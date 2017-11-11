@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/efa~efa-src/!svn/ver/89/src/de/nmichael/efa/ex
+END
+EfaModifyException.java
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/efa~efa-src/!svn/ver/67/src/de/nmichael/efa/ex/EfaModifyException.java
+END
+InvalidValueException.java
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/efa~efa-src/!svn/ver/89/src/de/nmichael/efa/ex/InvalidValueException.java
+END
+EfaException.java
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/efa~efa-src/!svn/ver/59/src/de/nmichael/efa/ex/EfaException.java
+END

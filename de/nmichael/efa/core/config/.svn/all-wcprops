@@ -1,0 +1,59 @@
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/efa~efa-src/!svn/ver/94/src/de/nmichael/efa/core/config
+END
+AdminRecord.java
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/efa~efa-src/!svn/ver/122/src/de/nmichael/efa/core/config/AdminRecord.java
+END
+Credentials.java
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/efa~efa-src/!svn/ver/111/src/de/nmichael/efa/core/config/Credentials.java
+END
+EfaTypeRecord.java
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/efa~efa-src/!svn/ver/84/src/de/nmichael/efa/core/config/EfaTypeRecord.java
+END
+EfaTypes.java
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/efa~efa-src/!svn/ver/144/src/de/nmichael/efa/core/config/EfaTypes.java
+END
+CustSettings.java
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/efa~efa-src/!svn/ver/70/src/de/nmichael/efa/core/config/CustSettings.java
+END
+Admins.java
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/efa~efa-src/!svn/ver/85/src/de/nmichael/efa/core/config/Admins.java
+END
+EfaConfigRecord.java
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/efa~efa-src/!svn/ver/84/src/de/nmichael/efa/core/config/EfaConfigRecord.java
+END
+EfaBaseConfig.java
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/efa~efa-src/!svn/ver/92/src/de/nmichael/efa/core/config/EfaBaseConfig.java
+END
+EfaConfig.java
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/efa~efa-src/!svn/ver/144/src/de/nmichael/efa/core/config/EfaConfig.java
+END

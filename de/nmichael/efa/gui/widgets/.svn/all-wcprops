@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/efa~efa-src/!svn/ver/93/src/de/nmichael/efa/gui/widgets
+END
+AlertWidget.java
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/efa~efa-src/!svn/ver/116/src/de/nmichael/efa/gui/widgets/AlertWidget.java
+END
+HTMLWidget.java
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svn/efa~efa-src/!svn/ver/140/src/de/nmichael/efa/gui/widgets/HTMLWidget.java
+END
+NewsMiniWidget.java
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/efa~efa-src/!svn/ver/113/src/de/nmichael/efa/gui/widgets/NewsMiniWidget.java
+END
+MeteoAstroWidget.java
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/efa~efa-src/!svn/ver/142/src/de/nmichael/efa/gui/widgets/MeteoAstroWidget.java
+END
+IWidget.java
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/efa~efa-src/!svn/ver/113/src/de/nmichael/efa/gui/widgets/IWidget.java
+END
+HtmlPopupDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/efa~efa-src/!svn/ver/113/src/de/nmichael/efa/gui/widgets/HtmlPopupDialog.java
+END
+ClockMiniWidget.java
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/efa~efa-src/!svn/ver/69/src/de/nmichael/efa/gui/widgets/ClockMiniWidget.java
+END
+Widget.java
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/efa~efa-src/!svn/ver/113/src/de/nmichael/efa/gui/widgets/Widget.java
+END

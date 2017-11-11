@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Plugins>
+
+    <Plugin name="ftp">
+        <FullName>edtFTPj/Free</FullName>
+        <Version>2.3.0</Version>
+        <Copyright>Copyright (c) Enterprise Distributed Technologies, licensed under the GNU LGPL</Copyright>
+        <Description lang="de">FTP-Upload von Statistiken aus efa heraus</Description>
+        <Description lang="en">FTP Upload of statistics directly from efa</Description>
+        <Files baseurl="http://efa.nmichael.de/plugins/ftp/">
+            <File size="186258">edtftpj.jar</File>
+        </Files>
+    </Plugin>
+
+    <Plugin name="help">
+        <FullName>JavaHelp</FullName>
+        <Version>2.0</Version>
+        <Copyright>Copyright (c) Oracle America, licensed under GNU General Public License - Version 2 with the class path exception</Copyright>
+        <Description lang="de">Online-Hilfe für efa</Description>
+        <Description lang="en">Online Help for efa</Description>
+        <Files baseurl="http://efa.nmichael.de/plugins/help/">
+            <File size="508396">jh.jar</File>
+        </Files>
+    </Plugin>
+
+    <Plugin name="jsuntimes">
+        <FullName>JSunTimes</FullName>
+        <Version>1.0</Version>
+        <Copyright>Copyright (c) 2000-11 Jonathan Stott, licensed under the GNU General Public License (GPL)</Copyright>
+        <Description lang="de">Berechnung von Sonnenauf- und -untergangszeiten</Description>
+        <Description lang="en">Calculation of sun rise and sun set times</Description>
+        <Files baseurl="http://efa.nmichael.de/plugins/jsuntimes/">
+            <File size="141525">jsuntimes.jar</File>
+        </Files>
+    </Plugin>
+
+    <Plugin name="mail">
+        <FullName>JavaMail</FullName>
+        <Version>1.5.1</Version>
+        <Copyright>Copyright (c) Oracle America, licensed under the Oracle Binary Code License Agreement for Java EE Technologies</Copyright>
+        <Description lang="de">email-Versand in efa</Description>
+        <Description lang="en">Sending of emails from efa</Description>
+        <Files baseurl="http://efa.nmichael.de/plugins/mail/">
+            <File size="545362">javax.mail.jar</File>
+        </Files>
+    </Plugin>
+
+    <Plugin name="pdf">
+        <FullName>Apache FOP</FullName>
+        <Version>1.1</Version>
+        <Copyright>Copyright (c) 2012 The Apache Software Foundation, licensed under the Apache License, Version 2.0</Copyright>
+        <Description lang="de">PDF-Plugin für das Erstellen von PDF-Dateien in efa</Description>
+        <Description lang="en">PDF Plugin for creating PDF Files in efa</Description>
+        <Files baseurl="http://efa.nmichael.de/plugins/pdf/">
+            <File size="81961">avalon-framework.jar</File>
+            <File size="3318083">batik-all.jar</File>
+            <File size="83613">commons-io.jar</File>
+            <File size="38015">commons-logging.jar</File>
+            <File size="3546394">fop.jar</File>
+            <File size="601866">xmlgraphics-commons.jar</File>
+        </Files>
+    </Plugin>
+
+    <Plugin name="signpost">
+        <FullName>Signpost OAuth Plugin</FullName>
+        <Version>1.2.1</Version>
+        <Copyright>Copyright (c) 2010 Matthias Käppler, licensed under the Apache License, Version 2.0</Copyright>
+        <Description lang="de">Plugin für Zugriff auf Wetter-Daten</Description>
+        <Description lang="en">Plugin for access of weather data</Description>
+        <Files baseurl="http://efa.nmichael.de/plugins/weather/">
+            <File size="44558">signpost-core.jar</File>
+            <File size="284184">commons-codec.jar</File>
+        </Files>
+    </Plugin>
+
+</Plugins>

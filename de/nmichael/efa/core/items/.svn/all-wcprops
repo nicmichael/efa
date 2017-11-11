@@ -1,0 +1,257 @@
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/efa~efa-src/!svn/ver/98/src/de/nmichael/efa/core/items
+END
+IItemListener.java
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/efa~efa-src/!svn/ver/64/src/de/nmichael/efa/core/items/IItemListener.java
+END
+ItemTypeImage.java
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/efa~efa-src/!svn/ver/136/src/de/nmichael/efa/core/items/ItemTypeImage.java
+END
+ItemTypeLabelValue.java
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/efa~efa-src/!svn/ver/105/src/de/nmichael/efa/core/items/ItemTypeLabelValue.java
+END
+ItemTypeFile.java
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svn/efa~efa-src/!svn/ver/85/src/de/nmichael/efa/core/items/ItemTypeFile.java
+END
+ItemTypeLong.java
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svn/efa~efa-src/!svn/ver/70/src/de/nmichael/efa/core/items/ItemTypeLong.java
+END
+ItemTypePassword.java
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/efa~efa-src/!svn/ver/74/src/de/nmichael/efa/core/items/ItemTypePassword.java
+END
+ItemTypeDateTime.java
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/efa~efa-src/!svn/ver/144/src/de/nmichael/efa/core/items/ItemTypeDateTime.java
+END
+ItemTypeLabel.java
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/efa~efa-src/!svn/ver/139/src/de/nmichael/efa/core/items/ItemTypeLabel.java
+END
+ItemTypeLabelTextfield.java
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/efa~efa-src/!svn/ver/124/src/de/nmichael/efa/core/items/ItemTypeLabelTextfield.java
+END
+ItemTypeMultiSelectList.java
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/efa~efa-src/!svn/ver/123/src/de/nmichael/efa/core/items/ItemTypeMultiSelectList.java
+END
+ItemTypeDecimal.java
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/efa~efa-src/!svn/ver/92/src/de/nmichael/efa/core/items/ItemTypeDecimal.java
+END
+ItemTypeAction.java
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/efa~efa-src/!svn/ver/116/src/de/nmichael/efa/core/items/ItemTypeAction.java
+END
+ItemTypeHours.java
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/efa~efa-src/!svn/ver/98/src/de/nmichael/efa/core/items/ItemTypeHours.java
+END
+ItemTypeButton.java
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/efa~efa-src/!svn/ver/112/src/de/nmichael/efa/core/items/ItemTypeButton.java
+END
+ItemTypeItemList.java
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/efa~efa-src/!svn/ver/121/src/de/nmichael/efa/core/items/ItemTypeItemList.java
+END
+ItemTypeString.java
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/efa~efa-src/!svn/ver/141/src/de/nmichael/efa/core/items/ItemTypeString.java
+END
+ItemTypeDouble.java
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/efa~efa-src/!svn/ver/124/src/de/nmichael/efa/core/items/ItemTypeDouble.java
+END
+ItemTypeBoatstatusList.java
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/efa~efa-src/!svn/ver/144/src/de/nmichael/efa/core/items/ItemTypeBoatstatusList.java
+END
+ItemTypeStringList.java
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/efa~efa-src/!svn/ver/139/src/de/nmichael/efa/core/items/ItemTypeStringList.java
+END
+ItemTypeBoolean.java
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/efa~efa-src/!svn/ver/112/src/de/nmichael/efa/core/items/ItemTypeBoolean.java
+END
+ItemTypeDate.java
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/efa~efa-src/!svn/ver/144/src/de/nmichael/efa/core/items/ItemTypeDate.java
+END
+ItemTypeTime.java
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svn/efa~efa-src/!svn/ver/86/src/de/nmichael/efa/core/items/ItemTypeTime.java
+END
+ItemTypeLongLat.java
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/efa~efa-src/!svn/ver/70/src/de/nmichael/efa/core/items/ItemTypeLongLat.java
+END
+IItemFactory.java
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svn/efa~efa-src/!svn/ver/66/src/de/nmichael/efa/core/items/IItemFactory.java
+END
+ItemType.java
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/efa~efa-src/!svn/ver/136/src/de/nmichael/efa/core/items/ItemType.java
+END
+ItemTypeList.java
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/efa~efa-src/!svn/ver/111/src/de/nmichael/efa/core/items/ItemTypeList.java
+END
+ItemTypeTextArea.java
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/efa~efa-src/!svn/ver/113/src/de/nmichael/efa/core/items/ItemTypeTextArea.java
+END
+ItemTypeDataRecordTable.java
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/efa~efa-src/!svn/ver/124/src/de/nmichael/efa/core/items/ItemTypeDataRecordTable.java
+END
+ItemTypeStringAutoComplete.java
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/svn/efa~efa-src/!svn/ver/134/src/de/nmichael/efa/core/items/ItemTypeStringAutoComplete.java
+END
+ITableEditListener.java
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/efa~efa-src/!svn/ver/90/src/de/nmichael/efa/core/items/ITableEditListener.java
+END
+IItemListenerDataRecordTable.java
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/svn/efa~efa-src/!svn/ver/114/src/de/nmichael/efa/core/items/IItemListenerDataRecordTable.java
+END
+ItemTypeDistance.java
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/efa~efa-src/!svn/ver/70/src/de/nmichael/efa/core/items/ItemTypeDistance.java
+END
+ItemTypeTable.java
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/efa~efa-src/!svn/ver/112/src/de/nmichael/efa/core/items/ItemTypeTable.java
+END
+ItemTypeConfigButton.java
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/efa~efa-src/!svn/ver/112/src/de/nmichael/efa/core/items/ItemTypeConfigButton.java
+END
+DataItem.java
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/efa~efa-src/!svn/ver/64/src/de/nmichael/efa/core/items/DataItem.java
+END
+ItemTypeCronEntry.java
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/efa~efa-src/!svn/ver/113/src/de/nmichael/efa/core/items/ItemTypeCronEntry.java
+END
+IItemType.java
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/efa~efa-src/!svn/ver/111/src/de/nmichael/efa/core/items/IItemType.java
+END
+ItemTypeColor.java
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/efa~efa-src/!svn/ver/114/src/de/nmichael/efa/core/items/ItemTypeColor.java
+END
+ItemTypeHtmlList.java
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/efa~efa-src/!svn/ver/70/src/de/nmichael/efa/core/items/ItemTypeHtmlList.java
+END
+ItemTypeHashtable.java
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/efa~efa-src/!svn/ver/136/src/de/nmichael/efa/core/items/ItemTypeHashtable.java
+END
+ItemTypeRadioButtons.java
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svn/efa~efa-src/!svn/ver/70/src/de/nmichael/efa/core/items/ItemTypeRadioButtons.java
+END
+ItemTypeInteger.java
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/efa~efa-src/!svn/ver/70/src/de/nmichael/efa/core/items/ItemTypeInteger.java
+END

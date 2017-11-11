@@ -1,0 +1,3363 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<efaOnlineUpdate>
+
+    <Version>
+        <VersionID>2.2.2_33</VersionID>
+        <ReleaseDate>10.11.2017</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa222.zip</DownloadUrl>
+        <DownloadSize>4141664</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Yahoo! Wetter API aktualisiert - Wetterdaten werden jetzt wieder korrekt angezeigt</ChangeItem>
+            <ChangeItem>Bugfix: PDF-Statistiken werden jetzt vom FTP-Upload korrekt (unverstümmelt) hochgeladen</ChangeItem>
+            <ChangeItem>Bugfix: Statistik mit Filtereinstellung eines einzelnen Fahrtenbuchs kann jetzt korrekt bearbeitet werden</ChangeItem>
+            <ChangeItem>Bugfix: Überschneidende Bootsreservierungen werden jetzt korrekt erkannt und unterbunden</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Yahoo! Wetter API updated - Weather information now shown properly</ChangeItem>
+            <ChangeItem>Bugfix: PDF statistics are now uploaded properly by FTP without file corruption</ChangeItem>
+            <ChangeItem>Bugfix: Statistic settings with a logbook set as filter criteria can now be properly edited</ChangeItem>
+            <ChangeItem>Bugfix: Overlapping boat reservations are now properly detected and prevented</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.2_32</VersionID>
+        <ReleaseDate>05.11.2017</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa222.zip</DownloadUrl>
+        <DownloadSize>4141381</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Unterstützung für Java 9 hinzugefügt</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Added support for Java 9</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.2_31</VersionID>
+        <ReleaseDate>03.05.2017</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa222.zip</DownloadUrl>
+        <DownloadSize>4090637</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Warnungen über fehlendes Geschlecht beim Auswerten der DRV-Wanderruderstatistik korrigiert</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.2_30</VersionID>
+        <ReleaseDate>27.04.2017</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa222.zip</DownloadUrl>
+        <DownloadSize>4090563</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Neu: Datenexport sämtlicher (auch derzeit ungültiger und gelöschter) Datensätze möglich, wenn kein Gültigkeitszeitpunkt angegeben wird</ChangeItem>
+            <ChangeItem>Neu: Warnungen bei Wettbewerbsauswertung, wenn Teilnehmer ohne Jahrgang oder Geschlecht in Personenliste erfaßt sind</ChangeItem>
+            <ChangeItem>Neu: Lock Timeout für Datenmanipulation jetzt konfigurierbar</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>New: Lock Timeout for data manipulation now configurable</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.2_29</VersionID>
+        <ReleaseDate>13.04.2017</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa222.zip</DownloadUrl>
+        <DownloadSize>4089668</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: verbesserte Fehlerausschriften falls DRV-Signatur nicht dekodiert werden kann</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.2_28</VersionID>
+        <ReleaseDate>12.04.2017</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa222.zip</DownloadUrl>
+        <DownloadSize>4089758</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Neu: Unterstützung von PASV Modus für FTP-Upload</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>New: Support of PASV mode for FTP Upload</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.2_26</VersionID>
+        <ReleaseDate>14.03.2017</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa222.zip</DownloadUrl>
+        <DownloadSize>4089436</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Neu: Datumsformat jetzt konfigurierbar (TT.MM.JJJJ oder MM/DD/YYYY)</ChangeItem>
+            <ChangeItem>Neu: Sortierung von Bootslisten nach Riggerung (und Anzahl von Bootsplätzen) jetzt möglich</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.2_24</VersionID>
+        <ReleaseDate>12.02.2017</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa222.zip</DownloadUrl>
+        <DownloadSize>4088070</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: HeadlessException beim Datenimport über efaCLI behoben</ChangeItem>
+            <ChangeItem>Bugfix: Hinweis auf Überweisung des DRV-Meldegeldes geändert (wird erst nach Bearbeitung überwiesen)</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.2_23</VersionID>
+        <ReleaseDate>07.02.2017</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa222.zip</DownloadUrl>
+        <DownloadSize>4087894</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: NullPointerException beim Auswerten von DRV-Fahrtenabzeichen behoben, wenn für einen Teilnehmer kein Geschlecht erfaßt ist</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.2_22</VersionID>
+        <ReleaseDate>12.12.2016</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa222.zip</DownloadUrl>
+        <DownloadSize>4087958</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Change: Nachfrage beim Erfassen von Fahrten mit mehr als 30 Km: Auswahlmöglichkeit "Kilometernachtrag" wird nicht mehr angeboten, um Mißverständnisse und irrtümliche Kennezeichnung von Fahrten als zusammengefaßte Kilometernachträge zu vermeiden</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.2_21</VersionID>
+        <ReleaseDate>05.12.2016</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa222.zip</DownloadUrl>
+        <DownloadSize>4087877</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Korrektur für email-Versand aus efaCLI</ChangeItem>
+            <ChangeItem>Bugfix: Vernünftige Fehlermeldung statt NullPointerException beim email-Versand, wenn kein email-Server konfiguriert ist</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Fix for sending email from efaCLI</ChangeItem>
+            <ChangeItem>Bugfix: Proper error message instead of NullPointerException, if no email server has been configured when sending an email</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.2_19</VersionID>
+        <ReleaseDate>23.10.2016</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa222.zip</DownloadUrl>
+        <DownloadSize>4087846</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Exception beim Online-Update und Versenden von emails behoben</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Exception during Online-Update and emails sending fixed</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.2_18</VersionID>
+        <ReleaseDate>22.10.2016</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa222.zip</DownloadUrl>
+        <DownloadSize>4087758</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>DRV: Meldegeld für DRV-Wettbewerbe 2016 aktualisiert</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.2_17</VersionID>
+        <ReleaseDate>17.09.2016</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa222.zip</DownloadUrl>
+        <DownloadSize>4087741</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Neu: Spezial-Button erlaubt jetzt das Wechseln des Projekts, Fahrtenbuchs, oder Bootshauses</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>New: Special Button now support changing the project, logbook, or boathouse</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.2_16</VersionID>
+        <ReleaseDate>09.09.2016</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa222.zip</DownloadUrl>
+        <DownloadSize>4086920</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Sortierung der Boote in Bootslisten ausschließlich nach Bootsnamen jetzt wieder möglich</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Sorting of boats in boat lists exclusively by boat name now possible again</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.2_15</VersionID>
+        <ReleaseDate>28.08.2016</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa222.zip</DownloadUrl>
+        <DownloadSize>4086860</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Neu: Sortierung der Boote in Bootslisten jetzt auch optional nach Bootstyp möglich</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>New: Sorting of boats in boat lists now optinally possible by boat type</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.2_14</VersionID>
+        <ReleaseDate>25.07.2016</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa222.zip</DownloadUrl>
+        <DownloadSize>4086718</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Bessere Robustheit beim Lesen von fehlerhaften Daten (Längenprüfung von Feldinhalten und ggf. Abschneiden von Werten über 1 MB Länge).</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Improved robustness for file reading (length checks of field values and truncating of values above 1 MB in size).</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.2_13</VersionID>
+        <ReleaseDate>23.07.2016</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa222.zip</DownloadUrl>
+        <DownloadSize>4086420</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: NullPointerException im Bootsstatus-Audit behoben (wenn Fahrtstatus eines Boots korrigiert wurde).</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Bugfix: NullPointerException in Boot Status Audit fixed (if correcting session status).</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.2_12</VersionID>
+        <ReleaseDate>16.07.2016</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa222.zip</DownloadUrl>
+        <DownloadSize>4086368</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Update-Konflikt bei wiederholtem Ändern desselben Fahrtenbucheintrags über efaRemote behoben.</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Update conflict in efaRemote for repeated change of the same logbook record fixed.</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.2_09</VersionID>
+        <ReleaseDate>01.05.2016</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa222.zip</DownloadUrl>
+        <DownloadSize>4085925</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Fehler (NoClassDefFoundError) beim Laden der Wetterdaten nach Online-Update behoben.</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Error (NoClassDefFoundError) when loading whether data after online update fixed.</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.2_08</VersionID>
+        <ReleaseDate>22.04.2016</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa222.zip</DownloadUrl>
+        <DownloadSize>4085406</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Wetterdaten werden jetzt wieder angezeigt (API zur Abfrage der Wetterdaten aktualisiert)</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Weather information now shown again (API for querying of weather data changed)</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.2_05</VersionID>
+        <ReleaseDate>27.02.2016</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa222.zip</DownloadUrl>
+        <DownloadSize>3811067</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Fehler beim Korrigieren von unbekannten Namen beim Download von DRV-Fahrtenheften behoben</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.2_04</VersionID>
+        <ReleaseDate>26.02.2016</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa222.zip</DownloadUrl>
+        <DownloadSize>3811012</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Neu: Wettbewerbsbestimmungen für LRV-Winter-Wettbewerb 2015/2016 angepaßt</ChangeItem>
+            <ChangeItem>Bugfix: Wiederholte Aufforderung zum Berechnen des Vereinsarbeits-Übertrags korrigiert</ChangeItem>
+            <ChangeItem>Bugfix: Nicht klickbare Aufforderung zum Berechnen des Vereinsarbeits-Übertrags in efaBasis korrigiert</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Repeated prompting for calculation of clubwork carry-over fixed</ChangeItem>
+            <ChangeItem>Bugfix: Unclickable dialog prompting for calculation of clubwork carry-over in efaBase fixed</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.2_03</VersionID>
+        <ReleaseDate>13.01.2016</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa222.zip</DownloadUrl>
+        <DownloadSize>3810558</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Fehlerhafte Statistikberechnung für Wochentage und Monate korrigiert</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Erroneous statistics calculation for days of week and months fixed</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.2_02</VersionID>
+        <ReleaseDate>22.12.2015</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa222.zip</DownloadUrl>
+        <DownloadSize>3810192</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Tagesfahrten werden bei Auswertungen zum Fahrtenabzeichen für Jahre vor 2015 nicht mehr berücksichtigt</ChangeItem>
+            <ChangeItem>Bugfix: efa fragt nun nicht mehr bei der Eingabe, ob eine als JuM-Regatta gekennzeichnete Fahrt eine Regatta ist</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.2_01</VersionID>
+        <ReleaseDate>21.12.2015</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa222.zip</DownloadUrl>
+        <DownloadSize>3810321</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Regatten wurden fälschlicherweise bei Erwachsenen für das DRV-Fahrtenabzeichen als Wanderruderkilometer gewertet</ChangeItem>
+            <ChangeItem>Bugfix: NullPointerException nach Update behoben</ChangeItem>
+            <ChangeItem>Bugfix: Warnungen zu nicht berücksichtigte Fahrten werden jetzt auch bei Statistik-Ausgabe für efaWett angezeigt</ChangeItem>
+            <ChangeItem>Bugfix: Strenge Prüfung von Namensformat erlaubt jetzt auch Namenszusätze (runge Klammern) sowie Vereinsnamen (eckige Klammern), jedoch nicht "Gast"</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.2_00</VersionID>
+        <ReleaseDate>16.12.2015</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa222.zip</DownloadUrl>
+        <DownloadSize>3809677</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Neu: Auswertung der DRV-Wettbewerbe an neue Bestimmungen für 2015 angepaßt</ChangeItem>
+            <ChangeItem>Neu: Fahrtarten "Training", "Wanderfahrt", "Ausbildung", "JuM-Regatta" abgeschafft</ChangeItem>
+            <ChangeItem>Neu: efa überprüft jetzt bei der Eingabe, ob eine Fahrt aufgrund ihrer Fahrtart als Wanderfahrt gewertet werden kann oder nicht</ChangeItem>
+            <ChangeItem>Neu: Status von Personen kann jetzt von efa altersabhängig automatisch gesetzt werden</ChangeItem>
+            <ChangeItem>Neu: Konfigurierbare Vorbelegung für Text im Bemerkungs-Feld</ChangeItem>
+            <ChangeItem>Neu: Darstellungsgröße im HTML-Widget kann beliebig skaliert werden</ChangeItem>
+            <ChangeItem>Neu: In Auswertungen der Vereinsarbeit können Mitglieder, die die Sollstunden noch nicht erfüllt haben, nun unterdrückt werden</ChangeItem>
+            <ChangeItem>Neu: Unbekannte Personennamen können bei Eingabe von Fahrten im Bootshaus jetzt nach strengen Regeln auf gültiges Namensformat hin geprüft werden</ChangeItem>
+            <ChangeItem>Neu: efa überprüft jetzt die email-Adressen in den Projekt-Einstellungen sowie beim Melden von Wettbewerben auf syntaktische Korrektheit</ChangeItem>
+            <ChangeItem>Neu: Bei der Auswertung der DRV-Wanderruderstatistik werden nun für jeden Eintrag die LfdNr aller berücksichtigten Fahrten ausgegeben</ChangeItem>
+            <ChangeItem>Bugfix: efaCLI kann jetzt unter Linux/Unix auch ohne graphische Umgebung (headless) gestartet werden</ChangeItem>
+            <ChangeItem>Bugfix: Fehlermeldungen beim Anlegen eines neuen Fahrtenbuchs über efaRemote behoben</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>New: Status of persons can now automatically be updated by efa based on year of birth</ChangeItem>
+            <ChangeItem>New: Configurable preset value for comments field</ChangeItem>
+            <ChangeItem>New: Scaling of HTML Widget can now be freely configured</ChangeItem>
+            <ChangeItem>New: Statistics evaluations of clubwork can now suppress members that have not yet fulfilled their clubwork hours</ChangeItem>
+            <ChangeItem>New: Strict checks of unknown person names in logbook entries can now be enforced when sessions are entered</ChangeItem>
+            <ChangeItem>New: efa now validates email addresses in project settings</ChangeItem>
+            <ChangeItem>Bugfix: efaCLI now run on Linux/Unix also in environments without display (headless)</ChangeItem>
+            <ChangeItem>Bugfix: Error messagesn during creation of a new logbook through efaRemote fixed</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.1_20</VersionID>
+        <ReleaseDate>06.10.2015</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa221.zip</DownloadUrl>
+        <DownloadSize>3602911</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Nachfrage nach Fahrtarten fragt jetzt nicht mehr nach nicht vorhandenen Fahrtarten</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Prompt for session type now does not offer non-configured session types</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.1_19</VersionID>
+        <ReleaseDate>27.09.2015</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa221.zip</DownloadUrl>
+        <DownloadSize>3602043</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Ausgabe von Mitgliedsnummer jetzt in CSV-Ausgabe möglich</ChangeItem>
+            <ChangeItem>Change: efa warnt jetzt bei Bootsbenutzung nur bei Bootsschäden, die unkritisch sind ("Boot voll benutzbar"). Falls efa auch bei Bootsschäden voll benutzbarer Boots warnen soll, kann die Option "Bei Bootsbenutzung auch im Fall von unkritischen Bootsschäden warnen" im Expertenmodus der efa-Konfigutation unter "efa-Bootshaus - Eingabe" gesetzt werden</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Output of membership number now possible in CSV output</ChangeItem>
+            <ChangeItem>Change: Per default, efa now only warns in case of critical boat damages, but not those where the boat is marked as fully useable</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.1_18</VersionID>
+        <ReleaseDate>30.08.2015</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa221.zip</DownloadUrl>
+        <DownloadSize>3601601</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Neu: Wettbewerbsbedingungen für LRV Berlin (Blauer Wimpel) aktualisiert für 2015</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.1_17</VersionID>
+        <ReleaseDate>26.08.2015</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa221.zip</DownloadUrl>
+        <DownloadSize>3601467</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Erstellen von mehreren Versionen von Gruppen ist jetzt möglich</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Creation of multi-versionized groups now possible</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.1_16</VersionID>
+        <ReleaseDate>24.08.2015</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa221.zip</DownloadUrl>
+        <DownloadSize>3601464</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Neu: Wettbewerbsbedingungen für LRV Berlin (Sommer-Wettbewerb und Blauer Wimpel) aktualisiert für 2015</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.1_15</VersionID>
+        <ReleaseDate>12.07.2015</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa221.zip</DownloadUrl>
+        <DownloadSize>3601066</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Neu: Kontaktinformationen bei Bootsreservierungen werden in Liste sowie Statistik der Bootsreservierungen jetzt angezeigt</ChangeItem>
+            <ChangeItem>Neu: Größe der Liste der 'nicht verfügbaren Boote' ist jetzt im Expertenmodus konfigurierbar</ChangeItem>
+            <ChangeItem>Bugfix: Fehler aus Version 2.2.1_14 (unbekannte Boote fehlen in Boots-Auswahllisten) behoben</ChangeItem>
+            <ChangeItem>Bugfix: Vorgeschlagenes Datum beim Nachtrag von Fahrten ist jetzt immer das aktuelle Datum (anstatt das Datum eines zuletzt erfaßten Eintrags)</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>New: Contact information of boat reservation is now displayed in reservation listst and statistics</ChangeItem>
+            <ChangeItem>Neu: Size of list 'not available boats' is now configurable in expert mode</ChangeItem>
+            <ChangeItem>Bugfix: Bug from version 2.2.1_14 (unknown boats missing in boat selection lists) fixed</ChangeItem>
+            <ChangeItem>Bugfix: Suggested data for late entries is now always the current date (instead that of a previous entry)</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.1_14</VersionID>
+        <ReleaseDate>28.06.2015</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa221.zip</DownloadUrl>
+        <DownloadSize>3600559</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Neu: Gruppierung anderer Boote in den Boots-Auswahllisten optional mit individuellem Bootstyp (anstatt unter "andere") möglich</ChangeItem>
+            <ChangeItem>Bugfix: Entfernen des Vereins-Logos nun möglich</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Neu: Grouping of other boats in the boat selection lists optionally possible with individual boat types (instead of grouping under the name "other")</ChangeItem>
+            <ChangeItem>Bugfix: Removal of club logo now possible</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.1_11</VersionID>
+        <ReleaseDate>25.05.2015</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa221.zip</DownloadUrl>
+        <DownloadSize>3597252</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Neu: Unterstützung von Statistikausgabe im CSV-Format für Wettbewebsauswertungen</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.1_10</VersionID>
+        <ReleaseDate>05.05.2015</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa221.zip</DownloadUrl>
+        <DownloadSize>3596543</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Neu: Vereinsarbeitsstunden können jetzt durch einen Admin geprüft und (optional) erst nach Bestätigung für die Auswertung berücksichtigt werden</ChangeItem>
+            <ChangeItem>Neu: efa fragt bei allen Fahrten > 30 Km nun nach der korrekten Fahrtart oder versucht, diese automatisch zu "erraten"</ChangeItem>
+            <ChangeItem>Bugfix: StringIndexOutOfBoundsException beim Speichern eines Backups auf einem externen Medium behoben, wenn als Pfad unter Windows nur der Laufwerksbuchstabe eingegeben wurde</ChangeItem>
+            <ChangeItem>Bugfix: Abfrage von Personennamen beim Import von DRV-Fahrtenheften unbekannter Personen korrigiert</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>New: Clubwork hours can now be approved by admins and will only be evaluated after approval</ChangeItem>
+            <ChangeItem>Bugfix: StringIndexOutOfBoundsException fixed when creating backups under Windows using just a driver letter as destination</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.1_08</VersionID>
+        <ReleaseDate>19.02.2015</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa221.zip</DownloadUrl>
+        <DownloadSize>3593903</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Neu: Für Statistikauswertungen ist jetzt konfigurierbar, ob Namen und Daten mittels des zum Ende des Auswertungszeitraumes gültigen Datensatzes angezeigt werden sollen, oder jeweils zum Zeitpunkt der letzten ausgewerteten Fahrt einer Person</ChangeItem>
+            <ChangeItem>Neu: Ausgabe der Mitgliedsnummer in Statistikauswertungen möglich</ChangeItem>
+            <ChangeItem>Bugfix: NullPointerException beim Ermitteln des Geschlechts eines Teilnehmers für die Wanderruderstatistik behoben</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>New: Membership numbers can now be reported in statistics calculations</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.1_04</VersionID>
+        <ReleaseDate>19.01.2015</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa221.zip</DownloadUrl>
+        <DownloadSize>3593551</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Fehlerhafte Anzeige von Zielfahrten, die aufgrund ihrere Entfernung keine sind, jetzt unterdrückt (Wertung war von diesem Fehler nicht betroffen)</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.1_03</VersionID>
+        <ReleaseDate>19.01.2015</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa221.zip</DownloadUrl>
+        <DownloadSize>3593246</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Fehler bei Konfiguration mehrerer Bootshäuser behoben</ChangeItem>
+            <ChangeItem>Bugfix: Allgemein verfügbare Statistiken (im Admin-Modus "blau" angezeigt) werden jetzt immer als allgemein verfügbar betrachtet, auch wenn von einem Admin berechnet. Mitglieder oder Boote, die von allgemein verfügbaren Statistiken ausgenommen werden, erscheinen jetzt auch dann nicht mehr in diesen Statistiken, wenn sie von einem Admin erstellt wurden.</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Bugs for configuration of multiple boathouses fixed</ChangeItem>
+            <ChangeItem>Bugfix: Publicly available statistics (shown as "blue" in admin mode) are now always considered as public, even when calculated by an admin. Therefore, persons and boats marked to be excluded from public statistics will no longer appear in those statistics when executed by an admin.</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.1_02</VersionID>
+        <ReleaseDate>11.01.2015</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa221.zip</DownloadUrl>
+        <DownloadSize>3592792</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: efaCLI gibt Meldungen jetzt wieder auf der Konsole aus</ChangeItem>
+            <ChangeItem>Bugfix: Jugendliche können goldene DRV-Jugendabzeichen erwerben, deren Erfüllung auch für die Erwachsenenabzeichen gilt</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Bugfix: efaCLI is now logging to the console again</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.1_01</VersionID>
+        <ReleaseDate>27.12.2014</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa221.zip</DownloadUrl>
+        <DownloadSize>3592868</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Neu: Kilometerausgabe bei Auswertung der Vereinsarbeitsstunden möglich</ChangeItem>
+            <ChangeItem>Bugfix: Geändertes Backup-Verzeichnis wurde nach Neustart nicht berücksichtigt</ChangeItem>
+            <ChangeItem>Change: Meldegeld für DRV-Jugendfahrtenabzeichen auf 0,75 EUR korrigiert</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>New: Clubwork statistics can optionally also show rowed mileage</ChangeItem>
+            <ChangeItem>Bugfix: Changed backup directory was ignored after restart</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.1_00</VersionID>
+        <ReleaseDate>13.12.2014</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa221.zip</DownloadUrl>
+        <DownloadSize>3592458</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Neu: Wettbewerbsauswertung für DRV-Wettbewerbe aktualisiert</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>New: Calculation of German rowing competitions updated</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.0_15</VersionID>
+        <ReleaseDate>06.12.2014</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa220.zip</DownloadUrl>
+        <DownloadSize>3592432</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Vereinsnamen werden jetzt von Namenszusätzen durch eckige Klammern in der Eingabe unterscheiden, wenn die Option "Vereinsnamen in Personenliste anzeigen" aktiviert ist</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Club names are now distinguished from name add-ons through squared brackets during input if the option "Show club names in person list" has been activated</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.0_14</VersionID>
+        <ReleaseDate>30.11.2014</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa220.zip</DownloadUrl>
+        <DownloadSize>3592293</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: efa erlaubt jetzt die Eingabe des korrekten Personennamens wenn eine Person beim Einspielen von signierten Fahrtenheften (DRV-Fahrtenabzeichen) nicht gefunden werden konnte</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.0_13</VersionID>
+        <ReleaseDate>12.11.2014</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa220.zip</DownloadUrl>
+        <DownloadSize>3591766</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: NullPointerException bei Statistikberechnung der Vereinsarbeitsstunden behoben, wenn keine Arbeitsstunden im angegebenen Zeitraum gefunden wurden</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Bugfix: NullPointerException during statistics calculation of clubwork fixed if no clubwork hours were found during selected period</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.0_12</VersionID>
+        <ReleaseDate>22.10.2014</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa220.zip</DownloadUrl>
+        <DownloadSize>3591210</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Fehlerhafte Berechnung von JuM-Regatten für DRV-Fahrtenabzeichen behoben, wenn Teilnehmer *nicht* der Gruppe 3 a/b angehört</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.0_11</VersionID>
+        <ReleaseDate>18.10.2014</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa220.zip</DownloadUrl>
+        <DownloadSize>3591098</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: efa versucht email-Versand jetzt nur, wenn auch ein email-Server konfiguriert ist</ChangeItem>
+            <ChangeItem>Bugfix: Fehlerhafte Angabe zur Anzahl der exportierten Datensätze bei Datenexport korrigiert</ChangeItem>
+            <ChangeItem>Bugfix: efa fragt jetzt vor der Reservierung von "nicht verfügbaren" Booten nach, ob diese wirklich reserviert werden sollen</ChangeItem>
+            <ChangeItem>Bugfix: Für Wettbewerbsauswertungen aktiviert efa jetzt nur alle vordefinierten Fahrtarten und Bootstypen, die für Ruderfahrten in Frage kommen, und erlaubt es weiterhin, selbst definierte Fahrtarten oder Bootstypen von der Wettbewerbsauswertung auszunehmen</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Bugfix: efa now onlz attempts to send email if an email server has been configured</ChangeItem>
+            <ChangeItem>Bugfix: wrong count for number of exported records fixed</ChangeItem>
+            <ChangeItem>Bugfix: efa now prompts user to confirm when attempting to reserve a boat that is currently "not available"</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.0_10</VersionID>
+        <ReleaseDate>06.08.2014</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa220.zip</DownloadUrl>
+        <DownloadSize>3589628</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Fehlende Beschreibung in Benachrichtigung bei Meldung eines ungeputzten Bootes ergänzt</ChangeItem>
+            <ChangeItem>Bugfix: Unerlaubte Filtereinstellungen bei Wettbewerbsmeldungen werden jetzt bei Auswertung ignoriert</ChangeItem>
+            <ChangeItem>Bugfix: Im Admin-Modus werden im Fahrtenbucheintrag bereits erfaßte Kilometereingaben bei Bearbeitung des Ziels nicht mehr gelöscht</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Missing notes when reporting an uncleaned boat added</ChangeItem>
+            <ChangeItem>Bugfix: Already entered distance is not lost any more when a destination is edited in admin mode</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.0_09</VersionID>
+        <ReleaseDate>24.07.2014</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa220.zip</DownloadUrl>
+        <DownloadSize>3589482</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: email-Versand ohne STARTTLS bei Verwendung von Port 25</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Sending of emails without STARTTLS when using port 25</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.0_08</VersionID>
+        <ReleaseDate>12.07.2014</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa220.zip</DownloadUrl>
+        <DownloadSize>3589438</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Verbesserte Unterstützung für email-Versand mittels STARTTLS oder SSL</ChangeItem>
+            <ChangeItem>Bugfix: Fehlende Anzeige von Vereinsnamen bei Steuerleuten korrigiert</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Improved support for sending email with STARTTLS or SSL</ChangeItem>
+            <ChangeItem>Bugfix: Missing club name for cox fixed</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.0_07</VersionID>
+        <ReleaseDate>18.06.2014</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa220.zip</DownloadUrl>
+        <DownloadSize>3589045</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Datenimport mittels efaCLI jetzt 100x schneller</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Data import with efaCLI now 100x faster</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.0_06</VersionID>
+        <ReleaseDate>17.06.2014</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa220.zip</DownloadUrl>
+        <DownloadSize>3588448</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Position in Statistikausgabe wird jetzt bei gleicher Leistung gleichgestzt</ChangeItem>
+            <ChangeItem>Neu: Debug-Logging in efaCLI</ChangeItem>
+            <ChangeItem>Bugfix: NullPointerExceptions beim Import von Daten in efaCLI behoben</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Position in statistics output now not incremented for identical values</ChangeItem>
+            <ChangeItem>Neu: Debug-Logging in efaCLI</ChangeItem>
+            <ChangeItem>Bugfix: NullPointerExceptions during data import in efaCLI fixed</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.0_05</VersionID>
+        <ReleaseDate>07.06.2014</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa220.zip</DownloadUrl>
+        <DownloadSize>3587943</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Statistikauswertung von unbekannten Personen jetzt wieder möglich</ChangeItem>
+            <ChangeItem>Bugfix: Zeitliche Sortierung von Fahrtenbucheinträgen in Statistikausgabe berücksichtigt jetzt neben Datum auch die Uhrzeit</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Statistics evaluation of unknown persons now possible again</ChangeItem>
+            <ChangeItem>Bugfix: Sorting of logbook entries by date in statistics evaluation now also considers time</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.0_04</VersionID>
+        <ReleaseDate>03.06.2014</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa220.zip</DownloadUrl>
+        <DownloadSize>3587698</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Probleme/Einfrieren von efa beim Starten behoben</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Problems/freeze of efa after start fixed</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.0_03</VersionID>
+        <ReleaseDate>01.06.2014</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa220.zip</DownloadUrl>
+        <DownloadSize>3587923</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Vereinsarbeit kann jetzt auch in efa-Basis administriert werden</ChangeItem>
+            <ChangeItem>Bugfix: Fehlermeldung beim Start von efa, wenn Vereinsarbeitsbuch gelöscht wurde, behoben</ChangeItem>
+            <ChangeItem>Bugfix: Aufforderung zum Schließen der Hallentore erscheint jetzt auch, wenn alle Boote zurück sind, aber einige Boote noch auf Regatta oder Wanderfahrt (nicht verfügbar) sind</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Clubwork can now also be administred in efa-Base</ChangeItem>
+            <ChangeItem>Bugfix: Error message during efa start fixed, if clubwork book had been deleted</ChangeItem>
+            <ChangeItem>Bugfix: Reminder to close the boat house if all boats are back now appears also, if some boats are at races or multi-day tours (not available)</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.0_02</VersionID>
+        <ReleaseDate>29.05.2014</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa220.zip</DownloadUrl>
+        <DownloadSize>3587378</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Vereinsarbeits-Button wird manchmal beim Start von efa nicht angezigt - behoben</ChangeItem>
+            <ChangeItem>Bugfix: Erfassung uns Auswertung von Vereinsarbeitsstunden für Gäste möglich</ChangeItem>
+            <ChangeItem>Bugfix: Berücksichtige Auswertungs- und Vereinsarbeits-Zeitraum korrekt bei Berechnung der Sollstunden</ChangeItem>
+            <ChangeItem>Bugfix: Fehlermeldung bei Eingabe von unbekannten Namen für Vereinsarbeit korrigiert</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Clubwork button sometimes not shown after efa start - fixed</ChangeItem>
+            <ChangeItem>Bugfix: Entering and evaluation of clubwork hours for guests possible</ChangeItem>
+            <ChangeItem>Bugfix: Time range for clubwork calculation of target hours fixed</ChangeItem>
+            <ChangeItem>Bugfix: Error message when entering unknown namen for clubwork hours fixed</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.0_01</VersionID>
+        <ReleaseDate>28.05.2014</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa220.zip</DownloadUrl>
+        <DownloadSize>3586716</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: NullPointerException beim Aufrufen des Projekt-Dialogs behoben</ChangeItem>
+            <ChangeItem>Bugfix: Vereinsarbeits-Button wird manchmal beim Start von efa nicht angezigt - behoben</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Bugfix: NullPointerException when opening project edit dialog fixed</ChangeItem>
+            <ChangeItem>Bugfix: Clubwork button sometimes not shown after efa start - fixed</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.0_00</VersionID>
+        <ReleaseDate>26.05.2014</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa220.zip</DownloadUrl>
+        <DownloadSize>3586787</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Neu: Erfassung und Auswertung von Vereinsarbeitsstunden</ChangeItem>
+            <ChangeItem>Neu: Schlüsselfeld für Datenimport nach efa ist jetzt konfigurierbar</ChangeItem>
+            <ChangeItem>Neu: Beim Versenden von Nachrichten wird die email-Adresse der Person, die die Nachricht erstellt hat, als reply-to Adresse gespeichert (sofern für die Person eine email-Adresse in der Personenliste hinterlegt ist)</ChangeItem>
+            <ChangeItem>Neu: Statistikauswertung erlaubt jetzt gezielte Auswertung eines einzelnen Fahrtenbuchs</ChangeItem>
+            <ChangeItem>Neu: Optional können bei der Statistikauswertung jetzt auch offene Fahrten berücksichtigt werden (bspw. um diese in der Fahrtenbuchausgabe mit auszugeben)</ChangeItem>
+            <ChangeItem>Neu: Bei Synchronisation mit Kanu-eFB werden nur Fahrten synchronisiert, die mit Kanu-Bootstypen durchgeführt wurden (Konfiguration der Kanu-Bootstypen unter "efa-Konfiguration - Synchronisation - Kanu-eFB")</ChangeItem>
+            <ChangeItem>Neu: Nachrichten können beim Weiterleiten durch Administrator editiert werden</ChangeItem>
+            <ChangeItem>Neu: Offene Fahrten können jetzt auch in efa-Basis (bzw. im Admin-Modus) manuell beendet werden. Der Bootsstatus wird hierbei korrekt aktualisiert.</ChangeItem>
+            <ChangeItem>Neu: Anzeige von Vereinsnamen optional hinter dem Personennamen in Auswahllisten möglich (kann aktiviert werden unter "efa-Konfiguration - Allgemein - Eingabe")</ChangeItem>
+            <ChangeItem>Neu: Optional erlaubt efa jetzt auch das Erfassen von Fahrten ohne Entfernungsangabe (kann aktiviert werden unter "efa-Konfiguration - Allgemein - Eingabe" im Expertenmodus)</ChangeItem>
+            <ChangeItem>Neu: Angabe von Kilometern und Fahrtart aus Fahrtgruppen entfernt</ChangeItem>
+            <ChangeItem>Neu: efa-Systeminfos zeigen jetzt auch aktuelle IP-Adresse an</ChangeItem>
+            <ChangeItem>Neu: SEPA-Kontoinformationen für DRV und LRV Berlin</ChangeItem>
+            <ChangeItem>Neu: JavaMail-Plugin aktualisiert (Version 1.5.1) und unterstützt jetzt den Versand von verschlüsselten emails besser</ChangeItem>
+            <ChangeItem>Change: Statistikfenster werden jetzt im Admin-Modus nicht mehr nach fünf Minuten automatisch geschlossen</ChangeItem>
+            <ChangeItem>Bugfix: Fehlermeldungen beim Erstellen eines neues Fahrtenbuchs behoben</ChangeItem>
+            <ChangeItem>Bugfix: Fälschlicher wiederholter automatischer Fahrtenbuchwechsel nach manuellem Öffnen eines anderen Fahrtenbuchs behoben</ChangeItem>
+            <ChangeItem>Bugfix: Fehler bei PDF-Generierung von nicht unterstützten Statistiken behoben</ChangeItem>
+            <ChangeItem>Bugfix: Fehlermeldungen beim Öffnen von XML-Dateien, die nicht mehr unterstützte Felder enthalten, jetzt unterdrückt</ChangeItem>
+            <ChangeItem>Bugfix: Melden von Änderungswünschen für Fahrtenbucheinträge war nicht möglich, wenn weniger als konfigurierte Fahrten angezeigt wurden oder die Tabelle umsortiert wurde</ChangeItem>
+            <ChangeItem>Bugfix: efa-Neustart unter Windows funktionierte nicht, wenn Java-Installationsverzeichnis Leerzeichen im Namen enthielt</ChangeItem>
+            <ChangeItem>Bugfix: Darstellungsprobleme im Konfigurationsdialog bei zu vielen Einträge in "Automatische Abläufe" korrigiert</ChangeItem>
+            <ChangeItem>Bugfix: Schreibfehler in Gewässerliste korrigiert</ChangeItem>
+            <ChangeItem>Sprache: Sprachunterstützung für Dänisch aktualisiert</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>New: Support for accounting of club work hours</ChangeItem>
+            <ChangeItem>New: Key field for data import is now configurable</ChangeItem>
+            <ChangeItem>New: emails sent from efa will now use the recipient's email address as reply-to address (if recipient has an email address configured in the persons list)</ChangeItem>
+            <ChangeItem>New: Statistics evaluation now allows to restrict evaluation to a specific logbook</ChangeItem>
+            <ChangeItem>New: Logbook statistics evaluation can now optionally also consider open sessions (instead of only finished sessions)</ChangeItem>
+            <ChangeItem>New: Messages can now be edited when forwarded by the admin</ChangeItem>
+            <ChangeItem>New: Open sessions can now be finished also in efa-Base (and Admin Mode). The boat status will be updated accordingly.</ChangeItem>
+            <ChangeItem>New: efa can now optionally display club names behind each person's name in drop-down lists.</ChangeItem>
+            <ChangeItem>New: Optionally, efa now allows to enter sessions without distance.</ChangeItem>
+            <ChangeItem>New: efa system infos now also show current IP address</ChangeItem>
+            <ChangeItem>New: JavaMail-Plugin updated (Version 1.5.1) and now supports sending of encrypted emails better</ChangeItem>
+            <ChangeItem>Change: Statistic windows in Admin Mode now not closed after 5 minutes any more</ChangeItem>
+            <ChangeItem>Bugfix: Error messages when creating logbook fixed</ChangeItem>
+            <ChangeItem>Bugfix: Repeated logbook switch after manual switch fixed</ChangeItem>
+            <ChangeItem>Bugfix: Error when creating PDF and XML output of unsupported statistics fixed</ChangeItem>
+            <ChangeItem>Bugfix: efa restart on Windows didn't work, when installation directory contained spaces</ChangeItem>
+            <ChangeItem>Bugfix: Display problems in efa configuration (too many fields) fixed</ChangeItem>
+            <ChangeItem>Language: Language support for Danish updated</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.1.1_04</VersionID>
+        <ReleaseDate>04.12.2013</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa211.zip</DownloadUrl>
+        <DownloadSize>3343997</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Inkorrekte Auswahlliste des Statistiktyps für Kilometerlisten korrigiert</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Incorrect drop-down list of statistics types fixed</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.1.1_03</VersionID>
+        <ReleaseDate>04.12.2013</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa211.zip</DownloadUrl>
+        <DownloadSize>3344136</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Neu: efa fordert nach Melden des DRV-Fahrtenabzeichens jetzt auch zum Melden der DRV-Wanderruderstatistik auf</ChangeItem>
+            <ChangeItem>Change: Fahrtarten DKV-Gemeinschaftsfahrt und DKV-Vereinsfahrt in Gemeinschaftsfahrt und Vereinsfahrt umbenannt</ChangeItem>
+            <ChangeItem>Bugfix: Fehler beim Konfigurieren eines Fahrtenbuchwechsels über efaRemote behoben</ChangeItem>
+            <ChangeItem>Bugfix: Falsche Handhabung von Motorboot- und Ergo-Fahrten korrigiert</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Error when configuring a logbook switch through efaRemote fixed</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.1.1_02</VersionID>
+        <ReleaseDate>21.11.2013</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa211.zip</DownloadUrl>
+        <DownloadSize>3343326</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Ausgabefelder bei abgespeicherten Statistikeintellungen wurden nicht korrekt angezeigt</ChangeItem>
+            <ChangeItem>Bugfix: Sortierung nach Datum für Statistiktyp "Weitere" jetzt möglich</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Output fields for saved statistics settings were not displayed properly</ChangeItem>
+            <ChangeItem>Bugfix: Sorting by date for statistics category "others" now possible</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.1.1_01</VersionID>
+        <ReleaseDate>17.11.2013</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa211.zip</DownloadUrl>
+        <DownloadSize>3343193</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: NullPointerException bei Statistikerstellung behoben</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Bugfix: NullPointerException for statistics calculation fixed</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.1.1_00</VersionID>
+        <ReleaseDate>17.11.2013</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa211.zip</DownloadUrl>
+        <DownloadSize>3343444</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Neu: Bootsreservierungen, Bootsstatus und Bootsschäden können jetzt als Statistiken in der Kategorie "Weitere" ausgegeben werden</ChangeItem>
+            <ChangeItem>Neu: Die Anzahl der Bootsschäden sowie Reparaturdauer kann als Statistik in der Kategorie "Weitere" berechnet werden</ChangeItem>
+            <ChangeItem>Neu: Zusammenfassen von Booten und Zielen, die versehentlich mehrfach als unterschiedliche Datensätze erfaßt wurden, zu einem gemeinsamen Datensatz</ChangeItem>
+            <ChangeItem>Neu: Neue Fahrtarten "DKV-Vereinsfahrt" und "DKV-Gemeinschaftsfahrt" für Paddler. ACHTUNG: Um diese Fahrtarten zu aktivieren, gehe in dem "Admin-Modus - Konfiguration - Bezeichnungen" und klicke "Fehlende Standard-Fahrtarten neu generieren"</ChangeItem>
+            <ChangeItem>Neu: Neues Feld "Veranstalter" für Fahrtgruppen zum Erfassen des Veranstalters von DKV-Gemeinschaftsfahrten</ChangeItem>
+            <ChangeItem>Neu: Synchronisation mit Kanu-eFB kann jetzt über efaCLI bzw. zeitgesteuert als automatischer Ablauf gestartet werden</ChangeItem>
+            <ChangeItem>Neu: efa überträgt jetzt auch Fartart sowie Fahrtgruppen bei Synchronisation ans Kanu-eFB</ChangeItem>
+            <ChangeItem>Neu: efa merkt sich jetzt jeweils das letzte Import- und Export-Verzeichnis und schlägt dieses beim nächsten Import/Export automatisch vor</ChangeItem>
+            <ChangeItem>Neu: Weitere Felder in der Bootsverwaltung zum Erfassen von Seriennummer, Verkaufspreis und Verkaufsdatum</ChangeItem>
+            <ChangeItem>Neu: Meldung von ungeputzten Booten möglich (experimentell)</ChangeItem>
+            <ChangeItem>Bugfix: Sortierung von Namen in Dropdown-Listen sortiert Umlaute jetzt nichts mehr ans Ende, sondern zu den entsprechenden Basis-Buchstaben</ChangeItem>
+            <ChangeItem>Bugfix: Projekt-ID bei Synchronisation mit Kanu-eFB zur eindeutigen Identifizierung von Fahrtenbucheinträgen übermittelt</ChangeItem>
+            <ChangeItem>Bugfix: Fahrten mit Motorbooten und Ergos werden von Synchronsation mit Kanu-eFB ausgenommen</ChangeItem>
+            <ChangeItem>Bugfix: NullPointerException im Korrekturassistenten behoben</ChangeItem>
+            <ChangeItem>Bugfix: Falsche Erfolgsmeldung im Fehlerfall beim Zusammenfügen von Datensätzen behoben</ChangeItem>
+            <ChangeItem>Bugfix: Falsche Überschrift bei interner HTML-Statistikausgabe behoben, falls versehentlich die versteckte Option "in existierenden HTML-Dateien nur Tabelle setzen" gesetzt war</ChangeItem>
+            <ChangeItem>Bugfix: OutOfMemoryError bei exzessivem Logging von Fehlermeldungen behoben</ChangeItem>
+            <ChangeItem>Bugfix: Probleme mit missachteter Eingabe von Namen behoben, wenn Button dahinter nicht grün oder rot, sondern grau blieb</ChangeItem>
+            <ChangeItem>Bugfix: NullPointerException beim Prüfen der erlaubten Personen in einem Boot behoben, wenn die zugeordnete Gruppe zum aktuellen Zeitpunkt nicht gültig ist</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Neu: Boat reservations, status, and damages can now be summarized as a statistic in the new category "Others"</ChangeItem>
+            <ChangeItem>Neu: Number and repair time of boat damages can now be calculated as a statistic</ChangeItem>
+            <ChangeItem>Neu: Merging of boats and destinations, that have accidentally been administrated multiple times, is now possible</ChangeItem>
+            <ChangeItem>Neu: efa now remembers the last import and export directory and uses it as default for the next import/export</ChangeItem>
+            <ChangeItem>Neu: New fields in boat administration allow to keep track of serial numbers, selling date, and selling price</ChangeItem>
+            <ChangeItem>Neu: Reporting of uncleaned boats possible (experimental</ChangeItem>
+            <ChangeItem>Bugfix: NullPointerException in auto correction assistant fixed</ChangeItem>
+            <ChangeItem>Bugfix: Wrong success message in case of errors when merging records fixed</ChangeItem>
+            <ChangeItem>Bugfix: Fixed wrong headers in HTML statistics when option to replace only the table was enabled</ChangeItem>
+            <ChangeItem>Bugfix: OutOfMemoryError during excessing logging fixed</ChangeItem>
+            <ChangeItem>Bugfix: Fixed problem of entering names by only selecting them from drop-down lists without the button behind the field becoming green</ChangeItem>
+            <ChangeItem>Bugfix: NullPointerException when checking boat usage permission with invalid groups fixed</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.1.0_10</VersionID>
+        <ReleaseDate>02.10.2013</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa210.zip</DownloadUrl>
+        <DownloadSize>3319474</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Sofortiges Beenden wegen angeblicher Inaktivität nach Start von efa behoben</ChangeItem>
+            <ChangeItem>Bugfix: Kodierung von Sonderzeichen in Kanu-eFB-Synchronisation korrigiert</ChangeItem>
+            <ChangeItem>Bugfix: Maximale Trace-Ausgabe für Kanu-eFB-Synchronisation auf 10 MB pro Protokollnachricht erhöht</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Immediate exit presumably because of inactivity immediately after efa start fixed</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.1.0_09</VersionID>
+        <ReleaseDate>18.09.2013</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa210.zip</DownloadUrl>
+        <DownloadSize>3318929</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Vor Synchronisation mit Kanu-eFB prüft efa jetzt, ob tatsächlich ein Fahrtenbuch geöffnet ist</ChangeItem>
+            <ChangeItem>Bugfix: email-Versand von Fehlermeldungen jetzt größenbeschränkt, um OutOfMemory-Errors durch riesige Fehlermeldungen zu vermeiden</ChangeItem>
+            <ChangeItem>Bugfix: Kanu-eFB-Synchronisation meldet jetzt nach Abschluß auch die Anzahl der aufgetretenen Warnungen und Fehler</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.1.0_08</VersionID>
+        <ReleaseDate>11.09.2013</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa210.zip</DownloadUrl>
+        <DownloadSize>3318666</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Format der Eingabekürzel unterstützt jetzt auch die aus efa1 übliche (deutsche) Notation mit Vx und Nx für Vorname und Nachname</ChangeItem>
+            <ChangeItem>Neu: Timeout für Hinweis-Fenster (z.B. "Hallentore schließen") ist jetzt im Expertenmodus unter "efa-Bootshaus - Erscheinungsbild" konfigurierbar</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Neu: Window closing timeout for notification windows (like "Lock boathouse") is now configurable in the expert mode under "efa Boathouse - Appearance"</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.1.0_07</VersionID>
+        <ReleaseDate>08.09.2013</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa210.zip</DownloadUrl>
+        <DownloadSize>3318312</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Fehler (NullPointerException) beim Wiederherstellen einer beschädigten Datei behoben</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Error (NullPointerException) while restoring a damaged data file fixed</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.1.0_06</VersionID>
+        <ReleaseDate>18.08.2013</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa210.zip</DownloadUrl>
+        <DownloadSize>3318274</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Fahrtenbucheinträge mit 0 Km werden jetzt in Statistikausgabe "Fahrtenbuch" mit ausgegeben (sofern es sich nicht um offene Fahrten handelt), falls di Option "Nullwerte nicht ausgeben" deaktiviert ist</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Logbook entries with a distance of 0 are now printed in statistics "Logbook", if the option "don't print null values" is not set</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.1.0_05</VersionID>
+        <ReleaseDate>02.08.2013</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa210.zip</DownloadUrl>
+        <DownloadSize>3318309</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Boote auf Trainingslager, Regatta oder Wanderfahrt werden jetzt, wenn entsprechende Konfigurationsoption gesetzt, als nicht verfügbar angezeigt</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Boats on a trainings camp, regatta or multi day session are now, if corresponding config setting enabled, shows as not available</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.1.0_04</VersionID>
+        <ReleaseDate>24.07.2013</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa210.zip</DownloadUrl>
+        <DownloadSize>3318291</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Falsche Farbdarstellung von doppelt existierenden (gültigen und ungültigen) identischen Namen in Auswahllisten behoben</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Wrong color coding of duplicate (valid and invalid) identical names in drop-down lists fixed</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.1.0_03</VersionID>
+        <ReleaseDate>20.07.2013</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa210.zip</DownloadUrl>
+        <DownloadSize>3318110</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: efa-Basis erscheint jetzt auch im Taskmanager</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Bugfix: efa-Basis now appears also in taskmanager</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.1.0_02</VersionID>
+        <ReleaseDate>14.07.2013</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa210.zip</DownloadUrl>
+        <DownloadSize>3317888</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Versteckte, gültige Datensätze werden jetzt in Fahrtenbucheinträgen grün markiert angezeigt</ChangeItem>
+            <ChangeItem>Bugfix: Fehler beim gleichzeitigen Ändern von Gültigkeits-Start- und -End-Zeitpunkt eines versionierten Datensatzen behoben, wenn das neue Gültigkeitsende vor dem ursprünglichen Gültigkeitsbeginn liegt</ChangeItem>
+            <ChangeItem>Bugfix: Fehlschlagen einer Datenänderung wegen Lock-Timeout wird jetzt immer protokolliert</ChangeItem>
+            <ChangeItem>Bugfix: Fehler beim Ändern des Paßworts eines Admins im Remote-Zugriff behoben</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Bugfixes</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.1.0_01</VersionID>
+        <ReleaseDate>11.07.2013</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa210.zip</DownloadUrl>
+        <DownloadSize>3317158</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: NullPointerException bei Fahrtenbuch-Anzeige von Einträgen mit fehlender LfdNr behoben</ChangeItem>
+            <ChangeItem>Bugfix: NullPointerException im Backup-Wiederherstellen-Dialog behoben</ChangeItem>
+            <ChangeItem>Bugfix: NoSuchMethodError im Korrektur-Assistent behoben</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Bugfixes</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.1.0_00</VersionID>
+        <ReleaseDate>08.07.2013</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa210.zip</DownloadUrl>
+        <DownloadSize>3317152</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Neu: Korrekturassistent hilft beim Finden und Korrigieren von falsch geschriebenen Personen-/Boots-/Zielnamen im Fahrtenbuch</ChangeItem>
+            <ChangeItem>Neu: Wiederkehrende Aufgaben (zum Beispiel das Erstellen einer Datensicherung oder Statistik) können in efa automatisiert und zu konfigurierbaren Zeiten ausgeführt werden</ChangeItem>
+            <ChangeItem>Neu: Automatische und über das CLI erstellte Backups können per email verschickt werden</ChangeItem>
+            <ChangeItem>Neu: Statistikauswertungen können per email verschickt werden</ChangeItem>
+            <ChangeItem>Neu: Individuelle Statistikauswertungen können per CLI auch für alle Personen/Boote/Gruppen in einem Rutsch erstellt werden</ChangeItem>
+            <ChangeItem>Neu: Erfassung von Änderungswünschen für Fahrtenbucheinträge durch Mitglieder</ChangeItem>
+            <ChangeItem>Neu: Konfigurierbare Hinweise für selektive Boote beim Beginnen und Beenden von Fahrten</ChangeItem>
+            <ChangeItem>Neu: Verbesserte Unterstützung von Touchscreens (experimentell)</ChangeItem>
+            <ChangeItem>Neu: Einfache Statistikausgabe in Tabellenform für leistungsschwache Computer</ChangeItem>
+            <ChangeItem>Neu: Verbesserte Geschwindigkeit beim ersten Aufruf des Dialogs zum Fahrt beginnen/beenden auf langsamen Computern</ChangeItem>
+            <ChangeItem>Neu: Statistikeinstellungen können kopiert und unter einem neuen Namen abgespeichert werden</ChangeItem>
+            <ChangeItem>Neu: Der Name einer abgespeicherten Statistikeinstellung wird jetzt auch als Titel für die Statistikausgabe verwendet</ChangeItem>
+            <ChangeItem>Neu: Beim Datenexport können wahlweise auch nur selektierte oder entsprechend des Filters gewählte Datensätze exportiert werden</ChangeItem>
+            <ChangeItem>Neu: Wiederherzustellende Daten eines Backups werden nach Konfiguration und Projektdaten sortiert, und können entsprechend selektiert werden</ChangeItem>
+            <ChangeItem>Neu: efa warnt vor Inkonsistenten Daten im Falle einer unvollständigen Wiederherstellung eines Projekt-Backups</ChangeItem>
+            <ChangeItem>Neu: Gesamte Wanderfahrt-Kilometer und Zielbereiche werden in Kilometerlisten-Statistiken am Ende aufsummiert ausgegeben</ChangeItem>
+            <ChangeItem>Neu: Verbesserter Dialog beim Erstellen von neuen Versionen eines Datensatzes</ChangeItem>
+            <ChangeItem>Neu: Bei Booten auf Fahrt mit Enddatum wird dieses jetzt auch in Statuszeile angezeigt</ChangeItem>
+            <ChangeItem>Neu: Zusätzliche (virtuelle) Ausgabefelder für Listenausgabe der Bootsreservierungen</ChangeItem>
+            <ChangeItem>Neu: Zusätzliche Statistikfilter nach Inhalt des Bemerkungsfelds und Mindestentfernung einer Fahrt</ChangeItem>
+            <ChangeItem>Neu: Das Reservieren von Privatbooten durch Mitglieder kann in der efa-Konfiguration im Expertenmodus jetzt unterbunden werden</ChangeItem>
+            <ChangeItem>Neu: Die Möglichkeit, für Fahrten ein Enddatum einzugeben, kann in der efa-Konfiguration im Expertenmodus jetzt unterbunden werden</ChangeItem>
+            <ChangeItem>Neu: Meldungen zum DRV-Fahrtenabzeichen enthalten jetzt eine interne ID, um das elektronische Fahrtenheft nach Download auch im Falle eines Namenswechsels noch eindeutig zuordnen zu können</ChangeItem>
+            <ChangeItem>Neu: Liste der DRV-Fahrtenabzeichen kann jetzt besser formatiert ausgegeben und ausgedruckt werden</ChangeItem>
+            <ChangeItem>Neu: Zugriffsstatistik für efaRemote-Zugriffe im Client</ChangeItem>
+            <ChangeItem>Neu: Sämtliche Daten sind jetzt auch über efaCLI zugänglich</ChangeItem>
+            <ChangeItem>Neu: Import und Export von Daten in efaCLI</ChangeItem>
+            <ChangeItem>Neu: Zeichensatz (Encoding) für HTML-Statistikausgabe kann jetzt zwischen UTF-8 und ISO-8859-1 ausgewählt werden</ChangeItem>
+            <ChangeItem>Neu: Meldedateieditor "emil" aus efa 1 wieder in efa2 enthalten (unsupported)</ChangeItem>
+            <ChangeItem>Neu: Beim Versuch, im Admin-Modus einen nicht behobenen Bootsschaden zu löschen, fragt efa jetzt noch, ob der Bootsschaden als behoben markiert werden soll</ChangeItem>
+            <ChangeItem>Neu: Informationen im Fehlerfall enthalten jetzt auch eine Historie der Log-Ausschriften</ChangeItem>
+            <ChangeItem>Bugfix: Bei entsprechend gesetzter Option wird ein Boot, das auf Regatta oder Mehrtagesfahrt unterwegs ist, jetzt korrekt als nicht verfügbar angezeigt</ChangeItem>
+            <ChangeItem>Bugfix: efa1-Import hat unter Windows Fahrtenbücher in unterschiedlicher Groß-/Kleinschreibung nicht als identisch erkannt</ChangeItem>
+            <ChangeItem>Bugfix: Entsperren von efa war ohne Admin-Login möglich</ChangeItem>
+            <ChangeItem>Bugfix: Remote-Zugriff in efa-Basis ist jetzt auch für Admins ohne das Recht "Projekte und Fahrtenbücher administrieren" möglich</ChangeItem>
+            <ChangeItem>Bugfix: Anzeige von Booten mit unbekannter Anzahl von Bootsplätzen in Bootsliste in efa-Bootshaus korrigiert</ChangeItem>
+            <ChangeItem>Bugfix: Als Personen zur Eingabe für Gruppen und Mannschaften zeigt efa jetzt nur noch gültige, bzw. im Zeitraum des Fahrtenbuchs gültige Personen zur Auswahl an</ChangeItem>
+            <ChangeItem>Bugfix: Buttons für Bootsreservierungen und Bootsschäden werden jetzt im Kontext-Menü nur dann angezeigt, wenn die entsprechenden Buttons/Funktionen auch aktiviert sind</ChangeItem>
+            <ChangeItem>Bugfix: Bemerkungstext eines Bootes, dessen Reservierung explizit durch den Admin gelöscht wurde, wird jetzt von efa korrekt auf "verfügbar" gesetzt</ChangeItem>
+            <ChangeItem>Bugfix: Nach Datenimport wird jetzt automatisch der Audit gestartet, um ggf. Inkonsistenzen zu erkennen und zu korrigieren</ChangeItem>
+            <ChangeItem>Bugfix: Der Audit gibt jetzt eine Warnung aus falls die Test-Option DataAuditCorrectErrors nicht gesetzt sein sollte</ChangeItem>
+            <ChangeItem>Bugfix: Bootsschaden in Bermerkungstext eines Boots wird nach Löschen/Beheben des Schadens jetzt entfernt</ChangeItem>
+            <ChangeItem>Bugfix: Geschwindigkeit von Wiederherstellung eines Backups über efaRemote deutlich verbessert</ChangeItem>
+            <ChangeItem>Bugfix: Geschwindigkeit der Anzeige von derzeit ungültigen Datensätzen in Administration von Personen, Booten und Zielen über efaRemote deutlich verbessert</ChangeItem>
+            <ChangeItem>Bugfix: Automatischer Fahrtenbuchwechsel jetzt auch für efaRemote-Clients unterstützt</ChangeItem>
+            <ChangeItem>Bugfix: efa überprüft jetzt Größe des Logfiles auch im laufenden Betrieb und schaltet Logging aus wenn Logfile eine maximale Größe überschreitet</ChangeItem>
+            <ChangeItem>Bugfix: Unvollständige Erstellung von Meldedateien behoben falls Kurzausgabe selektiert ist</ChangeItem>
+            <ChangeItem>Bugfix: Meldung von Bootsschäden für bereits ungültige Boote wird jetzt unterdrückt</ChangeItem>
+            <ChangeItem>Bugfix: Darstellungsfehler von scrollendem News-Text behoben</ChangeItem>
+            <ChangeItem>Bugfix: Fehler bei Dekodierung von ItemLists behoben</ChangeItem>
+            <ChangeItem>Bugfix: Ersetzen von Tabelle in HTML-Statistikausgabe funktioniert jetzt auch bei FTP-Upload</ChangeItem>
+            <ChangeItem>Bugfix: Timeout durch Race Condition bei synchronem Speichern von XML-Daten behoben</ChangeItem>
+            <ChangeItem>Bugfix: Die Auswahl keiner Farbe (z.B. für Gruppen oder Buttons) ist jetzt möglich</ChangeItem>
+            <ChangeItem>Bugfix: Möglichkeit zum Abbrechen einer Fahrt dem Kontextmenü für nicht verfügbare Boote hinzugefügt, wenn Boote auf Regatten, Trainingslater oder Mehrtagesfahrt dort angezeigt werden</ChangeItem>
+            <ChangeItem>Bugfix: Boote im Trainingslater werden jetzt, wenn entsprechend konfiguriert, als nicht verfügbare Boote angezeigt</ChangeItem>
+            <ChangeItem>Bugfix: NullPointerException behoben beim Schließen einer Datei, die bereits geschlossen wurde</ChangeItem>
+            <ChangeItem>Bugfix: javatest.bat angepaßt (Test auf Java 6, nicht Java 5)</ChangeItem>
+            <ChangeItem>Bugfix: Fehlende Aktualisierung der Bootslisten in efa-Bootshaus nach Einspielen eines Backups behoben</ChangeItem>
+            <ChangeItem>Bugfix: Vermeidung von Data Lock Timeouts und mehr Diagnose-Ausschriften im Fehlerfall</ChangeItem>
+            <ChangeItem>Sprache: Dänische Sprachunterstützung aktualisiert</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>New: Fix Logbook Assistent helps to fix misspelled person, boat and destination names in logbook entries</ChangeItem>
+            <ChangeItem>New: Repeated tasks (like the creation of backups or statistics) can now be run automatically at configurable times</ChangeItem>
+            <ChangeItem>New: Backups can now be sent via email to an admin's email address</ChangeItem>
+            <ChangeItem>New: Statistics can now be sent via email</ChangeItem>
+            <ChangeItem>New: Individual statistics for all persons, boats, or destinations can now be created per CLI in one batch</ChangeItem>
+            <ChangeItem>New: Members can now submit change request for sessions</ChangeItem>
+            <ChangeItem>New: Configurable messages for selective boats at start and finish of a session</ChangeItem>
+            <ChangeItem>New: Improved support for touch screens (experimental)</ChangeItem>
+            <ChangeItem>New: Simple statistic output function in tabular form for slow computers</ChangeItem>
+            <ChangeItem>New: Improved speed at first opening of logbook dialog for slow computers</ChangeItem>
+            <ChangeItem>New: Statistics settings can now be copied and saved under a different name</ChangeItem>
+            <ChangeItem>New: The name of saved statistics settings is now being used as the title of the created statistic</ChangeItem>
+            <ChangeItem>New: Data export can now export only selected or filtered records instead of all</ChangeItem>
+            <ChangeItem>New: Backup restore now sorted by configuration and data</ChangeItem>
+            <ChangeItem>New: Warning in case of an attempt to restore an incomplete backup</ChangeItem>
+            <ChangeItem>New: Improved dialog for creating new versions of a data record</ChangeItem>
+            <ChangeItem>New: End date for boats on the water, if set, is now shown in status message</ChangeItem>
+            <ChangeItem>New: Additional (virtual) output fields for boat damages</ChangeItem>
+            <ChangeItem>New: Additional filter criteria based on content of remarks field</ChangeItem>
+            <ChangeItem>New: Reservation for private boats can now be disabled in configuration</ChangeItem>
+            <ChangeItem>New: Possibility to enter end dates for sessions can now be disabled in configuration</ChangeItem>
+            <ChangeItem>New: Access statistics for remote access in client</ChangeItem>
+            <ChangeItem>New: All data now accessible through efaCLI</ChangeItem>
+            <ChangeItem>New: Import and export of data now supported in efaCLI</ChangeItem>
+            <ChangeItem>New: Character encoding for HTML statistics output can now be selected (TF-8 or ISO-8859-1)</ChangeItem>
+            <ChangeItem>New: When trying to delete a boat damage, efa now asks the admin whether the damange should be deleted or rather just be marked as fixed</ChangeItem>
+            <ChangeItem>New: Error information created by efa now contain a history of previous log messages</ChangeItem>
+            <ChangeItem>Bugfixes</ChangeItem>
+            <ChangeItem>Language: Language support for Danish updated</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.0.7_18</VersionID>
+        <ReleaseDate>25.04.2013</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa207.zip</DownloadUrl>
+        <DownloadSize>3201776</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: NullPointerException bei Booten ohne Namen behoben</ChangeItem>
+            <ChangeItem>Bugfix: Berechnung von Anfahrt- und Abfahrtzeiten bei Konfiguration von "0 Minuten hinzuaddieren" behoben</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Bugfix: NullPointerException for boats without names fixed</ChangeItem>
+            <ChangeItem>Bugfix: Calculation of session start and end times for configuration of "add 0 minutes" fixed</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.0.7_17</VersionID>
+        <ReleaseDate>06.03.2013</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa207.zip</DownloadUrl>
+        <DownloadSize>3201639</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Neu: Farbe für fokussierten Button kann in der efa-Konfiguration im Expertenmodus geändert werden</ChangeItem>
+            <ChangeItem>Änderung: Text-Beschreibung in Löschfunktion geändert</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>New: Color for focused button can be configured in expert mode</ChangeItem>
+            <ChangeItem>Change: Text description of record delete function changed</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.0.7_16</VersionID>
+        <ReleaseDate>24.02.2013</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa207.zip</DownloadUrl>
+        <DownloadSize>3231004</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Neu: Suchfunktion im Fahrtenbuch findet jetzt auch Fahrtgruppen</ChangeItem>
+            <ChangeItem>Bugfix: Darstellungsfehler bei Boots-/Personenauswahllisten in Hauptfenster von efa-Bootshaus behoben</ChangeItem>
+            <ChangeItem>Bugfix: Wenn Button für Bootsreservierungen ausgeblendet wird, zeigt efa jetzt auch das entsprechende Kontext-Menü nicht mehr an</ChangeItem>
+            <ChangeItem>Bugfix: Fehler wegen unstimmiger Projektnamen bei Wiederherstellung von Backups über efaRemote behoben</ChangeItem>
+            <ChangeItem>Bugfix: Verbesserte Fehlermeldung, wenn Remote-Online-Update fehlschlägt, da bereits auf dem aktuellen Stand</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Neu: Search function in logbook now also finds matching session groups</ChangeItem>
+            <ChangeItem>Bugfix: Display problem of Boat/Person selection list in main window of efa Boathouse fixed</ChangeItem>
+            <ChangeItem>Bugfix: When button for Boat Reservations is disabled, efa now also does not show the corresponding context menu any more</ChangeItem>
+            <ChangeItem>Bugfix: Error because of non-matching project names for restore of backups through efaRemote fixed</ChangeItem>
+            <ChangeItem>Bugfix: Improved error message if remote online update fails because already up to date</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.0.7_15</VersionID>
+        <ReleaseDate>07.02.2013</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa207.zip</DownloadUrl>
+        <DownloadSize>3230383</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Drucken in efa-Bootshaus im Admin-Modus wieder möglich</ChangeItem>
+            <ChangeItem>Bugfix: Fehlermeldung bei Auswahl von Fahrtgruppe behoben</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Printing in Admin Mode in efa-Boathouse now possible again</ChangeItem>
+            <ChangeItem>Bugfix: Error message when selecting session group fixed</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.0.7_14</VersionID>
+        <ReleaseDate>02.02.2013</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa207.zip</DownloadUrl>
+        <DownloadSize>3219176</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Neu: Anzeige des Hilfe-Buttons im Hauptfenster von efa-Bootshaus läßt sich jetzt deaktivieren</ChangeItem>
+            <ChangeItem>Neu: Experten-Tuning-Parameter für Schreiben von Dateien für langsame Datenträger hinzugefügt</ChangeItem>
+            <ChangeItem>Neu: Datenänderungen durch (lokale) Admins werden jetzt in Logdatei vermerkt</ChangeItem>
+            <ChangeItem>Bugfix: Fehler (Abbruch) bei Statistikauswertung mit Filter nach einem bestimmten Boot behoben</ChangeItem>
+            <ChangeItem>Bugfix: Aufruf von Funktionen im Bootshaus über Hotkeys jetzt deaktiviert, wenn entsprechende Buttons ausgeblendet werden (mit Ausnahme von Admin-Modus und Hilfe)</ChangeItem>
+            <ChangeItem>Bugfix: Abstand der Buttons im Hauptfenster von efa-Bootshaus beim Deaktivieren einzelner Buttons korrigiert</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>New: Display of Help button in efa main window can now be deactivated</ChangeItem>
+            <ChangeItem>New: Expert tuning parameters for writing to local files added</ChangeItem>
+            <ChangeItem>New: Data administration changes by (local) admins now get recorded in logfile</ChangeItem>
+            <ChangeItem>Bugfix: Bug (abortion) of statistics creation if filtering for a specific boat fixed</ChangeItem>
+            <ChangeItem>Bugfix: Access of main functions through hotkeys when associated buttons not shown now disabled</ChangeItem>
+            <ChangeItem>Bugfix: Padding between buttons in main window fixed if some buttons were hidden</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.0.7_13</VersionID>
+        <ReleaseDate>29.01.2013</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa207.zip</DownloadUrl>
+        <DownloadSize>3215259</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Fehler beim Download von Bestätigungsdateien für DRV-Fahrtenabzeichen behoben, wenn Personen mit Namenszusatz in der Personenliste eingetragen waren</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.0.7_12</VersionID>
+        <ReleaseDate>28.01.2013</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa207.zip</DownloadUrl>
+        <DownloadSize>3215113</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Fehler beim Download von Bestätigungsdateien für DRV-Fahrtenabzeichen behoben, wenn Vor- und Nachnamen nicht korrekt oder übereinstimmend erfasst waren</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.0.7_11</VersionID>
+        <ReleaseDate>27.01.2013</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa207.zip</DownloadUrl>
+        <DownloadSize>3211929</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Validierung des Bootshaus-Hauptfensters nach Umschalten zwischen Boots- und Personenliste</ChangeItem>
+            <ChangeItem>Bugfix: Zusätzliches Prüfen auf Gültigkeit eines Fahrtenbucheintrags für Fahrtenbuch jetzt auch auf Ebene des Storage Objects</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Validation of Boathouse window after switching between boats and persons lists</ChangeItem>
+            <ChangeItem>Bugfix: Additional Check for validity of logbook entry for logbook now also on the level of the Storage Object</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.0.7_10</VersionID>
+        <ReleaseDate>22.01.2013</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa207.zip</DownloadUrl>
+        <DownloadSize>3211771</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Personen ohne Vornamen wurden nicht korrekt abgespeichert</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Persons without first names were not stored properly</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.0.7_09</VersionID>
+        <ReleaseDate>19.01.2013</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa207.zip</DownloadUrl>
+        <DownloadSize>3210956</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Neu: Erweitertes Debug-Logging</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>New: Extended Debug-Logging</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.0.7_08</VersionID>
+        <ReleaseDate>17.01.2013</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa207.zip</DownloadUrl>
+        <DownloadSize>3209849</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Wechsel zur Personen-Auswahl in efa-Bootshaus war nicht mehr möglich</ChangeItem>
+            <ChangeItem>Bugfix: Inkonsistentes AutoIncrement wird von efa automatisch behoben</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Switch to person selection in efa Boathouse was not possible any more</ChangeItem>
+            <ChangeItem>Bugfix: Inconsistent AutoIncrement now is being fixed by efa automatically</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.0.7_07</VersionID>
+        <ReleaseDate>14.01.2013</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa207.zip</DownloadUrl>
+        <DownloadSize>3209581</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Einige Felder im Statistik-Dialog zwecks besserer Verständlichkeit umbenannt</ChangeItem>
+            <ChangeItem>Bugfix: NullPointerException beim Erstellen von versionierten Datensätzen über efaRemote behoben</ChangeItem>
+            <ChangeItem>Bugfix: Verbesserte Cursor-Führung und Text-Selektion bei Fahrteneingabe</ChangeItem>
+            <ChangeItem>Bugfix: Herstellungs- und Kaufdatum in Bootsverwaltung akzeptieren jetzt auch Jahreszahl ohne Tag und Monat</ChangeItem>
+            <ChangeItem>Bugfix: Zu große Darstellung der Auswahlliste von Personen in Bootshaus-Hauptfenster behoben</ChangeItem>
+            <ChangeItem>Bugfix: Signaturdaten bei DRV-Fahrtenabzeichen wurden in Übersicht nicht immer korrekt angezeigt</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Some fields in statistics dialog renamed for better understanding</ChangeItem>
+            <ChangeItem>Bugfix: NullPointerException when creating versionized records in efaRemote fixed</ChangeItem>
+            <ChangeItem>Bugfix: Improved cursor and selection handling when entering sessions</ChangeItem>
+            <ChangeItem>Bugfix: Manufacturing and purchase date in boat lists now accepts year without day and month</ChangeItem>
+            <ChangeItem>Bugfix: Display-problem with person selection list in efa-Boathouse main window fixed</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.0.7_06</VersionID>
+        <ReleaseDate>11.01.2013</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa207.zip</DownloadUrl>
+        <DownloadSize>3232499</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Import von Mehrtagesfahrten aus efa1 korrigiert, wenn die Fahrt nicht in Form von Etappen eingetragen wurde und das Startdatum in efa1 falsch gesetzt war</ChangeItem>
+            <ChangeItem>Bugfix: Fehler bei Statistikberechnung für Mehrtagesfahrten behoben</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Bug for statistics calculation of multi-day sessions fixed</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.0.7_04</VersionID>
+        <ReleaseDate>02.01.2013</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa207.zip</DownloadUrl>
+        <DownloadSize>3231858</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Warnung beim Aufruf von efaCLI, daß efa nicht korrekt beendet wurde, behoben</ChangeItem>
+            <ChangeItem>Bugfix: Aufrufoption "-cmd" für efaCLI funktionierte nicht unter Windows</ChangeItem>
+            <ChangeItem>Bugfix: Debug-Ausgabe des Tracelevels, wenn nicht gesetzt, führte zu falscher Ausschrift</ChangeItem>
+            <ChangeItem>Bugfix: Info-Dialoge im efaCLI müssen unterdrückt werden</ChangeItem>
+            <ChangeItem>Bugfix: Fehlerhafte Behandlung der Synchronisierungs-Antwort vom Kanu-eFB beim erfolgreichen Aktualisieren einer Fahrt korrigiert</ChangeItem>
+            <ChangeItem>Neu: Audit meldet jetzt Fahrtenbucheinträge, bei denen das Enddatum fälschlicherweise nicht nach dem Startdatum liegt</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Warning at efaCLI start about previous incorrect exit of efa fixed</ChangeItem>
+            <ChangeItem>Bugfix: Option "-cmd" for efaCLI under Windows didn't work</ChangeItem>
+            <ChangeItem>Bugfix: Debug message with wrong tracelevel fixed, if no level set</ChangeItem>
+            <ChangeItem>Bugfix: Info dialogs in efaCLI must be suppressed</ChangeItem>
+            <ChangeItem>New: Audit now reports logbook entries for which end date is not after the start date</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.0.7_03</VersionID>
+        <ReleaseDate>02.01.2013</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa207.zip</DownloadUrl>
+        <DownloadSize>3231773</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Neu: Suche im Fahrtenbuch jetzt auch mit exakter Übereinstimmung möglich</ChangeItem>
+            <ChangeItem>Neu: Spezialsuche im Fahrtenbuch nach derzeit ungültigen Booten, Personen und Zielen</ChangeItem>
+            <ChangeItem>Bugfix: Bearbeitungsassistent kann nicht nach leeren Feldern filtern</ChangeItem>
+            <ChangeItem>Bugfix: Aktualisierung im HTML-Widget funktionierte nicht</ChangeItem>
+            <ChangeItem>Änderung: Bemerkungs-Feld für Bootsstatus ist jetzt auch im Nicht-Expertenmodus sichtbar</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>New: Search in logbook now also with exact match possible</ChangeItem>
+            <ChangeItem>New: Special search in logbook for currently invalid boats, persons, and destinations</ChangeItem>
+            <ChangeItem>Bugfix: Batch edit can now filter for empty fields</ChangeItem>
+            <ChangeItem>Bugfix: Update on HTML page in HTML widget wasn't working</ChangeItem>
+            <ChangeItem>Change: Comment field for boat status now visible in non-expert mode</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.0.7_02</VersionID>
+        <ReleaseDate>31.12.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa207.zip</DownloadUrl>
+        <DownloadSize>3230418</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Fehler (NullPointerException) bei Berechnung des DRV-Fahrtenabzeichen behoben</ChangeItem>
+            <ChangeItem>Bugfix: Statistikausgabe aller Boote mit Filter nach eigenen Booten korrigiert</ChangeItem>
+            <ChangeItem>Bugfix: Versehentliche Debug-Ausgaben entfernt</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Statistic output of all boats with filter for own boats fixed</ChangeItem>
+            <ChangeItem>Bugfix: Accidental debug output removed</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.0.7_01</VersionID>
+        <ReleaseDate>31.12.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa207.zip</DownloadUrl>
+        <DownloadSize>3230343</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Fehler (NullPointerException) bei Berechnung des DRV-Fahrtenabzeichen behoben</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.0.7_00</VersionID>
+        <ReleaseDate>30.12.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa207.zip</DownloadUrl>
+        <DownloadSize>3230258</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Neu: Verbesserte Formatierung der HTML-Statistikausgabe durch die Verwendung von CSS</ChangeItem>
+            <ChangeItem>Neu: Ausgabe von Statistiken jetzt auch als PDF-Dokument möglich</ChangeItem>
+            <ChangeItem>Neu: Statistik-Filter für Fahrten mit Start und Ziel am Bootshaus</ChangeItem>
+            <ChangeItem>Neu: Für jeden (benutzerdefinierten) Status von Personen kann jetzt festgelegt werden, ob es sich um einen Mitgliedsstatus handelt oder nicht</ChangeItem>
+            <ChangeItem>Neu: Zusätzliche Funktionalität kann jetzt in Form von Plugins zu efa hinzugefügt werden</ChangeItem>
+            <ChangeItem>Neu: Bestehende Plugins auf neue Versionen aktualisiert</ChangeItem>
+            <ChangeItem>Neu: Statistikauswertung von Tageszeiten jetzt möglich</ChangeItem>
+            <ChangeItem>Neu: In Statistikauswertungen können jetzt auch alle diejenigen Einträge ausgegeben werden, zu denen es im Berechnungszeitraum keine Fahrten gibt</ChangeItem>
+            <ChangeItem>Neu: Neue Statistik-Ausgabefelder "Dauer" und "Geschwindigkeit"</ChangeItem>
+            <ChangeItem>Neu: Nachtragsmöglichkeit für Fahrten außerhalb des Gültigkeitszeitraums des aktuellen Fahrtenbuchs</ChangeItem>
+            <ChangeItem>Neu: Statistikauswertung von Matrix-Statistiken</ChangeItem>
+            <ChangeItem>Neu: efa prüft beim Start, ob efa sich zuletzt regulär beendet hat, und warnt falls nicht</ChangeItem>
+            <ChangeItem>Bugfix: Fehler beim Wiederherstellen eines Backups über efa-Remote (efaCLI, run_restore.sh) behoben, der insb. zur Beschädigung der Projekt-Datei führte</ChangeItem>
+            <ChangeItem>Bugfix: Fehler beim Löschen von beschädigten Projekten behoben</ChangeItem>
+            <ChangeItem>Bugfix: Fahrtenabzeichen von Personen, die derzeit ungültig sind, werden jetzt ausgegraut dargestellt</ChangeItem>
+            <ChangeItem>Bugfix: Fehler bei Zählung der aktiven Mitglieder für DRV-Wanderruderstatistik behoben</ChangeItem>
+            <ChangeItem>Bugfix: efa ist bei Auswertung von Etappen für Wanderfahrten jetzt toleranter und betrachtet zwei Etappen unabhängig von Groß- und Kleinschreibung als gleich</ChangeItem>
+            <ChangeItem>Bugfix: Sortierreihenfolge einiger Statistiken korrigiert</ChangeItem>
+            <ChangeItem>Bugfix: Unvollständige Ausgabe der Streckenangaben für DRV-Wanderruderstatistik korrigiert</ChangeItem>
+            <ChangeItem>Bugfix: Fehlerhafte Balkengröße für km/Fahrt in Statistikausgabe behoben</ChangeItem>
+            <ChangeItem>Bugfix: Fortschrittsbalken-Anzeige bei Backup korrigiert</ChangeItem>
+            <ChangeItem>Bugfix: Nachrichten werden jetzt mit Zeilenumbruch angezeigt</ChangeItem>
+            <ChangeItem>Bugfix: Text-Export von Fahrtenbuch beinhaltete virtuelles Feld</ChangeItem>
+            <ChangeItem>Bugfix: efa berücksichtigt für Wettbewerbe unabhängig von den ausgewählten Filtereinstellungen jetzt nur noch Mitglieder</ChangeItem>
+            <ChangeItem>Bugfix: Fehler bei Auswertung der 24. Person im Boot korrigiert</ChangeItem>
+            <ChangeItem>Bugfix: Fehler (Hang) bei Wiederherstellung von Daten bei unvollständigen Journals behoben</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>New: Improved formatting of HTML statistics through CSS</ChangeItem>
+            <ChangeItem>Neu: Output of statistics in PDF format</ChangeItem>
+            <ChangeItem>Neu: Statistics filter for sessions with start and destination at boathouse</ChangeItem>
+            <ChangeItem>Neu: For user-defined status it's possible to specify whether this is a member or non-member status</ChangeItem>
+            <ChangeItem>Neu: Plugin mechanism to add functionality to efa</ChangeItem>
+            <ChangeItem>Neu: Existing plugins updated</ChangeItem>
+            <ChangeItem>Neu: Statistic calculation based on time of day</ChangeItem>
+            <ChangeItem>Neu: Entries without sessions in statistic window can be printed as entries with 0 distance</ChangeItem>
+            <ChangeItem>Neu: New statistic output fields "duration" and "speed"</ChangeItem>
+            <ChangeItem>Neu: Late entry of sessions outside the timespan of the current logbook possible</ChangeItem>
+            <ChangeItem>Neu: New matrix statistics</ChangeItem>
+            <ChangeItem>Neu: efa now checks for abnormal previous exit upon start</ChangeItem>
+            <ChangeItem>Bugfix: Error for remote project restore (efaCLI, run_restore.sh) fixed</ChangeItem>
+            <ChangeItem>Bugfix: Error when deleting corrupted projects fixed</ChangeItem>
+            <ChangeItem>Bugfix: Sorting order in statistics fixed</ChangeItem>
+            <ChangeItem>Bugfix: Wrong bar size for some statistic outputs fixed</ChangeItem>
+            <ChangeItem>Bugfix: Progress bar in backup window fixed</ChangeItem>
+            <ChangeItem>Bugfix: Messages are now displayed with line breaks</ChangeItem>
+            <ChangeItem>Bugfix: Bugfix for text export of logbook</ChangeItem>
+            <ChangeItem>Bugfix: Wrong calculation of 24th person in boats fixed</ChangeItem>
+            <ChangeItem>Bugfix: Error (hang) in roll forward with incomplete journals fixed</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.0.6_05</VersionID>
+        <ReleaseDate>23.12.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa206.zip</DownloadUrl>
+        <DownloadSize>3010324</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Leerer Bootshaus-Datensatz ohne Namen wird jetzt bei bestehenden Projekten repariert</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Empty boathouse record without name will automatically be repaired by efa for existing projects</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.0.6_04</VersionID>
+        <ReleaseDate>12.12.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa206.zip</DownloadUrl>
+        <DownloadSize>3005476</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Leerer Bootshaus-Datensatz ohne Namen bei neu erstellten Projekt führte zu Fehlern beim ermitteln des aktuellen Bootshauses</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Empty boathouse record without name for newly created projects caused errors when trying to determine boathouse name</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.0.6_03</VersionID>
+        <ReleaseDate>10.12.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa206.zip</DownloadUrl>
+        <DownloadSize>3005552</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Fehler "null" bei Überprüfung von Bootsbenutzungsrechten beim Beginnen einer Fahrt behoben</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Error "null" when checking boat usage permission at session start fixed</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.0.6_02</VersionID>
+        <ReleaseDate>09.12.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa206.zip</DownloadUrl>
+        <DownloadSize>3005381</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: NullPointerException beim Beginnen von Fahrten mit unbekannten Personen</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Bugfix: NullPointerException when starting sessions for unknown persons</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.0.6_01</VersionID>
+        <ReleaseDate>08.12.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa206.zip</DownloadUrl>
+        <DownloadSize>3005221</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: NullPointerException bei Wochentagsauswahl (Englisch) behoben</ChangeItem>
+            <ChangeItem>Bugfix: Suche nach Fahrtenbuchdateien bei efa1-Import findet Fahrtenbücher jetzt unabhängig von Klein- oder Grußbuchstaben in Extension</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Bugfix: NullPointerException for selection of weekdays fixed</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.0.6_00</VersionID>
+        <ReleaseDate>05.12.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa206.zip</DownloadUrl>
+        <DownloadSize>3010433</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Neu: DRV-Wanderruderstatistik enthält jetzt Verweise auf die LfdNr der Fahrtenbucheinträge sowie detailliertere Streckenbeschreibungen</ChangeItem>
+            <ChangeItem>Neu: Fahrtenbucheinträge lassen sich zwecks Korrektur jetzt direkt aus der Statistikerstellung der DRV-Wanderruderstatistik für efaWett heraus aufrufen und editieren</ChangeItem>
+            <ChangeItem>Neu: Bootsbenutzungs-Sperren erlauben es, vorübergehend oder dauerhaft einzelne Personen für die Benutzung von Booten zu sperren</ChangeItem>
+            <ChangeItem>Neu: efa bietet jetzt in der Bootshaus-Maske eine zusätzliche Möglichkeit, die letzte Benutzung eines Bootes zu ermitteln</ChangeItem>
+            <ChangeItem>Neu: Automatischer Fahrtenbuchwechsel (z.B. zum Jahreswechsel) kann jetzt beim Erstellen eines neuen Fahrtenbuchs konfiguriert werden</ChangeItem>
+            <ChangeItem>Neu: efa erinnert den Super-Admin jetzt per Nachricht an das rechtzeitige Erstellen eines neuen Fahrtenbuchs und Konfigurieren eines automatischen Fahrtenbuchwechsels</ChangeItem>
+            <ChangeItem>Neu: Benachrichtigung an alle Bootswarte, wenn ein Bootsschaden behoben wurde</ChangeItem>
+            <ChangeItem>Bugfix: Fehlende Synchronisation mit Kanu-eFB von Gewässern bei Fahrten zu unbekannten Zielen behoben</ChangeItem>
+            <ChangeItem>Bugfix: Das Erstellen von Meldedateien für Kilometerwettbewerbe in öffentlichen Statistiken wird jetzt unterbunden</ChangeItem>
+            <ChangeItem>Bugfix: Hinzufügen oder Ändern von Ziel-Einträgen ohne Kilometerangaben überschreibt jetzt nicht mehr eine Kilometerangabe im Fahrtenbucheintrag</ChangeItem>
+            <ChangeItem>Bugfix: Fehlerhafte Berechnung der Anzahl der Mitglieder für LRV Berlin - Blauen Wimpel korrigiert</ChangeItem>
+            <ChangeItem>Bugfix: NullPointerException beim ermitteln der Programminformationen behoben</ChangeItem>
+            <ChangeItem>Bugfix: NullPointerException beim importieren von efa1-Daten ohne Fahrtenbücher behoben</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>New: Boat usage ban allow to ban certain persons from the usage on any boat</ChangeItem>
+            <ChangeItem>New: efa can now comes with a new menu option to display the last usage of a boat directly from the main window</ChangeItem>
+            <ChangeItem>New: With automatic logswitch configured, efa can now automatically open a new logbook at a configured time (for example, new year's day)</ChangeItem>
+            <ChangeItem>New: efa now reminds super-admin per message to configure an automatic logswitch when the expiration date of the current logbook approaches</ChangeItem>
+            <ChangeItem>Neu: efa sends notifications when boat damages have been repaired</ChangeItem>
+            <ChangeItem>Bugfix: Adding or changing of destination entries now does not overwrite the distance in logbook entries any more</ChangeItem>
+            <ChangeItem>Bugfix: NullPointerException when determining program information fixed</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.0.5_02</VersionID>
+        <ReleaseDate>29.11.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa205.zip</DownloadUrl>
+        <DownloadSize>2997443</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Fehler beim Abbrechen einer Fahrt beim Remote-Zugriff behoben</ChangeItem>
+            <ChangeItem>Bugfix: NullPointerException beim ermitteln des eigenen Bootshauses behoben</ChangeItem>
+            <ChangeItem>Bugfix: Ermittlung der Fahrtenabzeichen für Personen ohne vorheriges elektronisches Fahrtenheft korrigiert</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Error when aborting a session in remote access mode fixed</ChangeItem>
+            <ChangeItem>Bugfix: NullPointerException when determining own boathouse fixed</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.0.5_01</VersionID>
+        <ReleaseDate>28.11.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa205.zip</DownloadUrl>
+        <DownloadSize>2997317</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Überprüfung auf Eingabe von Benutzernamen beim Erstellen von elektronischen Wettbewerbsmeldungen</ChangeItem>
+            <ChangeItem>Bugfix: Sortierkriterien in Statistikauswertung waren "verrutscht"</ChangeItem>
+            <ChangeItem>Bugfix: Feldauswahl bei wiederholter interaktiver Statistikerstellung wurde nicht zurückgesetzt</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Sorting criteria in statistics calculation had been "mixed up"</ChangeItem>
+            <ChangeItem>Bugfix: Field selection for repeated interactive statistic creation had not been reset each time</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.0.5_00</VersionID>
+        <ReleaseDate>11.11.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa205.zip</DownloadUrl>
+        <DownloadSize>2990185</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Neu: Geschwindigkeit des Remote-Zugriffs deutlich verbessert (2-10x, teilweise bis zu 100x)</ChangeItem>
+            <ChangeItem>Neu: Ausgabe von Ruder/Paddel- und Steuer-Kilometern in Statistiken</ChangeItem>
+            <ChangeItem>Neu: Zusammenfügen von Personen ist jetzt möglich</ChangeItem>
+            <ChangeItem>Neu: Backup-Verzeichnis kann in der efa-Konfiguration konfiguriert werden</ChangeItem>
+            <ChangeItem>Neu: Beim Anlegen einer neuen Person warnt efa jetzt auch, wenn eine gleichnamige Person gefunden wird, die früher einmal angelegt worden war, aber inzwischen ungültig ist</ChangeItem>
+            <ChangeItem>Neu: efa zeigt jetzt für alle Datensätze beim Bearbeiten ihre interne ID sowie ihr letztes Änderungsdatum an</ChangeItem>
+            <ChangeItem>Bugfix: Fehler beim FTP-Upload ins Root-Verzeichnis behoben</ChangeItem>
+            <ChangeItem>Bugfix: Konfigurationsmöglichkeit des Nutzerdaten-Verzeichnisses beim Remote-Zugriff wird jetzt nicht mehr angeboten</ChangeItem>
+            <ChangeItem>Bugfix: NullPointerException in Wanderruderstatistik behoben</ChangeItem>
+            <ChangeItem>Bugfix: Doppelter Fahrtbeginn desselben Bootes durch Ändern eines Eintrags oder Remote-Zugriff wird jetzt von efa erkannt und unterbunden</ChangeItem>
+            <ChangeItem>Bugfix: Angezeigter Bootsstatus beim Remote-Zugriff wird jetzt innerhalb kurzer Zeit aktualisiert</ChangeItem>
+            <ChangeItem>Bugfix: Zeitgleiches Beginnen einer Fahrt in mehreren efa's über Remote-Zugriff führt jetzt nicht mehr zu Fehlern wegen doppelter LfdNr</ChangeItem>
+            <ChangeItem>Bugfix: Hintergrund-Aktivitäten von efa-Bootshaus als Remote-Client jetzt deutlich reduziert</ChangeItem>
+            <ChangeItem>Bugfix: Fahrtenbuch-Ansicht beim Remote-Zugriff zeigte nicht immer die letzten Fahrten an, falls Daten aus dem Cache geladen wurden</ChangeItem>
+            <ChangeItem>Bugfix: Robusteres Verhalten im Synchronisierungs-Protokoll mit dem Kanu-eFB</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>New: Performance of Remote Access greatly improved (2-10x, some even up to 100x)</ChangeItem>
+            <ChangeItem>New: Output of Paddling/Rowing and Coxing mileage in statistics</ChangeItem>
+            <ChangeItem>New: Merging of Persons possible</ChangeItem>
+            <ChangeItem>New: Backup directory can now be configured in efa</ChangeItem>
+            <ChangeItem>New: When creating a new person, efa now also warns if a similar or identical person exists even if it is not currently valid</ChangeItem>
+            <ChangeItem>New: efa now displays the internal ID and last change date of all records in the edit dialogs</ChangeItem>
+            <ChangeItem>Bugfix: Error when FTP uploading into root directory fixed</ChangeItem>
+            <ChangeItem>Bugfix: Option to configure user data directory for remote access is now hidden</ChangeItem>
+            <ChangeItem>Bugfix: Duplicate session start of the same boat through changing of a session or accessing efa remotely is now being detected by efa and will not be allowed</ChangeItem>
+            <ChangeItem>Bugfix: Boat status will be updated in short intervals in case of efa remote access</ChangeItem>
+            <ChangeItem>Bugfix: Simultaneous beginning of new sessions now does not cause errors in case of remote access any more</ChangeItem>
+            <ChangeItem>Bugfix: Background activity of efa remote clients has greatly been reduced to improve performance</ChangeItem>
+            <ChangeItem>Bugfix: "Show Logbook" view did not always work properly for remote access</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.0.4_05</VersionID>
+        <ReleaseDate>02.11.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa204.zip</DownloadUrl>
+        <DownloadSize>2978551</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Neu: Bei Wiederherstellung von Backups öffnet oder erstellt efa bei Bedarf jetzt auch das entsprechende Projekt (nur in GUI, nicht für CLI)</ChangeItem>
+            <ChangeItem>Änderung: Audit-Warnungen und Fehlermeldungen werden jetzt als eine einzelne (gesammelte) Nachricht verschickt anstelle vieler einzelner Nachrichten</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>New: Restore of backups now opens or creates the corresponding project, if necessary (only in GUI, not for CLI)</ChangeItem>
+            <ChangeItem>Change: Audit warnings and errors are now being sent as a single (aggregated) message and not as multiple individual ones</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.0.4_04</VersionID>
+        <ReleaseDate>31.10.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa204.zip</DownloadUrl>
+        <DownloadSize>2977061</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Änderung: FTP-Plugin wird jetzt standardmäßig mit efa ausgeliefert</ChangeItem>
+            <ChangeItem>Bugfix: Gewässer für Fahrten zu unbekannten Zielen wurden in Wanderruderstatistik nicht ausgegeben</ChangeItem>
+            <ChangeItem>Bugfix: NullPointerException beim Öffnen von Remote-Projekten behoben</ChangeItem>
+            <ChangeItem>Bugfix: Suche und Filter von Datensätzen in Datenlisten funktioniert jetzt für alle Felder</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Change: FTP plugin is now per default delivered with efa</ChangeItem>
+            <ChangeItem>Bugfix: NullPointerException when opening remote projects fixed</ChangeItem>
+            <ChangeItem>Bugfix: Search and filtering of records in data lists now works for all fields</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.0.4_03</VersionID>
+        <ReleaseDate>10.10.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa204.zip</DownloadUrl>
+        <DownloadSize>2943983</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Neu: Kanu-eFB-Synchronisationsprotokoll erweitert</ChangeItem>
+            <ChangeItem>Bugfix: XML-Export unterdrückt jetzt leere Felder</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Bugfix: XML export now suppressed empty fields</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.0.4_02</VersionID>
+        <ReleaseDate>24.09.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa204.zip</DownloadUrl>
+        <DownloadSize>2942168</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Bearbeiten von Bootsreservierungen für Mitglieder war trotz deaktivierung möglich</ChangeItem>
+            <ChangeItem>Bugfix: Fehlerhafte Berechnung der Anzahl von Rudertagen auf Wanderfahrten mit Fahrtgruppen behoben</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Editing of boat reservations through members was possible regardless of deactivation</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.0.4_01</VersionID>
+        <ReleaseDate>23.09.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa204.zip</DownloadUrl>
+        <DownloadSize>2941728</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Export/Liste ausgeben von Bootsreservierungen war konfigurationsabhängig auch für Mitglieder möglich</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Export/Print of boat reservation was available also to regular members (depending on configuration)</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.0.4_00</VersionID>
+        <ReleaseDate>16.09.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa204.zip</DownloadUrl>
+        <DownloadSize>2946216</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Neu: Ziele und Boote können Bootshäusern zugeordnet werden, so daß sie beim Einsatz von efa in mehreren Bootshäusern nur in einem der Bootshäuser angezeigt werden.</ChangeItem>
+            <ChangeItem>Neu: Benutzungserlaubnis für Boote kann in Auswahllisten durch farbliche Markierungen angezeigt werden.</ChangeItem>
+            <ChangeItem>Neu: Verbesserte Startgeschwindigkeit von efa.</ChangeItem>
+            <ChangeItem>Neu: Kleine Verbesserungen bei Benutzung der Spezialsuche.</ChangeItem>
+            <ChangeItem>Neu: Namenseingaben im Format "Nachname, Vorname" ohne Leerzeichen nach dem Komma werden von efa automatisch korrigiert.</ChangeItem>
+            <ChangeItem>Neu: Audit weist jetzt bei zu großen Nachrichtendateien mit einer Fehlermeldung auf das Löschen von Nachrichten hin, und archiviert im Notfall auch ungelese Nachrichten.</ChangeItem>
+            <ChangeItem>Neu: Optional markiert efa bereits beim Erstellen von neuen Nachrichten diese sofort als gelesen.</ChangeItem>
+            <ChangeItem>Neu: Import kann jetzt auch Gültigkeitszeitraum von Datensätzen setzen.</ChangeItem>
+            <ChangeItem>Neu: Für Bootsschäden werden jetzt in der Schadensmeldung auch Informationen zum zugehörigen Fahrtenbucheintrag abgespeichert (falls zutreffend).</ChangeItem>
+            <ChangeItem>Neu: Für Bootsreservierungen kann jetzt eine Telefonnummer für Rückfragen angegeben werden.</ChangeItem>
+            <ChangeItem>Neu: Da Google sein Wetter-API eingestellt hat, bezieht efa jetzt aktuelle Wetterdaten von Yahoo!. Hierzu muß in der efa-Konfiguration der Ort entsprechend eingetragen werden (Anleitung dazu im Forum in der FAQ).</ChangeItem>
+            <ChangeItem>Neu: efa zeigt bei Mehrtagesfahrten jetzt an, auf welches Datum sich Abfahrt- und Ankunftszeit beziehen.</ChangeItem>
+            <ChangeItem>Neu: Individuelle Statistiken im Bootshaus können durch ein Paßwort geschützt werden.</ChangeItem>
+            <ChangeItem>Bugfix: Inkrementelle Suche nach Bootsnamen in Bootslisten (efa-Bootshaus) ist jetzt auch mit Leerzeichen möglich.</ChangeItem>
+            <ChangeItem>Bugfix: Als Standard-Fahrtart für Boote kann jetzt auch 'keine Auswahl' festgelegt werden; in diesem Fall siegt die globale Standard-Fahrtart aus der efa-Konfiguration.</ChangeItem>
+            <ChangeItem>Bugfix: Beim Datenimport im Modus "aktualisieren" werden jetzt auch Felder aus einem exisitierenden Record gelöscht, wenn diese in der Importdatei angegeben und leer sind.</ChangeItem>
+            <ChangeItem>Bugfix: Exception beim Versuch, aus dem Projekt-Bearbeiten-Dialog heraus zu drucken.</ChangeItem>
+            <ChangeItem>Bugfix: Fehler in Spezialsuche behoben.</ChangeItem>
+            <ChangeItem>Bugfix: Audit hat Anzahl der Warnungen nicht korrekt gezählt.</ChangeItem>
+            <ChangeItem>Bugfix: Fehler beim Recovery behoben.</ChangeItem>
+            <ChangeItem>Bugfix: Inkorrekte Wertung von Mehrtagesfahrten für DRV-Wettbewerbe behoben.</ChangeItem>
+            <ChangeItem>Bugfix: Fehlerhafter Import von Bootsreservierungen korrigiert.</ChangeItem>
+            <ChangeItem>Bugfix: Wöchentliche Reservierungen wurden von efa nicht berücksichtigs.</ChangeItem>
+            <ChangeItem>Bugfix: Fehler bei Erstellung von efaRemote-Projekten behoben.</ChangeItem>
+            <ChangeItem>Bugfix: Wenn das Ändern von Kilometern für bekannte Ziele verboten ist, aber ein Ziel ohne Kilometer in der Zielliste erfaßt wird, erlaubt efa für dieses Ziel die Eingabe von Kilometern.</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>New: Destinations and boats can be assigned to boat houses, so that if efa is being used in multiple boathouses, they are only shown in one of them.</ChangeItem>
+            <ChangeItem>New: Usage permission for boats can be shown in boat selection lists though color coding.</ChangeItem>
+            <ChangeItem>New: Improved efa startup time.</ChangeItem>
+            <ChangeItem>New: Minor improvements in useability of special search..</ChangeItem>
+            <ChangeItem>New: Names in input with format "last name, first name" without space after comma are automatically corrected by efa.</ChangeItem>
+            <ChangeItem>New: Audit now raises an error if message file is too big, and in case of emergency also archives unread messages.</ChangeItem>
+            <ChangeItem>New: Optionally efa marks new messages as read as they are created.</ChangeItem>
+            <ChangeItem>New: Import can now change validity of data records.</ChangeItem>
+            <ChangeItem>New: For boat damages, efa now also stores additional information about the associated logbook entry (if applicable).</ChangeItem>
+            <ChangeItem>New: Boat reservations can additionally contain a contact phone number.</ChangeItem>
+            <ChangeItem>New: As Google discontinued their weather API, efa now retrieves weather information from Yahoo!. For this the desired location must be configured properly in efa (steps to do this are described in the efa Forum's FAQ</ChangeItem>
+            <ChangeItem>New: Individual statistics can be protected by a password in efa Boathouse.</ChangeItem>
+            <ChangeItem>Bugfix: Incremental search for boat names in boat lists (efa Boathouse) now also supports space character.</ChangeItem>
+            <ChangeItem>Bugfix: Default session type for boats can now also be 'no selection', in which case the global session type from the efa configuration wins.</ChangeItem>
+            <ChangeItem>Bugfix: When importing data in mode "update", fields in existing records can now also be deleted if those are specified in the import data and are empty.</ChangeItem>
+            <ChangeItem>Bugfix: Exception when trying to print from Project Edit dialog.</ChangeItem>
+            <ChangeItem>Bugfix: Bugs in Special Search fixed.</ChangeItem>
+            <ChangeItem>Bugfix: Audit did not count number of warnings properly.</ChangeItem>
+            <ChangeItem>Bugfix: Bugs in recovery fixed.</ChangeItem>
+            <ChangeItem>Bugfix: Weekly reservations have been ignored by efa.</ChangeItem>
+            <ChangeItem>Bugfix: Bugs for efaRemote project creation fixed.</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.0.3_05</VersionID>
+        <ReleaseDate>05.08.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa203.zip</DownloadUrl>
+        <DownloadSize>2915101</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Bugfix</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.0.3_04</VersionID>
+        <ReleaseDate>05.08.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa203.zip</DownloadUrl>
+        <DownloadSize>2915144</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Neu: Beim Anlegen einer neuen Person warnt efa, falls bereits eine "ähnliche Person" (mit gleichem Namen, aber ggf. anderem Namenszusatz) existiert.</ChangeItem>
+            <ChangeItem>Bugfix: Import von Fahrten ohne LfdNr im Modus "Datensätze hinzufügen oder aktualisieren" jetzt möglich.</ChangeItem>
+            <ChangeItem>Bugfix: Bei Eingabe von Admin-Namen werden jetzt Großbuchstaben automatisch in Kleinbuchstaben umgewandelt und nicht einfach nur abgeschnitten.</ChangeItem>
+            <ChangeItem>Neu: Eingabe von Zielbereichen ist toleranter bei Trennzeichen.</ChangeItem>
+            <ChangeItem>Bugfix: Doppelte Anzeige von Steuermann in Statuszeile behoben.</ChangeItem>
+            <ChangeItem>Bugfix: Fehler bei Datumseingabe mit Zurückblättern über "-" behoben.</ChangeItem>
+            <ChangeItem>Bugfix: Gewässer-Eingabefeld wird jetzt auch angezeigt, wenn Option "Gewässer muß bei unbekannten Zielen angegeben werden" gesetzt ist, aber nicht "Eingabe von Gewässern für unbekannte Ziele und Abstecher".</ChangeItem>
+            <ChangeItem>Bugfix: Unbekannte Gewässer in Fahrtenbucheinträgen wurden nicht angezeigt.</ChangeItem>
+            <ChangeItem>Bugfix: Audit hat fehlerhaften Bootsstatus nicht richtig korrigiert.</ChangeItem>
+            <ChangeItem>Bugfix: Erinnerungen an offene Bootsschäden kommt jetzt einmal pro Woche.</ChangeItem>
+            <ChangeItem>Bugfix: Fehlerhafte Statistikerstellung beim gleichzeitigen Aufruf mehrerer Statistiken behoben.</ChangeItem>
+            <ChangeItem>Bugfix: Fehlendes HTML-Tag in HTML-Statistik ergänzt.</ChangeItem>
+            <ChangeItem>Neu: Zeilenformatierungen für HTML-Statistiken sind jetzt in CSS-Styles ausgelagert, können geändert werden und werden beim Ersetzen der Tabelle im HTML-Dokument beibehalten.</ChangeItem>
+            <ChangeItem>Bugfix: Mitgliederstatus wird beim Import aus efa1 nach efa2 nicht korrekt importiert.</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>New: When creating a new person efa now warns in case a "similar person" (with same name, but eventually different name add-on) exists.</ChangeItem>
+            <ChangeItem>Bugfix: Import of sessions without EntryNo in mode "Add or update records" now possible.</ChangeItem>
+            <ChangeItem>Bugfix: When entering admin names, now capital letters are automatically replaced by lowercase letters and not just cut off.</ChangeItem>
+            <ChangeItem>Bugfix: Status line showing cox twice fixed.</ChangeItem>
+            <ChangeItem>Bugfix: Error for entering dates when changing data backwards through "-" fixed.</ChangeItem>
+            <ChangeItem>Bugfix: Unknown waters in logbook records were not displayed properly.</ChangeItem>
+            <ChangeItem>Bugfix: Audit didn't fix incorrect boat status entries properly.</ChangeItem>
+            <ChangeItem>Bugfix: Reminder for open boat damages is now being generated once per week.</ChangeItem>
+            <ChangeItem>Bugfix: Wrong statistics calculation fixed when launching multiple statistics simulataneously.</ChangeItem>
+            <ChangeItem>Bugfix: Missing HTML-Tag in HTML statistics added.</ChangeItem>
+            <ChangeItem>New: Row formatting for HTML statistics are now done using CSS styles, which can be re-defined and will not be overwritten when only table is replaced in existing HTML document.</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.0.3_03</VersionID>
+        <ReleaseDate>23.07.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa203.zip</DownloadUrl>
+        <DownloadSize>2913466</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Neu: Bearbeitungsassistent filtert jetzt auch nach allen Mannschaftsnamen (Fahrtenbuch) bzw. Vor- und Nachname gemeinsam (Personen).</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>New: Data Bulk Edit Assistant now also filters for all crew names (logbook) and for first and last names combined (persons).</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.0.3_02</VersionID>
+        <ReleaseDate>17.07.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa203.zip</DownloadUrl>
+        <DownloadSize>2913241</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Neu: Beim Datenimport/-export und im Bearbeitungsassistenten werden jetzt auch für das Fahrtenbuch Klartextnamen für die einzelnen Felder angezeigt.</ChangeItem>
+            <ChangeItem>Bugfix: NullPointerException im Audit behoben.</ChangeItem>
+            <ChangeItem>Bugfix: NullPointerException im Bearbeitungsassistenten bei der Bearbeitung unversionierter Daten behoben.</ChangeItem>
+            <ChangeItem>Änderung: Bearbeitungsassistent zeigt jetzt auch Datensätze an, deren Kriterien zwar passen, bei denen aber alter und neuer Wert der zu ändernden Felder identisch sind.</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>New: Data Import/Export and Bulk Edit Assistant now also show plain text field names for logbook fields.</ChangeItem>
+            <ChangeItem>Bugfix: NullPointerException in Audit fixed.</ChangeItem>
+            <ChangeItem>Bugfix: NullPointerException in Bulk Edit Assistant when editing of unversionized data fixed.</ChangeItem>
+            <ChangeItem>Change: Bulk Edit Assistant now also shows records which match the search criteria, but will not be changed as old and new field values are identical.</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.0.3_01</VersionID>
+        <ReleaseDate>16.07.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa203.zip</DownloadUrl>
+        <DownloadSize>2911825</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Neu: Neue Admin-Berechtigung zum Steuern, welche Admins den Datenimport und Bearbeitungsassistenten verwenden dürfen.</ChangeItem>
+            <ChangeItem>Bugfix: Fehler bei Eingabe von Paßwörtern mit weniger als 8 Zeichen behoben.</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>New: New admin permission to control which admins may use data import and bulk edit assistant.</ChangeItem>
+            <ChangeItem>Bugfix: Bug when entering passwords with less than 8 characters fixed.</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.0.3_00</VersionID>
+        <ReleaseDate>15.07.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa203.zip</DownloadUrl>
+        <DownloadSize>2915727</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Neu: Bearbeitungsassistent zum Bearbeiten ("in einem Rutsch") von Datensätzen, die bestimmten Kriterien entsprechen.</ChangeItem>
+            <ChangeItem>Bugfix: Erstellen/Reparieren des efaLive-Admin hat paßwortlose Auto-Login eines anderen Admins zerstört.</ChangeItem>
+            <ChangeItem>Änderung: Projekt-Konfigurationsdialog leicht restrukturiert.</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>New: Edit Assistant for bulk data editing of records that match certain criteria.</ChangeItem>
+            <ChangeItem>Bugfix: Creating/Fixing of efaLive admin damaged password-less auto login of another, previously created admin.</ChangeItem>
+            <ChangeItem>Change: Project Configuration dialog slightly restructured.</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.0.2_07</VersionID>
+        <ReleaseDate>14.07.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa202.zip</DownloadUrl>
+        <DownloadSize>2911849</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: efa1-Import enthält jetzt keine vordefinierten Status aus efa2 mehr, wenn diese in efa1 nicht benutzt wurden.</ChangeItem>
+            <ChangeItem>Bugfix: efa1-Import importiert jetzt auch Schlüssel der DRV-Fahrtenabzeichen zur Überprüfung der Signaturen.</ChangeItem>
+            <ChangeItem>Bugfix: Fehlende Schlüssel für DRV-Signaturen werden jetzt beim Öffnen des Dialogs zum Anzeigen eines Fahrtenabzeichens automatisch heruntergeladen.</ChangeItem>
+            <ChangeItem>Bugfix: efa1-Checksum-Überprüfung jetzt deaktiviert.</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Bugfix: efa1 import does not keep predefined status from efa2 any more, if those weren't used in efa1.</ChangeItem>
+            <ChangeItem>Bugfix: efa1 Checksum check now deactivated.</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.0.2_06</VersionID>
+        <ReleaseDate>12.07.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa202.zip</DownloadUrl>
+        <DownloadSize>2910133</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Import von Datensätzen mit leeren Feldern aus CSV- und XML-Dateien führte teilweise zu Fehlern oder Abbruch des Imports.</ChangeItem>
+            <ChangeItem>Bugfix: Bootsreservierungen und Bootsschäden für derzeit ungültige Boote wurden nicht (korrekt) angezeigt.</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Import of records with empty fields from CSV or XML files caused errors or aborts of the import.</ChangeItem>
+            <ChangeItem>Bugfix: Boat reservations and damages of currently invalid boats were not shown properly.</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.0.2_05</VersionID>
+        <ReleaseDate>11.07.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa202.zip</DownloadUrl>
+        <DownloadSize>2909937</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Öffnen des zuletzt geöffneten Projekts in efa-Basis.</ChangeItem>
+            <ChangeItem>Bugfix: Import von Fahrtart und Bootstyp in Fahrtenbuch-Import fehlerhaft.</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Opening of last opened project in efa Base.</ChangeItem>
+            <ChangeItem>Bugfix: Fixed import of session type and boat type in logbook import.</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.0.2_04</VersionID>
+        <ReleaseDate>10.07.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa202.zip</DownloadUrl>
+        <DownloadSize>2909691</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Neu: Admin-Login ohne Paßwort ist jetzt bei Erstellen einer Credentials-Datei auch in efa-Bootshaus möglich.</ChangeItem>
+            <ChangeItem>Änderung: Bei Fahrteingabe ist Inhalt des Entfernungsfelds selektiert, wenn es einen Wert enthält, so daß die vorgeschlagene Entfernung ohne vorherigen Löschen überschrieben werden kann.</ChangeItem>
+            <ChangeItem>Änderung: Spaltenüberschrift in Statistik von "Mehrtagesfahrten" in "Wanderfahrten" umbenannt.</ChangeItem>
+            <ChangeItem>Bugfix: Darstellung der Uhrzeiten in Fahrtenbuch-Ansicht war sekundengenau (geändert zu hh:mm).</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>New: Admin-Login without password is now also possible for efa Boathouse, if credentials file has been created.</ChangeItem>
+            <ChangeItem>Change: Content of distance field is now selected when entering a session (if it contains a value), such that the suggested distance can simply be overwritten without first deleting the current value.</ChangeItem>
+            <ChangeItem>Bugfix: Filter criteria for persons and groups were not correctly followed for boat mileage statistics.</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.0.2_03</VersionID>
+        <ReleaseDate>01.07.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa202.zip</DownloadUrl>
+        <DownloadSize>2891710</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Filterkriterien für Personen und Gruppen wurden bei Bootskilometerlisten nicht korrekt berücksichtigt.</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Filter criteria for persons and groups were not correctly followed for boat mileage statistics.</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.0.2_02</VersionID>
+        <ReleaseDate>28.06.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa202.zip</DownloadUrl>
+        <DownloadSize>2891906</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Uhr wird wieder angezeigt.</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Clock is shown again.</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.0.2_01</VersionID>
+        <ReleaseDate>27.06.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa202.zip</DownloadUrl>
+        <DownloadSize>2891739</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Falsches Icon für Button in Bearbeiten-Dialog korrigiert.</ChangeItem>
+            <ChangeItem>Bugfix: Fehlerhafte Erkennung der Bootsplätze bei efa1-Import von Booten mit unbekanntem Bootstyp korrigiert.</ChangeItem>
+            <ChangeItem>Bugfix: Zählung der ausgewerteten Einträge bei Statistikberechnung korrigiert.</ChangeItem>
+            <ChangeItem>Bugfix: Erinnerung an offene Bootsschäden erfolgte fälschlicherweise stündlich statt wöchentlich.</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Wrong icon for button in edit dialog corrected.</ChangeItem>
+            <ChangeItem>Bugfix: Wrong efa1 import of boat seats for boats with unknown boat type fixed.</ChangeItem>
+            <ChangeItem>Bugfix: Counting of evaluated entries for statistics fixed.</ChangeItem>
+            <ChangeItem>Bugfix: Reminder about open boat damages was hourly instead of weekly - fixed.</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.0.2_00</VersionID>
+        <ReleaseDate>26.06.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa202.zip</DownloadUrl>
+        <DownloadSize>2888996</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Neu: Text-Import und -Export von Fahrtenbüchern möglich</ChangeItem>
+            <ChangeItem>Neu: Nach Beenden der letzten Fahrt wird eine Erinnerung zum Schließen der Bootshalle angezeigt</ChangeItem>
+            <ChangeItem>Neu: Bei Fahrtbeginn kurz vor Einsetzen bzw. bei Dunkelheit wird (konfigurierbar) eine Warnung angezeigt</ChangeItem>
+            <ChangeItem>Neu: Bei Fahrtende kann Datum korrigiert werden</ChangeItem>
+            <ChangeItem>Neu: Statistikeinstellungen können während des Bearbeitens unter einem neuen Namen abgespeichert werden</ChangeItem>
+            <ChangeItem>Neu: Vor Wetter-Popup kann ein beliebiges Kommando ausgeführt werden (z.B. um Wetterdaten aufzubereiten)</ChangeItem>
+            <ChangeItem>Neu: Erinnerung an offene Bootsschäden wird wöchentlich an Bootswart verschickt</ChangeItem>
+            <ChangeItem>Bugfix: ArrayOutOfBoundsException beim Erstellen von Fahrtenbuch-Statistiken behoben, wenn keine Ausgabefelder selektiert waren.</ChangeItem>
+            <ChangeItem>Bugfix: Auswertungsfehler der Wanderruderkilometer bei Ausgabe in normalen Kilometerlisten behoben.</ChangeItem>
+            <ChangeItem>Bugfix: Auch langer News-Text wird jetzt korrekt angezeigt ohne das Fenster zu verschieben.</ChangeItem>
+            <ChangeItem>Bugfix: NullPointerException beim Daten-Import behoben.</ChangeItem>
+            <ChangeItem>Bugfix: Fehler beim Import von Booten mit verschiedenen Bootstypen behoben.</ChangeItem>
+            <ChangeItem>Bugfix: Fehler beim Import von Zielen mit Zielbereichen für Mehrtagesfahrten behoben.</ChangeItem>
+            <ChangeItem>Bugfix: Fehler bei parallelem Remote-Zugriff im efa-Client behoben.</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>New: Text import and export of logbooks possible</ChangeItem>
+            <ChangeItem>New: After finishing of the last session, efa will display a reminder to lock the boat house</ChangeItem>
+            <ChangeItem>New: When starting a session shortly before sunset or during darkness, a (configurable) warning will be displayed</ChangeItem>
+            <ChangeItem>New: Date can be modified when session is finished</ChangeItem>
+            <ChangeItem>New: Statistics sesstings may be saved under a new name while being edited</ChangeItem>
+            <ChangeItem>New: An arbitrary command can be run before opening the weather popup (for example, to prepare weather data)</ChangeItem>
+            <ChangeItem>New: Reminder of open boat damager is sent to boad maintenance once a week</ChangeItem>
+            <ChangeItem>Bugfix: ArrayOutOfBoundsException when creating logbook statistics fixed when no output fields have been selected</ChangeItem>
+            <ChangeItem>Bugfix: Also long news texts are now displayed properly without moving the window.</ChangeItem>
+            <ChangeItem>Bugfix: NullPointerException for Data Import fixed.</ChangeItem>
+            <ChangeItem>Bugfix: Fixed import of boats with different boat types.</ChangeItem>
+            <ChangeItem>Bugfix: Bug in case of concurrent remote access in efa client fixed.</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.0.1_05</VersionID>
+        <ReleaseDate>07.05.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa201.zip</DownloadUrl>
+        <DownloadSize>2830104</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Grafiken in generierten HTML-Dateien werden jetzt durch relativen (statt absoluten) Pfad referenziert.</ChangeItem>
+            <ChangeItem>Sprache: Erweiterte Griechische Übersetzung integriert.</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Images in generated HTML documents are now referecend through relative (instead of absolute) path names.</ChangeItem>
+            <ChangeItem>Language: Extended Greek translation integrated.</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.0.1_04</VersionID>
+        <ReleaseDate>05.05.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa201.zip</DownloadUrl>
+        <DownloadSize>2823446</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Anpassung: URL für Kanu-eFB in https://efb.kanu-efb.de/services geändert.</ChangeItem>
+            <ChangeItem>Bugfix: Beim Beginnen von Fahrten wird die Endzeit nicht mehr von efa aufgefüllt, wenn sämtliche Eingabefelder angezeigt werden.</ChangeItem>
+            <ChangeItem>Bugfix: Beim Eintragen von Fahrten vorgeschlagene Uhrzeiten, die nicht geändert werden können, führen zu keinen Fehlermeldungen von efa mehr.</ChangeItem>
+            <ChangeItem>Neu: In efa-Basis wird jetzt nach dem Speichern des letzten Fahrtenbucheintrags automatisch ein neuer Eintrag begonnen.</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Bugfix: End time field will not be filled by efa any more when starting a new session.</ChangeItem>
+            <ChangeItem>Bugfix: When entering sessions and change of suggested times has been disabled, efa will not complain about wrong times any more.</ChangeItem>
+            <ChangeItem>New: efa-Base will automatically start a new entry when the last entry of the logbook is being saved.</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.0.1_03</VersionID>
+        <ReleaseDate>26.04.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa201.zip</DownloadUrl>
+        <DownloadSize>2819501</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Neu: Admin-Login für efa-Basis und efaCLI anhand mittels Credentials-Datei auch ohne Paßworteingabe möglich.</ChangeItem>
+            <ChangeItem>Sprache: Erweiterte Griechische Übersetzung integriert.</ChangeItem>
+            <ChangeItem>Bugfix: NullPointerException im MeteoAstroWidget behoben.</ChangeItem>
+            <ChangeItem>Bugfix: Fehlerhafte Logausschrift beim efa-Restart unter Windows behoben.</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>New: Admin-Login for efa-Base and efaCLI using credentials file possible without the need to enter a password.</ChangeItem>
+            <ChangeItem>Language: Extended Greek translation integrated.</ChangeItem>
+            <ChangeItem>Bugfix: NullPointerException in MeteoAstroWidget fixed</ChangeItem>
+            <ChangeItem>Bugfix: Wrong logging message during efa restart under Windows fixed</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.0.1_02</VersionID>
+        <ReleaseDate>18.04.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa201.zip</DownloadUrl>
+        <DownloadSize>2813831</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Unvollständige Auswertung des LRV-Sommer-Wettbewerbs behoben.</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Bugfix (Berlin-specific)</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.0.1_01</VersionID>
+        <ReleaseDate>17.04.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa201.zip</DownloadUrl>
+        <DownloadSize>2813731</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Fehlermeldung bei Fahrtenbuchansicht und Auswahl der Option 'auch Boote unterwegs anzeigen' behoben.</ChangeItem>
+            <ChangeItem>Bugfix: Doppelte Tabellenüberschrift bei DRV-Wanderruderstatistik behoben</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Exception in Logbook View (for boats on the water) fixed.</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.0.1_00</VersionID>
+        <ReleaseDate>15.04.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa201.zip</DownloadUrl>
+        <DownloadSize>2818194</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Neu: Statistiken mit zusammengefaßter Ausgabe von Gästen (auch vereinsweise) und anderen möglich</ChangeItem>
+            <ChangeItem>Neu: Im Admin-Modus wird die Anzahl der ungelesenen Nachrichten deutlich angezeigt</ChangeItem>
+            <ChangeItem>Neu: Zusätzliches Feld 'Versicherungswert' in Bootsverwaltung</ChangeItem>
+            <ChangeItem>Neu: Zusätzliche Felder 'Reparaturkosten' und 'Versicherungsfall' für Bootsschäden</ChangeItem>
+            <ChangeItem>Neu: Ausgabe der Fahrtart für Statistikart 'Fahrtenbuch' möglich</ChangeItem>
+            <ChangeItem>Neu: FTP-Upload von Statistiken</ChangeItem>
+            <ChangeItem>Neu: Für Kombiboote kann ein Standard-Bootstyp festgelegt werden</ChangeItem>
+            <ChangeItem>Neu: Zusätzliche Buttons im Statistik-Dialog zum Sortieren (auf/ab) der Statistikeinstellungen</ChangeItem>
+            <ChangeItem>Neu: Statistiken können nach eigenen, fremden oder unbekannten Booten gefiltert werden</ChangeItem>
+            <ChangeItem>Neu: Optional können bei der Eingabe von Fahrten zu einem Ziel Zusatzinformationen wie Gewässer und Zielbereiche angezeigt werden</ChangeItem>
+            <ChangeItem>Neu: Verbesserte Debug-Ausgaben beim Programmstart zur einfacheren Fehlersuche</ChangeItem>
+            <ChangeItem>Neu: Optional enthält Ziel-Auswahlliste jetzt auch Gewässernamen, um eine Auswahl/Sortierung anhand des Gewässers zu erlauben</ChangeItem>
+            <ChangeItem>Neu: Für unbekannte Ziele oder Zielen mit Abstechern können jetzt optional auch Gewässer erfaßt werden</ChangeItem>
+            <ChangeItem>Neu: Bearbeitungsdialoge zeigen den Namen des Datensatzes in der Titelzeile</ChangeItem>
+            <ChangeItem>Neu: Ausgabe des Geschlechts in Kilometerliste möglich</ChangeItem>
+            <ChangeItem>Bugfix: Beim Hinzufügen von Personen durch Mitglieder können nur noch einige Basisfelder gesetzt werden, aber z.B. nicht mehr Status, Gruppenzugehörigkeit usw.</ChangeItem>
+            <ChangeItem>Bugfix: Beim Erstellen einer 'Nachricht an Admin' hat das Absender-Feld automatisch den Fokus</ChangeItem>
+            <ChangeItem>Bugfix: Fehler bei Ein- und Ausgabe von Dezimalzahlen bzgl. der Anzahl der Nachkommastellen behoben</ChangeItem>
+            <ChangeItem>Bugfix: Ausgewählter Datensatz behält nach Bearbeiten seinen Fokus</ChangeItem>
+            <ChangeItem>Bugfix: Ungünstige Spaltendarstellung für Bootsstatus und Fahrtgruppen bearbeiten</ChangeItem>
+            <ChangeItem>Bugfix: Bootsstatus auch von unbekannten Booten kann bearbeitet werden</ChangeItem>
+            <ChangeItem>Bugfix: efa zeigt jetzt korrekte Anzahl der Eingabefelder bei Auswahl von Kombibooten an und behält Auswahl bei</ChangeItem>
+            <ChangeItem>Bugfix: Debug-Ausgaben bei Aufruf mit Option -debug unter Windows sichtbar</ChangeItem>
+            <ChangeItem>Bugfix: Auswertungsfehler von Mehrtagesfahrten für LRV-Winter-Fahrten-Wettbewerb behoben</ChangeItem>
+            <ChangeItem>Bugfix: Entfernungseinheit für Fahrtenbuchausgabe wird jetzt unterdrückt, wenn die enstprechende Option in den Statistikeinstellungen nicht selektiert ist</ChangeItem>
+            <ChangeItem>Bugfix: Reihenfolge der Gewässer für Ziele wird jetzt beibehalten</ChangeItem>
+            <ChangeItem>Bugfix: Gruppenliste wird jetzt alphabetisch sortiert</ChangeItem>
+            <ChangeItem>Bugfix: Fahrtenabzeichen zeigen jetzt den Personennamen anstelle der ID als ihren Namen an</ChangeItem>
+            <ChangeItem>Bugfix: Tippfehlerkorrektur für kurze Namen ist jetzt weniger aggressiv</ChangeItem>
+            <ChangeItem>Bugfix: Darstellungsfehler bei Wettbewerben mit 'Ausgabe ohne Detail' korrigiert.</ChangeItem>
+            <ChangeItem>Bugfix: NullPointerException für Auswertung von Blauem Wimpel (LRV Berlin) korrigiert.</ChangeItem>
+            <ChangeItem>Bugfix: Streckenbeschreibung für Fahrtgruppen wird jetzt korrekt angezeigt.</ChangeItem>
+            <ChangeItem>Bugfix: efa verhindert jetzt, daß Reservierungen eingetragen werden, die sich überschneiden.</ChangeItem>
+            <ChangeItem>Bugfix: Darstellungs- und Sortierungsfehler in der Fahrtenbuchansicht behoben.</ChangeItem>
+            <ChangeItem>Bugfix: Nachrichten werden jetzt beim Lesen ohne Nachfrage als gelesen markiert (wenn entsprechend konfiguriert).</ChangeItem>
+            <ChangeItem>Bugfix: NullPointerException beim Erstellen von Meldedateien behoben.</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>New: Statistics with aggregated output of guests and others possible</ChangeItem>
+            <ChangeItem>New: Number of unread messages clearly visible in Admin Mode</ChangeItem>
+            <ChangeItem>New: Additional field 'Insurance Value' in Boat Administration</ChangeItem>
+            <ChangeItem>New: Additional fields 'Repait Costs' und 'Insurance Claim' for boat damages</ChangeItem>
+            <ChangeItem>New: Output of session type for statistic 'Logbook' possible</ChangeItem>
+            <ChangeItem>New: FTP-Upload of statistics</ChangeItem>
+            <ChangeItem>New: Definition of default boat type for boats with multiple boat types possible</ChangeItem>
+            <ChangeItem>New: Additional buttons to sort statistics</ChangeItem>
+            <ChangeItem>New: Filtering of statistics for own and other boats</ChangeItem>
+            <ChangeItem>New: Optionally show destinations infos when entering destinations</ChangeItem>
+            <ChangeItem>New: Improved debug output at program start</ChangeItem>
+            <ChangeItem>New: Destination list can optionally also show waters</ChangeItem>
+            <ChangeItem>New: Entering of waters for unknown destinations or side trips possible</ChangeItem>
+            <ChangeItem>New: Name of record show in title bar of data edit dialogs</ChangeItem>
+            <ChangeItem>New: Gender can be printed in statistics</ChangeItem>
+            <ChangeItem>Bugfixes</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.0.0_09</VersionID>
+        <ReleaseDate>24.03.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa200.zip</DownloadUrl>
+        <DownloadSize>2793743</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Obleute werden in Ansicht 'Fahrtenbuch anzeigen' korrekt markiert</ChangeItem>
+            <ChangeItem>Bugfix: Obleute werden auch in Statistikausgabe 'Fahrtenbuch' markiert</ChangeItem>
+            <ChangeItem>Bugfix: Bezeichnung für Positionsspalte in Kilometerlisten einheitlich 'Position'</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Boat Captain properly marked in windows 'Show Logbook'</ChangeItem>
+            <ChangeItem>Bugfix: Boat Captain also marked in statistic 'Logbook'</ChangeItem>
+            <ChangeItem>Bugfix: Name of column for position in mileage lists commonly changed to 'Position'</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.0.0_08</VersionID>
+        <ReleaseDate>20.03.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa200.zip</DownloadUrl>
+        <DownloadSize>2793532</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfixes</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Bugfixes</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.0.0_06</VersionID>
+        <ReleaseDate>18.03.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa200.zip</DownloadUrl>
+        <DownloadSize>2793210</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfixes</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Bugfixes</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.0.0_05</VersionID>
+        <ReleaseDate>17.03.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa200.zip</DownloadUrl>
+        <DownloadSize>2792683</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfixes</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Bugfixes</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.0.0_04</VersionID>
+        <ReleaseDate>11.03.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa200.zip</DownloadUrl>
+        <DownloadSize>2823476</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfixes LRV-Winter-Wettbewerb</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Bugfixes</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.0.0_03</VersionID>
+        <ReleaseDate>11.03.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa200.zip</DownloadUrl>
+        <DownloadSize>2822949</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfixes Statisiken</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Bugfixes Statistics</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.0.0_02</VersionID>
+        <ReleaseDate>06.03.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa200.zip</DownloadUrl>
+        <DownloadSize>2822505</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfixes</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Bugfixes</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.0.0_01</VersionID>
+        <ReleaseDate>26.02.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa200.zip</DownloadUrl>
+        <DownloadSize>2823389</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfixes</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Bugfixes</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.0.0_00</VersionID>
+        <ReleaseDate>26.02.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa2.zip</DownloadUrl>
+        <DownloadSize>2777996</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>efa Version 2.0</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>efa Version 2.0</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>1.9.9_55</VersionID>
+        <ReleaseDate>23.02.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/efa2/download/efa2_beta.zip</DownloadUrl>
+        <DownloadSize>2796474</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfixes</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Bugfixes</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>1.9.9_54</VersionID>
+        <ReleaseDate>22.02.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/efa2/download/efa2_beta.zip</DownloadUrl>
+        <DownloadSize>2796258</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Gewässerliste</ChangeItem>
+            <ChangeItem>Bugfixes</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Bugfixes</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>1.9.9_53</VersionID>
+        <ReleaseDate>21.02.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/efa2/download/efa2_beta.zip</DownloadUrl>
+        <DownloadSize>2796148</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Kleinigkeiten</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Minor Things</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>1.9.9_52</VersionID>
+        <ReleaseDate>20.02.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/efa2/download/efa2_beta.zip</DownloadUrl>
+        <DownloadSize>2803244</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Vordefinierte Gewässerliste für Deutschland (Teil 1)</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Predefined Waters Lists supported</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>1.9.9_51</VersionID>
+        <ReleaseDate>19.02.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/efa2/download/efa2_beta.zip</DownloadUrl>
+        <DownloadSize>2799976</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfixes Datenimport</ChangeItem>
+            <ChangeItem>Bugfixes DRV-Fahrtenabzeichen</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Bugfixes Data Import</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>1.9.9_49</VersionID>
+        <ReleaseDate>19.02.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/efa2/download/efa2_beta.zip</DownloadUrl>
+        <DownloadSize>2798698</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfixes</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Bugfixes</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>1.9.9_47</VersionID>
+        <ReleaseDate>18.02.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/efa2/download/efa2_beta.zip</DownloadUrl>
+        <DownloadSize>2795519</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Auswahl der Felder für Fahrtenbuchausgabe (bestehende Statistiken müssen angepaßt werden!)</ChangeItem>
+            <ChangeItem>Übersetzungstool in efa</ChangeItem>
+            <ChangeItem>Bugfixes</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Selection of Fields for Logbook Output</ChangeItem>
+            <ChangeItem>Translation Tool in efa</ChangeItem>
+            <ChangeItem>Bugfixes</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>1.9.9_46</VersionID>
+        <ReleaseDate>15.02.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/efa2/download/efa2_beta.zip</DownloadUrl>
+        <DownloadSize>2782684</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>GUI Icons für Buttons</ChangeItem>
+            <ChangeItem>Verbesserte Suchfunktion</ChangeItem>
+            <ChangeItem>Bugfixes</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>GUI Icons for Buttons</ChangeItem>
+            <ChangeItem>Improved Search Function</ChangeItem>
+            <ChangeItem>Bugfixes</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>1.9.9_45</VersionID>
+        <ReleaseDate>14.02.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/efa2/download/efa2_beta.zip</DownloadUrl>
+        <DownloadSize>2755094</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfixes</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Bugfixes</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>1.9.9_44</VersionID>
+        <ReleaseDate>13.02.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/efa2/download/efa2_beta.zip</DownloadUrl>
+        <DownloadSize>2754794</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Statistikausgabe Gewässer</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Statistics Calculation for Waters</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>1.9.9_43</VersionID>
+        <ReleaseDate>12.02.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/efa2/download/efa2_beta.zip</DownloadUrl>
+        <DownloadSize>2752907</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Audit: Überprüfung sämtlicher Projektdaten auf Korrektheit (beim Öffnen eines Projekts)</ChangeItem>
+            <ChangeItem>ACHTUNG: Beta-Tester bitte schaut ins Forum zu wichtigen Hinweisen zum Audit!!!!!</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Audit: Verification of all Project Data (when Project is opened)</ChangeItem>
+            <ChangeItem>ATTENTION: Beta Testers, please see the Forum for important notes regarding the Audit!!!!!</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>1.9.9_42</VersionID>
+        <ReleaseDate>12.02.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/efa2/download/efa2_beta.zip</DownloadUrl>
+        <DownloadSize>2744705</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfixes</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Bugfixes</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>1.9.9_40</VersionID>
+        <ReleaseDate>10.02.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/efa2/download/efa2_beta.zip</DownloadUrl>
+        <DownloadSize>2743456</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Kleinigkeiten</ChangeItem>
+            <ChangeItem>Bugfixes</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Small Stuff</ChangeItem>
+            <ChangeItem>Bugfixes</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>1.9.9_39</VersionID>
+        <ReleaseDate>09.02.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/efa2/download/efa2_beta.zip</DownloadUrl>
+        <DownloadSize>2741680</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Personen von Statistiken ausnehmen</ChangeItem>
+            <ChangeItem>Bugfixes</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Exclude Persons from Statistics</ChangeItem>
+            <ChangeItem>Bugfixes</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>1.9.9_38</VersionID>
+        <ReleaseDate>08.02.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/efa2/download/efa2_beta.zip</DownloadUrl>
+        <DownloadSize>2743716</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfixes</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Bugfixes</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>1.9.9_37</VersionID>
+        <ReleaseDate>07.02.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/efa2/download/efa2_beta.zip</DownloadUrl>
+        <DownloadSize>2732165</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfixes</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Bugfixes</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>1.9.9_36</VersionID>
+        <ReleaseDate>06.02.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/efa2/download/efa2_beta.zip</DownloadUrl>
+        <DownloadSize>2732201</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfixes Kanu-EFb-Synchronisation</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Bugfixes</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>1.9.9_35</VersionID>
+        <ReleaseDate>05.02.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/efa2/download/efa2_beta.zip</DownloadUrl>
+        <DownloadSize>2737851</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Verbesserte Handhabung versionierter Daten</ChangeItem>
+            <ChangeItem>Bugfixes</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Improved Handling of versionized Data</ChangeItem>
+            <ChangeItem>Bugfixes</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>1.9.9_34</VersionID>
+        <ReleaseDate>05.02.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/efa2/download/efa2_beta.zip</DownloadUrl>
+        <DownloadSize>2734682</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfixes (Import, Fahrtenbuchwechsel, andere)</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Bugfixes (Import, Logbook change, other)</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>1.9.9_33</VersionID>
+        <ReleaseDate>04.02.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/efa2/download/efa2_beta.zip</DownloadUrl>
+        <DownloadSize>2734433</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Verbesserungen Statistik-Dialog</ChangeItem>
+            <ChangeItem>Bugfixes</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Improvements Statistics Dialog</ChangeItem>
+            <ChangeItem>Bugfixes</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>1.9.9_32</VersionID>
+        <ReleaseDate>03.02.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/efa2/download/efa2_beta.zip</DownloadUrl>
+        <DownloadSize>2732354</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Initiale Kopie im Spiegelverzeichnis</ChangeItem>
+            <ChangeItem>Dokumentation erweitert</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Initial Copy in Mirror Directory</ChangeItem>
+            <ChangeItem>Extended Documentation</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>1.9.9_31</VersionID>
+        <ReleaseDate>02.02.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/efa2/download/efa2_beta.zip</DownloadUrl>
+        <DownloadSize>2713667</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Spiegelverzeichnis für zusätzliche Datensicherheit</ChangeItem>
+            <ChangeItem>Bugfixes Crash-Recovery</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Mirror Directory for additional Data Safety</ChangeItem>
+            <ChangeItem>Bugfixes Crash Recovery</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>1.9.9_30</VersionID>
+        <ReleaseDate>01.02.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/efa2/download/efa2_beta.zip</DownloadUrl>
+        <DownloadSize>2712240</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfixes</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Bugfixes</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>1.9.9_29</VersionID>
+        <ReleaseDate>31.01.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/efa2/download/efa2_beta.zip</DownloadUrl>
+        <DownloadSize>2711956</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Statistiken im CLI erstellen</ChangeItem>
+            <ChangeItem>Aktualisierung der Sprachpakete</ChangeItem>
+            <ChangeItem>Bugfix: CLI</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Create Statistics in CLI</ChangeItem>
+            <ChangeItem>Update of Language Packs</ChangeItem>
+            <ChangeItem>Bugfix: CLI</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>1.9.9_28</VersionID>
+        <ReleaseDate>30.01.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/efa2/download/efa2_beta.zip</DownloadUrl>
+        <DownloadSize>2734340</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Sprach-Bugfixes</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Language Bugfixes</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>1.9.9_27</VersionID>
+        <ReleaseDate>29.01.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/efa2/download/efa2_beta.zip</DownloadUrl>
+        <DownloadSize>2734096</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Ausdruck von Datensätzen</ChangeItem>
+            <ChangeItem>Sperren von efa</ChangeItem>
+            <ChangeItem>Französische Übersetzung aktualisiert</ChangeItem>
+            <ChangeItem>Dänische Übersetzung (noch unvollständig)</ChangeItem>
+            <ChangeItem>Bugfixes</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Printing of Records</ChangeItem>
+            <ChangeItem>Locking efa</ChangeItem>
+            <ChangeItem>French Translation updated</ChangeItem>
+            <ChangeItem>Danish Translation (yet incomplete)</ChangeItem>
+            <ChangeItem>Bugfixes</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>1.9.9_26</VersionID>
+        <ReleaseDate>28.01.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/efa2/download/efa2_beta.zip</DownloadUrl>
+        <DownloadSize>2677358</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Erkennung von externen Datenänderungen</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Detection of external Data Changes</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>1.9.9_25</VersionID>
+        <ReleaseDate>28.01.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/efa2/download/efa2_beta.zip</DownloadUrl>
+        <DownloadSize>2610358</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Wiederherstellung von Daten bei Datenkorruption</ChangeItem>
+            <ChangeItem>Bugfix Produktion</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Crash Recovery of corrupted Data</ChangeItem>
+            <ChangeItem>Bugfix Production</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>1.9.9_24</VersionID>
+        <ReleaseDate>25.01.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/efa2/download/efa2_beta.zip</DownloadUrl>
+        <DownloadSize>2707274</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Übersetzungs-Update</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Translation Update</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>1.9.9_23</VersionID>
+        <ReleaseDate>24.01.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/efa2/download/efa2_beta.zip</DownloadUrl>
+        <DownloadSize>2783469</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Listenausgabe aller Daten</ChangeItem>
+            <ChangeItem>Bugfixes</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>List Output of all Data</ChangeItem>
+            <ChangeItem>Bugfixes</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>1.9.9_22</VersionID>
+        <ReleaseDate>17.01.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/efa2/download/efa2_beta.zip</DownloadUrl>
+        <DownloadSize>2779726</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Interaktive Auswahl von Namen für Statistik</ChangeItem>
+            <ChangeItem>Bugfixes: Index-Updates, Spellcheck, Statistikauswahl</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Interactive Selection of Names for Statistics</ChangeItem>
+            <ChangeItem>Bugfixes: Index Updates, Spellcheck, Statistic Selection</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>1.9.9_21</VersionID>
+        <ReleaseDate>16.01.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/efa2/download/efa2_beta.zip</DownloadUrl>
+        <DownloadSize>2766835</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Manuelle Auswahl eines Ordners für efa1-Datenimport</ChangeItem>
+            <ChangeItem>Bugfix: Deadlock beim Löschen eines Projekts</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Manual Selection of a Folder for efa1 Data Import</ChangeItem>
+            <ChangeItem>Bugfix: Deadlock when deleting a Project</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>1.9.9_20</VersionID>
+        <ReleaseDate>16.01.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/efa2/download/efa2_beta.zip</DownloadUrl>
+        <DownloadSize>efa2_beta.zip</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>ACHTUNG Windows-Nutzer: Bitte NICHT per Online-Update, sondern manuell durch Download des ZIP-Archivs updaten!!</ChangeItem>
+            <ChangeItem>Bugfixes (Bootsstatus, Online-Update Windows)</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>ATTENTION Windows Users: Please don't update through Online Update, but install ZIP Archive manually.</ChangeItem>
+            <ChangeItem>Bugfixes (Boat Status, Online Update Windows)</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>1.9.9_19</VersionID>
+        <ReleaseDate>15.01.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/efa2/download/efa2_beta.zip</DownloadUrl>
+        <DownloadSize>2770297</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Übersetzung ins Englische aktualisiert</ChangeItem>
+            <ChangeItem>Aufräumen</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Translation into English updated</ChangeItem>
+            <ChangeItem>Cleanup</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>1.9.9_18</VersionID>
+        <ReleaseDate>15.01.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/efa2/download/efa2_beta.zip</DownloadUrl>
+        <DownloadSize>2784723</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfixes Online-Update</ChangeItem>
+            <ChangeItem>Bugfixes efaRemote</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Bugfixes Online Update</ChangeItem>
+            <ChangeItem>Bugfixes efaRemote</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>1.9.9_17</VersionID>
+        <ReleaseDate>15.01.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/efa2/download/efa2_beta.zip</DownloadUrl>
+        <DownloadSize>2783291</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix Bootsstatus</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Bugfix Boat Status</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>1.9.9_16</VersionID>
+        <ReleaseDate>15.01.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/efa2/download/efa2_beta.zip</DownloadUrl>
+        <DownloadSize>2783085</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix NullPointerException beim Fahrtenbuch öffnen</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Bugfix NullPointerException when opening Logbook</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>1.9.9_15</VersionID>
+        <ReleaseDate>14.01.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/efa2/download/efa2_beta.zip</DownloadUrl>
+        <DownloadSize>2783133</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bootsschaden melden im Popup-Menue</ChangeItem>
+            <ChangeItem>Bugfixes</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Bugfixes</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>1.9.9_14</VersionID>
+        <ReleaseDate>13.01.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/efa2/download/efa2_beta.zip</DownloadUrl>
+        <DownloadSize>2783965</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Projekt-Auswahl beim Start für efa-Basis</ChangeItem>
+            <ChangeItem>Bugfixes (Uhrzeiten und Datum)</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Project Selection at Start of efa Base</ChangeItem>
+            <ChangeItem>Bugfixes (Times and Dates)</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>1.9.9_13</VersionID>
+        <ReleaseDate>12.01.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/efa2/download/efa2_beta.zip</DownloadUrl>
+        <DownloadSize>2783189</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Installationshinweise aktualisiert</ChangeItem>
+            <ChangeItem>Bugfixes (assertUnique, CLI Return Codes, Statistiken im Bootshaus, Remote-Restore des Projekt-Storageobjekts)</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Install Hints updated (German only)</ChangeItem>
+            <ChangeItem>Bugfixes (assertUnique, CLI Return Codes, Statistics, Remote Restore of Project Storage Object)</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>1.9.9_12</VersionID>
+        <ReleaseDate>08.01.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/efa2/download/efa2_beta.zip</DownloadUrl>
+        <DownloadSize>2770128</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfixes</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Bugfixes</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>1.9.9_11</VersionID>
+        <ReleaseDate>08.01.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/efa2/download/efa2_beta.zip</DownloadUrl>
+        <DownloadSize>2769548</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Backups wiedereinspielen</ChangeItem>
+            <ChangeItem>Bugfixes</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Restore Backups</ChangeItem>
+            <ChangeItem>Bugfixes</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>1.9.9_10</VersionID>
+        <ReleaseDate>07.01.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/efa2/download/efa2_beta.zip</DownloadUrl>
+        <DownloadSize>2756065</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Remote Online-Update</ChangeItem>
+            <ChangeItem>Bugfixes</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Remote Online Update</ChangeItem>
+            <ChangeItem>Bugfixes</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>1.9.9_09</VersionID>
+        <ReleaseDate>07.01.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/efa2/download/efa2_beta.zip</DownloadUrl>
+        <DownloadSize>2754853</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix NullPointerException bei Fahrt beginnen</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Bugfix NullPointerException for Start Session</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>1.9.9_07</VersionID>
+        <ReleaseDate>07.01.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/efa2/download/efa2_beta.zip</DownloadUrl>
+        <DownloadSize>2754663</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>efaLive-Integration für Backup</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>efaLive Integration for Backup</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>1.9.9_06</VersionID>
+        <ReleaseDate>05.01.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/efa2/download/efa2_beta.zip</DownloadUrl>
+        <DownloadSize>2750989</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfixes</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Bugfixes</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>1.9.9_04</VersionID>
+        <ReleaseDate>04.01.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/efa2/download/efa2_beta.zip</DownloadUrl>
+        <DownloadSize>2750821</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>CLI Return Codes</ChangeItem>
+            <ChangeItem>Bugfixes</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>CLI Return Codes</ChangeItem>
+            <ChangeItem>Bugfixes</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>1.9.9_03</VersionID>
+        <ReleaseDate>02.01.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/efa2/download/efa2_beta.zip</DownloadUrl>
+        <DownloadSize>2749682</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>efaRemote Rechteverwaltung im Client</ChangeItem>
+            <ChangeItem>CLI-Anpassungen für Backup durch efaLive</ChangeItem>
+            <ChangeItem>Bugfixes</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>efaRemote Client-based Access Control</ChangeItem>
+            <ChangeItem>CLI Adapdations for Backup through efaLive</ChangeItem>
+            <ChangeItem>Bugfixes</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>1.9.9_02</VersionID>
+        <ReleaseDate>01.01.2012</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/efa2/download/efa2_beta.zip</DownloadUrl>
+        <DownloadSize>2743002</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Backup-Funktionalität in der GUI erreichbar</ChangeItem>
+            <ChangeItem>Bugfixes</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Backup Functionality available in GUI</ChangeItem>
+            <ChangeItem>Bugfixes</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>1.9.9_01</VersionID>
+        <ReleaseDate>31.12.2011</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/efa2/download/efa2_beta.zip</DownloadUrl>
+        <DownloadSize>2755584</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfixes Remote-Zugriff</ChangeItem>
+        </Changes>
+
+        <Changes lang="en">
+            <ChangeItem>Bugfixes Remote Access</ChangeItem>
+        </Changes>
+    </Version>
+
+</efaOnlineUpdate>

@@ -1,0 +1,358 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>efa - elektronisches Fahrtenbuch Version 2</title>
+</head>
+<body bgcolor="#ffffff">
+
+<h2 align="center">Installation von efa - elektronisches Fahrtenbuch - Version 2</h2>
+
+<p>Dises Dokument beschreibt die Installation von efa sowie den Umstieg von
+Version 1.x auf Version 2.x.</p>
+
+<p style="margin-top:3em"><b>Inhaltsverzeichnis</b></p>
+<ul>
+    <li><a href="#help">Hilfe und Support</a></li>
+    <li><a href="#requirements">Anforderungen der Version 2.x</a></li>
+    <li><a href="#versions">Erläuterung zu den Versionsbezeichnungen</a></li>
+    <li><a href="#install">Installation dieser Version (Version 2.x)</a></li>
+    <li><a href="#start">Starten und Einrichten von efa</a></li>
+    <li><a href="#upgrade"><b style="color:#ff0000">Umstieg von efa Version 1.x auf Version 2.x</b></a></li>
+</ul>
+
+<hr style="margin-top:3em">
+<h3 style="margin-top:3em"><a name="help">Hilfe und Support</a></h3>
+<p>Hilfe und Support bei Installationsproblemen und sonstigen Fragen zu efa
+erhälst Du im Support-Forum unter: <a href="http://forum.nmichael.de">http://forum.nmichael.de</a>.</p>
+
+
+<hr style="margin-top:3em">
+<h3 style="margin-top:3em"><a name="requirements">Anforderungen der Version 2.x</a></h3>
+<ul>
+    <li>Hardware:
+        <ul>
+            <li>Computer mit mindestens 256 MB RAM</li>
+            <li>Bildschirm mit einer Auflösung von mindestens 1024 x 768</li>
+        </ul>
+    </li>
+    <li>Software:
+        <ul>
+            <li><a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html">Java Runtime Environment (JRE) Version 6 oder neuer</a></li>
+        </ul>
+    </li>
+</ul>
+
+
+<hr style="margin-top:3em">
+<h3 style="margin-top:3em"><a name="versions">Erläuterung zu den Versionsbezeichnungen</a></h3>
+
+<table border align="center" cellpadding="5">
+    <tr>
+        <td>&nbsp;</td>
+        <td colspan="5" align="center" bgcolor="#ffaaaa"><big><b>efa Version 1.x</b></big></td>
+        <td colspan="5" align="center" bgcolor="#aaaaff"><big><b>efa Version 2.x</b></big></td>
+    </tr>
+    <tr>
+        <td><b>Versionsbezeichnung:</b></td>
+        <td bgcolor="#ffaaaa">...</td>
+        <td bgcolor="#ffaaaa">1.8.0</td>
+        <td bgcolor="#ffaaaa"><b>1.8.3</b></td>
+        <td bgcolor="#ffcccc">2_dev01</td>
+        <td bgcolor="#ffcccc">2_dev05</td>
+        <td bgcolor="#ccccff">2_beta</td>
+        <td bgcolor="#aaaaff">2.0.0</td>
+        <td bgcolor="#aaaaff"><b>2.0.x</b></td>
+        <td bgcolor="#aaaaff">2.1.0</td>
+        <td bgcolor="#aaaaff">...</td>
+    </tr>
+    <tr>
+        <td><b>interne Versionsnummer:</b></td>
+        <td bgcolor="#ffaaaa">...</td>
+        <td bgcolor="#ffaaaa">1.8.0_xx</td>
+        <td bgcolor="#ffaaaa"><b>1.8.3_xx</b></td>
+        <td bgcolor="#ffcccc">1.9.0_xx</td>
+        <td bgcolor="#ffcccc">1.9.0_xx</td>
+        <td bgcolor="#ccccff">1.9.9_xx</td>
+        <td bgcolor="#aaaaff">2.0.0_xx</td>
+        <td bgcolor="#aaaaff"><b>2.0.x_xx</b></td>
+        <td bgcolor="#aaaaff">2.1.0_xx</td>
+        <td bgcolor="#aaaaff">...</td>
+    </tr>
+    <tr>
+        <td><b>Update-Möglichkeit</b></td>
+        <td colspan="5" align="center" bgcolor="#ffaaaa">innerhalb von Version 1.x:<br>Online-Update oder <i>drüber-installieren</i></td>
+        <td colspan="5" align="center" bgcolor="#aaaaff">innerhalb von Version 2.x:<br>Online-Update oder <i>drüber-installieren</i></td>
+    </tr>
+    <tr>
+        <td><b>Upgrade</b></td>
+        <td colspan="10" align="center" bgcolor="#ffffaa">-------&gt;<br>Umstieg von Version 1.x auf 2.x:<br>siehe Abschnitt <a href="#upgrade">Umstieg von efa Version 1.x auf Version 2.x</a></td>
+    </tr>
+</table>
+
+<p><b>&quot;Version 1.x&quot;</b> bezieht sich auch alle <i>efa1</i>-Versionen bis einschließlich
+    Version 1.8.3, sowie auf die ersten <i>efa2</i>-Vorab-Versionen mit der internen
+Versionsnummer 1.9.0.</p>
+
+<p><b>&quot;Version 2.x&quot;</b> bezieht sich auf die <i>efa2</i>-Vorab-Version efa2_beta (interne
+Versionsnummer 1.9.9) sowie die Version 2.0 und alle Folgeversionen 2.x.</p>
+
+<p>Um die von Dir verwendete efa-Version in Erfahrung zu bringen, klicke bitte in
+    efa auf das efa-Logo oder wähle aus dem Menü <i>Hilfe</i> die Option <i>Info</i>.</p>
+
+
+<hr style="margin-top:3em">
+<h3 style="margin-top:3em"><a name="install">Installation dieser Version (Version 2.x)</a></h3>
+
+<p>Falls Du bereits eine frühere Version von efa (Version 1.x) verwendest, installiere (bzw. entpacke)
+diese Version in ein separates Verzeichnis und folge den Anweisungen im Abschnitt
+<a href="#upgrade">Umstieg von efa Version 1.x auf Version 2.x</a>.</p>
+
+<p>Falls dies eine Erstinstallation von efa ist, installiere (bzw. entpacke) efa
+bitte in ein leeres Verzeichnis und folge dann denn Anweisungen in
+<a href="#start">Starten und Einrichten von efa</a>.</p>
+
+<p>Falls dies ein Update auf eine Version 2.x von efa ist, installiere (bzw. entpacke)
+diese Version bitte in dasselbe Verzeichnis der Installation, die Du aktualisieren
+möchtest. <b>Achtung:</b> Dies gilt nur, wenn die zuvor verwendete Version von efa
+eine Version 2.x ist (interne Versionsnummern 1.9.9, 2.0 oder neuer)!</p>
+
+<h4>Installation mittels Windows-Setup-Programm</h4>
+
+<p>Wenn Du efa als Windows-Setup-Programm heruntergeladen hast, so starte einfach
+das Setup-Programm und folge den Schritten durch die Installation.</p>
+
+<h4>Installation des ZIP-Archivs</h4>
+
+<p>Wenn Du efa als ZIP-Archiv heruntergeladen hast, so erstelle ein neues
+    Verzeichnis für efa (z.B. <tt>c:\programme\efa2</tt> unter Windows oder <tt>/opt/efa2</tt> unter
+Linux) und entpacke den Inhalt des ZIP-Archivs in dieses Verzeichnis.</p>
+
+
+<hr style="margin-top:3em">
+<h3 style="margin-top:3em"><a name="start">Starten und Einrichten von efa</a></h3>
+
+<h4>Starten von efa</h4>
+
+<p>Je nach Einsatzzweck bietet efa zwei verschiedene Versionen (Modi) an, in denen
+    efa betrieben werden kann:</p>
+
+<ol>
+    <li>Die <b>Bootshaus-Version</b> startet mit einer vereinfachten Oberfläche, die für den
+Einsatz im Bootshaus gedacht ist, bei der Vereinsmitglieder ihre Fahrten direkt
+in efa eintragen und sämtliche Administrationsaufgaben nur paßwortgeschützt
+von einem Administrator durchgeführt werden können.</li>
+    <li>Die <b>Basis-Version</b> startet mit einer Administrations-Oberfläche mit vollem
+Zugriff auf alle Daten und ist für den Einsatz eines Bootswarts, Administrators
+oder einer Privatperson gedacht.</li>
+</ol>
+
+<p>Bei Verwendung des Windows-Setup-Programms werden automatisch Einträge zum
+Starten von efa im Windows-Startmenü erzeugt.<p>
+
+<p>Ansonsten kann efa durch folgende Batch-Dateien bzw. Skripte gestartet werden:</p>
+<table border>
+    <tr><td>efaBase.sh</td><td>efa Basis-Version (Linux/UNIX)</td></tr>
+    <tr><td>efaBase.bat</td><td>efa Basis-Version (Windows)</td></tr>
+    <tr><td>efaBths.sh</td><td>efa Bootshaus-Version (Linux/UNIX)</td></tr>
+    <tr><td>efaBths.bat</td><td>efa Bootshaus-Version (Windows)</td></tr>
+    <tr><td>efaCLI.sh</td><td>efa Kommandozeilen-Programm (Linux/UNIX)</td></tr>
+    <tr><td>efaCLI.bat</td><td>efa Kommandozeilen-Programm (Windows)</td></tr>
+</table>
+
+<h4>Startprobleme</h4>
+
+<p>Falls efa mit dem Hinweis <i>Aus Gründen der Sicherheit verweigert efa den Dienst</i>
+nicht mehr starten sollte, so lösche in dem Benutzerverzeichnis Deines Computers
+(unter Windows z.B. <tt>C:\Dokumente &amp; Einstellungen\<i>benutzername</i></tt>,
+unter Linux/UNIX z.B. <tt>/home/<i>benutzername</i></tt>) die Datei mit dem Namen
+<tt>.efa_<i>installationspfad</i></tt>, wobei <i>installationspfad</i> der Ort
+Deiner efa-Installation ist.<br>
+Beispiel: Wenn efa unter Windows im Ordner <tt>C:\Programme\efa2</tt> efa installiert ist,
+dann lösche in <tt>C:\Dokumente &amp; Einstellungen\<i>benutzername</i></tt> die
+Datei <tt>.efa_CProgrammeefa2</tt>.<br>
+Wenn unter Linux im Verzeichnis <tt>/opt/efa2</tt> efa installiert ist, dann lösche
+in <tt>/home/<i>benutzername</i></tt> die Datei <tt>.efa_optefa2</tt>.<br>
+<b>Achtung:</b> Wenn mehrere Versionen von efa installiert sind, kann es mehrere,
+sehr ähnlich lautende Dateien geben. Achte darauf, die richtige zu löschen!</p>
+
+<h4>Einrichten von efa</h4>
+
+<p>In efa 2.x sind alle Daten in einem <i>Projekt</i> organisiert. Üblicherweise wirst Du
+für Deinen Verein genau ein Projekt anlegen, in dem sich alle Daten befinden.</p>
+
+<p>Um mit efa 2.x zu beginnen, lege als erstes im Administrations-Modus in neues Projekt an.
+Falls Du Daten aus Version 1.x importieren möchtest, folge den Anweisungen im Abschnitt
+<a href="#upgrade">Umstieg von efa Version 1.x auf Version 2.x</a>.</p>
+<p>Ansonsten erstelle anschließend ein neues, leeres Fahrtenbuch. Boote, Personen, Ziele und
+    sonstige Daten können entweder manuell erfaßt werden, oder über die jeweiligen Import-Funktionen
+    im Admin-Modus importiert werden. Bei der Reihenfolge des Imports sind dabei unter Umständen gewisse
+    Abhängigkeiten zu beachten (zum Beispiel müssen die Status, die eine Person haben kann, importiert
+    oder angelegt werden, bevor die Personen importiert werden; die Gewässer vor den Zielen usw.).
+    <b>Hinweis:</b> Dieser Import ist <b>nicht</b> für Daten der Version 1.x geeignet!</p>
+<p>Die wichtigsten Schritte zum Einrichten und Konfigurieren von efa sind in
+    <a href="configure_de.html">dieser Anleitung</a> beschrieben.</p>
+
+<hr style="margin-top:3em">
+<h3 style="margin-top:3em"><a name="upgrade">Umstieg von efa Version 1.x auf Version 2.x</a></h3>
+
+<p>Zur Erläuterung der Versionsnummer, siehe Abschnitt <a href="#versions">Erläuterung zu den
+Versionsbezeichnungen</a>.</p>
+
+<h4>Voraussetzungen für den Umstieg von Version 1.x auf Version 2.x</h4>
+
+<p>efa Version 2.x kann nur Daten aus den 1.x-Versionen 1.8.3 sowie 1.9.0 importieren.
+Falls Du eine ältere Version als 1.8.3 benutzt, so aktualisiere diese zuerst auf
+<a href="http://efa.nmichael.de">Version 1.8.3</a>.</p>
+
+<h4><a name="prepare_upgrade">Vorbereitungen in efa Version 1.x vor dem Import der Daten in die Version 2.x</a></h4>
+
+<p>Folgende Schritte sollten in Version 1.x <b>vor dem Datenimport</b> in die
+neue Version durchgeführt werden:</p>
+
+<ol>
+    <li><b>Alle Daten der Version 1.x in efa 1.8.3 (oder 1.9.0) öffnen</b><br>
+Damit alle Daten, auch alte Fahrtenbücher, Mitgliederlisten usw., in das Format
+der Version 1.8.3 (oder 1.9.0) konvertiert werden, müssen sie zumindest einmal
+von efa <i>angefaßt</i> werden. Um dies zu bewerkstelligen, erstelle in efa 1.x eine
+Statistik mit der Option <i>fahrtenbuchübergreifend</i> ohne Einschränkung auf einen
+bestimmten Zeitraum.</li>
+    <li><b>Installationsverzeichnis von efa 1.x dokumentieren</b><br>
+Bitte notiere das Installationsverzeichnis Deiner efa 1.x Installation. Diese
+Information wird beim Datenimport in die Version 2.x abgefragt.</li>
+    <li><b>Bereinigung und Dokumentieren aller Fahrtenbücher, Mitgliederlisten usw.</b><br>
+Für den Import in die Version 2.0 ist es wichtig, daß die Daten in efa 1.x
+fehlerfrei sind.<br>
+Bitte öffne alle Fahrtenbücher, eins nach dem anderen, und prüfe, ob alle
+Fahrtenbücher sowie ihre Boots-, Mitglieder-und Ziellisten vollständig sind.
+Bitte notiere für alle Fahrtenbücher:<br>
+<ul>
+    <li>Name und Speicherort des Fahrtenbuchs</li>
+    <li>Name und Speicherort der Mitglieder-, Boots-, und Zielliste</li>
+    <li>Verknüpfung zur vorherigen und folgenden Fahrtenbuchdatei</li>
+</ul>
+Du findest diese Informationen unter <i>Administration - Fahrtenbuch - Einstellungen
+    zum Fahrtenbuch</i>, bzw. in der Bootshaus-Version im <i>Admin-Modus - Fahrtenbuch-Vollzugriff -
+        Administration - Fahrtenbuch - Einstellungen zum Fahrtenbuch</i>.<br>
+        Durch die Verknüpfung von Fahrtenbüchern über <i>vorheriges Fahrtenbuch</i> und
+        <i>nächstes Fahrtenbuch</i> ergibt sich eine Kette von Fahrtenbüchern, z.B.
+        <i>2009 <-> 2010 <-> 2011</i>. Stelle sicher, daß diese Kette vollständig und korrekt ist,
+        d.h. z.B. wenn das Fahrtenbuch <i>2010</i> als vorheriges Fahrtenbuch auf <i>2009</i> verweist,
+        dann muß auch das Fahrtenbuch <i>2009</i> als nächstes Fahrtenbuch auf <i>2010</i> verweisen usw.<br>
+Falls Du Test-Fahrtenbücher oder unvollständige Fahrtenbücher hast, die
+nicht importiert werden sollen, so notiere deren Namen separat.</li>
+    <li><b>Synonyme in efa 1.x korrigieren oder erstellen</b><br>
+        Damit Daten beim Import in efa 2.x korrekt importiert werden, überprüfe bitte insbesondere im
+        Fall von Kombibooten und Personen, deren Namen sich geändert haben, ob diese in efa 1.x mit
+        entsprechenden Synonymen erfaßt sind. In efa 1.x sind zwei Boote, Personen oder Ziele <i>gleich</i>,
+        wenn ihre Namen (bzw. Vor- und Nachnamen, und im Falle von Booten und Personen Vereinsnamen) gleich
+        sind, oder für die unterschiedlichen Namen ein gemeinsames Synonym existiert.<br>
+        Damit efa 1.x und 2.x erkennen, daß es sich beispielsweise
+        bei den Booten <i>Kombiboot - Skull</i> und <i>Kombiboot - Riemen</i> um dasselbe Boot handelt,
+        sollte in der Synonymliste für Boote ein Eintrag mit Hauptnamen <i>Kombiboot</i> und Synonymen
+        <i>Kombiboot - Skull</i> und <i>Kombiboot - Riemen</i> existieren.<br>
+        Falls sich der Name von
+        <i>Manuela Musterfrau</i> in <i>Manuela Mustermann</i> geändert hat und beide Namen in den
+        Mitgliederlisten vorkommen (z.B. ersterer in der 2010er und letzterer in der 2011er
+        Mitgliederliste), muß in der Synonymliste für Mitglieder ein Eintrag mit Hauptnamen
+        <i>Manuela Mustermann</i> und Synonym <i>Manuela Musterfrau</i> existieren. Nur so wird Manuela
+        als eine Person (und nicht als zwei unterschiedliche Personen) importiert.</li>
+    <li><b>Zeitraum eines Fahrtenbuchs</b><br>
+In efa 1.x passiert es manchmal, daß eine Fahrt mit einem falschen Datum erfaßt wird, etwa 12.3.<b>2021</b>
+anstatt 12.3.<b>2011</b>. Solche Einträge sollten unbedingt vor dem Import korrigiert werden. Am einfachsten
+    findest Du diese fehlerhaften Einträge, indem Du für das Fahrtenbuch <i>ohne</i> die Option <i>fahrtenbuchübergreifend</i>
+    eine Statistik erstellst (ohne Einschränkung auf einen Zeitraum) und bei der Auswertung darauf achtest,
+    in welchem Zeitraum efa Fahrten gefunden hat.</li>
+    <li><b>efa im Boothaus</b><br>
+        Falls Du efa im Bootshaus eingesetzt hast, beende vor dem Import alle noch offnen Fahrten.</li>
+    <li><b>Erstellen von Statistiken</b><br>
+Um später zu Überprüfen, ob die Daten vollständig und korrekt in efa 2.x
+importiert worden, solltest Du jetzt in efa 1.x Statistiken erstellen, und diese
+dann nach dem Import mit entsprechenden Statistiken in efa 2.x vergleichen.</li>
+    <li><b>Datensicherung</b><br>
+efa 2.x verändert oder löscht keine Daten der Version 1.x. Da aber Fehler und
+Fehlbedienungen nie ganz auszuschließen sind, solltest Du jetzt eine Sicherung
+aller Deiner Daten aus efa 1.x erstellen, und diese auf einem separaten Datenträger
+(z.B. USB-Stick) abspeichern.<br>
+Wenn Du alle Daten im <tt>daten</tt>-Verzeichnis gespeichert hast (siehe oben),
+genügt es, dieses Verzeichnis zu sichern.</li>
+</ol>
+
+<h4>efa Version 2.x installieren</h4>
+<p>Installiere oder entpacke efa 2.x in ein neues, leeres Verzeichnis, wie im
+Abschnitt <a href="#install">Installation dieser Version (Version 2.x)</a> beschrieben.</p>
+
+<h4>Vorbereiten von Version 2.x für den Import</h4>
+<p>Wenn in efa 1.x eigene Bezeichnungen für Fahrtarten oder Bootstypen definiert wurden, dann müssen
+    diese Bezeichnungen <b>vor</b> dem Import in efa 2.x eingetragen werden. Bitte gehe in diesem Fall
+    in die efa-Konfiguration, aktiviere den <i>Expertenmodus</i>, und füge in den entsprechenden
+    Rubriken unter <i>Bezeichnungen</i> die von Dir definierten Bezeichnungen durch Klicken auf das
+    Plus-Symbol hinzu. Als Name der Bezeichnung (erscheint in rot auf der linken Seite) muß
+    <b>exakt derselbe</b> Name (in identischer Schreibweise) wie in efa 1.x verwendet werden.</p>
+
+<h4>Import der Daten von Version 1.x in die Version 2.x</h4>
+<p>Nach der Installation, starte efa 2.x bitte wie in Abschnitt <a href="#start">Starten und Einrichten
+von efa</a> beschrieben und erstelle ein neues Projekt. Unmittelbar nach dem Erstellen
+des Projekts erscheint eine Frage, ob Du Daten aus Version 1.x importieren möchtest.
+Wähle diese Option aus.<br>
+<b>Hinweis:</b> Dies ist die einzige Möglichkeit, Daten von Version 1.x in die Version 2.x
+zu importieren. Ein Import zu einem späteren Zeitpunkt ist nicht möglich!</p>
+<p><b style="color:#ff0000">Achtung beim Import von efa1-Daten aus mehreren Bootshäusern oder separaten
+    efa1-Installationen:</b> efa2 erstellt beim Import für jeden Datensatz (Person, Boot, usw.) eine
+    weltweit eindeutige ID. Damit später efa2-Daten zwischen verschiedenen efa2-Installationen (etwa
+    in mehreren Bootshäusern) ausgetauscht werden können, müssen die Daten <b>in einem Schritt in ein
+    einziges Projekt</b> importiert werden. Es müssen also zunächst sämtliche efa1-Daten aus allen
+    efa1-Installationen zusammengeführt werden. Ferner müssen die Mitglieder-, Boots-, und Ziellisten zwischen
+    efa1-Fahrtenbüchern desselben Jahres identisch sein, d.h. alle Mitglieder, Boote und Ziele müssen
+    in allen 2011er Fahrtenbüchern (aller Bootshäuser oder efa1-Installationen) identisch sein, ebenso
+    alle Boote, Ziele usw. Anderenfalls kann es beim Import nach efa2 zu Fehlermeldungen kommen. Anschließend
+    müssen alle efa1-Daten <i>in einem Rutsch</i> in ein einziges efa2-Projekt importiert werden. Dieses
+    efa2-Projekt kann dann in verschiedenen efa2-Installationen (z.B. in mehreren Bootshäusern) verwendet
+    werden.</p>
+
+<p>Im ersten Dialog des Datenimports, wähle den Ort Deiner efa 1.x-Installation aus, den Du
+zuvor notiert hast.</p>
+
+<p>efa durchsucht die ausgewählte efa 1.x-Installation nach Daten und bietet Dir
+eine Auswahl an zu importierenden Daten. Selektiere hier alle Daten, die Du importieren
+möchtest (normalerweise alle), und vergib für die Fahrtenbücher einen Namen sowie einen Zeitraum.<br>
+<b>Achtung</b>: In efa2 können Fahrtenbücher nur Fahrten aus dem konfiguierten Zeitraum
+aufnehmen. Alle Fahrten, die importiert werden sollen, müssen in dem hier angegebenen Zeitraum
+liegen (siehe Schritt <a href="#prepare_upgrade">Vorbereitungen</a>).</p>
+
+<p>Beim Import wird eine Logdatei erstellt, in der Warnungen und Fehler verzeichnet werden. Falls
+viele Fehler auftreten, lösche das Projekt wieder, versuche diese in efa 1.x zu korrigieren, und
+importiere die Daten erneut. Falls einige wenige Fehler auftreten, können diese auch direkt in efa
+2.x manuell korrigiert werden. Hilfe bei Fragen und Problemen erhälst Du im
+<a href="http://forum.nmichael.de">Support-Forum</a>.</p>
+
+<p>Nach erfolgtem Import, prüfe die Daten gründlich (z.B. durch das Vergleichen von Statistiken mit
+denen aus Version 1.x), und beginne den Produktiveinsatz von efa 2.x erst, wenn Du sicher bist, daß
+alle Daten korrekt importiert wurden und efa 2.x ordnungsgemäß damit arbeitet.</p>
+
+<p>Limitierungen des Imports:</p>
+<ul>
+    <li>nicht importiert werden:
+        <ul>
+            <li>Konfiguration, Administratoren, Bezeichnungen</li>
+            <li>Nachrichten und Logdateien</li>
+            <li>Statistikeinstellungen</li>
+        </ul>
+    </li>
+    <li>nicht korrekt importiert werden:
+        <ul>
+            <li>Bootsstatus für Boote auf Fahrt (daher Fahrten vorher beenden!)</li>
+            <li>Gewässer für Mehrtagesfahrten (gehen verloren)</li>
+        </ul>
+    </li>
+    <li>Daten sollten gründlich geprüft werden insbesondere bei Verwendung von:
+        <ul>
+            <li>Synonymen</li>
+            <li>Kombibooten</li>
+        </ul>
+    </li>
+    <li>Häufige Ursache von Versionskonflikten beim Import sind mehrere Fahrtenbücher mit demselben
+    Datum als Gültigkeitsbeginn</li>
+</ul>
+
+</body>
+</html>

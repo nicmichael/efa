@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/efa~efa-src/!svn/ver/109/src/de/nmichael/efa/files
+END
+plugins.xml
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/efa~efa-src/!svn/ver/142/src/de/nmichael/efa/files/plugins.xml
+END
+efa-html-styles.css
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/efa~efa-src/!svn/ver/110/src/de/nmichael/efa/files/efa-html-styles.css
+END
+efa-pdf-styles.xsl
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/efa~efa-src/!svn/ver/134/src/de/nmichael/efa/files/efa-pdf-styles.xsl
+END

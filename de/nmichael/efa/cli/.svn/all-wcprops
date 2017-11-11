@@ -1,0 +1,131 @@
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/efa~efa-src/!svn/ver/93/src/de/nmichael/efa/cli
+END
+MenuBase.java
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/efa~efa-src/!svn/ver/112/src/de/nmichael/efa/cli/MenuBase.java
+END
+MenuCommand.java
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/efa~efa-src/!svn/ver/114/src/de/nmichael/efa/cli/MenuCommand.java
+END
+MenuMessages.java
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/efa~efa-src/!svn/ver/112/src/de/nmichael/efa/cli/MenuMessages.java
+END
+MenuData.java
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/efa~efa-src/!svn/ver/144/src/de/nmichael/efa/cli/MenuData.java
+END
+MenuSyncEfb.java
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/efa~efa-src/!svn/ver/116/src/de/nmichael/efa/cli/MenuSyncEfb.java
+END
+MenuBoatReservations.java
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/efa~efa-src/!svn/ver/112/src/de/nmichael/efa/cli/MenuBoatReservations.java
+END
+MenuBoatDamages.java
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/efa~efa-src/!svn/ver/112/src/de/nmichael/efa/cli/MenuBoatDamages.java
+END
+MenuDestinations.java
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/efa~efa-src/!svn/ver/112/src/de/nmichael/efa/cli/MenuDestinations.java
+END
+MenuStatistics.java
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/efa~efa-src/!svn/ver/112/src/de/nmichael/efa/cli/MenuStatistics.java
+END
+MenuBackup.java
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/efa~efa-src/!svn/ver/113/src/de/nmichael/efa/cli/MenuBackup.java
+END
+CLI.java
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/efa~efa-src/!svn/ver/131/src/de/nmichael/efa/cli/CLI.java
+END
+MenuPersons.java
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/efa~efa-src/!svn/ver/112/src/de/nmichael/efa/cli/MenuPersons.java
+END
+MenuWaters.java
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/efa~efa-src/!svn/ver/112/src/de/nmichael/efa/cli/MenuWaters.java
+END
+Main.java
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/efa~efa-src/!svn/ver/144/src/de/nmichael/efa/cli/Main.java
+END
+MenuMain.java
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/efa~efa-src/!svn/ver/116/src/de/nmichael/efa/cli/MenuMain.java
+END
+MenuBoats.java
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/efa~efa-src/!svn/ver/112/src/de/nmichael/efa/cli/MenuBoats.java
+END
+MenuGroups.java
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/efa~efa-src/!svn/ver/112/src/de/nmichael/efa/cli/MenuGroups.java
+END
+MenuCrews.java
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/efa~efa-src/!svn/ver/112/src/de/nmichael/efa/cli/MenuCrews.java
+END
+MenuFahrtenabzeichen.java
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/efa~efa-src/!svn/ver/112/src/de/nmichael/efa/cli/MenuFahrtenabzeichen.java
+END
+MenuStatus.java
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/efa~efa-src/!svn/ver/112/src/de/nmichael/efa/cli/MenuStatus.java
+END
+MenuBoatStatus.java
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/efa~efa-src/!svn/ver/112/src/de/nmichael/efa/cli/MenuBoatStatus.java
+END

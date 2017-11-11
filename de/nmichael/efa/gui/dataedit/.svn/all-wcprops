@@ -1,0 +1,269 @@
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/efa~efa-src/!svn/ver/98/src/de/nmichael/efa/gui/dataedit
+END
+UnversionizedDataEditDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/svn/efa~efa-src/!svn/ver/111/src/de/nmichael/efa/gui/dataedit/UnversionizedDataEditDialog.java
+END
+StatisticsListDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/efa~efa-src/!svn/ver/92/src/de/nmichael/efa/gui/dataedit/StatisticsListDialog.java
+END
+CrewListDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/efa~efa-src/!svn/ver/84/src/de/nmichael/efa/gui/dataedit/CrewListDialog.java
+END
+BoatListDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/efa~efa-src/!svn/ver/116/src/de/nmichael/efa/gui/dataedit/BoatListDialog.java
+END
+FahrtenabzeichenEditDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/svn/efa~efa-src/!svn/ver/103/src/de/nmichael/efa/gui/dataedit/FahrtenabzeichenEditDialog.java
+END
+BoatStatusEditDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/efa~efa-src/!svn/ver/84/src/de/nmichael/efa/gui/dataedit/BoatStatusEditDialog.java
+END
+WatersListDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/efa~efa-src/!svn/ver/111/src/de/nmichael/efa/gui/dataedit/WatersListDialog.java
+END
+DestinationEditDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/efa~efa-src/!svn/ver/84/src/de/nmichael/efa/gui/dataedit/DestinationEditDialog.java
+END
+ClubworkItemTypeDataRecordTable.java
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svn/efa~efa-src/!svn/ver/139/src/de/nmichael/efa/gui/dataedit/ClubworkItemTypeDataRecordTable.java
+END
+PersonListDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/efa~efa-src/!svn/ver/116/src/de/nmichael/efa/gui/dataedit/PersonListDialog.java
+END
+StatusListDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/efa~efa-src/!svn/ver/84/src/de/nmichael/efa/gui/dataedit/StatusListDialog.java
+END
+AdminListDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/efa~efa-src/!svn/ver/90/src/de/nmichael/efa/gui/dataedit/AdminListDialog.java
+END
+BoatDamageListDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/efa~efa-src/!svn/ver/114/src/de/nmichael/efa/gui/dataedit/BoatDamageListDialog.java
+END
+StatisticsEditDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/efa~efa-src/!svn/ver/109/src/de/nmichael/efa/gui/dataedit/StatisticsEditDialog.java
+END
+CrewEditDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/efa~efa-src/!svn/ver/84/src/de/nmichael/efa/gui/dataedit/CrewEditDialog.java
+END
+BoatEditDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/efa~efa-src/!svn/ver/89/src/de/nmichael/efa/gui/dataedit/BoatEditDialog.java
+END
+VersionizedDataCreateVersionDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/efa~efa-src/!svn/ver/112/src/de/nmichael/efa/gui/dataedit/VersionizedDataCreateVersionDialog.java
+END
+BoatReservationListDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svn/efa~efa-src/!svn/ver/132/src/de/nmichael/efa/gui/dataedit/BoatReservationListDialog.java
+END
+DataListDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/efa~efa-src/!svn/ver/134/src/de/nmichael/efa/gui/dataedit/DataListDialog.java
+END
+SessionGroupListDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/efa~efa-src/!svn/ver/111/src/de/nmichael/efa/gui/dataedit/SessionGroupListDialog.java
+END
+WatersEditDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/efa~efa-src/!svn/ver/84/src/de/nmichael/efa/gui/dataedit/WatersEditDialog.java
+END
+MessageListDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svn/efa~efa-src/!svn/ver/124/src/de/nmichael/efa/gui/dataedit/MessageListDialog.java
+END
+ClubworkListDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/efa~efa-src/!svn/ver/139/src/de/nmichael/efa/gui/dataedit/ClubworkListDialog.java
+END
+BatchEditDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/efa~efa-src/!svn/ver/111/src/de/nmichael/efa/gui/dataedit/BatchEditDialog.java
+END
+ProjectEditDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svn/efa~efa-src/!svn/ver/125/src/de/nmichael/efa/gui/dataedit/ProjectEditDialog.java
+END
+PersonEditDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/efa~efa-src/!svn/ver/106/src/de/nmichael/efa/gui/dataedit/PersonEditDialog.java
+END
+GroupListDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/efa~efa-src/!svn/ver/84/src/de/nmichael/efa/gui/dataedit/GroupListDialog.java
+END
+VersionizedDataDeleteDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/svn/efa~efa-src/!svn/ver/113/src/de/nmichael/efa/gui/dataedit/VersionizedDataDeleteDialog.java
+END
+StatusEditDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/efa~efa-src/!svn/ver/84/src/de/nmichael/efa/gui/dataedit/StatusEditDialog.java
+END
+VersionizedDataEditDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svn/efa~efa-src/!svn/ver/111/src/de/nmichael/efa/gui/dataedit/VersionizedDataEditDialog.java
+END
+AdminEditDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/efa~efa-src/!svn/ver/89/src/de/nmichael/efa/gui/dataedit/AdminEditDialog.java
+END
+BoatDamageEditDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/efa~efa-src/!svn/ver/120/src/de/nmichael/efa/gui/dataedit/BoatDamageEditDialog.java
+END
+FixLogbookDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/efa~efa-src/!svn/ver/116/src/de/nmichael/efa/gui/dataedit/FixLogbookDialog.java
+END
+BoatReservationEditDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svn/efa~efa-src/!svn/ver/106/src/de/nmichael/efa/gui/dataedit/BoatReservationEditDialog.java
+END
+DataEditDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/efa~efa-src/!svn/ver/105/src/de/nmichael/efa/gui/dataedit/DataEditDialog.java
+END
+VersionizedDataChangeValidityDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/efa~efa-src/!svn/ver/90/src/de/nmichael/efa/gui/dataedit/VersionizedDataChangeValidityDialog.java
+END
+SessionGroupEditDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/efa~efa-src/!svn/ver/84/src/de/nmichael/efa/gui/dataedit/SessionGroupEditDialog.java
+END
+FahrtenabzeichenListDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svn/efa~efa-src/!svn/ver/90/src/de/nmichael/efa/gui/dataedit/FahrtenabzeichenListDialog.java
+END
+MessageEditDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svn/efa~efa-src/!svn/ver/120/src/de/nmichael/efa/gui/dataedit/MessageEditDialog.java
+END
+ClubworkEditDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/efa~efa-src/!svn/ver/124/src/de/nmichael/efa/gui/dataedit/ClubworkEditDialog.java
+END
+BoatStatusListDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/efa~efa-src/!svn/ver/92/src/de/nmichael/efa/gui/dataedit/BoatStatusListDialog.java
+END
+DestinationListDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/efa~efa-src/!svn/ver/116/src/de/nmichael/efa/gui/dataedit/DestinationListDialog.java
+END
+LogbookListDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svn/efa~efa-src/!svn/ver/112/src/de/nmichael/efa/gui/dataedit/LogbookListDialog.java
+END
+GroupEditDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/efa~efa-src/!svn/ver/84/src/de/nmichael/efa/gui/dataedit/GroupEditDialog.java
+END

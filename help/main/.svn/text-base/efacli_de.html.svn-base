@@ -1,0 +1,203 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>efa - elektronisches Fahrtenbuch Version 2</title>
+</head>
+<body bgcolor="#ffffff">
+
+<h2 align="center">efaCLI - Kommandoschnittstelle</h2>
+
+<p>efaCLI ist eine kommandozeilen-basierte Schnittstelle von efa, über die sich häufige Aufgaben
+automatisieren lassen, wie z.B. das Erstellen von Backups oder Statistiken. Die von efaCLI unterstützten
+Kommandos können auch in der efa-Konfiguration zur Ausführung von automatischen Abläufen (cron jobs)
+verwendet werden.</p>
+
+<h3 align="center">Aufruf von efaCLI</h3>
+
+<p>Syntax: <tt>efaCLI [username[:password]@][host[:port]][/project] [-cmd command]</tt></p>
+
+<p>efaCLI greift nicht selbst auf lokal gespeicherte Daten zu, sondern verbindet sich an efa-Bootshaus
+   und bezieht seine Daten von dort. Damit efaCLI funktioniert, muß efa-Bootshaus zeitgleich auf
+   demselben oder einem anderen Computer laufen.</p>
+<p>Für den Zugriff auf efa-Bootshaus benötigt efaCLI den Benutzernamen und Paßwort eines Administrators,
+   der die Berechtigung <i>Remote-Zugriff über efaRemote</i> hat. Wenn kein Administrator explizit
+   angegeben wird, verwendet efaCLI den Admin <i>admin</i>. Wird kein Paßwort beim Aufruf angegeben,
+   so erfolgt die Abfrage interaktiv. Zur besseren Sicherheit sollte anstelle der Angabe des Paßworts auf
+   der Kommandozeile wie <a href="http://forum.nmichael.de/viewtopic.php?f=24&t=298">hier</a>
+   beschrieben eine Datei <i>.efacred</i> im Heimatverzeichnis des Betriebssystem-Benutzers angelegt
+   werden, welche Admin-Namen und Paßwort in einer Zeile enthält, z.B. <tt>admin geheim</tt>.</p>
+<p>Desweiteren benötigt efaCLI den Hostnamen (oder die IP-Adresse) und Port des Computers, auf dem
+   efa-Bootshaus läuft. Fehlt diese Angabe, versucht efaCLI sich an den lokalen Computer an Port 3834 zu
+   verbinden.</p>
+<p>Die dritte erforderliche Angabe ist der Name des Projekts, auf welches efaCLI zugreifen soll. Dieses
+   muß in efa-Bootshaus geöffnet sein. Nach dem ersten erfolgreichen Aufruf von efaCLI merkt sich efaCLI
+   das zuletzt geöffnete Projekt, und verwendet dieses beim nächsten Start erneut.</p>
+<p>Ein beispielhafter Aufruf von efaCLI unter Windows könnte folgendermaßen aussehen:<br>
+   <tt>efaCLI.bat admin@localhost/meinprojekt</tt><br>
+   Unter Linux hat der entsprechende Aufruf die Form:<br>
+   <tt>./efaCLI.sh admin@localhost/meinprojekt</tt></p>
+<p>Ohne Angabe eines Kommandos startet efaCLI eine interaktive Shell, in der Kommandos eingegeben werden
+   können. efaCLI hat mehrere Menüebenen, die durch den Eingabeprompt angezeigt werden. Das Kommando
+   <i>help</i> zeigt eine Hilfe für das aktuelle Menü. Mit <i>exit</i> wird das Menü verlassen, und
+   <i>quit</i> beendet efaCLI:<br>
+   <tt>./efaCLI.sh admin@localhost/meinprojekt<br>
+INPUT   - CLI003 - efaCLI:main> help<br>
+INFO    - CLI001 - Help for Menu: main<br>
+INFO    - CLI001 - ==========================================================================<br>
+INFO    - CLI001 - boats                                            boat administration<br>
+INFO    - CLI001 - persons                                          person administration<br>
+INFO    - CLI001 - destinations                                     destination administration<br>
+...<br>
+INPUT   - CLI003 - efaCLI:main> boats<br>
+INPUT   - CLI003 - efaCLI:boats> help<br>
+INFO    - CLI001 - Help for Menu: boats<br>
+INFO    - CLI001 - ==========================================================================<br>
+INFO    - CLI001 - list         [all|invisible|deleted]             list boats<br>
+INFO    - CLI001 - show         [name|index]                        show record<br>
+...<br>
+INPUT   - CLI003 - efaCLI:boats> exit<br>
+INPUT   - CLI003 - efaCLI:main> quit
+</tt></p>
+
+<p>Zur Automatisierung von Aufgaben ist eine interaktive Benutzung von efaCLI nicht sinnvoll. Stattdessen
+sollte efaCLI mit einem Kommando gestartet werden. Wenn das Paßwort wie beschrieben in einer Datei
+hinterlegt ist, führt efaCLI so beim Aufruf das Kommando aus und beendet sich anschließend wieder. Das
+auszuführende Kommando wird mittels <tt>-cmd <i>command</i></tt> an efaCLI übergeben. <i>command</i> muß
+von der Shell als ein einzelner Parameter an efaCLI übergeben werden und daher im Falle von Leerzeichen
+durch Kochkomma eingeschlossen sein.</p>
+<p>Um beispielsweise ein Backup aller Daten zu erstellen, kann efaCLI wie folgt aufgerufen werden:<br>
+    <tt>./efaCLI.sh admin@localhost/meinprojekt -cmd "backup create all"</tt><br>
+Eine Statistik zu einer abgespeicherten Statistikeinstellung <i>Kilometerliste (HTML)</i> kann folgendermaßen
+in efaCLI aufgerufen werden:<br>
+    <tt>./efaCLI.sh admin@localhost/meinprojekt -cmd "statistics create Kilometerliste (HTML)"</tt>
+</p>
+
+<h3 align="center">Verwendung von Kommandos für automatische Abläufe (crontab)</h3>
+
+<p>efa v2.1 führt einen neuen Mechanismus ein, mit dem sich direkt aus efa-Bootshaus heraus beliebige
+Aufgaben zu konfigurierten Zeiten automatisieren lassen. In der Konfiguration unter <i>efa-Bootshaus -
+    Automatische Abläufe</i> können sich beliebige Abläuft (<i>Tasks</i>) konfigurieren lassen.</p>
+
+<p>Die Felder <i>Minute</i>, <i>Stunde</i>, <i>Tag</i>, <i>Monat</i>, <i>Wochentag</i> legen fest, wann das Kommando
+ausgeführt werden soll. Damit ein Kommando zu einem bestimmten Zeitpunkt ausgeführt wird, müssen die
+Werte in allen fünf Feldern auf den derzeitigen Zeitpunkt zutreffen. Einzelne Werte können durch Komma
+getrennt werden, und Bereiche durch Bindestriche definiert werden. Ein <i>*</i> steht für alle möglichen
+Werte.</p>
+
+<p>Um beispielsweise ein Kommando zu jeder vollen Stunde auszuführen, müssen folgende Werte eingetragen
+werden: Minute=0 (nur zur Minute 0), Stunde=* (jede Stunde), Tag=* (jeden Tag), Monat=* (jeden Monat),
+Wochentag=* (jeden Wochentag).<br>
+Einmal wöchentlich am Sonntag um 23:00 wird ein Kommando ausgeführt, wenn die Werte Minute=0,
+Stunde=23, Tag=*, Monat=*, Wochentag=7 (1 ist Montag, 2 ist Dienstag, ..., 7 ist Sonntag) eingetragen
+werden.<br>
+Um ein Kommando viermal stündlich zwischen 8 und 20 Uhr auszuführen, können die Werte Minute=0,15,30,45,
+Stunde=8-20, Tag=*, Monat=*, Wochentag=* eingetragen werden.</p>
+
+<p>Das auszuführende Kommando kann ein beliebiges von efaCLI unterstütztes Kommando sein, etwa
+    <tt>backup create all</tt> zum Erstellen eines Backups, oder <tt>statistics create Kilometerliste (HTML)</tt>
+    zum Erstellen einer Kilometerliste. Beachte hierbei, daß zusätzliche Anführungszeichen hier <i>nicht</i>
+    erforderlich sind.</p>
+
+<p>Konfigurierte Kommandos werden selbstverständlich nur dann ausgeführt, wenn efa-Bootshaus zu dem
+angegebenen Zeipunkt auch tatsächlich läuft. Wenn beispielsweise ein Kommando für 10:00 Uhr konfiguriert
+ist, aber efa erst um 10:03 gestartet wird, dann wird dieses Kommando <i>nicht</i> ausgeführt.</p>
+
+<p>Die Ausführung von Kommandos wird in der Lodatei protokolliert.</p>
+
+<h3 align="center">Kommandoübersicht</h3>
+
+<h4 align="center">Anzeigen und Bearbeiten von Daten</h4>
+
+<p>Folgende Kommandos erlauben Zugriff auf die jeweiligen Daten:</p>
+
+<table align="center" border>
+    <tr><th>Kommando</th><th>Daten</th></tr>
+    <tr><td>boats</td><td>Boote</td></tr>
+    <tr><td>persons</td><td>Personen</td></tr>
+    <tr><td>destinations</td><td>Ziele</td></tr>
+    <tr><td>damages</td><td>Bootsschäden</td></tr>
+    <tr><td>reservations</td><td>Bootsreservierungen</td></tr>
+    <tr><td>boatstatus</td><td>Bootsstatus</td></tr>
+    <tr><td>crews</td><td>Mannschaften</td></tr>
+    <tr><td>groups</td><td>Gruppen</td></tr>
+    <tr><td>status</td><td>Status</td></tr>
+    <tr><td>waters</td><td>Gewässer</td></tr>
+    <tr><td>fahrtenabzeichen</td><td>Fahrtenabzeichen</td></tr>
+    <tr><td>messages</td><td>Nachrichten</td></tr>
+    <tr><td>statistics</td><td>Statistikeinstellungen</td></tr>
+</table>
+
+<p>Die oben genannten Kommandos unterstützen folgende Unterkommandos und Optionen:</p>
+
+<table align="center" border>
+    <tr><th>Unterkommando</th><th>Optionen</th><th>Beschreibung</th></tr>
+    <tr><td>list</td><td>[all|invisible|deleted]</td><td>Datensätze auflisten (wahlweise alle Datensätze, unsichtbare, oder gelöschte)</td></tr>
+    <tr><td>show</td><td>[name|index]</td><td>Einen bestimmten Datensatz anzeigen, identifiziert durch seinen Namen (wie von <i>list</i> ausgegeben, oder einen Index (nach vorherigem Aufruf von <i>list</i>)</td></tr>
+    <tr><td>export</td><td>[-format=xml|csv] &lt;filename&gt;</td><td>Alle Datensätze in eine Datei namens <i>filename</i> exportieren, wahlweise im XML- oder CSV-Format</td></tr>
+    <tr><td>import</td><td>[-encoding=ENCODING] [-csvsep=X] [-csvquote=X] [-impmode=add|update|addupdate] [-updversion=update|new] [-entryno=dupskip|dupadd|alwaysadd] &lt;filename&gt;</td><td>Datensätze aus einer Datei <i>filename</i> importieren. Die weiteren Optionen spezifizieren den Zeichensatz der zu importierenden Datei (encoding, entweder UTF-8 oder ISO-8859-1), den Feldtrenner (csvsep) und Texttrenner (csvquote) für CSV-Imports, den Import-Modus (impmode - hinzufügen und/oder aktualisieren), das Verhalten beim Update von bestehenden versionierten Datensätzen (updversion - neue Version erstellen oder vorhandene aktualisieren), sowie das Verhalten beim Import von Fahrtenbucheinträgen (entryno - doppelte Einträge nicht importieren, doppelte Einträge mit neuer LfdNr hinzufügen oder alle Einträge mit neuer LfdNr hinzufügen)</td></tr>
+</table>
+
+<p>Beispiele:<br>
+Um eine Personenliste im CSV-Format in die Datei <i>/tmp/personen.csv</i> zu exportieren:<br>
+<tt>persons export -format=csv /tmp/personen.csv</tt><br>
+Um eine Bootsliste aus der Datei <i>/tmp/boote.xml</i> zu importieren und nur Einträge zu aktualisieren:<br>
+<tt>boats import -impmode=update /tmp/boote.xml</tt></p>
+
+<h4 align="center">Statistiken erstellen</h4>
+
+<p>Statistiken werden über das Kommando <tt>statistics create</tt> erstellt:</p>
+
+<table align="center" border>
+    <tr><th>Kommando</th><th>Unterkommando</th><th>Optionen</th><th>Beschreibung</th></tr>
+    <tr><td>statistics</td><td>create</td><td>[-all|-status=name|-name=name] [name|index]</td><td>Statistik mit Name <i>name</i> erstellen (Name wie vom <tt>list</tt> Kommando ausgegeben). Statt eines Namens kann auch der Index der Statistik, wie zuvor vom <tt>list</tt> Kommando ausgegeben, angegeben werden. Für Individuelle Statistiken kann zusätzlich spezifiziert werden, ob diese für alle Personen/Boote (<tt>-all</tt>), nur für Personen mit Status <i>name</i> (<tt>-status=name</tt>), oder nur für eine einzelne Person/ein einzelnes Boot mit Namen <i>name</i> (<tt>-name=name</tt>) erzeugt werden sollen.</td></tr>
+</table>
+
+<p>Hinweis: Die Kommandos erlauben nur das Erstellen von Statistiken, die in Dateien ausgegeben,
+per email versand oder per FTP hochgeladen werden. Interaktive Statistiken (zur graphischen Anzeige)
+lassen sich über diese Kommandos nicht erstellen.</p>
+
+<p>Beispiele:<br>
+Um eine Kilometerliste zu erstellen, die unter dem Namen <i>Kilometerliste</i> als Statistikeinstellung abgespeichert wurde:<br>
+<tt>statistics create Kilometerliste</tt><br>
+Um ein individuelles Fahrtenbuch für <i>Manfred Mustermann</i> zu erstellen, unter Verwendung der zuvor erzeugten Statistikeinstellung <i>Individuelles Fahrtenbuch</i>:<br>
+<tt>statistics create -name=Mustermann,_Manfred Individuelles Fahrtenbuch</tt> (beachte den Unterstrich!)<br>
+Um ein individuelles Fahrtenbuch für alle Personen zu erstellen, unter Verwendung der zuvor erzeugten Statistikeinstellung <i>Individuelles Fahrtenbuch</i>:<br>
+<tt>statistics create -all Individuelles Fahrtenbuch</tt> (hierbei wird für jede Person eine separate Datei erstellt bzw. separate email verschickt)</p>
+
+<h4 align="center">Datensicherungen erstellen und wiederherstellen</h4>
+
+<p>Datensicherungen werden über das Kommando <tt>backup</tt> erstellt:</p>
+
+<table align="center" border>
+    <tr><th>Kommando</th><th>Unterkommando</th><th>Optionen</th><th>Beschreibung</th></tr>
+    <tr><td>backup</td><td>create</td><td>[project|config|all] [directory/file]</td><td>Erstellt ein Backup des aktuell geöffneten Projekts (<tt>project</tt>), der Konfiguration ((<tt>config</tt>), oder von Projekt und Konfiguration (<tt>all</tt>). Ohne Angabe eines Dateinamens erstellt efa ein Backup im Backup-Verzeichnis. Werden Verzeichnis- und/oder Dateiname angegeben, so verwendet efa diese. Um das Backup als email zu verschicken, kann anstelle einer Datei eine email-Adresse in der Form <tt>mailto:<i>name@domain.com</i> angegeben werden.</tt></td></tr>
+    <tr><td>backup</td><td>restore</td><td>&lt;zipfile&gt; [objects...]</td><td>Stellt aus einer Sicherungsdatei <i>zipfile</i> alle oder einzelne ausgewählte Objekte wieder her.</td></tr>
+    <tr><td>backup</td><td>show</td><td>&lt;zipfile&gt;</td><td>Zeigt den Inhalt der Sicherungsdatei <i>zipfile</i> an.</td></tr>
+</table>
+
+<p>Beispiele:<br>
+Um ein Backup des aktuellen Projekts und der Konfiguration zu erstellen:<br>
+<tt>backup create all</tt><br>
+Um ein Backup des aktuellen Projekts an die email-Adresse name@domain.com zu verschicken:<br>
+<tt>backup create project mailto:name@domain.com</tt><br>
+Um eine komplette Sicherung aus der Datei efaBackup_20130513_223131.zip wiederherzustellen:<br>
+<tt>backup restore efaBackup_20130513_223131.zip</tt><br>
+Um nur das 2013er Fahrtenbuch (mit dem Namen <i>2013</i>) einer Sicherung aus der Datei efaBackup_20130513_223131.zip wiederherzustellen:<br>
+<tt>backup restore efaBackup_20130513_223131.zip 2013.efa2logbook</tt></p>
+
+<h4 align="center">Externe Kommandos ausführen</h4>
+
+<p>Aus efa heraus können mittels des CLI-Kommandos <tt>command</tt> externe Kommandos ausgeführt werden.</p>
+
+<table align="center" border>
+    <tr><th>Kommando</th><th>Unterkommando</th><th>Optionen</th><th>Beschreibung</th></tr>
+    <tr><td>command</td><td>run</td><td>[options...] [>file]</td><td>Startet ein externes Kommando <i>command</i> mit den Optionen <i>options</i>. Mittels <tt>&gt;file</tt> kann die Ausgabe in eine Datei umgelenkt werden. Hinweis: Das Kommando wird im Hintergrund gestartet. efa wartet nicht auf die Beendigung des Kommandos.</td></tr>
+</table>
+
+<p>Beispiele:<br>
+Um xclock aufzurufen:<br>
+<tt>command run /usr/bin/xclock</tt>
+</p>
+
+</body>
+</html>

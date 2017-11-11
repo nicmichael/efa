@@ -1,0 +1,77 @@
+K 25
+svn:wc:ra_dav:version-url
+V 38
+/svn/efa~efa-src/!svn/ver/90/src/tools
+END
+HelpGenerator.java
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/efa~efa-src/!svn/ver/59/src/tools/HelpGenerator.java
+END
+Unixlf2doslf.java
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/efa~efa-src/!svn/ver/89/src/tools/Unixlf2doslf.java
+END
+TourGenerator.java
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/efa~efa-src/!svn/ver/59/src/tools/TourGenerator.java
+END
+make_i18n_keys.sh
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/efa~efa-src/!svn/ver/34/src/tools/make_i18n_keys.sh
+END
+make_i18n_keys.pl
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/efa~efa-src/!svn/ver/90/src/tools/make_i18n_keys.pl
+END
+propsRemoveGerman.pl
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/efa~efa-src/!svn/ver/34/src/tools/propsRemoveGerman.pl
+END
+DecodeBase64.java
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/efa~efa-src/!svn/ver/59/src/tools/DecodeBase64.java
+END
+propsReplaceGermanByEnglish.pl
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/efa~efa-src/!svn/ver/87/src/tools/propsReplaceGermanByEnglish.pl
+END
+SecFileCreator.java
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/efa~efa-src/!svn/ver/88/src/tools/SecFileCreator.java
+END
+isotxt2props.pl
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/efa~efa-src/!svn/ver/54/src/tools/isotxt2props.pl
+END
+props2csv.pl
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/efa~efa-src/!svn/ver/37/src/tools/props2csv.pl
+END
+find_i18n_status.pl
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/efa~efa-src/!svn/ver/33/src/tools/find_i18n_status.pl
+END

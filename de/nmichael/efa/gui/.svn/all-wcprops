@@ -1,0 +1,239 @@
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/efa~efa-src/!svn/ver/98/src/de/nmichael/efa/gui
+END
+AccessStatisticsDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/efa~efa-src/!svn/ver/113/src/de/nmichael/efa/gui/AccessStatisticsDialog.java
+END
+SearchLogbookDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/efa~efa-src/!svn/ver/111/src/de/nmichael/efa/gui/SearchLogbookDialog.java
+END
+NewDialogTemplate.txt
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/efa~efa-src/!svn/ver/68/src/de/nmichael/efa/gui/NewDialogTemplate.txt
+END
+EfaConfigDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/efa~efa-src/!svn/ver/90/src/de/nmichael/efa/gui/EfaConfigDialog.java
+END
+BackupDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/efa~efa-src/!svn/ver/115/src/de/nmichael/efa/gui/BackupDialog.java
+END
+DataPrintListDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/efa~efa-src/!svn/ver/100/src/de/nmichael/efa/gui/DataPrintListDialog.java
+END
+DownloadMultipleFilesDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/efa~efa-src/!svn/ver/109/src/de/nmichael/efa/gui/DownloadMultipleFilesDialog.java
+END
+DataExportDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/efa~efa-src/!svn/ver/116/src/de/nmichael/efa/gui/DataExportDialog.java
+END
+OnlineUpdateDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svn/efa~efa-src/!svn/ver/143/src/de/nmichael/efa/gui/OnlineUpdateDialog.java
+END
+OpenProjectOrLogbookDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svn/efa~efa-src/!svn/ver/124/src/de/nmichael/efa/gui/OpenProjectOrLogbookDialog.java
+END
+NewProjectDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/efa~efa-src/!svn/ver/113/src/de/nmichael/efa/gui/NewProjectDialog.java
+END
+SimpleInputDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/efa~efa-src/!svn/ver/134/src/de/nmichael/efa/gui/SimpleInputDialog.java
+END
+BaseFrame.java
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/efa~efa-src/!svn/ver/120/src/de/nmichael/efa/gui/BaseFrame.java
+END
+EfaBaseFrame.java
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/efa~efa-src/!svn/ver/144/src/de/nmichael/efa/gui/EfaBaseFrame.java
+END
+EnterPasswordDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/efa~efa-src/!svn/ver/104/src/de/nmichael/efa/gui/EnterPasswordDialog.java
+END
+BaseDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/efa~efa-src/!svn/ver/139/src/de/nmichael/efa/gui/BaseDialog.java
+END
+MultiInputDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/efa~efa-src/!svn/ver/90/src/de/nmichael/efa/gui/MultiInputDialog.java
+END
+ShowLogbookDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/efa~efa-src/!svn/ver/121/src/de/nmichael/efa/gui/ShowLogbookDialog.java
+END
+StepwiseDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/efa~efa-src/!svn/ver/90/src/de/nmichael/efa/gui/StepwiseDialog.java
+END
+AdminDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/efa~efa-src/!svn/ver/124/src/de/nmichael/efa/gui/AdminDialog.java
+END
+EfaAboutDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/efa~efa-src/!svn/ver/143/src/de/nmichael/efa/gui/EfaAboutDialog.java
+END
+LogViewDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/efa~efa-src/!svn/ver/86/src/de/nmichael/efa/gui/LogViewDialog.java
+END
+BrowserDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/efa~efa-src/!svn/ver/143/src/de/nmichael/efa/gui/BrowserDialog.java
+END
+EfaExitFrame.java
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/efa~efa-src/!svn/ver/85/src/de/nmichael/efa/gui/EfaExitFrame.java
+END
+EfaBoathouseFrame.java
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/efa~efa-src/!svn/ver/142/src/de/nmichael/efa/gui/EfaBoathouseFrame.java
+END
+SimpleOptionInputDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/efa~efa-src/!svn/ver/113/src/de/nmichael/efa/gui/SimpleOptionInputDialog.java
+END
+ImportEfa1DataDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/efa~efa-src/!svn/ver/112/src/de/nmichael/efa/gui/ImportEfa1DataDialog.java
+END
+BaseTabbedDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/efa~efa-src/!svn/ver/114/src/de/nmichael/efa/gui/BaseTabbedDialog.java
+END
+AdminLoginDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/efa~efa-src/!svn/ver/104/src/de/nmichael/efa/gui/AdminLoginDialog.java
+END
+AdminPasswordChangeDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/efa~efa-src/!svn/ver/90/src/de/nmichael/efa/gui/AdminPasswordChangeDialog.java
+END
+DataPrintRecordDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/efa~efa-src/!svn/ver/112/src/de/nmichael/efa/gui/DataPrintRecordDialog.java
+END
+PluginDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/efa~efa-src/!svn/ver/109/src/de/nmichael/efa/gui/PluginDialog.java
+END
+NewClubworkBookDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/efa~efa-src/!svn/ver/124/src/de/nmichael/efa/gui/NewClubworkBookDialog.java
+END
+DataImportDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/efa~efa-src/!svn/ver/116/src/de/nmichael/efa/gui/DataImportDialog.java
+END
+TranslateDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/efa~efa-src/!svn/ver/90/src/de/nmichael/efa/gui/TranslateDialog.java
+END
+ProgressDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/efa~efa-src/!svn/ver/131/src/de/nmichael/efa/gui/ProgressDialog.java
+END
+NewLogbookDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/efa~efa-src/!svn/ver/122/src/de/nmichael/efa/gui/NewLogbookDialog.java
+END
+EfaFirstSetupDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svn/efa~efa-src/!svn/ver/86/src/de/nmichael/efa/gui/EfaFirstSetupDialog.java
+END
+NotificationDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/efa~efa-src/!svn/ver/93/src/de/nmichael/efa/gui/NotificationDialog.java
+END

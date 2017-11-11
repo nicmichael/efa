@@ -1,0 +1,59 @@
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/efa~efa-src/!svn/ver/98/src/de/nmichael/efa/data/types
+END
+DataTypePasswordCrypted.java
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/efa~efa-src/!svn/ver/89/src/de/nmichael/efa/data/types/DataTypePasswordCrypted.java
+END
+DataTypeDecimal.java
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/efa~efa-src/!svn/ver/98/src/de/nmichael/efa/data/types/DataTypeDecimal.java
+END
+DataTypePasswordHashed.java
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/efa~efa-src/!svn/ver/74/src/de/nmichael/efa/data/types/DataTypePasswordHashed.java
+END
+DataTypeIntString.java
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/efa~efa-src/!svn/ver/141/src/de/nmichael/efa/data/types/DataTypeIntString.java
+END
+DataTypeHours.java
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/efa~efa-src/!svn/ver/98/src/de/nmichael/efa/data/types/DataTypeHours.java
+END
+DataTypeDistance.java
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/efa~efa-src/!svn/ver/81/src/de/nmichael/efa/data/types/DataTypeDistance.java
+END
+DataTypeList.java
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/efa~efa-src/!svn/ver/113/src/de/nmichael/efa/data/types/DataTypeList.java
+END
+DataTypeDate.java
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/efa~efa-src/!svn/ver/144/src/de/nmichael/efa/data/types/DataTypeDate.java
+END
+DataTypeTime.java
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svn/efa~efa-src/!svn/ver/94/src/de/nmichael/efa/data/types/DataTypeTime.java
+END

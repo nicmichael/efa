@@ -1,0 +1,173 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>efa - electronic Logbook Version 2</title>
+</head>
+<body bgcolor="#ffffff">
+
+<h2 align="center">Configuration and Setup Guide</h2>
+
+<p>This document gives a quick overview about the most important configuration
+    settings and steps to get started with efa.</p>
+
+<p style="margin-top:3em"><b>Table of Contents</b></p>
+<ul>
+    <li><a href="#overview">Overview</a></li>
+    <li><a href="#language">Language &amp; Region</a></li>
+    <li><a href="#datadir">User Data Directory</a></li>
+    <li><a href="#gui">Graphical UI Settings</a></li>
+    <li><a href="#admins">Administrators</a></li>
+    <li><a href="#projects">Projects and Logbooks</a></li>
+    <li><a href="#data">Persons, Boats and Destinations</a></li>
+    <li><a href="#statistics">Statistics Settings</a></li>
+    <li><a href="#datasafety">Data Safety</a></li>
+    <li><a href="#remote">Remote Access</a></li>
+</ul>
+
+<hr style="margin-top:3em">
+<h3 style="margin-top:3em"><a name="overview">Overview</a></h3>
+<p>All administrative tasks in efa are done inside the <i>Admin Mode</i>. In
+    efa-Boathouse, press button <i>Admin Mode</i> to login as an admin. efa-Base
+    always runs in Admin Mode - there you will find all options in the respective menus.
+    Only <a href="#admins">administrators</a> with sufficient privileges have access
+    to these functions.</p>
+<p>The Admin Interface provides the following functionality:</p>
+<ul>
+    <li>Configuring of efa through the option <i>Configuration</i></li>
+    <li>Creation and Opening of Projects and Logbooks</li>
+    <li>Administration of Data</li>
+    <li>Creation of Statistics and Statistics Settings</li>
+    <li>Messages and Logfiles</li>
+    <li>Backup and Restore</li>
+    <li>Online Update</li>
+    <li>Quit efa</li>
+</ul>
+
+
+<hr style="margin-top:3em">
+<h3 style="margin-top:3em"><a name="language">Language &amp; Region</a></h3>
+<p>You chose your language and may select some regional settings upon the first start
+    of efa. Later you may change these settings in the tab
+<i>Language &amp; Region</i> in the configuration dialog.</p>
+
+
+<hr style="margin-top:3em">
+<h3 style="margin-top:3em"><a name="datadir">User Data Directory</a></h3>
+<p>Upon the first start of efa you chose a folder where efa will store all user data.
+    Later you can change this folder in the configuration under <i>Common - Common</i>.<br>
+<b>Note:</b> If you change this at a later time, efa will not copy any data into the new
+folger. This you have to do yourself.</p>
+
+
+<hr style="margin-top:3em">
+<h3 style="margin-top:3em"><a name="gui">Graphical UI Settings</a></h3>
+<p>In the configuration under <i>Common - Appearance</i> you can select a
+Look &amp; Feel. Usually you will get the best results from <i>MetalLookAndFeel</i>.</p>
+<p>Under <i>efa-Boathouse- Appearance</i> you can select some options to influence the appearance of
+    efa-Boathouse.
+    A larger <i>Font Size</i> can improve readability, but too large a fond size may - depending on
+    your screen resolution - cut off some dialogs and introduce scroll bars. For a screen resolution
+    of 1024x768 a maximum font size of 16 is recommended.<br>
+    You can also select a club logo here to be displayed in efa's main window.</p>
+<p>If your efa windows hide some GUI elements of your operating systems like a menu bar, you can
+    switch into <i>Expert Mode</i> and under <i>Common - Appearance</i> configure the maximum
+    screen resolution to be used by efa, as well as its <i>Offset</i> (upper left corner).</p>
+<p>The display of weather conditions, sunrise and sunset, and the clock can be configured under
+    <i>efa-Boathouse- Widgets</i>. For your location, please enter correct coordinates and
+    locations under <i>Meteo-Astro-Widget</i>. Updating current weather data requires an internet
+    connection.</p>
+
+
+
+<hr style="margin-top:3em">
+<h3 style="margin-top:3em"><a name="admins">Administrators</a></h3>
+<p>Only administrators may perform administrative tasks in efa. Administrators
+    identify themselves through a name and a password, and may have individual rights.
+    The main administrator's name is always <i>admin</i>. He has absolute rights and
+    is created upon first start of efa.</p>
+<p>In the admin mode, the main administrator <i>admin</i> may create further administrators and grant them
+    individual rights.</p>
+
+
+<hr style="margin-top:3em">
+<h3 style="margin-top:3em"><a name="projects">Projects and Logbooks</a></h3>
+<p>All data of a club is held within a project. Normally, you should create exactly one project for one
+    club.</p>
+<p>As storage type for a project, you may chose between one of the following:</p>
+<ul>
+    <li>local File System: All files reside on your local hard drive (or a network drive)</li>
+    <li>efaRemote: The data reside on a different computer running efa</li>
+    <li>SQl Database: The data are stored in an SQL database</li>
+</ul>
+<p>Please refer to the
+    <a href="install_en.html">Installation Guide</a> for instructions on how to import data from efa 1.x.</p>
+<p>In a project, you may create as many logbooks as you like. Each logbook has a unique name and
+    a validity range. efa will only allow to enter sessions within the validity range of each logbook.</p>
+
+<hr style="margin-top:3em">
+<h3 style="margin-top:3em"><a name="data">Persons, Boats and Destinations</a></h3>
+<p>Each project has exactly one person, boat, and destination list (as well as related data such
+    as boat status, waters, etc.). This data may be entered manually, imported from efa 1.x, or
+    at any time be imported from an external CSV or XML file. The import can import new data or update
+    existing data. The format of the data to be imported has to follow certain rules, and must be indentical
+    as the export format that efa generates. Therefore it is easiests to first generate an export of
+    some dummy data and use the exported file as a template to create import files.</p>
+
+
+<hr style="margin-top:3em">
+<h3 style="margin-top:3em"><a name="statistics">Statistics Settings</a></h3>
+<p>Statistics can at any point in time be created by an administrator with appropriate
+    permissions by chosing the option <i>Statistics</i> and then select <i>One-Time Statistics</i>.
+    In order to make statistics available to everyone in the club, you have to save them as
+    <i>statistics setting</i> as a admin first, and enable the option <i>Statistic publicly available</i>.</p>
+
+
+<hr style="margin-top:3em">
+<h3 style="margin-top:3em"><a name="datasafety">Data Safety</a></h3>
+<p>To protect against data loss in case of hardware failures, software failures or
+    improper use, you should take some precautious actions:</p>
+<ul>
+    <li>Backups:
+        <ul>
+            <li>create manually: You can manually create a backup by chosing the menu option
+        <i>Backups</i>. To be protected against hardware failures, these backups should be stored
+        on an external device, such as an external hard drive or USB stick.</li>
+            <li>create automatically: With efaCLI you can script an automatic createion of backups.
+        <a href="http://efa.nmichael.de/efalive.html">efaLive</a> integrates efaCLI to automatically
+        create backups at scheduled times, and even send them home to you via email.</li>
+        </ul>
+    </li>
+    <li>Mirror Directory on second Hard Drive: In the configuration under
+        <i>Data - local Files</i> you can configure a mirror directory. efa will then
+        store all data in two locations - your primary efa data folder, and this mirror directory.
+        To protect against hard disk failures, you should put this mirror directory either onto a
+        secondary hard disk, or onto a USB stick which is always present.
+    </li>
+</ul>
+
+
+<hr style="margin-top:3em">
+<h3 style="margin-top:3em"><a name="remote">Remote Access</a></h3>
+<p>With efa you can access a remote running efa, which is for example installed in your boathouse,
+    from any place in the world over the internet - if also the computer in the boathouse is connected
+    to the internet. This way you can for example administer efa remotely from home, or connect multiple
+    efa installations to share the same data.</p>
+<p>First you have to activate the remote access function in the server efa by enabling the corresponding
+    option in the configuration under <i>Data - efaRemote</i>. To access a remote efa installation,
+    you have to have efa installed on your client as well, and create a project there with storage type
+    <i>efaRemote</i>. To connect to the server efa, you have to enter the server's IP address in your
+    client project, and specify an administrator account on the server to login. This administrator must
+    have the permission <i>Remote Access</i> on the server. You also have to specify the project name
+    on the server you want to access.</p>
+<p>Per default, efa uses port 3834 to connect remotely. If your server is standing
+    behind a router, you have to enable <i>Port Forwarding</i> on your router for port 3834
+    to your server PC.</p>
+<p>If the server does not have a static IP address, you may use
+    <a href="http://efa-online.nmichael.de">efaOnline</a> to get the current IP address of the#
+    server when connecting from the client. Please sign up for an account on
+<a href="http://efa-online.nmichael.de">efaOnline</a> and enter this account data both on the
+server in the configuration settings, as well as on the client in the project settings.</p>
+
+
+</body>
+</html>

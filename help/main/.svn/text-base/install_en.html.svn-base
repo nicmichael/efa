@@ -1,0 +1,331 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>efa - electronic Logbook Version 2</title>
+</head>
+<body bgcolor="#ffffff">
+
+<h2 align="center">Installation of efa - electronic Logbook - Version 2</h2>
+
+<p>This document describes the installation of efa, as well as the steps to
+    upgrade from version 1.x to version 2.x.</p>
+
+<p style="margin-top:3em"><b>Table of Contents</b></p>
+<ul>
+    <li><a href="#help">Help and Support</a></li>
+    <li><a href="#requirements">Requirements of Version 2.x</a></li>
+    <li><a href="#versions">Understanding the Version Numbers</a></li>
+    <li><a href="#install">Installation of this Version (Version 2.x)</a></li>
+    <li><a href="#start">Getting started with efa</a></li>
+    <li><a href="#upgrade"><b style="color:#ff0000">Migration from efa Version 1.x to Version 2.x</b></a></li>
+</ul>
+
+<hr style="margin-top:3em">
+<h3 style="margin-top:3em"><a name="help">Help and Support</a></h3>
+<p>For help and support with installation problems or any other questions regarding efa,
+please consult the Support Forum at: <a href="http://forum.nmichael.de">http://forum.nmichael.de</a>.</p>
+
+
+<hr style="margin-top:3em">
+<h3 style="margin-top:3em"><a name="requirements">Requirements of Version 2.x</a></h3>
+<ul>
+    <li>Hardware:
+        <ul>
+            <li>Computer with 256 MB RAM minimum</li>
+            <li>Screen with a resolution of 1024 x 768 minimum</li>
+        </ul>
+    </li>
+    <li>Software:
+        <ul>
+            <li><a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html">Java Runtime Environment (JRE) Version 6 oder neuer</a></li>
+        </ul>
+    </li>
+</ul>
+
+
+<hr style="margin-top:3em">
+<h3 style="margin-top:3em"><a name="versions">Understanding the Version Numbers</a></h3>
+
+<table border align="center" cellpadding="5">
+    <tr>
+        <td>&nbsp;</td>
+        <td colspan="5" align="center" bgcolor="#ffaaaa"><big><b>efa Version 1.x</b></big></td>
+        <td colspan="5" align="center" bgcolor="#aaaaff"><big><b>efa Version 2.x</b></big></td>
+    </tr>
+    <tr>
+        <td><b>Version Name:</b></td>
+        <td bgcolor="#ffaaaa">...</td>
+        <td bgcolor="#ffaaaa">1.8.0</td>
+        <td bgcolor="#ffaaaa"><b>1.8.3</b></td>
+        <td bgcolor="#ffcccc">2_dev01</td>
+        <td bgcolor="#ffcccc">2_dev05</td>
+        <td bgcolor="#ccccff">2_betax</td>
+        <td bgcolor="#aaaaff">2.0.0</td>
+        <td bgcolor="#aaaaff"><b>2.0.x</b></td>
+        <td bgcolor="#aaaaff">2.1.0</td>
+        <td bgcolor="#aaaaff">...</td>
+    </tr>
+    <tr>
+        <td><b>internal Version Number:</b></td>
+        <td bgcolor="#ffaaaa">...</td>
+        <td bgcolor="#ffaaaa">1.8.0_xx</td>
+        <td bgcolor="#ffaaaa"><b>1.8.3_xx</b></td>
+        <td bgcolor="#ffcccc">1.9.0_xx</td>
+        <td bgcolor="#ffcccc">1.9.0_xx</td>
+        <td bgcolor="#ccccff">1.9.9_xx</td>
+        <td bgcolor="#aaaaff">2.0.0_xx</td>
+        <td bgcolor="#aaaaff"><b>2.0.x_xx</b></td>
+        <td bgcolor="#aaaaff">2.1.0_xx</td>
+        <td bgcolor="#aaaaff">...</td>
+    </tr>
+    <tr>
+        <td><b>Update Possibilities</b></td>
+        <td colspan="5" align="center" bgcolor="#ffaaaa">within Version 1.x:<br>Online Update or <i>install over</i></td>
+        <td colspan="5" align="center" bgcolor="#aaaaff">within Version 2.x:<br>Online Update or <i>install over</i></td>
+    </tr>
+    <tr>
+        <td><b>Upgrade</b></td>
+        <td colspan="10" align="center" bgcolor="#ffffaa">-------&gt;<br>Migration from Version 1.x to 2.x:<br>see Section <a href="#upgrade">Migration from efa Version 1.x to Version 2.x</a></td>
+    </tr>
+</table>
+
+<p><b>&quot;Version 1.x&quot;</b> refers to all <i>efa1</i> Versions up to
+    Version 1.8.3, as well as the first <i>efa2</i> pre-released versions with the internal
+    version number 1.9.0.</p>
+
+<p><b>&quot;Version 2.x&quot;</b> refers to the <i>efa2</i> Beta Version efa2_beta (internal
+    version number 1.9.9) as well as Version 2.0 and all following versions 2.x.</p>
+
+<p>To find out about your current efa version, please click the efa logo in efa or select
+    option <i>Info</i> from menu <i>Help</i>.</p>
+
+
+<hr style="margin-top:3em">
+<h3 style="margin-top:3em"><a name="install">Installation of this Version (Version 2.x)</a></h3>
+
+<p>If you already use a previous version of efa (Version 1.x), install or unpack this version
+    in a separate directory and follow the instructions in section
+<a href="#upgrade">Migration from efa Version 1.x to Version 2.x</a>.</p>
+
+<p>If this is your first efa installation, install or unpack into a new directory
+and follow the instructions in section
+<a href="#start">Getting started with efa</a>.</p>
+
+<p>If you are updating an efa 2.x installation, please install or unpack this
+    update into the same directory as your previous efa 2.x installation.
+    <b>Caution:</b> This only applies if your previous version is a version 2.x
+    (internal version number 1.9.9, 2.0 or newer)!</p>
+
+<h4>Installation with Windows Setup Program</h4>
+
+<p>If you have downloaded the Windows Installer for efa, please start the setup
+    program and follow the steps through the installation.</p>
+
+<h4>Installation of ZIP Archive</h4>
+
+<p>If you have downloaded the ZIP archive, please create a directory for efa
+    (like <tt>c:\Program Files\efa2</tt> on Windows or <tt>/opt/efa2</tt> on
+Linux) and unpack the content of the ZIP archive into this directory.</p>
+
+
+<hr style="margin-top:3em">
+<h3 style="margin-top:3em"><a name="start">Getting started with efa</a></h3>
+
+<h4>Starting efa</h4>
+
+<p>efa comes in two different flavors depending on the intended use:</p>
+
+<ol>
+    <li>The <b>Boathouse Version</b> comes with a simplified user interface which is intended
+for the use in a boathouse where all rowers enter their outings directly into
+efa. All administrative tasks require an admin login with a password.</li>
+    <li>The <b>Basis Version</b> starts up with an administrative user interface which allows
+full access to all data and is intended for use by administrators or private
+users.</li>
+</ol>
+
+<p>If you have used the Windows setup program it has automatically created entries
+for starting efa in your Windows start menu.<p>
+
+<p>Otherwise you can start efa by running the following batch files or shell
+scrips:</p>
+<table border>
+    <tr><td>efaBase.sh</td><td>efa Base Version (Linux/UNIX)</td></tr>
+    <tr><td>efaBase.bat</td><td>efa Base Version (Windows)</td></tr>
+    <tr><td>efaBths.sh</td><td>efa Boathouse Version (Linux/UNIX)</td></tr>
+    <tr><td>efaBths.bat</td><td>efa Boathouse Version (Windows)</td></tr>
+    <tr><td>efaCLI.sh</td><td>efa Command Line Interface (Linux/UNIX)</td></tr>
+    <tr><td>efaCLI.bat</td><td>efa Command Line Interface (Windows)</td></tr>
+</table>
+
+<h4>Start Problems</h4>
+
+<p>If efa fails to start with a message <i>For security reasons efa won't start</i>,
+    please delete in the home directory on your computer
+(on Windows usually <tt>C:\Document &amp; Settings\<i>username</i></tt>,
+on Linux/UNIX usually <tt>/home/<i>username</i></tt>) the file named
+<tt>.efa_<i>installpath</i></tt>, where <i>installpath</i> is the location of
+your efa installation.<br>
+Example: If on Windows efa is installed at <tt>C:\Program Files\efa2</tt>,
+please delete in <tt>C:\Document &amp; Settings\<i>username</i></tt> the
+file <tt>.efa_CProgramFilesefa2</tt>.<br>
+If on Linux efa is installed at <tt>/opt/efa2</tt>, please delete in
+<tt>/home/<i>username</i></tt> the file named <tt>.efa_optefa2</tt>.<br>
+<b>Caution:</b> If multiple version of efa are installed, many similar of these files
+exist. Please be careful to delete the right one!</p>
+
+<h4>Setting up efa</h4>
+
+<p>In efa 2.x all data is organized in <i>Projects</i>. Usually you will just create one
+    project for your club, which will contain all data.</p>
+
+<p>To get started with efa 2.x, please create a new project in Admin Mode.
+If you want to import data from efa 1.x, please follow the instrunctions in section
+<a href="#upgrade">Migration from efa Version 1.x to Version 2.x</a>.</p>
+<p>Else create a new, empty logbook after creating the project. Boats, Persons,
+    and Destinations can either be entered manually, or be imported by the import
+    functions in respective administration dialogs. The order of importing data may have
+    to follow certain dependencies (for example, the status that a person may have must be
+    imported or created before the persons are imported; waters have to be defined before
+    destinations using these waters are imported etc.).
+    <b>Note</b> This import function is <b>not</b> intended to import data of efa Version 1.x!</p>
+
+<p>The main steps to setup and configure efa are described in
+    <a href="configure_en.html">this document</a>.</p>
+
+
+<hr style="margin-top:3em">
+<h3 style="margin-top:3em"><a name="upgrade">Migration from efa Version 1.x to Version 2.x</a></h3>
+
+<p>For an explanation of the version numbers, please see section <a href="#versions">Understanding
+        the Version Numbers</a>.</p>
+
+<h4>Prerequisits for Migration from Version 1.x to Version 2.x</h4>
+
+<p>efa Version 2.x can only import data from the 1.x versions 1.8.3 and 1.9.0.
+If you are using an older version than 1.8.3, please update to
+<a href="http://efa.nmichael.de">version 1.8.3</a> first.</p>
+
+<h4><a name="prepare_upgrade">Preparations in efa Version 1.x before Data Import into Version 2.x</a></h4>
+
+<p>The following steps should be completed in Version 1.x <b>before the data import</b> into
+    the new version:</p>
+
+<ol>
+    <li><b>Open all old data of Version 1.x in efa 1.8.3 (or 1.9.0)</b><br>
+In order to convert all data, including old logbooks, member lists, boats etc., into
+the format of Version 1.8.3 (or 1.9.0), they must at least once be <i>touched</i>
+bz efa. To accomplish this, please create a statistic in efa 1.x with the option
+<i>all logbooks</i> and no limitation on any dates.</li>
+    <li><b>Document Installation Directory of efa 1.x</b><br>
+Please write down the installation directory of your efa 1.x installation. You will
+be asked for this when importing data into version 2.x.</li>
+    <li><b>Cleanup and Documentation of Logbooks, Member Lists, etc.</b><br>
+For importing data into version 2.0 it is important that the data is free of errors.<br>
+Please open all logbnooks, one after another, and check whether all logbooks, as well
+as boat lists, member lists, and destination lists are complete. Please write down for
+all logbooks:<br>
+<ul>
+    <li>Name and Location of Logbook</li>
+    <li>Name and Location of Member, Boot, and Destination Lists</li>
+    <li>Links to previous and next Logbook</li>
+</ul>
+You can find this information under <i>Administration - Logbook - Settings for the logbook</i>, or in the
+Boathouse Version in <i>Admin Mode - Full Logbook Access -
+        Administration - Logbook - Settings for the logbook</i>.<br>
+        The links to <i>previous Logbook</i> and
+        <i>next Logbook</i> form a chain of logbooks, for example
+        <i>2009 <-> 2010 <-> 2011</i>. Please ensure that this chain is correct and
+        complete, for example: If logbook<i>2010</i> refers to <i>2009</i> as previous logbook,
+        then logbook <i>2009</i> must also refer to <i>2010</i> as next loogbook etc.<br>
+If you have test logbook or incomplete logbooks which you don't want to import, please
+write down their names separately.</li>
+    <li><b>Correct or Create Synonys in efa 1.x</b><br>
+        In order for the import into efa 2.x to work correctly, please verify that in case of combined
+        boats or persons whose names have changed a synonym has been defined.</li>
+    <li><b>Timespan of Logbook</b><br>
+In efa 1.x it sometimes happens that a session is entered with a wrong date, like 12.3.<b>2021</b>
+instead of 12.3.<b>2011</b>. Such entries must be corrected prior to the import. You find those
+    easiest if you create a statistic for the logbook <i>without</i> the option <i>all logbooks</i>
+    (no limitation to any dates) and closely pay attention to the date of entries efa finds.</li>
+    <li><b>efa in the Boat House</b><br>
+        If you are using efa in the boat house, please finish all open sessions before starting
+        the import.</li>
+    <li><b>Create Statistics</b><br>
+In order to verify whether all data has successfully been imported into version 2.x,
+you should now create some statistics in efa 1.x, to be able to later compare them
+with analogous statistics created in efa 2.x.</li>
+    <li><b>Data Backup</b><br>
+efa 2.x does not modify or delete any data of version 1.x. But to be protected
+against errors and erroneous operation, you should perform a backup of all your
+efa 1.x data and save it on an external medium like a memory stick.<br>
+If you have been storing all data in the <tt>data</tt> folder of efa (see above),
+it is sufficient to copy that folder.</li>
+</ol>
+
+<h4>Install efa Version 2.x</h4>
+<p>Install or unpack efa 2.x into a new, empty directory, as described in section
+    <a href="#install">Installation of this Version (Version 2.x)</a></p>
+
+<h4>Preparation in Version 2.x before starting the Import</h4>
+<p>If you have defined custom types for session or boat types in efa 1.x, then these must be
+    defined in efa 2.x <b>before</b> starting the import. In this case, please open the efa
+    configuration, activate the <i>Expert Mode</i>, and add these types in the corresponding
+    categories unter <i>Types</i> by clicking on the plus symbol. As a name (appears in red on
+    the left side) you must enter the <b>exact same</b> name as in efa 1.x (same spelling).</p>
+
+<h4>Importing efa 1.x Data into Version 2.x</h4>
+<p>After installing efa 2.x, starte the new version as described in <a href="#start">Getting started with efa</a>
+    and create a new project. After the last step of project creation, you will be
+    asked whether you want to import data from Version 1.x. Please select this option.<br>
+<b>Node:</b> This is the only opportunity to import data from version 1.x. Importing data
+at a later point in time is not possible!</p>
+
+<p>The first steop of the import dialog will ask you to select the
+    location of your efa 1.x installation, which you have written down before.</p>
+
+<p>efa now searches the selected efa 1.x installation for data and presents you with
+    a selection of data to import. Select all data you want to import (normally all data),
+    and specify names and time ranges for logbooks.<br>
+<b>Caution</b>: efa2 only allows sessions to be added to logbooks within the configured time ranges.
+All imported sessions must be within the specified range for the logbook (see step
+<a href="#prepare_upgrade">Preprarations</a>).</p>
+
+<p>During import a logfile will be created, which also contains warnings and errors that might
+    have occurred. If you experience a lot of errors, please delete the project again and
+    try to fix those errors in efa 1.x first, then inport the data again. If only a few
+    errors occur, you  may as well fix them in efa 2.x If you need help to figure out what
+    the errors are about and how to fix them, please consult the
+<a href="http://forum.nmichael.de">Support Forum</a>.</p>
+
+<p>After the import, thoroughly validate your data for correctness
+    (for example by comparing statistics from version 2.x with previous statistics from version 1.x),
+    and start your productive use of efa 2.x only when your certain that all data is correct..</p>
+
+<p>Limitations of the Import:</p>
+<ul>
+    <li>not being imported:
+        <ul>
+            <li>Configuration, Administrators, Types</li>
+            <li>Messages and Logfiles</li>
+            <li>Statistic Settings</li>
+        </ul>
+    </li>
+    <li>not correctly being imported:
+        <ul>
+            <li>Boat Status for Boats on the Water (therefore finish sessions first!)</li>
+            <li>Waters for Multi-Day Journeys (are lost)</li>
+        </ul>
+    </li>
+    <li>Data should be verified carefully if you have been using:
+        <ul>
+            <li>Synonyms</li>
+            <li>Combo Boats</li>
+        </ul>
+    </li>
+    <li>A frequent reason for versioning conflicts during the import are
+        logbooks which have the same starting validity date</li>
+</ul>
+
+</body>
+</html>

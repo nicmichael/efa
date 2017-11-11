@@ -1,0 +1,666 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!-- elwiz Konfigurations-Stylesheet -->
+
+<xsl:stylesheet version="1.0"
+   xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
+   xmlns:elwiz="http://www.nmichael.de/elwiz">
+
+<xsl:output method="html" encoding="ISO-8859-1"/>
+
+
+  <!-- Grundgerüst -->
+  <xsl:template match="kilometerliste">
+
+    <!-- ELWIZ: Hintergrundfarbe des gesamten Dokuments -->
+    <elwiz:value name="background" descr="Hintergrundfarbe des Dokuments">
+      <xsl:variable name="_background">
+        <elwiz:option pos="0" descr="Farbe (RGB)" value="ffffff" type="color"/>
+      </xsl:variable>
+    </elwiz:value>
+
+    <!-- ELWIZ: Schriftfarbe des gesamten Dokuments -->
+    <elwiz:value name="textcolor" descr="Textfarbe des Dokuments">
+      <xsl:variable name="_textcolor">
+        <elwiz:option pos="0" descr="Farbe (RGB)" value="000000" type="color"/>
+      </xsl:variable>
+    </elwiz:value>
+
+    <!-- ELWIZ: Titel der Kilometerliste -->
+    <elwiz:value name="listenTitel" descr="Titel der Kilometerliste">
+      <xsl:variable name="_titel">
+        <elwiz:option pos="0" descr="Titel (leer=Standard-Titel)" value="" type="string"/>
+      </xsl:variable>
+    </elwiz:value>
+
+    <html>
+      <head>
+        <title>
+	  <xsl:choose>
+	    <xsl:when test="$_titel=''">
+   	      <xsl:value-of select="listenkopf/titel"/>
+	    </xsl:when>
+	    <xsl:otherwise>
+	      <xsl:value-of select="$_titel"/>
+	    </xsl:otherwise>
+	  </xsl:choose>  
+	</title>
+      </head>
+      <body bgcolor="#{$_background}" text="#{$_textcolor}">
+        <h1 align="center">
+	  <xsl:choose>
+	    <xsl:when test="$_titel=''">
+   	      <xsl:value-of select="listenkopf/titel"/>
+	    </xsl:when>
+	    <xsl:otherwise>
+	      <xsl:value-of select="$_titel"/>
+	    </xsl:otherwise>
+	  </xsl:choose>  
+	</h1>
+	<xsl:comment>EFA-START</xsl:comment> <!-- Markierung für "nur Tabelle ersetzen" -->
+	<!-- ELWIZ: Tabelle mit Kopfzeilen ausgeben -->
+        <elwiz:optional name="listenKopf" descr="Tabelle mit Kopfzeilen">
+          <elwiz:option pos="0" descr="Tabelle mit Kopfzeilen ausgeben" selected="true">
+            <xsl:apply-templates select="listenkopf"/>
+	  </elwiz:option>
+        </elwiz:optional>
+        <xsl:apply-templates select="wettZeitraumWarnung"/>
+        <xsl:apply-templates select="wettBedingungen"/>
+	<xsl:if test="gruppe">
+          <table width="100%">
+            <xsl:apply-templates select="gruppe"/>
+	  </table>
+	</xsl:if>
+        <xsl:apply-templates select="tabelle"/>
+        <xsl:apply-templates select="zusatzTabelle"/>
+	<xsl:apply-templates select="spezialTabelle"/>
+	<xsl:comment>EFA-ENDE</xsl:comment> <!-- Markierung für "nur Tabelle ersetzen" -->
+      </body>
+    </html>
+  </xsl:template>
+
+
+
+  <!-- Tabelle mit allgemeinen Infos zur Auswertung -->
+  <xsl:template match="listenkopf">
+    <!-- ELWIZ: Einzelne Kopfzeilen ausgeben -->
+    <elwiz:optional name="headerInformation" descr="Folgende Kopfzeilen ausgeben">
+      <xsl:variable name="logo"><elwiz:option pos="0" descr="Logo (nur zusammen mit Erstellungsdatum)" selected="true">true</elwiz:option></xsl:variable>
+      <table border="3" align="center">
+      <elwiz:option pos="1" descr="Erstellungsdatum" selected="true">
+        <tr>
+	  <xsl:if test="$logo='true'">
+  	    <td rowspan="10"><a href="{auswertungsProgramm/@url}"><img src="efa.gif" width="128" height="128" alt="efa" border="0"/></a></td>
+	  </xsl:if>
+	  <td>erstellt am:</td><td><xsl:value-of select="auswertungsDatum"/> von <a href="{auswertungsProgramm/@url}"><xsl:value-of select="auswertungsProgramm"/></a></td>
+	</tr>
+      </elwiz:option>
+      <elwiz:option pos="2" descr="Art der Auswertung" selected="true">
+        <tr><td>Art der Auswertung:</td><td><xsl:value-of select="auswertungsArt"/></td></tr>
+      </elwiz:option>
+      <elwiz:option pos="3" descr="Zeitraum" selected="true">
+        <tr><td>Zeitraum:</td><td><xsl:value-of select="auswertungsZeitraum"/></td></tr>
+      </elwiz:option>
+      <elwiz:option pos="4" descr="Ausgewertete Einträge" selected="true">
+        <tr><td>Ausgewertete Einträge:</td><td><xsl:value-of select="ausgewertet/ausgewerteteEintraege"/></td></tr>
+      </elwiz:option>
+      <elwiz:option pos="5" descr="Auswertung für ..." selected="true">
+        <tr><td>ausgewertet für:</td><td><xsl:apply-templates select="ausgewertet/ausgewertetFuer"/></td></tr>
+      </elwiz:option>
+      <elwiz:option pos="6" descr="Auswertung nur für ... (wenn zutreffend)" selected="true">
+        <xsl:apply-templates select="ausgewertet/ausgewertetNurFuer"/>
+      </elwiz:option>
+      <elwiz:option pos="7" descr="Wettbewerbsausgabe nur, wenn ... (wenn zutreffend)" selected="true">
+        <xsl:apply-templates select="ausgewertet/ausgewertetWettNur"/>
+      </elwiz:option>
+      </table><br/>
+    </elwiz:optional>
+  </xsl:template>
+
+  <xsl:template match="ausgewertetFuer">
+    <xsl:value-of select="."/><xsl:if test="position() != last()"><br/></xsl:if>
+  </xsl:template>
+
+  <xsl:template match="ausgewertetNurFuer">
+    <tr><td>nur für <xsl:value-of select="@bezeichnung"/>:</td><td><xsl:value-of select="."/></td></tr>
+  </xsl:template>
+
+  <xsl:template match="ausgewertetWettNur">
+    <tr><td>Ausgabe nur, wenn:</td><td><xsl:value-of select="."/></td></tr>
+  </xsl:template>
+
+
+  <!-- ELWIZ: Felder bei Ausgabe "Fahrtenbuch" -->
+  <elwiz:optional name="fahrtenbuchFelder" descr="Bei Statistikart 'Fahrtenbuch' folgende Felder ausgeben">
+    <xsl:variable name="fbfeld1"><elwiz:option pos="0" descr="Lfd. Nr." selected="true">true</elwiz:option></xsl:variable>
+    <xsl:variable name="fbfeld2"><elwiz:option pos="1" descr="Datum" selected="true">true</elwiz:option></xsl:variable>
+    <xsl:variable name="fbfeld3"><elwiz:option pos="2" descr="Boot" selected="true">true</elwiz:option></xsl:variable>
+    <xsl:variable name="fbfeld4"><elwiz:option pos="3" descr="Steuermann" selected="true">true</elwiz:option></xsl:variable>
+    <xsl:variable name="fbfeld5"><elwiz:option pos="4" descr="Mannschaft" selected="true">true</elwiz:option></xsl:variable>
+    <xsl:variable name="fbfeld6"><elwiz:option pos="5" descr="Abfahrt" selected="true">true</elwiz:option></xsl:variable>
+    <xsl:variable name="fbfeld7"><elwiz:option pos="6" descr="Ankunft" selected="true">true</elwiz:option></xsl:variable>
+    <xsl:variable name="fbfeld8"><elwiz:option pos="7" descr="Ziel" selected="true">true</elwiz:option></xsl:variable>
+    <xsl:variable name="fbfeld9"><elwiz:option pos="8" descr="Boots-Km" selected="true">true</elwiz:option></xsl:variable>
+    <xsl:variable name="fbfeld10"><elwiz:option pos="9" descr="Mannschafts-Km" selected="true">true</elwiz:option></xsl:variable>
+    <xsl:variable name="fbfeld11"><elwiz:option pos="10" descr="Bemerkungen" selected="true">true</elwiz:option></xsl:variable>
+  </elwiz:optional>  
+
+
+  <!-- Tabelle mit eigentlichen Einträgen -->
+  <xsl:template match="tabelle">
+    <!-- ELWIZ: Tabellenrahmen -->
+    <elwiz:value name="tableBorder" descr="Tabellenrahmen">
+      <xsl:variable name="border">
+        <elwiz:option pos="0" descr="Rahmendicke" value="3" type="integer"/>
+      </xsl:variable>
+    </elwiz:value>
+  
+    <table border="{$border}" align="center">
+      <xsl:apply-templates select="tabellenTitel"/>
+      <xsl:apply-templates select="eintrag"/>
+    </table><br/>
+  </xsl:template>
+
+  <xsl:template match="tabellenTitel">
+    <!-- ELWIZ: Tabellenfarbe für Tabellentitel -->
+    <elwiz:value name="tableTitleColor" descr="Hintergrundfarbe der Tabellentitel">
+      <xsl:variable name="_ttcolor">
+        <elwiz:option pos="0" descr="Farbe (RGB)" value="cccccc" type="color"/>
+      </xsl:variable>
+    </elwiz:value>
+    <tr bgcolor="#{$_ttcolor}">
+      <xsl:choose>
+        <xsl:when test="@fahrtenbuch='true'">
+          <xsl:if test="$fbfeld1='true'"><th><xsl:value-of select="spaltenTitel[1]"/></th></xsl:if>
+          <xsl:if test="$fbfeld2='true'"><th><xsl:value-of select="spaltenTitel[2]"/></th></xsl:if>
+          <xsl:if test="$fbfeld3='true'"><th><xsl:value-of select="spaltenTitel[3]"/></th></xsl:if>
+          <xsl:if test="$fbfeld4='true'"><th><xsl:value-of select="spaltenTitel[4]"/></th></xsl:if>
+          <xsl:if test="$fbfeld5='true'"><th><xsl:value-of select="spaltenTitel[5]"/></th></xsl:if>
+          <xsl:if test="$fbfeld6='true'"><th><xsl:value-of select="spaltenTitel[6]"/></th></xsl:if>
+          <xsl:if test="$fbfeld7='true'"><th><xsl:value-of select="spaltenTitel[7]"/></th></xsl:if>
+          <xsl:if test="$fbfeld8='true'"><th><xsl:value-of select="spaltenTitel[8]"/></th></xsl:if>
+          <xsl:if test="$fbfeld9='true'"><th><xsl:value-of select="spaltenTitel[9]"/></th></xsl:if>
+          <xsl:if test="$fbfeld10='true'"><th><xsl:value-of select="spaltenTitel[10]"/></th></xsl:if>
+          <xsl:if test="$fbfeld11='true'"><th><xsl:value-of select="spaltenTitel[11]"/></th></xsl:if>
+	</xsl:when>
+	<xsl:otherwise>
+          <xsl:for-each select="spaltenTitel">
+            <xsl:choose>
+              <xsl:when test="@colspan">
+                <th colspan="{@colspan}"><xsl:value-of select="."/></th>
+              </xsl:when>
+              <xsl:otherwise>
+                <th><xsl:value-of select="."/></th>
+	      </xsl:otherwise>
+            </xsl:choose>
+          </xsl:for-each>
+	</xsl:otherwise>
+      </xsl:choose>
+    </tr>
+  </xsl:template>
+
+
+  <!-- Ein Eintrag in der Tabelle -->
+  <xsl:template match="eintrag">
+
+    <!-- ELWIZ: Berechnung der Hintergrundfarbe für Tabellenspalte -->
+    <elwiz:value name="tableColor" descr="Hintergrundfarbe der Tabellenfelder">
+      <xsl:variable name="_tcolor">
+        <xsl:choose>
+          <xsl:when test="position() mod 2 != 0">
+	    <elwiz:option pos="0" descr="Farbe 1 (RGB)" value="eeeeff" type="color"/>
+	  </xsl:when>
+  	  <xsl:otherwise>
+	    <elwiz:option pos="1" descr="Farbe 2 (RGB)" value="ccccff" type="color"/>
+	  </xsl:otherwise>
+        </xsl:choose>
+      </xsl:variable>
+    </elwiz:value>
+
+    <tr bgcolor="#{$_tcolor}">
+
+    <xsl:apply-templates select="nr"/>
+    <xsl:apply-templates select="name"/>
+    <xsl:apply-templates select="jahrgang"/>
+    <xsl:apply-templates select="status"/>
+    <xsl:apply-templates select="bezeichnung"/>
+    <xsl:apply-templates select="km"/>
+    <xsl:apply-templates select="rudkm"/>
+    <xsl:apply-templates select="stmkm"/>
+    <xsl:apply-templates select="fahrten"/>
+    <xsl:apply-templates select="kmfahrt"/>
+    <xsl:apply-templates select="dauer"/>
+    <xsl:apply-templates select="kmh"/>
+    <xsl:apply-templates select="anzversch"/>
+    <xsl:apply-templates select="wafakm"/>
+    <xsl:apply-templates select="zielfahrten"/>
+    <xsl:apply-templates select="zusatzDRV"/>
+    <xsl:apply-templates select="zusatzLRVBSommer"/>
+    <xsl:apply-templates select="zusatzLRVBWinter"/>
+    <xsl:apply-templates select="zusatzLRVBrbWanderWett"/>
+    <xsl:apply-templates select="zusatzLRVBrbFahrtenWett"/>
+    <xsl:apply-templates select="fahrtenbuch"/>
+    <xsl:apply-templates select="wwListe"/>
+    </tr>
+  </xsl:template>
+  
+  
+  
+
+  <xsl:template match="nr">
+    <td><xsl:value-of select="."/></td>
+  </xsl:template>
+
+  <xsl:template match="name">
+    <td><xsl:value-of select="."/></td>
+  </xsl:template>
+
+  <xsl:template match="jahrgang">
+    <td><xsl:value-of select="."/></td>
+  </xsl:template>
+
+  <xsl:template match="status">
+    <td><xsl:value-of select="."/></td>
+  </xsl:template>
+
+  <xsl:template match="bezeichnung">
+    <td><xsl:value-of select="."/></td>
+  </xsl:template>
+
+  <xsl:variable name="_balken">
+    <!-- ELWIZ: Balkentyp - Farbe oder grau -->
+    <elwiz:select name="balkenTyp" descr="Art der Balkendiagramme">
+      <elwiz:option pos="0" descr="farbig" value="color" selected="true"/>
+      <elwiz:option pos="1" descr="grau" value=""/>
+    </elwiz:select>
+  </xsl:variable>
+  <xsl:variable name="_align">
+    <!-- ELWIZ: Ausrichtung der Zahlenwerte bei Grafikausgabe -->
+    <elwiz:select name="valueAlignment" descr="Positionierung der Zahlenwerte bei Ausgabe von Balkendiagrammen">
+      <elwiz:option pos="0" descr="direkt am Balken" value="left" selected="true"/>
+      <elwiz:option pos="1" descr="außen (bündig)" value="right"/>
+    </elwiz:select>
+  </xsl:variable>
+
+  <xsl:template name="graFeld">
+    <xsl:variable name="wert">
+      <xsl:value-of select="."/>
+    </xsl:variable>
+    <xsl:variable name="breite">
+      <xsl:choose>
+        <xsl:when test="@breite >= 0">
+	  <xsl:value-of select="@breite"/>
+	</xsl:when>
+        <xsl:otherwise>
+          <xsl:value-of select="@breite * -1"/>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:choose>
+      <xsl:when test="@colspan">
+        <xsl:choose>
+          <xsl:when test="$wert = '+/- 0'">
+	    <td colspan="2" align="center"><xsl:value-of select="."/></td>
+          </xsl:when>
+          <xsl:otherwise>
+	    <xsl:variable name="inverted_align">
+	      <xsl:choose>
+		<xsl:when test="$_align = 'left'">right</xsl:when>
+		<xsl:otherwise>left</xsl:otherwise>
+	      </xsl:choose>
+            </xsl:variable>
+	    <td align="{$inverted_align}"> <!-- usually: left -->
+              <xsl:choose>
+                <xsl:when test="$wert &lt; 0">
+      	          <xsl:value-of select="."/>
+		  <xsl:if test="$breite != 0">
+  		    &#160;<xsl:call-template name="img"><xsl:with-param name="align" select="'right'"/></xsl:call-template>
+		  </xsl:if>
+                </xsl:when>
+                <xsl:otherwise>
+		  &#160;
+                </xsl:otherwise>
+              </xsl:choose>
+	    </td>
+	    <td align="{$_align}"> <!-- usually: right -->
+              <xsl:choose>
+                <xsl:when test="not($wert &lt; 0)">
+		  <xsl:if test="$breite != 0">
+  		    <xsl:call-template name="img"><xsl:with-param name="align" select="'left'"/></xsl:call-template>&#160;   
+		  </xsl:if>
+      	          <xsl:value-of select="."/>
+                </xsl:when>
+                <xsl:otherwise>
+		  &#160;
+                </xsl:otherwise>
+              </xsl:choose>
+	    </td>	    
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:choose>
+          <xsl:when test="@datei">
+            <xsl:choose>
+	      <xsl:when test="$_balken != ''">
+                <td align="{$_align}">
+		  <xsl:if test="$breite != 0">
+  		    <xsl:call-template name="img"><xsl:with-param name="align" select="'left'"/></xsl:call-template>&#160;
+		  </xsl:if>
+		  <xsl:value-of select="."/>
+		</td>
+	      </xsl:when>
+	      <xsl:otherwise>
+                <td align="{$_align}">
+		  <xsl:if test="$breite != 0">
+  		    <xsl:call-template name="img"><xsl:with-param name="align" select="'left'"/></xsl:call-template>&#160;
+		  </xsl:if>
+		<xsl:value-of select="."/>
+		</td>
+	      </xsl:otherwise>
+  	    </xsl:choose>
+          </xsl:when>
+          <xsl:otherwise>
+            <td align="right"><xsl:value-of select="."/></td>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
+  <xsl:template name="img">
+    <xsl:param name="align"/>
+    <xsl:variable name="breite">
+      <xsl:choose>
+        <xsl:when test="@breite >= 0">
+	  <xsl:value-of select="@breite"/>
+	</xsl:when>
+        <xsl:otherwise>
+          <xsl:value-of select="@breite * -1"/>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:choose>
+      <xsl:when test="$_balken != ''">
+        <img src="{@datei}" align="{$align}" width="{$breite}" height="20" alt=""/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:choose>
+          <xsl:when test="contains(@datei,'big.gif')">
+            <img src="graubig.gif" align="{$align}" width="{$breite}" height="20" alt=""/>
+          </xsl:when>
+          <xsl:otherwise>
+            <img src="grau.gif" align="{$align}" width="{$breite}" height="20" alt=""/>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template> 
+
+  <xsl:template match="km">
+    <xsl:call-template name="graFeld"/>
+  </xsl:template> 
+
+  <xsl:template match="rudkm">
+    <xsl:call-template name="graFeld"/>
+  </xsl:template>
+
+  <xsl:template match="stmkm">
+    <xsl:call-template name="graFeld"/>
+  </xsl:template>
+
+  <xsl:template match="fahrten">
+    <xsl:call-template name="graFeld"/>
+  </xsl:template>
+
+  <xsl:template match="kmfahrt">
+    <xsl:call-template name="graFeld"/>
+  </xsl:template>
+
+  <xsl:template match="dauer">
+    <xsl:call-template name="graFeld"/>
+  </xsl:template>
+
+  <xsl:template match="kmh">
+    <xsl:call-template name="graFeld"/>
+  </xsl:template>
+
+  <xsl:template match="anzversch">
+    <td><xsl:value-of select="."/></td>
+  </xsl:template>
+
+  <xsl:template match="wafakm">
+    <td><xsl:value-of select="."/></td>
+  </xsl:template>
+
+  <xsl:template match="zielfahrten">
+    <td><xsl:value-of select="."/></td>
+  </xsl:template>
+
+  <xsl:template match="zusatzDRV">
+    <td><xsl:value-of select="."/></td>
+  </xsl:template>
+
+  <xsl:template match="zusatzLRVBSommer">
+    <td><xsl:value-of select="."/></td>
+  </xsl:template>
+
+  <xsl:template match="zusatzLRVBWinter">
+    <td><xsl:value-of select="."/></td>
+  </xsl:template>
+
+  <xsl:template match="zusatzLRVBrbWanderWett">
+    <td><xsl:value-of select="."/></td>
+  </xsl:template>
+
+  <xsl:template match="zusatzLRVBrbFahrtenWett">
+    <td><xsl:value-of select="."/></td>
+  </xsl:template>
+
+  <xsl:template match="fahrtenbuch">
+          <xsl:if test="$fbfeld1='true'"><td><xsl:value-of select="fbFeld[1]"/></td></xsl:if>
+          <xsl:if test="$fbfeld2='true'"><td><xsl:value-of select="fbFeld[2]"/></td></xsl:if>
+          <xsl:if test="$fbfeld3='true'"><td><xsl:value-of select="fbFeld[3]"/></td></xsl:if>
+          <xsl:if test="$fbfeld4='true'"><td><xsl:value-of select="fbFeld[4]"/></td></xsl:if>
+          <xsl:if test="$fbfeld5='true'"><td><xsl:value-of select="fbFeld[5]"/></td></xsl:if>
+          <xsl:if test="$fbfeld6='true'"><td><xsl:value-of select="fbFeld[6]"/></td></xsl:if>
+          <xsl:if test="$fbfeld7='true'"><td><xsl:value-of select="fbFeld[7]"/></td></xsl:if>
+          <xsl:if test="$fbfeld8='true'"><td><xsl:value-of select="fbFeld[8]"/></td></xsl:if>
+          <xsl:if test="$fbfeld9='true'"><td><xsl:value-of select="fbFeld[9]"/></td></xsl:if>
+          <xsl:if test="$fbfeld10='true'"><td><xsl:value-of select="fbFeld[10]"/></td></xsl:if>
+          <xsl:if test="$fbfeld11='true'"><td><xsl:value-of select="fbFeld[11]"/></td></xsl:if>
+  </xsl:template>
+
+
+  <!-- Liste für Wer mit Wem und Wer Wohin -->
+  <xsl:template match="wwListe">
+    <xsl:for-each select="wwFeld">
+      <xsl:choose>
+        <xsl:when test="@selbst='true'">
+          <td bgcolor="#ffdddd"><xsl:value-of select="."/></td>
+        </xsl:when>
+        <xsl:otherwise>
+          <td><xsl:value-of select="."/></td>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:for-each>
+  </xsl:template>
+
+
+
+  <!-- Templates für Wettbewerbe -->
+
+  <!-- Warnung bei ungültigem Zeitraum -->
+  <xsl:template match="wettZeitraumWarnung">
+    <p align="center"><font color="red"><b><xsl:value-of select="."/></b></font></p>
+  </xsl:template>
+
+
+  <!-- Wettbewerbsbedingungen -->
+  <xsl:template match="wettBedingungen">
+    <!-- ELWIZ: Tabellenfarbe für Wettbewerbsbedingungen -->
+    <elwiz:value name="wettBedColor" descr="Hintergrundfarbe der Wettbewerbsbedingungen">
+      <xsl:variable name="_wbcolor">
+        <elwiz:option pos="0" descr="Farbe (RGB)" value="eeeeee" type="color"/>
+      </xsl:variable>
+    </elwiz:value>
+    <table align="center" bgcolor="#{$_wbcolor}">
+      <tr><td>
+        <xsl:for-each select="wettBedZeile">
+          <xsl:choose>
+            <xsl:when test="@fett"><b><xsl:value-of select="."/></b><br/></xsl:when>
+            <xsl:when test="@kursiv"><i><xsl:value-of select="."/></i><br/></xsl:when>
+            <xsl:otherwise><xsl:value-of select="."/><br/></xsl:otherwise>
+          </xsl:choose>
+        </xsl:for-each>
+      </td></tr>
+    </table><br/>
+  </xsl:template>
+
+
+
+
+
+  <!-- Gruppe -->
+  <xsl:template match="gruppe">
+    <xsl:apply-templates select="gruppenName"/>
+    <xsl:apply-templates select="wettEintrag"/>
+  </xsl:template>
+
+  <xsl:template match="gruppenName">
+    <!-- ELWIZ: Hintergrundfarbe für Gruppenbezeichnung -->
+    <elwiz:value name="wettGruppeColor" descr="Hintergrundfarbe für Gruppenbezeichnung">
+      <xsl:variable name="_wgrpcolor">
+        <elwiz:option pos="0" descr="Farbe (RGB)" value="ddddff" type="color"/>
+      </xsl:variable>
+    </elwiz:value>
+    <tr><th colspan="2"> </th></tr>
+    <tr><th align="left" colspan="2" bgcolor="#{$_wgrpcolor}">
+    <xsl:value-of select="gruppenBez"/><xsl:text> </xsl:text><xsl:value-of select="gruppenJahrg"/><xsl:text> </xsl:text>(<i>gefordert: <xsl:value-of select="gruppenBed"/></i>)
+    </th></tr>
+  </xsl:template>
+
+
+  <!-- Eintrag bei Wettbewerbsauswertung -->
+  <xsl:template match="wettEintrag">
+    <!-- ELWIZ: Farbe für Ruderer, die erfüllt haben oder nicht -->
+    <elwiz:value name="wettEintragColor" descr="Hintergrundfarbe für Wettbewerbsteilnehmer">
+      <xsl:variable name="_werfcolor">
+        <elwiz:option pos="0" descr="Farbe bei erfüllt (RGB)" value="00ff00" type="color"/>
+      </xsl:variable>
+      <xsl:variable name="_wnerfcolor">
+        <elwiz:option pos="1" descr="Farbe bei nicht erfüllt (RGB)" value="ff0000" type="color"/>
+      </xsl:variable>
+    </elwiz:value>
+    <tr>
+    <td width="10%"> </td>
+    <xsl:choose>
+      <xsl:when test="wettDetail">
+        <td><table border="1" width="100%">
+	  <tr><td colspan="6" bgcolor="#{$_werfcolor}"><b><xsl:value-of select="wettName"/></b><xsl:apply-templates select="wettJahrgang"/>: <xsl:value-of select="wettKilometer"/> Km<xsl:apply-templates select="wettZusatz"/></td></tr>
+	  <xsl:apply-templates select="wettDetail"/>
+	</table></td>
+      </xsl:when>
+      <xsl:otherwise> <!-- keine Details, oder nicht erfüllt -->
+        <xsl:choose>
+          <xsl:when test="@erfuellt='true'">
+            <td bgcolor="#{$_werfcolor}"><b><xsl:value-of select="wettName"/></b><xsl:apply-templates select="wettJahrgang"/>: <xsl:value-of select="wettKilometer"/> Km<xsl:apply-templates select="wettZusatz"/></td>
+          </xsl:when>
+          <xsl:otherwise> <!-- nicht erfüllt -->
+            <td bgcolor="#{$_wnerfcolor}">
+	      <b><xsl:value-of select="wettName"/></b>
+	      <xsl:apply-templates select="wettJahrgang"/>: 
+              <xsl:value-of select="wettKilometer"/> Km
+	      <xsl:apply-templates select="wettZusatz"/>
+	      <xsl:apply-templates select="wettWarnung"/>
+	    </td>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:otherwise>
+    </xsl:choose>
+    </tr>
+  </xsl:template>
+
+  <xsl:template match="wettZusatz">
+    <xsl:text>; </xsl:text><xsl:value-of select="."/>
+  </xsl:template>
+
+  <xsl:template match="wettWarnung">
+    <xsl:text>; </xsl:text>
+    <xsl:value-of select="."/>
+  </xsl:template>
+
+  <xsl:template match="wettJahrgang">
+    <xsl:text> </xsl:text>(<xsl:value-of select="."/>)
+  </xsl:template>
+
+  <xsl:template match="wettDetail">
+    <tr>
+      <xsl:for-each select="wettDetailFeld">
+        <td><xsl:value-of select="."/></td>
+      </xsl:for-each>
+    </tr>
+  </xsl:template>
+
+
+
+  <!-- Zusatztabelle -->
+  <xsl:template match="zusatzTabelle">
+    <table align="center" border="3">
+      <xsl:for-each select="zusatzTabelleZeile">
+        <tr>
+          <xsl:for-each select="zusatzTabelleSpalte">
+            <td>
+              <xsl:value-of select="."/>
+            </td>
+          </xsl:for-each>
+	</tr>
+      </xsl:for-each>
+    </table><br/>
+  </xsl:template>
+
+
+<!-- =================== Spezialtabelle =================== -->
+
+  <xsl:template match="spezialTabelle">
+    <xsl:apply-templates select="subTabelle"/>
+  </xsl:template>
+
+  <xsl:template match="subTabelle">
+    <table border="3" align="center">
+      <xsl:apply-templates select="zeile"/>
+    </table>
+    <br/>
+  </xsl:template>
+
+  <xsl:template match="zeile">
+    <tr>
+      <xsl:apply-templates select="spalte"/>
+    </tr>
+  </xsl:template>
+
+  <xsl:template match="spalte">
+    <xsl:variable name="_align">
+      <xsl:choose>
+        <xsl:when test="../@colspan='1'">left</xsl:when>
+        <xsl:otherwise>center</xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:variable name="_bgcolor">
+      <xsl:choose>
+        <xsl:when test="@color"><xsl:value-of select="@color"/></xsl:when>
+        <xsl:otherwise>ffffff</xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+
+    <xsl:choose>
+      <xsl:when test="@bold='true'">
+        <td align="{$_align}" colspan="{../@colspan}" bgcolor="#{$_bgcolor}"><b><xsl:value-of select="."/></b></td>
+      </xsl:when>
+      <xsl:otherwise> 
+        <td align="{$_align}" colspan="{../@colspan}" bgcolor="#{$_bgcolor}"><xsl:value-of select="."/></td>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
+</xsl:stylesheet>
