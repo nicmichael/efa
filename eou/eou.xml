@@ -2,6 +2,31 @@
 <efaOnlineUpdate>
 
     <Version>
+        <VersionID>2.2.2_35</VersionID>
+        <ReleaseDate>19.02.2018</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa222.zip</DownloadUrl>
+        <DownloadSize>4095047</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Neu: Auswertung von Jugendlichen mit Behinderung für DRV-Fahrtenabezeichen jetzt möglich</ChangeItem>
+            <ChangeItem>Neu: DRV-Gewässerkatalog aktualisiert</ChangeItem>
+            <ChangeItem>Bugfix: DRV-Wanderruderstatistik Auswertung von Fahrten jetzt möglich, auch wenn mehrere Fahrten derselben Personen zum selben Ziel am selben Tag stattgefunden haben</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.2_34</VersionID>
+        <ReleaseDate>01.02.2018</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa222.zip</DownloadUrl>
+        <DownloadSize>4092127</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: DRV-Wettbewerbsauswertung hat manchmal nicht genügend Fahrten ausgegeben (jetzt bis zu 10)</ChangeItem>
+            <ChangeItem>Bugfix: Standard-Wettbewerbsjahr im Statistikdialog ist jetzt zu Beginn des Jahres das Vorjahr (statt aktuelles Jahr)</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
         <VersionID>2.2.2_33</VersionID>
         <ReleaseDate>10.11.2017</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa222.zip</DownloadUrl>

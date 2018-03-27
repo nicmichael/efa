@@ -43,7 +43,7 @@ public class WatersListDialog extends DataListDialog {
     private void addCreateWatersButton() {
         try {
             if (Daten.project.getWaters(false).getResourceTemplate(International.getLanguageID()) != null) {
-                addAction(International.getString("Gewässerliste erstellen"),
+                addAction(International.getString("Gewässer aktualisieren"),
                         ACTION_CREATEFROMTEMPLATE,
                         BaseDialog.IMAGE_SPECIAL);
             }
@@ -61,7 +61,7 @@ public class WatersListDialog extends DataListDialog {
             case ACTION_CREATEFROMTEMPLATE:
                 int count = Daten.project.getWaters(false).addAllWatersFromTemplate(International.getLanguageID());
                 if (count > 0) {
-                    Dialog.infoDialog(International.getMessage("{count} Gewässer aus Gewässerkatalog erfolgreich hinzugefügt.",
+                    Dialog.infoDialog(International.getMessage("{count} Gewässer aus Gewässerkatalog erfolgreich hinzugefügt oder aktualisiert.",
                             count));
                 } else {
                     Dialog.infoDialog(International.getString("Alle Gewässer aus dem Gewässerkatalog sind bereits vorhanden (keine neuen hinzugefügt)."));

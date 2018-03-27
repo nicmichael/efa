@@ -67,6 +67,7 @@ public class ProjectRecord extends DataRecord  {
     public static final String ADMINNAME = "AdminName";
     public static final String ADMINEMAIL = "AdminEmail";
     public static final String LASTLOGBOOKSWITCH = "LastLogbookSwitch";
+    public static final String LASTWATERSTMPLHASH = "LastWatersTemplateHash";
     // Fields for Type=Club
     public static final String CLUBNAME = "ClubName";
     public static final String ADDRESSSTREET = "AddressStreet";
@@ -151,6 +152,8 @@ public class ProjectRecord extends DataRecord  {
         f.add(ADMINEMAIL);
         t.add(IDataAccess.DATA_STRING);
         f.add(LASTLOGBOOKSWITCH);
+        t.add(IDataAccess.DATA_STRING);
+        f.add(LASTWATERSTMPLHASH);
         t.add(IDataAccess.DATA_STRING);
         f.add(CURRENTLOGBOOKEFABASE);
         t.add(IDataAccess.DATA_STRING);
@@ -331,6 +334,10 @@ public class ProjectRecord extends DataRecord  {
 
     public void setLastLogbookSwitch(String key) {
         setString(LASTLOGBOOKSWITCH, key);
+    }
+
+    public void setLastWatersTamplateHash(String key) {
+        setString(LASTWATERSTMPLHASH, key);
     }
 
     public void setCurrentLogbookEfaBase(String currentLogbook) {
@@ -570,6 +577,10 @@ public class ProjectRecord extends DataRecord  {
 
     public String getLastLogbookSwitch() {
         return getString(LASTLOGBOOKSWITCH);
+    }
+
+    public String getLastWatersTemplateHash() {
+        return getString(LASTWATERSTMPLHASH);
     }
 
     public String getCurrentLogbookEfaBase() {

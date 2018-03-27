@@ -1463,6 +1463,16 @@ public class Project extends StorageObject {
         }
     }
 
+    public void setLastWatersTemplateHash(String key) {
+        try {
+            ProjectRecord r = getProjectRecord();
+            r.setLastWatersTamplateHash(key);
+            getMyDataAccess(ProjectRecord.TYPE_PROJECT).update(r);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public void setAutoNewLogbookDate(DataTypeDate date) {
         try {
             ProjectRecord r = getBoathouseRecord();
@@ -2145,6 +2155,10 @@ public class Project extends StorageObject {
 
     public String getLastLogbookSwitch() {
         return getProjectRecord().getLastLogbookSwitch();
+    }
+
+    public String getLastWatersTemplateHash() {
+        return getProjectRecord().getLastWatersTemplateHash();
     }
 
     public String getAutoNewClubworkName() {

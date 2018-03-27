@@ -34,6 +34,8 @@ public class CompetitionDRVFahrtenabzeichen extends Competition {
 
     public static final long WAFA_MINDISTANCE_ONEDAY   = 30 * 1000; // 30 km
     public static final long WAFA_MINDISTANCE_MULTIDAY = 40 * 1000; // 40 km
+    
+    private static final int MAX_WAFA_OUTPUT = 10;
 
 
     static long getNumberOfDays(DataTypeDate startDate, DataTypeDate endDate) {
@@ -242,7 +244,7 @@ public class CompetitionDRVFahrtenabzeichen extends Competition {
                     Hashtable<String,DRVFahrt> wanderfahrten = getWanderfahrten(sd[i], gruppe3abc);
 
                     boolean mehrFahrten = false;
-                    String[][] wafa = new String[7][6]; // 7 Einträge mit jeweils LfdNr/Abfahrt/Ankunft/Ziel/Km/Bemerk
+                    String[][] wafa = new String[MAX_WAFA_OUTPUT][6]; // MAX_WAFA_OUTPUT Einträge mit jeweils LfdNr/Abfahrt/Ankunft/Ziel/Km/Bemerk
                     Object[] keys = wanderfahrten.keySet().toArray(); // Keys ermitteln
                     long totalWafaMeters = 0; // Wafa-Meter insgesamt
                     for (int k=0; k<keys.length; k++) {
@@ -263,7 +265,7 @@ public class CompetitionDRVFahrtenabzeichen extends Competition {
                     int wafaAnzTTour = 0; // für Gruppe 3: Anzahl der 30 Km Tagesfahrten
                     int jumAnz = 0;       // für Gruppe 3 a/b/c: Anzahl der JuM-Regatten
                     DRVFahrt drvel = null, bestEl = null;
-                    for (int nr = 0; nr < wafa.length + 1; nr++) { // max. für 7 auszufüllende Felder Fahrten suchen (plus 1 weitere, die aber nicht gemerkt wird)
+                    for (int nr = 0; nr < wafa.length + 1; nr++) { // max. für MAX_WAFA_OUTPUT auszufüllende Felder Fahrten suchen (plus 1 weitere, die aber nicht gemerkt wird)
                         hoechst = 0; // höchste verbleibende KmZahl oder Tagezahl
 
                         // nächste geeignete Fahrt heraussuchen (meiste Km (Gruppe<3) oder längste Tour (Gruppe 3))
@@ -308,8 +310,8 @@ public class CompetitionDRVFahrtenabzeichen extends Competition {
                          *        wafaAnzMTour == 2 && wafaAnzTTour == 1 wenn 1 Wochenendfahrt und 1 Tagesfahrt
                          */
                         if (hoechst > 0 && // was gefunden?
-                                (nr < 5 || // weniger als 5 Einträge, oder ...
-                                (wafaMeters / 10 < gruppen[g].zusatz && gruppen[g].gruppe != 3) || // noch Km nötig
+                                (nr < MAX_WAFA_OUTPUT || // weniger als 5 Einträge, oder ...
+                                (wafaMeters / 1000 < gruppen[g].zusatz && gruppen[g].gruppe != 3) || // noch Km nötig
                                 ( (wafaAnzMTour + 2*wafaAnzTTour) < 3 && gruppen[g].gruppe == 3))) {         // noch Fahrten nötig
                             ausg[hoechstEl] = true;
                             wafa[nr][0] = bestEl.entryNo;
@@ -375,7 +377,7 @@ public class CompetitionDRVFahrtenabzeichen extends Competition {
                             sr.sCompPercentFulfilled < 100)) {
 
                         int wafaLength;
-                        for (wafaLength = 0; wafaLength < 7 && wafa[wafaLength][0] != null; wafaLength++);
+                        for (wafaLength = 0; wafaLength < MAX_WAFA_OUTPUT && wafa[wafaLength][0] != null; wafaLength++);
 
                         if (sr.getOutputTypeEnum() == StatisticsRecord.OutputTypes.efawett) {
                             // Ausgabe für efaWett

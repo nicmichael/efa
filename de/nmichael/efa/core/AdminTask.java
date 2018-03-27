@@ -12,6 +12,7 @@ import de.nmichael.efa.Daten;
 import de.nmichael.efa.core.config.AdminRecord;
 import de.nmichael.efa.data.Clubwork;
 import de.nmichael.efa.data.ProjectRecord;
+import de.nmichael.efa.data.Waters;
 import de.nmichael.efa.data.types.DataTypeDate;
 import de.nmichael.efa.gui.AdminDialog;
 import de.nmichael.efa.util.Dialog;
@@ -46,6 +47,9 @@ public class AdminTask extends Thread {
         // For each action, check whether admin has necessary permissions.
         if (admin.isAllowedAdministerProjectClubwork()) {
             checkForClubworkCarryOver();
+        }
+        if (admin.isAllowedEditDestinations()) {
+            checkForUpdateWaters();
         }
     }
 
@@ -131,4 +135,26 @@ public class AdminTask extends Thread {
             }
         }
     }
+    
+    private void checkForUpdateWaters() {
+        if (Daten.project != null && Daten.project.isOpen()
+                && Waters.getResourceTemplate(International.getLanguageID()) != null
+                && Waters.hasWaterTemplateChanged(International.getLanguageID())) {
+            if (Dialog.yesNoDialog(International.getString("Gewässerkatalog aktualisiert"),
+                    International.getMessage("Der vom {author} erstellte Gewässerkatalog wurde überarbeitet.",
+                            Waters.getWaterTemplateAuthor(International.getLanguageID())) + "\n"
+                    + International.getString("Möchstest Du die Gewässerliste jetzt aktualisieren?")) == Dialog.YES) {
+                int count = Daten.project.getWaters(false).addAllWatersFromTemplate(International.getLanguageID());
+                if (count > 0) {
+                    Dialog.infoDialog(International.getMessage("{count} Gewässer aus Gewässerkatalog erfolgreich hinzugefügt oder aktualisiert.",
+                            count));
+                } else {
+                    Dialog.infoDialog(International.getString("Alle Gewässer aus dem Gewässerkatalog sind bereits vorhanden (keine neuen hinzugefügt)."));
+                }
+            } else {
+                Waters.setWaterTemplateUnchanged(International.getLanguageID());
+            }
+        }
+    }
+    
 }

@@ -1,3 +1,4 @@
+# AUTHOR=DRV
 # Waters Template for Germany
 # Saved as CSV with Delimiter ; and without Quotes in UTF-8
 # Create using OpenOffice "Save As CSV..." Function
@@ -37,7 +38,7 @@ Vorpommersche Bodden;Saaler Bodden
 ;Zicker See
 ;Peenestrom
 ;Achterwasser
-;Keines Haff
+;Kleines Haff#;Keines Haff
 ;Usedomer See
 ;Neuwarper See
 Stettiner Haff;
@@ -58,7 +59,6 @@ Schweriner Seen;Schweriner Innensee
 ;Ziegelaußensee
 ;Heidensee
 ;Burgsee
-Störkanal;
 Pinnower See;
 Osdorfer See;
 Medeweger See;
@@ -118,7 +118,7 @@ Schwentine;Schwentine
 ;Kleiner Plöner See
 ;Lanker See
 Kieler Förde;
-NOK;Nord-Ostsee-Kanal
+Nord-Ostsee-Kanal;Nord-Ostsee-Kanal#NOK;Nord-Ostsee-Kanal
 ;Borgstedter Enge
 ;Audorfer See
 ;Gieselaukanal
@@ -133,7 +133,7 @@ Schaalsee;Schaalseekanal
 Ratzeburger See;Küchensee
 ;Domsee
 Wakenitz;
-ELK;Elbe-Lübeck-Kanal
+Elbe-Lübeck-Kanal;Elbe-Lübeck-Kanal#ELK;Elbe-Lübeck-Kanal
 ;Möllner See
 ;Schulsee
 ;Prüßsee
@@ -141,9 +141,11 @@ Eckernförder Bucht;
 Schlei;Burgsee
 ;Haddebyer Noor
 ;Selker Noor
-Flenburger Förde;Innenförde
+;Füsinger Au
+Flensburger Förde;Innenförde#Flenburger Förde;Innenförde
 ;Außenförde
 Krükau;
+Stör;Bekau
 Störkanal;
 Wilster Au;
 Hamburger Gewässer;Alster
@@ -193,8 +195,8 @@ Gose-Elbe;
 Elbe-Weser-Schifffahrtsweg;Medem
 ;Hadelner Kanal
 ;Aue
-;Berdakesa-Geste-Kanal
-;Geste
+;Berdakesa-Geeste-Kanal#;Berdakesa-Geste-Kanal
+;Geeste#;Geste
 Müritz-Havel-Wasserstrasse;Ellenbogensee 
 ;Mirower Kanal
 ;Sumpfsee
@@ -307,7 +309,7 @@ Potsdamer Gewässer;Glieniker Lake
 ;Lehnitzsee
 ;Krampnitzsee
 ;Heiliger See
-Emster;Emster Kanal
+Emster Gewässer;Emster Kanal#Emster;Emster Kanal
 ;Klostersee
 ;Rietzer See
 ;Netzner See
@@ -326,8 +328,8 @@ Brandenburger Gewässer;Brandenburger Stadtkanal
 Wublitz;
 Nuthe;
 Havelkanal;
-SPK;Sacrow-Paretzer-Kanal
-EHK;Elbe-Havel-Kanal
+Sacrow-Paretzer-Kanal;Sacrow-Paretzer-Kanal#SPK;Sacrow-Paretzer-Kanal
+Elbe-Havel-Kanal;Elbe-Havel-Kanal#EHK;Elbe-Havel-Kanal
 ;Woltersdorfer Altkanal
 ;Roßdorfer Altkanal
 ;Parayer Verbindungskanal
@@ -342,8 +344,8 @@ Elbe;Magdeburger Alte Elbe
 ;Zollelbe
 ;Handelshafen Magedeburg
 ;Rothenseeer Abstiegskanal
-ESK;Elbe-Seitenkanal
-OHK;Oder-Havel-Kanal
+Elbe-Seitenkanal;Elbe-Seitenkanal#ESK;Elbe-Seitenkanal
+Oder-Havel-Kanal;Oder-Havel-Kanal#OHK;Oder-Havel-Kanal
 Finowkanal;
 ;Oderberger See
 ;Lieper See
@@ -351,7 +353,7 @@ Werbelliner Gewässer;Werbellinsee
 ;Werbellinkanal
 ;Langer Trödel
 ;Grimnitzsee
-HFW;Hohensaaten-Friedrichstaler-Wasserst.
+Hohensaaten-Friedrichstaler-Wasserstraße;Hohensaaten-Friedrichstaler-Wasserstraße#HFW;Hohensaaten-Friedrichstaler-Wasserst.
 Ruppiner Gewässer;Oranienburger Kanal
 ;Malzer Kanal
 ;Ruppiner Kanal
@@ -368,9 +370,9 @@ Ruppiner Gewässer;Oranienburger Kanal
 ;Rottenstielfließ
 ;Tornowsee
 ;Zermützelsee
-;Rheisberger Rhin
+;Rheinsberger Rhin#;Rheisberger Rhin
 ;Möllensee
-;Gudelachsee
+;Gudelacksee#;Gudelachsee
 ;Vielitzsee
 Rhingewässer;Fehrbelliner Rhin
 ;Rhinkanal
@@ -378,12 +380,12 @@ Rhingewässer;Fehrbelliner Rhin
 ;Mühlenrhin
 ;Bültgraben
 Dosse;
-HGH;Havelländischer Großer Hauptkanal
-NPK;Nauen-Paretzer-Kanal
+Havelländischer Großer Hauptkanal;Havelländischer Großer Hauptkanal#HGH;Havelländischer Großer Hauptkanal
+Nauen-Paretzer-Kanal;Nauen-Paretzer-Kanal#NPK;Nauen-Paretzer-Kanal
 Tek;Teltowkanal
 Berliner Gewässer;Spree (von Dämeritzsee bis Mündung)
-;Havel (von Nieder-Neuendorf bis Gl.-Br.)
-;Dahme (von Zeithen bis Mündung)
+;Havel (von Nieder-Neuendorf bis Glienicker Brücke)#;Havel (von Nieder-Neuendorf bis Gl.-Br.)
+;Dahme (von Zeuthen bis Mündung)#;Dahme (von Zeithen bis Mündung)
 ;Nieder-Neuendorfer See
 ;Havelseen
 ;Wannsee
@@ -398,7 +400,7 @@ Berliner Gewässer;Spree (von Dämeritzsee bis Mündung)
 ;Hohenzollernkanal
 ;Alte Spandauer Schifffahrtskanal
 ;Westhafenkanal
-;Chalottenburger Verbindungskanal
+;Charlottenburger Verbindungskanal#;Chalottenburger Verbindungskanal
 ;Landwehrkanal
 ;Kupfergraben
 ;Strekkanal
@@ -412,8 +414,8 @@ Berliner Gewässer;Spree (von Dämeritzsee bis Mündung)
 ;Krampe
 ;Seddinsee
 ;Gosener Kanal
-;Gossener Graben
-;Neuvenedig
+;Gosener Graben#;Gossener Graben
+;Neu-Venedig#;Neuvenedig
 ;Zeuthener See
 ;Krossinsee
 Rüdersdorfer Gewässer;Flakenfließ
@@ -431,10 +433,10 @@ Löcknitz;Löcknitz
 ;Peetzsee
 ;Möllensee
 ;Kiessee
-OSK;Oder-Spree-Kanal
+Oder-Spree-Kanal;Oder-Spree-Kanal#OSK;Oder-Spree-Kanal
 ;Dehmsee
 ;Kersdorfersee
-;Mülroser See
+;Großer Müllroser See#;Mülroser See
 ;Brieskower Kanal
 Wentower Gewässer;Großer Wentower See
 ;Kleiner Wentower See
@@ -461,7 +463,7 @@ Teupitzer Gewässer;Schmöldesee
 ;Schweriner See
 ;Teupitzer See
 ;Mielitzsee
-DUK;Dahme-Umflut-Kanal
+Dahme-Umflut-Kanal;Dahme-Umflut-Kanal#DUK;Dahme-Umflut-Kanal
 ;Köthener See
 Dahme;Streganzer See
 ;Dolgensee
@@ -555,7 +557,7 @@ Leipziger Gewässer;Cospudener See
 ;Elster-Saale Kanal
 ;Floßgraben
 ;Weiße Elster
-;Pleisse
+;Pleiße#;Pleisse
 ;Markkleeberger See
 ;Karl-Heine-Kanal
 ;Lindenauer Hafen
@@ -584,10 +586,11 @@ Lausitzer Seenplatte;Senftenberger See
 ;Silbersee
 ;Speicherbecken Lohsa
 ;Spreetaler See
-MLK;Mittellandkanal
+Mittellandkanal;Mittellandkanal#MLK;Mittellandkanal
 ;Stichkanal Osnabrück
 ;Stichkanal Salzgitter
 ;Stichkanal Hannover-Linden
+;Stichkanal Hildesheim
 ;Stichkanal Misburg
 ;Salzgittersee
 ;Allersee
@@ -599,11 +602,11 @@ Weser;Doktorsee
 ;Schweiburg
 Lune;
 Lesum;
-Wümme;
+Wümme;Wörpe
 Hamme;Beke
 Ochtum;
 Blocklandgewässer;Kuhgraben
-;Kleine wümme
+;Kleine Wümme#;Kleine wümme
 ;Maschinenfleet
 ;Waller Fleet
 Hunte;Neuenhuntorfersiel
@@ -611,9 +614,9 @@ Hunte;Neuenhuntorfersiel
 ;Bornhorster Siel
 ;Hemmelsbäker Kanal
 ;Oldenburger Stadthafen
-Kük;Küstenkanal
-Efk;Elisabethfehnkanal
-Ngk;Nordgeorgsfehnkanal
+Küstenkanal;Küstenkanal#Kük;Küstenkanal
+Elisabethfehnkanal;Elisabethfehnkanal#Efk;Elisabethfehnkanal
+Nordgeorgsfehnkanal;Nordgeorgsfehnkanal#Ngk;Nordgeorgsfehnkanal
 Barßeler Gewässer;Soeste
 ;Leda
 ;Sagter Ems
@@ -655,15 +658,16 @@ Norder Gewässer;Gretsieler Tief
 ;Hager Tief
 ;Störtebekerkanal
 Jadebusen;Vareler Tief
-EJK;Ems-Jade-Kanal
+Ems-Jade-Kanal;Ems-Jade-Kanal#EJK;Ems-Jade-Kanal
 Ems;Dollart
 ;Dwarstief
 ;Heisfelder Sielmuhde
 ;Nüttermoorer Sieltief
 ;Papenburger Sielkanal
 ;Papenburger Stadtkanal
-HRK;Haren-Rütenbrock-Kanal
-SNK;Süd-Nord-Kanal
+Haren-Rütenbrock-Kanal;Haren-Rütenbrock-Kanal#HRK;Haren-Rütenbrock-Kanal
+Süd-Nord-Kanal;Süd-Nord-Kanal#SNK;Süd-Nord-Kanal
+Spoykanal;
 Hase;
 Nordhorner Gewässer;Vechtesee
 ;Ems-Vechte-Kanal
@@ -671,10 +675,10 @@ Nordhorner Gewässer;Vechtesee
 ;Coevorden-Vechte-Kanal
 ;Nordhorn-Almelo-Kanal
 Vechte;
-DEK;Dortmund-Ems-Kanal
-WDK;Wesel-Datteln-Kanal
-DHK;Datteln-Hamm-Kanal
-RHK;Rhein-Herne-Kanal
+Dortmund-Ems-Kanal;Dortmund-Ems-Kanal#DEK;Dortmund-Ems-Kanal
+Wesel-Datteln-Kanal;Wesel-Datteln-Kanal#WDK;Wesel-Datteln-Kanal
+Datteln-Hamm-Kanal;Datteln-Hamm-Kanal#DHK;Datteln-Hamm-Kanal
+Rhein-Herne-Kanal;Rhein-Herne-Kanal#RHK;Rhein-Herne-Kanal
 Ederstausee;
 Emmerstausee;
 Okerstausee;
@@ -701,17 +705,18 @@ Bodensee;Untersee
 ;Überlinger See
 ;Bruckgraben
 ;Zeller See
-;Seerhhein
+;Seerhein#;Seerhhein
 ;Rhein bis Stein
 Hochrhein;
 Rhein;Oberrhein
+;Gold-Kanal
 ;Mittelrhein
 ;Niederrhein
 Main;Obermain
 ;Mittelmain
 ;Untermain
 Regnitz;
-MDK;Main-Donau-Kanal
+Main-Donau-Kanal;Main-Donau-Kanal#MDK;Main-Donau-Kanal
 Saar;
 Mosel;
 Lahn;

@@ -45,6 +45,7 @@ public class CompetitionDRVWanderruderstatistik extends Competition {
                    "##" + sg.getName();
         } else {
             return "##" + r.getDate().toString() +
+                   "##" + (r.getStartTime() != null ? Integer.toString(r.getStartTime().getHour()) : "") +
                    "##" + r.getDistance().getStringValueInKilometers() +
                    "##" + r.getDestinationAndVariantName(validAt);
         }

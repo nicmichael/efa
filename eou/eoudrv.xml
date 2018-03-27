@@ -2,6 +2,18 @@
 <efaOnlineUpdate>
 
     <Version>
+        <VersionID>2.2.2_35</VersionID>
+        <ReleaseDate>19.02.2018</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa2drv.zip</DownloadUrl>
+        <DownloadSize>4262719</DownloadSize>
+
+        <!-- Changes (deutsch) -->
+        <Changes lang="de">
+            <ChangeItem>Neu: Auswertung von Jugendlichen mit Behinderung für DRV-Fahrtenabezeichen jetzt möglich</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
         <VersionID>2.2.2_27</VersionID>
         <ReleaseDate>11.04.2017</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa2drv.zip</DownloadUrl>

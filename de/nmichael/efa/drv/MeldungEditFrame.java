@@ -1184,6 +1184,8 @@ public class MeldungEditFrame extends JDialog implements ActionListener {
                 hGruppe.put("3d", new Integer(12));
                 this.mGruppe.addItem("3e (Jugend 17-18)");
                 hGruppe.put("3e", new Integer(13));
+                this.mGruppe.addItem("3f (Jugend 50% Beh.)");
+                hGruppe.put("3f (50% Behinderung)", new Integer(14));
 
                 hAbzeichen.put("", "ungültig");
                 hAbzeichen.put(EfaWettMeldung.ABZEICHEN_ERW_EINF, "Erwachsene einfach");

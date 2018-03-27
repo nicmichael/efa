@@ -705,7 +705,7 @@ public class StatisticsRecord extends DataRecord implements IItemListener {
         setAggrSpeedBarSize(0);
         setSortingCriteria(SORTING_DISTANCE);
         setSortingOrder(SORTINGORDER_DESC);
-        setCompYear(DataTypeDate.today().getYear());
+        setCompYear(DataTypeDate.today().getMonth() > 2 ? DataTypeDate.today().getYear() : DataTypeDate.today().getYear() - 1);
         setCompPercentFulfilled(100);
         setOptionDistanceWithUnit(true);
         setOptionTruncateDistance(true);
