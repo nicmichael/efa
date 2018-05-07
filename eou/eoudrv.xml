@@ -2,6 +2,18 @@
 <efaOnlineUpdate>
 
     <Version>
+        <VersionID>2.2.2_36</VersionID>
+        <ReleaseDate>06.05.2018</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa2drv.zip</DownloadUrl>
+        <DownloadSize>4263975</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Neu: Bemerkungen werden für Wanderruderstatistik mit übermittelt</ChangeItem>
+            <ChangeItem>Bugfix: Irrtümliche Fehlermeldung beim Bestätigen von Meldungen (xx Teilnehmer gesendet, aber nur yy empfangen) behoben</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
         <VersionID>2.2.2_35</VersionID>
         <ReleaseDate>19.02.2018</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa2drv.zip</DownloadUrl>

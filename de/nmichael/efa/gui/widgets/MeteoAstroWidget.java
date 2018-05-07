@@ -67,6 +67,9 @@ public class MeteoAstroWidget extends Widget {
     static final String PARAM_WARNTEXTDARKSOON      = "WarnTextDarkSoon";
     static final String PARAM_WARNTEXTDARKNOW       = "WarnTextDarkNow";
 
+    static final String PARAM_INCLUDEHTMLTEXT       = "IncludeHtmlText";
+    static final String PARAM_INCLUDEHTMLPAGE       = "IncludeHtmlPage";
+    
     enum WeatherApi {
         google,
         yahoo
@@ -206,8 +209,12 @@ public class MeteoAstroWidget extends Widget {
         addParameterInternal(new ItemTypeInteger(PARAM_WARNTIMEBEFORESUNRISE, 30, 0, 60, false,
                 IItemType.TYPE_EXPERT, "",
                 PARAM_WARNTIMEBEFORESUNRISE));
-
-
+        addParameterInternal(new ItemTypeString(PARAM_INCLUDEHTMLTEXT, "",
+                IItemType.TYPE_PUBLIC, "",
+                International.getString("HTML-Text einbinden")));
+        addParameterInternal(new ItemTypeString(PARAM_INCLUDEHTMLPAGE, "",
+                IItemType.TYPE_PUBLIC, "",
+                International.getString("HTML-Seite einbinden")));
 
         super.setEnabled(true);
         super.setPosition(IWidget.POSITION_CENTER);
@@ -307,6 +314,14 @@ public class MeteoAstroWidget extends Widget {
     public String getWarnTextDarkNow() {
         return ((ItemTypeString)getParameterInternal(PARAM_WARNTEXTDARKNOW)).toString();
     }
+    public String getIncludeHtmlText() {
+        return ((ItemTypeString)getParameterInternal(PARAM_INCLUDEHTMLTEXT)).toString();
+    }
+    public String getIncludeHtmlPage() {
+        return ((ItemTypeString)getParameterInternal(PARAM_INCLUDEHTMLPAGE)).toString();
+    }
+    
+    
 
     void construct() {
         htmlPane.setContentType("text/html");
@@ -671,8 +686,24 @@ public class MeteoAstroWidget extends Widget {
                     htmlDoc.append("</tr>\n");
 
                     htmlDoc.append("</table>\n");
+                    
+                    if (getIncludeHtmlText() != null && getIncludeHtmlText().length() > 0) {
+                        htmlDoc.append(getIncludeHtmlText());
+                    }
+                    if (getIncludeHtmlPage() != null && getIncludeHtmlPage().length() > 0) {
+                        String includeText = EfaUtil.getBodyFromURL(getIncludeHtmlPage());
+                        if (includeText != null && includeText.trim().length() > 0) {
+                            htmlDoc.append(includeText.trim());
+                        }
+                    }
+                    
                     htmlDoc.append("</body>\n</html>\n");
 
+                    if (Logger.isTraceOn(Logger.TT_WIDGETS, 9)) {
+                        BufferedWriter f = new BufferedWriter(new FileWriter("/tmp/efa_widget.html"));
+                        f.write(htmlDoc.toString());
+                        f.close();
+                    }
                     // System.out.println(htmlDoc.toString());
                     htmlPane.setText(htmlDoc.toString());
                 } catch(Exception e) {

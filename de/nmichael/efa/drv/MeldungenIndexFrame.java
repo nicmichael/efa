@@ -1267,6 +1267,11 @@ public class MeldungenIndexFrame extends JDialog implements ActionListener {
                         changeddata += z + "**#**"; // Zeilenumbrüche als **#** maskieren
                     }
                     f.close();
+                    EfaWett efw = new EfaWett(meldfile);
+                    if (efw.readFile()) {
+                        // over-ride teilcnt: we're interested in the total number of teilnehmer, not just those who fulfilled
+                        teilcnt = efw.getNumberOfMeldungen();
+                    }
                 }
                 
                 String request = Main.drvConfig.makeScriptRequestString(DRVConfig.ACTION_UPLOAD, 

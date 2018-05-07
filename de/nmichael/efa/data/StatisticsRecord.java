@@ -565,6 +565,7 @@ public class StatisticsRecord extends DataRecord implements IItemListener {
     public boolean    pAdditionalTable2LastRowBold = false;
     public StatOutputLines pOutputLinesAbove;
     public StatOutputLines pOutputLinesBelow;
+    public String     pComments;
 
 
 

@@ -430,6 +430,9 @@ public class EfaWett {
             if (m.drvWS_JuniorinnenKm != null) {
                 f.write("DRVWS_JUNIORINNENKM=" + m.drvWS_JuniorinnenKm + "\n");
             }
+            if (m.drvWS_Bemerkungen != null) {
+                f.write("DRVWS_BEMERKUNGEN=" + m.drvWS_Bemerkungen + "\n");
+            }
 
             // Bearbeitungsdaten (DRV)
             if (durchDRVbearbeitet) {
@@ -761,6 +764,9 @@ public class EfaWett {
                 if (s.startsWith("DRVWS_JUNIORINNENKM=")) {
                     m.drvWS_JuniorinnenKm = s.substring(20, s.length());
                 }
+                if (s.startsWith("DRVWS_BEMERKUNGEN=")) {
+                    m.drvWS_Bemerkungen = s.substring(18, s.length());
+                }
 
                 // DRV Bearbeitungsstatus
                 if (s.startsWith("DRVINTERN_WIRDGEWERTET=")) {
@@ -810,5 +816,15 @@ public class EfaWett {
             m.drvint_nachfrage = null;
             m = m.next;
         }
+    }
+    
+    public int getNumberOfMeldungen() {
+        int c = 0;
+        EfaWettMeldung m = this.meldung;
+        while (m != null) {
+            c++;
+            m = m.next;
+        }
+        return c;
     }
 }

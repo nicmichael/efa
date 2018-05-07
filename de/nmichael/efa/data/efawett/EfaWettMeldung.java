@@ -81,6 +81,7 @@ public class EfaWettMeldung {
     public String drvWS_FrauenKm = null;
     public String drvWS_JuniorinnenAnz = null;
     public String drvWS_JuniorinnenKm = null;
+    public String drvWS_Bemerkungen = null;
     public String[][] fahrt = new String[FAHRT_ANZ_X][FAHRT_ANZ_Y];
     public EfaWettMeldung next = null;
     // Bearbeitungsdaten durch den DRV (wird ebenfalls in der Datei gespeichert)
@@ -139,6 +140,7 @@ public class EfaWettMeldung {
         this.drvWS_FrauenKm = ewm.drvWS_FrauenKm;
         this.drvWS_JuniorinnenAnz = ewm.drvWS_JuniorinnenAnz;
         this.drvWS_JuniorinnenKm = ewm.drvWS_JuniorinnenKm;
+        this.drvWS_Bemerkungen = ewm.drvWS_Bemerkungen;
         for (int i = 0; ewm.fahrt != null && this.fahrt != null && i < this.fahrt.length && i < ewm.fahrt.length; i++) {
             for (int j = 0; ewm.fahrt[i] != null && this.fahrt[i] != null && j < this.fahrt[i].length && j < ewm.fahrt[i].length; j++) {
                 this.fahrt[i][j] = ewm.fahrt[i][j];

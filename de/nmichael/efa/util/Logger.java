@@ -444,6 +444,7 @@ public class Logger {
     public static final String MSG_DEBUG_RMTACCESSSTATS = "DBG023";
     public static final String MSG_DEBUG_BOATLISTS = "DBG024";
     public static final String MSG_DEBUG_LOCKTIMEOUTSET = "DBG025";
+    public static final String MSG_DEBUG_SAVEMETEOWIDGETHTML = "DBG026";
 
     // CLI
     public static final String MSG_CLI_INFO  = "CLI001";
@@ -453,23 +454,24 @@ public class Logger {
     public static final String MSG_CLI_DEBUG = "CLI005";
 
     // Trace Topics for Debug Logging
-    public static final long TT_CORE = Integer.parseInt("0000000000000001", 2); // 0x0001
-    public static final long TT_OTHER = Integer.parseInt("0000000000000010", 2); // 0x0002
-    public static final long TT_INTERNATIONALIZATION = Integer.parseInt("0000000000000100", 2); // 0x0004
-    public static final long TT_EFATYPES = Integer.parseInt("0000000000001000", 2); // 0x0008
-    public static final long TT_BACKGROUND = Integer.parseInt("0000000000010000", 2); // 0x0010
-    public static final long TT_MEMORYSUPERVISION = Integer.parseInt("0000000000100000", 2); // 0x0020
-    public static final long TT_FILEIO = Integer.parseInt("0000000001000000", 2); // 0x0040
-    public static final long TT_XMLFILE = Integer.parseInt("0000000010000000", 2); // 0x0080
-    public static final long TT_GUI = Integer.parseInt("0000000100000000", 2); // 0x0100
-    public static final long TT_PRINT_FTP = Integer.parseInt("0000001000000000", 2); // 0x0200
-    public static final long TT_STATISTICS = Integer.parseInt("0000010000000000", 2); // 0x0400
-    public static final long TT_EXCEPTIONS = Integer.parseInt("0000100000000000", 2); // 0x0800
-    public static final long TT_HELP = Integer.parseInt("0001000000000000", 2); // 0x1000
-    public static final long TT_SYNC = Integer.parseInt("0010000000000000", 2); // 0x2000
-    public static final long TT_REMOTEEFA = Integer.parseInt("0100000000000000", 2); // 0x4000
-    public static final long TT_PDF = Integer.parseInt("1000000000000000", 2);  // 0x8000
-    public static final long TT_CLI = Integer.parseInt("10000000000000000", 2); // 0x10000
+    public static final long TT_CORE =                 Integer.parseInt("00000000000000001", 2); // 0x0001
+    public static final long TT_OTHER =                Integer.parseInt("00000000000000010", 2); // 0x0002
+    public static final long TT_INTERNATIONALIZATION = Integer.parseInt("00000000000000100", 2); // 0x0004
+    public static final long TT_EFATYPES =             Integer.parseInt("00000000000001000", 2); // 0x0008
+    public static final long TT_BACKGROUND =           Integer.parseInt("00000000000010000", 2); // 0x0010
+    public static final long TT_MEMORYSUPERVISION =    Integer.parseInt("00000000000100000", 2); // 0x0020
+    public static final long TT_FILEIO =               Integer.parseInt("00000000001000000", 2); // 0x0040
+    public static final long TT_XMLFILE =              Integer.parseInt("00000000010000000", 2); // 0x0080
+    public static final long TT_GUI =                  Integer.parseInt("00000000100000000", 2); // 0x0100
+    public static final long TT_PRINT_FTP =            Integer.parseInt("00000001000000000", 2); // 0x0200
+    public static final long TT_STATISTICS =           Integer.parseInt("00000010000000000", 2); // 0x0400
+    public static final long TT_EXCEPTIONS =           Integer.parseInt("00000100000000000", 2); // 0x0800
+    public static final long TT_HELP =                 Integer.parseInt("00001000000000000", 2); // 0x1000
+    public static final long TT_SYNC =                 Integer.parseInt("00010000000000000", 2); // 0x2000
+    public static final long TT_REMOTEEFA =            Integer.parseInt("00100000000000000", 2); // 0x4000
+    public static final long TT_PDF =                  Integer.parseInt("01000000000000000", 2);  // 0x8000
+    public static final long TT_CLI =                  Integer.parseInt("010000000000000000", 2); // 0x10000
+    public static final long TT_WIDGETS =              Integer.parseInt("100000000000000000", 2); // 0x20000
 
     // Debug Logging and Trace Topics
     private static boolean debugLogging = false;

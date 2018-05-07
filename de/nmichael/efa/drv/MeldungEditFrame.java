@@ -234,6 +234,7 @@ public class MeldungEditFrame extends JDialog implements ActionListener {
     JLabel jLabel56 = new JLabel();
     JTextField fTeilnehmer = new JTextField();
     JTextField fMannschKm = new JTextField();
+    JTextField fBemerkungen = new JTextField();
     JLabel jLabel58 = new JLabel();
     JLabel jLabel59 = new JLabel();
     JLabel jLabel60 = new JLabel();
@@ -699,6 +700,7 @@ public class MeldungEditFrame extends JDialog implements ActionListener {
             jLabel8.setText("Bezeichnung der Fahrt: ");
             jLabelStrecke.setText("Strecke: ");
             jLabel10.setText("Befahrene Gewässer: ");
+            JLabel jLabelBemerk = new JLabel("Bemerkungen: ");
             jLabel11.setToolTipText("");
             jLabel11.setText("Dauer und Länge: ");
             jLabel55.setText("Tage: ");
@@ -711,6 +713,8 @@ public class MeldungEditFrame extends JDialog implements ActionListener {
             fTeilnehmer.setPreferredSize(new Dimension(60, 17));
             fMannschKm.setMinimumSize(new Dimension(60, 17));
             fMannschKm.setPreferredSize(new Dimension(60, 17));
+            fBemerkungen.setMinimumSize(new Dimension(60, 17));
+            fBemerkungen.setPreferredSize(new Dimension(60, 17));
             jLabel58.setText("Männer: ");
             jLabel59.setText("Junioren: ");
             jLabel60.setText("Frauen: ");
@@ -1021,46 +1025,48 @@ public class MeldungEditFrame extends JDialog implements ActionListener {
             fahrtenDataPanel.add(jLabel10, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
             fahrtenDataPanel.add(fGewaesser, new GridBagConstraints(1, 3, 6, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
             fahrtenDataPanel.add(addGewaesser, new GridBagConstraints(7, 3, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-            fahrtenDataPanel.add(jLabel11, new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-            fahrtenDataPanel.add(fKilometer, new GridBagConstraints(5, 4, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-            fahrtenDataPanel.add(fTage, new GridBagConstraints(2, 4, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-            fahrtenDataPanel.add(jLabel55, new GridBagConstraints(1, 4, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 10, 0, 0), 0, 0));
+            fahrtenDataPanel.add(jLabelBemerk, new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+            fahrtenDataPanel.add(fBemerkungen, new GridBagConstraints(1, 4, 7, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+            fahrtenDataPanel.add(jLabel11, new GridBagConstraints(0, 5, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+            fahrtenDataPanel.add(fKilometer, new GridBagConstraints(5, 5, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+            fahrtenDataPanel.add(fTage, new GridBagConstraints(2, 5, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+            fahrtenDataPanel.add(jLabel55, new GridBagConstraints(1, 5, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 10, 0, 0), 0, 0));
 
-            fahrtenDataPanel.add(jLabel58, new GridBagConstraints(0, 5, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-            fahrtenDataPanel.add(jLabel59, new GridBagConstraints(0, 6, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-            fahrtenDataPanel.add(jLabel60, new GridBagConstraints(0, 7, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-            fahrtenDataPanel.add(jLabel61, new GridBagConstraints(0, 8, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-            fahrtenDataPanel.add(jLabel62, new GridBagConstraints(1, 5, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 10, 0, 0), 0, 0));
-            fahrtenDataPanel.add(jLabel63, new GridBagConstraints(1, 6, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 10, 0, 0), 0, 0));
-            fahrtenDataPanel.add(jLabel64, new GridBagConstraints(1, 7, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 10, 0, 0), 0, 0));
-            fahrtenDataPanel.add(jLabel65, new GridBagConstraints(1, 8, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 10, 0, 0), 0, 0));
+            fahrtenDataPanel.add(jLabel58, new GridBagConstraints(0, 6, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+            fahrtenDataPanel.add(jLabel59, new GridBagConstraints(0, 7, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+            fahrtenDataPanel.add(jLabel60, new GridBagConstraints(0, 8, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+            fahrtenDataPanel.add(jLabel61, new GridBagConstraints(0, 9, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+            fahrtenDataPanel.add(jLabel62, new GridBagConstraints(1, 6, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 10, 0, 0), 0, 0));
+            fahrtenDataPanel.add(jLabel63, new GridBagConstraints(1, 7, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 10, 0, 0), 0, 0));
+            fahrtenDataPanel.add(jLabel64, new GridBagConstraints(1, 8, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 10, 0, 0), 0, 0));
+            fahrtenDataPanel.add(jLabel65, new GridBagConstraints(1, 9, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 10, 0, 0), 0, 0));
 
-            fahrtenDataPanel.add(jLabel56, new GridBagConstraints(1, 9, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 10, 0, 0), 0, 0));
-            fahrtenDataPanel.add(fTeilnehmer, new GridBagConstraints(2, 9, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-            fahrtenDataPanel.add(fMannschKm, new GridBagConstraints(4, 9, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-            fahrtenDataPanel.add(fMaennerAnz, new GridBagConstraints(2, 5, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-            fahrtenDataPanel.add(fJuniorenAnz, new GridBagConstraints(2, 6, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-            fahrtenDataPanel.add(fFrauenAnz, new GridBagConstraints(2, 7, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-            fahrtenDataPanel.add(fJuniorinnenAnz, new GridBagConstraints(2, 8, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-            fahrtenDataPanel.add(fMaennerKm, new GridBagConstraints(4, 5, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-            fahrtenDataPanel.add(fJuniorenKm, new GridBagConstraints(4, 6, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-            fahrtenDataPanel.add(fFrauenKm, new GridBagConstraints(4, 7, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-            fahrtenDataPanel.add(fJuniorinnenKm, new GridBagConstraints(4, 8, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-            fahrtenDataPanel.add(jLabel66, new GridBagConstraints(3, 5, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 10, 0, 0), 0, 0));
-            fahrtenDataPanel.add(jLabel67, new GridBagConstraints(3, 6, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 10, 0, 0), 0, 0));
-            fahrtenDataPanel.add(jLabel68, new GridBagConstraints(3, 7, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 10, 0, 0), 0, 0));
-            fahrtenDataPanel.add(jLabel69, new GridBagConstraints(3, 8, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 10, 0, 0), 0, 0));
-            fahrtenDataPanel.add(jLabel57, new GridBagConstraints(3, 9, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 10, 0, 0), 0, 0));
-            fahrtenDataPanel.add(jLabel70, new GridBagConstraints(3, 4, 2, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 10, 0, 0), 0, 0));
-            fahrtenDataPanel.add(fUnblockButton, new GridBagConstraints(0, 10, 7, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(10, 0, 0, 0), 0, 0));
-            fahrtenDataPanel.add(fWirdGewertet, new GridBagConstraints(0, 11, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-            fahrtenDataPanel.add(fNichtGewertetGrundLabel, new GridBagConstraints(3, 11, 2, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-            fahrtenDataPanel.add(fNichtGewertetGrund, new GridBagConstraints(5, 11, 2, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+            fahrtenDataPanel.add(jLabel56, new GridBagConstraints(1, 10, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 10, 0, 0), 0, 0));
+            fahrtenDataPanel.add(fTeilnehmer, new GridBagConstraints(2, 10, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+            fahrtenDataPanel.add(fMannschKm, new GridBagConstraints(4, 10, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+            fahrtenDataPanel.add(fMaennerAnz, new GridBagConstraints(2, 6, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+            fahrtenDataPanel.add(fJuniorenAnz, new GridBagConstraints(2, 7, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+            fahrtenDataPanel.add(fFrauenAnz, new GridBagConstraints(2, 8, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+            fahrtenDataPanel.add(fJuniorinnenAnz, new GridBagConstraints(2, 9, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+            fahrtenDataPanel.add(fMaennerKm, new GridBagConstraints(4, 6, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+            fahrtenDataPanel.add(fJuniorenKm, new GridBagConstraints(4, 7, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+            fahrtenDataPanel.add(fFrauenKm, new GridBagConstraints(4, 8, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+            fahrtenDataPanel.add(fJuniorinnenKm, new GridBagConstraints(4, 9, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+            fahrtenDataPanel.add(jLabel66, new GridBagConstraints(3, 6, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 10, 0, 0), 0, 0));
+            fahrtenDataPanel.add(jLabel67, new GridBagConstraints(3, 7, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 10, 0, 0), 0, 0));
+            fahrtenDataPanel.add(jLabel68, new GridBagConstraints(3, 8, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 10, 0, 0), 0, 0));
+            fahrtenDataPanel.add(jLabel69, new GridBagConstraints(3, 9, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 10, 0, 0), 0, 0));
+            fahrtenDataPanel.add(jLabel57, new GridBagConstraints(3, 10, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 10, 0, 0), 0, 0));
+            fahrtenDataPanel.add(jLabel70, new GridBagConstraints(3, 5, 2, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 10, 0, 0), 0, 0));
+            fahrtenDataPanel.add(fUnblockButton, new GridBagConstraints(0, 11, 7, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(10, 0, 0, 0), 0, 0));
+            fahrtenDataPanel.add(fWirdGewertet, new GridBagConstraints(0, 12, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+            fahrtenDataPanel.add(fNichtGewertetGrundLabel, new GridBagConstraints(3, 12, 2, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+            fahrtenDataPanel.add(fNichtGewertetGrund, new GridBagConstraints(5, 12, 2, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
 
-            fahrtenDataPanel.add(fNachfrageCheckBox, new GridBagConstraints(0, 12, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-            fahrtenDataPanel.add(fNachfrage, new GridBagConstraints(1, 12, 6, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+            fahrtenDataPanel.add(fNachfrageCheckBox, new GridBagConstraints(0, 13, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+            fahrtenDataPanel.add(fNachfrage, new GridBagConstraints(1, 13, 6, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
 
-            fahrtenDataPanel.add(jLabel22, new GridBagConstraints(0, 9, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+            fahrtenDataPanel.add(jLabel22, new GridBagConstraints(0, 10, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
             teilnDataPanel.add(jLabel31, new GridBagConstraints(0, 1, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
             teilnDataPanel.add(jLabel32, new GridBagConstraints(0, 2, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
             teilnDataPanel.add(jLabel33, new GridBagConstraints(0, 3, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
@@ -1455,6 +1461,7 @@ public class MeldungEditFrame extends JDialog implements ActionListener {
             printDiff("Frauen (Kilometer)", ewmOld.drvWS_FrauenKm, ewmCur.drvWS_FrauenKm);
             printDiff("Juniorinnen (Anzahl)", ewmOld.drvWS_JuniorinnenAnz, ewmCur.drvWS_JuniorinnenAnz);
             printDiff("Juniorinnen (Kilometer)", ewmOld.drvWS_JuniorinnenKm, ewmCur.drvWS_JuniorinnenKm);
+            printDiff("Bemerkungen", ewmOld.drvWS_Bemerkungen, ewmCur.drvWS_Bemerkungen);
             for (int i = 0; i < ewmOld.fahrt.length && i < ewmCur.fahrt.length; i++) {
                 for (int j = 0; j < ewmOld.fahrt[i].length && j < ewmCur.fahrt[i].length; j++) {
                     printDiff("Fahrt[" + i + "][" + j + "]", ewmOld.fahrt[i][j], ewmCur.fahrt[i][j]);
@@ -1924,6 +1931,7 @@ public class MeldungEditFrame extends JDialog implements ActionListener {
                 this.fJuniorinnenKm.setText(notNull(ewmCur.drvWS_JuniorinnenKm));
                 this.fTeilnehmer.setText(notNull(ewmCur.drvWS_Teilnehmer));
                 this.fMannschKm.setText(notNull(ewmCur.drvWS_MannschKm));
+                this.fBemerkungen.setText(notNull(ewmCur.drvWS_Bemerkungen));
 
                 this.fWirdGewertet.setSelected(ewmCur.drvint_wirdGewertet);
                 updateStatusNichtGewertetGrund();
@@ -2058,6 +2066,7 @@ public class MeldungEditFrame extends JDialog implements ActionListener {
                 ewm.drvWS_JuniorinnenKm = notEmpty(this.fJuniorinnenKm);
                 ewm.drvWS_Teilnehmer = notEmpty(this.fTeilnehmer);
                 ewm.drvWS_MannschKm = notEmpty(this.fMannschKm);
+                ewm.drvWS_Bemerkungen = notEmpty(this.fBemerkungen);
                 break;
         }
         ewm.changed = true;
@@ -2698,6 +2707,7 @@ public class MeldungEditFrame extends JDialog implements ActionListener {
         this.fJuniorinnenKm.setEditable(!blocked);
         this.fTeilnehmer.setEditable(!blocked);
         this.fMannschKm.setEditable(!blocked);
+        this.fBemerkungen.setEditable(!blocked);
 
         if (blocked) {
             this.mUnblockButton.setText("Felder zum Bearbeiten freigeben");

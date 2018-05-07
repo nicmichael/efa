@@ -191,6 +191,14 @@ public class CompetitionDRVWanderruderstatistik extends Competition {
         }
         sd.sName = fahrtName;
         sd.sAdditional = fahrtDetails;
+        
+        if (r.getComments() != null && r.getComments().length() > 0) {
+            if (sd.sComments == null || sd.sComments.length() == 0) {
+                sd.sComments = r.getComments();
+            } else if (sd.sComments.indexOf(r.getComments()) < 0) {
+                    sd.sComments = sd.sComments + ";" + r.getComments();
+            }
+        }
 
         // Kilometer dieser Etappe (Etappe kann auch gesamte Fahrt sein)
         meters = (Long) sd.compData.etappen.get(etappenName);
@@ -455,6 +463,7 @@ public class CompetitionDRVWanderruderstatistik extends Competition {
                     ewm.drvWS_FrauenKm = sr.pAdditionalTable1[pos][13];
                     ewm.drvWS_JuniorinnenAnz = sr.pAdditionalTable1[pos][14];
                     ewm.drvWS_JuniorinnenKm = sr.pAdditionalTable1[pos][15];
+                    ewm.drvWS_Bemerkungen = sd[i].sComments;
                     if (efaWett.meldung == null) {
                         efaWett.meldung = ewm;
                     } else {

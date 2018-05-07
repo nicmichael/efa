@@ -26,8 +26,12 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.net.NetworkInterface;
+import java.net.URL;
+import java.net.URLConnection;
 import javax.swing.JComponent;
 import java.security.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.mail.internet.InternetAddress;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
@@ -2036,6 +2040,29 @@ public class EfaUtil {
             } else x.append(c);
         }
         return x.toString();
+    }
+    
+    public static String getBodyFromURL(String url) {
+        try {
+            URLConnection conn = new URL(url).openConnection();
+            conn.connect();
+            BufferedInputStream in = new BufferedInputStream(conn.getInputStream());
+            StringBuilder s = new StringBuilder();
+            while (in.available() > 0) {
+                byte[] data = new byte[in.available()];
+                in.read(data);
+                s.append(new String(data));
+            }
+            in.close();
+            Pattern p = Pattern.compile(".*<body[^>]*>(.+)</body>.*", Pattern.DOTALL);
+            Matcher m = p.matcher(s.toString());
+            if (m.matches()) {
+                return m.group(1);
+            }
+        } catch(Exception e) {
+            Logger.log(e);
+        }
+        return null;
     }
 
     public static void main(String args[]) {
