@@ -2,6 +2,20 @@
 <efaOnlineUpdate>
 
     <Version>
+        <VersionID>2.2.2_37</VersionID>
+        <ReleaseDate>19.06.2018</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa222.zip</DownloadUrl>
+        <DownloadSize>4097223</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Darstellungsprobleme im Projekt/Fahrtenbuch Öffnen Dialog behoben</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Layout problems of Project/Logbook Open dialog fixed</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
         <VersionID>2.2.2_36</VersionID>
         <ReleaseDate>06.05.2018</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa222.zip</DownloadUrl>

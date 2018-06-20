@@ -53,13 +53,18 @@ public class ItemTypeHtmlList extends ItemType implements ActionListener {
 
     public void showValue() {
         if (list != null) {
+            list.removeAll();
             if (keys != null && items != null) {
                 String[] elements = new String[keys.length];
                 for (int i = 0; i < keys.length; i++) {
                     StringBuffer s = new StringBuffer();
                     s.append(items.get(keys[i]));
                     elements[i] = s.toString();
-                }
+                    if (Logger.isTraceOn(Logger.TT_GUI, 6)) {
+                        Logger.log(Logger.DEBUG, Logger.MSG_DEBUG_GUI_ELEMENTS,
+                                getClass().getName() + ".showValue() elements[" + i + "] = " + s);
+                    }
+            }
                 list.setListData(elements);
             } else {
                 list.setListData(new Object[0]);
@@ -75,6 +80,11 @@ public class ItemTypeHtmlList extends ItemType implements ActionListener {
     }
 
     protected void iniDisplay() {
+        if (Logger.isTraceOn(Logger.TT_GUI, 6)) {
+            Logger.log(Logger.DEBUG, Logger.MSG_DEBUG_GUI_ELEMENTS, 
+                    getClass().getName() + ".iniDisplay() fieldWidth=" + fieldWidth +
+                    ", fieldHeight=" + fieldHeight);
+        }
         list = new JList();
         list.setCellRenderer(new MyCellRenderer());
         scrollPane = new JScrollPane();
@@ -172,6 +182,11 @@ public class ItemTypeHtmlList extends ItemType implements ActionListener {
             String s = value.toString();
             setContentType("text/html");
             setText(s);
+            if (Logger.isTraceOn(Logger.TT_GUI, 6)) {
+                Logger.log(Logger.DEBUG, Logger.MSG_DEBUG_GUI_ELEMENTS,
+                        getClass().getName() + ".MyCellRenderer preferred height = " + 
+                        getPreferredSize().getHeight() + ", s = " + s);
+            }
             if (isSelected) {
                 setBackground(list.getSelectionBackground());
                 setForeground(list.getSelectionForeground());
@@ -182,6 +197,19 @@ public class ItemTypeHtmlList extends ItemType implements ActionListener {
             setEnabled(list.isEnabled());
             setFont(list.getFont());
             setOpaque(true);
+            int height = (int) getPreferredSize().getHeight();
+            if (height < 25) {
+                // some environments have display problems with this list and only show the
+                // first item properly, but miscompute the height for subsequent list elements
+                // to something very small (e.g. 6). If we get a rediculously small preferred height,
+                // we compute one ourselves
+                height = Math.max(height, (EfaUtil.countCharInString(s, "<br>") + 1) * 25);
+                if (Logger.isTraceOn(Logger.TT_GUI, 6)) {
+                    Logger.log(Logger.DEBUG, Logger.MSG_DEBUG_GUI_ELEMENTS,
+                            getClass().getName() + ".MyCellRenderer setting preferred height = " + height);
+                }
+                setPreferredSize(new Dimension(fieldWidth, height));
+            }
             return this;
         }
     }

@@ -445,6 +445,7 @@ public class Logger {
     public static final String MSG_DEBUG_BOATLISTS = "DBG024";
     public static final String MSG_DEBUG_LOCKTIMEOUTSET = "DBG025";
     public static final String MSG_DEBUG_SAVEMETEOWIDGETHTML = "DBG026";
+    public static final String MSG_DEBUG_GUI_ELEMENTS = "DBG027";
 
     // CLI
     public static final String MSG_CLI_INFO  = "CLI001";
