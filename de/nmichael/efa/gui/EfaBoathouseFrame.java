@@ -746,61 +746,65 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
     }
 
     private void updateGuiWidgets() {
-        widgetTopPanel.removeAll();
-        widgetBottomPanel.removeAll();
-        widgetLeftPanel.removeAll();
-        widgetRightPanel.removeAll();
-        widgetCenterPanel.removeAll();
-
-        if (Daten.efaConfig.getWidgets() == null) {
-            return;
-        }
-
-        // stop all previously started widgets
         try {
-            for (int i = 0; widgets != null && i < widgets.size(); i++) {
+            widgetTopPanel.removeAll();
+            widgetBottomPanel.removeAll();
+            widgetLeftPanel.removeAll();
+            widgetRightPanel.removeAll();
+            widgetCenterPanel.removeAll();
+            
+            if (Daten.efaConfig.getWidgets() == null) {
+                return;
+            }
+
+            // stop all previously started widgets
+            try {
+                for (int i = 0; widgets != null && i < widgets.size(); i++) {
+                    IWidget w = widgets.get(i);
+                    w.stop();
+                }
+            } catch (Exception e) {
+                Logger.logdebug(e);
+            }
+            widgets = new Vector<IWidget>();
+
+            // find all enabled widgets
+            Vector<IWidget> allWidgets = Widget.getAllWidgets();
+            for (int i = 0; allWidgets != null && i < allWidgets.size(); i++) {
+                IWidget w = allWidgets.get(i);
+                IItemType enabled = Daten.efaConfig.getExternalGuiItem(w.getParameterName(Widget.PARAM_ENABLED));
+                if (enabled != null && enabled instanceof ItemTypeBoolean && ((ItemTypeBoolean) enabled).getValue()) {
+                    // set parameters for this enabled widget according to configuration
+                    IItemType[] params = w.getParameters();
+                    for (int j = 0; j < params.length; j++) {
+                        params[j].parseValue(Daten.efaConfig.getExternalGuiItem(params[j].getName()).toString());
+                    }
+                    widgets.add(w);
+                }
+            }
+
+            // show all enabled widgets
+            for (int i = 0; i < widgets.size(); i++) {
                 IWidget w = widgets.get(i);
-                w.stop();
+                String position = w.getPosition();
+                if (IWidget.POSITION_TOP.equals(position)) {
+                    w.show(widgetTopPanel, BorderLayout.CENTER);
+                }
+                if (IWidget.POSITION_BOTTOM.equals(position)) {
+                    w.show(widgetBottomPanel, BorderLayout.CENTER);
+                }
+                if (IWidget.POSITION_LEFT.equals(position)) {
+                    w.show(widgetLeftPanel, BorderLayout.CENTER);
+                }
+                if (IWidget.POSITION_RIGHT.equals(position)) {
+                    w.show(widgetRightPanel, BorderLayout.CENTER);
+                }
+                if (IWidget.POSITION_CENTER.equals(position)) {
+                    w.show(widgetCenterPanel, BorderLayout.CENTER);
+                }
             }
         } catch (Exception e) {
             Logger.logdebug(e);
-        }
-        widgets = new Vector<IWidget>();
-
-        // find all enabled widgets
-        Vector<IWidget> allWidgets = Widget.getAllWidgets();
-        for (int i=0; allWidgets != null && i<allWidgets.size(); i++) {
-            IWidget w = allWidgets.get(i);
-            IItemType enabled = Daten.efaConfig.getExternalGuiItem(w.getParameterName(Widget.PARAM_ENABLED));
-            if (enabled != null && enabled instanceof ItemTypeBoolean && ((ItemTypeBoolean)enabled).getValue()) {
-                // set parameters for this enabled widget according to configuration
-                IItemType[] params = w.getParameters();
-                for (int j=0; j<params.length; j++) {
-                    params[j].parseValue(Daten.efaConfig.getExternalGuiItem(params[j].getName()).toString());
-                }
-                widgets.add(w);
-            }
-        }
-
-        // show all enabled widgets
-        for (int i=0; i<widgets.size(); i++) {
-            IWidget w = widgets.get(i);
-            String position = w.getPosition();
-            if (IWidget.POSITION_TOP.equals(position)) {
-                w.show(widgetTopPanel, BorderLayout.CENTER);
-            }
-            if (IWidget.POSITION_BOTTOM.equals(position)) {
-                w.show(widgetBottomPanel, BorderLayout.CENTER);
-            }
-            if (IWidget.POSITION_LEFT.equals(position)) {
-                w.show(widgetLeftPanel, BorderLayout.CENTER);
-            }
-            if (IWidget.POSITION_RIGHT.equals(position)) {
-                w.show(widgetRightPanel, BorderLayout.CENTER);
-            }
-            if (IWidget.POSITION_CENTER.equals(position)) {
-                w.show(widgetCenterPanel, BorderLayout.CENTER);
-            }
         }
     }
 

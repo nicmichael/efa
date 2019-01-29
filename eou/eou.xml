@@ -2,6 +2,31 @@
 <efaOnlineUpdate>
 
     <Version>
+        <VersionID>2.2.2_40</VersionID>
+        <ReleaseDate>28.01.2019</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa222.zip</DownloadUrl>
+        <DownloadSize>4097732</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Neu: Bedingungen für DRV-Wanderruderwettbewerb 2019 aktualisiert</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.2_39</VersionID>
+        <ReleaseDate>28.10.2018</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa222.zip</DownloadUrl>
+        <DownloadSize>4097452</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Trenner in Bootslisten zeigen jetzt selbstdefinierte Bootstypen an</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Separators in boat lists now show names of self-defined boat types</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
         <VersionID>2.2.2_37</VersionID>
         <ReleaseDate>19.06.2018</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa222.zip</DownloadUrl>

@@ -1807,14 +1807,16 @@ public class MeldungenIndexFrame extends JDialog implements ActionListener {
             // Tabelle 3: 75 Jahre und älter
             SortedStatistic sStat = new SortedStatistic();
             f.write("Statistik 3: Jahrgang " + (Main.drvConfig.aktJahr - 75) + " und älter (75 Jahre und älter)\n");
-            f.write("Jahrgang;Name;Verein;Km\n");
+            f.write("Jahrgang;Name;Verein;Vereins-Nr;Km\n");
             for (DatenFelder d = Main.drvConfig.meldestatistik.getCompleteFirst(); d != null; d = Main.drvConfig.meldestatistik.getCompleteNext()) {
                 int jahrgang = EfaUtil.string2int(d.get(Meldestatistik.JAHRGANG), 9999);
                 if (jahrgang <= Main.drvConfig.aktJahr - 75) {
                     int key = jahrgang * 100000 + (999999 - EfaUtil.string2int(d.get(Meldestatistik.KILOMETER), 0));
                     sStat.add(key, null,
                             d.get(Meldestatistik.JAHRGANG),
-                            d.get(Meldestatistik.NACHNAME) + " " + d.get(Meldestatistik.VORNAME) + ";" + d.get(Meldestatistik.VEREIN),
+                            d.get(Meldestatistik.NACHNAME) + " " + d.get(Meldestatistik.VORNAME) + ";" + 
+                            d.get(Meldestatistik.VEREIN) + ";" +
+                            d.get(Meldestatistik.VEREINSMITGLNR),
                             d.get(Meldestatistik.KILOMETER));
                 }
             }
@@ -1828,27 +1830,30 @@ public class MeldungenIndexFrame extends JDialog implements ActionListener {
             // Tabelle 4: Über 4000 Km
             sStat = new SortedStatistic();
             f.write("Statistik 4: Über 4000 Km haben gerudert:\n");
-            f.write("Platz;Km;Name/Jahrgang/Verein\n");
+            f.write("Platz;Km;Name;Jahrgang;Verein;Vereins-Nr\n");
             for (DatenFelder d = Main.drvConfig.meldestatistik.getCompleteFirst(); d != null; d = Main.drvConfig.meldestatistik.getCompleteNext()) {
                 int km = EfaUtil.string2int(d.get(Meldestatistik.KILOMETER), 0);
                 if (km >= 4000) {
                     sStat.add(km, null,
-                            d.get(Meldestatistik.KILOMETER),
-                            d.get(Meldestatistik.NACHNAME) + ", " + d.get(Meldestatistik.VORNAME) + " (" + d.get(Meldestatistik.JAHRGANG) + "), " + d.get(Meldestatistik.VEREIN),
-                            null);
+                            d.get(Meldestatistik.KILOMETER) + ";" +
+                            d.get(Meldestatistik.NACHNAME) + ", " + d.get(Meldestatistik.VORNAME) + ";" +
+                            d.get(Meldestatistik.JAHRGANG) + ";" + 
+                            d.get(Meldestatistik.VEREIN) + ";" +
+                            d.get(Meldestatistik.VEREINSMITGLNR),
+                            null, null);
                 }
             }
             sStat.sort(false);
             for (int i = 0; i < sStat.sortedSize(); i++) {
                 String[] sdata = sStat.getSorted(i);
-                f.write((i + 1) + ".;" + sdata[0] + ";" + sdata[1] + "\n");
+                f.write((i + 1) + ".;" + sdata[0] + "\n");
             }
             f.write("\n\n\n");
 
             // Tabelle 5: Fahrtenabzeichen in Gold
             sStat = new SortedStatistic();
             f.write("Statistik 5: Fahrtenabzeichen in Gold\n");
-            f.write("Platz;Km;Name/Jahrgang/Verein\n");
+            f.write("Platz;Km;Name;Jahrgang;Verein;Vereins-Nr\n");
             for (int _anzAbz = 0; _anzAbz <= 95; _anzAbz += 5) {
                 for (DatenFelder d = Main.drvConfig.meldestatistik.getCompleteFirst(); d != null; d = Main.drvConfig.meldestatistik.getCompleteNext()) {
                     int anzAbz = EfaUtil.string2int(d.get(Meldestatistik.ANZABZEICHEN), 0);
@@ -1866,9 +1871,13 @@ public class MeldungenIndexFrame extends JDialog implements ActionListener {
                             abz = Integer.toString(_anzAbz);
                         }
 
-                        String name = d.get(Meldestatistik.NACHNAME) + ", " + d.get(Meldestatistik.VORNAME) + " (" + d.get(Meldestatistik.JAHRGANG) + "), " + d.get(Meldestatistik.VEREIN);
-
-                        sStat.add(-1, abz + name, abz, name, null);
+                        sStat.add(-1, abz + d.get(Meldestatistik.NACHNAME) + ", " + d.get(Meldestatistik.VORNAME), abz, 
+                                d.get(Meldestatistik.KILOMETER) + ";" +
+                                d.get(Meldestatistik.NACHNAME) + ", " + d.get(Meldestatistik.VORNAME) + ";" + 
+                                d.get(Meldestatistik.JAHRGANG) + ";" + 
+                                d.get(Meldestatistik.VEREIN) + ";" +
+                                d.get(Meldestatistik.VEREINSMITGLNR),
+                                null);
                     }
                 }
             }
@@ -1892,12 +1901,23 @@ public class MeldungenIndexFrame extends JDialog implements ActionListener {
 
             // Tabelle 6: Äquatorpreisträger
             f.write("Statistik 6: Äquatorpreisträger:\n");
-            f.write("Verein;Vorname;Nachname;Kilometer;Äquatorpreis\n");
+            f.write("Verein;Vereins-Nr;Vorname;Nachname;Kilometer;Äquatorpreis\n");
+            sStat = new SortedStatistic();
             for (DatenFelder d = Main.drvConfig.meldestatistik.getCompleteFirst(); d != null; d = Main.drvConfig.meldestatistik.getCompleteNext()) {
                 if (d.get(Meldestatistik.AEQUATOR).length() > 0) {
-                    f.write(d.get(Meldestatistik.VEREIN) + ";" + d.get(Meldestatistik.VORNAME) + ";" + d.get(Meldestatistik.NACHNAME) + ";"
-                            + d.get(Meldestatistik.GESKM) + ";" + d.get(Meldestatistik.AEQUATOR) + "\n");
+                    sStat.add(-1, d.get(Meldestatistik.VEREIN), 
+                            d.get(Meldestatistik.VEREIN) + ";" + 
+                            d.get(Meldestatistik.VEREINSMITGLNR) + ";" + 
+                            d.get(Meldestatistik.VORNAME) + ";" + 
+                            d.get(Meldestatistik.NACHNAME) + ";" + 
+                            d.get(Meldestatistik.GESKM) + ";" + 
+                            d.get(Meldestatistik.AEQUATOR),
+                            null, null);
                 }
+            }
+            sStat.sort(true);
+            for (int i = 0; i < sStat.sortedSize(); i++) {
+                f.write(sStat.getSorted(i)[0] + "\n");
             }
             f.write("\n\n\n");
 
@@ -1906,20 +1926,21 @@ public class MeldungenIndexFrame extends JDialog implements ActionListener {
             f.write("Statistik 7: Fahrtenabzeichen pro Verein:\n");
             f.write("Vereins-Nr;Verein;Anzahl\n");
             Hashtable<String,Integer> vereinsAbz = new Hashtable<String,Integer>();
+            Hashtable<String,String> vereinsName = new Hashtable<String,String>();
             for (DatenFelder d = Main.drvConfig.meldestatistik.getCompleteFirst(); d != null; d = Main.drvConfig.meldestatistik.getCompleteNext()) {
-                String verein = d.get(Meldestatistik.VEREINSMITGLNR) + ";" +
-                                d.get(Meldestatistik.VEREIN);
-                Integer anz = vereinsAbz.get(verein);
+                String vereinsId = d.get(Meldestatistik.VEREINSMITGLNR);
+                Integer anz = vereinsAbz.get(vereinsId);
                 if (anz == null) {
-                    vereinsAbz.put(verein, 1);
+                    vereinsAbz.put(vereinsId, 1);
                 } else {
-                    vereinsAbz.put(verein, anz + 1);
+                    vereinsAbz.put(vereinsId, anz + 1);
                 }
+                vereinsName.put(vereinsId, d.get(Meldestatistik.VEREIN));
             }
-            for (String verein : vereinsAbz.keySet()) {
-                sStat.add(vereinsAbz.get(verein), null,
-                        verein,
-                        Integer.toString(vereinsAbz.get(verein)),
+            for (String vereinsId : vereinsAbz.keySet()) {
+                sStat.add(vereinsAbz.get(vereinsId), null,
+                        vereinsId + ";" + vereinsName.get(vereinsId),
+                        Integer.toString(vereinsAbz.get(vereinsId)),
                         null);
             }
             sStat.sort(false);
@@ -1938,16 +1959,16 @@ public class MeldungenIndexFrame extends JDialog implements ActionListener {
                 f.write("Vereins-Nr;Verein;Aktive;Mannschaftskilometer;Fahrtenabzeichen\n");
 
                 for (DatenFelder d = Main.drvConfig.meldestatistik.getCompleteFirst(); d != null; d = Main.drvConfig.meldestatistik.getCompleteNext()) {
-                    String verein = d.get(Meldestatistik.VEREINSMITGLNR) + ";"
-                            + d.get(Meldestatistik.VEREIN);
+                    String vereinsId = d.get(Meldestatistik.VEREINSMITGLNR);
                     int aktive = EfaUtil.string2int(d.get(Meldestatistik.WS_AKT18M), 0)
                             + EfaUtil.string2int(d.get(Meldestatistik.WS_AKT19M), 0)
                             + EfaUtil.string2int(d.get(Meldestatistik.WS_AKT18W), 0)
                             + EfaUtil.string2int(d.get(Meldestatistik.WS_AKT19W), 0);
                     String mannschKm = d.get(Meldestatistik.WS_MANNSCHKM);
-                    int abzeichen = vereinsAbz.get(verein) != null ? vereinsAbz.get(verein) : 0;
-                    String vdata = verein + ";" + aktive + ";" + mannschKm + ";" + abzeichen;
-                    sStat.add(-1, verein, vdata, null, null);
+                    int abzeichen = vereinsAbz.get(vereinsId) != null ? vereinsAbz.get(vereinsId) : 0;
+                    String vdata = d.get(Meldestatistik.VEREINSMITGLNR) + ";" + d.get(Meldestatistik.VEREIN) + ";" + 
+                            aktive + ";" + mannschKm + ";" + abzeichen;
+                    sStat.add(-1, vereinsId, vdata, null, null);
                 }
                 sStat.sort(false);
                 for (int i = 0; i < sStat.sortedSize(); i++) {

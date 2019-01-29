@@ -250,13 +250,19 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
                     case 8:
                         s = Daten.efaTypes.getValue(EfaTypes.CATEGORY_NUMSEATS, EfaTypes.TYPE_NUMSEATS_8);
                         break;
+                    default:
+                        if (a[i].seats < 99) {
+                            s = Daten.efaTypes.getValue(EfaTypes.CATEGORY_NUMSEATS, Integer.toString(a[i].seats));
+                        }
                 }
             }
 
             // sort by rigger?
             if (Daten.efaConfig.getValueEfaDirekt_sortByRigger() && a[i].rigger != null) {
                 if (Daten.efaConfig.getValueEfaDirekt_sortByAnzahl()) {
-                    s = Daten.efaTypes.getValue(EfaTypes.CATEGORY_NUMSEATS, EfaTypes.getSeatsKey(a[i].seats, a[i].rigger));
+                    if (EfaTypes.getSeatsKey(a[i].seats, a[i].rigger) != null) {
+                        s = Daten.efaTypes.getValue(EfaTypes.CATEGORY_NUMSEATS, EfaTypes.getSeatsKey(a[i].seats, a[i].rigger));
+                    }
                 } else {
                     s = (s == null ? "" : s + " ") + Daten.efaTypes.getValue(EfaTypes.CATEGORY_RIGGING, a[i].rigger);
                 }

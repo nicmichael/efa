@@ -2,6 +2,29 @@
 <efaOnlineUpdate>
 
     <Version>
+        <VersionID>2.2.2_40</VersionID>
+        <ReleaseDate>28.01.2019</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa2drv.zip</DownloadUrl>
+        <DownloadSize>4265581</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Neu: Bedingungen für DRV-Wanderruderwettbewerb 2019 aktualisiert</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.2_38</VersionID>
+        <ReleaseDate>21.10.2018</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa2drv.zip</DownloadUrl>
+        <DownloadSize>4265601</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Neu: Erweiterte Spalten für Meldestatistik</ChangeItem>
+            <ChangeItem>Bugfix: Fehlende Fahrtenabzeichen mancher Vereine in Meldestatistik Tabelle 8 behoben</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
         <VersionID>2.2.2_36</VersionID>
         <ReleaseDate>06.05.2018</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa2drv.zip</DownloadUrl>
