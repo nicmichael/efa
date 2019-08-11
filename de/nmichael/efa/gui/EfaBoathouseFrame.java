@@ -2105,6 +2105,10 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
                 break;
             case 2:
                 return;
+                
+            default: // if the user hit the ESC key or closed the dialogue
+                return;
+
         }
 
         showEfaBaseFrame(EfaBaseFrame.MODE_BOATHOUSE_ABORT, item);
