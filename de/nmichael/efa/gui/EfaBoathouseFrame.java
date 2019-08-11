@@ -1766,15 +1766,27 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
             Logger.log(Logger.DEBUG, Logger.MSG_GUI_DEBUGGUI, "toggleAvailableBoats_actionPerformed()");
         }
         try {
+              // die Preferredsize des Panels immer merken  
+              Dimension size = boatsAvailablePanel.getPreferredSize();           
+
+              // Es nun wird immer versucht, Boots- und PersonenPanel aus der GUI zu entfernen.
+              // Dabei muss berücksichtigt werden, dass diese auch NULL sein können - 
+              // denn sonst würde eine nullpointerexception auftreten, die zu unerwünschtem
+              // Verhalten führt.
+
+              if (personsAvailableList.getPanel() != null) {
+                            boatsAvailablePanel.remove(personsAvailableList.getPanel());
+              }
+              if (boatsAvailableList.getPanel() != null) {
+                            boatsAvailablePanel.remove(boatsAvailableList.getPanel());
+              }
+
             if (toggleAvailableBoatsToBoats.isSelected()) {
-                boatsAvailablePanel.remove(personsAvailableList.getPanel());
                 boatsAvailableList.displayOnGui(this, boatsAvailablePanel, BorderLayout.CENTER);
             } else {
-                Dimension size = boatsAvailablePanel.getPreferredSize();
-                boatsAvailablePanel.remove(boatsAvailableList.getPanel());
-                personsAvailableList.displayOnGui(this, boatsAvailablePanel, BorderLayout.CENTER);
-                boatsAvailablePanel.setPreferredSize(size);
+              personsAvailableList.displayOnGui(this, boatsAvailablePanel, BorderLayout.CENTER);
             }
+            boatsAvailablePanel.setPreferredSize(size);
             validate();
             updateBoatLists(true);
         } catch (Exception ee) {
@@ -1783,6 +1795,7 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
             Logger.log(Logger.DEBUG, Logger.MSG_GUI_DEBUGGUI, "toggleAvailableBoats_actionPerformed() - done");
         }
     }
+
 
     private ItemTypeBoatstatusList.BoatListItem getSelectedListItem(ItemTypeBoatstatusList list) {
         ItemTypeBoatstatusList.BoatListItem item = (list != null ?
