@@ -1787,7 +1787,9 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
               personsAvailableList.displayOnGui(this, boatsAvailablePanel, BorderLayout.CENTER);
             }
             boatsAvailablePanel.setPreferredSize(size);
-            validate();
+            this.validate();
+            this.repaint(); // ist erforderlich, damit auch mnemonics richtig geschrieben werden.
+            
             updateBoatLists(true);
         } catch (Exception ee) {
         }
