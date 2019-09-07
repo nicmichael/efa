@@ -9,6 +9,18 @@
  */
 package de.nmichael.efa.core;
 
+import java.io.BufferedOutputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Hashtable;
+import java.util.Vector;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipOutputStream;
+
 import de.nmichael.efa.Daten;
 import de.nmichael.efa.core.config.Admins;
 import de.nmichael.efa.core.config.EfaConfig;
@@ -25,14 +37,6 @@ import de.nmichael.efa.util.International;
 import de.nmichael.efa.util.LogString;
 import de.nmichael.efa.util.Logger;
 import de.nmichael.efa.util.ProgressTask;
-import java.io.BufferedOutputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.util.Hashtable;
-import java.util.Vector;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipOutputStream;
 
 public class Backup {
 
@@ -135,6 +139,47 @@ public class Backup {
         return successful;
     }
 
+  private boolean backupEfaLogFile(ZipOutputStream zipOut, String efaLogFileName) {
+    	
+        String zipFileEntry = "log/efa.log";
+        try {
+            ZipEntry entry = new ZipEntry(zipFileEntry);
+            zipOut.putNextEntry(entry);
+            
+            copyFileToZip(zipOut, efaLogFileName);
+            
+            zipOut.closeEntry();
+            
+            logMsg(Logger.INFO, Logger.MSG_BACKUP_BACKUPINFO, "EFA Log file "+ zipFileEntry);
+            return true;
+            
+        } catch (Exception e) {
+        	 logMsg(Logger.ERROR, Logger.MSG_BACKUP_BACKUPERROR,
+                     LogString.fileArchivingFailed(efaLogFileName, "EFA Log file"));
+        	 Logger.logdebug(e);
+        	 return false;
+        }
+    }
+    
+    
+    private void copyFileToZip(ZipOutputStream zipOut, String efaLogFileName) throws FileNotFoundException, IOException {
+    	
+    	FileInputStream in = new FileInputStream (efaLogFileName);
+    	 
+    	byte[] buffer = new byte[65535];
+    	 
+ 	    int length;
+ 	    /*copying the contents from input stream to
+ 	     * output stream using read and write methods
+ 	     */
+ 	    while ((length = in.read(buffer)) > 0){
+ 	    	zipOut.write(buffer, 0, length);
+ 	    }
+  
+ 		in.close();
+    	
+    }
+    
     public static boolean isProjectDataAccess(String type) {
         return !type.equals(EfaConfig.DATATYPE) &&
                !type.equals(Admins.DATATYPE) &&
@@ -341,6 +386,14 @@ public class Backup {
                 errors += (dataAccesses.length - cnt);
             }
 
+            // add the efa log file to the zip.
+            if (backupEfaLogFile(zipOut, Daten.efaLogfile)==true)
+            	{successful+=1;}
+            else
+            	{errors+=1;}
+            
+            
+            
             backupMetaData.write(zipOut);
             zipOut.close();
             
