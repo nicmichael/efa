@@ -141,7 +141,9 @@ public class Backup {
 
   private boolean backupEfaLogFile(ZipOutputStream zipOut, String efaLogFileName) {
     	
-        String zipFileEntry = "log/efa.log";
+	  	//	Entry within the zip file. Hard coded, as we only want to store a specific file here.  
+	  	String zipFileEntry = "log/efa.log"; 
+        
         try {
             ZipEntry entry = new ZipEntry(zipFileEntry);
             zipOut.putNextEntry(entry);
@@ -150,28 +152,41 @@ public class Backup {
             
             zipOut.closeEntry();
             
-            logMsg(Logger.INFO, Logger.MSG_BACKUP_BACKUPINFO, "EFA Log file "+ zipFileEntry);
+            logMsg(Logger.INFO, Logger.MSG_BACKUP_BACKUPINFO,
+                    LogString.fileSuccessfullyArchived(efaLogFileName, "EFA Log"));
             return true;
             
         } catch (Exception e) {
-        	 logMsg(Logger.ERROR, Logger.MSG_BACKUP_BACKUPERROR,
-                     LogString.fileArchivingFailed(efaLogFileName, "EFA Log file"));
-        	 Logger.logdebug(e);
-        	 return false;
+  
+        	logMsg(Logger.ERROR, Logger.MSG_BACKUP_BACKUPERROR,
+                     LogString.fileArchivingFailed(efaLogFileName, "EFA Log file", e.toString()));
+        	Logger.logdebug(e);
+        	return false;
         }
     }
-    
-    
+   
+     
+  
+    /* 
+     * Copies the contents of a given file into the ZIP stream. 
+     * Requires there has already been created a ZIP entry, and that the zip entry is closed
+     * afterwards.
+     * 
+     * It's quite hacky because it does not handle the possible exceptions
+     * by itself, but it does the job for efa2.
+     * 
+     * if there is an error while opening or reading the file, an empty entry or an half-filled
+     * entry within the ZIP file is created. This does no harm to using the zip file afterwards.
+     * 
+     */
     private void copyFileToZip(ZipOutputStream zipOut, String efaLogFileName) throws FileNotFoundException, IOException {
     	
     	FileInputStream in = new FileInputStream (efaLogFileName);
     	 
-    	byte[] buffer = new byte[65535];
+    	byte[] buffer = new byte[65535]; //64k buffer for speed
     	 
  	    int length;
- 	    /*copying the contents from input stream to
- 	     * output stream using read and write methods
- 	     */
+
  	    while ((length = in.read(buffer)) > 0){
  	    	zipOut.write(buffer, 0, length);
  	    }
