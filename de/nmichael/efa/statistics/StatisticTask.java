@@ -10,10 +10,12 @@
 package de.nmichael.efa.statistics;
 
 import de.nmichael.efa.Daten;
+import de.nmichael.efa.core.OnlineUpdate;
 import de.nmichael.efa.core.Plugins;
 import de.nmichael.efa.core.config.AdminRecord;
 import de.nmichael.efa.core.config.EfaTypes;
 import de.nmichael.efa.data.*;
+import de.nmichael.efa.data.StatisticsRecord.OutputTypes;
 import de.nmichael.efa.data.StatisticsRecord.StatisticCategory;
 import de.nmichael.efa.data.efawett.WettDefs;
 import de.nmichael.efa.data.efawett.Zielfahrt;
@@ -2382,6 +2384,21 @@ public class StatisticTask extends ProgressTask {
         }
         return true;
     }
+    
+    private boolean checkOnlineUpdateIfNeeded(StatisticsRecord sr) {
+        if (admin != null && Daten.isGuiAppl() && sr.sOutputType == OutputTypes.efawett) { // @todo
+            long lastUpdate = System.currentTimeMillis() - Daten.efaConfig.getValueEfaVersionLastCheck();
+            long versionAge = EfaUtil.getDateDiff(Daten.VERSIONRELEASEDATE, EfaUtil.getCurrentTimeStampDD_MM_YYYY());
+            if (lastUpdate > 7 * 24 * 60 * 60 * 1000 && versionAge > 7) {
+                if (!OnlineUpdate.runOnlineUpdate(lastParentDialog, Daten.ONLINEUPDATE_INFO)) {
+                    Dialog.error("Das Erstellen von Meldedateien erfordert eine aktuelle Version von efa.\n" +
+                                 "Vor dem Fortfahren mit der Meldung ist ein Online-Update erforderlich.");
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 
     private String createStatistic(StatisticsRecord sr, int statisticsNumber) {
         this.sr = sr;
@@ -2390,6 +2407,11 @@ public class StatisticTask extends ProgressTask {
         if (!sr.prepareStatisticSettings(admin)) {
             return null;
         }
+        
+        if (!checkOnlineUpdateIfNeeded(sr)) {
+            return null;
+        }
+        
         logInfo(International.getMessage("Erstelle Statistik für den Zeitraum {from} bis {to} ...",
                 sr.sStartDate.toString(), sr.sEndDate.toString()) + "\n", false, true);
         logInfo(International.getString("Erstelle Statistik ..."),

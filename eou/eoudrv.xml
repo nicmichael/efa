@@ -2,6 +2,28 @@
 <efaOnlineUpdate>
 
     <Version>
+        <VersionID>2.2.2_43</VersionID>
+        <ReleaseDate>22.02.2020</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa2drv.zip</DownloadUrl>
+        <DownloadSize>4257092</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Neu: Neues Feld 'Adresszusatz' fuer DRV/LRV-Wettbewerbsmeldungen</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.2_41</VersionID>
+        <ReleaseDate>28.03.2019</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa2drv.zip</DownloadUrl>
+        <DownloadSize>4255944</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Postbank-Konto aus Footer der DRV-Briefvorlage entfernt</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
         <VersionID>2.2.2_40</VersionID>
         <ReleaseDate>28.01.2019</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa2drv.zip</DownloadUrl>

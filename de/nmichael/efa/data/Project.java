@@ -1531,6 +1531,24 @@ public class Project extends StorageObject {
         }
     }
 
+    public void setClubAddressAdditional(String additional) {
+        long l = 0;
+        IDataAccess access = getMyDataAccess(ProjectRecord.TYPE_CLUB);
+        if (access == null) {
+            return;
+        }
+        try {
+            l = access.acquireLocalLock(getClubRecordKey());
+            ProjectRecord r = getClubRecord();
+            r.setAddressAdditional(additional);
+            access.update(r, l);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            access.releaseLocalLock(l);
+        }
+    }
+
     public void setClubAddressStreet(String street) {
         long l = 0;
         IDataAccess access = getMyDataAccess(ProjectRecord.TYPE_CLUB);
@@ -2063,6 +2081,10 @@ public class Project extends StorageObject {
 
     public String getClubName() {
         return getClubRecord().getClubName();
+    }
+
+    public String getClubAddressAdditional() {
+        return getClubRecord().getAddressAdditional();
     }
 
     public String getClubAddressStreet() {

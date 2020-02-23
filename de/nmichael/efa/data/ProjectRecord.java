@@ -70,6 +70,7 @@ public class ProjectRecord extends DataRecord  {
     public static final String LASTWATERSTMPLHASH = "LastWatersTemplateHash";
     // Fields for Type=Club
     public static final String CLUBNAME = "ClubName";
+    public static final String ADDRESSADDITIONAL = "AddressAdditional";
     public static final String ADDRESSSTREET = "AddressStreet";
     public static final String ADDRESSCITY = "AddressCity";
     public static final String ASSOCIATIONGLOBALNAME = "GlobalAssociationName";
@@ -168,6 +169,8 @@ public class ProjectRecord extends DataRecord  {
         f.add(AUTONEWCLUBWORKNAME);
         t.add(IDataAccess.DATA_STRING);
         f.add(CLUBNAME);
+        t.add(IDataAccess.DATA_STRING);
+        f.add(ADDRESSADDITIONAL);
         t.add(IDataAccess.DATA_STRING);
         f.add(ADDRESSSTREET);
         t.add(IDataAccess.DATA_STRING);
@@ -366,6 +369,10 @@ public class ProjectRecord extends DataRecord  {
 
     public void setClubName(String clubName) {
         setString(CLUBNAME, clubName);
+    }
+
+    public void setAddressAdditional(String addressAdditional) {
+        setString(ADDRESSADDITIONAL, addressAdditional);
     }
 
     public void setAddressStreet(String addressStreet) {
@@ -611,6 +618,10 @@ public class ProjectRecord extends DataRecord  {
         return getString(CLUBNAME);
     }
 
+    public String getAddressAdditional() {
+        return getString(ADDRESSADDITIONAL);
+    }
+
     public String getAddressStreet() {
         return getString(ADDRESSSTREET);
     }
@@ -834,6 +845,9 @@ public class ProjectRecord extends DataRecord  {
                 v.add(item = new ItemTypeString(ProjectRecord.CLUBNAME, getClubName(),
                         IItemType.TYPE_PUBLIC, category,
                         International.getString("Vereinsname")));
+                v.add(item = new ItemTypeString(ProjectRecord.ADDRESSADDITIONAL, getAddressAdditional(),
+                        IItemType.TYPE_PUBLIC, category,
+                        International.getString("Adresszusatz")));
                 v.add(item = new ItemTypeString(ProjectRecord.ADDRESSSTREET, getAddressStreet(),
                         IItemType.TYPE_PUBLIC, category,
                         International.getString("Anschrift") + " - "

@@ -758,6 +758,7 @@ public class MeldungenIndexFrame extends JDialog implements ActionListener {
                 exportField(f, efw.meld_bank, "Bank");
                 f.write("\n");
                 exportField(f, efw.versand_name, "Versand an");
+                exportField(f, efw.versand_zusatz, "Adreßzusatz");
                 exportField(f, efw.versand_strasse, "Straße");
                 exportField(f, efw.versand_ort, "Ort");
                 f.write("\n");

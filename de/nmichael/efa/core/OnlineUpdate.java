@@ -92,7 +92,7 @@ public class OnlineUpdate {
                 lastError = International.getString("Es liegt derzeit keine neuere Version von efa vor.");
             }
             EfaUtil.deleteFile(versionFile);
-            return false;
+            return true;
         }
 
         // Ok, es gibt eine neue Version --> Infos über diese Version einlesen

@@ -2,6 +2,32 @@
 <efaOnlineUpdate>
 
     <Version>
+        <VersionID>2.2.2_43</VersionID>
+        <ReleaseDate>22.02.2020</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa222.zip</DownloadUrl>
+        <DownloadSize>4088340</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Neu: Neues Feld 'Adresszusatz' fuer DRV/LRV-Wettbewerbsmeldungen</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.2_42</VersionID>
+        <ReleaseDate>16.06.2019</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa222.zip</DownloadUrl>
+        <DownloadSize>4088408</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Wetterdaten werden wieder korrekt angezeigt (Yahoo Weather API updated)</ChangeItem>
+            <ChangeItem>Neu: elektronische Wettbewerbsmeldungen jetzt nur noch nach Online-Update bzw. Check der neuesten Version moeglich</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Weather data now displays correctly again (Yahoo Weather API updated)</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
         <VersionID>2.2.2_40</VersionID>
         <ReleaseDate>28.01.2019</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa222.zip</DownloadUrl>

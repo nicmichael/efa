@@ -106,6 +106,8 @@ public class MeldungEditFrame extends JDialog implements ActionListener {
     JLabel vLabelStrasse = new JLabel();
     JLabel vLabelName = new JLabel();
     JTextField vVersandName = new JTextField();
+    JLabel vLabelZusatz = new JLabel();
+    JTextField vVersandZusatz = new JTextField();
     JTextField vVersantStrasse = new JTextField();
     JTextField vVersandOrt = new JTextField();
     JPanel bestellungenPanel = new JPanel();
@@ -410,10 +412,13 @@ public class MeldungEditFrame extends JDialog implements ActionListener {
             vLabelOrt.setText("Ort: ");
             vLabelStrasse.setText("Straße: ");
             vLabelName.setText("Name: ");
+            vLabelZusatz.setText("Adresszusatz: ");
+            vVersandZusatz.setMinimumSize(new Dimension(300, 17));
+            vVersandZusatz.setPreferredSize(new Dimension(300, 17));
             vVersantStrasse.setMinimumSize(new Dimension(300, 17));
             vVersantStrasse.setPreferredSize(new Dimension(300, 17));
-            vVersandOrt.setMinimumSize(new Dimension(200, 17));
-            vVersandOrt.setPreferredSize(new Dimension(200, 17));
+            vVersandOrt.setMinimumSize(new Dimension(300, 17));
+            vVersandOrt.setPreferredSize(new Dimension(300, 17));
             bestellungenPanel.setLayout(gridBagLayout7);
             bestellungenPanel.setBorder(titledBorderBestellungen);
             vLabelErwGold.setText("Erw. (gold): ");
@@ -945,12 +950,14 @@ public class MeldungEditFrame extends JDialog implements ActionListener {
             meldenderPanel.add(labelEmail, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 10, 0, 0), 0, 0));
             meldenderPanel.add(vMeldenderEmail, new GridBagConstraints(4, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
             vereinsdatenPanel.add(versandPanel, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
-            versandPanel.add(vLabelOrt, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 10, 0, 0), 0, 0));
-            versandPanel.add(vLabelStrasse, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
             versandPanel.add(vLabelName, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
             versandPanel.add(vVersandName, new GridBagConstraints(1, 0, 3, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-            versandPanel.add(vVersantStrasse, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-            versandPanel.add(vVersandOrt, new GridBagConstraints(3, 1, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+            versandPanel.add(vLabelZusatz, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+            versandPanel.add(vVersandZusatz, new GridBagConstraints(1, 1, 3, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+            versandPanel.add(vLabelStrasse, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+            versandPanel.add(vVersantStrasse, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+            versandPanel.add(vLabelOrt, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+            versandPanel.add(vVersandOrt, new GridBagConstraints(1, 3, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
             vereinsdatenPanel.add(bestellungenPanel, new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
             bestellungenPanel.add(vLabelErwGold, new GridBagConstraints(3, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 10, 0, 0), 0, 0));
             bestellungenPanel.add(vLabelAnstecknadeln, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
@@ -1731,6 +1738,7 @@ public class MeldungEditFrame extends JDialog implements ActionListener {
         this.vMeldenderEmail.setText(notNull(ew.meld_email));
 
         this.vVersandName.setText(notNull(ew.versand_name));
+        this.vVersandZusatz.setText(notNull(ew.versand_zusatz));
         this.vVersantStrasse.setText(notNull(ew.versand_strasse));
         this.vVersandOrt.setText(notNull(ew.versand_ort));
 
@@ -2615,6 +2623,7 @@ public class MeldungEditFrame extends JDialog implements ActionListener {
         this.vLandesverband.setEditable(!blocked);
         this.vVereinsname.setEditable(!blocked);
         this.vVersandName.setEditable(!blocked);
+        this.vVersandZusatz.setEditable(!blocked);
         this.vVersandOrt.setEditable(!blocked);
         this.vVersantStrasse.setEditable(!blocked);
         this.vAnzahlPapierFahrtenhefte.setEditable(!blocked);
@@ -2653,6 +2662,7 @@ public class MeldungEditFrame extends JDialog implements ActionListener {
             ew.verein_lrv = this.vLandesverband.getText().trim();
             ew.verein_name = this.vVereinsname.getText().trim();
             ew.versand_name = this.vVersandName.getText().trim();
+            ew.versand_zusatz = this.vVersandZusatz.getText().trim();
             ew.versand_ort = this.vVersandOrt.getText().trim();
             ew.versand_strasse = this.vVersantStrasse.getText().trim();
             ew.drvint_anzahlPapierFahrtenhefte = EfaUtil.string2int(this.vAnzahlPapierFahrtenhefte.getText().trim(), -1);
@@ -2993,6 +3003,9 @@ public class MeldungEditFrame extends JDialog implements ActionListener {
             f.write("<tr><td>BLZ:</td><td><tt><b>" + ew.meld_blz + "</b></tt></td></tr>\n");
             f.write("<tr><td colspan=\"2\" align=\"center\"><big>Versandanschrift</big></tt></td></tr>\n");
             f.write("<tr><td>Name:</td><td><tt><b>" + ew.versand_name + "</b></tt></td></tr>\n");
+            if (ew.versand_zusatz != null && ew.versand_zusatz.trim().length() > 0) {
+                f.write("<tr><td>Adresszusatz:</td><td><tt><b>" + ew.versand_zusatz + "</b></tt></td></tr>\n");
+            }
             f.write("<tr><td>Straße:</td><td><tt><b>" + ew.versand_strasse + "</b></tt></td></tr>\n");
             f.write("<tr><td>Ort:</td><td><tt><b>" + ew.versand_ort + "</b></tt></td></tr>\n");
             f.write("<tr><td colspan=\"2\" align=\"center\"><big>Bestellung</big></tt></td></tr>\n");
@@ -3115,7 +3128,8 @@ public class MeldungEditFrame extends JDialog implements ActionListener {
             f.write("<head><META http-equiv=\"Content-Type\" content=\"text/html; charset=" + Daten.ENCODING_UTF + "\"></head>\n");
             f.write("<body>\n");
             f.write("<h1 align=\"center\">Äquatorpreisträger</h1>\n");
-            f.write("<p><b>Verein: " + ew.verein_name + "</b><br>Mitgliedsnummer: " + ew.verein_mitglnr + "<br><br>Anschrift:<br>" + ew.versand_name + "<br>" + ew.versand_strasse + "<br>" + ew.versand_ort + "</p>\n");
+            f.write("<p><b>Verein: " + ew.verein_name + "</b><br>Mitgliedsnummer: " + ew.verein_mitglnr +
+                    "<br><br>Anschrift:<br>" + ew.versand_name + "<br>" + (ew.versand_zusatz != null && ew.versand_zusatz.length() > 0 ? ew.versand_zusatz + "<br>" : "") + ew.versand_strasse + "<br>" + ew.versand_ort + "</p>\n");
             for (int i = 0; i < aequator.size(); i++) {
                 f.write(((String) aequator.get(i)) + "\n");
             }
