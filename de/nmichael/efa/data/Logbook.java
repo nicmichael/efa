@@ -99,7 +99,19 @@ public class Logbook extends StorageObject {
             return null;
         }
     }
-
+/*
+ * @return the latest Logbook record (without knowing it's actual entryNo).
+ * 
+ */
+    public LogbookRecord getLastLogbookRecord() {
+     try {
+    	 return (LogbookRecord) data().getLast();
+     } catch (Exception e) {
+    	 Logger.logdebug(e);
+    	 return null;
+     }
+    }
+    
     public LogbookRecord findDuplicateEntry(LogbookRecord r, int rangeFromEnd) {
         if (r == null || r.getEntryId() == null ||
             r.getDate() == null || !r.getDate().isSet() ||
