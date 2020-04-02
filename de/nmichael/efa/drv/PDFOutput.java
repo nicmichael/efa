@@ -113,6 +113,9 @@ public class PDFOutput {
             f.write("              <fo:block space-before=\"5mm\" font-size=\"7.5pt\">Deutscher Ruderverband, Ferdinand-Wilhelm-Fricke-Weg 10, 30169 Hannover</fo:block>\n");
             f.write("              <fo:block space-before=\"5mm\">An</fo:block>\n");
             f.write("              <fo:block>" + ew.versand_name + "</fo:block>\n");
+            if (ew.versand_zusatz != null && ew.versand_zusatz.trim().length() > 0) {
+                f.write("              <fo:block>" + ew.versand_zusatz + "</fo:block>\n");
+            }
             f.write("              <fo:block>" + ew.versand_strasse + "</fo:block>\n");
             f.write("              <fo:block>" + ew.versand_ort + "</fo:block>\n");
             f.write("            </fo:table-cell>\n");

@@ -85,6 +85,7 @@ public class MeteoAstroWidget extends Widget {
     //static final String YAHOO_API = "http://weather.yahooapis.com/forecastrss";
     static final String YAHOO_API = "https://weather.yahooapis.com/forecastrss";
     static final String YAHOO_API2 = "https://query.yahooapis.com/v1/public/yql";
+    static final String YAHOO_API3 = "https://weather-ydn-yql.media.yahoo.com/forecastrss";
     
     private static WeatherXmlResponse cachedResponse;
     private static long lastResponseTime = 0;
@@ -453,9 +454,15 @@ public class MeteoAstroWidget extends Widget {
                                     url = YAHOO_API + "?w=" + getWeatherLocation() + "&u="
                                             + (getTemperatureScale().equals(TEMP_CELSIUS) ? "c" : "f");
                                     */
+                                    /* old Yahoo API (EOL)
                                     url = YAHOO_API2 + "?q=select%20*%20from%20weather.forecast%20where%20woeid%3D%22" + getWeatherLocation() + "%22" +
                                             "%20and%20u%3D%22" + (getTemperatureScale().equals(TEMP_CELSIUS) ? "c" : "f") + "%22"
                                             + "&format=xml&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys";
+                                    */
+                                    url = YAHOO_API3 + "?location=" + getWeatherLocation() + "&u=" + (getTemperatureScale().equals(TEMP_CELSIUS) ? "c" : "f");
+                                    if (Logger.isTraceOn(Logger.TT_WIDGETS, 5)) {
+                                        Logger.log(Logger.DEBUG, Logger.MSG_DEBUG_METEOWIDGET, "Weather Request: " + url);
+                                    }
                                     OAuthConsumer consumer = new DefaultOAuthConsumer("dj0yJmk9TDh2Q05KY0dIZUxmJmQ9WVdrOVZVRnZNbVpRTkRnbWNHbzlNQS0tJnM9Y29uc3VtZXJzZWNyZXQmeD1iNA--", "07b26654a24b6ada504616a50b27bff74a08975e");
                                     conn = new URL(url).openConnection();
                                     consumer.sign((HttpsURLConnection) conn);

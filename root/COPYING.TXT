@@ -1,6 +1,6 @@
             efa - elektronisches Fahrtenbuch fuer Rudern und Kanu
               (efa - electronic Logbook for Rowing and Canoeing)
-                   Copyright (c) 2001-17 by Nicolas Michael
+                   Copyright (c) 2001-20 by Nicolas Michael
 		 --------------------------------------------
 
 Nicolas Michael              http://efa.nmichael.de

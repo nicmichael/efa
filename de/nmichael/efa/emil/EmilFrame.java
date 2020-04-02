@@ -90,6 +90,7 @@ public class EmilFrame extends JFrame {
   BorderLayout borderLayout5 = new BorderLayout();
   JPanel versandPanel = new JPanel();
   JLabel jLabel8 = new JLabel();
+  JLabel jLabel26 = new JLabel();
   GridBagLayout gridBagLayout5 = new GridBagLayout();
   JPanel jPanel5 = new JPanel();
   BorderLayout borderLayout6 = new BorderLayout();
@@ -98,6 +99,7 @@ public class EmilFrame extends JFrame {
   JPanel jPanel7 = new JPanel();
   JButton saveButton = new JButton();
   JTextField versandName = new JTextField();
+  JTextField versandZusatz = new JTextField();
   JLabel jLabel10 = new JLabel();
   JTextField versandStrasse = new JTextField();
   JLabel jLabel11 = new JLabel();
@@ -328,6 +330,7 @@ public class EmilFrame extends JFrame {
     versandPanel.setPreferredSize(new Dimension(625, 35));
     versandPanel.setLayout(gridBagLayout5);
     jLabel8.setText("Versand: Name: ");
+    jLabel26.setText("Adresszusatz: ");
     jPanel5.setLayout(borderLayout6);
     jLabel9.setText("Anzahl Teilnehmer (erfüllt/gesamt): ");
     saveButton.setNextFocusableComponent(firstButton);
@@ -341,9 +344,16 @@ public class EmilFrame extends JFrame {
     });
     jLabel10.setText("Straße: ");
     jLabel11.setText("PLZ, Ort: ");
-    versandName.setNextFocusableComponent(versandStrasse);
+    versandName.setNextFocusableComponent(versandZusatz);
     versandName.setPreferredSize(new Dimension(200, 19));
     versandName.addKeyListener(new java.awt.event.KeyAdapter() {
+      public void keyTyped(KeyEvent e) {
+        dateiGeaendert(e);
+      }
+    });
+    versandZusatz.setNextFocusableComponent(versandStrasse);
+    versandZusatz.setPreferredSize(new Dimension(200, 19));
+    versandZusatz.addKeyListener(new java.awt.event.KeyAdapter() {
       public void keyTyped(KeyEvent e) {
         dateiGeaendert(e);
       }
@@ -595,13 +605,17 @@ public class EmilFrame extends JFrame {
             ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
     versandPanel.add(versandName, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0
             ,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-    versandPanel.add(jLabel10, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0
-            ,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 10, 0, 0), 0, 0));
-    versandPanel.add(versandStrasse, new GridBagConstraints(3, 0, 1, 1, 0.0, 0.0
+    versandPanel.add(jLabel26, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0
+            ,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+    versandPanel.add(versandZusatz, new GridBagConstraints(3, 0, 1, 1, 0.0, 0.0
             ,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-    versandPanel.add(jLabel11, new GridBagConstraints(4, 0, 1, 1, 0.0, 0.0
+    versandPanel.add(jLabel10, new GridBagConstraints(4, 0, 1, 1, 0.0, 0.0
             ,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 10, 0, 0), 0, 0));
-    versandPanel.add(versandOrt, new GridBagConstraints(5, 0, 1, 1, 0.0, 0.0
+    versandPanel.add(versandStrasse, new GridBagConstraints(5, 0, 1, 1, 0.0, 0.0
+            ,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+    versandPanel.add(jLabel11, new GridBagConstraints(6, 0, 1, 1, 0.0, 0.0
+            ,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 10, 0, 0), 0, 0));
+    versandPanel.add(versandOrt, new GridBagConstraints(7, 0, 1, 1, 0.0, 0.0
             ,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
     jPanel3.add(jPanel5, BorderLayout.SOUTH);
     jPanel5.add(jPanel6, BorderLayout.CENTER);
@@ -1087,6 +1101,7 @@ public class EmilFrame extends JFrame {
     meldName.setText("");
     meldEmail.setText("");
     versandName.setText("");
+    versandZusatz.setText("");
     versandStrasse.setText("");
     versandOrt.setText("");
     wimpelKm.setText("");
@@ -1141,6 +1156,8 @@ public class EmilFrame extends JFrame {
 
     if (efw.versand_name != null)
       versandName.setText(efw.versand_name);
+    if (efw.versand_zusatz != null)
+      versandZusatz.setText(efw.versand_zusatz);
     if (efw.versand_strasse != null)
       versandStrasse.setText(efw.versand_strasse);
     if (efw.versand_ort != null)
@@ -1250,6 +1267,8 @@ public class EmilFrame extends JFrame {
 
     if (!(s = versandName.getText().trim()).equals("")) efw.versand_name = s;
     else efw.versand_name = null;
+    if (!(s = versandZusatz.getText().trim()).equals("")) efw.versand_zusatz = s;
+    else efw.versand_zusatz = null;
     if (!(s = versandStrasse.getText().trim()).equals("")) efw.versand_strasse = s;
     else efw.versand_strasse = null;
     if (!(s = versandOrt.getText().trim()).equals("")) efw.versand_ort = s;

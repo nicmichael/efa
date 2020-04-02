@@ -47,6 +47,7 @@ public class EfaWett {
     public String meld_kto = null;
     // Versand
     public String versand_name = null;
+    public String versand_zusatz = null;
     public String versand_strasse = null;
     public String versand_ort = null;
     // DRV
@@ -115,6 +116,7 @@ public class EfaWett {
         meld_blz = null;
         meld_kto = null;
         versand_name = null;
+        versand_zusatz = null;
         versand_strasse = null;
         versand_ort = null;
         wimpel_mitglieder = null;
@@ -144,6 +146,7 @@ public class EfaWett {
         meld_name = prj.getCompetitionSubmitterName();
         meld_email = prj.getCompetitionSubmitterEmail();
         versand_name = prj.getClubName();
+        versand_zusatz = prj.getClubAddressAdditional();
         versand_strasse = prj.getClubAddressStreet();
         versand_ort = prj.getClubAddressCity();
     }
@@ -221,6 +224,9 @@ public class EfaWett {
             f.write("\n[VERSAND]\n");
             if (versand_name != null) {
                 f.write("NAME=" + versand_name + "\n");
+            }
+            if (versand_zusatz != null) {
+                f.write("ZUSATZ=" + versand_zusatz + "\n");
             }
             if (versand_strasse != null) {
                 f.write("STRASSE=" + versand_strasse + "\n");
@@ -576,6 +582,9 @@ public class EfaWett {
             if (block.equals("VERSAND")) {
                 if (s.startsWith("NAME=")) {
                     versand_name = s.substring(5, s.length());
+                }
+                if (s.startsWith("ZUSATZ=")) {
+                    versand_zusatz = s.substring(7, s.length());
                 }
                 if (s.startsWith("STRASSE=")) {
                     versand_strasse = s.substring(8, s.length());
