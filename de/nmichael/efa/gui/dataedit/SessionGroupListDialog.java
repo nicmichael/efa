@@ -20,6 +20,7 @@ import java.util.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 
 
 // @i18n complete
@@ -57,6 +58,9 @@ public class SessionGroupListDialog extends DataListDialog {
         iniValues(logbook, selectedSessionGroupId, true);
     }
 
+    
+    
+    
     private void iniValues(String logbook, UUID selectedSessionGroupId, boolean modeSelectSessionGroup) {
         this.logbook = logbook;
         this.selectedSessionGroupId = selectedSessionGroupId;
@@ -84,14 +88,73 @@ public class SessionGroupListDialog extends DataListDialog {
         intelligentColumnWidth = false;
     }
 
+    
+    // Methode übernommen von DataListDialog - Ausnahme ist, dass wir hier einen
+    // expliziten BoatReservationItemTypeDataRecordTable setzen, damit man besser filtern kann.
     protected void iniDialog() throws Exception {
-        super.iniDialog();
+        mainPanel.setLayout(new BorderLayout());
+        
+        JPanel mainTablePanel = new JPanel();
+        mainTablePanel.setLayout(new BorderLayout());
+
+        if (filterFieldDescription != null) {
+            JLabel filterName = new JLabel();
+            filterName.setText(filterFieldDescription);
+            filterName.setHorizontalAlignment(SwingConstants.CENTER);
+            mainTablePanel.add(filterName, BorderLayout.NORTH);
+            mainTablePanel.setBorder(new EmptyBorder(10,0,0,0));
+        }
+
+        table = new SessionGroupItemTypeDataRecordTable("TABLE",
+                persistence.createNewRecord().getGuiTableHeader(),
+                persistence, validAt, admin,
+                filterFieldName, filterFieldValue, // defaults are null
+                actionText, actionType, actionImage, // default actions: new, edit, delete
+                this,
+                IItemType.TYPE_PUBLIC, "BASE_CAT", getTitle());
+        table.setSorting(sortByColumn, sortAscending);
+        table.setFontSize(tableFontSize);
+        table.setMarkedCellColor(markedCellColor);
+        table.setMarkedCellBold(markedCellBold);
+        table.disableIntelligentColumnWidth(!intelligentColumnWidth);
+        if (minColumnWidth > 0) {
+            table.setMinColumnWidth(minColumnWidth);
+        }
+        if (minColumnWidths != null) {
+            table.setMinColumnWidths(minColumnWidths);
+        }
+        table.setButtonPanelPosition(buttonPanelPosition);
+        table.setFieldSize(600, 500);
+        table.setPadding(0, 0, 10, 0);
+        table.displayOnGui(this, mainTablePanel, BorderLayout.CENTER);
+
+        boolean hasEditAction = false;
+        for (int i=0; actionType != null && i < actionType.length; i++) {
+            if (actionType[i] == ItemTypeDataRecordTable.ACTION_EDIT) {
+                hasEditAction = true;
+            }
+        }
+        if (!hasEditAction) {
+            table.setDefaultActionForDoubleclick(-1);
+        }
+
+        iniControlPanel();
+        mainPanel.add(mainTablePanel, BorderLayout.CENTER);
+
+        setRequestFocus(table);
+        this.validate();
+        
+        //uebernommen aus bisheriger iniDialog() Methode von SessionGroupListDialog
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         table.setDefaultActionForDoubleclick(ACTION_SELECT);
         if (selectedSessionGroupId != null) {
             table.selectValue(selectedSessionGroupId.toString());
         }
-    }
+        
+        table.setIsFilterSet(true);// in der Fahrtgruppenliste immer filtern, statt mit der Eingabe zu einem Zellwert sprinten
+
+    }        
+    
 
     public void keyAction(ActionEvent evt) {
         _keyAction(evt);

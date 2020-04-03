@@ -15,6 +15,7 @@ import de.nmichael.efa.util.*;
 import de.nmichael.efa.util.Dialog;
 import de.nmichael.efa.gui.util.*;
 import de.nmichael.efa.data.storage.*;
+import de.nmichael.efa.data.types.DataTypeDate;
 import de.nmichael.efa.ex.*;
 import de.nmichael.efa.gui.BaseDialog;
 import java.awt.*;
@@ -434,65 +435,7 @@ public class ItemTypeDataRecordTable extends ItemTypeTable implements IItemListe
             showValue();
         }
         if (event != null && event instanceof KeyEvent && event.getID() == KeyEvent.KEY_RELEASED && itemType == searchField) {
-            String s = searchField.getValueFromField();
-            if (s != null && s.length() > 0 && keys != null && items != null) {
-                s = s.toLowerCase();
-                Vector<String> sv = null;
-                boolean[] sb = null;
-                if (s.indexOf(" ") > 0) {
-                    sv = EfaUtil.split(s, ' ');
-                    if (sv != null && sv.size() == 0) {
-                        sv = null;
-                    } else {
-                        sb = new boolean[sv.size()];
-                    }
-                }
-                int rowFound = -1;
-                for (int i = 0; rowFound < 0 && i < keys.length; i++) {
-                    // search in row i
-                    for (int j = 0; sb != null && j < sb.length; j++) {
-                        sb[j] = false; // matched parts of substring
-                    }
-
-                    TableItem[] row = items.get(keys[i]);
-                    for (int j = 0; row != null && rowFound < 0 && j < row.length; j++) {
-                        // search in row i, column j
-                        String t = (row[j] != null ? row[j].toString() : null);
-                        t = (t != null ? t.toLowerCase() : null);
-                        if (t == null) {
-                            continue;
-                        }
-
-                        // match entire search string against column
-                        if (t.indexOf(s) >= 0) {
-                            rowFound = i;
-                        }
-
-                        if (sv != null && rowFound < 0) {
-                            // match column agains substrings
-                            for (int k = 0; k < sv.size(); k++) {
-                                if (t.indexOf(sv.get(k)) >= 0) {
-                                    sb[k] = true;
-                                }
-                            }
-                        }
-                    }
-                    if (sb != null && rowFound < 0) {
-                        rowFound = i;
-                        for (int j = 0; j < sb.length; j++) {
-                            if (!sb[j]) {
-                                rowFound = -1;
-                            }
-                        }
-                    }
-                }
-                if (rowFound >= 0) {
-                    int currentIdx = table.getCurrentRowIndex(rowFound);
-                    if (currentIdx >= 0) {
-                        scrollToRow(currentIdx);
-                    }
-                }
-            }
+        	filterTableContents();
         }
         if (event != null
                 && (event instanceof KeyEvent && event.getID() == KeyEvent.KEY_RELEASED && itemType == searchField)
@@ -501,6 +444,70 @@ public class ItemTypeDataRecordTable extends ItemTypeTable implements IItemListe
         }
     }
 
+    private void filterTableContents() {
+    	
+        String sSearchValue = searchField.getValueFromField();
+        if (sSearchValue != null && sSearchValue.length() > 0 && keys != null && items != null) {
+            sSearchValue = sSearchValue.toLowerCase();
+            Vector<String> sSplittedSearchValues = null;
+            boolean[] bDidFindValue = null;
+            if (sSearchValue.indexOf(" ") > 0) {
+                sSplittedSearchValues = EfaUtil.split(sSearchValue, ' ');
+                if (sSplittedSearchValues != null && sSplittedSearchValues.size() == 0) {
+                    sSplittedSearchValues = null;
+                } else {
+                    bDidFindValue = new boolean[sSplittedSearchValues.size()];
+                }
+            }
+            int rowFound = -1;
+            for (int iCurrentRow = 0; rowFound < 0 && iCurrentRow < keys.length; iCurrentRow++) {
+                // search in row iCurrentRow
+                for (int j = 0; bDidFindValue != null && j < bDidFindValue.length; j++) {
+                    bDidFindValue[j] = false; // matched parts of substring
+                }
+
+                TableItem[] row = items.get(keys[iCurrentRow]);
+                for (int iCurrentCol = 0; row != null && rowFound < 0 && iCurrentCol < row.length; iCurrentCol++) {
+                    // search in row i, column j
+                    String t = (row[iCurrentCol] != null ? row[iCurrentCol].toString() : null);
+                    t = (t != null ? t.toLowerCase() : null);
+                    if (t == null) {
+                        continue;
+                    }
+
+                    // match entire search string against column
+                    if (t.indexOf(sSearchValue) >= 0) {
+                        rowFound = iCurrentRow;
+                    }
+
+                    if (sSplittedSearchValues != null && rowFound < 0) {
+                        // match column agains substrings
+                        for (int k = 0; k < sSplittedSearchValues.size(); k++) {
+                            if (t.indexOf(sSplittedSearchValues.get(k)) >= 0) {
+                                bDidFindValue[k] = true;
+                            }
+                        }
+                    }
+                }
+                if (bDidFindValue != null && rowFound < 0) {
+                    rowFound = iCurrentRow;
+                    for (int j = 0; j < bDidFindValue.length; j++) {
+                        if (!bDidFindValue[j]) {
+                            rowFound = -1;
+                        }
+                    }
+                }
+            }
+            if (rowFound >= 0) {
+                int currentIdx = table.getCurrentRowIndex(rowFound);
+                if (currentIdx >= 0) {
+                    scrollToRow(currentIdx);
+                }
+            }
+        }
+        
+    }
+    
     protected void updateFilter() {
         searchField.getValueFromGui();
         filterBySearch.getValueFromGui();
@@ -580,6 +587,8 @@ public class ItemTypeDataRecordTable extends ItemTypeTable implements IItemListe
             DataKeyIterator it = dataAccess.getStaticIterator();
             DataKey key = it.getFirst();
             Hashtable<DataKey, String> uniqueHash = new Hashtable<DataKey, String>();
+
+            
             while (key != null) {
                 // avoid duplicate versionized keys for the same record
                 if (isVersionized) {
@@ -609,10 +618,14 @@ public class ItemTypeDataRecordTable extends ItemTypeTable implements IItemListe
                         r = any[0];
                     }
                 }
+                
+
+                
+                
                 if (r != null && (!r.getDeleted() || showDeleted)) {
                     if (filterFieldName == null || filterFieldValue == null
                             || filterFieldValue.equals(r.getAsString(filterFieldName))) {
-                        if (filterByAnyText == null || r.getAllFieldsAsSeparatedText().toLowerCase().indexOf(filterByAnyText) >= 0) {
+                        if (filterByAnyText == null || r.getAllFieldsAsSeparatedText().toLowerCase().indexOf(filterByAnyText) >= 0 || filterFromToAppliesToDate(r, filterByAnyText)) {
                             data.add(r);
                         }
                     }
@@ -624,6 +637,14 @@ public class ItemTypeDataRecordTable extends ItemTypeTable implements IItemListe
         }
     }
 
+    // Diese Methode soll die Eingabe als Datum interpretieren,
+    // und prüfen, ob die Datensätze der Liste zu dem Datum passen.
+    // dies ist erforderlich für die Bootsreservierung - damit bei der Suche nach einem Datum
+    // auch Reservierungen gefunden werden, deren Zeitraum das eingegebene Datum abdeckt.
+    protected boolean filterFromToAppliesToDate(DataRecord theDataRecord, String filterValue) {
+    	return false;
+    }
+    
     public void actionPerformed(ActionEvent e) {
         itemListenerAction(this, e);
     }
@@ -666,5 +687,11 @@ public class ItemTypeDataRecordTable extends ItemTypeTable implements IItemListe
     public boolean isFilterSet() {
         filterBySearch.getValueFromGui();
         return filterBySearch.getValue();
+    }
+    
+    public void setIsFilterSet(Boolean value) {
+    	filterBySearch.setValue(value);
+    	updateFilter();
+    	updateData();
     }
 }

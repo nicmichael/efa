@@ -10,19 +10,34 @@
 
 package de.nmichael.efa.gui.dataedit;
 
-import de.nmichael.efa.*;
+import java.awt.BorderLayout;
+import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.util.UUID;
+
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
+
+import de.nmichael.efa.Daten;
 import de.nmichael.efa.core.config.AdminRecord;
-import de.nmichael.efa.core.items.*;
-import de.nmichael.efa.data.*;
-import de.nmichael.efa.data.storage.*;
+import de.nmichael.efa.core.items.IItemType;
+import de.nmichael.efa.core.items.ItemTypeDataRecordTable;
+import de.nmichael.efa.core.items.ItemTypeStringAutoComplete;
+import de.nmichael.efa.data.BoatRecord;
+import de.nmichael.efa.data.BoatReservationRecord;
+import de.nmichael.efa.data.BoatReservations;
+import de.nmichael.efa.data.BoatStatusRecord;
+import de.nmichael.efa.data.Boats;
+import de.nmichael.efa.data.storage.DataRecord;
+import de.nmichael.efa.data.storage.StorageObject;
 import de.nmichael.efa.gui.SimpleInputDialog;
 import de.nmichael.efa.gui.util.AutoCompleteList;
-import de.nmichael.efa.util.*;
 import de.nmichael.efa.util.Dialog;
-import java.util.*;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
+import de.nmichael.efa.util.International;
+import de.nmichael.efa.util.Logger;
 
 
 // @i18n complete
@@ -60,6 +75,66 @@ public class BoatReservationListDialog extends DataListDialog {
         iniValues(boatId, allowNewReservations, allowNewReservationsWeekly, allowEditDeleteReservations);
     }
 
+   
+    // Methode übernommen von DataListDialog - Ausnahme ist, dass wir hier einen
+    // expliziten BoatReservationItemTypeDataRecordTable setzen, damit man besser filtern kann.
+    protected void iniDialog() throws Exception {
+        mainPanel.setLayout(new BorderLayout());
+        
+        JPanel mainTablePanel = new JPanel();
+        mainTablePanel.setLayout(new BorderLayout());
+
+        if (filterFieldDescription != null) {
+            JLabel filterName = new JLabel();
+            filterName.setText(filterFieldDescription);
+            filterName.setHorizontalAlignment(SwingConstants.CENTER);
+            mainTablePanel.add(filterName, BorderLayout.NORTH);
+            mainTablePanel.setBorder(new EmptyBorder(10,0,0,0));
+        }
+
+        table = new BoatReservationItemTypeDataRecordTable("TABLE",
+                persistence.createNewRecord().getGuiTableHeader(),
+                persistence, validAt, admin,
+                filterFieldName, filterFieldValue, // defaults are null
+                actionText, actionType, actionImage, // default actions: new, edit, delete
+                this,
+                IItemType.TYPE_PUBLIC, "BASE_CAT", getTitle());
+        table.setSorting(sortByColumn, sortAscending);
+        table.setFontSize(tableFontSize);
+        table.setMarkedCellColor(markedCellColor);
+        table.setMarkedCellBold(markedCellBold);
+        table.disableIntelligentColumnWidth(!intelligentColumnWidth);
+        if (minColumnWidth > 0) {
+            table.setMinColumnWidth(minColumnWidth);
+        }
+        if (minColumnWidths != null) {
+            table.setMinColumnWidths(minColumnWidths);
+        }
+        table.setButtonPanelPosition(buttonPanelPosition);
+        table.setFieldSize(600, 500);
+        table.setPadding(0, 0, 10, 0);
+        table.displayOnGui(this, mainTablePanel, BorderLayout.CENTER);
+
+        boolean hasEditAction = false;
+        for (int i=0; actionType != null && i < actionType.length; i++) {
+            if (actionType[i] == ItemTypeDataRecordTable.ACTION_EDIT) {
+                hasEditAction = true;
+            }
+        }
+        if (!hasEditAction) {
+            table.setDefaultActionForDoubleclick(-1);
+        }
+
+        iniControlPanel();
+        mainPanel.add(mainTablePanel, BorderLayout.CENTER);
+
+        setRequestFocus(table);
+        this.validate();
+        
+        table.setIsFilterSet(true);// in der Bootreservierungsliste immer filtern, statt mit der Eingabe zu einem Zellwert sprinten
+    }    
+    
+    
     private void iniValues(UUID boatId, boolean allowNewReservations, boolean allowNewReservationsWeekly, boolean allowEditDeleteReservations) {
         if (boatId != null) {
             this.filterFieldName  = BoatReservationRecord.BOATID;

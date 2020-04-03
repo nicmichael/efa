@@ -10,18 +10,29 @@
 
 package de.nmichael.efa.gui.dataedit;
 
-import de.nmichael.efa.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.util.UUID;
+
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
+
+import de.nmichael.efa.Daten;
 import de.nmichael.efa.core.config.AdminRecord;
+import de.nmichael.efa.core.items.IItemType;
 import de.nmichael.efa.core.items.ItemTypeDataRecordTable;
-import de.nmichael.efa.data.*;
-import de.nmichael.efa.data.storage.*;
+import de.nmichael.efa.data.Statistics;
+import de.nmichael.efa.data.StatisticsRecord;
+import de.nmichael.efa.data.storage.DataRecord;
+import de.nmichael.efa.data.storage.StorageObject;
 import de.nmichael.efa.statistics.StatisticTask;
-import de.nmichael.efa.util.*;
 import de.nmichael.efa.util.Dialog;
-import java.util.*;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
+import de.nmichael.efa.util.International;
 
 
 // @i18n complete
@@ -106,9 +117,64 @@ public class StatisticsListDialog extends DataListDialog {
         }
     }
 
+    
+         
     protected void iniDialog() throws Exception {
-        super.iniDialog();
+        mainPanel.setLayout(new BorderLayout());
+        
+        JPanel mainTablePanel = new JPanel();
+        mainTablePanel.setLayout(new BorderLayout());
+
+        if (filterFieldDescription != null) {
+            JLabel filterName = new JLabel();
+            filterName.setText(filterFieldDescription);
+            filterName.setHorizontalAlignment(SwingConstants.CENTER);
+            mainTablePanel.add(filterName, BorderLayout.NORTH);
+            mainTablePanel.setBorder(new EmptyBorder(10,0,0,0));
+        }
+
+        table = new StatisticsItemTypeDataRecordTable("TABLE",
+                persistence.createNewRecord().getGuiTableHeader(),
+                persistence, validAt, admin,
+                filterFieldName, filterFieldValue, // defaults are null
+                actionText, actionType, actionImage, // default actions: new, edit, delete
+                this,
+                IItemType.TYPE_PUBLIC, "BASE_CAT", getTitle());
+        table.setSorting(sortByColumn, sortAscending);
+        table.setFontSize(tableFontSize);
+        table.setMarkedCellColor(markedCellColor);
+        table.setMarkedCellBold(markedCellBold);
+        table.disableIntelligentColumnWidth(!intelligentColumnWidth);
+        if (minColumnWidth > 0) {
+            table.setMinColumnWidth(minColumnWidth);
+        }
+        if (minColumnWidths != null) {
+            table.setMinColumnWidths(minColumnWidths);
+        }
+        table.setButtonPanelPosition(buttonPanelPosition);
+        table.setFieldSize(600, 500);
+        table.setPadding(0, 0, 10, 0);
+        table.displayOnGui(this, mainTablePanel, BorderLayout.CENTER);
+
+        boolean hasEditAction = false;
+        for (int i=0; actionType != null && i < actionType.length; i++) {
+            if (actionType[i] == ItemTypeDataRecordTable.ACTION_EDIT) {
+                hasEditAction = true;
+            }
+        }
+        if (!hasEditAction) {
+            table.setDefaultActionForDoubleclick(-1);
+        }
+
+        iniControlPanel();
+        mainPanel.add(mainTablePanel, BorderLayout.CENTER);
+
+        setRequestFocus(table);
+        this.validate();
+    	
+        //übernommen aus der ursprünglichen iniDialog() Methode.
         table.setDefaultActionForDoubleclick(ACTION_CREATESTATISTICS);
+        table.setIsFilterSet(true);
         if (admin == null) {
             table.setVisibleSearchPanel(false);
         }
