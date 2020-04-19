@@ -2,6 +2,17 @@
 <efaOnlineUpdate>
 
     <Version>
+        <VersionID>2.2.2_44</VersionID>
+        <ReleaseDate>19.04.2020</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa222.zip</DownloadUrl>
+        <DownloadSize>4134664</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Change: Geänderte Wettbewerbsbedingungen für LRV Winter-Wettbewerb 2019/2020</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
         <VersionID>2.2.2_43</VersionID>
         <ReleaseDate>22.02.2020</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa222.zip</DownloadUrl>
