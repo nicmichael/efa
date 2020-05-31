@@ -25,15 +25,14 @@ import de.nmichael.efa.gui.util.TableItemHeader;
 import de.nmichael.efa.util.EfaUtil;
 import de.nmichael.efa.util.International;
 import de.nmichael.efa.util.Logger;
-import de.nmichael.efa.util.Dialog;
+
 import java.awt.*;
-import java.awt.event.FocusEvent;
 import java.util.UUID;
 import java.util.Vector;
 import java.util.regex.Pattern;
 
 // @i18n complete
-public class ProjectRecord extends DataRecord  {
+public class ProjectRecord extends DataRecord {
 
     public static final String TYPE_PROJECT = "Project";
     public static final String TYPE_CLUB = "Club";
@@ -60,6 +59,9 @@ public class ProjectRecord extends DataRecord  {
     public static final String STORAGELOCATION = "StorageLocation";
     public static final String STORAGEUSERNAME = "StorageUsername";
     public static final String STORAGEPASSWORD = "StoragePassword";
+    //#START# efacloud adaptation
+    public static final String EFACLOUDURL = "EfaCloudURL";
+    //#END# efacloud adaptation
     public static final String REMOTEPROJECTNAME = "RemoteProjectName";
     public static final String EFAONLINECONNECT = "EfaOnlineConnect";
     public static final String EFAONLINEUSERNAME = "EfaOnlineUsername";
@@ -97,8 +99,8 @@ public class ProjectRecord extends DataRecord  {
     public static final String AREAID = "AreaID"; // previous ClubRecord
     public static final String AUTONEWLOGBOOKDATE = "AutoNewLogbookDate"; // previous ConfigRecord
     public static final String AUTONEWLOGBOOKNAME = "AutoNewLogbookName"; // previous ConfigRecord
-    public static final String CURRENTCLUBWORKEFABASE = "CurrentClubworkEfaBase";			// previous ProjectRecord
-    public static final String CURRENTCLUBWORKEFABOATHOUSE = "CurrentClubworkEfaBoathouse";	// previous ProjectRecord
+    public static final String CURRENTCLUBWORKEFABASE = "CurrentClubworkEfaBase";            // previous ProjectRecord
+    public static final String CURRENTCLUBWORKEFABOATHOUSE = "CurrentClubworkEfaBoathouse";    // previous ProjectRecord
     public static final String AUTONEWCLUBWORKDATE = "AutoNewClubworkDate"; // previous ConfigRecord
     public static final String AUTONEWCLUBWORKNAME = "AutoNewClubworkName"; // previous ConfigRecord
     // Fields for Type=Logbook
@@ -120,112 +122,62 @@ public class ProjectRecord extends DataRecord  {
         Vector<String> f = new Vector<String>();
         Vector<Integer> t = new Vector<Integer>();
 
-        f.add(TYPE);
-        t.add(IDataAccess.DATA_STRING);
-        f.add(PROJECTNAME);
-        t.add(IDataAccess.DATA_STRING);
-        f.add(PROJECT_ID);
-        t.add(IDataAccess.DATA_UUID);
-        f.add(DEPRECATED_LOGBOOKNAME);
-        t.add(IDataAccess.DATA_STRING);
-        f.add(NAME);
-        t.add(IDataAccess.DATA_STRING);
-        f.add(DESCRIPTION);
-        t.add(IDataAccess.DATA_STRING);
-        f.add(STORAGETYPE);
-        t.add(IDataAccess.DATA_STRING);
-        f.add(STORAGELOCATION);
-        t.add(IDataAccess.DATA_STRING);
-        f.add(STORAGEUSERNAME);
-        t.add(IDataAccess.DATA_STRING);
-        f.add(STORAGEPASSWORD);
-        t.add(IDataAccess.DATA_PASSWORDC);
-        f.add(REMOTEPROJECTNAME);
-        t.add(IDataAccess.DATA_STRING);
-        f.add(EFAONLINECONNECT);
-        t.add(IDataAccess.DATA_BOOLEAN);
-        f.add(EFAONLINEUSERNAME);
-        t.add(IDataAccess.DATA_STRING);
-        f.add(EFAONLINEPASSWORD);
-        t.add(IDataAccess.DATA_PASSWORDC);
-        f.add(ADMINNAME);
-        t.add(IDataAccess.DATA_STRING);
-        f.add(ADMINEMAIL);
-        t.add(IDataAccess.DATA_STRING);
-        f.add(LASTLOGBOOKSWITCH);
-        t.add(IDataAccess.DATA_STRING);
-        f.add(LASTWATERSTMPLHASH);
-        t.add(IDataAccess.DATA_STRING);
-        f.add(CURRENTLOGBOOKEFABASE);
-        t.add(IDataAccess.DATA_STRING);
-        f.add(CURRENTLOGBOOKEFABOATHOUSE);
-        t.add(IDataAccess.DATA_STRING);
-        f.add(AUTONEWLOGBOOKDATE);
-        t.add(IDataAccess.DATA_DATE);
-        f.add(AUTONEWLOGBOOKNAME);
-        t.add(IDataAccess.DATA_STRING);
-        f.add(AUTONEWCLUBWORKDATE);
-        t.add(IDataAccess.DATA_DATE);
-        f.add(AUTONEWCLUBWORKNAME);
-        t.add(IDataAccess.DATA_STRING);
-        f.add(CLUBNAME);
-        t.add(IDataAccess.DATA_STRING);
-        f.add(ADDRESSADDITIONAL);
-        t.add(IDataAccess.DATA_STRING);
-        f.add(ADDRESSSTREET);
-        t.add(IDataAccess.DATA_STRING);
-        f.add(ADDRESSCITY);
-        t.add(IDataAccess.DATA_STRING);
-        f.add(ASSOCIATIONGLOBALNAME);
-        t.add(IDataAccess.DATA_STRING);
-        f.add(ASSOCIATIONGLOBALMEMBERNO);
-        t.add(IDataAccess.DATA_STRING);
-        f.add(ASSOCIATIONGLOBALLOGIN);
-        t.add(IDataAccess.DATA_STRING);
-        f.add(ASSOCIATIONREGIONALNAME);
-        t.add(IDataAccess.DATA_STRING);
-        f.add(ASSOCIATIONREGIONALMEMBERNO);
-        t.add(IDataAccess.DATA_STRING);
-        f.add(ASSOCIATIONREGIONALLOGIN);
-        t.add(IDataAccess.DATA_STRING);
-        f.add(MEMBEROFDRV);
-        t.add(IDataAccess.DATA_BOOLEAN);
-        f.add(MEMBEROFSRV);
-        t.add(IDataAccess.DATA_BOOLEAN);
-        f.add(MEMBEROFADH);
-        t.add(IDataAccess.DATA_BOOLEAN);
-        f.add(AREAID);
-        t.add(IDataAccess.DATA_INTEGER);
-        f.add(KANUEFBUSERNAME);
-        t.add(IDataAccess.DATA_STRING);
-        f.add(KANUEFBPASSWORD);
-        t.add(IDataAccess.DATA_PASSWORDC);
-        f.add(KANUEFBLASTSYNC);
-        t.add(IDataAccess.DATA_LONGINT);
-        f.add(STARTDATE);
-        t.add(IDataAccess.DATA_DATE);
-        f.add(ENDDATE);
-        t.add(IDataAccess.DATA_DATE);
-        f.add(DEFAULTCLUBWORKTARGETHOURS);
-        t.add(IDataAccess.DATA_DOUBLE);
-        f.add(TRANSFERABLECLUBWORKHOURS);
-        t.add(IDataAccess.DATA_DOUBLE);
-        f.add(FINEFORTOOLITTLECLUBWORK);
-        t.add(IDataAccess.DATA_DOUBLE);
-        f.add(LAST_DRV_FA_YEAR);
-        t.add(IDataAccess.DATA_INTEGER);
-        f.add(LAST_DRV_WS_YEAR);
-        t.add(IDataAccess.DATA_INTEGER);
-        f.add(BOATHOUSEID);
-        t.add(IDataAccess.DATA_INTEGER);
-        f.add(BOATHOUSE_IDENTIFIER);
-        t.add(IDataAccess.DATA_STRING);
-        f.add(CURRENTCLUBWORKEFABASE);
-        t.add(IDataAccess.DATA_STRING);
-        f.add(CURRENTCLUBWORKEFABOATHOUSE);
-        t.add(IDataAccess.DATA_STRING);
-        f.add(CLUBWORKCARRYOVERDONE);
-        t.add(IDataAccess.DATA_BOOLEAN);
+        f.add(TYPE);      t.add(IDataAccess.DATA_STRING);
+        f.add(PROJECTNAME);      t.add(IDataAccess.DATA_STRING);
+        f.add(PROJECT_ID);      t.add(IDataAccess.DATA_UUID);
+        f.add(DEPRECATED_LOGBOOKNAME);      t.add(IDataAccess.DATA_STRING);
+        f.add(NAME);      t.add(IDataAccess.DATA_STRING);
+        f.add(DESCRIPTION);      t.add(IDataAccess.DATA_STRING);
+        f.add(STORAGETYPE);      t.add(IDataAccess.DATA_STRING);
+        f.add(STORAGELOCATION);      t.add(IDataAccess.DATA_STRING);
+        f.add(STORAGEUSERNAME);      t.add(IDataAccess.DATA_STRING);
+        f.add(STORAGEPASSWORD);      t.add(IDataAccess.DATA_PASSWORDC);
+        // #START# efacloud adaptation.
+        f.add(EFACLOUDURL);      t.add(IDataAccess.DATA_STRING);
+        // #END# efacloud adaptation.
+        f.add(REMOTEPROJECTNAME);      t.add(IDataAccess.DATA_STRING);
+        f.add(EFAONLINECONNECT);      t.add(IDataAccess.DATA_BOOLEAN);
+        f.add(EFAONLINEUSERNAME);      t.add(IDataAccess.DATA_STRING);
+        f.add(EFAONLINEPASSWORD);      t.add(IDataAccess.DATA_PASSWORDC);
+        f.add(ADMINNAME);      t.add(IDataAccess.DATA_STRING);
+        f.add(ADMINEMAIL);      t.add(IDataAccess.DATA_STRING);
+        f.add(LASTLOGBOOKSWITCH);      t.add(IDataAccess.DATA_STRING);
+        f.add(LASTWATERSTMPLHASH);      t.add(IDataAccess.DATA_STRING);
+        f.add(CURRENTLOGBOOKEFABASE);      t.add(IDataAccess.DATA_STRING);
+        f.add(CURRENTLOGBOOKEFABOATHOUSE);      t.add(IDataAccess.DATA_STRING);
+        f.add(AUTONEWLOGBOOKDATE);      t.add(IDataAccess.DATA_DATE);
+        f.add(AUTONEWLOGBOOKNAME);      t.add(IDataAccess.DATA_STRING);
+        f.add(AUTONEWCLUBWORKDATE);      t.add(IDataAccess.DATA_DATE);
+        f.add(AUTONEWCLUBWORKNAME);      t.add(IDataAccess.DATA_STRING);
+        f.add(CLUBNAME);      t.add(IDataAccess.DATA_STRING);
+        f.add(ADDRESSADDITIONAL);      t.add(IDataAccess.DATA_STRING);
+        f.add(ADDRESSSTREET);      t.add(IDataAccess.DATA_STRING);
+        f.add(ADDRESSCITY);      t.add(IDataAccess.DATA_STRING);
+        f.add(ASSOCIATIONGLOBALNAME);      t.add(IDataAccess.DATA_STRING);
+        f.add(ASSOCIATIONGLOBALMEMBERNO);      t.add(IDataAccess.DATA_STRING);
+        f.add(ASSOCIATIONGLOBALLOGIN);      t.add(IDataAccess.DATA_STRING);
+        f.add(ASSOCIATIONREGIONALNAME);      t.add(IDataAccess.DATA_STRING);
+        f.add(ASSOCIATIONREGIONALMEMBERNO);      t.add(IDataAccess.DATA_STRING);
+        f.add(ASSOCIATIONREGIONALLOGIN);      t.add(IDataAccess.DATA_STRING);
+        f.add(MEMBEROFDRV);      t.add(IDataAccess.DATA_BOOLEAN);
+        f.add(MEMBEROFSRV);      t.add(IDataAccess.DATA_BOOLEAN);
+        f.add(MEMBEROFADH);      t.add(IDataAccess.DATA_BOOLEAN);
+        f.add(AREAID);      t.add(IDataAccess.DATA_INTEGER);
+        f.add(KANUEFBUSERNAME);      t.add(IDataAccess.DATA_STRING);
+        f.add(KANUEFBPASSWORD);      t.add(IDataAccess.DATA_PASSWORDC);
+        f.add(KANUEFBLASTSYNC);      t.add(IDataAccess.DATA_LONGINT);
+        f.add(STARTDATE);      t.add(IDataAccess.DATA_DATE);
+        f.add(ENDDATE);      t.add(IDataAccess.DATA_DATE);
+        f.add(DEFAULTCLUBWORKTARGETHOURS);      t.add(IDataAccess.DATA_DOUBLE);
+        f.add(TRANSFERABLECLUBWORKHOURS);      t.add(IDataAccess.DATA_DOUBLE);
+        f.add(FINEFORTOOLITTLECLUBWORK);      t.add(IDataAccess.DATA_DOUBLE);
+        f.add(LAST_DRV_FA_YEAR);      t.add(IDataAccess.DATA_INTEGER);
+        f.add(LAST_DRV_WS_YEAR);      t.add(IDataAccess.DATA_INTEGER);
+        f.add(BOATHOUSEID);      t.add(IDataAccess.DATA_INTEGER);
+        f.add(BOATHOUSE_IDENTIFIER);      t.add(IDataAccess.DATA_STRING);
+        f.add(CURRENTCLUBWORKEFABASE);      t.add(IDataAccess.DATA_STRING);
+        f.add(CURRENTCLUBWORKEFABOATHOUSE);      t.add(IDataAccess.DATA_STRING);
+        f.add(CLUBWORKCARRYOVERDONE);      t.add(IDataAccess.DATA_BOOLEAN);
 
         MetaData metaData = constructMetaData(Project.DATATYPE, f, t, false);
         metaData.setKey(new String[]{TYPE, NAME});
@@ -293,8 +245,8 @@ public class ProjectRecord extends DataRecord  {
             case IDataAccess.TYPE_EFA_REMOTE:
                 setString(STORAGETYPE, IDataAccess.TYPESTRING_EFA_REMOTE);
                 break;
-            case IDataAccess.TYPE_DB_SQL:
-                setString(STORAGETYPE, IDataAccess.TYPESTRING_DB_SQL);
+            case IDataAccess.TYPE_EFA_CLOUD:
+                setString(STORAGETYPE, IDataAccess.TYPESTRING_EFA_CLOUD);
                 break;
         }
     }
@@ -302,6 +254,12 @@ public class ProjectRecord extends DataRecord  {
     public void setStorageLocation(String storageLocation) {
         setString(STORAGELOCATION, storageLocation);
     }
+
+    // #START# efacloud adaptation
+    public void setEfaCloudURL(String efaCloudURL) {
+        setString(EFACLOUDURL, efaCloudURL);
+    }
+    // #END# efacloud adaptation
 
     public void setStorageUsername(String username) {
         setString(STORAGEUSERNAME, username);
@@ -458,6 +416,7 @@ public class ProjectRecord extends DataRecord  {
     public boolean getClubworkCarryOverDone() {
         return getBool(CLUBWORKCARRYOVERDONE);
     }
+
     public void setClubworkCarryOverDone(boolean done) {
         setBool(CLUBWORKCARRYOVERDONE, done);
     }
@@ -518,8 +477,8 @@ public class ProjectRecord extends DataRecord  {
         if (s != null && s.equals(IDataAccess.TYPESTRING_EFA_REMOTE)) {
             return IDataAccess.TYPE_EFA_REMOTE;
         }
-        if (s != null && s.equals(IDataAccess.TYPESTRING_DB_SQL)) {
-            return IDataAccess.TYPE_DB_SQL;
+        if (s != null && s.equals(IDataAccess.TYPESTRING_EFA_CLOUD)) {
+            return IDataAccess.TYPE_EFA_CLOUD;
         }
         return -1;
     }
@@ -530,7 +489,11 @@ public class ProjectRecord extends DataRecord  {
 
     public String getStorageLocation() {
         try {
-            if (getStorageType() == IDataAccess.TYPE_FILE_XML) {
+            if (getStorageType() == IDataAccess.TYPE_FILE_XML
+                    // #START #efacloud adaptation
+                    || getStorageType() == IDataAccess.TYPE_EFA_CLOUD
+                // #START #efacloud adaptation
+            ) {
                 // for file-based projects: storageLocation of content is always relative to this project file!
                 return getPersistence().data().getStorageLocation() + getProjectName() + Daten.fileSep;
             }
@@ -556,6 +519,13 @@ public class ProjectRecord extends DataRecord  {
     public String getRemoteProjectName() {
         return getString(REMOTEPROJECTNAME);
     }
+
+    // #START# efacloud adaptation.
+    public String getEfaCoudURL() {
+        return getString(EFACLOUDURL);
+    }
+
+    // #START# efacloud adaptation.
 
     public boolean getEfaOnlineConnect() {
         return getBool(EFAONLINECONNECT);
@@ -697,6 +667,7 @@ public class ProjectRecord extends DataRecord  {
 
     /**
      * gives the amount of hours to work in a period (which can be a year or only for some month)
+     *
      * @return
      */
     public double getDefaultClubworkTargetHours() {
@@ -786,15 +757,25 @@ public class ProjectRecord extends DataRecord  {
 
             if (subtype == GUIITEMS_SUBTYPE_ALL || subtype == 3) {
 
-                if (!newProject || getStorageType() != IDataAccess.TYPE_FILE_XML) {
+                if (!newProject ||
+                        //#START# efacloud adaptation:
+                        (getStorageType() != IDataAccess.TYPE_EFA_CLOUD &&
+                                //#END# efacloud adaptation:
+                                getStorageType() != IDataAccess.TYPE_FILE_XML)) {
                     v.add(item = new ItemTypeString(ProjectRecord.STORAGELOCATION, getStorageLocation(),
                             IItemType.TYPE_PUBLIC, category,
                             (getStorageType() == IDataAccess.TYPE_EFA_REMOTE
                                     ? International.getString("IP-Adresse") + " ("
                                     + International.getString("remote") + ")"
                                     : International.getString("Speicherort"))));
-                    ((ItemTypeString) item).setEnabled(getStorageType() != IDataAccess.TYPE_FILE_XML);
-                    ((ItemTypeString) item).setNotNull(getStorageType() == IDataAccess.TYPE_DB_SQL);
+                    ((ItemTypeString) item).setEnabled(getStorageType() != IDataAccess.TYPE_FILE_XML
+                            //#START# efacloud adaptation:
+                            && getStorageType() != IDataAccess.TYPE_EFA_CLOUD
+                            //#END# efacloud adaptation:
+                    );
+                    //#START# efacloud adaptation: Commented out.
+                    // ((ItemTypeString) item).setNotNull(getStorageType() == IDataAccess.TYPE_DB_SQL);
+                    //#END# efacloud adaptation
                 }
 
                 if (getStorageType() != IDataAccess.TYPE_FILE_XML) {
@@ -812,10 +793,17 @@ public class ProjectRecord extends DataRecord  {
                                     + International.getString("remote") + ")"
                                     : International.getString("Paßwort"))));
                     ((ItemTypeString) item).setNotNull(true);
-                    v.add(item = new ItemTypeString(ProjectRecord.REMOTEPROJECTNAME, getRemoteProjectName(),
-                            IItemType.TYPE_PUBLIC, category,
-                            International.getString("Name des Projekts") + " ("
-                                    + International.getString("remote") + ")"));
+                    //#START# efacloud adaptation
+                    if (getStorageType() == IDataAccess.TYPE_EFA_CLOUD)
+                        v.add(item = new ItemTypeString(ProjectRecord.EFACLOUDURL, getEfaCoudURL(),
+                                IItemType.TYPE_PUBLIC, category,
+                                International.getString("URL es efaCloud Servers")));
+                    else
+                        //#ENDE# efacloud adaptation
+                        v.add(item = new ItemTypeString(ProjectRecord.REMOTEPROJECTNAME, getRemoteProjectName(),
+                                IItemType.TYPE_PUBLIC, category,
+                                International.getString("Name des Projekts") + " ("
+                                        + International.getString("remote") + ")"));
                     ((ItemTypeString) item).setNotNull(true);
                 }
 
@@ -883,7 +871,7 @@ public class ProjectRecord extends DataRecord  {
                             IItemType.TYPE_PUBLIC, category,
                             International.getString("Deine email-Adresse")));
                     item.setNotNull(true);
-                    ((ItemTypeString)item).setAllowedRegexWarnIfWrong(Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE));
+                    ((ItemTypeString) item).setAllowedRegexWarnIfWrong(Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE));
                     if (email == null || email.length() == 0) {
                         item.setChanged(); // enforcing the check
                     }
@@ -1114,7 +1102,7 @@ public class ProjectRecord extends DataRecord  {
         return new String[]{
                 IDataAccess.TYPESTRING_FILE_XML,
                 IDataAccess.TYPESTRING_EFA_REMOTE,
-                IDataAccess.TYPESTRING_DB_SQL
+                IDataAccess.TYPESTRING_EFA_CLOUD
         };
     }
 
@@ -1122,7 +1110,9 @@ public class ProjectRecord extends DataRecord  {
         return new String[]{
                 International.getString("lokales Dateisystem"),
                 Daten.EFA_REMOTE,
-                International.getString("SQL-Datenbank")
+                // #START# efacloud adaptation. Was "SQL Datenbank""
+                International.getString("efaCloud Sever")
+                // #END# efacloud adaptation.
         };
     }
 

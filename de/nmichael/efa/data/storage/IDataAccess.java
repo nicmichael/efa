@@ -20,11 +20,15 @@ public interface IDataAccess {
 
     public static final int TYPE_FILE_XML = 1;
     public static final int TYPE_EFA_REMOTE = 2;
-    public static final int TYPE_DB_SQL = 3;
+    // #START# efacloud adaptation. Refactored TYPE_DB_SQL to TYPE_EFA_CLOUD
+    public static final int TYPE_EFA_CLOUD = 3;
+    // #END# efacloud adaptation. Refactored TYPE_DB_SQL to TYPE_EFA_CLOUD
 
     public static final String TYPESTRING_FILE_XML = "file/xml";
     public static final String TYPESTRING_EFA_REMOTE = "efa/remote";
-    public static final String TYPESTRING_DB_SQL = "db/sql";
+    // #START# efacloud adaptation. Refactored TYPESTRING_DB_SQL to TYPESTRING_EFA_CLOUD
+    public static final String TYPESTRING_EFA_CLOUD = "file/efaCloud";
+    // #END# efacloud adaptation. Refactored TYPESTRING_DB_SQL to TYPESTRING_EFA_CLOUD
 
     // Data Types supported by IDataAccess
     //                      Data Type                Internal Java Type

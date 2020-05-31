@@ -63,6 +63,9 @@ public class EfaConfig extends StorageObject implements IItemFactory {
     public final String CATEGORY_DATAACCESS    = "%19%" + International.getString("Daten");
     public final String CATEGORY_DATAXML       = "%191%" + International.getString("lokale Dateien");
     public final String CATEGORY_DATAREMOTE    = "%192%" + Daten.EFA_REMOTE;
+    // #START# efacloud adaptation
+    public final String CATEGORY_DATACLOUD    = "%193%" + International.getString("efaCloud");
+    // #END# efacloud adaptation
     public final String CATEGORY_CRONTAB       = "%20%" + International.getString("Automatische Abläufe");
 
     private static final int STRINGLIST_VALUES  = 1;
@@ -303,6 +306,9 @@ public class EfaConfig extends StorageObject implements IItemFactory {
     private ItemTypeLong dataRemoteIsOpenExpiryTime;
     private ItemTypeLong dataRemoteLoginFailureRetryTime;
     private ItemTypeLong dataRemoteClientReceiveTimeout;
+    // #START# efacloud adaptation
+    private ItemTypeLong dataRemoteEfaCloudSynchIntervalSecs;
+    // #END# efacloud adaptation
     private Vector<IWidget> widgets;
     private ItemTypeItemList crontab;
 
@@ -1211,19 +1217,25 @@ public class EfaConfig extends StorageObject implements IItemFactory {
             addParameter(dataRemoteEfaOnlineUsername = new ItemTypeString("DataRemoteEfaOnlineUsername", "",
                     IItemType.TYPE_PUBLIC,BaseTabbedDialog.makeCategory(CATEGORY_DATAACCESS, CATEGORY_DATAREMOTE),
                     Daten.EFA_ONLINE + " - " +
-                    International.getString("Benutzername") +
-                    " (" + International.getString("Server") + ")"));
+                            International.getString("Benutzername") +
+                            " (" + International.getString("Server") + ")"));
             addParameter(dataRemoteEfaOnlinePassword = new ItemTypePassword("DataRemoteEfaOnlinePassword", "", true,
                     IItemType.TYPE_PUBLIC,BaseTabbedDialog.makeCategory(CATEGORY_DATAACCESS, CATEGORY_DATAREMOTE),
                     Daten.EFA_ONLINE + " - " +
-                    International.getString("Paßwort") +
-                    " (" + International.getString("Server") + ")"));
+                            International.getString("Paßwort") +
+                            " (" + International.getString("Server") + ")"));
             addParameter(dataRemoteEfaOnlineUrl = new ItemTypeString("DataRemoteEfaOnlineUrl", "http://efa-online.nmichael.de/efa",
                     IItemType.TYPE_INTERNAL,BaseTabbedDialog.makeCategory(CATEGORY_DATAACCESS, CATEGORY_DATAREMOTE),
                     "efaOnline URL"));
             addParameter(dataRemoteEfaOnlineUpdateInterval = new ItemTypeLong("DataRemoteEfaOnlineUpdateInverval", 3600, 60, 24*3600,
                     IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_DATAACCESS, CATEGORY_DATAREMOTE),
                     "efaOnline Update Interval (sec)"));
+
+            // #START# efacloud adaptation
+            addParameter(dataRemoteEfaCloudSynchIntervalSecs = new ItemTypeLong("DataRemoteEfaCloudSynchIntervalSecs", 24 * 3600, 600, 7 * 24*3600,
+                    IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_DATAACCESS, CATEGORY_DATACLOUD),
+                    "efaCloud Synch Interval (sec)"));
+            // #END# efacloud adaptation
 
         }
     }
@@ -2137,6 +2149,13 @@ public class EfaConfig extends StorageObject implements IItemFactory {
     public long getValueDataRemoteClientReceiveTimeout() {
         return dataRemoteClientReceiveTimeout.getValue();
     }
+
+    // #START# efacloud adaptation
+    public long getValueDataRemoteEfaCloudSynchIntervalSecs() {
+        return dataRemoteEfaCloudSynchIntervalSecs.getValue();
+    }
+    // #END# efacloud adaptation
+
 
     public Vector<IWidget> getWidgets() {
         return widgets;
