@@ -36,6 +36,7 @@ import de.nmichael.efa.util.EfaUtil;
 import de.nmichael.efa.util.International;
 import de.nmichael.efa.util.LogString;
 import de.nmichael.efa.util.Logger;
+
 import java.net.InetAddress;
 import java.util.UUID;
 
@@ -316,7 +317,7 @@ public class Project extends StorageObject {
         try {
             if (isOpen()) {
                 String[] bhNames = getAllBoathouseNames();
-                for (int i=0; bhNames != null && i<bhNames.length; i++) {
+                for (int i = 0; bhNames != null && i < bhNames.length; i++) {
                     ProjectRecord r = getBoathouseRecord(bhNames[i]);
                     if (r != null && r.getBoathouseId() < 0) {
                         int lastId = getHighestBoathouseId();
@@ -726,7 +727,7 @@ public class Project extends StorageObject {
         if (r == null) {
             try {
                 throw new Exception("No ProjectRecord found!");
-            } catch(Exception e) {
+            } catch (Exception e) {
                 Logger.logdebug(e);
             }
         }
@@ -845,7 +846,7 @@ public class Project extends StorageObject {
         myBoathouseName = r.getName();
         return myBoathouseName;
     }
-    
+
     public void setMyBoathouseName(String name) {
         ProjectRecord r = getBoathouseRecord(name);
         if (r != null) {
@@ -900,7 +901,7 @@ public class Project extends StorageObject {
     }
 
     private synchronized StorageObject getPersistence(Class c, String storageObjectName, String storageObjectType,
-            boolean createNewIfDoesntExist, String description, boolean silent) {
+                                                      boolean createNewIfDoesntExist, String description, boolean silent) {
         if (_inDeleteProject) {
             return null;
         }
@@ -1012,7 +1013,7 @@ public class Project extends StorageObject {
     }
 
     public IDataAccess getStorageObjectDataAccess(String storageObjectName, String storageObjectType,
-            boolean createNewIfDoesntExist) {
+                                                  boolean createNewIfDoesntExist) {
         if (storageObjectType.equals(DATATYPE)) {
             if (getProjectStorageType() != IDataAccess.TYPE_EFA_REMOTE
                     && storageObjectName.equals(data().getStorageObjectName())) {
@@ -1836,7 +1837,11 @@ public class Project extends StorageObject {
 
     // set the storageLocation for this project's content
     public void setProjectStorageLocation(String storageLocation) {
-        if (getProjectStorageType() == IDataAccess.TYPE_FILE_XML) {
+        if (getProjectStorageType() == IDataAccess.TYPE_FILE_XML
+                // #START# efacloud adaptation
+                || getProjectStorageType() == IDataAccess.TYPE_EFA_CLOUD
+            // #END# efacloud adaptation
+        ) {
             // for file-based projects: storageLocation of content is always relative to this project file!
             storageLocation = null;
         }
@@ -1880,6 +1885,24 @@ public class Project extends StorageObject {
             data().releaseLocalLock(l);
         }
     }
+
+    // #START# efacloud adaptation.
+    public void setProjectEfaCloudURL(String efaCloudURL) {
+        long l = 0;
+        try {
+            l = data().acquireLocalLock(getProjectRecordKey());
+            ProjectRecord r = getProjectRecord();
+            r.setEfaCloudURL(efaCloudURL);
+            data().update(r, l);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            data().releaseLocalLock(l);
+        }
+    }
+
+    // #END# efacloud adaptation.
+
 
     public void setProjectRemoteProjectName(String projectName) {
         long l = 0;
@@ -1961,8 +1984,8 @@ public class Project extends StorageObject {
                 return IDataAccess.TYPESTRING_FILE_XML;
             case IDataAccess.TYPE_EFA_REMOTE:
                 return IDataAccess.TYPESTRING_EFA_REMOTE;
-            case IDataAccess.TYPE_DB_SQL:
-                return IDataAccess.TYPESTRING_DB_SQL;
+            case IDataAccess.TYPE_EFA_CLOUD:
+                return IDataAccess.TYPESTRING_EFA_CLOUD;
         }
         return null;
     }
@@ -2237,11 +2260,11 @@ public class Project extends StorageObject {
                             Thread.currentThread().getStackTrace());
                 }
                 if (r.getBoathouseIdentifier() != null && r.getBoathouseIdentifier().length() > 0 &&
-                    r.getBoathouseId() < 0) {
-                        int lastId = getHighestBoathouseId();
-                        if (lastId >= 0) {
-                            r.setBoathouseId(lastId + 1);
-                        }
+                        r.getBoathouseId() < 0) {
+                    int lastId = getHighestBoathouseId();
+                    if (lastId >= 0) {
+                        r.setBoathouseId(lastId + 1);
+                    }
                 }
             }
         }
@@ -2252,7 +2275,7 @@ public class Project extends StorageObject {
                 if (lName != null && lName.length() > 0 && r.getName().equals(lName)) {
                     throw new EfaModifyException(Logger.MSG_DATA_MODIFYEXCEPTION,
                             International.getMessage("Der Datensatz kann nicht gelöscht werden, da er noch von {listtype} '{record}' genutzt wird.",
-                            International.getString("Fahrtenbuchwechsel"), lName),
+                                    International.getString("Fahrtenbuchwechsel"), lName),
                             Thread.currentThread().getStackTrace());
                 }
             }
@@ -2262,7 +2285,7 @@ public class Project extends StorageObject {
                 if (lName != null && lName.length() > 0 && r.getName().equals(lName)) {
                     throw new EfaModifyException(Logger.MSG_DATA_MODIFYEXCEPTION,
                             International.getMessage("Der Datensatz kann nicht gelöscht werden, da er noch von {listtype} '{record}' genutzt wird.",
-                            International.getString("Vereinsarbeitsbuchwechsel"), lName),
+                                    International.getString("Vereinsarbeitsbuchwechsel"), lName),
                             Thread.currentThread().getStackTrace());
                 }
             }
@@ -2270,7 +2293,7 @@ public class Project extends StorageObject {
                 if (getNumberOfBoathouses(true) == 1) {
                     throw new EfaModifyException(Logger.MSG_DATA_MODIFYEXCEPTION,
                             International.getMessage("Eintrag kann nicht gelöscht werden, da mindestens {count} Einträge verbleiben müssen.",
-                            1),
+                                    1),
                             Thread.currentThread().getStackTrace());
                 }
                 int bid = ((ProjectRecord) record).getBoathouseId();
@@ -2282,7 +2305,7 @@ public class Project extends StorageObject {
                         DestinationRecord dr = (DestinationRecord) dest.data().get(k[0]);
                         throw new EfaModifyException(Logger.MSG_DATA_MODIFYEXCEPTION,
                                 International.getMessage("Der Datensatz kann nicht gelöscht werden, da er noch von {listtype} '{record}' genutzt wird.",
-                                International.getString("Ziel"), (dr != null ? dr.getQualifiedName() : "<unknown>")),
+                                        International.getString("Ziel"), (dr != null ? dr.getQualifiedName() : "<unknown>")),
                                 Thread.currentThread().getStackTrace());
                     }
                     BoatStatus status = getBoatStatus(false);
@@ -2292,7 +2315,7 @@ public class Project extends StorageObject {
                         BoatStatusRecord br = (BoatStatusRecord) status.data().get(k[0]);
                         throw new EfaModifyException(Logger.MSG_DATA_MODIFYEXCEPTION,
                                 International.getMessage("Der Datensatz kann nicht gelöscht werden, da er noch von {listtype} '{record}' genutzt wird.",
-                                International.getString("Bootsstatus"), (br != null ? br.getQualifiedName() : "<unknown>")),
+                                        International.getString("Bootsstatus"), (br != null ? br.getQualifiedName() : "<unknown>")),
                                 Thread.currentThread().getStackTrace());
                     }
 

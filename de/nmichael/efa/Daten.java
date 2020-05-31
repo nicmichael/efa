@@ -9,6 +9,7 @@
  */
 package de.nmichael.efa;
 
+import de.nmichael.efa.data.efacloud.TableBuilder;
 import de.nmichael.efa.data.efawett.WettDefs;
 import de.nmichael.efa.core.config.*;
 import de.nmichael.efa.core.items.*;
@@ -220,6 +221,10 @@ public class Daten {
 
     // Applikations- PID
     public static String applPID = "XXXXX"; // will be set in iniBase(...)
+
+    // #START# efacloud adaptation
+    public static TableBuilder tableBuilder = new TableBuilder();
+    // #END# efacloud adaptation
 
     public static AdminRecord initialize() {
         if (Logger.isTraceOn(Logger.TT_CORE, 9) || Logger.isDebugLoggingActivatedByCommandLine()) {

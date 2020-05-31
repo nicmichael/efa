@@ -1,8 +1,7 @@
 /**
- * Title:        efa - elektronisches Fahrtenbuch für Ruderer
- * Copyright:    Copyright (c) 2001-2011 by Nicolas Michael
- * Website:      http://efa.nmichael.de/
- * License:      GNU General Public License v2
+ * Title:        efa - elektronisches Fahrtenbuch für Ruderer Copyright:    Copyright (c) 2001-2011
+ * by Nicolas Michael Website:      http://efa.nmichael.de/ License:      GNU General Public License
+ * v2
  *
  * @author Nicolas Michael
  * @version 2
@@ -10,12 +9,21 @@
 
 package de.nmichael.efa.data.storage;
 
+import de.nmichael.efa.Daten;
 import de.nmichael.efa.core.config.AdminRecord;
-import java.util.*;
+import de.nmichael.efa.core.items.IItemType;
+import de.nmichael.efa.core.items.ItemTypeStringAutoComplete;
 import de.nmichael.efa.data.types.*;
-import de.nmichael.efa.core.items.*;
-import de.nmichael.efa.gui.util.*;
-import de.nmichael.efa.util.*;
+import de.nmichael.efa.gui.util.AutoCompleteList;
+import de.nmichael.efa.gui.util.TableItem;
+import de.nmichael.efa.gui.util.TableItemHeader;
+import de.nmichael.efa.util.EfaUtil;
+import de.nmichael.efa.util.International;
+import de.nmichael.efa.util.Logger;
+
+import java.util.HashMap;
+import java.util.UUID;
+import java.util.Vector;
 
 // @i18n complete
 
@@ -23,12 +31,12 @@ public abstract class DataRecord implements Cloneable, Comparable {
 
     public static final String ENCODING_RECORD = "Record";
 
-    public static final String CHANGECOUNT      = "ChangeCount";
-    public static final String LASTMODIFIED     = "LastModified";
-    public static final String VALIDFROM        = "ValidFrom";
-    public static final String INVALIDFROM      = "InvalidFrom";
-    public static final String INVISIBLE        = "Invisible";
-    public static final String DELETED          = "Deleted";
+    public static final String CHANGECOUNT = "ChangeCount";
+    public static final String LASTMODIFIED = "LastModified";
+    public static final String VALIDFROM = "ValidFrom";
+    public static final String INVALIDFROM = "InvalidFrom";
+    public static final String INVISIBLE = "Invisible";
+    public static final String DELETED = "Deleted";
 
     protected StorageObject persistence;
     protected MetaData metaData;
@@ -37,29 +45,41 @@ public abstract class DataRecord implements Cloneable, Comparable {
     public DataRecord(StorageObject persistence, MetaData metaData) {
         this.persistence = persistence;
         this.metaData = metaData;
+        // #START# efacloud adaptation
+        if (persistence != null) Daten.tableBuilder.addDataRecord(persistence, metaData);
+        // #END# efacloud adaptation
         data = new Object[metaData.getNumberOfFields()];
         if (metaData.versionized) {
             setAlwaysValid();
         }
     }
 
-    protected static MetaData constructMetaData(String dataType, Vector<String> fields, Vector<Integer> types, boolean versionized) {
+    protected static MetaData constructMetaData(String dataType, Vector<String> fields,
+                                                Vector<Integer> types, boolean versionized) {
         if (versionized) {
-            fields.add(DataRecord.VALIDFROM);       types.add(IDataAccess.DATA_LONGINT);
-            fields.add(DataRecord.INVALIDFROM);     types.add(IDataAccess.DATA_LONGINT);
-            fields.add(DataRecord.INVISIBLE);       types.add(IDataAccess.DATA_BOOLEAN);
-            fields.add(DataRecord.DELETED);         types.add(IDataAccess.DATA_BOOLEAN);
+            fields.add(DataRecord.VALIDFROM);
+            types.add(IDataAccess.DATA_LONGINT);
+            fields.add(DataRecord.INVALIDFROM);
+            types.add(IDataAccess.DATA_LONGINT);
+            fields.add(DataRecord.INVISIBLE);
+            types.add(IDataAccess.DATA_BOOLEAN);
+            fields.add(DataRecord.DELETED);
+            types.add(IDataAccess.DATA_BOOLEAN);
         }
-        fields.add(DataRecord.CHANGECOUNT);         types.add(IDataAccess.DATA_LONGINT);
-        // LastModified must always be the last field; this class's set(int, Object) method implicitly uses this to update the timestamp!
-        fields.add(DataRecord.LASTMODIFIED);        types.add(IDataAccess.DATA_LONGINT);
+        fields.add(DataRecord.CHANGECOUNT);
+        types.add(IDataAccess.DATA_LONGINT);
+        // LastModified must always be the last field; this class's set(int, Object) method
+        // implicitly uses this to update the timestamp!
+        fields.add(DataRecord.LASTMODIFIED);
+        types.add(IDataAccess.DATA_LONGINT);
         return MetaData.constructMetaData(dataType, fields, types, versionized);
     }
 
 /*
     public DataRecord clone()  {
         try {
-            return this.getClass().getConstructor(this.getClass(), metaData.getClass()).newInstance(this, metaData);
+            return this.getClass().getConstructor(this.getClass(), metaData.getClass())
+            .newInstance(this, metaData);
         } catch (Exception e) {
             throw new InternalError(e.toString());
         }
@@ -70,7 +90,7 @@ public abstract class DataRecord implements Cloneable, Comparable {
 
     public DataRecord cloneRecord() {
         DataRecord rec = createDataRecord();
-        synchronized(this.data) {
+        synchronized (this.data) {
             for (int i = 0; i < this.data.length; i++) {
                 if (this.data[i] != null) {
                     switch (metaData.getFieldType(i)) {
@@ -109,16 +129,20 @@ public abstract class DataRecord implements Cloneable, Comparable {
                             rec.data[i] = new DataTypeIntString((DataTypeIntString) this.data[i]);
                             break;
                         case IDataAccess.DATA_PASSWORDH:
-                            rec.data[i] = new DataTypePasswordHashed((DataTypePasswordHashed) this.data[i]);
+                            rec.data[i] = new DataTypePasswordHashed(
+                                    (DataTypePasswordHashed) this.data[i]);
                             break;
                         case IDataAccess.DATA_PASSWORDC:
-                            rec.data[i] = new DataTypePasswordCrypted((DataTypePasswordCrypted) this.data[i]);
+                            rec.data[i] = new DataTypePasswordCrypted(
+                                    (DataTypePasswordCrypted) this.data[i]);
                             break;
                         case IDataAccess.DATA_LIST_STRING:
-                            rec.data[i] = new DataTypeList<String>((DataTypeList<String>) this.data[i]);
+                            rec.data[i] = new DataTypeList<String>(
+                                    (DataTypeList<String>) this.data[i]);
                             break;
                         case IDataAccess.DATA_LIST_INTEGER:
-                            rec.data[i] = new DataTypeList<Integer>((DataTypeList<Integer>) this.data[i]);
+                            rec.data[i] = new DataTypeList<Integer>(
+                                    (DataTypeList<Integer>) this.data[i]);
                             break;
                         case IDataAccess.DATA_LIST_UUID:
                             rec.data[i] = new DataTypeList<UUID>((DataTypeList<UUID>) this.data[i]);
@@ -135,8 +159,8 @@ public abstract class DataRecord implements Cloneable, Comparable {
         return rec;
     }
 
-    public int compareTo(Object o)  {
-        return getKey().compareTo( (o != null ? ((DataRecord)o).getKey() : null) );
+    public int compareTo(Object o) {
+        return getKey().compareTo((o != null ? ((DataRecord) o).getKey() : null));
     }
 
     public String[] getFields() {
@@ -176,16 +200,16 @@ public abstract class DataRecord implements Cloneable, Comparable {
         }
         DataKey k = getKey();
         StringBuffer s = new StringBuffer();
-        for (int i=0; i<keyFieldCnt; i++) {
+        for (int i = 0; i < keyFieldCnt; i++) {
             Object kp = k.getKeyPart(i);
             String kps = (kp != null ? kp.toString() : null);
             if (kps != null && kps.length() > 0) {
-                s.append( (s.length() > 0 ? ";" : "") + kps);
+                s.append((s.length() > 0 ? ";" : "") + kps);
             }
         }
         return s.toString();
     }
-    
+
     protected void set(int fieldIdx, Object data, boolean updateTimestamp) {
         if (fieldIdx < 0) {
             return;
@@ -193,75 +217,104 @@ public abstract class DataRecord implements Cloneable, Comparable {
         if (data != null) {
             int type = getFieldType(fieldIdx);
             if (data instanceof String && type != IDataAccess.DATA_STRING) {
-                data = transformDataStringToType((String)data, type);
+                data = transformDataStringToType((String) data, type);
                 if (data == null) {
-                    throw new IllegalArgumentException(persistence.toString() + ": Data could not be transformed to Type " + persistence.data().getTypeName(type) + " for Data Field " + metaData.getFieldName(fieldIdx) + ".");
+                    throw new IllegalArgumentException(persistence
+                            .toString() + ": Data could not be transformed to Type " + persistence
+                            .data().getTypeName(type) + " for Data Field " + metaData
+                            .getFieldName(fieldIdx) + ".");
                 }
             }
             switch (type) {
                 case IDataAccess.DATA_STRING:
                     if (!(data instanceof String)) {
-                        throw new IllegalArgumentException(persistence.toString() + ": Data Type STRING expected for Data Field " + metaData.getFieldName(fieldIdx) + ".");
+                        throw new IllegalArgumentException(persistence
+                                .toString() + ": Data Type STRING expected for Data Field " + metaData
+                                .getFieldName(fieldIdx) + ".");
                     }
                     break;
                 case IDataAccess.DATA_INTEGER:
                     if (!(data instanceof Integer)) {
-                        throw new IllegalArgumentException(persistence.toString() + ": Data Type INTEGER expected for Data Field " + metaData.getFieldName(fieldIdx) + ".");
+                        throw new IllegalArgumentException(persistence
+                                .toString() + ": Data Type INTEGER expected for Data Field " + metaData
+                                .getFieldName(fieldIdx) + ".");
                     }
                     break;
                 case IDataAccess.DATA_LONGINT:
                     if (!(data instanceof Long)) {
-                        throw new IllegalArgumentException(persistence.toString() + ": Data Type LONGINT expected for Data Field " + metaData.getFieldName(fieldIdx) + ".");
+                        throw new IllegalArgumentException(persistence
+                                .toString() + ": Data Type LONGINT expected for Data Field " + metaData
+                                .getFieldName(fieldIdx) + ".");
                     }
                     break;
                 case IDataAccess.DATA_DOUBLE:
                     if (!(data instanceof Double)) {
-                        throw new IllegalArgumentException(persistence.toString() + ": Data Type DOUBLE expected for Data Field " + metaData.getFieldName(fieldIdx) + ".");
+                        throw new IllegalArgumentException(persistence
+                                .toString() + ": Data Type DOUBLE expected for Data Field " + metaData
+                                .getFieldName(fieldIdx) + ".");
                     }
                     break;
                 case IDataAccess.DATA_DECIMAL:
                     if (!(data instanceof DataTypeDecimal)) {
-                        throw new IllegalArgumentException(persistence.toString() + ": Data Type DECIMAL expected for Data Field " + metaData.getFieldName(fieldIdx) + ".");
+                        throw new IllegalArgumentException(persistence
+                                .toString() + ": Data Type DECIMAL expected for Data Field " + metaData
+                                .getFieldName(fieldIdx) + ".");
                     }
                     break;
                 case IDataAccess.DATA_DISTANCE:
                     if (!(data instanceof DataTypeDistance)) {
-                        throw new IllegalArgumentException(persistence.toString() + ": Data Type DISTANCE expected for Data Field " + metaData.getFieldName(fieldIdx) + ".");
+                        throw new IllegalArgumentException(persistence
+                                .toString() + ": Data Type DISTANCE expected for Data Field " + metaData
+                                .getFieldName(fieldIdx) + ".");
                     }
                     break;
                 case IDataAccess.DATA_BOOLEAN:
                     if (!(data instanceof Boolean)) {
-                        throw new IllegalArgumentException(persistence.toString() + ": Data Type BOOLEAN expected for Data Field " + metaData.getFieldName(fieldIdx) + ".");
+                        throw new IllegalArgumentException(persistence
+                                .toString() + ": Data Type BOOLEAN expected for Data Field " + metaData
+                                .getFieldName(fieldIdx) + ".");
                     }
                     break;
                 case IDataAccess.DATA_DATE:
                     if (!(data instanceof DataTypeDate)) {
-                        throw new IllegalArgumentException(persistence.toString() + ": Data Type DATE expected for Data Field " + metaData.getFieldName(fieldIdx) + ".");
+                        throw new IllegalArgumentException(persistence
+                                .toString() + ": Data Type DATE expected for Data Field " + metaData
+                                .getFieldName(fieldIdx) + ".");
                     }
                     break;
                 case IDataAccess.DATA_TIME:
                     if (!(data instanceof DataTypeTime)) {
-                        throw new IllegalArgumentException(persistence.toString() + ": Data Type TIME expected for Data Field " + metaData.getFieldName(fieldIdx) + ".");
+                        throw new IllegalArgumentException(persistence
+                                .toString() + ": Data Type TIME expected for Data Field " + metaData
+                                .getFieldName(fieldIdx) + ".");
                     }
                     break;
                 case IDataAccess.DATA_UUID:
                     if (!(data instanceof UUID)) {
-                        throw new IllegalArgumentException(persistence.toString() + ": Data Type UUID expected for Data Field " + metaData.getFieldName(fieldIdx) + ".");
+                        throw new IllegalArgumentException(persistence
+                                .toString() + ": Data Type UUID expected for Data Field " + metaData
+                                .getFieldName(fieldIdx) + ".");
                     }
                     break;
                 case IDataAccess.DATA_INTSTRING:
                     if (!(data instanceof DataTypeIntString)) {
-                        throw new IllegalArgumentException(persistence.toString() + ": Data Type INTSTRING expected for Data Field " + metaData.getFieldName(fieldIdx) + ".");
+                        throw new IllegalArgumentException(persistence
+                                .toString() + ": Data Type INTSTRING expected for Data Field " + metaData
+                                .getFieldName(fieldIdx) + ".");
                     }
                     break;
                 case IDataAccess.DATA_PASSWORDH:
                     if (!(data instanceof DataTypePasswordHashed)) {
-                        throw new IllegalArgumentException(persistence.toString() + ": Data Type PASSWORDH expected for Data Field " + metaData.getFieldName(fieldIdx) + ".");
+                        throw new IllegalArgumentException(persistence
+                                .toString() + ": Data Type PASSWORDH expected for Data Field " + metaData
+                                .getFieldName(fieldIdx) + ".");
                     }
                     break;
                 case IDataAccess.DATA_PASSWORDC:
                     if (!(data instanceof DataTypePasswordCrypted)) {
-                        throw new IllegalArgumentException(persistence.toString() + ": Data Type PASSWORDC expected for Data Field " + metaData.getFieldName(fieldIdx) + ".");
+                        throw new IllegalArgumentException(persistence
+                                .toString() + ": Data Type PASSWORDC expected for Data Field " + metaData
+                                .getFieldName(fieldIdx) + ".");
                     }
                     break;
                 case IDataAccess.DATA_VIRTUAL:
@@ -291,7 +344,7 @@ public abstract class DataRecord implements Cloneable, Comparable {
             return null;
         }
         int type = getFieldType(fieldIdx);
-        synchronized(data) {
+        synchronized (data) {
             if (type != IDataAccess.DATA_VIRTUAL) {
                 return this.data[fieldIdx];
             } else {
@@ -313,21 +366,21 @@ public abstract class DataRecord implements Cloneable, Comparable {
         if (o != null) {
             switch (getFieldType(idx)) {
                 case IDataAccess.DATA_INTEGER:
-                    if (((Integer)o).intValue() == IDataAccess.UNDEFINED_INT) {
+                    if (((Integer) o).intValue() == IDataAccess.UNDEFINED_INT) {
                         return "";
                     }
                     break;
                 case IDataAccess.DATA_LONGINT:
-                    if (((Long)o).longValue() == IDataAccess.UNDEFINED_LONG) {
+                    if (((Long) o).longValue() == IDataAccess.UNDEFINED_LONG) {
                         return "";
                     }
                     break;
                 case IDataAccess.DATA_DOUBLE:
-                    if (((Double)o).doubleValue() == IDataAccess.UNDEFINED_DOUBLE) {
+                    if (((Double) o).doubleValue() == IDataAccess.UNDEFINED_DOUBLE) {
                         return "";
                     }
                     break;
-        }
+            }
         }
         return (o != null ? o.toString() : null);
     }
@@ -340,11 +393,10 @@ public abstract class DataRecord implements Cloneable, Comparable {
         if (value != null) {
             value = value.trim();
         }
-        if ((fieldName.equals(VALIDFROM) ||
-            fieldName.equals(INVALIDFROM)) && value != null) {
+        if ((fieldName.equals(VALIDFROM) || fieldName.equals(INVALIDFROM)) && value != null) {
             try {
                 set(fieldName, value);
-            } catch(NumberFormatException elong) {
+            } catch (NumberFormatException elong) {
                 DataTypeDate date = DataTypeDate.parseDate(value);
                 if (date.isSet()) {
                     set(fieldName, Long.toString(date.getTimestamp(null)));
@@ -362,14 +414,15 @@ public abstract class DataRecord implements Cloneable, Comparable {
             DataTypeList list = getList(fieldName, getPersistence().data().getFieldType(fieldName));
             DataRecord rtmp = createDataRecord();
             rtmp.setFromText(fieldName, value);
-            DataTypeList listtmp = rtmp.getList(fieldName, getPersistence().data().getFieldType(fieldName));
+            DataTypeList listtmp = rtmp
+                    .getList(fieldName, getPersistence().data().getFieldType(fieldName));
             Object newListValue = (listtmp != null && listtmp.length() > 0 ? listtmp.get(0) : null);
             if (newListValue != null && !list.contains(newListValue)) {
                 list.add(newListValue);
             }
             rtmp.set(fieldName, list);
             return rtmp.getAsText(fieldName);
-        } catch(Exception e) {
+        } catch (Exception e) {
             Logger.logdebug(e);
             return null;
         }
@@ -380,23 +433,24 @@ public abstract class DataRecord implements Cloneable, Comparable {
             DataTypeList list = getList(fieldName, getPersistence().data().getFieldType(fieldName));
             DataRecord rtmp = createDataRecord();
             rtmp.setFromText(fieldName, value);
-            DataTypeList listtmp = rtmp.getList(fieldName, getPersistence().data().getFieldType(fieldName));
+            DataTypeList listtmp = rtmp
+                    .getList(fieldName, getPersistence().data().getFieldType(fieldName));
             Object newListValue = (listtmp != null && listtmp.length() > 0 ? listtmp.get(0) : null);
             if (newListValue != null && list.contains(newListValue)) {
                 list.remove(newListValue);
             }
             rtmp.set(fieldName, list);
             return rtmp.getAsText(fieldName);
-        } catch(Exception e) {
+        } catch (Exception e) {
             Logger.logdebug(e);
             return null;
         }
     }
 
     public String[] getEquivalentFields(String fieldName) {
-        return new String[] { fieldName };
+        return new String[]{fieldName};
     }
-    
+
     public String[] getFieldNamesForTextExport(boolean includingVirtual) {
         return getPersistence().data().getFieldNames(includingVirtual);
     }
@@ -404,33 +458,33 @@ public abstract class DataRecord implements Cloneable, Comparable {
     protected boolean isDefaultValue(int fieldIdx) {
         int type = getFieldType(fieldIdx);
         Object o = get(fieldIdx);
-        switch(type) {
+        switch (type) {
             case IDataAccess.DATA_STRING:
-                return o == null || ((String)o).length() == 0;
+                return o == null || ((String) o).length() == 0;
             case IDataAccess.DATA_INTEGER:
-                return o == null || ((Integer)o).intValue() == IDataAccess.UNDEFINED_INT;
+                return o == null || ((Integer) o).intValue() == IDataAccess.UNDEFINED_INT;
             case IDataAccess.DATA_LONGINT:
-                return o == null || ((Long)o).longValue() == IDataAccess.UNDEFINED_LONG;
+                return o == null || ((Long) o).longValue() == IDataAccess.UNDEFINED_LONG;
             case IDataAccess.DATA_DOUBLE:
-                return o == null || ((Double)o).doubleValue() == IDataAccess.UNDEFINED_DOUBLE;
+                return o == null || ((Double) o).doubleValue() == IDataAccess.UNDEFINED_DOUBLE;
             case IDataAccess.DATA_DECIMAL:
-                return o == null || !((DataTypeDecimal)o).isSet();
+                return o == null || !((DataTypeDecimal) o).isSet();
             case IDataAccess.DATA_DISTANCE:
-                return o == null || !((DataTypeDistance)o).isSet();
+                return o == null || !((DataTypeDistance) o).isSet();
             case IDataAccess.DATA_BOOLEAN:
-                return o == null || ((Boolean)o).booleanValue() == false;
+                return o == null || ((Boolean) o).booleanValue() == false;
             case IDataAccess.DATA_DATE:
-                return o == null || !((DataTypeDate)o).isSet();
+                return o == null || !((DataTypeDate) o).isSet();
             case IDataAccess.DATA_TIME:
-                return o == null || !((DataTypeTime)o).isSet();
+                return o == null || !((DataTypeTime) o).isSet();
             case IDataAccess.DATA_UUID:
                 return o == null;
             case IDataAccess.DATA_INTSTRING:
-                return o == null || !((DataTypeIntString)o).isSet();
+                return o == null || !((DataTypeIntString) o).isSet();
             case IDataAccess.DATA_PASSWORDH:
-                return o == null || !((DataTypePasswordHashed)o).isSet();
+                return o == null || !((DataTypePasswordHashed) o).isSet();
             case IDataAccess.DATA_PASSWORDC:
-                return o == null || !((DataTypePasswordCrypted)o).isSet();
+                return o == null || !((DataTypePasswordCrypted) o).isSet();
             case IDataAccess.DATA_VIRTUAL:
                 return false;
         }
@@ -444,7 +498,7 @@ public abstract class DataRecord implements Cloneable, Comparable {
     public String toString() {
         StringBuilder b = new StringBuilder();
         b.append("[");
-        for (int i=0; i<getFieldCount(); i++) {
+        for (int i = 0; i < getFieldCount(); i++) {
             Object v = get(i);
             if (v == null && !isKeyField(i)) {
                 continue;
@@ -456,8 +510,8 @@ public abstract class DataRecord implements Cloneable, Comparable {
                 b.append(";");
             }
             if (isKeyField(i)) { // Output for Key Field
-                b.append("#" + getFieldName(i) + "#" + "=" + 
-                        (v != null ? v.toString() : "<UNSET>") );
+                b.append(
+                        "#" + getFieldName(i) + "#" + "=" + (v != null ? v.toString() : "<UNSET>"));
             } else { // Output for normal Field
                 b.append(getFieldName(i) + "=" + v.toString());
             }
@@ -469,10 +523,11 @@ public abstract class DataRecord implements Cloneable, Comparable {
     public String encodeAsString() {
         StringBuilder s = new StringBuilder();
         s.append("<" + ENCODING_RECORD + ">");
-        for (int i=0; i<getFieldCount(); i++) {
+        for (int i = 0; i < getFieldCount(); i++) {
             Object o = get(i);
             if (o != null && getFieldType(i) != IDataAccess.DATA_VIRTUAL && !isDefaultValue(i)) {
-                s.append("<" + getFieldName(i) + ">" + EfaUtil.escapeXml(o.toString()) + "</" +  getFieldName(i) + ">");
+                s.append("<" + getFieldName(i) + ">" + EfaUtil
+                        .escapeXml(o.toString()) + "</" + getFieldName(i) + ">");
             }
         }
         s.append("</" + ENCODING_RECORD + ">");
@@ -480,12 +535,12 @@ public abstract class DataRecord implements Cloneable, Comparable {
     }
 
     public void decodeFromString(String s) throws Exception {
-        
+
     }
 
     public String getAllFieldsAsSeparatedText() {
         StringBuilder b = new StringBuilder();
-        for (int i=0; i<getFieldCount(); i++) {
+        for (int i = 0; i < getFieldCount(); i++) {
             if (b.length() > 1) {
                 b.append(";");
             }
@@ -507,11 +562,13 @@ public abstract class DataRecord implements Cloneable, Comparable {
     }
 
     public String[] getQualifiedNameFieldsTranslateVirtualToReal() {
-        return getQualifiedNameFields(); // not supported - no qualified name; to be overridden in subclass if necessary
+        return getQualifiedNameFields(); // not supported - no qualified name; to be overridden
+        // in subclass if necessary
     }
 
     public String[] getQualifiedNameValues(String qname) {
-        return new String[] { qname } ; // default is qname itself; to be overridden in subclass if necessary
+        return new String[]{qname}; // default is qname itself; to be overridden in subclass if
+        // necessary
     }
 
     public Object getUniqueIdForRecord() {
@@ -520,7 +577,8 @@ public abstract class DataRecord implements Cloneable, Comparable {
 
     public void setLastModified() {
         synchronized (this.data) {
-            this.data[getFieldCount() - 1] = (Long)System.currentTimeMillis(); // LastModified timestamp
+            this.data[getFieldCount() - 1] = System
+                    .currentTimeMillis(); // LastModified timestamp
         }
     }
 
@@ -530,7 +588,7 @@ public abstract class DataRecord implements Cloneable, Comparable {
 
     protected void updateChangeCount() {
         long l = getChangeCount();
-        setLong(CHANGECOUNT, l+1);
+        setLong(CHANGECOUNT, l + 1);
     }
 
     public long getChangeCount() {
@@ -557,7 +615,7 @@ public abstract class DataRecord implements Cloneable, Comparable {
         setValidFrom(0);
         setInvalidFrom(Long.MAX_VALUE);
     }
-    
+
     public long getValidFrom() {
         long t = (metaData.versionized ? getLong(VALIDFROM) : 0);
         if (t == IDataAccess.UNDEFINED_LONG || t < 0) {
@@ -582,13 +640,13 @@ public abstract class DataRecord implements Cloneable, Comparable {
 
     public String getValidUntilTimeString() {
         long t = getInvalidFrom();
-        String s = (t == 0 || t == Long.MAX_VALUE ? "" : EfaUtil.getTimeStamp(t-1));
+        String s = (t == 0 || t == Long.MAX_VALUE ? "" : EfaUtil.getTimeStamp(t - 1));
         return s;
     }
 
     public String getValidRangeString() {
         String from = getValidFromTimeString();
-        String to =   getValidUntilTimeString();
+        String to = getValidUntilTimeString();
         if (from.length() > 0 && to.length() > 0) {
             return from + " - " + to;
         }
@@ -610,14 +668,15 @@ public abstract class DataRecord implements Cloneable, Comparable {
         }
         long rValidFrom = getValidFrom();
         long rValidUntil = getInvalidFrom() - 1;
-        if ( (rValidFrom >= validStart && rValidFrom <= validEnd) ||   // rValidFrom is in specified range
-             (rValidUntil >= validStart && rValidUntil <= validEnd) || // rValidUntil is in specified range
-             (rValidFrom < validStart && rValidUntil > validEnd) ) {   // rValidFrom is before specified range and rValidUntil is after specified range
-            return true;
-        }
-        return false;
+        // rValidFrom is before
+        // specified range and rValidUntil is after specified range
+        return (rValidFrom >= validStart && rValidFrom <= validEnd) ||   // rValidFrom is in
+                // specified range
+                (rValidUntil >= validStart && rValidUntil <= validEnd) || // rValidUntil is in
+                // specified range
+                (rValidFrom < validStart && rValidUntil > validEnd);
     }
-    
+
     public boolean isValidAt(long validAt) {
         if (getDeleted()) {
             return false;
@@ -675,7 +734,7 @@ public abstract class DataRecord implements Cloneable, Comparable {
         } else {
             set(fieldName, null);
         }
-}
+    }
 
     protected void setDistance(String fieldName, DataTypeDistance distance) {
         if (distance != null && distance.isSet()) {
@@ -700,7 +759,7 @@ public abstract class DataRecord implements Cloneable, Comparable {
             set(fieldName, null);
         }
     }
-    
+
     protected void setDouble(String fieldName, double d) {
         if (d != IDataAccess.UNDEFINED_DOUBLE) {
             set(fieldName, new Double(d));
@@ -752,11 +811,23 @@ public abstract class DataRecord implements Cloneable, Comparable {
     }
 
     protected String getString(String fieldName) {
-        return (String)get(fieldName);
+        // #START# efacloud adaptation.
+        // Original code (one line only): return get(fieldName).toString();
+        // Method was needed by EfaCloud.modifyServerRecord() and class cast "(String)" did not
+        // work for a UUID field. The error is caught and replaced by a toString() - call.
+        Object getFieldName = get(fieldName);
+        String getFieldNameStr;
+        try {
+            getFieldNameStr = (String) getFieldName;
+        } catch (Exception e) {
+            getFieldNameStr = getFieldName.toString();
+        }
+        return getFieldNameStr;
+        // #END# efacloud adaptation.
     }
 
     protected DataTypeDate getDate(String fieldName) {
-        DataTypeDate date = (DataTypeDate)get(fieldName);
+        DataTypeDate date = (DataTypeDate) get(fieldName);
         if (date == null) {
             return null;
         }
@@ -764,7 +835,7 @@ public abstract class DataRecord implements Cloneable, Comparable {
     }
 
     protected DataTypeTime getTime(String fieldName) {
-        DataTypeTime time = (DataTypeTime)get(fieldName);
+        DataTypeTime time = (DataTypeTime) get(fieldName);
         if (time == null) {
             return null;
         }
@@ -772,7 +843,7 @@ public abstract class DataRecord implements Cloneable, Comparable {
     }
 
     protected DataTypeDecimal getDecimal(String fieldName) {
-        DataTypeDecimal d = (DataTypeDecimal)get(fieldName);
+        DataTypeDecimal d = (DataTypeDecimal) get(fieldName);
         if (d == null) {
             return null;
         }
@@ -780,7 +851,7 @@ public abstract class DataRecord implements Cloneable, Comparable {
     }
 
     protected DataTypeDistance getDistance(String fieldName) {
-        DataTypeDistance d = (DataTypeDistance)get(fieldName);
+        DataTypeDistance d = (DataTypeDistance) get(fieldName);
         if (d == null) {
             return null;
         }
@@ -788,7 +859,7 @@ public abstract class DataRecord implements Cloneable, Comparable {
     }
 
     protected int getInt(String fieldName) {
-        Integer i = (Integer)get(fieldName);
+        Integer i = (Integer) get(fieldName);
         if (i == null) {
             return IDataAccess.UNDEFINED_INT;
         }
@@ -796,15 +867,15 @@ public abstract class DataRecord implements Cloneable, Comparable {
     }
 
     protected long getLong(String fieldName) {
-        Long l = (Long)get(fieldName);
+        Long l = (Long) get(fieldName);
         if (l == null) {
             return IDataAccess.UNDEFINED_LONG;
         }
         return l.longValue();
     }
-    
+
     protected double getDouble(String fieldName) {
-        Double i = (Double)get(fieldName);
+        Double i = (Double) get(fieldName);
         if (i == null) {
             return IDataAccess.UNDEFINED_DOUBLE;
         }
@@ -812,7 +883,7 @@ public abstract class DataRecord implements Cloneable, Comparable {
     }
 
     protected Boolean getBool(String fieldName) {
-        Boolean bool = (Boolean)get(fieldName);
+        Boolean bool = (Boolean) get(fieldName);
         if (bool == null) {
             return false; // default is false
         }
@@ -820,15 +891,12 @@ public abstract class DataRecord implements Cloneable, Comparable {
     }
 
     protected UUID getUUID(String fieldName) {
-        UUID uuid = (UUID)get(fieldName);
-        if (uuid == null) {
-            return null;
-        }
+        UUID uuid = (UUID) get(fieldName);
         return uuid;
     }
 
     protected DataTypeList getList(String fieldName, int dataType) {
-        DataTypeList list = (DataTypeList)get(fieldName);
+        DataTypeList list = (DataTypeList) get(fieldName);
         if (list == null) {
             return null;
         }
@@ -836,26 +904,17 @@ public abstract class DataRecord implements Cloneable, Comparable {
     }
 
     protected DataTypeIntString getIntString(String fieldName) {
-        DataTypeIntString s = (DataTypeIntString)get(fieldName);
-        if (s == null) {
-            return null;
-        }
+        DataTypeIntString s = (DataTypeIntString) get(fieldName);
         return s;
     }
 
     protected DataTypePasswordHashed getPasswordHashed(String fieldName) {
-        DataTypePasswordHashed pwd = (DataTypePasswordHashed)get(fieldName);
-        if (pwd == null) {
-            return null;
-        }
+        DataTypePasswordHashed pwd = (DataTypePasswordHashed) get(fieldName);
         return pwd;
     }
 
     protected DataTypePasswordCrypted getPasswordCrypted(String fieldName) {
-        DataTypePasswordCrypted pwd = (DataTypePasswordCrypted)get(fieldName);
-        if (pwd == null) {
-            return null;
-        }
+        DataTypePasswordCrypted pwd = (DataTypePasswordCrypted) get(fieldName);
         return pwd;
     }
 
@@ -874,7 +933,7 @@ public abstract class DataRecord implements Cloneable, Comparable {
             case IDataAccess.DATA_DISTANCE:
                 return DataTypeDistance.parseDistance(s);
             case IDataAccess.DATA_BOOLEAN:
-                return (s.length() > 0 ? Boolean.parseBoolean(s) : false);
+                return (s.length() > 0 && Boolean.parseBoolean(s));
             case IDataAccess.DATA_DATE:
                 return DataTypeDate.parseDate(s);
             case IDataAccess.DATA_TIME:
@@ -903,20 +962,24 @@ public abstract class DataRecord implements Cloneable, Comparable {
      * throws Exception if fields are not comparable!
      */
     public int compareFieldToOtherRecord(String fieldName, DataRecord otherRecord) {
-        return ((Comparable)get(fieldName)).compareTo(otherRecord.get(fieldName));
+        return ((Comparable) get(fieldName)).compareTo(otherRecord.get(fieldName));
     }
 
     public StorageObject getPersistence() {
         return persistence;
     }
 
-    protected ItemTypeStringAutoComplete getGuiItemTypeStringAutoComplete(String name, UUID value, int type, String category,
-            StorageObject persistence, long validFrom, long validUntil,
-            String description) {
+    protected ItemTypeStringAutoComplete getGuiItemTypeStringAutoComplete(String name, UUID value,
+                                                                          int type, String category,
+                                                                          StorageObject persistence,
+                                                                          long validFrom,
+                                                                          long validUntil,
+                                                                          String description) {
         AutoCompleteList list = new AutoCompleteList();
         list.setDataAccess(persistence.data(), validFrom, validUntil);
         String svalue = (value != null ? list.getValueForId(value.toString()) : "");
-        ItemTypeStringAutoComplete item = new ItemTypeStringAutoComplete(name, svalue, type, category, description, true);
+        ItemTypeStringAutoComplete item = new ItemTypeStringAutoComplete(name, svalue, type,
+                category, description, true);
         item.setFieldSize(200, 19);
         item.setAutoCompleteData(list);
         item.setChecks(true, true);
@@ -924,14 +987,17 @@ public abstract class DataRecord implements Cloneable, Comparable {
     }
 
     public abstract Vector<IItemType> getGuiItems(AdminRecord admin);
+
     public abstract TableItemHeader[] getGuiTableHeader();
+
     public abstract TableItem[] getGuiTableItems();
 
     /**
      * exchange null with set aggregations to display aggregations after filter
      * DataList
      */
-    public String[] getGuiTableAggregations(String[] aggregations, int index, int size, HashMap<String, Object> overallInfo) {
+    public String[] getGuiTableAggregations(String[] aggregations, int index, int size,
+                                            HashMap<String, Object> overallInfo) {
         return null;
     }
 
@@ -941,7 +1007,7 @@ public abstract class DataRecord implements Cloneable, Comparable {
     }
 
     public void saveGuiItems(Vector<IItemType> items) {
-        for(IItemType item : items) {
+        for (IItemType item : items) {
             String name = item.getName();
             if (!metaData.isField(name)) {
                 continue; // skip this field - must be handled by subclass!
