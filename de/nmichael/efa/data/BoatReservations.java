@@ -127,6 +127,27 @@ public class BoatReservations extends StorageObject {
         return purged;
     }
 
+    
+    private String buildOverlappingReservationInfo(BoatReservationRecord reservation)
+    {
+              String result ="";
+              
+              if (reservation.getType().equals(BoatReservationRecord.TYPE_WEEKLY)) {
+                            result = "\n\n" + reservation.getBoatName()+" / "+ reservation.getPersonAsName()+" ("+reservation.getDayOfWeek()+" "+reservation.getTimeFrom()+" -- "+reservation.getTimeTo()+")"
+                                                         + "\n" + International.getString("Reservierungsgrund")+": "+reservation.getReason() 
+                                                        +"\n"+International.getString("Telefon_für_Rückfragen") + ": "+reservation.getContact();
+              }
+              else if (reservation.getType().equals( BoatReservationRecord.TYPE_ONETIME)) {
+              result =  "\n\n" + reservation.getBoatName()+" / "+ reservation.getPersonAsName()+" ("+reservation.getDateFrom().getWeekdayAsString()+ " "  +reservation.getDateFrom()+" "+reservation.getTimeFrom()+" -- "+ reservation.getDateTo().getWeekdayAsString()+ " "+reservation.getDateTo()+" "+reservation.getTimeTo()+")"
+                                                                       + "\n" + International.getString("Reservierungsgrund")+": "+reservation.getReason() 
+                                                                       +"\n"+International.getString("Telefon_für_Rückfragen") + ": "+reservation.getContact();                      
+                            
+              }
+              
+              return result;
+    }
+
+    
     public void preModifyRecordCallback(DataRecord record, boolean add, boolean update, boolean delete) throws EfaModifyException {
         if (add || update) {
             assertFieldNotEmpty(record, BoatReservationRecord.BOATID);
@@ -152,7 +173,7 @@ public class BoatReservations extends StorageObject {
                     if (DataTypeTime.isRangeOverlap(r.getTimeFrom(), r.getTimeTo(),
                             br[i].getTimeFrom(), br[i].getTimeTo())) {
                         throw new EfaModifyException(Logger.MSG_DATA_MODIFYEXCEPTION,
-                                International.getString("Die Reservierung überschneidet sich mit einer anderen Reservierung."),
+                                International.getString("Die Reservierung überschneidet sich mit einer anderen Reservierung." + buildOverlappingReservationInfo(br[i]) ),
                                 Thread.currentThread().getStackTrace());
                         
                     }
@@ -171,7 +192,7 @@ public class BoatReservations extends StorageObject {
                                                     br[i].getDateTo(),
                                                     br[i].getTimeTo())) {
                         throw new EfaModifyException(Logger.MSG_DATA_MODIFYEXCEPTION,
-                                International.getString("Die Reservierung überschneidet sich mit einer anderen Reservierung."),
+                                International.getString("Die Reservierung überschneidet sich mit einer anderen Reservierung." + buildOverlappingReservationInfo(br[i]) ),
                                 Thread.currentThread().getStackTrace());
 
                     }
