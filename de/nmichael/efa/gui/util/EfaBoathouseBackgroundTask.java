@@ -177,9 +177,7 @@ public class EfaBoathouseBackgroundTask extends Thread {
             if (Daten.project != null) {
                 isProjectOpen = true;
                 if (Daten.project.getProjectStorageType() == IDataAccess.TYPE_FILE_XML
-                    // #START# efacloud adaptation.
                         || Daten.project.getProjectStorageType() == IDataAccess.TYPE_EFA_CLOUD
-                    // #END# efacloud adaptation.
                 ) {
                     isLocalProject = true;
                 } else {

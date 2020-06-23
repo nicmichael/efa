@@ -40,9 +40,7 @@ public class EfaMenuButton {
     public final static String BUTTON_PROJECTS          = "PROJECTS";
     public final static String BUTTON_LOGBOOKS          = "LOGBOOKS";
     public final static String BUTTON_BACKUP            = "BACKUP";
-    // #START# efacloud adaptation
     public final static String BUTTON_EFACLOUD          = "EFACLOUD";
-    // #END# efacloud adaptation
     public final static String BUTTON_UPDATE            = "UPDATE";
     public final static String BUTTON_PLUGINS           = "PLUGINS";
     public final static String BUTTON_OSCOMMAND         = "OSCOMMAND";
@@ -177,14 +175,12 @@ public class EfaMenuButton {
                     International.getStringWithMnemonic("Backups"),
                     BaseFrame.getIcon("menu_backup.png")));
         }
-        // #START# efacloud adaptation
         if (admin == null || admin.isAllowedCreateBackup()) {
             v.add(new EfaMenuButton(MENU_FILE, BUTTON_EFACLOUD,
                     International.getStringWithMnemonic("Datei"),
                     International.getStringWithMnemonic("EfaCloud"),
                     BaseFrame.getIcon("menu_efacloud.png")));
         }
-        // #END# efacloud adaptation
         if (admin == null || admin.isAllowedUpdateEfa()) {
             v.add(new EfaMenuButton(MENU_FILE, BUTTON_UPDATE,
                     International.getStringWithMnemonic("Datei"),
@@ -475,7 +471,6 @@ public class EfaMenuButton {
             dlg.showDialog();
         }
 
-        // #START# efacloud adaptation
         if (action.equals(BUTTON_EFACLOUD)) {
             if (admin == null ||
                     (!admin.isAllowedCreateBackup() && !admin.isAllowedRestoreBackup())) {
@@ -486,7 +481,6 @@ public class EfaMenuButton {
             EfaCloudSynchDialog dlg = new EfaCloudSynchDialog(parentDialog, admin);
             dlg.showDialog();
         }
-        // #END# efacloud adaptation
 
         if (action.equals(BUTTON_UPDATE)) {
             if (admin == null || (!admin.isAllowedUpdateEfa())) {

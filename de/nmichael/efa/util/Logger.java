@@ -412,7 +412,6 @@ public class Logger {
     public static final String MSG_BACKUP_RESTOREDEBUG = "BCK016";
     public static final String MSG_BACKUP_REOPENINGFILES = "BCK017";
 
-    // #START# efacloud adaptation
     // EfaCloudSync
     public static final String MSG_EFACLOUDSYNCH_STARTED = "ECS001";
     public static final String MSG_EFACLOUDSYNCH_INFO = "ECS002";
@@ -422,7 +421,6 @@ public class Logger {
     public static final String MSG_EFACLOUDSYNCH_FINISHED = "ECS006";
     public static final String MSG_EFACLOUDSYNCH_FAILED = "ECS007";
     public static final String MSG_EFACLOUDSYNCH_DEBUG = "ECS008";
-    // #END# efacloud adaptation
 
     // Statistics
     public static final String MSG_STAT_CALCULATEDENTRIES = "STA001";

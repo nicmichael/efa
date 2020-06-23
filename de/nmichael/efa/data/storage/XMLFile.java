@@ -13,9 +13,7 @@ package de.nmichael.efa.data.storage;
 import de.nmichael.efa.Daten;
 import de.nmichael.efa.util.*;
 import de.nmichael.efa.ex.EfaException;
-
 import java.io.*;
-
 import org.xml.sax.*;
 
 // @i18n complete
@@ -39,11 +37,9 @@ public class XMLFile extends DataFile {
     }
 
     public int getStorageType() {
-        // #START# efacloud adaptation.
         if (this instanceof EfaCloudStorage)
             return IDataAccess.TYPE_EFA_CLOUD;
         else
-            // #END# efacloud adaptation.
             return IDataAccess.TYPE_FILE_XML;
     }
 
@@ -55,7 +51,7 @@ public class XMLFile extends DataFile {
             readFile(fr);
             fr.close();
             isOpen = true;
-        } catch (Exception e) {
+        } catch(Exception e) {
             throw new EfaException(Logger.MSG_DATA_OPENFAILED, LogString.fileOpenFailed(filename, storageLocation, e.toString()), Thread.currentThread().getStackTrace());
         }
     }
@@ -83,7 +79,7 @@ public class XMLFile extends DataFile {
             if (xmlFileReader.getDocumentReadError() != null) {
                 throw new EfaException(Logger.MSG_DATA_INVALIDHEADER, xmlFileReader.getDocumentReadError(), Thread.currentThread().getStackTrace());
             }
-        } catch (Exception e) {
+        } catch(Exception e) {
             Logger.logdebug(e);
             throw new EfaException(Logger.MSG_DATA_READFAILED, LogString.fileReadFailed(filename, storageLocation, e.toString()), Thread.currentThread().getStackTrace());
         } finally {
@@ -118,10 +114,10 @@ public class XMLFile extends DataFile {
                 Logger.log(e);
                 throw new EfaException(Logger.MSG_DATA_WRITEFAILED,
                         LogString.fileWritingFailed(data.dataAccess.getUID(),
-                                data.dataAccess.getStorageObjectDescription(), e.toString()), Thread.currentThread().getStackTrace());
+                        data.dataAccess.getStorageObjectDescription(), e.toString()), Thread.currentThread().getStackTrace());
             }
         }
-    }
+   }
 
     private static void writeData(XmlFileInfo data) throws EfaException {
         write(data, xmltagStart(data, FIELD_DATA));
@@ -129,16 +125,16 @@ public class XMLFile extends DataFile {
         String[] fields = data.dataAccess.getFieldNames();
         DataKeyIterator it = data.dataAccess.getStaticIterator();
         DataKey k = it.getFirst();
-        while (k != null) {
+        while(k != null) {
             DataRecord r = data.dataAccess.get(k);
             if (r == null) {
                 continue;
             }
             write(data, xmltagStart(data, FIELD_DATA_RECORD));
-            for (int i = 0; i < fields.length; i++) {
+            for (int i=0; i<fields.length; i++) {
                 Object o = r.get(fields[i]);
                 if (o != null && r.getFieldType(i) != IDataAccess.DATA_VIRTUAL && !r.isDefaultValue(i)) {
-                    write(data, xmltag(data, fields[i], o.toString()));
+                    write(data, xmltag(data, fields[i],o.toString()));
                 }
             }
             write(data, xmltagEnd(data, FIELD_DATA_RECORD));
@@ -152,11 +148,11 @@ public class XMLFile extends DataFile {
         try {
             String str = space(data) + s + "\n";
             data.write(str);
-        } catch (Exception e) {
+        } catch(Exception e) {
             Logger.log(e);
-            throw new EfaException(Logger.MSG_DATA_WRITEFAILED,
+            throw new EfaException(Logger.MSG_DATA_WRITEFAILED, 
                     LogString.fileWritingFailed(data.dataAccess.getUID(),
-                            data.dataAccess.getStorageObjectDescription(), e.toString()), Thread.currentThread().getStackTrace());
+                    data.dataAccess.getStorageObjectDescription(), e.toString()), Thread.currentThread().getStackTrace());
         }
     }
 
@@ -175,11 +171,11 @@ public class XMLFile extends DataFile {
                 EfaUtil.escapeXml(value) +
                 xmltagEnd(data, tag);
     }
-
+ 
     private static String space(XmlFileInfo data) {
         if (doIndent) {
             String s = "";
-            for (int i = 0; i < data.lastindent && i < data.indent; i++) {
+            for (int i=0; i<data.lastindent && i<data.indent; i++) {
                 s += "  ";
             }
             data.lastindent = data.indent;
@@ -228,7 +224,7 @@ class XmlFileInfo {
                     return null;
                 }
                 mirrorFile = mirrorDir + (mirrorDir.endsWith(Daten.fileSep) ? "" : Daten.fileSep)
-                        + relativeFilename;
+                                       + relativeFilename;
                 File f = new File(mirrorFile);
                 f.getParentFile().mkdirs();
                 ((XMLFile) dataAccess).createBackupFile(mirrorFile);
@@ -237,7 +233,7 @@ class XmlFileInfo {
         } catch (Exception e) {
             Logger.log(Logger.WARNING, Logger.MSG_DATA_WRITEFAILED,
                     LogString.fileWritingFailed(mirrorFile, International.getString("Spiegeldatei"),
-                            e.toString()));
+                    e.toString()));
         }
         return null;
     }
@@ -245,20 +241,20 @@ class XmlFileInfo {
     private void writeMirror(String s) {
         try {
             fout2.write(s);
-        } catch (Exception e) {
+        } catch(Exception e) {
             Logger.log(Logger.WARNING, Logger.MSG_DATA_WRITEFAILED,
                     LogString.fileWritingFailed(mirrorFile, International.getString("Spiegeldatei"),
-                            e.toString()));
+                    e.toString()));
         }
     }
 
     private void closeMirror() {
         try {
             fout2.close();
-        } catch (Exception e) {
+        } catch(Exception e) {
             Logger.log(Logger.WARNING, Logger.MSG_DATA_WRITEFAILED,
                     LogString.fileCloseFailed(mirrorFile, International.getString("Spiegeldatei"),
-                            e.toString()));
+                    e.toString()));
         }
     }
 
@@ -282,5 +278,5 @@ class XmlFileInfo {
         }
         // no need to close out, only fout!
     }
-
+    
 }

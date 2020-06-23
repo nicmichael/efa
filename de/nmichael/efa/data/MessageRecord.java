@@ -40,7 +40,7 @@ public class MessageRecord extends DataRecord {
     public static final String READ                  = "Read";
     public static final String TOBEMAILED            = "ToBeMailed";
     public static final String REPLYTO               = "ReplyTo";
-
+    
     private boolean forceNewMsg = false; // mark this messages as new
 
     public static void initialize() {
