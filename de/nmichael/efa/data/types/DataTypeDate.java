@@ -530,6 +530,26 @@ public class DataTypeDate implements Cloneable, Comparable<DataTypeDate> {
         }
         return EfaTypes.TEXT_UNKNOWN;
     }
+    
+    public String getWeekdayAsEfaType() {
+        switch (toCalendar().get(Calendar.DAY_OF_WEEK)) {
+	        case Calendar.MONDAY:
+	            return EfaTypes.TYPE_WEEKDAY_MONDAY;
+	        case Calendar.TUESDAY:
+	            return EfaTypes.TYPE_WEEKDAY_TUESDAY;
+	        case Calendar.WEDNESDAY:
+	            return EfaTypes.TYPE_WEEKDAY_WEDNESDAY;
+	        case Calendar.THURSDAY:
+	            return EfaTypes.TYPE_WEEKDAY_THURSDAY;
+	        case Calendar.FRIDAY:
+	            return EfaTypes.TYPE_WEEKDAY_FRIDAY;
+	        case Calendar.SATURDAY:
+	            return EfaTypes.TYPE_WEEKDAY_SATURDAY;
+	        case Calendar.SUNDAY:
+	            return EfaTypes.TYPE_WEEKDAY_SUNDAY;
+	    }
+        return EfaTypes.TEXT_UNKNOWN;	
+    }
 
     public static String[] makeDistanceUnitValueArray() {
         String[] units = new String[2];
