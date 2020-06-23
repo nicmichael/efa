@@ -480,22 +480,30 @@ public class Dialog {
 
     // Methoden zum Setzen der Position eines neuen JDialogs
     public static void setDlgLocation(JDialog dlg, Frame parent) {
-        dlg.setLocation(getLocation(dlg.getSize(), (parent != null ? parent.getSize() : null), (parent != null ? parent.getLocation() : null)));
+        dlg.setLocation(getLocation(dlg.getSize(),
+                (parent != null ? parent.getSize() : null),
+                (parent != null ? parent.getLocation() : null),
+                (parent != null ? parent.getGraphicsConfiguration().getBounds() : null)
+        ));
     }
 
     public static void setDlgLocation(JDialog dlg, Window parent) {
-        dlg.setLocation(getLocation(dlg.getSize(), (parent != null ? parent.getSize() : null), (parent != null ? parent.getLocation() : null)));
+        dlg.setLocation(getLocation(dlg.getSize(),
+                (parent != null ? parent.getSize() : null),
+                (parent != null ? parent.getLocation() : null),
+                (parent != null ? parent.getGraphicsConfiguration().getBounds() : null)
+        ));
     }
 
     public static void setDlgLocation(JDialog dlg) {
-        dlg.setLocation(getLocation(dlg.getSize(), null, null));
+        dlg.setLocation(getLocation(dlg.getSize(), null, null, null));
     }
 
     public static void setDlgLocation(JFrame dlg) {
-        dlg.setLocation(getLocation(dlg.getSize(), null, null));
+        dlg.setLocation(getLocation(dlg.getSize(), null, null, null));
     }
 
-    public static Point getLocation(Dimension dlgSize, Dimension parentSize, Point loc) {
+    public static Point getLocation(Dimension dlgSize, Dimension parentSize, Point loc, Rectangle screen) {
         int x, y;
 
         // fix dlgSize, if necessary
@@ -532,6 +540,12 @@ public class Dialog {
             if (Daten.efaConfig != null && Daten.efaConfig.getValueWindowYOffset() > 0) {
                 y += Daten.efaConfig.getValueWindowYOffset();
             }
+        }
+
+        // place dialog on same screen as parent dialog (for multi-screen environments)
+        if (loc != null && screen != null) {
+            x += screen.x;
+            y += screen.y;
         }
 
         if (x < 0) {

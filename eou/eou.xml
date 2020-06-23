@@ -2,6 +2,20 @@
 <efaOnlineUpdate>
 
     <Version>
+        <VersionID>2.2.2_45</VersionID>
+        <ReleaseDate>22.06.2020</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa222.zip</DownloadUrl>
+        <DownloadSize>4134579</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Korrekte Platzierung von Dialogen in Umgebungen mit mehreren Bildschirmen</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Correct placement of dialogs in environments with multiple monitors</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
         <VersionID>2.2.2_44</VersionID>
         <ReleaseDate>19.04.2020</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa222.zip</DownloadUrl>
