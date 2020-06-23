@@ -530,8 +530,8 @@ public class Dialog {
             y = (parentSize.height - dlgSize.height) / 2 + loc.y;
         } else {
             // calculate position based on screen size
-            x = (screenSize.width - dlgSize.width) / 2;
-            y = (screenSize.height - dlgSize.height) / 2;
+            x = ((screen != null ? screen.width : screenSize.width) - dlgSize.width) / 2;
+            y = ((screen != null ? screen.height : screenSize.height) - dlgSize.height) / 2;
 
             // add offset
             if (Daten.efaConfig != null && Daten.efaConfig.getValueWindowXOffset() > 0) {
@@ -540,12 +540,12 @@ public class Dialog {
             if (Daten.efaConfig != null && Daten.efaConfig.getValueWindowYOffset() > 0) {
                 y += Daten.efaConfig.getValueWindowYOffset();
             }
-        }
 
-        // place dialog on same screen as parent dialog (for multi-screen environments)
-        if (loc != null && screen != null) {
-            x += screen.x;
-            y += screen.y;
+            // place dialog on same screen as parent dialog (for multi-screen environments)
+            if (loc != null && screen != null) {
+                x += screen.x;
+                y += screen.y;
+            }
         }
 
         if (x < 0) {

@@ -5,13 +5,19 @@
         <VersionID>2.2.2_45</VersionID>
         <ReleaseDate>22.06.2020</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa222.zip</DownloadUrl>
-        <DownloadSize>4134579</DownloadSize>
+        <DownloadSize>4135257</DownloadSize>
 
         <Changes lang="de">
             <ChangeItem>Bugfix: Korrekte Platzierung von Dialogen in Umgebungen mit mehreren Bildschirmen</ChangeItem>
+            <ChangeItem>Bugfix: Fahrtabbruch-Dialog kann jetzt mit ESC abgebrochen werden</ChangeItem>
+            <ChangeItem>Bugfix: Fehlerhaftes Verhalten beim Wechseln zwischen Boots und Personen-Liste behoben</ChangeItem>
+            <ChangeItem>Neu: Details einer Ueberlappenden Reservierung werden jetzt angezeigt</ChangeItem>
         </Changes>
         <Changes lang="en">
             <ChangeItem>Bugfix: Correct placement of dialogs in environments with multiple monitors</ChangeItem>
+            <ChangeItem>Bugfix: Session cancel dialog can now be cancled with ESC</ChangeItem>
+            <ChangeItem>Bugfix: Broken switching between person and boat selection lists fixed</ChangeItem>
+            <ChangeItem>New: reservation details of overlapping reservations are now shown</ChangeItem>
         </Changes>
     </Version>
 
