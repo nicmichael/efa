@@ -1015,9 +1015,7 @@ public class Audit extends Thread {
         try {
             Messages messages = project.getMessages(false);
             if ((messages.data().getStorageType() == IDataAccess.TYPE_FILE_XML)
-            // #START# efacloud adaptation.
-            || (messages.data().getStorageType() == IDataAccess.TYPE_EFA_CLOUD))
-            // #END# efacloud adaptation.
+                 || (messages.data().getStorageType() == IDataAccess.TYPE_EFA_CLOUD))
             {
                 long size = ((DataFile)messages.data()).getFileSize();
                 if (size > MAX_MESSAGES_FILESIZE) {

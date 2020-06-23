@@ -18,7 +18,6 @@ import de.nmichael.efa.data.storage.*;
 import de.nmichael.efa.ex.EfaException;
 import de.nmichael.efa.*;
 import de.nmichael.efa.core.config.AdminRecord;
-
 import java.util.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -48,33 +47,33 @@ public class NewProjectDialog extends StepwiseDialog implements IItemListener {
 
     String[] getSteps() {
         return new String[]{
-                International.getString("Name und Beschreibung"),
-                International.getString("Speichertyp auswählen"),
-                International.getString("Speicherort festlegen"),
-                International.getString("Angaben zum Verein"),
-                International.getString("Verbände")
-        };
+                    International.getString("Name und Beschreibung"),
+                    International.getString("Speichertyp auswählen"),
+                    International.getString("Speicherort festlegen"),
+                    International.getString("Angaben zum Verein"),
+                    International.getString("Verbände")
+                };
     }
-
+    
     String getDescription(int step) {
-        switch (step) {
+        switch(step) {
             case 0:
-                return International.getString("In efa2 werden alle Daten in Projekten zusammengefaßt. Üblicherweise solltest Du für einen Verein " +
+                return International.getString("In efa2 werden alle Daten in Projekten zusammengefaßt. Üblicherweise solltest Du für einen Verein "+
                         "genau ein Projekt erstellen, welches dann sämtliche Fahrtenbücher, Mitglieder-, Boots- und Ziellisten sowie sonstige Daten enthält.");
             case 1:
-                return International.getString("Bitte wähle, wo die Daten des Projekts gespeichert werden sollen") + ":\n" +
-                        "  " + International.getString("lokales Dateisystem") + " - " +
-                        International.getString("speichert die Daten lokal auf Deinem Computer") + "\n" +
-                        "  " + Daten.EFA_REMOTE + " - " +
-                        International.getString("greift auf Daten in einem entfernt laufenden efa zu") + "\n" +
-                        "  " + International.getString("SQL-Datenbank") + " - " +
-                        International.getString("speichert die Daten in einer beliebigen SQL-Datenbank");
+                return International.getString("Bitte wähle, wo die Daten des Projekts gespeichert werden sollen") + ":\n"+
+                        "  "+International.getString("lokales Dateisystem") + " - " +
+                             International.getString("speichert die Daten lokal auf Deinem Computer")+"\n"+
+                        "  "+Daten.EFA_REMOTE + " - " +
+                             International.getString("greift auf Daten in einem entfernt laufenden efa zu")+"\n"+
+                        "  "+International.getString("SQL-Datenbank") + " - " +
+                             International.getString("speichert die Daten in einer beliebigen SQL-Datenbank");
             case 2:
                 return International.getString("Bitte gib an, wo die Daten gespeichert werden sollen und wie der Zugriff erfolgen soll");
             case 3:
                 return International.getString("Bitte vervollständige die Angaben zu Deinem Verein.");
             case 4:
-                return International.getString("Bitte gib an, in welchen Dachverbänden Dein Verein Mitglied ist, und (falls vorhanden) die Benutzernamen " +
+                return International.getString("Bitte gib an, in welchen Dachverbänden Dein Verein Mitglied ist, und (falls vorhanden) die Benutzernamen "+
                         "für elektronische Meldung und ähnliche Dienste.");
         }
         return "";
@@ -105,9 +104,9 @@ public class NewProjectDialog extends StepwiseDialog implements IItemListener {
         if (!ok) {
             return false;
         }
-
+        
         if (step == 0) {
-            ItemTypeString item = (ItemTypeString) getItemByName(ProjectRecord.PROJECTNAME);
+            ItemTypeString item = (ItemTypeString)getItemByName(ProjectRecord.PROJECTNAME);
             String name = item.getValue();
             Project prj = new Project(IDataAccess.TYPE_FILE_XML, Daten.efaDataDirectory, name);
             try {
@@ -122,17 +121,7 @@ public class NewProjectDialog extends StepwiseDialog implements IItemListener {
 
 
         if (step == 1) {
-            ItemTypeStringList item = (ItemTypeStringList) getItemByName(ProjectRecord.STORAGETYPE);
-
-            // #START# efacloud adaptation. Invalid option replaced by efaCloud.
-            /* if (!item.getValue().equals(IDataAccess.TYPESTRING_FILE_XML) &&
-                    !item.getValue().equals(IDataAccess.TYPESTRING_EFA_REMOTE)) {
-                Dialog.error(International.getMessage("Die ausgewählte Option '{option}' wird zur Zeit noch nicht unterstützt.",
-                        item.getValue()));
-                item.requestFocus();
-                return false;
-            } */
-            // #END# efacloud adaptation.
+            ItemTypeStringList item = (ItemTypeStringList)getItemByName(ProjectRecord.STORAGETYPE);
 
             // remove all StorageType-specific config options
             ProjectRecord rPrj = Project.createNewRecordFromStatic(ProjectRecord.TYPE_PROJECT);
@@ -149,17 +138,18 @@ public class NewProjectDialog extends StepwiseDialog implements IItemListener {
             itemsToBeDeleted.addAll(rClb.getGuiItems(admin, 2, "4", true));
             itemsToBeDeleted.add(new ItemTypeBoolean(GUIITEM_CREATE_WATERS_LIST, true,
                     IItemType.TYPE_PUBLIC, "3", ""));
-            itemsToBeDeleted.add(new ItemTypeLabel(GUIITEM_NODATA_LABEL1, IItemType.TYPE_PUBLIC, "3", ""));
-            itemsToBeDeleted.add(new ItemTypeLabel(GUIITEM_NODATA_LABEL2, IItemType.TYPE_PUBLIC, "4", ""));
+            itemsToBeDeleted.add(new ItemTypeLabel(GUIITEM_NODATA_LABEL1,  IItemType.TYPE_PUBLIC, "3", ""));
+            itemsToBeDeleted.add(new ItemTypeLabel(GUIITEM_NODATA_LABEL2,  IItemType.TYPE_PUBLIC, "4", ""));
 
             // delete items we don't want
-            for (int i = 0; i < items.size(); i++) {
-                for (int j = 0; j < itemsToBeDeleted.size(); j++) {
+            for (int i=0; i<items.size(); i++) {
+                for (int j=0; j<itemsToBeDeleted.size(); j++) {
                     if (items.get(i).getName().equals(itemsToBeDeleted.get(j).getName())) {
                         items.remove(i--);
                     }
                 }
             }
+
 
             // add all StorageType-specific config options
             rPrj.setStorageType(IDataAccess.TYPE_FILE_XML);
@@ -171,11 +161,8 @@ public class NewProjectDialog extends StepwiseDialog implements IItemListener {
             }
             items.addAll(rPrj.getGuiItems(admin, 3, "2", true));
 
-            if (item.getValue().equals(IDataAccess.TYPESTRING_FILE_XML)
-                    // #START# efacloud adaptation.
-                    || item.getValue().equals(IDataAccess.TYPESTRING_EFA_CLOUD)
-                    // #END# efacloud adaptation.
-            ) {
+            if (item.getValue().equals(IDataAccess.TYPESTRING_FILE_XML) ||
+                item.getValue().equals(IDataAccess.TYPESTRING_EFA_CLOUD)) {
                 items.addAll(rClb.getGuiItems(admin, 1, "3", true));
                 items.addAll(rClb.getGuiItems(admin, 2, "4", true));
                 if (Waters.getResourceTemplate(International.getLanguageID()) != null) {
@@ -186,10 +173,10 @@ public class NewProjectDialog extends StepwiseDialog implements IItemListener {
             } else {
                 items.add(new ItemTypeLabel(GUIITEM_NODATA_LABEL1,
                         IItemType.TYPE_PUBLIC, "3",
-                        International.getString("Keine Angaben erforderlich")));
+                            International.getString("Keine Angaben erforderlich")));
                 items.add(new ItemTypeLabel(GUIITEM_NODATA_LABEL2,
                         IItemType.TYPE_PUBLIC, "4",
-                        International.getString("Keine Angaben erforderlich")));
+                            International.getString("Keine Angaben erforderlich")));
             }
             if (item.getValue().equals(IDataAccess.TYPESTRING_EFA_REMOTE)) {
                 IItemType checkbox = getItemByName(ProjectRecord.EFAONLINECONNECT);
@@ -230,9 +217,9 @@ public class NewProjectDialog extends StepwiseDialog implements IItemListener {
             return false;
         }
 
-        ItemTypeString prjName = (ItemTypeString) getItemByName(ProjectRecord.PROJECTNAME);
+        ItemTypeString prjName = (ItemTypeString)getItemByName(ProjectRecord.PROJECTNAME);
 
-        ItemTypeStringList storType = (ItemTypeStringList) getItemByName(ProjectRecord.STORAGETYPE);
+        ItemTypeStringList storType = (ItemTypeStringList)getItemByName(ProjectRecord.STORAGETYPE);
         int storageType = -1;
         if (storType.getValue().equals(IDataAccess.TYPESTRING_FILE_XML)) {
             storageType = IDataAccess.TYPE_FILE_XML;
@@ -251,43 +238,37 @@ public class NewProjectDialog extends StepwiseDialog implements IItemListener {
             prj.setEmptyProject(prjName.getValue());
 
             // Project Properties
-            prj.setProjectDescription(((ItemTypeString) getItemByName(ProjectRecord.DESCRIPTION)).getValue());
+            prj.setProjectDescription(((ItemTypeString)getItemByName(ProjectRecord.DESCRIPTION)).getValue());
             prj.setProjectStorageType(storageType);
-            prj.setAdminName(((ItemTypeString) getItemByName(ProjectRecord.ADMINNAME)).getValue());
-            prj.setAdminEmail(((ItemTypeString) getItemByName(ProjectRecord.ADMINEMAIL)).getValue());
+            prj.setAdminName(((ItemTypeString)getItemByName(ProjectRecord.ADMINNAME)).getValue());
+            prj.setAdminEmail(((ItemTypeString)getItemByName(ProjectRecord.ADMINEMAIL)).getValue());
             if (getItemByName(ProjectRecord.STORAGELOCATION) != null) {
-                prj.setProjectStorageLocation(((ItemTypeString) getItemByName(ProjectRecord.STORAGELOCATION)).getValue());
+                prj.setProjectStorageLocation(((ItemTypeString)getItemByName(ProjectRecord.STORAGELOCATION)).getValue());
             }
-            if (getItemByName(ProjectRecord.STORAGEUSERNAME) != null) {
-                prj.setProjectStorageUsername(((ItemTypeString) getItemByName(ProjectRecord.STORAGEUSERNAME)).getValue());
-            }
-            // #START# efacloud adaptation.
             if (getItemByName(ProjectRecord.EFACLOUDURL) != null) {
                 prj.setProjectEfaCloudURL(((ItemTypeString) getItemByName(ProjectRecord.EFACLOUDURL)).getValue());
             }
-            // #END# efacloud adaptation.
+            if (getItemByName(ProjectRecord.STORAGEUSERNAME) != null) {
+                prj.setProjectStorageUsername(((ItemTypeString)getItemByName(ProjectRecord.STORAGEUSERNAME)).getValue());
+            }
             if (getItemByName(ProjectRecord.STORAGEPASSWORD) != null) {
-                prj.setProjectStoragePassword(((ItemTypeString) getItemByName(ProjectRecord.STORAGEPASSWORD)).getValue());
+                prj.setProjectStoragePassword(((ItemTypeString)getItemByName(ProjectRecord.STORAGEPASSWORD)).getValue());
             }
             if (getItemByName(ProjectRecord.REMOTEPROJECTNAME) != null) {
-                prj.setProjectRemoteProjectName(((ItemTypeString) getItemByName(ProjectRecord.REMOTEPROJECTNAME)).getValue());
+                prj.setProjectRemoteProjectName(((ItemTypeString)getItemByName(ProjectRecord.REMOTEPROJECTNAME)).getValue());
             }
             if (getItemByName(ProjectRecord.EFAONLINECONNECT) != null) {
-                prj.setProjectEfaOnlineConnect(((ItemTypeBoolean) getItemByName(ProjectRecord.EFAONLINECONNECT)).getValue());
+                prj.setProjectEfaOnlineConnect(((ItemTypeBoolean)getItemByName(ProjectRecord.EFAONLINECONNECT)).getValue());
             }
             if (getItemByName(ProjectRecord.EFAONLINEUSERNAME) != null) {
-                prj.setProjectEfaOnlineUsername(((ItemTypeString) getItemByName(ProjectRecord.EFAONLINEUSERNAME)).getValue());
+                prj.setProjectEfaOnlineUsername(((ItemTypeString)getItemByName(ProjectRecord.EFAONLINEUSERNAME)).getValue());
             }
             if (getItemByName(ProjectRecord.EFAONLINEPASSWORD) != null) {
-                prj.setProjectEfaOnlinePassword(((ItemTypePassword) getItemByName(ProjectRecord.EFAONLINEPASSWORD)).getValue());
+                prj.setProjectEfaOnlinePassword(((ItemTypePassword)getItemByName(ProjectRecord.EFAONLINEPASSWORD)).getValue());
             }
 
             // Club Properties (1)
-            if ((storageType == IDataAccess.TYPE_FILE_XML)
-                    // #START# efacloud adaptation.
-                    || (storageType == IDataAccess.TYPE_EFA_CLOUD))
-            // #END# efacloud adaptation.
-            {
+            if (storageType == IDataAccess.TYPE_FILE_XML || storageType == IDataAccess.TYPE_EFA_CLOUD) {
                 prj.setClubName(((ItemTypeString) getItemByName(ProjectRecord.CLUBNAME)).getValue());
                 prj.setClubAddressStreet(((ItemTypeString) getItemByName(ProjectRecord.ADDRESSSTREET)).getValue());
                 prj.setClubAddressCity(((ItemTypeString) getItemByName(ProjectRecord.ADDRESSCITY)).getValue());
@@ -326,18 +307,18 @@ public class NewProjectDialog extends StepwiseDialog implements IItemListener {
                         International.getString("Projekt")));
                 try {
                     if (Waters.getResourceTemplate(International.getLanguageID()) != null) {
-                        ItemTypeBoolean createWatersList = (ItemTypeBoolean) getItemByName(GUIITEM_CREATE_WATERS_LIST);
+                        ItemTypeBoolean createWatersList = (ItemTypeBoolean)getItemByName(GUIITEM_CREATE_WATERS_LIST);
                         if (createWatersList != null && createWatersList.getValue() &&
-                                storageType != IDataAccess.TYPE_EFA_REMOTE) {
+                            storageType != IDataAccess.TYPE_EFA_REMOTE) {
                             Daten.project.getWaters(false).addAllWatersFromTemplate(International.getLanguageID());
                         }
                     }
-                } catch (Exception eignore) {
+                } catch(Exception eignore) {
                     Logger.logdebug(eignore);
                 }
             }
             setDialogResult(Daten.project != null);
-        } catch (EfaException ee) {
+        } catch(EfaException ee) {
             Dialog.error(ee.getMessage());
             ee.log();
             setDialogResult(false);
@@ -350,17 +331,14 @@ public class NewProjectDialog extends StepwiseDialog implements IItemListener {
         if (!getDialogResult()) {
             return null;
         }
-        if (Daten.project != null && Daten.project.getProjectStorageType() != IDataAccess.TYPE_FILE_XML
-                // #START# efacloud adaptation.
-                && Daten.project.getProjectStorageType() != IDataAccess.TYPE_EFA_CLOUD
-            // #END# efacloud adaptation.
-        ) {
+        if (Daten.project != null && Daten.project.getProjectStorageType() != IDataAccess.TYPE_FILE_XML &&
+            Daten.project.getProjectStorageType() != IDataAccess.TYPE_EFA_CLOUD) {
             return null;
         }
         String logbookName = null;
-        switch (Dialog.auswahlDialog(International.getString("Fahrtenbuch erstellen"),
+        switch(Dialog.auswahlDialog(International.getString("Fahrtenbuch erstellen"),
                 International.getString("Das Projekt enthält noch keine Daten.") + " " +
-                        International.getString("Was möchtest Du tun?"),
+                International.getString("Was möchtest Du tun?"),
                 International.getString("Neues (leeres) Fahrtenbuch erstellen"),
                 International.getString("Daten aus efa 1.x importieren"))) {
             case 0:

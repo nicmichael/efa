@@ -63,6 +63,7 @@ public class Daten {
     public static String EFA_LIVE      = "efaLive";                          // dummy, will be set in International.ininitalize()
     public static String EFA_WETT      = "efaWett";                          // dummy, will be set in International.ininitalize()
     public static String EFA_REMOTE    = "efaRemote";                        // dummy, will be set in International.ininitalize()
+    public static String EFA_CLOUD     = "efaCloud";                         // dummy, will be set in International.ininitalize()
     public final static String EFA_JAVA_ARGUMENTS = "EFA_JAVA_ARGUMENTS"; // Environment Variable Name containing all arguments passed to the "java" command
     public static String efa_java_arguments = null;                 // Environment Variable Contents containing all arguments passed to the "java" command
     public final static String EFADIREKT_MAINCLASS = de.nmichael.efa.boathouse.Main.class.getCanonicalName();
@@ -193,6 +194,8 @@ public class Daten {
     public static boolean watchWindowStack = false; // Window-Stack überwachen
     public static boolean dateFormatDMY = true;
 
+    public static TableBuilder tableBuilder = new TableBuilder();
+
     // Encoding zum Lesen und Schreiben von Dateien
     public static final String ENCODING_ISO = "ISO-8859-1";
     public static final String ENCODING_UTF = "UTF-8";
@@ -222,10 +225,6 @@ public class Daten {
 
     // Applikations- PID
     public static String applPID = "XXXXX"; // will be set in iniBase(...)
-
-    // #START# efacloud adaptation
-    public static TableBuilder tableBuilder = new TableBuilder();
-    // #END# efacloud adaptation
 
     public static AdminRecord initialize() {
         if (Logger.isTraceOn(Logger.TT_CORE, 9) || Logger.isDebugLoggingActivatedByCommandLine()) {

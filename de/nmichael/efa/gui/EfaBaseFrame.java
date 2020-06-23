@@ -813,10 +813,8 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
     void iniApplication() {
         if (Daten.project == null && isModeBase()) {
             if (Daten.efaConfig.getValueLastProjectEfaBase().length() > 0) {
-                // #START# efacloud adaptation
                 // Set the GUI context to be able to display server synchronisation progress
                 if (Daten.tableBuilder != null) Daten.tableBuilder.guiBaseFrameOnAppLoading = this;
-                // #END# efacloud adaptation
                 Project.openProject(Daten.efaConfig.getValueLastProjectEfaBase(), true);
                 remoteAdmin = (Daten.project != null ? Daten.project.getRemoteAdmin() : null);
                 checkRemoteAdmin();
