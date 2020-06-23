@@ -21,24 +21,15 @@ public class BoatReservationItemTypeDataRecordTable extends ItemTypeDataRecordTa
 				itemListenerActionTable, type, category, description);
 	}
 
-	// Diese Methode soll die Eingabe als Datum interpretieren,
-	// und prüfen, ob die Datensätze der Liste zu dem Datum passen.
-	// dies ist erforderlich für die Bootsreservierung - damit bei der Suche nach
-	// einem Datum
-	// auch Reservierungen gefunden werden, deren Zeitraum das eingegebene Datum
-	// abdeckt.
 	protected boolean filterFromToAppliesToDate(DataRecord theDataRecord, String filterValue) {
 
-		//
 		if (filterValue == null) {
 			return false;
-
 		}
 
 		DataTypeDate curDate = DataTypeDate.parseDate(filterValue.trim());
 		if (!curDate.isSet()) {
-			// die Eingabe ist kein Datum. Damit können wir hier keine zutreffenden Zeilen
-			// ermitteln.
+			// Die Eingabe ist kein Datum. Damit können wir hier keine zutreffenden Zeilen ermitteln.
 			return false;
 		}
 
@@ -56,8 +47,7 @@ public class BoatReservationItemTypeDataRecordTable extends ItemTypeDataRecordTa
 
 				if ((fromDate.isSet() && toDate.isSet())) {
 
-					// true, wenn das eingegebene Datum ist zwischen den beiden Datumswerten der
-					// Reservierung ist
+					// true, wenn das eingegebene Datum zwischen den beiden Datumswerten der Reservierung ist
 
 					return (curDate.isAfterOrEqual(fromDate) && curDate.isBeforeOrEqual(toDate));
 

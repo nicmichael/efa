@@ -444,6 +444,10 @@ public class ItemTypeDataRecordTable extends ItemTypeTable implements IItemListe
         }
     }
 
+   /*
+    * Method is called from itemListenerAction when a literal is entered in the searchfield.
+    *  
+    */
     private void filterTableContents() {
     	
         String sSearchValue = searchField.getValueFromField();
@@ -637,10 +641,15 @@ public class ItemTypeDataRecordTable extends ItemTypeTable implements IItemListe
         }
     }
 
-    // Diese Methode soll die Eingabe als Datum interpretieren,
-    // und prüfen, ob die Datensätze der Liste zu dem Datum passen.
-    // dies ist erforderlich für die Bootsreservierung - damit bei der Suche nach einem Datum
-    // auch Reservierungen gefunden werden, deren Zeitraum das eingegebene Datum abdeckt.
+    /**
+     * Default implementation of the method which returns false for all tables which do not
+     * allow date-based filtering. Check derived classes of ItemTypeDataRecordTable which implement this method
+     * to find those tables which do.
+     * 
+     * @param theDataRecord
+     * @param filterValue 
+     * @return true if the filtervalue (as a date) applies to the datarecord
+     */
     protected boolean filterFromToAppliesToDate(DataRecord theDataRecord, String filterValue) {
     	return false;
     }

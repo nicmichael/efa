@@ -530,7 +530,11 @@ public class DataTypeDate implements Cloneable, Comparable<DataTypeDate> {
         }
         return EfaTypes.TEXT_UNKNOWN;
     }
-    
+
+    /**
+     * Gets the weekday of the current date and returns it as a EFA Type.
+     * @return EfaType.Weekday
+     */
     public String getWeekdayAsEfaType() {
         switch (toCalendar().get(Calendar.DAY_OF_WEEK)) {
 	        case Calendar.MONDAY:
