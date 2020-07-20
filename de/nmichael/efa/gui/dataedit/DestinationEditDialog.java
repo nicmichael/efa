@@ -25,6 +25,7 @@ public class DestinationEditDialog extends VersionizedDataEditDialog {
                 International.getString("Ziel") + " / " +
                 International.getString("Strecke"),
                 r, newRecord, admin);
+        ini4Permissions(admin);
     }
 
     public DestinationEditDialog(JDialog parent, DestinationRecord r, boolean newRecord, AdminRecord admin) {
@@ -32,10 +33,22 @@ public class DestinationEditDialog extends VersionizedDataEditDialog {
                 International.getString("Ziel") + " / " +
                 International.getString("Strecke"),
                 r, newRecord, admin);
+        ini4Permissions(admin);
     }
 
     public void keyAction(ActionEvent evt) {
         _keyAction(evt);
+    }
+
+    private void ini4Permissions(AdminRecord admin) {
+        if (admin == null || !admin.isAllowedEditPersons()) {
+            setShowVersionPanel(false);
+            setPromptToEnterValidity(false);
+            allowConflicts = false;
+        }
+        if (admin != null && !admin.isAllowedEditDestinations()) {
+            setForbidChanges();
+        }
     }
 
     protected void iniDefaults() {

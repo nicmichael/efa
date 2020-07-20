@@ -22,14 +22,22 @@ public class WatersEditDialog extends UnversionizedDataEditDialog {
 
     public WatersEditDialog(Frame parent, WatersRecord r, boolean newRecord, AdminRecord admin) {
         super(parent, International.getString("Gewässer"), r, newRecord, admin);
+        ini4Permissions(admin);
     }
 
     public WatersEditDialog(JDialog parent, WatersRecord r, boolean newRecord, AdminRecord admin) {
         super(parent, International.getString("Gewässer"), r, newRecord, admin);
+        ini4Permissions(admin);
     }
 
     public void keyAction(ActionEvent evt) {
         _keyAction(evt);
+    }
+
+    private void ini4Permissions(AdminRecord admin) {
+        if (admin != null && !admin.isAllowedEditDestinations()) {
+            setForbidChanges();
+        }
     }
 
 }

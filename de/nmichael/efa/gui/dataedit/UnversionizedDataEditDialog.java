@@ -33,6 +33,7 @@ public class UnversionizedDataEditDialog extends DataEditDialog {
     protected boolean _dontSaveRecord = false;
     protected boolean _alwaysCheckValues = false;
     protected boolean allowConflicts = true;
+    private boolean forbidChanges = false;
     private JButton printButton;
 
     public UnversionizedDataEditDialog(Frame parent, String title, 
@@ -151,6 +152,10 @@ public class UnversionizedDataEditDialog extends DataEditDialog {
     }
 
     protected boolean saveRecord() throws InvalidValueException {
+        if (forbidChanges) {
+            Dialog.infoDialog(International.getString("Du hast keine Berechtigung, diesen Datensatz zu ändern."));
+            return false;
+        }
         checkValidValues();
         try {
             dataRecord.saveGuiItems(getItems());
@@ -260,5 +265,14 @@ public class UnversionizedDataEditDialog extends DataEditDialog {
         dlg.showDialog();
     }
 
+    protected void setForbidChanges() {
+        this.forbidChanges = true;
+        Vector<IItemType> items = getItems();
+        if (items != null) {
+            for (IItemType i : items) {
+                i.setEditable(false);
+            }
+        }
+    }
 
 }

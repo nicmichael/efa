@@ -1469,7 +1469,11 @@ public class Project extends StorageObject {
             r.setLastWatersTamplateHash(key);
             getMyDataAccess(ProjectRecord.TYPE_PROJECT).update(r);
         } catch (Exception e) {
-            e.printStackTrace();
+            // we suppress logging any exception here since this is
+            // called from Audit and the error message window triggered
+            // by the exception may not be focussable since we're in the
+            // initialization of efa
+            // e.printStackTrace();
         }
     }
 

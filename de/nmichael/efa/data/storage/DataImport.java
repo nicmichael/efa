@@ -141,6 +141,11 @@ public class DataImport extends ProgressTask {
         try {
             if (versionized) {
                 long myValidAt = getValidFrom(r);
+                if (r.getInvalidFrom() > 0 && r.getInvalidFrom() <= myValidAt) {
+                    // we're trying to add a new record which is already invalid at the time of adding.
+                    // change its validFrom to 0
+                    myValidAt = 0;
+                }
                 dataAccess.addValidAt(r, myValidAt);
                 setCurrentWorkDone(++importCount);
             } else {
@@ -238,15 +243,26 @@ public class DataImport extends ProgressTask {
             if (key.getKeyPart1() == null || overrideKeyField != null) {
                 // first key field is *not* set, or we're overriding the default key field
                 DataKey[] keys = null;
-                if (overrideKeyField == null) {
-                    // -> search for record by QualifiedName
-                    keys = dataAccess.getByFields(r.getQualifiedNameFields(), r.getQualifiedNameValues(r.getQualifiedName()),
-                            (versionized ? validAt : -1));
-                } else {
-                    // -> search for record by user-specified key field
-                    keys = dataAccess.getByFields(new String[] { overrideKeyField }, 
-                            new String[] { r.getAsString(overrideKeyField) },
-                            (versionized ? validAt : -1));
+                long searchValidAt = validAt;
+                while (true) {
+                    if (overrideKeyField == null) {
+                        // -> search for record by QualifiedName
+                        keys = dataAccess.getByFields(r.getQualifiedNameFields(), r.getQualifiedNameValues(r.getQualifiedName()),
+                                (versionized ? searchValidAt : -1));
+                    } else {
+                        // -> search for record by user-specified key field
+                        keys = dataAccess.getByFields(new String[]{overrideKeyField},
+                                new String[]{r.getAsString(overrideKeyField)},
+                                (versionized ? searchValidAt : -1));
+                    }
+                    if (versionized && r.getInvalidFrom() > 0 && r.getInvalidFrom() < searchValidAt) {
+                        // the imported record's invalidFrom is set to a time before the import validAt time:
+                        // someone may try to mark an existing record as deleted/invalid, so let's try to search
+                        // for a valid record at the end of the validity period
+                        searchValidAt = r.getInvalidFrom() - 1;
+                    } else {
+                        break;
+                    }
                 }
                 if (keys != null && keys.length > 0) {
                     for (int i = 0; i < keyFields.length; i++) {
