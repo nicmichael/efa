@@ -2,6 +2,17 @@
 <efaOnlineUpdate>
 
     <Version>
+        <VersionID>2.2.2_47</VersionID>
+        <ReleaseDate>19.07.2020</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa222.zip</DownloadUrl>
+        <DownloadSize>4136356</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Change: Aktualisierte Wettbewerbsbedingungen fuer LRV Berlin Sommer-Fahrten-Wettbewerb 2020</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
         <VersionID>2.2.2_46</VersionID>
         <ReleaseDate>19.07.2020</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa222.zip</DownloadUrl>
