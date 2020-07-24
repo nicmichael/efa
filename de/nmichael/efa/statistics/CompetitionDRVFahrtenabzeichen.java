@@ -312,7 +312,7 @@ public class CompetitionDRVFahrtenabzeichen extends Competition {
                         if (hoechst > 0 && // was gefunden?
                                 (nr < MAX_WAFA_OUTPUT || // weniger als 5 Einträge, oder ...
                                 (wafaMeters / 1000 < gruppen[g].zusatz && gruppen[g].gruppe != 3) || // noch Km nötig
-                                ( (wafaAnzMTour + 2*wafaAnzTTour) < 3 && gruppen[g].gruppe == 3))) {         // noch Fahrten nötig
+                                ( (wafaAnzMTour + 2*wafaAnzTTour) < gruppen[g].zusatz && gruppen[g].gruppe == 3))) {         // noch Fahrten nötig
                             ausg[hoechstEl] = true;
                             wafa[nr][0] = bestEl.entryNo;
                             wafa[nr][1] = bestEl.dateStart.toString();
