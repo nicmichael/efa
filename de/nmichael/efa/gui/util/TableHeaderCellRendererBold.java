@@ -18,7 +18,6 @@ public class TableHeaderCellRendererBold  extends DefaultTableCellRenderer{
 			int row, int column) {
 		Component comp = original.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 		comp.setFont(comp.getFont().deriveFont(Font.BOLD));
-		comp.setBackground(/* java.awt.Color.LIGHT_GRAY */ new java.awt.Color(181, 206, 226));
 		return comp;
 	}
 
