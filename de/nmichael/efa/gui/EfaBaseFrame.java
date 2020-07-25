@@ -4642,16 +4642,12 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
                     break;
                 case EfaBaseFrame.MODE_BOATHOUSE_FINISH:
                 case EfaBaseFrame.MODE_BOATHOUSE_ABORT:
-                    //old newStatus = BoatStatusRecord.STATUS_AVAILABLE;
-                    if (boatStatusRecord == null) {
-                    	// Ein unbekanntes Boot - d.h. das nicht in der Bootliste ist
-                        // Dann gibt es keinen BoatStatusRecord-Objekt.
-                        // Setzen wir den neuen Status einfach auf Available
-                    	newStatus= BoatStatusRecord.STATUS_AVAILABLE;
+                    if (boatStatusRecord == null || boatStatusRecord.getBaseStatus() == null) {
+                        newStatus = BoatStatusRecord.STATUS_AVAILABLE;
                     } else {
-                    	// bekanntes Boot - BoatStatusRecord auf den Basisstatus des Boots setzen.
-                    	newStatus=boatStatusRecord.getBaseStatus();
-                    }             
+                        // this boat has a defined base status: use this status
+                        newStatus = boatStatusRecord.getBaseStatus();
+                   }             
                     newComment = "";
                     break;
 

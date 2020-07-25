@@ -2,6 +2,77 @@
 <efaOnlineUpdate>
 
     <Version>
+        <VersionID>2.2.2_48</VersionID>
+        <ReleaseDate>23.07.2020</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa222.zip</DownloadUrl>
+        <DownloadSize>4136374</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Change: Aktualisierte Wettbewerbsbedingungen fuer DRV Jugend-Fahrtenabzeichen 2020</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.2_47</VersionID>
+        <ReleaseDate>19.07.2020</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa222.zip</DownloadUrl>
+        <DownloadSize>4136356</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Change: Aktualisierte Wettbewerbsbedingungen fuer LRV Berlin Sommer-Fahrten-Wettbewerb 2020</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.2_46</VersionID>
+        <ReleaseDate>19.07.2020</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa222.zip</DownloadUrl>
+        <DownloadSize>4136367</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Change: Aktualisierte Wettbewerbsbedingungen fuer DRV-Fahrtenabzeichen 2020</ChangeItem>
+            <ChangeItem>Bugfix: Deadlock nach Aktualisierung des Gewaesserkatalogs aufgrund fehlerhafter Projekt-Konfiguration behoben</ChangeItem>
+            <ChangeItem>Bugfix: Import von Datensaetzen mit InvalidFrom-Feld korrigiert, wenn der Zeitpunkt des InvalidFrom vor dem Import-Gueltigkeitszeitpunkg liegt</ChangeItem>
+            <ChangeItem>Bugfix: Unerlaubtes Bearbeiten von Personen, Booten und Zielen durch Admins ohne entsprechende Berechtigung korrigiert</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Fixed import of data records with set InvalidFrom field if the time of invalidity lies before the validity time of the import</ChangeItem>
+            <ChangeItem>Bugfix: Unallowed editing of persons, boats and destinations by admins without corresponding permissions fixed</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.2_45</VersionID>
+        <ReleaseDate>22.06.2020</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa222.zip</DownloadUrl>
+        <DownloadSize>4135257</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Korrekte Platzierung von Dialogen in Umgebungen mit mehreren Bildschirmen</ChangeItem>
+            <ChangeItem>Bugfix: Fahrtabbruch-Dialog kann jetzt mit ESC abgebrochen werden</ChangeItem>
+            <ChangeItem>Bugfix: Fehlerhaftes Verhalten beim Wechseln zwischen Boots und Personen-Liste behoben</ChangeItem>
+            <ChangeItem>Neu: Details einer Ueberlappenden Reservierung werden jetzt angezeigt</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Correct placement of dialogs in environments with multiple monitors</ChangeItem>
+            <ChangeItem>Bugfix: Session cancel dialog can now be cancled with ESC</ChangeItem>
+            <ChangeItem>Bugfix: Broken switching between person and boat selection lists fixed</ChangeItem>
+            <ChangeItem>New: reservation details of overlapping reservations are now shown</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.2_44</VersionID>
+        <ReleaseDate>19.04.2020</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa222.zip</DownloadUrl>
+        <DownloadSize>4134664</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Change: Geänderte Wettbewerbsbedingungen für LRV Winter-Wettbewerb 2019/2020</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
         <VersionID>2.2.2_43</VersionID>
         <ReleaseDate>22.02.2020</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa222.zip</DownloadUrl>

@@ -2,6 +2,17 @@
 <efaOnlineUpdate>
 
     <Version>
+        <VersionID>2.2.2_48</VersionID>
+        <ReleaseDate>23.07.2020</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa2drv.zip</DownloadUrl>
+        <DownloadSize>4305107</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Neu: Wettbewerbsbedingungen fur DRV Wettbewerbe 2020 aktualisiert</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
         <VersionID>2.2.2_43</VersionID>
         <ReleaseDate>22.02.2020</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa2drv.zip</DownloadUrl>

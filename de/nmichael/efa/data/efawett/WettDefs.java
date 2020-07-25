@@ -637,8 +637,8 @@ public class WettDefs extends DatenListe {
             case DRV_FAHRTENABZEICHEN: // zusatz:= wafaKm/10        zusatz2:= wafaAnzMTour     zusatz3:= jumAnz
                 int ABC3 = (wettJahr < 2015 ? 2 : 3);
                 if (!((wett.gruppen[gruppe].gruppe < 3 && zusatz >= wett.gruppen[gruppe].zusatz) || // Gruppe 1/2: WafaKm erfüllt?
-                        (wett.gruppen[gruppe].gruppe == 3 && (zusatz2 >= 3 || // Gruppe 3: Anz Wafa erfüllt?
-                        wett.gruppen[gruppe].untergruppe <= ABC3 && (zusatz2 == 2 && zusatz3 >= 2 || // oder bei a/b/c mit Hilfe von JuM erfüllt?
+                        (wett.gruppen[gruppe].gruppe == 3 && (zusatz2 >= wett.gruppen[gruppe].zusatz || // Gruppe 3: Anz Wafa erfüllt?
+                        wett.gruppen[gruppe].untergruppe <= ABC3 && (zusatz2 == (wett.gruppen[gruppe].zusatz - 1) && zusatz3 >= 2 || // oder bei a/b/c mit Hilfe von JuM erfüllt?
                         zusatz3 >= 4))))) {
                     return false;
                 }

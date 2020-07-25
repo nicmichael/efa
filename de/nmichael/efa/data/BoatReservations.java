@@ -126,25 +126,23 @@ public class BoatReservations extends StorageObject {
         }
         return purged;
     }
+  
 
-    
-    private String buildOverlappingReservationInfo(BoatReservationRecord reservation)
-    {
-              String result ="";
-              
-              if (reservation.getType().equals(BoatReservationRecord.TYPE_WEEKLY)) {
-                            result = "\n\n" + reservation.getBoatName()+" / "+ reservation.getPersonAsName()+" ("+reservation.getDayOfWeek()+" "+reservation.getTimeFrom()+" -- "+reservation.getTimeTo()+")"
-                                                         + "\n" + International.getString("Reservierungsgrund")+": "+reservation.getReason() 
-                                                        +"\n"+International.getString("Telefon_für_Rückfragen") + ": "+reservation.getContact();
-              }
-              else if (reservation.getType().equals( BoatReservationRecord.TYPE_ONETIME)) {
-              result =  "\n\n" + reservation.getBoatName()+" / "+ reservation.getPersonAsName()+" ("+reservation.getDateFrom().getWeekdayAsString()+ " "  +reservation.getDateFrom()+" "+reservation.getTimeFrom()+" -- "+ reservation.getDateTo().getWeekdayAsString()+ " "+reservation.getDateTo()+" "+reservation.getTimeTo()+")"
-                                                                       + "\n" + International.getString("Reservierungsgrund")+": "+reservation.getReason() 
-                                                                       +"\n"+International.getString("Telefon_für_Rückfragen") + ": "+reservation.getContact();                      
-                            
-              }
-              
-              return result;
+    private String buildOverlappingReservationInfo(BoatReservationRecord reservation) {
+        String result = "";
+
+        if (reservation.getType().equals(BoatReservationRecord.TYPE_WEEKLY)) {
+            result = "\n\n" + reservation.getBoatName() + " / " + reservation.getPersonAsName() + " (" + reservation.getDayOfWeek() + " " + reservation.getTimeFrom() + " -- " + reservation.getTimeTo() + ")"
+                    + "\n" + International.getString("Reservierungsgrund") + ": " + reservation.getReason()
+                    + "\n" + International.getString("Telefon für Rückfragen") + ": " + reservation.getContact();
+        } else if (reservation.getType().equals(BoatReservationRecord.TYPE_ONETIME)) {
+            result = "\n\n" + reservation.getBoatName() + " / " + reservation.getPersonAsName() + " (" + reservation.getDateFrom().getWeekdayAsString() + " " + reservation.getDateFrom() + " " + reservation.getTimeFrom() + " -- " + reservation.getDateTo().getWeekdayAsString() + " " + reservation.getDateTo() + " " + reservation.getTimeTo() + ")"
+                    + "\n" + International.getString("Reservierungsgrund") + ": " + reservation.getReason()
+                    + "\n" + International.getString("Telefon für Rückfragen") + ": " + reservation.getContact();
+        }
+
+        return result;
+
     }
 
     
