@@ -38,7 +38,7 @@ public abstract class DataRecord implements Cloneable, Comparable {
     public DataRecord(StorageObject persistence, MetaData metaData) {
         this.persistence = persistence;
         this.metaData = metaData;
-        if (persistence != null) Daten.tableBuilder.addDataRecord(persistence, metaData);
+        Daten.tableBuilder.addDataRecord(persistence, metaData);
         data = new Object[metaData.getNumberOfFields()];
         if (metaData.versionized) {
             setAlwaysValid();
@@ -754,16 +754,12 @@ public abstract class DataRecord implements Cloneable, Comparable {
     }
 
     protected String getString(String fieldName) {
-        // Method was needed by EfaCloud.modifyServerRecord() and class cast "(String)" did not
-        // work for a UUID field. The error is caught and replaced by a toString() - call.
-        Object getFieldName = get(fieldName);
-        String getFieldNameStr;
+        Object oFieldName = get(fieldName);
         try {
-            getFieldNameStr = (String) getFieldName;
+            return (String) oFieldName;
         } catch (Exception e) {
-            getFieldNameStr = getFieldName.toString();
+            return oFieldName.toString();
         }
-        return getFieldNameStr;
     }
 
     protected DataTypeDate getDate(String fieldName) {

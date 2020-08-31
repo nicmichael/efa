@@ -833,7 +833,7 @@ public class ProjectRecord extends DataRecord  {
                     if (getStorageType() == IDataAccess.TYPE_EFA_CLOUD) {
                         v.add(item = new ItemTypeString(ProjectRecord.EFACLOUDURL, getEfaCoudURL(),
                                 IItemType.TYPE_PUBLIC, category,
-                                International.getString("URL es efaCloud Servers")));
+                                International.getString("URL des efaCloud Servers")));
                         ((ItemTypeString) item).setNotNull(true);
                     }
                 }
