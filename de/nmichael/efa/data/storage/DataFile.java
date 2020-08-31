@@ -584,25 +584,17 @@ public abstract class DataFile extends DataAccess {
             // check whether an efacloud server shall also be updated, and trigger update, if
             // needed.
             StorageObject rp = record.getPersistence();
-            boolean writeSuccess = true;
-            // check whether the project says, it is efacloud type and the storage also is of
-            // that type
-            if ((rp.dataAccess instanceof EfaCloudStorage) && (rp.getProject() != null) && (rp
-                    .getProject().getProjectRecord() != null) && (rp.getProject().getProjectRecord()
-                    .getStorageType() == IDataAccess.TYPE_EFA_CLOUD) && !inOpeningStorageObject) {
+            // check whether this is an efa Cloud storage object
+            if (rp.dataAccess.getStorageType() == IDataAccess.TYPE_EFA_CLOUD && !inOpeningStorageObject) {
                 // if so, trigger server modification, if this is not a write back from the server
                 // side.
                 EfaCloudStorage efaCloudStorage = (EfaCloudStorage) rp.dataAccess;
                 Transaction tx;
                 if (!efaCloudStorage.isServerToLocalModification(constructKey(record))) {
-                    if (add || update) tx = efaCloudStorage
-                            .modifyServerRecord(newRecord, add, update, delete, true);
-                    else tx = efaCloudStorage.modifyServerRecord(record, add, update, delete, true);
+                    tx = efaCloudStorage.modifyServerRecord(add || update ? newRecord : record, add, update, delete, true);
                     if (tx.getResultCode() >= 400) {
-                        Dialog.error(International.getString(
-                                "Daten konnten nicht auf den Server geschrieben werden.\nGrund: " + tx
-                                        .getResultMessage()));
-                        writeSuccess = false;
+                        Dialog.error(International.getString("Daten konnten nicht auf den Server geschrieben werden.") +
+                                "\n" + International.getString("Grund") + ": " + tx.getResultMessage());
                     }
                 }
             }

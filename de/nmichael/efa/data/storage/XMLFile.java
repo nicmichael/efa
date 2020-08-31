@@ -37,10 +37,7 @@ public class XMLFile extends DataFile {
     }
 
     public int getStorageType() {
-        if (this instanceof EfaCloudStorage)
-            return IDataAccess.TYPE_EFA_CLOUD;
-        else
-            return IDataAccess.TYPE_FILE_XML;
+        return IDataAccess.TYPE_FILE_XML;
     }
 
     // for restoring backups only!

@@ -175,7 +175,7 @@ public class EfaMenuButton {
                     International.getStringWithMnemonic("Backups"),
                     BaseFrame.getIcon("menu_backup.png")));
         }
-        if (admin == null || admin.isAllowedCreateBackup()) {
+        if (admin == null || admin.isAllowedAdministerProjectLogbook()) {
             v.add(new EfaMenuButton(MENU_FILE, BUTTON_EFACLOUD,
                     International.getStringWithMnemonic("Datei"),
                     International.getStringWithMnemonic("EfaCloud"),
@@ -472,8 +472,7 @@ public class EfaMenuButton {
         }
 
         if (action.equals(BUTTON_EFACLOUD)) {
-            if (admin == null ||
-                    (!admin.isAllowedCreateBackup() && !admin.isAllowedRestoreBackup())) {
+            if (admin == null || !admin.isAllowedAdministerProjectLogbook()) {
                 insufficientRights(admin, action);
                 return false;
             }

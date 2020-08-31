@@ -2,6 +2,7 @@ package de.nmichael.efa.data.efacloud;
 
 import de.nmichael.efa.core.Backup;
 import de.nmichael.efa.data.storage.EfaCloudStorage;
+import de.nmichael.efa.data.storage.IDataAccess;
 import de.nmichael.efa.data.storage.MetaData;
 import de.nmichael.efa.data.storage.StorageObject;
 import de.nmichael.efa.gui.EfaBaseFrame;
@@ -78,26 +79,26 @@ public class TableBuilder {
     /**
      * IDataAccess interface data type index to name mapping.
      */
-    public static HashMap<Integer, String> datatypes = new HashMap<>();
+    public static final HashMap<Integer, String> datatypes = new HashMap<>();
 
     static {
-        datatypes.put(0, "DATA_STRING");
-        datatypes.put(1, "DATA_INTEGER");
-        datatypes.put(2, "DATA_LONGINT");
-        datatypes.put(3, "DATA_DOUBLE");
-        datatypes.put(4, "DATA_DECIMAL");
-        datatypes.put(5, "DATA_DISTANCE");
-        datatypes.put(6, "DATA_BOOLEAN");
-        datatypes.put(7, "DATA_DATE");
-        datatypes.put(8, "DATA_TIME");
-        datatypes.put(9, "DATA_UUID");
-        datatypes.put(10, "DATA_INTSTRING");
-        datatypes.put(11, "DATA_PASSWORDH");
-        datatypes.put(12, "DATA_PASSWORDC");
-        datatypes.put(100, "DATA_LIST_STRING");
-        datatypes.put(101, "DATA_LIST_INTEGER");
-        datatypes.put(108, "DATA_LIST_UUID");
-        datatypes.put(999, "DATA_VIRTUAL");
+        datatypes.put(IDataAccess.DATA_STRING, "DATA_STRING");
+        datatypes.put(IDataAccess.DATA_INTEGER, "DATA_INTEGER");
+        datatypes.put(IDataAccess.DATA_LONGINT, "DATA_LONGINT");
+        datatypes.put(IDataAccess.DATA_DOUBLE, "DATA_DOUBLE");
+        datatypes.put(IDataAccess.DATA_DECIMAL, "DATA_DECIMAL");
+        datatypes.put(IDataAccess.DATA_DISTANCE, "DATA_DISTANCE");
+        datatypes.put(IDataAccess.DATA_BOOLEAN, "DATA_BOOLEAN");
+        datatypes.put(IDataAccess.DATA_DATE, "DATA_DATE");
+        datatypes.put(IDataAccess.DATA_TIME, "DATA_TIME");
+        datatypes.put(IDataAccess.DATA_UUID, "DATA_UUID");
+        datatypes.put(IDataAccess.DATA_INTSTRING, "DATA_INTSTRING");
+        datatypes.put(IDataAccess.DATA_PASSWORDH, "DATA_PASSWORDH");
+        datatypes.put(IDataAccess.DATA_PASSWORDC, "DATA_PASSWORDC");
+        datatypes.put(IDataAccess.DATA_LIST_STRING, "DATA_LIST_STRING");
+        datatypes.put(IDataAccess.DATA_LIST_INTEGER, "DATA_LIST_INTEGER");
+        datatypes.put(IDataAccess.DATA_LIST_UUID, "DATA_LIST_UUID");
+        datatypes.put(IDataAccess.DATA_VIRTUAL, "DATA_VIRTUAL");
     }
 
 
@@ -294,8 +295,8 @@ public class TableBuilder {
      *                    PersonRecord.getPersistence()
      * @param metaData    metadata to add.
      */
-    public void addDataRecord(StorageObject persistence, MetaData metaData) {
-        if (!(persistence.data() instanceof EfaCloudStorage)) return;
+    public synchronized void addDataRecord(StorageObject persistence, MetaData metaData) {
+        if (persistence == null || persistence.data().getStorageType() != IDataAccess.TYPE_EFA_CLOUD) return;
         String recordType = efaCloudTableNames.get(persistence.data().getStorageObjectType());
         if (recordTypes.get(recordType) != null) return;
         RecordTypeDefinition rtd = new RecordTypeDefinition(recordType,
@@ -318,7 +319,7 @@ public class TableBuilder {
      *
      * @param efa2RecordType type of data record to be removed, e.g. efa2persons
      */
-    public void removeDataRecord(String efa2RecordType) {
+    public synchronized void removeDataRecord(String efa2RecordType) {
         String recordType = efaCloudTableNames.get(efa2RecordType);
         if (recordTypes.get(recordType) == null) return;
         recordTypes.remove(recordType);
@@ -332,7 +333,7 @@ public class TableBuilder {
      * @param efa2RecordType data record type for which the key shall be set, e.g. efa2persons.
      * @param key            key to set.
      */
-    public void addKey(String efa2RecordType, String[] key) {
+    public synchronized void addKey(String efa2RecordType, String[] key) {
         String recordType = efaCloudTableNames.get(efa2RecordType);
         RecordTypeDefinition rtd = recordTypes.get(recordType);
         if (rtd == null) return;
@@ -349,7 +350,7 @@ public class TableBuilder {
      * @param useConfig  set true to get the configuration tables
      * @return set of requested table names
      */
-    public RecordTypeDefinition[] getTables(boolean useProject, boolean useConfig) {
+    public synchronized RecordTypeDefinition[] getTables(boolean useProject, boolean useConfig) {
         RecordTypeDefinition[] tables = new RecordTypeDefinition[recordTypes.keySet().size()];
         int i = 0;
         for (String tablename : recordTypes.keySet()) {

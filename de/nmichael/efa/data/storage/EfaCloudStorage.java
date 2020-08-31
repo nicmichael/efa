@@ -60,6 +60,10 @@ public class EfaCloudStorage extends XMLFile {
         tablename = TableBuilder.efaCloudTableNames.get(getStorageObjectType());
     }
 
+    public int getStorageType() {
+        return IDataAccess.TYPE_EFA_CLOUD;
+    }
+
     /**
      * Build a modify transaction for the efacloud api and append it to the server transaction
      * queue.
