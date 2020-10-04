@@ -172,6 +172,36 @@ public class LogString {
       return fileRestoreFailed(filename, description, null);
   }
 
+    public static String efaCloudSynchInit(String description) {
+        return International.getMessage(
+                "{filedescription} wird synchronisiert.",
+                description);
+    }
+
+    public static String efaCloudSynchFailed(String filename, String description, String error) {
+        return International.getMessage(
+                "{filedescription} '{filename}' konnte nicht mit dem efaCloud Server "
+                + "synchronisiert werden",
+                description, filename) + (error == null ? "." : ": " + error);
+    }
+
+    public static String efaCloudSynchProgress(String filename, int requested, int succeeded, int failed) {
+        return International.getMessage(
+                "{cnt} Datensätze von '{filename}' synchronisiert: {succeeded} / {requested} ({failed} Fehler).",
+                Integer.toString(succeeded + failed),
+                filename,
+                Integer.toString(succeeded),
+                Integer.toString(requested),
+                Integer.toString(failed));
+    }
+
+    public static String efaCloudSynchSuccessfull(String description, int succeeded, int failed) {
+        return International.getMessage(
+                "{filedescription} wurde mit dem efaCloud Server "
+                + "synchronisiert. {all} Datensätze, davon {failed} mit Fehlern.",
+                description, "" + (succeeded + failed), "" + failed);
+    }
+
   public static String fileMoved(String filename, String description, String destination) {
       return International.getMessage("{filedescription} '{filename}' wurde nach '{destination}' verschoben",
                                        description,filename, destination) + ".";

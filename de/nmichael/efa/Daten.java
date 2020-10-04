@@ -9,6 +9,7 @@
  */
 package de.nmichael.efa;
 
+import de.nmichael.efa.data.efacloud.TableBuilder;
 import de.nmichael.efa.data.efawett.WettDefs;
 import de.nmichael.efa.core.config.*;
 import de.nmichael.efa.core.items.*;
@@ -61,6 +62,7 @@ public class Daten {
     public static String EFA_LIVE      = "efaLive";                          // dummy, will be set in International.ininitalize()
     public static String EFA_WETT      = "efaWett";                          // dummy, will be set in International.ininitalize()
     public static String EFA_REMOTE    = "efaRemote";                        // dummy, will be set in International.ininitalize()
+    public static String EFA_CLOUD     = "efaCloud";                         // dummy, will be set in International.ininitalize()
     public final static String EFA_JAVA_ARGUMENTS = "EFA_JAVA_ARGUMENTS"; // Environment Variable Name containing all arguments passed to the "java" command
     public static String efa_java_arguments = null;                 // Environment Variable Contents containing all arguments passed to the "java" command
     public final static String EFADIREKT_MAINCLASS = de.nmichael.efa.boathouse.Main.class.getCanonicalName();
@@ -190,6 +192,8 @@ public class Daten {
     public static boolean exceptionTest = false; // Exceptions beim Drücken von F1 produzieren (für Exception-Test)
     public static boolean watchWindowStack = false; // Window-Stack überwachen
     public static boolean dateFormatDMY = true;
+
+    public static TableBuilder tableBuilder = new TableBuilder();
 
     // Encoding zum Lesen und Schreiben von Dateien
     public static final String ENCODING_ISO = "ISO-8859-1";

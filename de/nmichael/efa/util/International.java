@@ -69,6 +69,8 @@ public class International {
             Daten.EFA_LIVE = "efaLive";
             Daten.EFA_WETT = "efaWett";
             Daten.EFA_REMOTE = "efaRemote";
+            Daten.EFA_CLOUD = "efaCloud";
+
             EfaTypes.TEXT_UNKNOWN = International.getString("unbekannt");
             JOptionPane.setDefaultLocale(locale);
         } catch(Exception e) {

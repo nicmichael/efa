@@ -122,13 +122,6 @@ public class NewProjectDialog extends StepwiseDialog implements IItemListener {
 
         if (step == 1) {
             ItemTypeStringList item = (ItemTypeStringList)getItemByName(ProjectRecord.STORAGETYPE);
-            if (!item.getValue().equals(IDataAccess.TYPESTRING_FILE_XML) &&
-                !item.getValue().equals(IDataAccess.TYPESTRING_EFA_REMOTE)) {
-                Dialog.error(International.getMessage("Die ausgewählte Option '{option}' wird zur Zeit noch nicht unterstützt.",
-                        item.getValue()));
-                item.requestFocus();
-                return false;
-            }
 
             // remove all StorageType-specific config options
             ProjectRecord rPrj = Project.createNewRecordFromStatic(ProjectRecord.TYPE_PROJECT);
@@ -137,7 +130,7 @@ public class NewProjectDialog extends StepwiseDialog implements IItemListener {
             itemsToBeDeleted.addAll(rPrj.getGuiItems(admin, 3, "2", true));
             rPrj.setStorageType(IDataAccess.TYPE_EFA_REMOTE);
             itemsToBeDeleted.addAll(rPrj.getGuiItems(admin, 3, "2", true));
-            rPrj.setStorageType(IDataAccess.TYPE_DB_SQL);
+            rPrj.setStorageType(IDataAccess.TYPE_EFA_CLOUD);
             itemsToBeDeleted.addAll(rPrj.getGuiItems(admin, 3, "2", true));
 
             // delete all Club items
@@ -163,12 +156,13 @@ public class NewProjectDialog extends StepwiseDialog implements IItemListener {
             if (item.getValue().equals(IDataAccess.TYPESTRING_EFA_REMOTE)) {
                 rPrj.setStorageType(IDataAccess.TYPE_EFA_REMOTE);
             }
-            if (item.getValue().equals(IDataAccess.TYPESTRING_DB_SQL)) {
-                rPrj.setStorageType(IDataAccess.TYPE_DB_SQL);
+            if (item.getValue().equals(IDataAccess.TYPESTRING_EFA_CLOUD)) {
+                rPrj.setStorageType(IDataAccess.TYPE_EFA_CLOUD);
             }
             items.addAll(rPrj.getGuiItems(admin, 3, "2", true));
 
-            if (item.getValue().equals(IDataAccess.TYPESTRING_FILE_XML)) {
+            if (item.getValue().equals(IDataAccess.TYPESTRING_FILE_XML) ||
+                item.getValue().equals(IDataAccess.TYPESTRING_EFA_CLOUD)) {
                 items.addAll(rClb.getGuiItems(admin, 1, "3", true));
                 items.addAll(rClb.getGuiItems(admin, 2, "4", true));
                 if (Waters.getResourceTemplate(International.getLanguageID()) != null) {
@@ -233,8 +227,8 @@ public class NewProjectDialog extends StepwiseDialog implements IItemListener {
         if (storType.getValue().equals(IDataAccess.TYPESTRING_EFA_REMOTE)) {
             storageType = IDataAccess.TYPE_EFA_REMOTE;
         }
-        if (storType.getValue().equals(IDataAccess.TYPESTRING_DB_SQL)) {
-            storageType = IDataAccess.TYPE_DB_SQL;
+        if (storType.getValue().equals(IDataAccess.TYPESTRING_EFA_CLOUD)) {
+            storageType = IDataAccess.TYPE_EFA_CLOUD;
         }
         // Note: The storageType of the project file itself is always TYPE_FILE_XML.
         // The storageType of the project's content (set through prj.setProjectStorageType(storageType)) may differ.
@@ -250,6 +244,9 @@ public class NewProjectDialog extends StepwiseDialog implements IItemListener {
             prj.setAdminEmail(((ItemTypeString)getItemByName(ProjectRecord.ADMINEMAIL)).getValue());
             if (getItemByName(ProjectRecord.STORAGELOCATION) != null) {
                 prj.setProjectStorageLocation(((ItemTypeString)getItemByName(ProjectRecord.STORAGELOCATION)).getValue());
+            }
+            if (getItemByName(ProjectRecord.EFACLOUDURL) != null) {
+                prj.setProjectEfaCloudURL(((ItemTypeString) getItemByName(ProjectRecord.EFACLOUDURL)).getValue());
             }
             if (getItemByName(ProjectRecord.STORAGEUSERNAME) != null) {
                 prj.setProjectStorageUsername(((ItemTypeString)getItemByName(ProjectRecord.STORAGEUSERNAME)).getValue());
@@ -271,7 +268,7 @@ public class NewProjectDialog extends StepwiseDialog implements IItemListener {
             }
 
             // Club Properties (1)
-            if (storageType == IDataAccess.TYPE_FILE_XML) {
+            if (storageType == IDataAccess.TYPE_FILE_XML || storageType == IDataAccess.TYPE_EFA_CLOUD) {
                 prj.setClubName(((ItemTypeString) getItemByName(ProjectRecord.CLUBNAME)).getValue());
                 prj.setClubAddressStreet(((ItemTypeString) getItemByName(ProjectRecord.ADDRESSSTREET)).getValue());
                 prj.setClubAddressCity(((ItemTypeString) getItemByName(ProjectRecord.ADDRESSCITY)).getValue());
@@ -334,7 +331,8 @@ public class NewProjectDialog extends StepwiseDialog implements IItemListener {
         if (!getDialogResult()) {
             return null;
         }
-        if (Daten.project != null && Daten.project.getProjectStorageType() != IDataAccess.TYPE_FILE_XML) {
+        if (Daten.project != null && Daten.project.getProjectStorageType() != IDataAccess.TYPE_FILE_XML &&
+            Daten.project.getProjectStorageType() != IDataAccess.TYPE_EFA_CLOUD) {
             return null;
         }
         String logbookName = null;

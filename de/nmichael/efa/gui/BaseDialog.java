@@ -50,6 +50,10 @@ public abstract class BaseDialog extends JDialog implements ActionListener {
     public static final String IMAGE_FORWARD   = "button_forward.png";
     public static final String IMAGE_RUNEXPORT = "button_runexport.png";
     public static final String IMAGE_RUNIMPORT = "button_runimport.png";
+    public static final String IMAGE_RUNUPLOAD = "button_efacloud_up.png";
+    public static final String IMAGE_RUNDNLOAD = "button_efacloud_dn.png";
+    public static final String IMAGE_ACTIVATE_EC = "button_efacloud_ok.png";
+    public static final String IMAGE_DEACTIVATE_EC = "button_efacloud_ex.png";
     public static final String IMAGE_HELP      = "button_help.png";
     public static final String IMAGE_RUN       = "button_run.png";
     public static final String IMAGE_PREVIEW   = "button_preview.png";

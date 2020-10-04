@@ -96,6 +96,15 @@ public class ProgressDialog extends BaseDialog {
         _keyAction(evt);
     }
 
+    public void showNonModalDialog() {
+        Daten.iniSplashScreen(false);
+        if (!_prepared && !prepareDialog()) return;
+        Dialog.setDlgLocation(this, _parent);
+        setModal(false);
+        if (focusItem != null) focusItem.requestFocus();
+        this.setVisible(true);
+    }
+
     public void logInfo(String s) {
         for (int tryi=1; loggingTextArea == null && currentStatusLabel == null && tryi<=10; tryi++) {
             try { Thread.sleep(100*tryi); } catch(Exception e) {} // Dialog may not have been fully initialized when progress thread starts running

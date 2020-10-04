@@ -63,6 +63,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
     public final String CATEGORY_DATAACCESS    = "%19%" + International.getString("Daten");
     public final String CATEGORY_DATAXML       = "%191%" + International.getString("lokale Dateien");
     public final String CATEGORY_DATAREMOTE    = "%192%" + Daten.EFA_REMOTE;
+    public final String CATEGORY_DATACLOUD     = "%193%" + Daten.EFA_CLOUD;
     public final String CATEGORY_CRONTAB       = "%20%" + International.getString("Automatische Abläufe");
 
     private static final int STRINGLIST_VALUES  = 1;
@@ -263,6 +264,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
     private ItemTypeBoolean useFunctionalityRowingBerlin;
     private ItemTypeBoolean useFunctionalityCanoeing;
     private ItemTypeBoolean useFunctionalityCanoeingGermany;
+    private ItemTypeBoolean experimentalFunctions;
     private ItemTypeBoolean developerFunctions;
     private ItemTypeFile efaUserDirectory;
     private ItemTypeFile lastExportDirectory;
@@ -302,6 +304,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
     private ItemTypeLong dataRemoteIsOpenExpiryTime;
     private ItemTypeLong dataRemoteLoginFailureRetryTime;
     private ItemTypeLong dataRemoteClientReceiveTimeout;
+    private ItemTypeLong dataRemoteEfaCloudSynchIntervalSecs;
     private Vector<IWidget> widgets;
     private ItemTypeItemList crontab;
 
@@ -485,6 +488,11 @@ public class EfaConfig extends StorageObject implements IItemFactory {
                     null, ItemTypeFile.MODE_OPEN, ItemTypeFile.TYPE_DIR,
                     IItemType.TYPE_INTERNAL, BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_COMMON),
                     "last import directory"));
+            addParameter(experimentalFunctions = new ItemTypeBoolean("ExperimentalFunctions",
+                    false,
+                    IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_COMMON),
+                    International.getMessage("{type} Funktionalitäten aktivieren",
+                    International.getString("Experimentelle"))));
             addParameter(developerFunctions = new ItemTypeBoolean("DeveloperFunctions",
                     false,
                     IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_COMMON),
@@ -1220,6 +1228,10 @@ public class EfaConfig extends StorageObject implements IItemFactory {
             addParameter(dataRemoteEfaOnlineUpdateInterval = new ItemTypeLong("DataRemoteEfaOnlineUpdateInverval", 3600, 60, 24*3600,
                     IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_DATAACCESS, CATEGORY_DATAREMOTE),
                     "efaOnline Update Interval (sec)"));
+
+            addParameter(dataRemoteEfaCloudSynchIntervalSecs = new ItemTypeLong("DataRemoteEfaCloudSynchIntervalSecs", 24 * 3600, 600, 7 * 24*3600,
+                    IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_DATAACCESS, CATEGORY_DATACLOUD),
+                    "efaCloud Synch Interval (sec)"));
 
         }
     }
@@ -1989,6 +2001,9 @@ public class EfaConfig extends StorageObject implements IItemFactory {
         return developerFunctions.getValue();
     }
 
+    public boolean getExperimentalFunctionsActivated() {
+        return experimentalFunctions.getValue();
+    }
 
     public String getValueEfaUserDirectory() {
         return efaUserDirectory.getValue();
@@ -2126,6 +2141,10 @@ public class EfaConfig extends StorageObject implements IItemFactory {
         return dataRemoteClientReceiveTimeout.getValue();
     }
 
+    public long getValueDataRemoteEfaCloudSynchIntervalSecs() {
+        return dataRemoteEfaCloudSynchIntervalSecs.getValue();
+    }
+
     public Vector<IWidget> getWidgets() {
         return widgets;
     }
@@ -2192,6 +2211,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
                         item == useFunctionalityCanoeing ||
                         item == useFunctionalityCanoeingGermany ||
                         item == developerFunctions ||
+                        item == experimentalFunctions ||
                         item == this.dataRemoteEfaServerEnabled ||
                         item == this.dataRemoteEfaServerPort) {
                         changedSettings.put(item.getDescription(), "foo");

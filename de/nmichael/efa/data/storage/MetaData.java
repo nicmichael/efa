@@ -11,6 +11,7 @@
 package de.nmichael.efa.data.storage;
 
 import java.util.*;
+import de.nmichael.efa.Daten;
 import de.nmichael.efa.util.*;
 
 public class MetaData {
@@ -55,6 +56,7 @@ public class MetaData {
     public static void removeMetaData(String dataType) {
         if (metaData.get(dataType) != null) {
             metaData.remove(dataType);
+            Daten.tableBuilder.removeDataRecord(dataType);
         }
     }
 
@@ -77,6 +79,7 @@ public class MetaData {
                 KEY[i] = DataRecord.VALIDFROM;
             }
         }
+        Daten.tableBuilder.addKey(dataType, key);
     }
 
     public void addIndex(String[] fieldNames) {

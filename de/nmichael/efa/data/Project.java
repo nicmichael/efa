@@ -1840,7 +1840,8 @@ public class Project extends StorageObject {
 
     // set the storageLocation for this project's content
     public void setProjectStorageLocation(String storageLocation) {
-        if (getProjectStorageType() == IDataAccess.TYPE_FILE_XML) {
+        if (getProjectStorageType() == IDataAccess.TYPE_FILE_XML ||
+            getProjectStorageType() == IDataAccess.TYPE_EFA_CLOUD) {
             // for file-based projects: storageLocation of content is always relative to this project file!
             storageLocation = null;
         }
@@ -1877,6 +1878,20 @@ public class Project extends StorageObject {
             l = data().acquireLocalLock(getProjectRecordKey());
             ProjectRecord r = getProjectRecord();
             r.setStoragePassword(storagePassword);
+            data().update(r, l);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            data().releaseLocalLock(l);
+        }
+    }
+
+    public void setProjectEfaCloudURL(String efaCloudURL) {
+        long l = 0;
+        try {
+            l = data().acquireLocalLock(getProjectRecordKey());
+            ProjectRecord r = getProjectRecord();
+            r.setEfaCloudURL(efaCloudURL);
             data().update(r, l);
         } catch (Exception e) {
             e.printStackTrace();
@@ -1965,8 +1980,8 @@ public class Project extends StorageObject {
                 return IDataAccess.TYPESTRING_FILE_XML;
             case IDataAccess.TYPE_EFA_REMOTE:
                 return IDataAccess.TYPESTRING_EFA_REMOTE;
-            case IDataAccess.TYPE_DB_SQL:
-                return IDataAccess.TYPESTRING_DB_SQL;
+            case IDataAccess.TYPE_EFA_CLOUD:
+                return IDataAccess.TYPESTRING_EFA_CLOUD;
         }
         return null;
     }

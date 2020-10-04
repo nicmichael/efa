@@ -10,6 +10,7 @@
 
 package de.nmichael.efa.data.storage;
 
+import de.nmichael.efa.Daten;
 import de.nmichael.efa.core.config.AdminRecord;
 import java.util.*;
 import de.nmichael.efa.data.types.*;
@@ -37,6 +38,7 @@ public abstract class DataRecord implements Cloneable, Comparable {
     public DataRecord(StorageObject persistence, MetaData metaData) {
         this.persistence = persistence;
         this.metaData = metaData;
+        Daten.tableBuilder.addDataRecord(persistence, metaData);
         data = new Object[metaData.getNumberOfFields()];
         if (metaData.versionized) {
             setAlwaysValid();
@@ -752,7 +754,12 @@ public abstract class DataRecord implements Cloneable, Comparable {
     }
 
     protected String getString(String fieldName) {
-        return (String)get(fieldName);
+        Object oFieldName = get(fieldName);
+        try {
+            return (String) oFieldName;
+        } catch (Exception e) {
+            return oFieldName.toString();
+        }
     }
 
     protected DataTypeDate getDate(String fieldName) {

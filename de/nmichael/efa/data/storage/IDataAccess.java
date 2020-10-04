@@ -20,11 +20,11 @@ public interface IDataAccess {
 
     public static final int TYPE_FILE_XML = 1;
     public static final int TYPE_EFA_REMOTE = 2;
-    public static final int TYPE_DB_SQL = 3;
+    public static final int TYPE_EFA_CLOUD = 3;
 
     public static final String TYPESTRING_FILE_XML = "file/xml";
     public static final String TYPESTRING_EFA_REMOTE = "efa/remote";
-    public static final String TYPESTRING_DB_SQL = "db/sql";
+    public static final String TYPESTRING_EFA_CLOUD = "file/efaCloud";
 
     // Data Types supported by IDataAccess
     //                      Data Type                Internal Java Type

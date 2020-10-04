@@ -12,6 +12,7 @@ package de.nmichael.efa.data.storage;
 
 import de.nmichael.efa.Daten;
 import de.nmichael.efa.core.BackupMetaDataItem;
+import de.nmichael.efa.data.Project;
 import de.nmichael.efa.ex.EfaException;
 import de.nmichael.efa.util.LogString;
 import de.nmichael.efa.util.Logger;
@@ -54,8 +55,21 @@ public abstract class DataAccess implements IDataAccess {
                 dataAccess = (IDataAccess)new XMLFile(storageLocation, storageObjectName, storageObjectType, storageObjectDescription);
                 dataAccess.setPersistence(persistence);
                 return dataAccess;
-            case IDataAccess.TYPE_DB_SQL:
-                break; // @todo (P6) TYPE_DB_SQL not yet implemented
+            case IDataAccess.TYPE_EFA_CLOUD:
+                Project p = Daten.project;
+                String efaCloudURL = p.getProjectRecord().getEfaCoudURL();
+                try {
+                    dataAccess = new EfaCloudStorage(efaCloudURL, storageLocation, storageUsername,
+                            storagePassword, storageObjectName, storageObjectType,
+                            storageObjectDescription);
+                } catch (EfaException e) {
+                    Logger.log(Logger.ERROR, Logger.MSG_DATA_DATAACCESS,
+                            "DataAccess initialization for " + storageObjectName + "." + storageObjectType + " (type " + type
+                            + "): authorization failed.");
+                    return null;
+                }
+                dataAccess.setPersistence(persistence);
+                return dataAccess;
             case IDataAccess.TYPE_EFA_REMOTE:
                  dataAccess = (IDataAccess)new RemoteEfaClient(storageLocation, storageUsername, storagePassword, storageObjectName, storageObjectType, storageObjectDescription);
                  dataAccess.setPersistence(persistence);

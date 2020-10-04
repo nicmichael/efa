@@ -1014,7 +1014,9 @@ public class Audit extends Thread {
         int messageErr = 0;
         try {
             Messages messages = project.getMessages(false);
-            if (messages.data().getStorageType() == IDataAccess.TYPE_FILE_XML) {
+            if ((messages.data().getStorageType() == IDataAccess.TYPE_FILE_XML)
+                 || (messages.data().getStorageType() == IDataAccess.TYPE_EFA_CLOUD))
+            {
                 long size = ((DataFile)messages.data()).getFileSize();
                 if (size > MAX_MESSAGES_FILESIZE) {
                     auditInfo(Logger.MSG_DATA_FILESIZEHIGH,

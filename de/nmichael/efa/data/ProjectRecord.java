@@ -60,6 +60,7 @@ public class ProjectRecord extends DataRecord  {
     public static final String STORAGELOCATION = "StorageLocation";
     public static final String STORAGEUSERNAME = "StorageUsername";
     public static final String STORAGEPASSWORD = "StoragePassword";
+    public static final String EFACLOUDURL = "EfaCloudURL";
     public static final String REMOTEPROJECTNAME = "RemoteProjectName";
     public static final String EFAONLINECONNECT = "EfaOnlineConnect";
     public static final String EFAONLINEUSERNAME = "EfaOnlineUsername";
@@ -140,6 +141,8 @@ public class ProjectRecord extends DataRecord  {
         t.add(IDataAccess.DATA_STRING);
         f.add(STORAGEPASSWORD);
         t.add(IDataAccess.DATA_PASSWORDC);
+        f.add(EFACLOUDURL);
+        t.add(IDataAccess.DATA_STRING);
         f.add(REMOTEPROJECTNAME);
         t.add(IDataAccess.DATA_STRING);
         f.add(EFAONLINECONNECT);
@@ -293,14 +296,18 @@ public class ProjectRecord extends DataRecord  {
             case IDataAccess.TYPE_EFA_REMOTE:
                 setString(STORAGETYPE, IDataAccess.TYPESTRING_EFA_REMOTE);
                 break;
-            case IDataAccess.TYPE_DB_SQL:
-                setString(STORAGETYPE, IDataAccess.TYPESTRING_DB_SQL);
+            case IDataAccess.TYPE_EFA_CLOUD:
+                setString(STORAGETYPE, IDataAccess.TYPESTRING_EFA_CLOUD);
                 break;
         }
     }
 
     public void setStorageLocation(String storageLocation) {
         setString(STORAGELOCATION, storageLocation);
+    }
+
+    public void setEfaCloudURL(String efaCloudURL) {
+        setString(EFACLOUDURL, efaCloudURL);
     }
 
     public void setStorageUsername(String username) {
@@ -518,8 +525,8 @@ public class ProjectRecord extends DataRecord  {
         if (s != null && s.equals(IDataAccess.TYPESTRING_EFA_REMOTE)) {
             return IDataAccess.TYPE_EFA_REMOTE;
         }
-        if (s != null && s.equals(IDataAccess.TYPESTRING_DB_SQL)) {
-            return IDataAccess.TYPE_DB_SQL;
+        if (s != null && s.equals(IDataAccess.TYPESTRING_EFA_CLOUD)) {
+            return IDataAccess.TYPE_EFA_CLOUD;
         }
         return -1;
     }
@@ -530,7 +537,7 @@ public class ProjectRecord extends DataRecord  {
 
     public String getStorageLocation() {
         try {
-            if (getStorageType() == IDataAccess.TYPE_FILE_XML) {
+            if (getStorageType() == IDataAccess.TYPE_FILE_XML || getStorageType() == IDataAccess.TYPE_EFA_CLOUD) {
                 // for file-based projects: storageLocation of content is always relative to this project file!
                 return getPersistence().data().getStorageLocation() + getProjectName() + Daten.fileSep;
             }
@@ -555,6 +562,10 @@ public class ProjectRecord extends DataRecord  {
 
     public String getRemoteProjectName() {
         return getString(REMOTEPROJECTNAME);
+    }
+
+    public String getEfaCoudURL() {
+        return getString(EFACLOUDURL);
     }
 
     public boolean getEfaOnlineConnect() {
@@ -786,15 +797,16 @@ public class ProjectRecord extends DataRecord  {
 
             if (subtype == GUIITEMS_SUBTYPE_ALL || subtype == 3) {
 
-                if (!newProject || getStorageType() != IDataAccess.TYPE_FILE_XML) {
+                if (!newProject ||
+                     (getStorageType() != IDataAccess.TYPE_FILE_XML && getStorageType() != IDataAccess.TYPE_EFA_CLOUD)) {
                     v.add(item = new ItemTypeString(ProjectRecord.STORAGELOCATION, getStorageLocation(),
                             IItemType.TYPE_PUBLIC, category,
                             (getStorageType() == IDataAccess.TYPE_EFA_REMOTE
                                     ? International.getString("IP-Adresse") + " ("
                                     + International.getString("remote") + ")"
                                     : International.getString("Speicherort"))));
-                    ((ItemTypeString) item).setEnabled(getStorageType() != IDataAccess.TYPE_FILE_XML);
-                    ((ItemTypeString) item).setNotNull(getStorageType() == IDataAccess.TYPE_DB_SQL);
+                    ((ItemTypeString) item).setEnabled(getStorageType() != IDataAccess.TYPE_FILE_XML &&
+                            getStorageType() != IDataAccess.TYPE_EFA_CLOUD);
                 }
 
                 if (getStorageType() != IDataAccess.TYPE_FILE_XML) {
@@ -811,12 +823,19 @@ public class ProjectRecord extends DataRecord  {
                                     ? International.getString("Paßwort") + " ("
                                     + International.getString("remote") + ")"
                                     : International.getString("Paßwort"))));
-                    ((ItemTypeString) item).setNotNull(true);
-                    v.add(item = new ItemTypeString(ProjectRecord.REMOTEPROJECTNAME, getRemoteProjectName(),
-                            IItemType.TYPE_PUBLIC, category,
-                            International.getString("Name des Projekts") + " ("
-                                    + International.getString("remote") + ")"));
-                    ((ItemTypeString) item).setNotNull(true);
+                    if (getStorageType() == IDataAccess.TYPE_EFA_REMOTE) {
+                        v.add(item = new ItemTypeString(ProjectRecord.REMOTEPROJECTNAME, getRemoteProjectName(),
+                                IItemType.TYPE_PUBLIC, category,
+                                International.getString("Name des Projekts") + " ("
+                                + International.getString("remote") + ")"));
+                        ((ItemTypeString) item).setNotNull(true);
+                    }
+                    if (getStorageType() == IDataAccess.TYPE_EFA_CLOUD) {
+                        v.add(item = new ItemTypeString(ProjectRecord.EFACLOUDURL, getEfaCoudURL(),
+                                IItemType.TYPE_PUBLIC, category,
+                                International.getString("URL des efaCloud Servers")));
+                        ((ItemTypeString) item).setNotNull(true);
+                    }
                 }
 
                 if (getStorageType() == IDataAccess.TYPE_EFA_REMOTE) {
@@ -1111,10 +1130,15 @@ public class ProjectRecord extends DataRecord  {
     }
 
     public static String[] getStorageTypeTypeStrings() {
-        return new String[]{
+        return Daten.efaConfig.getExperimentalFunctionsActivated() ?
+                new String[]{
                 IDataAccess.TYPESTRING_FILE_XML,
                 IDataAccess.TYPESTRING_EFA_REMOTE,
-                IDataAccess.TYPESTRING_DB_SQL
+                IDataAccess.TYPESTRING_EFA_CLOUD
+        } :
+                new String[]{
+                IDataAccess.TYPESTRING_FILE_XML,
+                IDataAccess.TYPESTRING_EFA_REMOTE
         };
     }
 
@@ -1122,7 +1146,7 @@ public class ProjectRecord extends DataRecord  {
         return new String[]{
                 International.getString("lokales Dateisystem"),
                 Daten.EFA_REMOTE,
-                International.getString("SQL-Datenbank")
+                Daten.EFA_CLOUD
         };
     }
 

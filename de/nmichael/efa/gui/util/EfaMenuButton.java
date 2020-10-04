@@ -40,6 +40,7 @@ public class EfaMenuButton {
     public final static String BUTTON_PROJECTS          = "PROJECTS";
     public final static String BUTTON_LOGBOOKS          = "LOGBOOKS";
     public final static String BUTTON_BACKUP            = "BACKUP";
+    public final static String BUTTON_EFACLOUD          = "EFACLOUD";
     public final static String BUTTON_UPDATE            = "UPDATE";
     public final static String BUTTON_PLUGINS           = "PLUGINS";
     public final static String BUTTON_OSCOMMAND         = "OSCOMMAND";
@@ -155,6 +156,12 @@ public class EfaMenuButton {
         if (v.size() > 0 && v.get(v.size()-1).getMenuName().equals(MENU_FILE) && !v.get(v.size()-1).isSeparator()) {
             v.add(new EfaMenuButton(MENU_FILE, SEPARATOR,
                     null, null, null));
+        }
+        if ((admin == null || admin.isAllowedAdministerProjectLogbook()) && Daten.efaConfig.getExperimentalFunctionsActivated()) {
+            v.add(new EfaMenuButton(MENU_FILE, BUTTON_EFACLOUD,
+                    International.getStringWithMnemonic("Datei"),
+                    International.getStringWithMnemonic("EfaCloud"),
+                    BaseFrame.getIcon("menu_efacloud.png")));
         }
         if (Daten.efaConfig.getValueUseFunctionalityCanoeingGermany()) {
             if (admin == null || admin.isAllowedSyncKanuEfb()) {
@@ -461,6 +468,16 @@ public class EfaMenuButton {
             BackupDialog dlg = (parentFrame != null ?
                     new BackupDialog(parentFrame, admin) :
                     new BackupDialog(parentDialog, admin));
+            dlg.showDialog();
+        }
+
+        if (action.equals(BUTTON_EFACLOUD)) {
+            if (admin == null || !admin.isAllowedAdministerProjectLogbook()) {
+                insufficientRights(admin, action);
+                return false;
+            }
+            // The only parent for this button is the EfaCloudSynchDialog.
+            EfaCloudSynchDialog dlg = new EfaCloudSynchDialog(parentDialog, admin);
             dlg.showDialog();
         }
 

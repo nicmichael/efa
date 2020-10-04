@@ -11,6 +11,7 @@
 package de.nmichael.efa.data.storage;
 
 import de.nmichael.efa.*;
+import de.nmichael.efa.data.efacloud.Transaction;
 import de.nmichael.efa.util.*;
 import de.nmichael.efa.ex.EfaException;
 import java.util.*;
@@ -579,6 +580,25 @@ public abstract class DataFile extends DataAccess {
                     releaseLocalLock(myLock);
                 }
             }
+
+            // check whether an efacloud server shall also be updated, and trigger update, if
+            // needed.
+            StorageObject rp = record.getPersistence();
+            // check whether this is an efa Cloud storage object
+            if (rp.dataAccess.getStorageType() == IDataAccess.TYPE_EFA_CLOUD && !inOpeningStorageObject) {
+                // if so, trigger server modification, if this is not a write back from the server
+                // side.
+                EfaCloudStorage efaCloudStorage = (EfaCloudStorage) rp.dataAccess;
+                Transaction tx;
+                if (!efaCloudStorage.isServerToLocalModification(constructKey(record))) {
+                    tx = efaCloudStorage.modifyServerRecord(add || update ? newRecord : record, add, update, delete, true);
+                    if (tx.getResultCode() >= 400) {
+                        Dialog.error(International.getString("Daten konnten nicht auf den Server geschrieben werden.") +
+                                "\n" + International.getString("Grund") + ": " + tx.getResultMessage());
+                    }
+                }
+            }
+
             if (fileWriter != null) { // may be null while reading (opening) a file
                 fileWriter.save(false, true);
             }
