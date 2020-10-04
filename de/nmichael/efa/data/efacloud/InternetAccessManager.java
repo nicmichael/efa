@@ -1,7 +1,5 @@
 package de.nmichael.efa.data.efacloud;
 
-import de.nmichael.efa.util.International;
-
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
@@ -210,8 +208,7 @@ public class InternetAccessManager implements TaskManager.RequestDispatcherIF {
                 connection = (HttpURLConnection) url.openConnection();
                 iamMonitor.notifyActivity();
             } catch (Exception e) {
-                callBackMsg = new TaskManager.RequestMessage(postURL, International
-                        .getMessage("#ERROR: Failed to open {URL}: {errorMessage}", postURL,
+                callBackMsg = new TaskManager.RequestMessage(postURL, String.format("#ERROR: Failed to open %s: %s", postURL,
                                 e.getMessage()), TYPE_ABORTED, 0.0, iamParent);
                 if (callback != null) callback.sendRequest(callBackMsg);
                 return;
@@ -238,9 +235,8 @@ public class InternetAccessManager implements TaskManager.RequestDispatcherIF {
 
                 int resp = connection.getResponseCode();
                 if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
-                    callBackMsg = new TaskManager.RequestMessage(postURLplus, International
-                            .getMessage(
-                                    "#ERROR: url does not take the post call to {URL} with resp " + "code HTTP {errorMessage}",
+                    callBackMsg = new TaskManager.RequestMessage(postURLplus, String.format(
+                                    "#ERROR: url does not take the post call to %s with resp code HTTP %s",
                                     postURL, resp), TYPE_ABORTED, 0.0, this);
                     if (callback != null) callback.sendRequest(callBackMsg);
                     return;
@@ -263,8 +259,8 @@ public class InternetAccessManager implements TaskManager.RequestDispatcherIF {
                         TYPE_COMPLETED, fileSize, iamParent);
                 if (callback != null) callback.sendRequest(callBackMsg);
             } catch (Exception e) {
-                callBackMsg = new TaskManager.RequestMessage(postURLplus, International
-                        .getMessage("#ERROR: Exception downloading {URL}: {errorMessage}", postURL,
+                callBackMsg = new TaskManager.RequestMessage(postURLplus,
+                        String.format("#ERROR: Exception downloading %s: %s", postURL,
                                 e.getMessage()), TYPE_ABORTED, 0.0, iamParent);
                 if (callback != null) callback.sendRequest(callBackMsg);
             }
@@ -279,10 +275,10 @@ public class InternetAccessManager implements TaskManager.RequestDispatcherIF {
         private void showProgress(String filePath, int bytesRead, int fileSize) {
             if (callback == null) return;
             if (fileSize <= 0) callback.sendRequest(
-                    new TaskManager.RequestMessage(International.getString("Downloading ..."),
+                    new TaskManager.RequestMessage("Downloading ...",
                             filePath, TYPE_PROGRESS_INFO, 0.0, iamParent));
             else callback.sendRequest(
-                    new TaskManager.RequestMessage(International.getString("Downloading ..."),
+                    new TaskManager.RequestMessage("Downloading ...",
                             filePath, TYPE_PROGRESS_INFO, ((double) bytesRead) / fileSize,
                             iamParent));
         }
@@ -328,8 +324,7 @@ public class InternetAccessManager implements TaskManager.RequestDispatcherIF {
                 }
             } catch (IOException e) {
                 fileContents = null;
-                callBackMsg = new TaskManager.RequestMessage(outFpath, International
-                        .getMessage("#ERROR: Exception downloading to file {file}: {errorMessage}",
+                callBackMsg = new TaskManager.RequestMessage(outFpath, String.format("#ERROR: Exception downloading to file %s: %s",
                                 outFpath, e.getMessage()), TYPE_ABORTED, 0.0, iamParent);
                 if (callback != null) callback.sendRequest(callBackMsg);
             }
@@ -394,8 +389,7 @@ public class InternetAccessManager implements TaskManager.RequestDispatcherIF {
                     new File(outFpath).delete();
                 } catch (Exception ignored) {
                 }
-                callBackMsg = new TaskManager.RequestMessage(outFpath, International
-                        .getMessage("#ERROR: Exception downloading to file {file}: {errorMessage}",
+                callBackMsg = new TaskManager.RequestMessage(outFpath, String.format("#ERROR: Exception downloading to file %s: %s",
                                 outFpath, e.getMessage()), TYPE_ABORTED, 0.0, iamParent);
                 if (callback != null) callback.sendRequest(callBackMsg);
             }
@@ -432,8 +426,7 @@ public class InternetAccessManager implements TaskManager.RequestDispatcherIF {
                 fileSize = urlConnection.getContentLength();
                 iamMonitor.notifyActivity();
             } catch (Exception e) {
-                callBackMsg = new TaskManager.RequestMessage(outFpath, International
-                        .getMessage("#ERROR: Failed to open {URL}: {errorMessage}", getURL,
+                callBackMsg = new TaskManager.RequestMessage(outFpath, String.format("#ERROR: Failed to open %s: %s", getURL,
                                 e.getMessage()), TYPE_ABORTED, 0.0, iamParent);
                 if (callback != null) callback.sendRequest(callBackMsg);
                 return;
@@ -449,8 +442,8 @@ public class InternetAccessManager implements TaskManager.RequestDispatcherIF {
                 if (callback != null) callback.sendRequest(callBackMsg);
 
             } catch (IOException e) {
-                callBackMsg = new TaskManager.RequestMessage(outFpath, International.getMessage(
-                        "#ERROR: Exception downloading {URL} to {outFpath}: {errorMessage}", getURL,
+                callBackMsg = new TaskManager.RequestMessage(outFpath, String.format(
+                        "#ERROR: Exception downloading %s to %s: %s", getURL,
                         outFpath, e.getMessage()), TYPE_ABORTED, fileSize, iamParent);
                 if (callback != null) callback.sendRequest(callBackMsg);
             }
@@ -472,8 +465,7 @@ public class InternetAccessManager implements TaskManager.RequestDispatcherIF {
                 fileSize = urlConnection.getContentLength();
                 iamMonitor.notifyActivity();
             } catch (Exception e) {
-                callBackMsg = new TaskManager.RequestMessage(outFpath, International
-                        .getMessage("#ERROR: Failed to open {URL}: {errorMessage}", getURL,
+                callBackMsg = new TaskManager.RequestMessage(outFpath, String.format("#ERROR: Failed to open %s: %s", getURL,
                                 e.getMessage()), TYPE_ABORTED, 0.0, iamParent);
                 if (callback != null) callback.sendRequest(callBackMsg);
                 return;
@@ -494,8 +486,8 @@ public class InternetAccessManager implements TaskManager.RequestDispatcherIF {
                 if (callback != null) callback.sendRequest(callBackMsg);
 
             } catch (Exception e) {
-                callBackMsg = new TaskManager.RequestMessage(outFpath, International.getMessage(
-                        "#ERROR: Exception downloading {URL} to {outFpath}: {errorMessage}", getURL,
+                callBackMsg = new TaskManager.RequestMessage(outFpath, String.format(
+                        "#ERROR: Exception downloading %s to %s: %s", getURL,
                         outFpath, e.getMessage()), TYPE_ABORTED, 0.0, iamParent);
                 if (callback != null) callback.sendRequest(callBackMsg);
             }
@@ -521,8 +513,8 @@ public class InternetAccessManager implements TaskManager.RequestDispatcherIF {
             callback = ((msg.sender instanceof TaskManager.RequestDispatcherIF)) ?
                     (TaskManager.RequestDispatcherIF) msg.sender : null;
             if ((msg.sender != null) && !(msg.sender instanceof TaskManager.RequestDispatcherIF))
-                System.out.println(International.getMessage(
-                        "Warning: InternetAccessManager call with invalid callback {callback}",
+                System.out.println(String.format(
+                        "Warning: InternetAccessManager call with invalid callback %s",
                         msg.sender.toString()));
             // POST to URL
             if (msg.type == TYPE_POST_PARAMETERS) {
@@ -562,14 +554,14 @@ public class InternetAccessManager implements TaskManager.RequestDispatcherIF {
                     if (activityBusy) {
                         if (!activityRegistered) {
                             callBackMsg = new TaskManager.RequestMessage(
-                                    International.getString("Please wait..."),
-                                    International.getString("Internet access pending."),
+                                    "Please wait...",
+                                    "Internet access pending.",
                                     TYPE_PENDING, 0.0, InternetAccessMonitor.this.iamParent);
                             idleCounter++;
                             if (idleCounter > TIME_OUT_MONITOR_PERIODS) {
                                 callBackMsg = new TaskManager.RequestMessage(
-                                        International.getString("Please wait..."), International
-                                        .getString("Internet access aborted. Time out."),
+                                        "Please wait...",
+                                        "Internet access aborted. Time out.",
                                         TYPE_ABORTED, 0.0, InternetAccessMonitor.this.iamParent);
                                 try {
                                     InternetAccessMonitor.this.iamParent.internetAccessHandler

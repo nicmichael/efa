@@ -19,6 +19,7 @@ import de.nmichael.efa.data.storage.IDataAccess;
 import de.nmichael.efa.ex.EfaException;
 import de.nmichael.efa.gui.util.EfaMenuButton;
 import de.nmichael.efa.util.International;
+import de.nmichael.efa.util.LogString;
 
 import javax.swing.*;
 import java.awt.*;
@@ -57,7 +58,7 @@ public class EfaCloudSynchDialog extends BaseTabbedDialog implements IItemListen
      * Initialize all items on theis dialog.
      *
      * @param admin the admin which provides the rights to use. It must have the
-     *              "admin.isAllowedCreateBackup()" authorisation.
+     *              "isAllowedAdministerProjectLogbook()" authorisation.
      */
     private void iniItems(AdminRecord admin) {
         this.admin = admin;
@@ -71,18 +72,19 @@ public class EfaCloudSynchDialog extends BaseTabbedDialog implements IItemListen
         boolean isEfaCloud = projectStorageType == IDataAccess.TYPE_EFA_CLOUD;
 
         // change storage type. If efaCloud is not yet enabled, this will be the only tab
-        category = (isEfaCloud) ? "%01%" + International
-                .getString("efaCloud deaktivieren") : "%01%" + International
-                .getString("efaCloud aktivieren");
+        category = (isEfaCloud) ?
+                "%01%" + International.getMessage("{item} deaktivieren", Daten.EFA_CLOUD) :
+                "%01%" + International.getMessage("{item} aktivieren", Daten.EFA_CLOUD);
 
-        String advice = (isEfaRemote) ? "Für efaRemote kann der efaCloud-Modus nicht aktiviert " +
-                "werden." : (isXML) ? "Hier wird der efacloud Modus aktiviert.\nAnschließend lädt" +
-                " efa die aktuellen Daten in den vorbereiteten efaCloud Server.\nACHTUNG: DABEI " +
-                "WERDEN ALLE DATEN AUF DEM SERVER GELÖSCHT UND NEU GESCHRIEBEN." : "Hier kann der" +
-                " efaCloud Modus wieder abgeschaltet werden. Das löscht keine Daten auf dem " +
-                "Server.";
-        guiItems.add(item = new ItemTypeLabel(CONFIG_INFO, IItemType.TYPE_PUBLIC, category,
-                International.getString(advice)));
+        String advice = (isEfaRemote) ?
+                International.getString("Für efaRemote kann der efaCloud-Modus nicht aktiviert werden.") :
+                (isXML) ?
+                International.getString("Aktuelles Projekt nach efaCloud migrieren.") + "\n" +
+                International.getString("Das aktuelle Projekt wird in einen vorbereiteten efaCloud Server hochgeladen.") + "\n" +
+                International.getString("ACHTUNG: ALLE DATEN AUF DEM EFACLOUD SERVER WERDEN GELOESCHT UND NEU GESCHRIEBEN.") :
+                International.getString("Deaktiviert den efaCloud Modus für das aktuelle Projekt.") + "\n" +
+                International.getString("Alle Daten auf dem efaCloud Server und im lokalen Projekt bleiben erhalten.");
+        guiItems.add(item = new ItemTypeLabel(CONFIG_INFO, IItemType.TYPE_PUBLIC, category, advice));
         item.setPadding(0, 0, 20, 20);
         item.registerItemListener(this);
         item.setFieldGrid(2, GridBagConstraints.NORTH, GridBagConstraints.NONE);
@@ -93,21 +95,21 @@ public class EfaCloudSynchDialog extends BaseTabbedDialog implements IItemListen
                 ProjectRecord p = Daten.project.getProjectRecord();
                 guiItems.add(item = new ItemTypeString(ProjectRecord.STORAGEUSERNAME,
                         p.getStorageUsername(), IItemType.TYPE_PUBLIC, category,
-                        International.getString("Benutzername")));
+                        International.getString("Benutzername") + " (efaCloud Client)"));
                 item.setPadding(0, 0, 0, 0);
                 item.setFieldGrid(2, GridBagConstraints.CENTER, GridBagConstraints.NONE);
                 item.setName("efaCloudUsername");
                 item.setNotNull(true);
                 guiItems.add(item = new ItemTypePassword(ProjectRecord.STORAGEPASSWORD,
                         p.getStoragePassword(), true, IItemType.TYPE_PUBLIC, category,
-                        International.getString("Paßwort")));
+                        International.getString("Paßwort") + " (efaCloud Client)"));
                 item.setPadding(0, 0, 0, 0);
                 item.setFieldGrid(2, GridBagConstraints.CENTER, GridBagConstraints.NONE);
                 item.setName("efaCloudPassword");
                 item.setNotNull(true);
                 guiItems.add(item = new ItemTypeString(ProjectRecord.EFACLOUDURL, p.getEfaCoudURL(),
                         IItemType.TYPE_PUBLIC, category,
-                        International.getString("URL es efaCloud Servers")));
+                        International.getString("URL des efaCloud Servers")));
                 item.setPadding(0, 0, 0, 0);
                 item.setFieldGrid(2, GridBagConstraints.CENTER, GridBagConstraints.NONE);
                 item.setName("efaCloudURL");
@@ -116,7 +118,9 @@ public class EfaCloudSynchDialog extends BaseTabbedDialog implements IItemListen
             // Add mode change button.
             guiItems.add(item = new ItemTypeButton(CONFIG_BUTTON, IItemType.TYPE_PUBLIC, category,
                     International
-                            .getString((isXML) ? "efaCloud aktivieren" : "efaCloud deaktivieren")));
+                            .getString((isXML) ?
+                                    International.getMessage("{item} aktivieren", Daten.EFA_CLOUD) :
+                                    International.getMessage("{item} deaktivieren", Daten.EFA_CLOUD))));
             ((ItemTypeButton) item)
                     .setIcon(getIcon((isXML) ? IMAGE_ACTIVATE_EC : IMAGE_DEACTIVATE_EC));
             item.setPadding(0, 0, 20, 20);
@@ -126,9 +130,7 @@ public class EfaCloudSynchDialog extends BaseTabbedDialog implements IItemListen
             if (isEfaCloud) {
                 guiItems.add(
                         item = new ItemTypeButton(DOWNLOAD_BUTTON, IItemType.TYPE_PUBLIC, category,
-                                International.getString(
-                                        "Daten vom Server holen (lokale Daten werden vorher " +
-                                                "gelöscht).")));
+                                International.getString("Daten vom efaCloud Server laden")));
                 ((ItemTypeButton) item).setIcon(getIcon(IMAGE_DOWNLOAD));
                 item.setPadding(0, 0, 20, 20);
                 item.registerItemListener(this);
@@ -148,7 +150,7 @@ public class EfaCloudSynchDialog extends BaseTabbedDialog implements IItemListen
 
         if (event instanceof ActionEvent) {
             // authorization check
-            if (!admin.isAllowedCreateBackup()) {
+            if (!admin.isAllowedAdministerProjectLogbook()) {
                 EfaMenuButton.insufficientRights(admin, itemType.getDescription());
                 return;
             }
@@ -177,8 +179,7 @@ public class EfaCloudSynchDialog extends BaseTabbedDialog implements IItemListen
                         ((EfaBaseFrame) parent).openLogbook(pr.getCurrentLogbook());
                     }
                 } catch (EfaException e) {
-                    de.nmichael.efa.util.Dialog.error(International
-                            .getString("Konnte Änderung im Projekt nicht speichern."));
+                    de.nmichael.efa.util.Dialog.error(LogString.fileSavingFailed(prjName, International.getString("Projekt"), e.toString()));
                     return;
                 }
                 // Start the server upload.
@@ -195,8 +196,7 @@ public class EfaCloudSynchDialog extends BaseTabbedDialog implements IItemListen
                     pr.close();
                     Project.openProject(prjName, false);
                 } catch (EfaException e) {
-                    de.nmichael.efa.util.Dialog.error(International
-                            .getString("Konnte Änderung im Projekt nicht speichern."));
+                    de.nmichael.efa.util.Dialog.error(LogString.fileSavingFailed(prjName, International.getString("Projekt"), e.toString()));
                     return;
                 }
             }

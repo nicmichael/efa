@@ -187,9 +187,12 @@ public class LogString {
 
     public static String efaCloudSynchProgress(String filename, int requested, int succeeded, int failed) {
         return International.getMessage(
-                "{cnt} Datensätze von '{filename}' synchronisiert. von {requested} bisher {succeeded} erfolgreich, "
-                + "{failed} mit Fehlern.",
-                "" + (succeeded + failed), filename, "" + requested, "" + succeeded, "" + failed);
+                "{cnt} Datensätze von '{filename}' synchronisiert: {succeeded} / {requested} ({failed} Fehler).",
+                Integer.toString(succeeded + failed),
+                filename,
+                Integer.toString(succeeded),
+                Integer.toString(requested),
+                Integer.toString(failed));
     }
 
     public static String efaCloudSynchSuccessfull(String description, int succeeded, int failed) {

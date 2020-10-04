@@ -1130,10 +1130,15 @@ public class ProjectRecord extends DataRecord  {
     }
 
     public static String[] getStorageTypeTypeStrings() {
-        return new String[]{
+        return Daten.efaConfig.getExperimentalFunctionsActivated() ?
+                new String[]{
                 IDataAccess.TYPESTRING_FILE_XML,
                 IDataAccess.TYPESTRING_EFA_REMOTE,
                 IDataAccess.TYPESTRING_EFA_CLOUD
+        } :
+                new String[]{
+                IDataAccess.TYPESTRING_FILE_XML,
+                IDataAccess.TYPESTRING_EFA_REMOTE
         };
     }
 

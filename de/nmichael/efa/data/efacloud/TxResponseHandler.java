@@ -2,7 +2,6 @@ package de.nmichael.efa.data.efacloud;
 
 import de.nmichael.efa.Daten;
 import de.nmichael.efa.ex.EfaException;
-import de.nmichael.efa.util.International;
 import de.nmichael.efa.util.Logger;
 
 import java.nio.charset.StandardCharsets;
@@ -27,10 +26,9 @@ public class TxResponseHandler {
      */
     private void handleTxContainerError(TxResponseContainer txrc) {
         String droppedTxIDs = txq.listIDsContainedInBusy();
-        Logger.log(Logger.ERROR, Logger.MSG_EFACLOUDSYNCH_ERROR, International.getMessage(
-                "TxResponseHandler.handleTxResponse error: cresult_code = " + "{cresult_code" +
-                        "}, cresult_message = " + "{cresult_message}" + ". " + "Failed " +
-                        "transactions: " + "{droppedTxIDs}",
+        Logger.log(Logger.ERROR, Logger.MSG_EFACLOUDSYNCH_ERROR, String.format(
+                "TxResponseHandler.handleTxResponse error: cresult_code = %s, " +
+                "cresult_message = %s Failed transactions: %s",
                 txrc.cresultCode, txrc.cresultMessage, droppedTxIDs));
         try {
             txq.registerContainerResult(txrc.cresultCode, txrc.cresultMessage);
@@ -59,8 +57,7 @@ public class TxResponseHandler {
                     break;
             }
         } catch (EfaException e) {
-            Logger.log(Logger.ERROR, Logger.MSG_EFACLOUDSYNCH_ERROR, International
-                    .getString("TxResponseContainer: queue lock time out (clearing queue)."));
+            Logger.log(Logger.ERROR, Logger.MSG_EFACLOUDSYNCH_ERROR, "TxResponseContainer: queue lock time out (clearing queue).");
         }
     }
 
@@ -197,9 +194,9 @@ public class TxResponseHandler {
                             handleTxResult(tx);
                         } catch (EfaException e) {
                             Logger.log(Logger.ERROR, Logger.MSG_FILE_WRITETHREAD_ERROR,
-                                    International.getMessage(
+                                    String.format(
                                             "TxResponseHandler: message handling aborted for " +
-                                                    "{type}. " + "Error: {error}.",
+                                                    "%s. " + "Error: %s.",
                                             tx.type, e.toString()));
                         }
                     }
@@ -208,9 +205,8 @@ public class TxResponseHandler {
 
             // clear the queue from the remaining transactions, for which no response was contained.
             if (txq.getBusyQueueSize() > 0) {
-                Logger.log(Logger.ERROR, Logger.MSG_FILE_WRITETHREAD_ERROR, International
-                        .getMessage(
-                                "TxResponseHandler.handleTxResponse: transactions with ID: {IDs} "
+                Logger.log(Logger.ERROR, Logger.MSG_FILE_WRITETHREAD_ERROR, String.format(
+                                "TxResponseHandler.handleTxResponse: transactions with ID: %s "
                                         + "not responded by server. They will be moved to the " + "failed queue.",
                                 txq.listIDsContainedInBusy()));
                 try {
@@ -218,8 +214,7 @@ public class TxResponseHandler {
                             TxRequestQueue.TX_FAILED_QUEUE_INDEX,
                             TxRequestQueue.ACTION_TX_RESP_MISSING, 0, 0, true);
                 } catch (EfaException e) {
-                    Logger.log(Logger.ERROR, Logger.MSG_EFACLOUDSYNCH_ERROR, International
-                            .getString("TxResponseHandler: queue lock time out (clearing queue)."));
+                    Logger.log(Logger.ERROR, Logger.MSG_EFACLOUDSYNCH_ERROR, "TxResponseHandler: queue lock time out (clearing queue).");
                 }
             }
         }
@@ -262,10 +257,9 @@ public class TxResponseHandler {
                 // decode the transaction response container
                 String txContainerBase64 = txcResponse.replace('-', '/').replace('*', '+')
                         .replace('_', '=').trim();
-                String txContainer = TxRequestQueue.EFA_CLOUD_VERSION + ";0;503;" + International
-                        .getString(
+                String txContainer = TxRequestQueue.EFA_CLOUD_VERSION + ";0;503;" +
                                 "Could not decode server response. Unsupported character " +
-                                        "encoding" + ".") + TxRequestQueue.TX_RESP_DELIMITER;
+                                        "encoding" + "." + TxRequestQueue.TX_RESP_DELIMITER;
                 try {
                     txContainer = new String(Base64.getDecoder().decode(txContainerBase64),
                             StandardCharsets.UTF_8);

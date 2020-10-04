@@ -264,6 +264,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
     private ItemTypeBoolean useFunctionalityRowingBerlin;
     private ItemTypeBoolean useFunctionalityCanoeing;
     private ItemTypeBoolean useFunctionalityCanoeingGermany;
+    private ItemTypeBoolean experimentalFunctions;
     private ItemTypeBoolean developerFunctions;
     private ItemTypeFile efaUserDirectory;
     private ItemTypeFile lastExportDirectory;
@@ -487,6 +488,11 @@ public class EfaConfig extends StorageObject implements IItemFactory {
                     null, ItemTypeFile.MODE_OPEN, ItemTypeFile.TYPE_DIR,
                     IItemType.TYPE_INTERNAL, BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_COMMON),
                     "last import directory"));
+            addParameter(experimentalFunctions = new ItemTypeBoolean("ExperimentalFunctions",
+                    false,
+                    IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_COMMON),
+                    International.getMessage("{type} Funktionalitäten aktivieren",
+                    International.getString("Experimentelle"))));
             addParameter(developerFunctions = new ItemTypeBoolean("DeveloperFunctions",
                     false,
                     IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_COMMON),
@@ -1995,6 +2001,9 @@ public class EfaConfig extends StorageObject implements IItemFactory {
         return developerFunctions.getValue();
     }
 
+    public boolean getExperimentalFunctionsActivated() {
+        return experimentalFunctions.getValue();
+    }
 
     public String getValueEfaUserDirectory() {
         return efaUserDirectory.getValue();
@@ -2202,6 +2211,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
                         item == useFunctionalityCanoeing ||
                         item == useFunctionalityCanoeingGermany ||
                         item == developerFunctions ||
+                        item == experimentalFunctions ||
                         item == this.dataRemoteEfaServerEnabled ||
                         item == this.dataRemoteEfaServerPort) {
                         changedSettings.put(item.getDescription(), "foo");

@@ -196,8 +196,8 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
         if ((resultCode == 402) || (resultCode == 403)) {
             queueTimer.cancel();
             Dialog.error(International.getMessage(
-                    "Authentication failed for server {efaCloudUrl} and account {username}. " + "Server is not connected, operation fully local.",
-                    efaCloudUrl, username));
+                    "Anmeldung von {username} auf efaCloud server {efaCloudUrl} fehlgeschlagen.",
+                    username, efaCloudUrl));
         }
     }
 
@@ -248,9 +248,9 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
                                 iam.sendRequest(rq);
                             } catch (EfaException e) {
                                 Logger.log(Logger.ERROR, Logger.MSG_EFACLOUDSYNCH_ERROR,
-                                        International.getMessage(
-                                                "TxRequestQueue error (efacloud URL: {URL}): " +
-                                                        "{error}",
+                                        String.format(
+                                                "TxRequestQueue error (efacloud URL: %s): " +
+                                                        "%s",
                                                 TxRequestQueue.this.efaCloudUrl, e.toString()));
                                 Logger.log(e);
                             }
@@ -270,9 +270,9 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
                                     iam.sendRequest(rq);
                                 } catch (EfaException e) {
                                     Logger.log(Logger.ERROR, Logger.MSG_EFACLOUDSYNCH_ERROR,
-                                            International.getMessage(
-                                                    "TxRequestQueue error (efacloud URL: {URL}): "
-                                                            + "{error}",
+                                            String.format(
+                                                    "TxRequestQueue error (efacloud URL: %s): "
+                                                            + "%s",
                                                     TxRequestQueue.this.efaCloudUrl, e.toString()));
                                     Logger.log(e);
                                 }
@@ -501,16 +501,14 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
             case ACTION_TX_RESP_MISSING:
                 tx.setResultAt(System.currentTimeMillis());
                 tx.setResultCode(503);
-                tx.setResultMessage(International.getString(
-                        "No server response in returned transaction response container."));
+                tx.setResultMessage("No server response in returned transaction response container.");
                 tx.setClosedAt(System.currentTimeMillis());
                 txReceipts.add(new Transaction.TxReceipt(tx));
                 break;
             case ACTION_TX_CONTAINER_FAILED:
                 tx.setResultAt(System.currentTimeMillis());
                 tx.setResultCode(504);
-                tx.setResultMessage(
-                        International.getString("transaction response container failed."));
+                tx.setResultMessage("transaction response container failed.");
                 tx.setClosedAt(System.currentTimeMillis());
                 txReceipts.add(new Transaction.TxReceipt(tx));
                 break;
@@ -562,9 +560,8 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
         } else {
             if ((now - locks[queueIndex]) > QUEUE_LOCK_TIMEOUT) {
                 releaseQueueLock(queueIndex);
-                throw new EfaException(Logger.MSG_DATA_GENERICEXCEPTION, International.getMessage(
-                        "EfaCloud transaction queue timeout for {queue} queue. Forced" + " " +
-                                "release.",
+                throw new EfaException(Logger.MSG_DATA_GENERICEXCEPTION, String.format(
+                        "EfaCloud transaction queue timeout for %s queue. Forced release.",
                         TX_QUEUE_NAMES[queueIndex]), null);
             } else return true;
         }
@@ -614,9 +611,8 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
         }
         // Write queue
         boolean written = TextResource.writeContents(txFilePath[queueIndex], qString, false);
-        if (!written) Logger.log(Logger.ERROR, Logger.MSG_FILE_WRITETHREAD_ERROR, International
-                .getMessage(
-                        "TxRequestQueue.writeQueueToFile: failed to write queue {queue} to disc.",
+        if (!written) Logger.log(Logger.ERROR, Logger.MSG_FILE_WRITETHREAD_ERROR, String.format(
+                        "TxRequestQueue.writeQueueToFile: failed to write queue %s to disc.",
                         txFilePath[queueIndex]));
     }
 
@@ -642,9 +638,8 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
             }
         // Remove contents from queue file.
         boolean written = TextResource.writeContents(txFilePath[queueIndex], "", false);
-        if (!written) Logger.log(Logger.ERROR, Logger.MSG_FILE_WRITETHREAD_ERROR, International
-                .getMessage(
-                        "TxRequestQueue.writeQueueToFile: failed to clear queue {queue} an disc.",
+        if (!written) Logger.log(Logger.ERROR, Logger.MSG_FILE_WRITETHREAD_ERROR, String.format(
+                        "TxRequestQueue.writeQueueToFile: failed to clear queue %s an disc.",
                         txFilePath[queueIndex]));
     }
 

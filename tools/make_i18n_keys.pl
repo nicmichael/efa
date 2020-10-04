@@ -176,7 +176,7 @@ sub parseLine {
         }
         $txt =~ s/%_1_%/{/g;
         $txt =~ s/%_2_%/}/g;
-        $txt =~ s/'{([^}]+)}'/''{\1}''/g;  # replace '{1}' by ''{1}''
+        $txt =~ s/'\{([^\}]+)}'/''\{\1\}''/g;  # replace '{1}' by ''{1}''
       }
 
       # handle special characters in translated text

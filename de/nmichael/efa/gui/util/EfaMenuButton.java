@@ -157,6 +157,12 @@ public class EfaMenuButton {
             v.add(new EfaMenuButton(MENU_FILE, SEPARATOR,
                     null, null, null));
         }
+        if ((admin == null || admin.isAllowedAdministerProjectLogbook()) && Daten.efaConfig.getExperimentalFunctionsActivated()) {
+            v.add(new EfaMenuButton(MENU_FILE, BUTTON_EFACLOUD,
+                    International.getStringWithMnemonic("Datei"),
+                    International.getStringWithMnemonic("EfaCloud"),
+                    BaseFrame.getIcon("menu_efacloud.png")));
+        }
         if (Daten.efaConfig.getValueUseFunctionalityCanoeingGermany()) {
             if (admin == null || admin.isAllowedSyncKanuEfb()) {
                 v.add(new EfaMenuButton(MENU_FILE, BUTTON_SYNCKANUEFB,
@@ -174,12 +180,6 @@ public class EfaMenuButton {
                     International.getStringWithMnemonic("Datei"),
                     International.getStringWithMnemonic("Backups"),
                     BaseFrame.getIcon("menu_backup.png")));
-        }
-        if (admin == null || admin.isAllowedAdministerProjectLogbook()) {
-            v.add(new EfaMenuButton(MENU_FILE, BUTTON_EFACLOUD,
-                    International.getStringWithMnemonic("Datei"),
-                    International.getStringWithMnemonic("EfaCloud"),
-                    BaseFrame.getIcon("menu_efacloud.png")));
         }
         if (admin == null || admin.isAllowedUpdateEfa()) {
             v.add(new EfaMenuButton(MENU_FILE, BUTTON_UPDATE,
