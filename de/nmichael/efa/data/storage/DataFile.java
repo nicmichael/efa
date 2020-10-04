@@ -11,7 +11,6 @@
 package de.nmichael.efa.data.storage;
 
 import de.nmichael.efa.*;
-import de.nmichael.efa.data.efacloud.Transaction;
 import de.nmichael.efa.util.*;
 import de.nmichael.efa.ex.EfaException;
 import java.util.*;
@@ -68,7 +67,7 @@ public abstract class DataFile extends DataAccess {
         }
     }
     */
-    
+
     public String getUID() {
         return "file:" + filename;
     }
@@ -112,7 +111,7 @@ public abstract class DataFile extends DataAccess {
             throw new EfaException(Logger.MSG_DATA_CREATEFAILED, LogString.fileCreationFailed(filename, storageLocation, e.toString()), Thread.currentThread().getStackTrace());
         }
     }
-    
+
     private void printFileInfoBeforeRecovery(String filename) {
         try {
             String fname = (new File(filename)).getName();
@@ -136,7 +135,7 @@ public abstract class DataFile extends DataAccess {
                 }
             }
         } catch(Exception e) {
-            Logger.log(Logger.WARNING, Logger.MSG_DATA_RECOVERYINFO, 
+            Logger.log(Logger.WARNING, Logger.MSG_DATA_RECOVERYINFO,
                     "Failed to get file information: " + e);
         }
     }
@@ -175,13 +174,13 @@ public abstract class DataFile extends DataAccess {
         fr.close();
         if (recover) {
             Logger.log(Logger.INFO, Logger.MSG_DATA_RECOVERYSTART,
-                    LogString.fileOpened(filename, 
+                    LogString.fileOpened(filename,
                         getStorageObjectName() + "." + getStorageObjectType() + " [SCN " + getSCN() + "]"));
             long latestScn = Journal.getLatestScnFromJournals(getStorageObjectName()+"."+getStorageObjectType(), this.filename);
             if (latestScn < 0) {
                 Logger.log(Logger.ERROR, Logger.MSG_DATA_REPLAYNOJOURNAL,
                         International.getMessage("Kein Journal für Wiederherstellung von {description} gefunden. Wiederhergestellte Daten sind möglicherweise unvollständig (Datenverlust)!",
-                        descr, filename));                
+                        descr, filename));
             } else {
                 if (latestScn > scn) {
                     inOpeningStorageObject = true; // don't update LastModified Timestamps, don't increment SCN, don't check assertions!
@@ -518,7 +517,7 @@ public abstract class DataFile extends DataAccess {
                     }
                     if (update && !add) {
                         if (currentRecord.getChangeCount() != record.getChangeCount() &&
-                            !inOpeningStorageObject) {
+                            !inOpeningStorageObject && !record.isCopyFromServer) {
                             // Throw an exception!
                             throw new EfaException(Logger.MSG_DATA_DUPLICATERECORD, getUID() + ": Update Conflict for Data Record '"+key.toString()+
                                     "': Current ChangeCount="+currentRecord.getChangeCount()+", expected ChangeCount="+record.getChangeCount(),
@@ -533,7 +532,9 @@ public abstract class DataFile extends DataAccess {
                             */
                         }
                     }
-                    if (!inOpeningStorageObject) { // don't update LastModified timestamp when reading saved data from file!
+                    if (!inOpeningStorageObject && !record.isCopyFromServer) {
+                        // don't update LastModified timestamp neither when reading saved data from file
+                        // nor when copying it from the efacloud server!
                         record.setLastModified();
                         record.updateChangeCount();
                     }
@@ -584,19 +585,11 @@ public abstract class DataFile extends DataAccess {
             // check whether an efacloud server shall also be updated, and trigger update, if
             // needed.
             StorageObject rp = record.getPersistence();
-            // check whether this is an efa Cloud storage object
-            if (rp.dataAccess.getStorageType() == IDataAccess.TYPE_EFA_CLOUD && !inOpeningStorageObject) {
-                // if so, trigger server modification, if this is not a write back from the server
-                // side.
+            // check whether this is an efa Cloud storage object, and the record is not a server copy anyway
+            if (rp.dataAccess.getStorageType() == IDataAccess.TYPE_EFA_CLOUD && !inOpeningStorageObject && !record.isCopyFromServer) {
+                // if so, trigger server modification
                 EfaCloudStorage efaCloudStorage = (EfaCloudStorage) rp.dataAccess;
-                Transaction tx;
-                if (!efaCloudStorage.isServerToLocalModification(constructKey(record))) {
-                    tx = efaCloudStorage.modifyServerRecord(add || update ? newRecord : record, add, update, delete, true);
-                    if (tx.getResultCode() >= 400) {
-                        Dialog.error(International.getString("Daten konnten nicht auf den Server geschrieben werden.") +
-                                "\n" + International.getString("Grund") + ": " + tx.getResultMessage());
-                    }
-                }
+                efaCloudStorage.modifyServerRecord(add || update ? newRecord : record, add, update, delete, false);
             }
 
             if (fileWriter != null) { // may be null while reading (opening) a file
@@ -1116,13 +1109,13 @@ public abstract class DataFile extends DataAccess {
             return keyList.toArray(new DataKey[0]);
         } else {
             // Search without index
-            
+
             // transfer field names to indices
             int[] fieldIdx = new int[fieldNames.length];
             for (int i=0; i<fieldNames.length; i++) {
                 fieldIdx[i] = (values[i] != null ? meta.getFieldIndex(fieldNames[i]) : -1);
             }
-            
+
             // now search all records for matching ones
             ArrayList<DataKey> matches = new ArrayList<DataKey>();
             DataKeyIterator it = getStaticIterator();

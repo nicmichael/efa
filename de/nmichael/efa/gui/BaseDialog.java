@@ -50,10 +50,6 @@ public abstract class BaseDialog extends JDialog implements ActionListener {
     public static final String IMAGE_FORWARD   = "button_forward.png";
     public static final String IMAGE_RUNEXPORT = "button_runexport.png";
     public static final String IMAGE_RUNIMPORT = "button_runimport.png";
-    public static final String IMAGE_RUNUPLOAD = "button_efacloud_up.png";
-    public static final String IMAGE_RUNDNLOAD = "button_efacloud_dn.png";
-    public static final String IMAGE_ACTIVATE_EC = "button_efacloud_ok.png";
-    public static final String IMAGE_DEACTIVATE_EC = "button_efacloud_ex.png";
     public static final String IMAGE_HELP      = "button_help.png";
     public static final String IMAGE_RUN       = "button_run.png";
     public static final String IMAGE_PREVIEW   = "button_preview.png";
@@ -70,6 +66,13 @@ public abstract class BaseDialog extends JDialog implements ActionListener {
     public static final String IMAGE_ARROWUP   = "button_arrowup.png";
     public static final String IMAGE_ARROWDOWN = "button_arrowdown.png";
     public static final String IMAGE_CORRECTION = "button_correction.png";
+    public static final String IMAGE_EFACLOUD_ACTIVATE    = "button_efacloud_activate.png";
+    public static final String IMAGE_EFACLOUD_DEACTIVATE  = "button_efacloud_deactivate.png";
+    public static final String IMAGE_EFACLOUD_DELETE      = "button_efacloud_delete.png";
+    public static final String IMAGE_EFACLOUD_START       = "button_efacloud_start.png";
+    public static final String IMAGE_EFACLOUD_SYNCH       = "button_efacloud_synch.png";
+    public static final String IMAGE_EFACLOUD_PAUSE       = "button_efacloud_pause.png";
+    public static final String IMAGE_EFACLOUD_STOP        = "button_efacloud_stop.png";
 
     public static final String BIGIMAGE_CLOSEDOORS = "notification_closedoors.png";
     public static final String BIGIMAGE_DARKNESS   = "notification_darkness.png";

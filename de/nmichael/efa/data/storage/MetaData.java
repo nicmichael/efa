@@ -53,10 +53,13 @@ public class MetaData {
         return metaData.get(dataType);
     }
 
+    // The following function is not used in efa. It may be deleted. It is the only reason for implementing the
+    // TableBuilder.removeStorageType function, so dropping removeMetaData would also simplify the TableBuilder class.
+    @Deprecated
     public static void removeMetaData(String dataType) {
         if (metaData.get(dataType) != null) {
             metaData.remove(dataType);
-            Daten.tableBuilder.removeDataRecord(dataType);
+            Daten.tableBuilder.removeStorageType(dataType);
         }
     }
 
@@ -97,13 +100,13 @@ public class MetaData {
     public int getNumberOfFields() {
         return FIELDS.length;
     }
-    
+
     public int getFieldIndex(String fieldName) {
         try {
             return FIELDIDX.get(fieldName).intValue();
         } catch(Exception e) {
             if (Logger.isTraceOn(Logger.TT_XMLFILE, 1)) {
-                Logger.log(Logger.DEBUG, Logger.MSG_DATA_FIELDDOESNOTEXIST, 
+                Logger.log(Logger.DEBUG, Logger.MSG_DATA_FIELDDOESNOTEXIST,
                     "MetaData.getIndex(\""+fieldName+"\") - Field does not exist for DataType " + dataType + "!");
             }
             Logger.logdebug(e);

@@ -34,11 +34,13 @@ public abstract class DataRecord implements Cloneable, Comparable {
     protected StorageObject persistence;
     protected MetaData metaData;
     protected Object[] data;
+    protected String LastModification = null;    // Needed for efacloud synchronization
+    protected boolean isCopyFromServer = false;  // Needed for efacloud synchronization
 
     public DataRecord(StorageObject persistence, MetaData metaData) {
         this.persistence = persistence;
         this.metaData = metaData;
-        Daten.tableBuilder.addDataRecord(persistence, metaData);
+        Daten.tableBuilder.addDataRecordReference(persistence, metaData);
         data = new Object[metaData.getNumberOfFields()];
         if (metaData.versionized) {
             setAlwaysValid();
