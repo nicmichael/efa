@@ -1,7 +1,6 @@
 package de.nmichael.efa.data.efacloud;
 
 import de.nmichael.efa.Daten;
-import de.nmichael.efa.util.International;
 import de.nmichael.efa.util.Logger;
 
 import java.nio.charset.StandardCharsets;
@@ -233,9 +232,9 @@ public class Transaction {
             String[] record = new String[]{"record;lost"};
             tx = new Transaction(0, "nop", "ignored", record);
             tx.resultCode = 500;
-            tx.resultMessage = International.getString(
+            tx.resultMessage =
                     "Message could not be retrieved from permanent message queue. It's " +
-                            "contents is lost.");
+                            "contents is lost.";
         }
         // return result
         return tx;

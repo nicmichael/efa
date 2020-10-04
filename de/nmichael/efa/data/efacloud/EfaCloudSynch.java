@@ -141,16 +141,16 @@ public class EfaCloudSynch {
                     .getString("Projekt") + " '" + currentProjectName + "'" : International
                     .getString("efa-Konfiguration");
             logMsg(Logger.INFO, Logger.MSG_EFACLOUDSYNCH_STARTED, International
-                    .getMessage("Starte efaCloud upload in {efacloudURL} von {items} ...",
-                            Daten.project.getProjectRecord().getEfaCoudURL(), items));
+                    .getMessage("Starte efaCloud upload von {items} auf {efacloudURL} ...",
+                            items, Daten.project.getProjectRecord().getEfaCoudURL()));
 
             int cnt = (synchTask.mode == Mode.upload) ? uploadData() : downloadData();
             logMsg(Logger.INFO, Logger.MSG_EFACLOUDSYNCH_FINISHEDINFO, International
-                    .getMessage("{n} Objekte ohne Fehler synchronisiert, fertig.", cnt));
+                    .getMessage("{n} Objekte ohne Fehler synchronisiert.", cnt));
             if (!synchErrors.toString().isEmpty())
-                logMsg(Logger.INFO, Logger.MSG_EFACLOUDSYNCH_FINISHEDWITHERRORS, LogString
-                        .efaCloudSynchFailed(International.getString("EfaCloudSynch"),
-                                International.getString("mit Hinweisen abgeschlossen. Hinweise: "),
+                logMsg(Logger.WARNING, Logger.MSG_EFACLOUDSYNCH_FINISHEDWITHERRORS, LogString
+                        .efaCloudSynchFailed(International.getString("Synchronisation"),
+                                International.getString("Synchronisation mit Fehlern abgeschlossen."),
                                 synchErrors.toString()));
         } catch (Exception e) {
             logMsg(Logger.ERROR, Logger.MSG_EFACLOUDSYNCH_FAILED, LogString
@@ -198,11 +198,11 @@ public class EfaCloudSynch {
         String progressDialogTitle;
         switch (mode) {
             case download:
-                progressDialogTitle = International.getString("Serverdaten komplett herunterladen");
+                progressDialogTitle = International.getString("Download vom efaCloud Server");
                 break;
             case upload:
                 progressDialogTitle = International
-                        .getString("lokale Daten komplett auf den Server hochladen");
+                        .getString("Upload auf den efaCloud Server");
                 break;
             default:
                 progressDialogTitle = "Synchronisation mit efaCloud Server";
@@ -283,13 +283,13 @@ public class EfaCloudSynch {
                 switch (efaCloudSynch.mode) {
                     case upload:
                         return LogString.operationSuccessfullyCompleted(
-                                International.getString("Full upload to efaCloud Server"));
+                                International.getString("Upload auf den efaCloud Server"));
                     case download:
                         return LogString.operationSuccessfullyCompleted(
-                                International.getString("Full download from efaCloud Server"));
+                                International.getString("Download vom efaCloud Server"));
                 }
                 return LogString
-                        .operationSuccessfullyCompleted(International.getString("Operation"));
+                        .operationSuccessfullyCompleted(International.getString("Synchronisation mit efaCloud Server"));
 
             } else {
                 return null;
@@ -301,13 +301,13 @@ public class EfaCloudSynch {
                 switch (efaCloudSynch.mode) {
                     case upload:
                         return LogString.operationFailed(
-                                International.getString("Upload auf efaCloud Server"));
+                                International.getString("Upload auf den efaCloud Server"));
                     case download:
                         return LogString.operationFailed(
                                 International.getString("Download vom efaCloud Server"));
                 }
                 return LogString
-                        .operationFailed(International.getString("efaCloud Synchronisation"));
+                        .operationFailed(International.getString("Synchronisation mit efaCloud Server"));
             } else {
                 return null;
             }

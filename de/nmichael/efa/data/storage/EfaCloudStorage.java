@@ -164,7 +164,7 @@ public class EfaCloudStorage extends XMLFile {
             e.printStackTrace();
         }
         if (keyIterator == null)
-            return International.getString("Cannot initialize the key iterator.");
+            return "Cannot initialize the key iterator.";
         int n = 0;
 
         DataKey k = keyIterator.getFirst();
@@ -286,7 +286,7 @@ public class EfaCloudStorage extends XMLFile {
         StringBuilder documentReadError = new StringBuilder();
         ArrayList<String> lines = CsvCodec.splitLines(csvString, q);
         if (lines.isEmpty()) {
-            return International.getString("Info: Tabelle ist leer.");
+            return "Info: Table is empty.";
         }
         ArrayList<String> header = CsvCodec.splitEntries(lines.get(0), d, q, true);
         succeded = 0;
