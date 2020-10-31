@@ -12,6 +12,7 @@ package de.nmichael.efa.gui.dataedit;
 
 import de.nmichael.efa.*;
 import de.nmichael.efa.core.config.AdminRecord;
+import de.nmichael.efa.core.items.IItemType;
 import de.nmichael.efa.core.items.ItemTypeDataRecordTable;
 import de.nmichael.efa.data.*;
 import de.nmichael.efa.data.storage.*;
@@ -109,6 +110,8 @@ public class StatisticsListDialog extends DataListDialog {
     protected void iniDialog() throws Exception {
         super.iniDialog();
         table.setDefaultActionForDoubleclick(ACTION_CREATESTATISTICS);
+        // by default show only matching elements in the table
+        table.setIsFilterSet(true);
         if (admin == null) {
             table.setVisibleSearchPanel(false);
         }
@@ -156,4 +159,14 @@ public class StatisticsListDialog extends DataListDialog {
         }
         return new StatisticsEditDialog(parent, (StatisticsRecord)record, newRecord, admin);
     }
+    
+	protected void createSpecificItemTypeRecordTable() {
+        table = new StatisticsItemTypeDataRecordTable("TABLE",
+                persistence.createNewRecord().getGuiTableHeader(),
+                persistence, validAt, admin,
+                filterFieldName, filterFieldValue, // defaults are null
+                actionText, actionType, actionImage, // default actions: new, edit, delete
+                this,
+                IItemType.TYPE_PUBLIC, "BASE_CAT", getTitle());
+	}
 }
