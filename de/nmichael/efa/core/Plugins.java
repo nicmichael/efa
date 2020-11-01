@@ -121,7 +121,9 @@ public class Plugins {
             parser.setContentHandler(pp);
             InputStream in = Plugins.class.getResourceAsStream(Daten.FILEPATH + Daten.PLUGIN_INFO_FILE);
             parser.parse(new InputSource(in));
-            return new Plugins(pp.getPlugins());
+            Plugins result =new Plugins(pp.getPlugins());
+            in.close(); // close inputstream to avoid resource leak
+            return result;
         } catch (Exception e) {
             Logger.logdebug(e);
             Dialog.error(e.getMessage());

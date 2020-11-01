@@ -143,6 +143,10 @@ public class BackupMetaData extends XMLWriter {
             BackupMetaDataParser xmlhandler = new BackupMetaDataParser(this);
             parser.setContentHandler(xmlhandler);
             parser.parse(new InputSource(in));
+            
+            in.close();//Close the stream and the zip file
+            zip.close();
+            
             zipFileName = zipFile;
         } catch(Exception e) {
             Logger.logdebug(e);

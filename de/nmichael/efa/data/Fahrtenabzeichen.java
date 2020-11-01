@@ -294,6 +294,7 @@ public class Fahrtenabzeichen extends StorageObject {
             String s = f.readLine();
             if (s != null && s.startsWith("ERROR")) {
                 Dialog.error(qnrtxt + s);
+                f.close();//close the file to avoid resource leak
                 return false;
             }
             f.close();

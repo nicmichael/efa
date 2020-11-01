@@ -124,6 +124,7 @@ public class CertInfos {
     InputStream inStream = new FileInputStream(args[0]);
     CertificateFactory cf = CertificateFactory.getInstance("X.509");
     X509Certificate cert = (X509Certificate)cf.generateCertificate(inStream);
+    inStream.close(); // close stream to avoid resource leak
 
     System.out.println(getCertInfos(cert,args[0]));
   }

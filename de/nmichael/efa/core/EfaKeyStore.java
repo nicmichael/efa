@@ -37,6 +37,7 @@ public class EfaKeyStore {
             if (EfaUtil.canOpenFile(filename)) {
                 InputStream is = new FileInputStream(filename);
                 keyStore.load(is, password);
+                is.close(); //Close stream to avoid resource leak
             } else {
                 keyStore.load(null, password);
             }

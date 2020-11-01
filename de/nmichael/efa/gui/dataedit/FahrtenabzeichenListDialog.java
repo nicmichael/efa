@@ -133,6 +133,10 @@ public class FahrtenabzeichenListDialog extends DataListDialog {
                     while ((s = f.readLine()) != null) {
                         if (s.startsWith("ERROR")) {
                             Dialog.error(s);
+                            
+                            f.close(); // close the reader to avoid resource leak
+                            EfaUtil.deleteFile(localFile);
+                            
                             return false;
                         }
                         if (s.startsWith("QNR=")) {

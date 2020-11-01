@@ -891,6 +891,7 @@ public class EmilFrame extends JFrame {
     try {
       BufferedWriter f = new BufferedWriter(new FileWriter(cfg.getStdCsv(),true));
       int c = writeCSVfile(f);
+      f.close();//close the writer although writeCSVfile closes the writer on its own. Failure proof: flushing a closed writer has no effect. 
       if (efw.wettId != WettDefs.LRVBERLIN_BLAUERWIMPEL)
         Dialog.infoDialog("Bestätigung","Es wurden "+c+" von insgesamt "+getAnzTeilnehmer()+" Einträgen in die Datei\n'"+cfg.getStdCsv()+"'\ngeschrieben!");
       else
@@ -1656,6 +1657,7 @@ public class EmilFrame extends JFrame {
     try {
       BufferedWriter f = new BufferedWriter(new FileWriter(datei));
       int c = writeCSVfile(f);
+      f.close();//close the writer although writeCSVfile closes the writer on its own. Failure proof: flushing a closed writer has no effect. 
       if (efw.wettId != WettDefs.LRVBERLIN_BLAUERWIMPEL)
         Dialog.infoDialog("Bestätigung","Es wurden "+c+" von insgesamt "+getAnzTeilnehmer()+" Einträgen in die Datei\n'"+datei+"'\ngeschrieben!");
       else

@@ -1455,6 +1455,7 @@ public class MeldungenIndexFrame extends JDialog implements ActionListener {
             if (s == null || !s.equals("OK")) {
                 Logger.log(Logger.ERROR, "Zurückweisen der Meldung " + qnr + " von Verein " + verein + " fehlgeschlagen: " + s);
                 Dialog.error("Aktion fehlgeschlagen: " + s);
+                f.close(); // close the file to avoid resource leak
                 return;
             }
             f.close();
@@ -2364,6 +2365,10 @@ public class MeldungenIndexFrame extends JDialog implements ActionListener {
             if (s == null || !s.equals("OK")) {
                 Logger.log(Logger.ERROR, "Erstellen der Meldung für Verein " + verein + " fehlgeschlagen: " + s);
                 Dialog.error("Aktion fehlgeschlagen: " + s);
+                
+                f.close(); // close the file to avoid resource leak
+                EfaUtil.deleteFile(localFile);
+                
                 return false;
             }
             f.close();

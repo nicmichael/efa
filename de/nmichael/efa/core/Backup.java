@@ -222,6 +222,7 @@ public class Backup {
                                                       backupMetaData.getProjectName(),
                                                       (currentProjectName != null ? currentProjectName :
                                                           "<--->"))));
+                    in.close(); // close inputstream to avoid resource leak
                     return false;
                 }
             }
@@ -231,6 +232,7 @@ public class Backup {
                 logMsg(Logger.ERROR, Logger.MSG_BACKUP_RESTOREERROR,
                         LogString.fileRestoreFailed(meta.getNameAndType(),
                         meta.getDescription(),  "DataAccess not found"));
+                in.close(); // close inputstream to avoid resource leak                
                 return false;
             }
             if (!dataAccess.isStorageObjectOpen()) {
@@ -449,6 +451,8 @@ public class Backup {
                 }
             }
 
+            zip.close(); // close the file to avoid resource leak
+            
             logMsg(Logger.INFO, Logger.MSG_BACKUP_RESTOREFINISHEDINFO,
                     International.getMessage("{n} Objekte wiederhergestellt.",
                     successful, zipFile));

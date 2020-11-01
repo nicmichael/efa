@@ -316,12 +316,14 @@ public class Journal {
             if (s == null || s.length() == 0) {
                 Logger.log(Logger.ERROR, Logger.MSG_DATA_JOURNALWRITEFAILED,
                         LogString.fileWritingFailed(fwname, International.getString("Journal"), "empty log string"));
+                f.close(); // close the writer to avoid resource leak
                 return false;
             }
             f.write(s + "\n");
-            if (FLUSH_WRITES) {
+            if (FLUSH_WRITES) { //TODO: does this make sense here? the buffered writer will be closed (and thus flushed) as it is a local variable..
                 f.flush();
             }
+            f.close(); // close the writer to avoid resource leak
         } catch(Exception e) {
             Logger.log(Logger.ERROR, Logger.MSG_DATA_JOURNALWRITEFAILED,
                         LogString.fileWritingFailed(fwname, International.getString("Journal"), e.toString()));

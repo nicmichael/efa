@@ -177,7 +177,8 @@ public class HelpGenerator {
         }
       }
     }
-
+    
+    f.close(); // close the file to avoid resource leak
     files.add("@"); // Dummy Element
     writeIndex(files);
   }

@@ -592,6 +592,7 @@ public class MeteoAstroWidget extends Widget {
                             in.reset();
                             BufferedReader buf = new BufferedReader(new InputStreamReader(in));
                             firstResultLine = buf.readLine();
+                            buf.close(); // close the buffer to avoid resource leak
                         } catch (Exception eignore) {
                         }
                         // log as WARNING for first weatherError; log as DEBUG for every next weatherError
