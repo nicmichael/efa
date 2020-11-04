@@ -1,3 +1,13 @@
+/*
+ * <pre>
+ * Title:        efa - elektronisches Fahrtenbuch für Ruderer
+ * Copyright:    Copyright (c) 2001-2011 by Nicolas Michael
+ * Website:      http://efa.nmichael.de/
+ * License:      GNU General Public License v2
+ *
+ * @author Nicolas Michael, Martin Glade
+ * @version 2</pre>
+ */
 package de.nmichael.efa.data.efacloud;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -16,17 +26,16 @@ import java.util.TimerTask;
 /**
  * <p>Little singleton helper class to load a resource from web in a different task.</p>
  * <p>Encoding
- * of TaskManager.RequestMessage for the access request is:<ul> <li> title = download URL </li> <li>
- * text = file system location to store file to, or call_post parameters in case of call_post </li>
+ * of TaskManager.RequestMessage for the access request is:<ul> <li> title = download URL </li> <li> text = file system
+ * location to store file to, or call_post parameters in case of call_post </li>
  * <li> type = type of internet Access. TYPE_POST_PARAMETERS, TYPE_GET_BINARY and TYPE_GET_TEXT are
  * available
  * </li> <li> value = text encoding. Available are ISO-8859-1 (default) or UTF-8, use parameters:
- * VALUE_TEXT_ENCODING_ISO8859_1, VALUE_TEXT_ENCODING_UTF8 </li> </ul> </p> <p>Encoding of
- * TaskManager.RequestMessage for the callback is:<ul> <li> title = file system location to which
- * the file was stored, if a file is stored. Dialog title for progress messages. postURLplus, if a
- * post request was aborted. Else it is empty</li> <li> text = result string, Usually empty for get,
- * server response for call_post and error mesage in case of error. </li> <li> type = type of
- * message. TYPE_FILE_SIZE_INFO, TYPE_PROGRESS_INFO, TYPE_COMPLETED, TYPE_ABORTED are available
+ * VALUE_TEXT_ENCODING_ISO8859_1, VALUE_TEXT_ENCODING_UTF8 </li> </ul> </p> <p>Encoding of TaskManager.RequestMessage
+ * for the callback is:<ul> <li> title = file system location to which the file was stored, if a file is stored. Dialog
+ * title for progress messages. postURLplus, if a post request was aborted. Else it is empty</li> <li> text = result
+ * string, Usually empty for get, server response for call_post and error mesage in case of error. </li> <li> type =
+ * type of message. TYPE_FILE_SIZE_INFO, TYPE_PROGRESS_INFO, TYPE_COMPLETED, TYPE_ABORTED are available
  * </li> <li> value = filesize in byte for TYPE_FILE_SIZE_INFO, part downloaded (0 .. 1) for
  * TYPE_PROGRESS_INFO and TYPE_COMPLETED_INFO</li> </ul> </p>
  *
@@ -75,24 +84,23 @@ public class InternetAccessManager implements TaskManager.RequestDispatcherIF {
     }
 
     /**
-     * Get the internet access manager. It decouples internet post and response from program
-     * execution.
+     * Get the internet access manager. It decouples internet post and response from program execution.
      *
      * @return the one and only instance of internet access to the efaCloud server.
      */
     public static InternetAccessManager getInstance() {
-        if (iam == null) iam = new InternetAccessManager();
+        if (iam == null)
+            iam = new InternetAccessManager();
         return iam;
     }
 
     /**
      * @param request <p>request sent. Shall be <ol><li>title = URL, or postURLplus including
-     *                parameters, for generation see petPostURLplus method.</li><li>text = path in
-     *                file system to which the response shall be stored. May be empty or null on
-     *                call_post requests, then a text response is expected and the text
-     *                returned.<li>type = see type constants of InternetAccessManager
-     *                class</li><li>value = no relevance .</li></li></ol></p><p>In the cal back
-     *                expect the following parameters:
+     *                parameters, for generation see petPostURLplus method.</li><li>text = path in file system to which
+     *                the response shall be stored. May be empty or null on call_post requests, then a text response is
+     *                expected and the text returned.<li>type = see type constants of InternetAccessManager
+     *                class</li><li>value = no relevance .</li></li></ol></p><p>In the cal back expect the following
+     *                parameters:
      *                <ol><li>title = path to which the response was saved to in case of
      *                success</li><li>text = message recieved, e.g. relevant at simple call_post
      *                requests.</li><li>type = see InternetAccessManager class
@@ -112,19 +120,29 @@ public class InternetAccessManager implements TaskManager.RequestDispatcherIF {
     }
 
     /**
-     * Set all certificates to "allowed". This can not be reverted. See
-     * InternetAccessHandler.allowAllCertificates() for details.
+     * Set all certificates to "allowed". This can not be reverted. See InternetAccessHandler.allowAllCertificates() for
+     * details.
      *
      * @param allowAllCertificates set true to allow once for all, all certicates.
      */
     public void setAllowAllCertificates(boolean allowAllCertificates) {
         this.allowAllCertificates = this.allowAllCertificates || allowAllCertificates;
-        if (allowAllCertificates) internetAccessHandler.allowAllCertificates();
+        if (allowAllCertificates)
+            internetAccessHandler.allowAllCertificates();
     }
 
     /**
-     * This here is the real worker class, wrapped in the manager. By this means it can be achieved,
-     * that the public method handleRequest of the RequestHandlerIF is not publicly visible.
+     * Terminate the internet access manager by terminating the task manager and dropping the link to the singleton
+     * InternetAccessManager instance. Call this method prior to dropping the task manager, e. g. by re-instantiation.
+     */
+    public void terminate() {
+        taskManager.terminate();
+        iam = null;
+    }
+
+    /**
+     * This here is the real worker class, wrapped in the manager. By this means it can be achieved, that the public
+     * method handleRequest of the RequestHandlerIF is not publicly visible.
      */
     private class InternetAccessHandler implements TaskManager.RequestHandlerIF {
 
@@ -142,16 +160,17 @@ public class InternetAccessManager implements TaskManager.RequestDispatcherIF {
          * To time out, close down the input stream and the connection.
          */
         private void timeOut() throws IOException {
-            if (inputStream != null) inputStream.close();
-            if (connection != null) connection.disconnect();
+            if (inputStream != null)
+                inputStream.close();
+            if (connection != null)
+                connection.disconnect();
         }
 
         /**
-         * A connection to an efacloud server must use https to protect exchanged information
-         * including credentials. Depending on the used operating system age, Certificates may occur
-         * for which the CA is not available. Happened with raspberries and Debian. This procedure
-         * will provide trust to any certificate. This does not shield against impersonation
-         * attacks, but does protect against eavesdropping the credentials. See
+         * A connection to an efacloud server must use https to protect exchanged information including credentials.
+         * Depending on the used operating system age, Certificates may occur for which the CA is not available.
+         * Happened with raspberries and Debian. This procedure will provide trust to any certificate. This does not
+         * shield against impersonation attacks, but does protect against eavesdropping the credentials. See
          * https://stackoverflow.com/questions/10135074/download-file-from-https-server-using-java
          */
         private void allowAllCertificates() {
@@ -161,12 +180,10 @@ public class InternetAccessManager implements TaskManager.RequestDispatcherIF {
                     return null;
                 }
 
-                public void checkClientTrusted(java.security.cert.X509Certificate[] certs,
-                                               String authType) {
+                public void checkClientTrusted(java.security.cert.X509Certificate[] certs, String authType) {
                 }
 
-                public void checkServerTrusted(java.security.cert.X509Certificate[] certs,
-                                               String authType) {
+                public void checkServerTrusted(java.security.cert.X509Certificate[] certs, String authType) {
                 }
             }};
             // Activate the new trust manager
@@ -180,20 +197,17 @@ public class InternetAccessManager implements TaskManager.RequestDispatcherIF {
 
         /**
          * <p></p>Execute a post and return the result as TaskManager.RequestMessage to the
-         * callback. The result will also be stored to outFpath, if outFpath is not empty. The
-         * message returned contains:<ul><li>title: the outFpath</li><li>text: the text returned, if
-         * the content type of the response was "text..." or possibly an error message</li><li>type:
-         * the result type, see Pparameters of this class definition</li><li>value: always
-         * 0.0</li><li>sender: this instance</li> </ul><p> Based on a snippet taken from
-         * "http://www.xyzws .com/Javafaq/how-to-use-httpurlconnection-call_post-data
-         * -to-web-server/139"</p>
+         * callback. The result will also be stored to outFpath, if outFpath is not empty. The message returned
+         * contains:<ul><li>title: the outFpath</li><li>text: the text returned, if the content type of the response was
+         * "text..." or possibly an error message</li><li>type: the result type, see Pparameters of this class
+         * definition</li><li>value: always 0.0</li><li>sender: this instance</li> </ul><p> Based on a snippet taken
+         * from "http://www.xyzws .com/Javafaq/how-to-use-httpurlconnection-call_post-data -to-web-server/139"</p>
          *
-         * @param postURLplus URL for call_post request plus "?" plus encoded parameters for POST
-         *                    request. The urlParameters is a URL encoded string. Example: String
-         *                    urlParameters = "fName=" + URLEncoder.encode("???", "UTF-8") +
-         *                    "&lName=" + URLEncoder.encode("???", "UTF-8")
-         * @param outFpath    file to store response to. The response may be text or binary. If
-         *                    outFpath is empty, nothing will be stored, e. g. for expected text.
+         * @param postURLplus URL for call_post request plus "?" plus encoded parameters for POST request. The
+         *                    urlParameters is a URL encoded string. Example: String urlParameters = "fName=" +
+         *                    URLEncoder.encode("???", "UTF-8") + "&lName=" + URLEncoder.encode("???", "UTF-8")
+         * @param outFpath    file to store response to. The response may be text or binary. If outFpath is empty,
+         *                    nothing will be stored, e. g. for expected text.
          */
         private void excutePost(String postURLplus, String outFpath) {
 
@@ -208,17 +222,18 @@ public class InternetAccessManager implements TaskManager.RequestDispatcherIF {
                 connection = (HttpURLConnection) url.openConnection();
                 iamMonitor.notifyActivity();
             } catch (Exception e) {
-                callBackMsg = new TaskManager.RequestMessage(postURL, String.format("#ERROR: Failed to open %s: %s", postURL,
-                                e.getMessage()), TYPE_ABORTED, 0.0, iamParent);
-                if (callback != null) callback.sendRequest(callBackMsg);
+                callBackMsg = new TaskManager.RequestMessage(postURL,
+                        String.format("#ERROR: Failed to open %s: %s", postURL, e.getMessage()), TYPE_ABORTED, 0.0,
+                        iamParent);
+                if (callback != null)
+                    callback.sendRequest(callBackMsg);
                 return;
             }
             try {
                 connection.setRequestMethod("POST");
                 connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 
-                connection
-                        .setRequestProperty("Content-Length", "" + urlParameters.getBytes().length);
+                connection.setRequestProperty("Content-Length", "" + urlParameters.getBytes().length);
                 connection.setRequestProperty("Content-Language", "en-US");
 
                 connection.setUseCaches(false);
@@ -235,10 +250,11 @@ public class InternetAccessManager implements TaskManager.RequestDispatcherIF {
 
                 int resp = connection.getResponseCode();
                 if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
-                    callBackMsg = new TaskManager.RequestMessage(postURLplus, String.format(
-                                    "#ERROR: url does not take the post call to %s with resp code HTTP %s",
+                    callBackMsg = new TaskManager.RequestMessage(postURLplus,
+                            String.format("#ERROR: url does not take the post call to %s with resp code HTTP %s",
                                     postURL, resp), TYPE_ABORTED, 0.0, this);
-                    if (callback != null) callback.sendRequest(callBackMsg);
+                    if (callback != null)
+                        callback.sendRequest(callBackMsg);
                     return;
                 }
 
@@ -249,20 +265,23 @@ public class InternetAccessManager implements TaskManager.RequestDispatcherIF {
                 StringBuilder resb = new StringBuilder();
                 if (contentType.contains("text")) {
                     ArrayList<String> rlist = readTextInputStream("UTF-8", outFpath, fileSize);
-                    for (String line : rlist) resb.append(line).append('\n');
+                    for (String line : rlist)
+                        resb.append(line).append('\n');
                 } else if ((outFpath != null) && !outFpath.isEmpty()) {
                     saveInputStreamToFile(outFpath, fileSize);
                 }
                 connection.disconnect();
                 // call back
-                callBackMsg = new TaskManager.RequestMessage(outFpath, resb.toString(),
-                        TYPE_COMPLETED, fileSize, iamParent);
-                if (callback != null) callback.sendRequest(callBackMsg);
+                callBackMsg = new TaskManager.RequestMessage(outFpath, resb.toString(), TYPE_COMPLETED, fileSize,
+                        iamParent);
+                if (callback != null)
+                    callback.sendRequest(callBackMsg);
             } catch (Exception e) {
                 callBackMsg = new TaskManager.RequestMessage(postURLplus,
-                        String.format("#ERROR: Exception downloading %s: %s", postURL,
-                                e.getMessage()), TYPE_ABORTED, 0.0, iamParent);
-                if (callback != null) callback.sendRequest(callBackMsg);
+                        String.format("#ERROR: Exception downloading %s: %s", postURL, e.getMessage()), TYPE_ABORTED,
+                        0.0, iamParent);
+                if (callback != null)
+                    callback.sendRequest(callBackMsg);
             }
         }
 
@@ -273,31 +292,29 @@ public class InternetAccessManager implements TaskManager.RequestDispatcherIF {
          * @param fileSize  full file size to download, if known.
          */
         private void showProgress(String filePath, int bytesRead, int fileSize) {
-            if (callback == null) return;
-            if (fileSize <= 0) callback.sendRequest(
-                    new TaskManager.RequestMessage("Downloading ...",
-                            filePath, TYPE_PROGRESS_INFO, 0.0, iamParent));
-            else callback.sendRequest(
-                    new TaskManager.RequestMessage("Downloading ...",
-                            filePath, TYPE_PROGRESS_INFO, ((double) bytesRead) / fileSize,
-                            iamParent));
+            if (callback == null)
+                return;
+            if (fileSize <= 0)
+                callback.sendRequest(
+                        new TaskManager.RequestMessage("Downloading ...", filePath, TYPE_PROGRESS_INFO, 0.0,
+                                iamParent));
+            else
+                callback.sendRequest(new TaskManager.RequestMessage("Downloading ...", filePath, TYPE_PROGRESS_INFO,
+                        ((double) bytesRead) / fileSize, iamParent));
         }
-
 
         /**
          * Save an Input stream to a binary file. Used for both get and Post requests.
          *
-         * @param outFpath    path of file to save input stream to. File will be overwritten without
-         *                    warning. Missing paths will be created. Set to null or "" to skip
-         *                    writing.
+         * @param outFpath    path of file to save input stream to. File will be overwritten without warning. Missing
+         *                    paths will be created. Set to null or "" to skip writing.
          * @param charsetName name of character set to be used, e. g. UTF-8
-         * @param fileSize    size of file usually as reported in the return protocol of the
-         *                    call_post or get request.
+         * @param fileSize    size of file usually as reported in the return protocol of the call_post or get request.
          * @return the read file contents as an Array List of lines read.
          * @throws IOException any internet access exception this may be.
          */
-        private ArrayList<String> readTextInputStream(String charsetName, String outFpath,
-                                                      int fileSize) throws IOException {
+        private ArrayList<String> readTextInputStream(String charsetName, String outFpath, int fileSize) throws
+                IOException {
 
             int bytesRead = 0;
             int lastUpdate = 0;
@@ -324,9 +341,11 @@ public class InternetAccessManager implements TaskManager.RequestDispatcherIF {
                 }
             } catch (IOException e) {
                 fileContents = null;
-                callBackMsg = new TaskManager.RequestMessage(outFpath, String.format("#ERROR: Exception downloading to file %s: %s",
-                                outFpath, e.getMessage()), TYPE_ABORTED, 0.0, iamParent);
-                if (callback != null) callback.sendRequest(callBackMsg);
+                callBackMsg = new TaskManager.RequestMessage(outFpath,
+                        String.format("#ERROR: Exception downloading to file %s: %s", outFpath, e.getMessage()),
+                        TYPE_ABORTED, 0.0, iamParent);
+                if (callback != null)
+                    callback.sendRequest(callBackMsg);
             }
             try {
                 textInputReader.close();
@@ -345,10 +364,9 @@ public class InternetAccessManager implements TaskManager.RequestDispatcherIF {
         /**
          * Save an Input stream to a binary file. Used for both get and Post requests.
          *
-         * @param outFpath path of file to save input stream to. File will be overwritten without
-         *                 warning. Missing paths will be created.
-         * @param fileSize size of file usually as reported in the return protocol of the call_post
-         *                 or get request.
+         * @param outFpath path of file to save input stream to. File will be overwritten without warning. Missing paths
+         *                 will be created.
+         * @param fileSize size of file usually as reported in the return protocol of the call_post or get request.
          * @throws IOException any internet access exception this may be.
          */
         private void saveInputStreamToFile(String outFpath, long fileSize) throws IOException {
@@ -389,14 +407,20 @@ public class InternetAccessManager implements TaskManager.RequestDispatcherIF {
                     new File(outFpath).delete();
                 } catch (Exception ignored) {
                 }
-                callBackMsg = new TaskManager.RequestMessage(outFpath, String.format("#ERROR: Exception downloading to file %s: %s",
-                                outFpath, e.getMessage()), TYPE_ABORTED, 0.0, iamParent);
-                if (callback != null) callback.sendRequest(callBackMsg);
+                callBackMsg = new TaskManager.RequestMessage(outFpath,
+                        String.format("#ERROR: Exception downloading to file %s: %s", outFpath, e.getMessage()),
+                        TYPE_ABORTED, 0.0, iamParent);
+                if (callback != null)
+                    callback.sendRequest(callBackMsg);
             }
-            if (fos != null) fos.flush();
-            if (bout != null) bout.flush();
-            if (fos != null) fos.close();
-            if (bout != null) bout.close();
+            if (fos != null)
+                fos.flush();
+            if (bout != null)
+                bout.flush();
+            if (fos != null)
+                fos.close();
+            if (bout != null)
+                bout.close();
             iamMonitor.notifyActivity();
             try {
                 inputStream.close();
@@ -409,9 +433,9 @@ public class InternetAccessManager implements TaskManager.RequestDispatcherIF {
          *
          * @param getURL      url to get text from
          * @param outFpath    file path to put the text to.
-         * @param charsetName charset to be used for reading. Passed to the InputStreamReader for
-         *                    retrieving the resource. Thus, even, if the retrieved file has an
-         *                    appropriate charset meta tag, this will not be recognized
+         * @param charsetName charset to be used for reading. Passed to the InputStreamReader for retrieving the
+         *                    resource. Thus, even, if the retrieved file has an appropriate charset meta tag, this will
+         *                    not be recognized
          */
         private void excuteGetForText(String getURL, String outFpath, String charsetName) {
 
@@ -426,9 +450,11 @@ public class InternetAccessManager implements TaskManager.RequestDispatcherIF {
                 fileSize = urlConnection.getContentLength();
                 iamMonitor.notifyActivity();
             } catch (Exception e) {
-                callBackMsg = new TaskManager.RequestMessage(outFpath, String.format("#ERROR: Failed to open %s: %s", getURL,
-                                e.getMessage()), TYPE_ABORTED, 0.0, iamParent);
-                if (callback != null) callback.sendRequest(callBackMsg);
+                callBackMsg = new TaskManager.RequestMessage(outFpath,
+                        String.format("#ERROR: Failed to open %s: %s", getURL, e.getMessage()), TYPE_ABORTED, 0.0,
+                        iamParent);
+                if (callback != null)
+                    callback.sendRequest(callBackMsg);
                 return;
             }
 
@@ -437,15 +463,16 @@ public class InternetAccessManager implements TaskManager.RequestDispatcherIF {
                 readTextInputStream(charsetName, outFpath, fileSize);
 
                 // call back
-                callBackMsg = new TaskManager.RequestMessage(outFpath, "", TYPE_COMPLETED, fileSize,
-                        iamParent);
-                if (callback != null) callback.sendRequest(callBackMsg);
+                callBackMsg = new TaskManager.RequestMessage(outFpath, "", TYPE_COMPLETED, fileSize, iamParent);
+                if (callback != null)
+                    callback.sendRequest(callBackMsg);
 
             } catch (IOException e) {
-                callBackMsg = new TaskManager.RequestMessage(outFpath, String.format(
-                        "#ERROR: Exception downloading %s to %s: %s", getURL,
-                        outFpath, e.getMessage()), TYPE_ABORTED, fileSize, iamParent);
-                if (callback != null) callback.sendRequest(callBackMsg);
+                callBackMsg = new TaskManager.RequestMessage(outFpath,
+                        String.format("#ERROR: Exception downloading %s to %s: %s", getURL, outFpath, e.getMessage()),
+                        TYPE_ABORTED, fileSize, iamParent);
+                if (callback != null)
+                    callback.sendRequest(callBackMsg);
             }
         }
 
@@ -465,9 +492,11 @@ public class InternetAccessManager implements TaskManager.RequestDispatcherIF {
                 fileSize = urlConnection.getContentLength();
                 iamMonitor.notifyActivity();
             } catch (Exception e) {
-                callBackMsg = new TaskManager.RequestMessage(outFpath, String.format("#ERROR: Failed to open %s: %s", getURL,
-                                e.getMessage()), TYPE_ABORTED, 0.0, iamParent);
-                if (callback != null) callback.sendRequest(callBackMsg);
+                callBackMsg = new TaskManager.RequestMessage(outFpath,
+                        String.format("#ERROR: Failed to open %s: %s", getURL, e.getMessage()), TYPE_ABORTED, 0.0,
+                        iamParent);
+                if (callback != null)
+                    callback.sendRequest(callBackMsg);
                 return;
             }
             // read file
@@ -477,25 +506,25 @@ public class InternetAccessManager implements TaskManager.RequestDispatcherIF {
              * -download-binary-files-from-the-internet
              */
             try {
-                inputStream = new java.io.BufferedInputStream(
-                        new java.net.URL(getURL).openStream());
+                inputStream = new java.io.BufferedInputStream(new java.net.URL(getURL).openStream());
                 saveInputStreamToFile(outFpath, fileSize);
                 // call back
-                callBackMsg = new TaskManager.RequestMessage(outFpath, "", TYPE_COMPLETED, fileSize,
-                        iamParent);
-                if (callback != null) callback.sendRequest(callBackMsg);
+                callBackMsg = new TaskManager.RequestMessage(outFpath, "", TYPE_COMPLETED, fileSize, iamParent);
+                if (callback != null)
+                    callback.sendRequest(callBackMsg);
 
             } catch (Exception e) {
-                callBackMsg = new TaskManager.RequestMessage(outFpath, String.format(
-                        "#ERROR: Exception downloading %s to %s: %s", getURL,
-                        outFpath, e.getMessage()), TYPE_ABORTED, 0.0, iamParent);
-                if (callback != null) callback.sendRequest(callBackMsg);
+                callBackMsg = new TaskManager.RequestMessage(outFpath,
+                        String.format("#ERROR: Exception downloading %s to %s: %s", getURL, outFpath, e.getMessage()),
+                        TYPE_ABORTED, 0.0, iamParent);
+                if (callback != null)
+                    callback.sendRequest(callBackMsg);
             }
         }
 
         /**
-         * Note: do not use by main Thread to avoid "android.os.NetworkOnMainThreadException" which
-         * will show up, but most typically not be visible.
+         * Note: do not use by main Thread to avoid "android.os.NetworkOnMainThreadException" which will show up, but
+         * most typically not be visible.
          */
         @Override
         public void handleRequest(TaskManager.RequestMessage msg) {
@@ -504,17 +533,17 @@ public class InternetAccessManager implements TaskManager.RequestDispatcherIF {
             // Debugging support.
             if (debugFilePath != null) {
                 TextResource.writeContents(debugFilePath,
-                        "TaskManager.RequestMessage msg: \ntitle: " + msg.title + "\ntext: " + msg.text,
-                        true);
+                        "TaskManager.RequestMessage msg: \ntitle: " + msg.title + "\ntext: " + msg.text, true);
             }
             String enc = "UTF-8";
-            if (((int) msg.value) == VALUE_TEXT_ENCODING_ISO8859_1) enc = "ISO-8859-1";
-            if (((int) msg.value) == VALUE_TEXT_ENCODING_UTF8) enc = "UTF-8";
+            if (((int) msg.value) == VALUE_TEXT_ENCODING_ISO8859_1)
+                enc = "ISO-8859-1";
+            if (((int) msg.value) == VALUE_TEXT_ENCODING_UTF8)
+                enc = "UTF-8";
             callback = ((msg.sender instanceof TaskManager.RequestDispatcherIF)) ?
                     (TaskManager.RequestDispatcherIF) msg.sender : null;
             if ((msg.sender != null) && !(msg.sender instanceof TaskManager.RequestDispatcherIF))
-                System.out.println(String.format(
-                        "Warning: InternetAccessManager call with invalid callback %s",
+                System.out.println(String.format("Warning: InternetAccessManager call with invalid callback %s",
                         msg.sender.toString()));
             // POST to URL
             if (msg.type == TYPE_POST_PARAMETERS) {
@@ -553,24 +582,22 @@ public class InternetAccessManager implements TaskManager.RequestDispatcherIF {
                 public void run() {
                     if (activityBusy) {
                         if (!activityRegistered) {
-                            callBackMsg = new TaskManager.RequestMessage(
-                                    "Please wait...",
-                                    "Internet access pending.",
+                            callBackMsg = new TaskManager.RequestMessage("Please wait...", "Internet access pending.",
                                     TYPE_PENDING, 0.0, InternetAccessMonitor.this.iamParent);
                             idleCounter++;
                             if (idleCounter > TIME_OUT_MONITOR_PERIODS) {
-                                callBackMsg = new TaskManager.RequestMessage(
-                                        "Please wait...",
-                                        "Internet access aborted. Time out.",
-                                        TYPE_ABORTED, 0.0, InternetAccessMonitor.this.iamParent);
+                                callBackMsg = new TaskManager.RequestMessage("Please wait...",
+                                        "Internet access aborted. Time out.", TYPE_ABORTED, 0.0,
+                                        InternetAccessMonitor.this.iamParent);
                                 try {
-                                    InternetAccessMonitor.this.iamParent.internetAccessHandler
-                                            .timeOut();
+                                    InternetAccessMonitor.this.iamParent.internetAccessHandler.timeOut();
                                 } catch (Exception ignored) {
                                 }
                             }
-                            if (callback != null) callback.sendRequest(callBackMsg);
-                        } else activityRegistered = false;
+                            if (callback != null)
+                                callback.sendRequest(callBackMsg);
+                        } else
+                            activityRegistered = false;
                     }
                 }
             };
@@ -579,9 +606,8 @@ public class InternetAccessManager implements TaskManager.RequestDispatcherIF {
         }
 
         /**
-         * The monitor will be started with all acitivities triggered. Activities like opening a
-         * connection or reading of bytes will be registered. This can manage a regular time out for
-         * internet connectivity failurs.
+         * The monitor will be started with all acitivities triggered. Activities like opening a connection or reading
+         * of bytes will be registered. This can manage a regular time out for internet connectivity failurs.
          */
         private void start() {
             activityBusy = true;

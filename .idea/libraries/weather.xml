@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="weather">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/plugins/weather/commons-codec.jar!/" />
+      <root url="jar://$PROJECT_DIR$/plugins/weather/signpost-core.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

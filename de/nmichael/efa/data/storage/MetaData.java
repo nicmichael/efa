@@ -16,7 +16,7 @@ import de.nmichael.efa.util.*;
 
 public class MetaData {
 
-    private String dataType;
+    private final String dataType;
     protected String[] FIELDS;
     protected int[] TYPES;
     protected HashMap<String,Integer> FIELDIDX;
@@ -24,7 +24,7 @@ public class MetaData {
     protected ArrayList<String[]> indices = new ArrayList<String[]>();
     protected boolean versionized;
 
-    private static Hashtable<String,MetaData> metaData = new Hashtable<String,MetaData>();
+    private static final Hashtable<String,MetaData> metaData = new Hashtable<String,MetaData>();
 
     private MetaData(String dataType) {
         this.dataType = dataType;
@@ -53,10 +53,13 @@ public class MetaData {
         return metaData.get(dataType);
     }
 
+    // The following function is not used in efa. It may be deleted. It is the only reason for implementing the
+    // TableBuilder.removeStorageType function, so dropping removeMetaData would also simplify the TableBuilder class.
+    @Deprecated
     public static void removeMetaData(String dataType) {
         if (metaData.get(dataType) != null) {
             metaData.remove(dataType);
-            Daten.tableBuilder.removeDataRecord(dataType);
+            Daten.tableBuilder.removeStorageType(dataType);
         }
     }
 

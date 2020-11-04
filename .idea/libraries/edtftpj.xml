@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="edtftpj">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/plugins/ftp/edtftpj.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

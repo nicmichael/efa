@@ -1,17 +1,47 @@
+/*
+ * <pre>
+ * Title:        efa - elektronisches Fahrtenbuch für Ruderer
+ * Copyright:    Copyright (c) 2001-2011 by Nicolas Michael
+ * Website:      http://efa.nmichael.de/
+ * License:      GNU General Public License v2
+ *
+ * @author Nicolas Michael, Martin Glade
+ * @version 2</pre>
+ */
 package de.nmichael.efa.data.efacloud;
 
 import de.nmichael.efa.Daten;
+import de.nmichael.efa.util.International;
 import de.nmichael.efa.util.Logger;
 
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Vector;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * A container class for data modifications passed to the efaClod Server.
  */
-public class Transaction {
+class Transaction {
+
+    // The transaction response codes as text
+    static final HashMap<Integer, String> TX_RESULT_CODES = new HashMap<>();
+
+    static {
+        TX_RESULT_CODES.put(300, "Transaction completed");
+        TX_RESULT_CODES.put(303, "Transaction completed and data key mismatch detected");
+        TX_RESULT_CODES.put(400, "XHTTPrequest Error"); // (client side generated error, javascript version only)
+        TX_RESULT_CODES.put(401, "Syntax error");
+        TX_RESULT_CODES.put(402, "Unknown client");
+        TX_RESULT_CODES.put(403, "Authentication failed");
+        TX_RESULT_CODES.put(404, "Server side busy");
+        TX_RESULT_CODES.put(405, "Wrong transaction ID"); // (client side generated error)
+        TX_RESULT_CODES.put(406, "Overload detected");
+        TX_RESULT_CODES.put(407, "No data base connection");
+        TX_RESULT_CODES.put(500, "Internal server error");
+        TX_RESULT_CODES.put(501, "Transaction invalid");
+        TX_RESULT_CODES.put(502, "Transaction failed");
+        TX_RESULT_CODES.put(503, "Could not decode server response");
+    }
 
     // the MESSAGE_SEPARATOR_STRING must not contain any regex special character
     // because it is used in "split()" calls as "regex" argument.
@@ -29,20 +59,10 @@ public class Transaction {
     public final String type;
     public final String tablename;
     /**
-     * lock the transaction fpr synchronous operation. That will prevent retry, but return a failure
-     * after timeout
+     * record is an array of n "key;value" pairs, all entries csv encoded. They can just be appended to a csv-encoded
+     * String to build a valid transaction String.
      */
-    public volatile Boolean lock = false;
-    /**
-     * per transaction one event listener can be set which will be notified on transaction events.
-     * See the TxEventListener interface for the events available.
-     */
-    public Object sender = null;
-    /**
-     * The Strings within record are csv encoded: field;value. They can just be appended to a
-     * csv-encoded String.
-     */
-    protected final String[] record;
+    private final String[] record;
     // transaction result
     private int resultCode = 0;
     private String resultMessage = "";
@@ -51,177 +71,32 @@ public class Transaction {
     private String cresultMessage = "";
 
     /**
-     * Constructor. Creates the transaction and adds a new transaction ID.
+     * Parse the full transaction String as read from permanent storage. The reverse function to appendTxFullString();
      *
-     * @param ID     ID of transaction to be created. Set -1 to auto increment the ID
-     * @param type   type of transaction to be created
-     * @param record record data of the transaction to be created
+     * @return the transaction parsed. Returns null on errors.
      */
-    public Transaction(int ID, String type, String tablename, String[] record) {
-        this.ID = (ID == -1) ? TxRequestQueue.getTxId() : ID;
-        this.type = type;
-        this.tablename = tablename;
-        this.record = record;
-    }
-
-    /**
-     * Create an internet access request for the InternetAccessManager for a bundle of transaction
-     * messages.
-     *
-     * @param txs the transactions to be encoded.
-     * @return the properly formatted IAM message.
-     */
-    public static TaskManager.RequestMessage createIamRequest(Vector<Transaction> txs) {
-
-        if (txs == null || txs.size() == 0) return null;
-        char d = TxRequestQueue.TX_REQ_DELIMITER;
-        // Create the transaction container.
-        TxRequestQueue txq = TxRequestQueue.getInstance();
-        StringBuilder txContainer = new StringBuilder();
-        txContainer.append(TxRequestQueue.EFA_CLOUD_VERSION).append(d)
-                .append(TxRequestQueue.getTxcId()).append(d).append(txq.credentials);
-        for (Transaction tx : txs) {
-            Transaction.appendTxPostString(txContainer, tx);
-            txContainer.append(MESSAGE_SEPARATOR_STRING);
-        }
-        String txContainerStr = txContainer.toString();
-        txContainerStr = txContainerStr
-                .substring(0, txContainerStr.length() - MESSAGE_SEPARATOR_STRING.length());
-        // encode the transaction message container
-        String txContainerBase64;
-        txContainerBase64 = Base64.getEncoder()
-                .encodeToString(txContainerStr.getBytes(StandardCharsets.UTF_8));
-
-        // create the txContainerBase64efa which needs no further URL encoding.
-        String txContainerBase64efa = txContainerBase64.replace('/', '-').replace('+', '*')
-                .replace('=', '_');
-        // send it to the internet access manager.
-        String postURLplus = txq.efaCloudUrl + "?txc=" + txContainerBase64efa;
-        // For the InternetAccessManager semantics of a RequestMessage, see InternetAccessManager
-        // class information.
-        return new TaskManager.RequestMessage(postURLplus, "",
-                InternetAccessManager.TYPE_POST_PARAMETERS, 0.0, txq);
-    }
-
-    /**
-     * Append a transaction record to the provided StringBuilder.
-     *
-     * @param toAppendTo StringBuilder to append the transaction to
-     * @param tx         transaction for which the record shall be appended.
-     */
-    private static void appendTxRecord(StringBuilder toAppendTo, Transaction tx) {
-        char d = TxRequestQueue.TX_REQ_DELIMITER;
-        int k = 0;
-        for (String r : tx.record) {   // request record
-            // cut value to max length.
-            ArrayList<String> fnv = CsvCodec.splitEntries(r);
-            String field = fnv.get(0);
-            String value;
-            if (fnv.size() < 2) value = "";
-            else value = fnv.get(1);
-            // cut the value to the maximum length for data write transactions
-            if (tx.type.equalsIgnoreCase("insert") || tx.type.equalsIgnoreCase("update"))
-                value = Daten.tableBuilder.adjustForEfaCloudStorage(value, tx.tablename, field);
-            // ensure the message separator String will not be contained.
-            if (value != null && value.contains(Transaction.MESSAGE_SEPARATOR_STRING)) value = value
-                    .replace(Transaction.MESSAGE_SEPARATOR_STRING,
-                            Transaction.MS_REPLACEMENT_STRING);
-            // append value
-            toAppendTo.append(field).append(";").append(CsvCodec
-                    .encodeElement(value, CsvCodec.DEFAULT_DELIMITER, CsvCodec.DEFAULT_QUOTATION));
-            // do not add a delimiter at the very end.
-            k++;
-            if (k < tx.record.length) toAppendTo.append(d);
-        }
-    }
-
-    /**
-     * append the full transaction String to the provided StringBuilder.
-     *
-     * @param toAppendTo StringBuilder to append the transaction to
-     * @param tx         transaction to append
-     */
-    private static void appendTxPostString(StringBuilder toAppendTo, Transaction tx) {
-        char d = TxRequestQueue.TX_REQ_DELIMITER;
-        // Request header
-        toAppendTo.append(tx.ID).append(d)        //
-                .append(tx.retries).append(d)     //
-                .append(tx.type).append(d)        //
-                .append(tx.tablename).append(d);  //
-        // Request record
-        appendTxRecord(toAppendTo, tx);
-    }
-
-    /**
-     * append the full transaction String to the provided StringBuilder.
-     *
-     * @param toAppendTo StringBuilder to append the transaction to
-     * @param tx         transaction to append
-     */
-    private static void appendFullTxString(StringBuilder toAppendTo, Transaction tx) {
-        char d = CsvCodec.DEFAULT_DELIMITER;
-        // Request header
-        toAppendTo.append(tx.ID).append(d)        //
-                .append(tx.sentAt).append(d)      // transaction control, all numeric.
-                .append(tx.retries).append(d)     //
-                .append(tx.resultAt).append(d)    //
-                .append(tx.closedAt).append(d)    //
-                .append(tx.type).append(d)        // the remainder of the request header.
-                .append(tx.tablename).append(d);  //
-        // Request record
-        appendTxRecord(toAppendTo, tx);
-        // Request result
-        toAppendTo.append(d).append(tx.resultCode).append(d)  // result code
-                .append(CsvCodec.encodeElement(tx.resultMessage, d,
-                        CsvCodec.DEFAULT_QUOTATION));  // and result message.
-    }
-
-    /**
-     * Get the full transaction String for permanent storage in the retry queue.
-     *
-     * @return full transaction String: ID/retries, type, parameters. 'csv'-encoded using the
-     * URL_DELIMITER and URL_QUOTATION
-     */
-    protected String getFullTxString() {
-        StringBuilder toAppendTo = new StringBuilder();
-        appendFullTxString(toAppendTo, this);
-        return toAppendTo.toString();
-    }
-
-    /**
-     * Get the full transaction String for permanent storage in the retry queue.
-     *
-     * @return full transaction String: ID/retries, type, parameters. 'csv'-encoded using the
-     * URL_DELIMITER and URL_QUOTATION
-     */
-    protected static Transaction parseFullTxString(String txString) {
-        Transaction tx;
+    static Transaction parseTxFullString(String txFullString) {
+        if (txFullString.trim().isEmpty())
+            return null;
+        Transaction tx = null;
         try {
             // Parse csv-String. Returns all decoded elements.
-            ArrayList<String> txParts = CsvCodec.splitEntries(txString);
-            // Parse elements. Sequence of read (parseFullTxString) and write (appendFullTxString)
-            // must be the same.
-            int ID = Integer.parseInt(txParts.get(0));
-            long sentAt = Long.parseLong(txParts.get(1));
-            int retries = Integer.parseInt(txParts.get(2));
-            long resultAt = Long.parseLong(txParts.get(3));
-            long closedAt = Long.parseLong(txParts.get(4));
-            String type = txParts.get(5);
-            String tablename = txParts.get(6);
-            // read the record. The record elements are csv encoded. They can just be appended to
-            // a csv-encoded transaction message String
-            ArrayList<String> record = new ArrayList<>();
-            for (int i = 7; i < txParts.size() - 2; i = i + 2)
-                record.add(txParts.get(i) + ";" + CsvCodec
-                        .encodeElement(txParts.get(i + 1), CsvCodec.DEFAULT_DELIMITER,
-                                CsvCodec.DEFAULT_QUOTATION));
-            String[] rArray = new String[record.size()];
-            for (int i = 0; i < record.size(); i++) rArray[i] = record.get(i);
+            ArrayList<String> txElements = CsvCodec.splitEntries(txFullString);
+            // Parse elements.
+            int ID = Integer.parseInt(txElements.get(0));
+            long sentAt = Long.parseLong(txElements.get(1));
+            int retries = Integer.parseInt(txElements.get(2));
+            long resultAt = Long.parseLong(txElements.get(3));
+            long closedAt = Long.parseLong(txElements.get(4));
+            String type = txElements.get(5);
+            String tablename = txElements.get(6);
+            // parse the record
+            String[] record = parseTxRecordString(txElements);
             // add the result. The result code and result message are always the last two elements.
-            int resultCode = Integer.parseInt(txParts.get(txParts.size() - 2));
-            String resultMessage = txParts.get(txParts.size() - 1);
+            int resultCode = Integer.parseInt(txElements.get(txElements.size() - 2));
+            String resultMessage = txElements.get(txElements.size() - 1);
             // Build the transaction
-            tx = new Transaction(ID, type, tablename, rArray);
+            tx = new Transaction(ID, type, tablename, record);
             tx.sentAt = sentAt;
             tx.retries = retries;
             tx.resultAt = resultAt;
@@ -229,47 +104,188 @@ public class Transaction {
             tx.resultCode = resultCode;
             tx.resultMessage = resultMessage;
         } catch (Exception e) {
-            String[] record = new String[]{"record;lost"};
-            tx = new Transaction(0, "nop", "ignored", record);
-            tx.resultCode = 500;
-            tx.resultMessage =
-                    "Message could not be retrieved from permanent message queue. It's " +
-                            "contents is lost.";
+            Logger.log(Logger.ERROR, Logger.MSG_EFACLOUDSYNCH_ERROR, International
+                    .getString("Fehler beim Lesen einer Transaktion vom permanenten Speicher: '{transaction}'",
+                            txFullString));
         }
         // return result
         return tx;
     }
 
     /**
-     * Append the transaction to the pending queue and return only after a response was received.
+     * Parse the record part of a full transaction String as read from permanent storage. The reverse function to
+     * appendTxRecordString();
+     *
+     * @param txFullStringElements the fullString split into elements using the csv-parser
+     * @return the record as used by the transaction constructor.
      */
-    public synchronized void executeSynchronously(TxRequestQueue txq) {
-        lock = true;
-        long startAt = System.currentTimeMillis();
-        long timeOut = (InternetAccessManager.TIME_OUT_MONITOR_PERIODS + 1) * InternetAccessManager.MONITOR_PERIOD;
-        txq.appendTransactionPending(this);
-        while (lock && (System.currentTimeMillis() - startAt) < timeOut) try {
-            // wait at least one retry cycle.
-            wait((InternetAccessManager.TIME_OUT_MONITOR_PERIODS + 1) * InternetAccessManager.MONITOR_PERIOD);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
+    private static String[] parseTxRecordString(ArrayList<String> txFullStringElements) {
+        // read the record as the inner elements of the transaction
+        final int recordStartOffset = 7;  // The first 7 elements are the transaction header fields.
+        ArrayList<String> record = new ArrayList<>();
+        for (int i = recordStartOffset; i < txFullStringElements.size() - 2; i = i + 2)
+            record.add(txFullStringElements.get(i) + ";" +
+                    CsvCodec.encodeElement(txFullStringElements.get(i + 1), CsvCodec.DEFAULT_DELIMITER,
+                            CsvCodec.DEFAULT_QUOTATION));
+        String[] rArray = new String[record.size()];
+        for (int i = 0; i < record.size(); i++)
+            rArray[i] = record.get(i);
+        return rArray;
+    }
+
+    /**
+     * Create an internet access request for the InternetAccessManager for a bundle of transaction messages.
+     *
+     * @param txs the transactions to be encoded.
+     * @return the properly formatted IAM message.
+     */
+    static TaskManager.RequestMessage createIamRequest(Vector<Transaction> txs) {
+
+        if (txs == null || txs.size() == 0)
+            return null;
+        char d = TxRequestQueue.TX_REQ_DELIMITER;
+        // Create the transaction container.
+        TxRequestQueue txq = TxRequestQueue.getInstance();
+        StringBuilder txContainer = new StringBuilder();
+        txContainer.append(TxRequestQueue.EFA_CLOUD_VERSION).append(d).append(TxRequestQueue.getTxcId()).append(d)
+                .append(txq.credentials);
+        for (Transaction tx : txs) {
+            tx.appendTxPostString(txContainer);
+            tx.logMessage("send");
+            txContainer.append(MESSAGE_SEPARATOR_STRING);
         }
-        if ((System.currentTimeMillis() - startAt) > timeOut) {
-            // time out happened. Register event in transaction.
-            Logger.log(Logger.ERROR, Logger.MSG_EFACLOUDSYNCH_ERROR,
-                    "Timeout on synchronous transaction: " + this.toString());
-            this.resultCode = 408;
-            this.resultMessage = "Time out of synchronous transaction.";
-            this.resultAt = System.currentTimeMillis();
+        String txContainerStr = txContainer.toString();
+        txContainerStr = txContainerStr.substring(0, txContainerStr.length() - MESSAGE_SEPARATOR_STRING.length());
+        // encode the transaction message container
+        String txContainerBase64;
+        txContainerBase64 = Base64.getEncoder().encodeToString(txContainerStr.getBytes(StandardCharsets.UTF_8));
+
+        // create the txContainerBase64efa which needs no further URL encoding.
+        String txContainerBase64efa = txContainerBase64.replace('/', '-').replace('+', '*').replace('=', '_');
+        // send it to the internet access manager.
+        String postURLplus = txq.efaCloudUrl + "?txc=" + txContainerBase64efa;
+        // For the InternetAccessManager semantics of a RequestMessage, see InternetAccessManager
+        // class information.
+        return new TaskManager.RequestMessage(postURLplus, "", InternetAccessManager.TYPE_POST_PARAMETERS, 0.0, txq);
+    }
+
+    /**
+     * Constructor. Creates the transaction and adds a new transaction ID.
+     *
+     * @param ID     ID of transaction to be created. Set -1 to auto increment the ID
+     * @param type   type of transaction to be created
+     * @param record record data of the transaction to be created. An array of n "key;value" pairs, all entries csv
+     *               encoded. They can just be appended to a csv-encoded String to build a valid transaction String.
+     */
+    Transaction(int ID, String type, String tablename, String[] record) {
+        this.ID = (ID == -1) ? TxRequestQueue.getTxId() : ID;
+        this.type = type;
+        this.tablename = tablename;
+        this.record = record;
+    }
+
+    /**
+     * Append a log message to the synch log.
+     *
+     * @param action the action triggering the log activity
+     */
+    void logMessage(String action) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String transactionString = "#" + ID + ", " + type + " (record length: " + ((record == null) ? "null" : "" + record.length) + ")";
+        String dateString = format.format(new Date()) + " [" + action + " for " + tablename + "]: ";
+        TextResource.writeContents(TxRequestQueue.getInstance().apiActivityLogFilePath, dateString + transactionString, true);
+    }
+
+    /**
+     * Find out whether this transaction has a record
+     *
+     * @return true, if a record with al least one key;value - pair is contained in the transaction.
+     */
+    boolean hasRecord() {
+        return (this.record != null) && (this.record.length > 0);
+    }
+
+    /**
+     * <p>Compile a transaction String for permanent storage</p><p>Append the full transaction String including the
+     * record part to the provided StringBuilder. Use it to store a transaction to a file. Read it back with
+     * parseFullTxString().</p><p>The format is a csv String having as elements #1-#7 ID, sentAt, retries, resultAt,
+     * closedAt, type, tablename. The one before last and last elements are the result code and the result message.
+     * Inbetween those and element #7 there is an even set of elements representing the record as 'key;value'
+     * pairs.</p>
+     *
+     * @param toAppendTo StringBuilder to append the transaction to
+     */
+    void appendTxFullString(StringBuilder toAppendTo) {
+        char d = CsvCodec.DEFAULT_DELIMITER;
+        // append request header
+        toAppendTo.append(ID).append(d)        //
+                .append(sentAt).append(d)      // transaction control, all numeric.
+                .append(retries).append(d)     //
+                .append(resultAt).append(d)    //
+                .append(closedAt).append(d)    //
+                .append(type).append(d)        // the remainder of the request header.
+                .append(tablename);  //
+        // append request record, if available
+        if (hasRecord()) {
+            toAppendTo.append(d);
+            appendTxRecordString(toAppendTo);
+        }
+        // append request result
+        toAppendTo.append(d).append(resultCode).append(d)  // result code
+                .append(CsvCodec.encodeElement(resultMessage, d, CsvCodec.DEFAULT_QUOTATION));  // and result message.
+    }
+
+    /**
+     * append the full transaction String to the provided StringBuilder.
+     *
+     * @param toAppendTo StringBuilder to append the transaction to
+     */
+    private void appendTxPostString(StringBuilder toAppendTo) {
+        char d = TxRequestQueue.TX_REQ_DELIMITER;
+        // append request header
+        toAppendTo.append(ID).append(d)        //
+                .append(retries).append(d)     //
+                .append(type).append(d)        //
+                .append(tablename);  //  if no record is available there must be no dangling ';'
+        // append request record, if available
+        if (hasRecord()) {
+            toAppendTo.append(d);
+            appendTxRecordString(toAppendTo);
         }
     }
 
     /**
-     * Append the transaction to the pending queue and return only after a response was received.
+     * Append the transaction record to the provided StringBuilder. The end is a record value, no delimiter.
+     *
+     * @param toAppendTo StringBuilder to append the transaction to
      */
-    public synchronized void confirmExecution() {
-        lock = false;
-        notifyAll();
+    private void appendTxRecordString(StringBuilder toAppendTo) {
+        char d = TxRequestQueue.TX_REQ_DELIMITER;
+        int k = 0;
+        for (String r : record) {   // request record
+            if (!r.trim().isEmpty()) {
+                ArrayList<String> fnv = CsvCodec.splitEntries(r);
+                String field = fnv.get(0);
+                String value;
+                if (fnv.size() < 2)
+                    value = "";
+                else
+                    value = fnv.get(1);
+                // cut the value to the maximum length for data write transactions
+                if (type.equalsIgnoreCase("insert") || type.equalsIgnoreCase("update"))
+                    value = Daten.tableBuilder.adjustForEfaCloudStorage(value, tablename, field);
+                // ensure the message separator String will not be contained.
+                if (value != null && value.contains(Transaction.MESSAGE_SEPARATOR_STRING))
+                    value = value.replace(Transaction.MESSAGE_SEPARATOR_STRING, Transaction.MS_REPLACEMENT_STRING);
+                // append value
+                toAppendTo.append(field).append(";")
+                        .append(CsvCodec.encodeElement(value, CsvCodec.DEFAULT_DELIMITER, CsvCodec.DEFAULT_QUOTATION));
+                k++;
+                // do not add a delimiter at the very end.
+                if (k < record.length)
+                    toAppendTo.append(d);
+            }
+        }
     }
 
     /**
@@ -281,88 +297,60 @@ public class Transaction {
         return ID + ":" + type + " " + tablename;
     }
 
-    public long getSentAt() {
+    long getSentAt() {
         return sentAt;
     }
 
-    public int getResultCode() {
+    int getResultCode() {
         return resultCode;
     }
 
-    public String getResultMessage() {
+    String getResultMessage() {
         return resultMessage;
     }
 
-    public void setResultCode(int resultCode) {
+    void setResultCode(int resultCode) {
         this.resultCode = resultCode;
     }
 
-    public void setResultMessage(String resultMessage) {
+    void setResultMessage(String resultMessage) {
         this.resultMessage = resultMessage;
     }
 
-    public void setSentAt(long sentAt) { this.sentAt = sentAt; }
+    void setSentAt(long sentAt) {
+        this.sentAt = sentAt;
+    }
 
-    public long getRetries() {
+    long getRetries() {
         return retries;
     }
 
-    public void setRetries(long retries) {
+    void setRetries(long retries) {
         this.retries = retries;
     }
 
-    public void setResultAt(long resultAt) {
+    void setResultAt(long resultAt) {
         this.resultAt = resultAt;
     }
 
-    public long getResultAt() {
-        return resultAt;
-    }
-
-    public void setClosedAt(long closedAt) {
+    void setClosedAt(long closedAt) {
         this.closedAt = closedAt;
     }
 
-    public int getCresultCode() {
+    int getCresultCode() {
         return cresultCode;
     }
 
-    public void setCresultCode(int cresultCode) {
+    void setCresultCode(int cresultCode) {
         this.cresultCode = cresultCode;
     }
 
-    public String getCresultMessage() {
+    String getCresultMessage() {
         return cresultMessage;
     }
 
-    public void setCresultMessage(String cresultMessage) {
+    void setCresultMessage(String cresultMessage) {
         this.cresultMessage = cresultMessage;
     }
 
-    /**
-     * A compact container to keep the result of transactions in memory for statistics.
-     */
-    public static class TxReceipt {
-        public final int ID;
-        public final long sentAt;
-        public final long retries;
-        public final long resultAt;
-        public final long closedAt;
-        public final String type;
-        public final String tablename;
-        public final int resultCode;
-        public final Object sender;
-
-        TxReceipt(Transaction tx) {
-            this.ID = tx.ID;
-            this.sentAt = tx.sentAt;
-            this.retries = tx.retries;
-            this.resultAt = tx.resultAt;
-            this.closedAt = tx.closedAt;
-            this.type = tx.type;
-            this.tablename = tx.tablename;
-            this.resultCode = (tx.resultCode == 0) ? tx.cresultCode : tx.resultCode;
-            this.sender = tx.sender;
-        }
-    }
 }

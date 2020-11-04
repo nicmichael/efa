@@ -1,3 +1,13 @@
+/*
+ * <pre>
+ * Title:        efa - elektronisches Fahrtenbuch für Ruderer
+ * Copyright:    Copyright (c) 2001-2011 by Nicolas Michael
+ * Website:      http://efa.nmichael.de/
+ * License:      GNU General Public License v2
+ *
+ * @author Nicolas Michael, Martin Glade
+ * @version 2</pre>
+ */
 package de.nmichael.efa.data.efacloud;
 
 import java.io.*;
@@ -154,7 +164,7 @@ public class TextResource {
         aContentsList.add(aContents);
         OutputStream out;
         try {
-            out = new FileOutputStream(new File(filename), append);
+            out = new FileOutputStream(filename, append);
             return writeContents(out, aContentsList, "UTF-8", append, "\n");
         } catch (Exception e) {
             // e.printStackTrace();
