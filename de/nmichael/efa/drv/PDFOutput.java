@@ -50,6 +50,81 @@ public class PDFOutput {
         f.write("                    <fo:table-cell border=\"0.5pt #000000 solid\" padding-left=\"1pt\"><fo:block font-size=\"" + fontSize + "\">" + value + "</fo:block></fo:table-cell>\n");
         f.write("                  </fo:table-row>\n");
     }
+    
+    private static void writeTitlePageHeader(BufferedWriter f, EfaWett ew, String qnr, String title, boolean rechnung) throws IOException {
+        String header = EfaUtil.saveImage("DRV_Briefkopf_header.gif", "gif", Daten.efaTmpDirectory, true, true, true);
+        String footer = EfaUtil.saveImage("DRV_Briefkopf_footer.gif", "gif", Daten.efaTmpDirectory, true, true, true);
+        String fontSize = "10pt";
+
+        f.write("  <fo:page-sequence master-reference=\"titelseite\" force-page-count=\"no-force\">\n");
+
+        f.write("    <fo:static-content flow-name=\"xsl-region-before\" >\n");
+        f.write("        <fo:block>\n");
+        f.write("              <fo:external-graphic src=\"url('" + header + "')\" content-width=\"210mm\" content-height=\"42mm\" />\n");
+        f.write("        </fo:block>\n");
+        f.write("    </fo:static-content>\n");
+
+        f.write("    <fo:static-content flow-name=\"xsl-region-after\" >\n");
+        f.write("        <fo:block>\n");
+        f.write("              <fo:external-graphic src=\"url('" + footer + "')\" content-width=\"210mm\" content-height=\"50mm\" />\n");
+        f.write("        </fo:block>\n");
+        f.write("    </fo:static-content>\n");
+
+        f.write("    <fo:flow font-family=\"Helvetica\" font-size=\"" + fontSize + "\" flow-name=\"xsl-region-body\">\n");
+
+        f.write("      <fo:table>\n");
+        f.write("        <fo:table-column column-width=\"115mm\"/>\n");
+        f.write("        <fo:table-column column-width=\"45mm\"/>\n");
+        f.write("	 <fo:table-body>\n");
+        f.write("	   <fo:table-row>\n");
+        f.write("            <fo:table-cell height=\"50mm\">\n");
+        f.write("              <fo:block></fo:block>\n");
+        f.write("              <fo:block space-before=\"5mm\" font-size=\"7.5pt\">Deutscher Ruderverband, Ferdinand-Wilhelm-Fricke-Weg 10, 30169 Hannover</fo:block>\n");
+        f.write("              <fo:block space-before=\"5mm\">" + ew.versand_name + "</fo:block>\n");
+        if (ew.versand_zusatz != null && ew.versand_zusatz.trim().length() > 0) {
+            f.write("              <fo:block>" + ew.versand_zusatz + "</fo:block>\n");
+        }
+        f.write("              <fo:block>" + ew.versand_strasse + "</fo:block>\n");
+        f.write("              <fo:block>" + ew.versand_ort + "</fo:block>\n");
+        f.write("            </fo:table-cell>\n");
+        f.write("            <fo:table-cell height=\"50mm\">\n");
+        f.write("              <fo:block></fo:block>\n");
+        f.write("              <fo:block space-before=\"15mm\" font-size=\"7.5pt\">Fachressort Wanderrudern &amp; Breitensport</fo:block>\n");
+        f.write("              <fo:block space-before=\"5mm\" font-size=\"7.5pt\">" + EfaUtil.getCurrentTimeStampDD_MM_YYYY() + "</fo:block>\n");
+        f.write("            </fo:table-cell>\n");
+        f.write("	   </fo:table-row>\n");
+        f.write("	 </fo:table-body>\n");
+        f.write("      </fo:table>\n");
+
+        f.write("      <fo:block font-size=\"" + fontSize + "\" font-weight=\"bold\"  space-after=\"5mm\">" + title + "</fo:block>\n");
+
+        f.write("      <fo:table>\n");
+        f.write("        <fo:table-column column-width=\"50mm\"/>\n");
+        f.write("        <fo:table-column column-width=\"110mm\"/>\n");
+        f.write("	 <fo:table-body>\n");
+        f.write("	   <fo:table-row>\n");
+        f.write("            <fo:table-cell height=\"25mm\">\n");
+        f.write("               <fo:block font-size=\"" + fontSize + "\" font-weight=\"bold\">Verein:</fo:block>\n");
+        f.write("               <fo:block font-size=\"" + fontSize + "\" font-weight=\"bold\">Mitgliedsnummer:</fo:block>\n");
+        f.write("               <fo:block font-size=\"" + fontSize + "\" font-weight=\"bold\">" + (rechnung ? "Rechnungsnummer" : "Bestätigungsnummer") + ":</fo:block>\n");
+        f.write("            </fo:table-cell>\n");
+        f.write("            <fo:table-cell height=\"25mm\">\n");
+        f.write("               <fo:block font-size=\"" + fontSize + "\" font-weight=\"bold\">" + ew.verein_name + "</fo:block>\n");
+        f.write("               <fo:block font-size=\"" + fontSize + "\" font-weight=\"bold\">" + ew.verein_mitglnr + "</fo:block>\n");
+        f.write("               <fo:block font-size=\"" + fontSize + "\" font-weight=\"bold\">" + qnr + "</fo:block>\n");
+        f.write("            </fo:table-cell>\n");
+        f.write("	   </fo:table-row>\n");
+        f.write("	 </fo:table-body>\n");
+        f.write("      </fo:table>\n");
+    }
+
+    private static void writeTitlePageFooter(BufferedWriter f) throws IOException {
+        f.write("      <fo:block space-before=\"3mm\">Dieses Schriftstück wurde per EDV erstellt und ist daher ohne Unterschrift.</fo:block>\n");
+        f.write("      <fo:block space-before=\"3mm\">Mit freundlichen Grüßen,</fo:block>\n");
+        f.write("      <fo:block space-before=\"2mm\">Deutscher Ruderverband</fo:block>\n");
+        f.write("    </fo:flow>\n");
+        f.write("  </fo:page-sequence>\n");
+    }
 
     public static void printPDFbestaetigung(DRVConfig drvConfig, EfaWett ew, String qnr, int meldegeld,
             int gemeldet, int gewertet, int erwachsene, int jugendliche, ESigFahrtenhefte fh,
@@ -71,75 +146,15 @@ public class PDFOutput {
             f.write("    <fo:simple-page-master page-height=\"297mm\" page-width=\"210mm\" master-name=\"titelseite\">\n");
             f.write("      <fo:region-body margin-right=\"25mm\" margin-left=\"25mm\" margin-bottom=\"30mm\" margin-top=\"45mm\"/>\n");
             f.write("      <fo:region-before extent=\"42mm\" />\n");
-            f.write("      <fo:region-after extent=\"30mm\" />\n");
+            f.write("      <fo:region-after extent=\"50mm\" />\n");
             f.write("    </fo:simple-page-master>\n");
             f.write("    <fo:simple-page-master page-height=\"297mm\" page-width=\"210mm\" master-name=\"fahrtenhefte\">\n");
             f.write("      <fo:region-body margin-right=\"10mm\" margin-left=\"10mm\" margin-bottom=\"10mm\" margin-top=\"10mm\"/>\n");
             f.write("    </fo:simple-page-master>\n");
             f.write("  </fo:layout-master-set>\n");
 
-            f.write("  <fo:page-sequence master-reference=\"titelseite\" force-page-count=\"no-force\">\n");
-
-/*
-            f.write("    <fo:static-content flow-name=\"xsl-region-before\" >\n");
-            f.write("              <fo:external-graphic src=\"url('" + header + "')\" width=\"210mm\" height=\"42mm\" />\n");
-            f.write("    </fo:static-content>\n");
-
-            f.write("    <fo:static-content flow-name=\"xsl-region-after\" >\n");
-            f.write("              <fo:external-graphic src=\"url('" + footer + "')\" width=\"210mm\" height=\"30mm\" />\n");
-            f.write("    </fo:static-content>\n");
-*/
-            f.write("    <fo:static-content flow-name=\"xsl-region-before\" >\n");
-            f.write("        <fo:block>\n");
-            f.write("              <fo:external-graphic src=\"url('" + header + "')\" content-width=\"210mm\" content-height=\"42mm\" />\n");
-            f.write("        </fo:block>\n");
-            f.write("    </fo:static-content>\n");
-
-            f.write("    <fo:static-content flow-name=\"xsl-region-after\" >\n");
-            f.write("        <fo:block>\n");
-            f.write("              <fo:external-graphic src=\"url('" + footer + "')\" content-width=\"210mm\" content-height=\"30mm\" />\n");
-            f.write("        </fo:block>\n");
-            f.write("    </fo:static-content>\n");
-
-
-            f.write("    <fo:flow font-family=\"Helvetica\" font-size=\""+fontSize+"\" flow-name=\"xsl-region-body\">\n");
-
-            f.write("      <fo:table>\n");
-            f.write("          <fo:table-column column-width=\"160mm\"/>\n");
-            f.write("	       <fo:table-body>\n");
-            f.write("	         <fo:table-row>\n");
-            f.write("            <fo:table-cell height=\"60mm\">\n");
-            f.write("              <fo:block></fo:block>\n");
-            f.write("              <fo:block space-before=\"5mm\" font-size=\"7.5pt\">Deutscher Ruderverband, Ferdinand-Wilhelm-Fricke-Weg 10, 30169 Hannover</fo:block>\n");
-            f.write("              <fo:block space-before=\"5mm\">An</fo:block>\n");
-            f.write("              <fo:block>" + ew.versand_name + "</fo:block>\n");
-            if (ew.versand_zusatz != null && ew.versand_zusatz.trim().length() > 0) {
-                f.write("              <fo:block>" + ew.versand_zusatz + "</fo:block>\n");
-            }
-            f.write("              <fo:block>" + ew.versand_strasse + "</fo:block>\n");
-            f.write("              <fo:block>" + ew.versand_ort + "</fo:block>\n");
-            f.write("            </fo:table-cell>\n");
-            f.write("	         </fo:table-row>\n");
-            f.write("	       </fo:table-body>\n");
-            f.write("      </fo:table>\n");
-
-            f.write("      <fo:table>\n");
-            f.write("          <fo:table-column column-width=\"135mm\"/>\n");
-            f.write("          <fo:table-column column-width=\"25mm\"/>\n");
-            f.write("	       <fo:table-body>\n");
-            f.write("	         <fo:table-row>\n");
-            f.write("            <fo:table-cell height=\"25mm\">\n");
-            f.write("               <fo:block font-size=\""+fontSize+"\" font-weight=\"bold\"  space-before=\"5mm\">Meldung für das DRV-Fahrtenabzeichen " + drvConfig.aktJahr + "</fo:block>\n");
-            f.write("               <fo:block font-size=\""+fontSize+"\" font-weight=\"bold\">Verein: " + ew.verein_name + "</fo:block>\n");
-            f.write("               <fo:block font-size=\""+fontSize+"\" font-weight=\"bold\">Mitgliedsnummer: " + ew.verein_mitglnr + "</fo:block>\n");
-            f.write("               <fo:block font-size=\""+fontSize+"\" font-weight=\"bold\">Rechnungs- und Bestätigungsnummer: " + qnr + "</fo:block>\n");
-            f.write("            </fo:table-cell>\n");
-            f.write("            <fo:table-cell height=\"25mm\">\n");
-            f.write("               <fo:block font-size=\""+fontSize+"\">" + EfaUtil.getCurrentTimeStampDD_MM_YYYY() + "</fo:block>\n");
-            f.write("            </fo:table-cell>\n");
-            f.write("	         </fo:table-row>\n");
-            f.write("	       </fo:table-body>\n");
-            f.write("      </fo:table>\n");
+            // =============================== ANSCHREIBEN ===============================
+            writeTitlePageHeader(f, ew, qnr, "Bestätigung Ihrer Meldung für das DRV-Fahrtenabzeichen " + drvConfig.aktJahr, false);
 
             f.write("      <fo:block>Sehr geehrte Damen und Herren,</fo:block>\n");
             f.write("      <fo:block space-before=\"3mm\">zu der erfolgreichen Teilnahme " + (gewertet == 1 ? "Ihres Mitglieds" : "Ihrer Mitglieder")
@@ -183,7 +198,7 @@ public class PDFOutput {
                 f.write("            <fo:list-item-body start-indent=\"5mm\"><fo:block>eingesandte Papier-Fahrtenhefte (" + ew.drvint_anzahlPapierFahrtenhefte + " Hefte)</fo:block></fo:list-item-body>\n");
                 f.write("          </fo:list-item>\n");
             }
-            String s = "";
+            String nadelnText = "";
             int nadelnCount = EfaUtil.sumUpArray(EfaUtil.kommaList2IntArr(ew.drv_nadel_erw_gold, ',')) + EfaUtil.string2int(ew.drv_nadel_erw_silber, 0)
                     + EfaUtil.sumUpArray(EfaUtil.kommaList2IntArr(ew.drv_nadel_jug_gold, ',')) + EfaUtil.string2int(ew.drv_nadel_jug_silber, 0);
             if (nadelnCount > 0) {
@@ -217,28 +232,86 @@ public class PDFOutput {
                     f.write("            <fo:list-item-body start-indent=\"50mm\"><fo:block>" + ew.drv_nadel_jug_silber + "</fo:block></fo:list-item-body>\n");
                     f.write("          </fo:list-item>\n");
                 }
-                s = " und die bestellten Anstecknadeln";
+                nadelnText = " und die bestellten Anstecknadeln";
             }
             f.write("      </fo:list-block>\n");
 
-            f.write("      <fo:block space-before=\"3mm\">Für das Meldegeld" + s + " ergibt sich eine Summe in Höhe von " + EfaUtil.cent2euro(meldegeld, true)
-                    + " (Nettobetrag " + EfaUtil.cent2euro(netto, true) + " zzgl. " + EfaUtil.cent2euro(mwst, true) + " gesetzl. MwSt. 7% gem. § 12 Abs. 8 UStG). "
-                    + "Der Betrag ist innerhalb von 14 Tagen unter Angabe der Vereins-Nr., der Rechnungs-Nr. und dem Hinweis \"Fahrtenwettbewerb\" auf das Konto IBAN: DE06 2505 0180 0000 123862, BIC: SPKHDE2HXXX "
-                    + "der Sparkasse Hannover zu überweisen. Ist dies bereits erfolgt, betrachten Sie diese Rechnung als gegenstandslos. "
-                    + "Unsere UID lautet DE 115665464 / St.-Nr. 25/206/21626.</fo:block>\n");
-
-            f.write("      <fo:block space-before=\"3mm\">Bitte geben Sie diese Rechnung zwecks Bezahlung zeitnah an den Zuständigen in Ihrem Verein weiter. Danke.</fo:block>\n");
-            
             f.write("      <fo:block space-before=\"3mm\">Im Meldesystem efaWett (http://efa.rudern.de) liegen"
                     + " die elektronischen Fahrtenhefte für Sie zum Abruf bereit. Bitte laden Sie diese in efa herunter, "
                     + " da sie für die nächste elektronische Meldung benötigt werden "
                     + "(Administration - DRV-Fahrtenabzeichen - Bestätigungsdatei abrufen).</fo:block>\n");
 
-            f.write("      <fo:block space-before=\"3mm\">Dieses Schriftstück wurde per EDV erstellt und ist daher ohne Unterschrift.</fo:block>\n");
-            f.write("      <fo:block space-before=\"3mm\">Mit freundlichen Grüßen,</fo:block>\n");
-            f.write("      <fo:block space-before=\"2mm\">Deutscher Ruderverband</fo:block>\n");
-            f.write("    </fo:flow>\n");
-            f.write("  </fo:page-sequence>\n");
+            writeTitlePageFooter(f);
+
+            // =============================== RECHNUNG ===============================
+            writeTitlePageHeader(f, ew, qnr, "Rechnung zu Ihrer Meldung für das DRV-Fahrtenabzeichen " + drvConfig.aktJahr, true);
+
+            f.write("      <fo:block>Sehr geehrte Damen und Herren,</fo:block>\n");
+            f.write("      <fo:block space-before=\"3mm\">für Ihre Meldung zum Fahrtenwettbewerb " + drvConfig.aktJahr + " berechnen wir Ihnen nachfolgende Positionen:</fo:block>\n");
+
+            f.write("      <fo:list-block space-before=\"3mm\">\n");
+            f.write("          <fo:list-item>\n");
+            f.write("            <fo:list-item-label><fo:block>Gewertete Teilnehmer:</fo:block></fo:list-item-label>\n");
+            f.write("            <fo:list-item-body start-indent=\"50mm\"><fo:block>" + gewertet + "</fo:block></fo:list-item-body>\n");
+            f.write("          </fo:list-item>\n");
+            if (nadelnCount > 0) {
+                f.write("          <fo:list-item>\n");
+                f.write("            <fo:list-item-label><fo:block>Bestellte Anstecknadeln:</fo:block></fo:list-item-label>\n");
+                f.write("            <fo:list-item-body start-indent=\"50mm\"><fo:block>" + nadelnCount + "</fo:block></fo:list-item-body>\n");
+                f.write("          </fo:list-item>\n");
+                if (EfaUtil.sumUpArray(EfaUtil.kommaList2IntArr(ew.drv_nadel_erw_gold, ',')) > 0) {
+                    String abzeichenList = getAbzeichenList(ew.drv_nadel_erw_gold);
+                    f.write("          <fo:list-item>\n");
+                    f.write("            <fo:list-item-label start-indent=\"10mm\"><fo:block>Erwachsene (gold):</fo:block></fo:list-item-label>\n");
+                    f.write("            <fo:list-item-body start-indent=\"50mm\"><fo:block>" + abzeichenList + "</fo:block></fo:list-item-body>\n");
+                    f.write("          </fo:list-item>\n");
+                }
+                if (EfaUtil.string2int(ew.drv_nadel_erw_silber, 0) > 0) {
+                    f.write("          <fo:list-item>\n");
+                    f.write("            <fo:list-item-label start-indent=\"10mm\"><fo:block>Erwachsene (silber):</fo:block></fo:list-item-label>\n");
+                    f.write("            <fo:list-item-body start-indent=\"50mm\"><fo:block>" + ew.drv_nadel_erw_silber + "</fo:block></fo:list-item-body>\n");
+                    f.write("          </fo:list-item>\n");
+                }
+                if (EfaUtil.sumUpArray(EfaUtil.kommaList2IntArr(ew.drv_nadel_jug_gold, ',')) > 0) {
+                    String abzeichenList = getAbzeichenList(ew.drv_nadel_jug_gold);
+                    f.write("          <fo:list-item>\n");
+                    f.write("            <fo:list-item-label start-indent=\"10mm\"><fo:block>Jugend (gold):</fo:block></fo:list-item-label>\n");
+                    f.write("            <fo:list-item-body start-indent=\"50mm\"><fo:block>" + abzeichenList + "</fo:block></fo:list-item-body>\n");
+                    f.write("          </fo:list-item>\n");
+                }
+                if (EfaUtil.string2int(ew.drv_nadel_jug_silber, 0) > 0) {
+                    f.write("          <fo:list-item>\n");
+                    f.write("            <fo:list-item-label start-indent=\"10mm\"><fo:block>Jugend (silber):</fo:block></fo:list-item-label>\n");
+                    f.write("            <fo:list-item-body start-indent=\"50mm\"><fo:block>" + ew.drv_nadel_jug_silber + "</fo:block></fo:list-item-body>\n");
+                    f.write("          </fo:list-item>\n");
+                }
+            }
+            f.write("      </fo:list-block>\n");
+
+            f.write("      <fo:block space-before=\"3mm\">Für das Meldegeld" + nadelnText + " ergibt sich eine Summe in Höhe von " + EfaUtil.cent2euro(meldegeld, true)
+                    + " (Nettobetrag " + EfaUtil.cent2euro(netto, true) + " zzgl. " + EfaUtil.cent2euro(mwst, true) + " gesetzl. MwSt. 7% gem. § 12 Abs. 8 UStG). "
+                    + "Der Betrag ist innerhalb von 14 Tagen unter Angabe der Vereins-Nr., der Rechnungs-Nr. und dem Hinweis \"Fahrtenwettbewerb\" auf das Konto</fo:block>\n");
+            f.write("      <fo:list-block space-before=\"3mm\">\n");
+            f.write("          <fo:list-item>\n");
+            f.write("            <fo:list-item-label start-indent=\"10mm\"><fo:block>IBAN:</fo:block></fo:list-item-label>\n");
+            f.write("            <fo:list-item-body start-indent=\"22mm\"><fo:block>DE06 2505 0180 0000 123862</fo:block></fo:list-item-body>\n");
+            f.write("          </fo:list-item>\n");            
+            f.write("          <fo:list-item>\n");
+            f.write("            <fo:list-item-label start-indent=\"10mm\"><fo:block>BIC: </fo:block></fo:list-item-label>\n");
+            f.write("            <fo:list-item-body start-indent=\"22mm\"><fo:block>SPKHDE2HXXX</fo:block></fo:list-item-body>\n");
+            f.write("          </fo:list-item>\n");            
+            f.write("          <fo:list-item>\n");
+            f.write("            <fo:list-item-label start-indent=\"10mm\"><fo:block>Sparkasse Hannover</fo:block></fo:list-item-label>\n");
+            f.write("            <fo:list-item-body start-indent=\"22mm\"><fo:block></fo:block></fo:list-item-body>\n");
+            f.write("          </fo:list-item>\n");            
+            f.write("      </fo:list-block>\n");
+            f.write("      <fo:block space-before=\"3mm\">zu überweisen. Ist dies bereits erfolgt, betrachten Sie diese Rechnung als gegenstandslos.</fo:block>\n");
+
+            f.write("      <fo:block space-before=\"3mm\">Bitte geben Sie diese Rechnung zwecks Bezahlung zeitnah an den Zuständigen in Ihrem Verein weiter. Danke.</fo:block>\n");
+
+            writeTitlePageFooter(f);
+
+            // =============================== FAHRTENHEFTE ===============================
 
             f.write("  <fo:page-sequence initial-page-number=\"1\" master-reference=\"fahrtenhefte\">\n");
             f.write("    <fo:flow font-family=\"Helvetica\" font-size=\"11pt\" flow-name=\"xsl-region-body\">\n");

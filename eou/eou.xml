@@ -2,6 +2,17 @@
 <efaOnlineUpdate>
 
     <Version>
+        <VersionID>2.2.2_49</VersionID>
+        <ReleaseDate>14.11.2020</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa222.zip</DownloadUrl>
+        <DownloadSize>4338097</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Ermittlung der Zielfahrten fuer geaenderte Bestimmungen (Covid) korrigiert</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
         <VersionID>2.2.2_48</VersionID>
         <ReleaseDate>23.07.2020</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa222.zip</DownloadUrl>

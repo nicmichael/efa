@@ -2,6 +2,17 @@
 <efaOnlineUpdate>
 
     <Version>
+        <VersionID>2.2.2_49</VersionID>
+        <ReleaseDate>14.11.2020</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa2drv.zip</DownloadUrl>
+        <DownloadSize></DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Neu: Briefkopf/Anschreiben aktualisiert</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
         <VersionID>2.2.2_48</VersionID>
         <ReleaseDate>23.07.2020</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa2drv.zip</DownloadUrl>

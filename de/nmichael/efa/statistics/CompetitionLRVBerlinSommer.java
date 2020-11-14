@@ -74,14 +74,19 @@ public class CompetitionLRVBerlinSommer extends Competition {
     }
 
 // @ZF@
-    protected boolean zfErfuellt(Zielfahrt[] zf) {
-        if (zf == null || zf.length < 4 || zf[0] == null || zf[1] == null || zf[2] == null || zf[3] == null) {
+    protected boolean zfErfuellt(Zielfahrt[] zf, int erforderlicheZielfahrten) {
+        if (zf == null || zf.length < erforderlicheZielfahrten) {
             return false;
+        }
+        for (int i=0; i<erforderlicheZielfahrten; i++) {
+            if (zf[i] == null) {
+                return false;
+            }
         }
 
         // auf zu geringe Km und doppeltes Datum prüfen
         Vector datum = new Vector();
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < erforderlicheZielfahrten; i++) {
             if (EfaUtil.zehntelString2Int(zf[i].getKm()) < 200) {
                 return false;
             }
@@ -92,10 +97,31 @@ public class CompetitionLRVBerlinSommer extends Competition {
         }
 
         // Zielbereiche der einzelnen Fahrten in Arrays umwandeln
-        String[] zb0 = zf[0].getBereicheAsArray();
-        String[] zb1 = zf[1].getBereicheAsArray();
-        String[] zb2 = zf[2].getBereicheAsArray();
-        String[] zb3 = zf[3].getBereicheAsArray();
+        String[] zb0 = erforderlicheZielfahrten > 0 ? zf[0].getBereicheAsArray() : null;
+        String[] zb1 = erforderlicheZielfahrten > 1 ? zf[1].getBereicheAsArray() : null;
+        String[] zb2 = erforderlicheZielfahrten > 2 ? zf[2].getBereicheAsArray() : null;
+        String[] zb3 = erforderlicheZielfahrten > 3 ? zf[3].getBereicheAsArray() : null;
+
+        if (erforderlicheZielfahrten == 2) {
+            // hack for Covid
+            for (int b0 = 0; b0 < zb0.length; b0++) {
+                for (int b1 = 0; b1 < zb1.length; b1++) {
+                    Vector zbs = new Vector();
+                    if (!zbs.contains(zb0[b0])) {
+                        zbs.add(zb0[b0]);
+                    }
+                    if (!zbs.contains(zb1[b1])) {
+                        zbs.add(zb1[b1]);
+                    }
+                    if (zbs.size() == erforderlicheZielfahrten) {
+                        return true;
+                    }
+                }
+            }
+        }
+        if (erforderlicheZielfahrten != 4) {
+            return false; // not supported
+        }
 
         // wurden vier unterschiedliche Zielbereiche in je einer der Fahrten erreicht?
         for (int b0 = 0; b0 < zb0.length; b0++) {
@@ -115,7 +141,7 @@ public class CompetitionLRVBerlinSommer extends Competition {
                         if (!zbs.contains(zb3[b3])) {
                             zbs.add(zb3[b3]);
                         }
-                        if (zbs.size() == 4) {
+                        if (zbs.size() == erforderlicheZielfahrten) {
                             return true;
                         }
                     }
@@ -127,9 +153,21 @@ public class CompetitionLRVBerlinSommer extends Competition {
     }
 
 // @ZF@
-    protected Zielfahrt[] getBestZf(Vector zielfahrten) {
+    protected Zielfahrt[] getBestZf(Vector zielfahrten, int erforderlicheZielfahrten) {
         int size = zielfahrten.size();
-        if (size < 4) {
+        if (size < erforderlicheZielfahrten) {
+            return null;
+        }
+
+        // special case if we require less than 4 Zielfahrten (hack for Covid)
+        if (erforderlicheZielfahrten < 4) {
+            Zielfahrt[] zf = new Zielfahrt[erforderlicheZielfahrten];
+            for (int i=0; i<erforderlicheZielfahrten; i++) {
+                zf[i] = (Zielfahrt) zielfahrten.get(i);
+            }
+            if (zfErfuellt(zf, erforderlicheZielfahrten)) {
+                return zf;
+            }
             return null;
         }
 
@@ -143,7 +181,7 @@ public class CompetitionLRVBerlinSommer extends Competition {
                         zf[1] = (Zielfahrt) zielfahrten.get(f1);
                         zf[2] = (Zielfahrt) zielfahrten.get(f2);
                         zf[3] = (Zielfahrt) zielfahrten.get(f3);
-                        if (zfErfuellt(zf)) {
+                        if (zfErfuellt(zf, erforderlicheZielfahrten)) {
                             return zf;
                         }
                     }
@@ -195,6 +233,10 @@ public class CompetitionLRVBerlinSommer extends Competition {
         }
         sr.pTableColumns = null;
         WettDefGruppe[] gruppen = wett.gruppen;
+        int maxZielfahrten = 0;
+        for (int g=0; g<gruppen.length; g++) {
+            maxZielfahrten = Math.max(gruppen[g].zusatz, maxZielfahrten);
+        }
         int jahrgang;
         int anzInGruppe; // wievielter Ruderer in der Gruppe: die ersten 3 brauchen eine Adresse!
         long totalDistanceInDefaultUnit = 0;
@@ -204,7 +246,7 @@ public class CompetitionLRVBerlinSommer extends Competition {
         for (int i = 0; i < sd.length; i++) {
             // suche vier passende Zielfahrten
             sd[i].getAllDestinationAreas();
-            sd[i].bestDestinationAreas = getBestZf(sd[i].destinationAreaVector);
+            sd[i].bestDestinationAreas = getBestZf(sd[i].destinationAreaVector, maxZielfahrten);
             sd[i].additionalDestinationAreas = getAdditionalZf(sd[i].destinationAreaVector, sd[i].bestDestinationAreas);
         }
 
