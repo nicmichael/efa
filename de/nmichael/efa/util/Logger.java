@@ -21,8 +21,8 @@ public class Logger {
     private static final int LOGGING_THRESHOLD      = 1000; // max LOGGING_THRESHOLD logging messages per second
     private static final int LOGGING_THRESHOLD_ERR  = 100;  // max LOGGING_THRESHOLD logging messages per second
     private static final int LOGGING_CHECK_FILESIZE = 1000; // number of log messages after which to check file size
-    private static final int MAX_LOG_FILE_SIZE = 1048576*5; // max file size of log file before log rotate. 
-    														// 1M may be too small for big boat houses and many EFA_CLI calls. Updated to 5M. 
+    private static final int MAX_LOG_FILE_SIZE = 1048576*10; // max file size of log file before log rotate. 
+    														// 1M may be too small for big boat houses and many EFA_CLI calls. Updated to 10M. 
     														// efa will quit logging if a log file exceeds 10 times this size.
     
     private static final int MAX_LOGMSG_SIZE = 10*1024; // max. 10 Kb for log message
