@@ -11,6 +11,8 @@ import de.nmichael.efa.gui.util.TableItemHeader;
 
 public class BoatDamageItemTypeDataRecordTable extends ItemTypeDataRecordTable {
 
+	private Boolean showOpenDamagesOnly = true;
+	
 	public BoatDamageItemTypeDataRecordTable(String name, TableItemHeader[] tableHeader, StorageObject persistence,
 			long validAt, AdminRecord admin, String filterFieldName, String filterFieldValue, String[] actions,
 			int[] actionTypes, String[] actionIcons, IItemListenerDataRecordTable itemListenerActionTable, int type,
@@ -68,4 +70,24 @@ public class BoatDamageItemTypeDataRecordTable extends ItemTypeDataRecordTable {
 		}
 	}
 
+    protected boolean removeItemByCustomFilter(DataRecord theDataRecord) {
+
+    	if (this.showOpenDamagesOnly) {
+    		//item shall be removed if it is already fixed
+    		return ((BoatDamageRecord) theDataRecord).getFixed();//casting is safe here
+    	} else {
+    		return false;
+    	}
+    }
+	
+	public Boolean getShowOpenDamagesOnly() {
+		return showOpenDamagesOnly;
+	}
+
+	public void setShowOpenDamagesOnly(Boolean bShowOpenDamagesOnly) {
+		this.showOpenDamagesOnly = bShowOpenDamagesOnly;
+		// When the item is set, apply the filter...
+		updateData();
+		showValue(); //updateData alone won't suffice
+	}
 }

@@ -621,13 +621,17 @@ public class ItemTypeDataRecordTable extends ItemTypeTable implements IItemListe
                     }
                 }
                 if (r != null && (!r.getDeleted() || showDeleted)) {
-                    if (filterFieldName == null || filterFieldValue == null
-                            || filterFieldValue.equals(r.getAsString(filterFieldName))) {
-                    	// Check if field content matches to the searchtext. Also, check if the entry matches for a certain date.
-                    	if (filterByAnyText == null || r.getAllFieldsAsSeparatedText().toLowerCase().indexOf(filterByAnyText) >= 0 || filterFromToAppliesToDate(r, filterByAnyText)) {
-                            data.add(r);
-                        }
-                    }
+
+                	if (!removeItemByCustomFilter(r)) {
+                	
+	                    if (filterFieldName == null || filterFieldValue == null
+	                            || filterFieldValue.equals(r.getAsString(filterFieldName))) {
+	                    	// Check if field content matches to the searchtext. Also, check if the entry matches for a certain date.
+	                    	if (filterByAnyText == null || r.getAllFieldsAsSeparatedText().toLowerCase().indexOf(filterByAnyText) >= 0 || filterFromToAppliesToDate(r, filterByAnyText)) {
+	                            data.add(r);
+	                        }
+	                    }
+                	}
                 }
                 key = it.getNext();
             }
@@ -648,7 +652,23 @@ public class ItemTypeDataRecordTable extends ItemTypeTable implements IItemListe
     protected boolean filterFromToAppliesToDate(DataRecord theDataRecord, String filterValue) {
     	return false;
     }
-        
+
+    /**
+     * Use this function to remove items from the table by using custom filters which apply
+     * to the special record type.
+     * 
+     * How to apply custom filters to itemTypeDataRecordTable:
+     * - modify the specialized class of DataListDialog.java to add a control panel above the table. 
+     *   The actionlistener shall then set a dedicated attribute in the specialized class of ItemTypeDataRecordTable.
+     * - override this function in the specialized class of ItemTypeDataRecordTable.
+     * 
+     * @param theDataRecord
+     * @return
+     */
+    protected boolean removeItemByCustomFilter(DataRecord theDataRecord) {
+    	return false;
+    }
+    
     public void actionPerformed(ActionEvent e) {
         itemListenerAction(this, e);
     }
