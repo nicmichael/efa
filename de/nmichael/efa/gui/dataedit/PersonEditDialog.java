@@ -52,7 +52,7 @@ public class PersonEditDialog extends VersionizedDataEditDialog implements IItem
             setPromptToEnterValidity(false);
             allowConflicts = false;
         }
-        if (!admin.isAllowedEditPersons()) {
+        if (admin != null && !admin.isAllowedEditPersons()) {
             setForbidChanges();
         }
     }
