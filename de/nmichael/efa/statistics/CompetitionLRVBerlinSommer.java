@@ -118,6 +118,7 @@ public class CompetitionLRVBerlinSommer extends Competition {
                     }
                 }
             }
+            return false;
         }
         if (erforderlicheZielfahrten != 4) {
             return false; // not supported
@@ -162,11 +163,14 @@ public class CompetitionLRVBerlinSommer extends Competition {
         // special case if we require less than 4 Zielfahrten (hack for Covid)
         if (erforderlicheZielfahrten < 4) {
             Zielfahrt[] zf = new Zielfahrt[erforderlicheZielfahrten];
-            for (int i=0; i<erforderlicheZielfahrten; i++) {
-                zf[i] = (Zielfahrt) zielfahrten.get(i);
-            }
-            if (zfErfuellt(zf, erforderlicheZielfahrten)) {
-                return zf;
+            for (int i=0; i<size - 1; i++) {
+                for (int j=i+1; j<size; j++) {
+                    zf[0] = (Zielfahrt) zielfahrten.get(i);
+                    zf[1] = (Zielfahrt) zielfahrten.get(j);
+                    if (zfErfuellt(zf, erforderlicheZielfahrten)) {
+                        return zf;
+                    }
+                }
             }
             return null;
         }
