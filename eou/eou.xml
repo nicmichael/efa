@@ -2,6 +2,20 @@
 <efaOnlineUpdate>
 
     <Version>
+        <VersionID>2.2.2_51</VersionID>
+        <ReleaseDate>16.11.2020</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa222.zip</DownloadUrl>
+        <DownloadSize>4145485</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Fehler beim Anlegen einer Person als normaler Nutzer im Bootshaus-Modus behoben</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Exception when creating new persons as an ordinary user in boathouse mode fixed</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
         <VersionID>2.2.2_50</VersionID>
         <ReleaseDate>16.11.2020</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa222.zip</DownloadUrl>
