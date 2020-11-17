@@ -18,6 +18,7 @@ import java.util.EventObject;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.table.*;
+import de.nmichael.efa.Daten;
 
 public class Table extends JTable {
 
@@ -43,10 +44,27 @@ public class Table extends JTable {
         this.header = header;
         this.data = data;
 
+        if (Daten.efaConfig.getValueEfaDirekt_tabelleAlternierendeZeilenFarben()) {
+        	// Update for standard tables: Update for standard inverted cursor
+        	// only applied when using alternating row colors - otherwise the standard of the lookandfeel is used.
+	        this.setSelectionBackground(new Color(75,134,193));
+	        this.setSelectionForeground(Color.WHITE);
+        }
+        
+        // Update for standard tables: increase row height for better readability (depending on the tables font size)
+        Font f = this.getFont();
+        FontMetrics fm = this.getFontMetrics(f);
+        this.setRowHeight(fm.getHeight()+4);
+
         if (renderer == null) {
             renderer = new TableCellRenderer();
         }
         setDefaultRenderer(Object.class, renderer);
+        
+        // Update for standard tables: Replace default header renderer with bold+dark background renderer 
+        javax.swing.table.TableCellRenderer l_originalRenderer = this.getTableHeader().getDefaultRenderer();
+        this.getTableHeader().setDefaultRenderer(new TableHeaderCellRendererBold(l_originalRenderer));
+        
         this.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         if (allowSorting) {
             sorter.addMouseListenerToHeaderInTable(this);
@@ -248,8 +266,22 @@ public class Table extends JTable {
             if (toolTipsEnabled) {
                 int row = rowAtPoint(event.getPoint());
                 int col = columnAtPoint(event.getPoint());
-                return getValueAt(row, col).toString();
-            }
+				
+                // SGB Update for tables: Tooltipp shall be presented only if the value does not fit into row. 
+                if (col!=-1 && row !=-1) {
+					
+                	javax.swing.table.TableCellRenderer l_renderer = getCellRenderer(row, col);
+					Component l_component = prepareRenderer (l_renderer, row, col);
+					Rectangle l_cellRect=getCellRect(row, col, false);
+	
+					if (l_cellRect.width >= l_component.getPreferredSize().width) {
+						// do not show any tooltip if the column has enough space for the value
+						return null;
+					} else {
+						return getValueAt(row, col).toString();
+					}
+				}
+             }            
         } catch (Exception eignore) {
         }
         return null;
