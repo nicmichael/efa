@@ -2,6 +2,17 @@
 <efaOnlineUpdate>
 
     <Version>
+        <VersionID>2.2.2_50</VersionID>
+        <ReleaseDate>16.11.2020</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa222.zip</DownloadUrl>
+        <DownloadSize>4145426</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Fehlerhafte Uebermittlung von Zielfahrten fuer LRV-Sommer-Wettbebwerb 2020 (Covid) bei Meldung korrigiert</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
         <VersionID>2.2.2_49</VersionID>
         <ReleaseDate>14.11.2020</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa222.zip</DownloadUrl>
