@@ -2,6 +2,22 @@
 <efaOnlineUpdate>
 
     <Version>
+        <VersionID>2.2.2_52</VersionID>
+        <ReleaseDate>18.11.2020</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa222.zip</DownloadUrl>
+        <DownloadSize>4099451</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>New: efa ueberprueft regelmaessig, ob Java Version 8 oder neuer verwendet wird und warnt ggf.</ChangeItem>
+            <ChangeItem>Bugfix: Ueberfluessige .java Dateien aus efa.jar entfernt</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>New: efa checks periodically if Java version 8 or newer is being used and warns if not</ChangeItem>
+            <ChangeItem>Bugfix: Removed unnecessary .java files from efa.jar</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
         <VersionID>2.2.2_51</VersionID>
         <ReleaseDate>16.11.2020</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa222.zip</DownloadUrl>
