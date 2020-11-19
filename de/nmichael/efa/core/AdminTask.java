@@ -16,6 +16,7 @@ import de.nmichael.efa.data.Waters;
 import de.nmichael.efa.data.types.DataTypeDate;
 import de.nmichael.efa.gui.AdminDialog;
 import de.nmichael.efa.util.Dialog;
+import de.nmichael.efa.util.EfaUtil;
 import de.nmichael.efa.util.International;
 import de.nmichael.efa.util.Logger;
 import javax.swing.JDialog;
@@ -45,6 +46,9 @@ public class AdminTask extends Thread {
         Logger.log(Logger.DEBUG, Logger.MSG_CORE_ADMINTASK, "running AdminTask ...");
         // Actions to be implemented here!
         // For each action, check whether admin has necessary permissions.
+        if (admin.isAllowedUpdateEfa()) {
+            checkForJavaVersion();
+        }
         if (admin.isAllowedAdministerProjectClubwork()) {
             checkForClubworkCarryOver();
         }
@@ -89,6 +93,19 @@ public class AdminTask extends Thread {
         }
         task = new AdminTask(admin, dlg);
         task.start();
+    }
+
+    private void checkForJavaVersion() {
+        if (EfaUtil.stringFindInt(Daten.javaVersion, 0) < Daten.REQUIRED_JAVA_VERSION) {
+            long lastCheck = System.currentTimeMillis() - Daten.efaConfig.getValueJavaVersionLastCheck();
+            if (lastCheck > 7 * 24 * 60 * 60 * 1000) {
+                Dialog.infoDialog(International.getString("Java Update erforderlich"),
+                    International.getMessage("Die verwendete Java Version {version} ist zu alt und wird demnächst nicht mehr unterstützt.", Daten.javaVersion) + "\n" +
+                    International.getMessage("Um efa auch in Zukunft weiter verwenden zu können, installiere bitte Java Version {version} oder neuer.", Daten.REQUIRED_JAVA_VERSION) + "\n" +
+                    International.getString("Weitere Informationen auf http://efa.nmichael.de/download.html"));
+                Daten.efaConfig.setValueJavaVersionLastCheck(System.currentTimeMillis());
+            }
+        }
     }
 
     private void checkForClubworkCarryOver() {

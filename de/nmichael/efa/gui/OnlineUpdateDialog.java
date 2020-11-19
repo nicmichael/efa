@@ -179,7 +179,11 @@ public class OnlineUpdateDialog extends BaseDialog {
         s.append(International.getString("Sportarten") + ": " +
                 (Daten.efaConfig.getValueUseFunctionalityRowing() ? International.getString("Rudern") : "") + " " +
                 (Daten.efaConfig.getValueUseFunctionalityCanoeing() ? International.getString("Kanu") : "") + "\n");
-        s.append(International.getString("Version") + ": " + newVersionName + "\n");
+        s.append(International.getString("efa Version") + ": " + newVersionName + "\n");
+        if (Daten.EFALIVE_VERSION != null) {
+            s.append(International.getString("efaLive Version") + ": " + Daten.EFALIVE_VERSION + "\n");
+        }
+        s.append(International.getString("Java Version") + ": " + Daten.javaVersion + "\n");
         if (Daten.applID == Daten.APPL_EFABH || Daten.EFALIVE_VERSION != null) {
             s.append(International.getString("Verwendung") + ": " +
                     (Daten.applID == Daten.APPL_EFABH ? International.getString("efa-Bootshaus") : "") + " " +
@@ -204,7 +208,10 @@ public class OnlineUpdateDialog extends BaseDialog {
             OutputStreamWriter out = new OutputStreamWriter(connection.getOutputStream());
             out.write("subject=User efa - " + newVersionName + " (Online-Update)" +
                     "&comments=" + URLEncoder.encode(infos, "ISO-8859-1") +
-                    "&club=" + URLEncoder.encode(Daten.project.getClubName(), "ISO-8859-1"));
+                    "&club=" + URLEncoder.encode(Daten.project.getClubName(), "ISO-8859-1") +
+                    "&efa.version=" + URLEncoder.encode(newVersionName, "ISO-8859-1") +
+                    (Daten.EFALIVE_VERSION != null ? "&efalive.version=" + URLEncoder.encode(Daten.EFALIVE_VERSION, "ISO-8859-1") : "") +
+                    "&java.version=" + URLEncoder.encode(Daten.javaVersion, "ISO-8859-1"));
             out.flush();
             out.close();
             InputStream in = new BufferedInputStream(connection.getInputStream());
