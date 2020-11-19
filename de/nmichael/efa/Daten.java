@@ -47,6 +47,7 @@ public class Daten {
     public final static String PROGRAMMID         = "EFA.222"; // Versions-ID für Wettbewerbsmeldungen
     public final static String PROGRAMMID_DRV     = "EFADRV.222"; // Versions-ID für Wettbewerbsmeldungen
     public final static String COPYRIGHTYEAR      = "20";   // aktuelles Jahr (Copyright (c) 2001-COPYRIGHTYEAR)
+    public final static int REQUIRED_JAVA_VERSION = 8;
 
     // enable/disable development functions for next version
     public static final boolean NEW_FEATURES = false;
