@@ -188,6 +188,9 @@ public class TaskManager {
         public final double value;
         public final Object sender;
         public final RunControl runControl;
+        public final long created;
+        public long started;
+        public long completed;
 
         /**
          * Constructor. Interpretation of the "values to be used by the invoked method" please
@@ -208,6 +211,7 @@ public class TaskManager {
             this.value = value;
             this.sender = sender;
             this.runControl = new RunControl();
+            this.created = System.currentTimeMillis();
         }
 
         @Override

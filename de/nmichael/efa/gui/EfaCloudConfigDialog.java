@@ -33,11 +33,10 @@ import java.util.Vector;
 public class EfaCloudConfigDialog extends BaseTabbedDialog implements IItemListener {
 
     private static final String ACTIVATION_INFO = "ACTIVATION_INFO";
-    private static final String BUTTON_EFACLOUD_ACTIVATE = "BUTTON_EFACLOUD_DEACTIVATE";
+    private static final String BUTTON_EFACLOUD_ACTIVATE = "BUTTON_EFACLOUD_ACTIVATE";
     private static final String BUTTON_EFACLOUD_DEACTIVATE = "BUTTON_EFACLOUD_DEACTIVATE";
     private static final String BUTTON_EFACLOUD_START = "BUTTON_EFACLOUD_START";
     private static final String BUTTON_EFACLOUD_SYNCH_UPLOAD = "BUTTON_EFACLOUD_SYNCH_UPLOAD";
-    private static final String BUTTON_EFACLOUD_SYNCH_DOWNLOAD = "BUTTON_EFACLOUD_SYNCH_DOWNLOAD";
     private static final String BUTTON_EFACLOUD_PAUSE = "BUTTON_EFACLOUD_PAUSE";
     private static final String BUTTON_EFACLOUD_DELETE = "BUTTON_EFACLOUD_DELETE";
 
@@ -83,7 +82,7 @@ public class EfaCloudConfigDialog extends BaseTabbedDialog implements IItemListe
         String advice = (isEfaRemote) ? International
                 .getString("Für efaRemote kann der efaCloud-Modus nicht aktiviert werden.") : (isXML) ?
                 International.getString("Aktuelles Projekt auf efaCloud umstellen.") + "\n" : International
-                .getMessage("Efacloud Server Kommunikation steuern. Aktueller Status: {state}", queueState) + "\n";
+                .getMessage("Efacloud Server Kommunikation steuern.\nAktueller Status: {state}", queueState) + "\n";
         category = "%01%" + International.getString("Efacloud Optionen");
         guiItems.add(item = new ItemTypeLabel(ACTIVATION_INFO, IItemType.TYPE_PUBLIC, category, advice));
         item.setPadding(0, 0, 20, 20);
@@ -141,13 +140,6 @@ public class EfaCloudConfigDialog extends BaseTabbedDialog implements IItemListe
                     item.setPadding(0, 0, 20, 20);
                     item.registerItemListener(this);
                     item.setFieldGrid(2, GridBagConstraints.CENTER, GridBagConstraints.NONE);
-                    // manual download synchronization
-                    guiItems.add(item = new ItemTypeButton(BUTTON_EFACLOUD_SYNCH_DOWNLOAD, IItemType.TYPE_PUBLIC, category,
-                            International.getString(International.getString("Download Synchronisation starten"))));
-                    ((ItemTypeButton) item).setIcon(getIcon(IMAGE_EFACLOUD_SYNCH));
-                    item.setPadding(0, 0, 20, 20);
-                    item.registerItemListener(this);
-                    item.setFieldGrid(2, GridBagConstraints.CENTER, GridBagConstraints.NONE);
                     // server side table rebuild
                     String warning = International.getString("Datenbank auf dem Server initialisieren.") + "\n" +
                             International.getString("LÖSCHT ALLE DATEN AUF DEM EFACLOUD SERVER.") + "\n" +
@@ -178,16 +170,6 @@ public class EfaCloudConfigDialog extends BaseTabbedDialog implements IItemListe
                     item.setPadding(0, 0, 20, 20);
                     item.registerItemListener(this);
                     item.setFieldGrid(2, GridBagConstraints.SOUTH, GridBagConstraints.NONE);
-                }
-                // If the queue is stooped the options are resume
-                else if (state == TxRequestQueue.QUEUE_IS_STOPPED) {
-                    // Resume
-                    guiItems.add(item = new ItemTypeButton(BUTTON_EFACLOUD_START, IItemType.TYPE_PUBLIC, category,
-                            International.getString(International.getString("Kommunikation aufnehmen"))));
-                    ((ItemTypeButton) item).setIcon(getIcon(IMAGE_EFACLOUD_START));
-                    item.setPadding(0, 0, 20, 20);
-                    item.registerItemListener(this);
-                    item.setFieldGrid(2, GridBagConstraints.NORTH, GridBagConstraints.NONE);
                 }
                 // any other state. No options to control provided.
                 else {
@@ -273,7 +255,7 @@ public class EfaCloudConfigDialog extends BaseTabbedDialog implements IItemListe
                         TxRequestQueue txq = TxRequestQueue.getInstance();
                         if (txq != null) {
                             txq.clearAllQueues();
-                            txq.requestStateChange(TxRequestQueue.RQ_QUEUE_AUTHENTICATE);
+                            txq.registerStateChangeRequest(TxRequestQueue.RQ_QUEUE_AUTHENTICATE);
                         }
                     } catch (EfaException e) {
                         de.nmichael.efa.util.Dialog.error(LogString
@@ -288,15 +270,13 @@ public class EfaCloudConfigDialog extends BaseTabbedDialog implements IItemListe
                 if (itemType.getName().equalsIgnoreCase(BUTTON_EFACLOUD_DEACTIVATE)) {
                     deactivateEfacloud();
                 } else if (itemType.getName().equalsIgnoreCase(BUTTON_EFACLOUD_DELETE)) {
-                    Daten.tableBuilder.initAllServerTables();
+                    txq.registerStateChangeRequest(TxRequestQueue.RQ_QUEUE_START_SYNCH_DELETE);
                 } else if (itemType.getName().equalsIgnoreCase(BUTTON_EFACLOUD_START)) {
-                    txq.requestStateChange(TxRequestQueue.RQ_QUEUE_AUTHENTICATE);
+                    txq.registerStateChangeRequest(TxRequestQueue.RQ_QUEUE_START);
                 } else if (itemType.getName().equalsIgnoreCase(BUTTON_EFACLOUD_PAUSE)) {
-                    txq.requestStateChange(TxRequestQueue.RQ_QUEUE_PAUSE);
+                    txq.registerStateChangeRequest(TxRequestQueue.RQ_QUEUE_PAUSE);
                 } else if (itemType.getName().equalsIgnoreCase(BUTTON_EFACLOUD_SYNCH_UPLOAD)) {
-                    txq.requestStateChange(TxRequestQueue.RQ_QUEUE_START_SYNCH_UPLOAD);
-                } else if (itemType.getName().equalsIgnoreCase(BUTTON_EFACLOUD_SYNCH_DOWNLOAD)) {
-                    txq.requestStateChange(TxRequestQueue.RQ_QUEUE_START_SYNCH_DOWNLOAD);
+                    txq.registerStateChangeRequest(TxRequestQueue.RQ_QUEUE_START_SYNCH_UPLOAD);
                 }
             }
             this.dispose();

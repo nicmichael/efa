@@ -34,7 +34,7 @@ public class TableBuilder {
     static {
         // Note to length definitions: limiting are the Logbook and Statistics tables, which hit
         // the 65k row length limitation of MySQL. Therefore "DATA_STRING" is only 192 characters
-        // and DATA_LIST_STRING not more than "1536". The table statistics has then only 4.400
+        // and DATA_LIST_STRING not more than "1480". The table statistics has then only 4.400
         // characters left. Entries are cut as soon as they reach the limit - 2 characters.
         datatypeDefaults.put(IDataAccess.DATA_BOOLEAN, "Varchar(12) NULL DEFAULT NULL"); // true, false
         datatypeDefaults.put(IDataAccess.DATA_DATE, "Date NULL DEFAULT NULL");
@@ -44,7 +44,7 @@ public class TableBuilder {
         datatypeDefaults.put(IDataAccess.DATA_INTEGER, "Int NULL DEFAULT NULL");
         datatypeDefaults.put(IDataAccess.DATA_INTSTRING, "Varchar(64) NULL DEFAULT NULL");
         datatypeDefaults.put(IDataAccess.DATA_LIST_INTEGER, "Varchar(192) NULL DEFAULT NULL");
-        datatypeDefaults.put(IDataAccess.DATA_LIST_STRING, "Varchar(1536) NULL DEFAULT NULL");  // see above
+        datatypeDefaults.put(IDataAccess.DATA_LIST_STRING, "Varchar(1480) NULL DEFAULT NULL");  // see above
         datatypeDefaults.put(IDataAccess.DATA_LIST_UUID, "Varchar(1024) NULL DEFAULT NULL");
         datatypeDefaults.put(IDataAccess.DATA_LONGINT, "BigInt NULL DEFAULT NULL");
         datatypeDefaults.put(IDataAccess.DATA_PASSWORDC, "Varchar(256) NULL DEFAULT NULL");
@@ -106,77 +106,77 @@ public class TableBuilder {
     private static final String[] efa2fieldSpecialDefinitions = new String[]{ //
             // autoincrement fields. They are also unique which is ensured programmatically to
             // secure the unique setting if before the autoincrement setting.
-            "Logbook;$AUTOINCREMENT;;EntryId",   //
-            "Messages;$AUTOINCREMENT;;MessageId",   //
+            "efa2logbook;$AUTOINCREMENT;;EntryId",   //
+            "efa2messages;$AUTOINCREMENT;;MessageId",   //
 
             // unique fields
-            "AutoIncrement;$UNIQUE;;Sequence",   //
-            "BoatStatus;$UNIQUE;;BoatId",   //
-            "Clubwork;$UNIQUE;;Id",   //
-            "Crews;$UNIQUE;;Id",   //
-            "Fahrtenabzeichen;$UNIQUE;;PersonId",   //
-            "Project;$UNIQUE;;Type",   //
-            "SessionGroups;$UNIQUE;;Id",   //
-            "Statistics;$UNIQUE;;Id",   //
-            "Status;$UNIQUE;;Id",   //
-            "Waters;$UNIQUE;;Id",   //
+            "efa2autoincrement;$UNIQUE;;Sequence",   //
+            "efa2boatstatus;$UNIQUE;;BoatId",   //
+            "efa2clubwork;$UNIQUE;;Id",   //
+            "efa2crews;$UNIQUE;;Id",   //
+            "efa2fahrtenabzeichen;$UNIQUE;;PersonId",   //
+            "efa2project;$UNIQUE;;Type",   //
+            "efa2sessiongroups;$UNIQUE;;Id",   //
+            "efa2statistics;$UNIQUE;;Id",   //
+            "efa2status;$UNIQUE;;Id",   //
+            "efa2waters;$UNIQUE;;Id",   //
 
-            // String fields which need more then 256 characters length
-            "BoatDamages;DESCRIPTION;DATA_TEXT;Description",   //
-            "BoatDamages;LOGBOOKTEXT;DATA_TEXT;LogbookText",   //
-            "Boats;TYPEDESCRIPTION;DATA_TEXT;TypeDescription",   //
-            "BoatStatus;COMMENT;DATA_TEXT;Comment",   //
-            "Clubwork;DESCRIPTION;DATA_TEXT;Description",   //
-            "Logbook;COMMENTS;DATA_TEXT;Comments",   //
-            "Messages;TEXT;DATA_TEXT;Text",   //
-            "Project;DESCRIPTION;DATA_TEXT;Description",   //
+            // String fields which need more then 192 characters length
+            "efa2boatdamages;DESCRIPTION;DATA_TEXT;Description",   //
+            "efa2boatdamages;LOGBOOKTEXT;DATA_TEXT;LogbookText",   //
+            "efa2boats;TYPEDESCRIPTION;DATA_TEXT;TypeDescription",   //
+            "efa2boatstatus;COMMENT;DATA_TEXT;Comment",   //
+            "efa2clubwork;DESCRIPTION;DATA_TEXT;Description",   //
+            "efa2logbook;COMMENTS;DATA_TEXT;Comments",   //
+            "efa2messages;TEXT;DATA_TEXT;Text",   //
+            "efa2project;DESCRIPTION;DATA_TEXT;Description",   //
 
             // Other fields which need data type corrections
-            "Persons;BIRTHDAY;DATA_STRING;Birthday",   // The field may only contain the birth year.
+            "efa2persons;BIRTHDAY;DATA_STRING;Birthday",   // The field may only contain the birth year.
 
             // Fields with efa constant names which are not the uppercase field name
-            "Boats;CURRENCY;DATA_STRING;PurchasePriceCurrency",   //
-            "Boats;EXCLUDEFROMSTATISTIC;DATA_BOOLEAN;ExcludeFromStatistics",   //
-            "BoatReservations;VBOAT;DATA_VIRTUAL;VirtualBoat",   //
-            "BoatReservations;VRESERVATIONDATE;DATA_VIRTUAL;VirtualReservationDate",   //
-            "BoatReservations;VPERSON;DATA_VIRTUAL;VirtualPerson",   //
-            "Clubwork;WORKDATE;DATA_DATE;Date",   //
-            "Persons;EXCLUDEFROMSTATISTIC;DATA_BOOLEAN;ExcludeFromStatistics",   //
-            "Persons;EXCLUDEFROMCOMPETE;DATA_BOOLEAN;ExcludeFromCompetition",   //
-            "Persons;EXCLUDEFROMCLUBWORK;DATA_BOOLEAN;ExcludeFromClubwork",   //
-            "Project;PROJECT_ID;DATA_UUID;ProjectID",   //
-            "Project;DEPRECATED_LOGBOOKNAME;DATA_STRING;LogbookName",   //
-            "Project;LASTWATERSTMPLHASH;DATA_STRING;LastWatersTemplateHash",   //
-            "Project;AUTONEWCLUBWORKDATE;DATA_DATE;AutoNewClubworkDate",   //
-            "Project;ASSOCIATIONGLOBALNAME;DATA_STRING;GlobalAssociationName",   //
-            "Project;ASSOCIATIONGLOBALMEMBERNO;DATA_STRING;GlobalAssociationMemberNo",   //
-            "Project;ASSOCIATIONGLOBALLOGIN;DATA_STRING;GlobalAssociationLogin",   //
-            "Project;ASSOCIATIONREGIONALNAME;DATA_STRING;RegionalAssociationName",   //
-            "Project;ASSOCIATIONREGIONALMEMBERNO;DATA_STRING;RegionalAssociationMemberNo",   //
-            "Project;ASSOCIATIONREGIONALLOGIN;DATA_STRING;RegionalAssociationLogin",   //
-            "Project;LAST_DRV_FA_YEAR;DATA_INTEGER;LastDrvFaYear",   //
-            "Project;LAST_DRV_WS_YEAR;DATA_INTEGER;LastDrvWsYear",   //
-            "Project;BOATHOUSE_IDENTIFIER;DATA_STRING;BoathouseIdentifier",   //
-            "Statistics;FILTERBYPERSONTEXT;DATA_STRING;FilterByPersonText",   //
-            "Statistics;SHOWLOGBOOKFIELDS;DATA_LIST_STRING;ShowLogbookFields",   //
-            "Statistics;AGGRDISTANCEBARSIZE;DATA_INTEGER;AggregationDistanceBarSize",   //
-            "Statistics;AGGRROWDISTANCEBARSIZE;DATA_INTEGER;AggregationRowDistanceBarSize",   //
-            "Statistics;AGGRCOXDISTANCEBARSIZE;DATA_INTEGER;AggregationCoxDistanceBarSize",   //
-            "Statistics;AGGRSESSIONSBARSIZE;DATA_INTEGER;AggregationSessionsBarSize",   //
-            "Statistics;AGGRAVGDISTBARSIZE;DATA_INTEGER;AggregationAvgDistanceBarSize",   //
-            "Statistics;AGGRDURATIONBARSIZE;DATA_INTEGER;AggregationDurationBarSize",   //
-            "Statistics;AGGRSPEEDBARSIZE;DATA_INTEGER;AggregationSpeedBarSize",   //
-            "Statistics;OPTIONTRUNCATEDIST;DATA_BOOLEAN;OptionTruncateDistance",   //
+            "efa2boats;CURRENCY;DATA_STRING;PurchasePriceCurrency",   //
+            "efa2boats;EXCLUDEFROMSTATISTIC;DATA_BOOLEAN;ExcludeFromStatistics",   //
+            "efa2boatreservations;VBOAT;DATA_VIRTUAL;VirtualBoat",   //
+            "efa2boatreservations;VRESERVATIONDATE;DATA_VIRTUAL;VirtualReservationDate",   //
+            "efa2boatreservations;VPERSON;DATA_VIRTUAL;VirtualPerson",   //
+            "efa2clubwork;WORKDATE;DATA_DATE;Date",   //
+            "efa2persons;EXCLUDEFROMSTATISTIC;DATA_BOOLEAN;ExcludeFromStatistics",   //
+            "efa2persons;EXCLUDEFROMCOMPETE;DATA_BOOLEAN;ExcludeFromCompetition",   //
+            "efa2persons;EXCLUDEFROMCLUBWORK;DATA_BOOLEAN;ExcludeFromClubwork",   //
+            "efa2project;PROJECT_ID;DATA_UUID;ProjectID",   //
+            "efa2project;DEPRECATED_LOGBOOKNAME;DATA_STRING;LogbookName",   //
+            "efa2project;LASTWATERSTMPLHASH;DATA_STRING;LastWatersTemplateHash",   //
+            "efa2project;AUTONEWCLUBWORKDATE;DATA_DATE;AutoNewClubworkDate",   //
+            "efa2project;ASSOCIATIONGLOBALNAME;DATA_STRING;GlobalAssociationName",   //
+            "efa2project;ASSOCIATIONGLOBALMEMBERNO;DATA_STRING;GlobalAssociationMemberNo",   //
+            "efa2project;ASSOCIATIONGLOBALLOGIN;DATA_STRING;GlobalAssociationLogin",   //
+            "efa2project;ASSOCIATIONREGIONALNAME;DATA_STRING;RegionalAssociationName",   //
+            "efa2project;ASSOCIATIONREGIONALMEMBERNO;DATA_STRING;RegionalAssociationMemberNo",   //
+            "efa2project;ASSOCIATIONREGIONALLOGIN;DATA_STRING;RegionalAssociationLogin",   //
+            "efa2project;LAST_DRV_FA_YEAR;DATA_INTEGER;LastDrvFaYear",   //
+            "efa2project;LAST_DRV_WS_YEAR;DATA_INTEGER;LastDrvWsYear",   //
+            "efa2project;BOATHOUSE_IDENTIFIER;DATA_STRING;BoathouseIdentifier",   //
+            "efa2statistics;FILTERBYPERSONTEXT;DATA_STRING;FilterByPersonText",   //
+            "efa2statistics;SHOWLOGBOOKFIELDS;DATA_LIST_STRING;ShowLogbookFields",   //
+            "efa2statistics;AGGRDISTANCEBARSIZE;DATA_INTEGER;AggregationDistanceBarSize",   //
+            "efa2statistics;AGGRROWDISTANCEBARSIZE;DATA_INTEGER;AggregationRowDistanceBarSize",   //
+            "efa2statistics;AGGRCOXDISTANCEBARSIZE;DATA_INTEGER;AggregationCoxDistanceBarSize",   //
+            "efa2statistics;AGGRSESSIONSBARSIZE;DATA_INTEGER;AggregationSessionsBarSize",   //
+            "efa2statistics;AGGRAVGDISTBARSIZE;DATA_INTEGER;AggregationAvgDistanceBarSize",   //
+            "efa2statistics;AGGRDURATIONBARSIZE;DATA_INTEGER;AggregationDurationBarSize",   //
+            "efa2statistics;AGGRSPEEDBARSIZE;DATA_INTEGER;AggregationSpeedBarSize",   //
+            "efa2statistics;OPTIONTRUNCATEDIST;DATA_BOOLEAN;OptionTruncateDistance",   //
 
             // Statistics data fields which need stricter limitation because of MySQL row length
-            // using 1024 characters of DATA_LIST_UUID instead of 2048 chars of DATA_LIST_STRING
-            "Statistics;FILTERGENDER;DATA_LIST_UUID;FilterGender",   //
-            "Statistics;FILTERSESSIONTYPE;DATA_LIST_UUID;FilterSessionType",   //
-            "Statistics;FILTERBOATTYPE;DATA_LIST_UUID;FilterBoatType",   //
-            "Statistics;FILTERBOATSEATS;DATA_LIST_UUID;FilterBoatSeats",   //
-            "Statistics;FILTERBOATRIGGING;DATA_LIST_UUID;FilterBoatRigging",   //
-            "Statistics;FILTERBOATCOXING;DATA_LIST_UUID;FilterBoatCoxing",   //
-            "Statistics;FILTERBOATOWNER;DATA_LIST_UUID;FilterBoatOwner",   //
+            // using 1024 characters of DATA_LIST_UUID instead of 1480 chars of DATA_LIST_STRING
+            "efa2statistics;FILTERGENDER;DATA_LIST_UUID;FilterGender",   //
+            "efa2statistics;FILTERSESSIONTYPE;DATA_LIST_UUID;FilterSessionType",   //
+            "efa2statistics;FILTERBOATTYPE;DATA_LIST_UUID;FilterBoatType",   //
+            "efa2statistics;FILTERBOATSEATS;DATA_LIST_UUID;FilterBoatSeats",   //
+            "efa2statistics;FILTERBOATRIGGING;DATA_LIST_UUID;FilterBoatRigging",   //
+            "efa2statistics;FILTERBOATCOXING;DATA_LIST_UUID;FilterBoatCoxing",   //
+            "efa2statistics;FILTERBOATOWNER;DATA_LIST_UUID;FilterBoatOwner",   //
 
             // Data fields common for versionized tables. They are already added
             // within the metadata definitions an only listed for completeness.
@@ -412,7 +412,7 @@ public class TableBuilder {
         String tablename = rtd.storageObjectType;
         TxRequestQueue txq = TxRequestQueue.getInstance();
         // create table
-        txq.appendTransaction(TxRequestQueue.TX_PENDING_QUEUE_INDEX, "createtable", tablename,
+        txq.appendTransaction(TxRequestQueue.TX_SYNCH_QUEUE_INDEX, "createtable", tablename,
                 rtd.tableDefinitionRecord());
         // add uniques
         if (rtd.uniques.size() > 0)
@@ -420,7 +420,7 @@ public class TableBuilder {
                 String record = unique + ";" +
                         CsvCodec.encodeElement(rtd.fields.get(unique).sqlDefinition, CsvCodec.DEFAULT_DELIMITER,
                                 CsvCodec.DEFAULT_QUOTATION);
-                txq.appendTransaction(TxRequestQueue.TX_PENDING_QUEUE_INDEX, "unique", tablename, record);
+                txq.appendTransaction(TxRequestQueue.TX_SYNCH_QUEUE_INDEX, "unique", tablename, record);
             }
         // add autoincrements
         if (rtd.autoincrements.size() > 0)
@@ -430,8 +430,8 @@ public class TableBuilder {
                 String record = autoincrement + ";" +
                         CsvCodec.encodeElement(rtd.fields.get(autoincrement).sqlDefinition, CsvCodec.DEFAULT_DELIMITER,
                                 CsvCodec.DEFAULT_QUOTATION);
-                txq.appendTransaction(TxRequestQueue.TX_PENDING_QUEUE_INDEX, "unique", tablename, record);
-                txq.appendTransaction(TxRequestQueue.TX_PENDING_QUEUE_INDEX, "autoincrement", tablename, record);
+                txq.appendTransaction(TxRequestQueue.TX_SYNCH_QUEUE_INDEX, "unique", tablename, record);
+                txq.appendTransaction(TxRequestQueue.TX_SYNCH_QUEUE_INDEX, "autoincrement", tablename, record);
             }
     }
 
@@ -461,11 +461,17 @@ public class TableBuilder {
          */
         String[] tableDefinitionRecord() {
             String[] tdr = new String[fields.size()];
+            //# Use the //# commented lines to create a set of SQL table definitions for documentation or testing
+            //# StringBuilder sqlCmd = new StringBuilder();
+            //# sqlCmd.append("CREATE TABLE `").append(persistence.getStorageObjectType()).append("` (\n");
             for (String fieldname : fields.keySet()) {
                 RecordFieldDefinition rfd = fields.get(fieldname);
                 // neither the field name nor the sqlDefinition need csv encoding.
                 tdr[rfd.column] = rfd.fieldName + ";" + rfd.sqlDefinition;
+                //# sqlCmd.append("`").append(rfd.fieldName).append("` ").append(rfd.sqlDefinition).append(",\n");
             }
+            //# String sqlcmd = sqlCmd.substring(0, sqlCmd.length() - 2) + "\n);";
+            //# TextResource.writeContents("/ramdisk/" + persistence.getStorageObjectType() + ".sql", sqlcmd, false);
             return tdr;
         }
 

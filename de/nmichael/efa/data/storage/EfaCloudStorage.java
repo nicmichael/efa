@@ -77,7 +77,6 @@ public class EfaCloudStorage extends XMLFile {
      * @param delete        set true, if the modify transaction is a record deletion
      * @param useSynchQueue set true, to append the transaction to the synchronization transactions queue rather than to
      *                      the pending transactions queue
-     * @return modification transaction
      */
     public void modifyServerRecord(DataRecord dataRecord, boolean add, boolean update, boolean delete,
                                    boolean useSynchQueue) {
@@ -118,7 +117,9 @@ public class EfaCloudStorage extends XMLFile {
     }
 
     /**
-     * Parse a csv table into a list of data records for further handling
+     * Parse a csv table into a list of data records for further handling. This reads only data fields which are part of
+     * the data record template and additionally puts the value of "LastModification" into the LastModification field of
+     * the dataRecord Object.
      *
      * @param csvString the table to be parsed. The first line must be the header
      * @return ArrayList<DataRecord> with all retrieved data records.

@@ -10,7 +10,6 @@
  */
 package de.nmichael.efa.data.efacloud;
 
-import de.nmichael.efa.Daten;
 import de.nmichael.efa.util.Dialog;
 import de.nmichael.efa.util.International;
 import de.nmichael.efa.util.Logger;
@@ -38,7 +37,7 @@ public class TxResponseHandler {
         String transactionString = "#" + tx.ID + ", " + tx.type + ": " + tx.getResultCode() + " - " +
                 Transaction.TX_RESULT_CODES.get(tx.getResultCode());
         String dateString = format.format(new Date()) + " [receive for " + tx.tablename + "]: ";
-        TextResource.writeContents(TxRequestQueue.getInstance().apiActivityLogFilePath, dateString + transactionString,
+        TextResource.writeContents(TxRequestQueue.logFilePaths.get("API activity"), dateString + transactionString,
                 true);
     }
 
@@ -48,14 +47,22 @@ public class TxResponseHandler {
      * @param resultCode the resultCode of the transaction container.
      */
     void handleAuthenticationError(int resultCode) {
+        String errorMessage = International.getMessage(
+                "Anmeldung von {username} auf efaCloud server {efaCloudUrl} fehlgeschlagen. Unbekannter Fehlertyp. " +
+                        "Deaktiviere Efacloud.", txq.username, txq.efaCloudUrl);
         if ((resultCode == 402) || (resultCode == 403)) {
-            txq.requestStateChange(TxRequestQueue.RQ_QUEUE_DEACTIVATE);
-            String errorMessage = International.getMessage(
-                    "Anmeldung von {username} auf efaCloud server {efaCloudUrl} fehlgeschlagen. Deaktiviere Efacloud.",
+            txq.registerStateChangeRequest(TxRequestQueue.RQ_QUEUE_DEACTIVATE);
+            errorMessage = International.getMessage(
+                    "Anmeldung von {username} auf efaCloud server {efaCloudUrl} abgelehnt. Deaktiviere Efacloud.",
                     txq.username, txq.efaCloudUrl);
-            Dialog.error(errorMessage);
-            Logger.log(Logger.ERROR, Logger.MSG_EFACLOUDSYNCH_ERROR, errorMessage);
+        } else if (resultCode == 500) {
+            errorMessage = International.getMessage(
+                    "Anmeldung von {username} auf efaCloud server {efaCloudUrl} führte zu einem Severfehler " +
+                            "(500 internal Server Error). Bitte prüfen sie die Server-Installation. Deaktiviere " +
+                            "Efacloud.", txq.username, txq.efaCloudUrl);
         }
+        Dialog.error(errorMessage);
+        Logger.log(Logger.ERROR, Logger.MSG_EFACLOUDSYNCH_ERROR, errorMessage);
     }
 
     /**
@@ -70,20 +77,21 @@ public class TxResponseHandler {
      */
     private void handleTxcError(TxResponseContainer txrc) {
         String droppedTxCnt = "" + txq.getQueueSize(TxRequestQueue.TX_BUSY_QUEUE_INDEX);
-        txq.logError(International.getMessage(
+        txq.logApiMessage(International.getMessage(
                 "CONTAINER-Fehler bei der Behandlung einer Serverantwort: cresult_code = {resultCode}, " +
                         "cresult_message = {resultMessage}. Betroffene, damit gescheiterte Transaktionen: " +
-                        "{droppedCount}", txrc.cresultCode, txrc.cresultMessage, droppedTxCnt));
+                        "{droppedCount}", txrc.cresultCode, txrc.cresultMessage, droppedTxCnt), 1);
         // Any error shall force a fallback to normal, because the synchronization process relies on the answers and
         // if they don't come it will not end and continue to block the normal communication
-        if (txq.getState() == TxRequestQueue.RQ_QUEUE_STOP_SYNCH) {
-            txq.requestStateChange(TxRequestQueue.RQ_QUEUE_RESUME);
-            txq.logError(International.getString("Die Synchronisation wird beendet."));
+        if (txq.getState() == TxRequestQueue.QUEUE_IS_SYNCHRONIZING) {
+            txq.registerStateChangeRequest(TxRequestQueue.RQ_QUEUE_RESUME);
+            txq.logApiMessage(International.getString("Die Synchronisation wird beendet."), 1);
         }
         txq.registerContainerResult(txrc.cresultCode, txrc.cresultMessage);
-        if (txq.getState() == TxRequestQueue.QUEUE_IS_AUTHENTICATING)
+        if (txq.getState() == TxRequestQueue.QUEUE_IS_AUTHENTICATING) {
             handleAuthenticationError(txrc.cresultCode);
-        else
+            txq.registerStateChangeRequest(TxRequestQueue.RQ_QUEUE_DEACTIVATE);
+        } else
             switch (txrc.cresultCode) {
                 case 402:  // "Unknown client"
                 case 403:  // "Authentication failed"
@@ -116,15 +124,15 @@ public class TxResponseHandler {
     private void handleTxError(Transaction tx) {
         StringBuilder txString = new StringBuilder();
         tx.appendTxFullString(txString);
-        txq.logError(International.getMessage(
+        txq.logApiMessage(International.getMessage(
                 "Transaktions-Fehler bei der Behandlung einer Serverantwort: result_code = {resultCode}, " +
                         "result_message = {resultMessage}, Transaktion: {transaction}", "" + tx.getResultCode(),
-                tx.getResultMessage(), txString.toString()));
+                tx.getResultMessage(), txString.toString()), 1);
         // Any error shall force a fallback to normal, because the synchronization process relies on the answers and
         // if they don't come it will not end and continue to block the normal communication
         if (txq.getState() == TxRequestQueue.RQ_QUEUE_STOP_SYNCH) {
-            txq.requestStateChange(TxRequestQueue.RQ_QUEUE_RESUME);
-            txq.logError(International.getString("Die Synchronisation wird beendet."));
+            txq.registerStateChangeRequest(TxRequestQueue.RQ_QUEUE_RESUME);
+            txq.logApiMessage(International.getString("Die Synchronisation wird beendet."), 1);
         }
         switch (tx.getResultCode()) {
             case 401:  // "Syntax error"
@@ -162,19 +170,18 @@ public class TxResponseHandler {
         // handle a positive response.  
         if (tx.getResultCode() >= 300) {
             // handle synchronization responses
-            if (txq.getState() == TxRequestQueue.QUEUE_IS_SYNCHING) {
-                if (tx.type.equalsIgnoreCase("keyfixing")) {
+            if (txq.getState() == TxRequestQueue.QUEUE_IS_SYNCHRONIZING) {
+                if (tx.type == Transaction.TX_TYPE.KEYFIXING) {
                     if (tx.getResultCode() == 303)   // result 303 indicates the key change
                         txq.synchControl.fixOneKeyForTable(tx);
                     else  // after all keys of one table are fixed, move to next or trigger next step
                         txq.synchControl.fixKeysForNextTable();
-                } else if (tx.type.equalsIgnoreCase("synch")) {
+                } else if (tx.type == Transaction.TX_TYPE.SYNCH) {
                     if (tx.tablename.equalsIgnoreCase("@all"))
                         // the response statement on the @all request is the starting point for both
                         // synchronization directions
                         txq.synchControl.buildSynchTableListAndStartSynch(tx);
-
-                } else if (tx.type.equalsIgnoreCase("select")) {
+                } else if (tx.type == Transaction.TX_TYPE.SELECT) {
                     if (txq.synchControl.synch_upload)
                         txq.synchControl.nextTableForUploadSynch(tx);
                     else
@@ -187,8 +194,8 @@ public class TxResponseHandler {
             }
             // one special case for an ok result: If the queue is authenticating, put it to working
             if (txq.getState() == TxRequestQueue.QUEUE_IS_AUTHENTICATING) {
-                txq.requestStateChange(TxRequestQueue.RQ_QUEUE_START);
-                if (tx.type.equalsIgnoreCase("synch")) {
+                txq.registerStateChangeRequest(TxRequestQueue.RQ_QUEUE_START);
+                if (tx.type == Transaction.TX_TYPE.SYNCH) {
                     String[] counts = tx.getResultMessage().split(";");
                     if (counts.length < 10) {
                         String warningMessage = International.getMessage(
@@ -197,7 +204,7 @@ public class TxResponseHandler {
                                         "Sollen die efa-Tabellen jetzt initialisiert werden?", counts.length);
                         if (Dialog.yesNoDialog(International.getString("Server Datenbank unvollständig."),
                                 warningMessage) == Dialog.YES)
-                            Daten.tableBuilder.initAllServerTables();
+                            txq.registerStateChangeRequest(TxRequestQueue.RQ_QUEUE_START_SYNCH_DELETE);
                     }
                 }
             }
@@ -273,10 +280,10 @@ public class TxResponseHandler {
             // clear the queue from the remaining transactions, for which no response was contained.
             if (txq.getBusyQueueSize() > 0) {
                 String droppedTxCnt = "" + txq.getQueueSize(TxRequestQueue.TX_BUSY_QUEUE_INDEX);
-                txq.logError(International.getMessage(
+                txq.logApiMessage(International.getMessage(
                         "Container-Fehler in einer Serverantwort: {droppedCount} Transaktionen " +
                                 "im Container ohne Serverantwort. Sie gelten als gescheitert, vgl. txFailedQueue " +
-                                "Datei", droppedTxCnt));
+                                "Datei", droppedTxCnt), 1);
                 txq.shiftTx(TxRequestQueue.TX_BUSY_QUEUE_INDEX, TxRequestQueue.TX_FAILED_QUEUE_INDEX,
                         TxRequestQueue.ACTION_TX_RESP_MISSING, 0, 0);
             }

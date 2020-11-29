@@ -10,18 +10,13 @@
  */
 package de.nmichael.efa.data.efacloud;
 
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.Locale;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * <p>Little singleton helper class to load a resource from web in a different task.</p>
@@ -46,6 +41,8 @@ public class InternetAccessManager implements TaskManager.RequestDispatcherIF {
     public static final int TYPE_POST_PARAMETERS = 0;
     public static final int TYPE_GET_BINARY = 1;
     public static final int TYPE_GET_TEXT = 2;
+    private static final String[] TYPE_STRING = new String[]{"post", "get bin", "get txt"};
+
     public static final int VALUE_TEXT_ENCODING_ISO8859_1 = 0;
     public static final int VALUE_TEXT_ENCODING_UTF8 = 1;
 
@@ -53,6 +50,7 @@ public class InternetAccessManager implements TaskManager.RequestDispatcherIF {
     public static final int TYPE_ABORTED = 2;
     public static final int TYPE_COMPLETED = 3;
     public static final int TYPE_PENDING = 4;
+    private static final String[] RESULT_STRING = new String[]{"", "progress info", "aborted", "completed", "pending"};
     // public static final int TYPE_FILE_SIZE_INFO = 5;
 
     private static final int UPDATE_INTERVAL_BYTES = 16 * 1024;
@@ -68,9 +66,13 @@ public class InternetAccessManager implements TaskManager.RequestDispatcherIF {
     private final InternetAccessHandler internetAccessHandler;
     private TaskManager.RequestDispatcherIF callback;
     private TaskManager.RequestMessage callBackMsg;
-    private boolean allowAllCertificates = false;
     // for debugging set debugFilePath to a valid location.
     public String debugFilePath = null;
+
+    // Statistics buffer
+    private static final int STATISTICS_BUFFER_SIZE = 5000;
+    private static int statisticsBufferIndex;
+    private static StatisticsRecord[] statisticsRecords;
 
     //private boolean debug = false;
     //private StringBuilder debugLog = new StringBuilder();
@@ -120,18 +122,6 @@ public class InternetAccessManager implements TaskManager.RequestDispatcherIF {
     }
 
     /**
-     * Set all certificates to "allowed". This can not be reverted. See InternetAccessHandler.allowAllCertificates() for
-     * details.
-     *
-     * @param allowAllCertificates set true to allow once for all, all certicates.
-     */
-    public void setAllowAllCertificates(boolean allowAllCertificates) {
-        this.allowAllCertificates = this.allowAllCertificates || allowAllCertificates;
-        if (allowAllCertificates)
-            internetAccessHandler.allowAllCertificates();
-    }
-
-    /**
      * Terminate the internet access manager by terminating the task manager and dropping the link to the singleton
      * InternetAccessManager instance. Call this method prior to dropping the task manager, e. g. by re-instantiation.
      */
@@ -164,35 +154,6 @@ public class InternetAccessManager implements TaskManager.RequestDispatcherIF {
                 inputStream.close();
             if (connection != null)
                 connection.disconnect();
-        }
-
-        /**
-         * A connection to an efacloud server must use https to protect exchanged information including credentials.
-         * Depending on the used operating system age, Certificates may occur for which the CA is not available.
-         * Happened with raspberries and Debian. This procedure will provide trust to any certificate. This does not
-         * shield against impersonation attacks, but does protect against eavesdropping the credentials. See
-         * https://stackoverflow.com/questions/10135074/download-file-from-https-server-using-java
-         */
-        private void allowAllCertificates() {
-            // Create a new trust manager that trust all certificates
-            TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
-                public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-                    return null;
-                }
-
-                public void checkClientTrusted(java.security.cert.X509Certificate[] certs, String authType) {
-                }
-
-                public void checkServerTrusted(java.security.cert.X509Certificate[] certs, String authType) {
-                }
-            }};
-            // Activate the new trust manager
-            try {
-                SSLContext sc = SSLContext.getInstance("SSL");
-                sc.init(null, trustAllCerts, new java.security.SecureRandom());
-                HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-            } catch (Exception ignored) {
-            }
         }
 
         /**
@@ -543,27 +504,91 @@ public class InternetAccessManager implements TaskManager.RequestDispatcherIF {
             callback = ((msg.sender instanceof TaskManager.RequestDispatcherIF)) ?
                     (TaskManager.RequestDispatcherIF) msg.sender : null;
             if ((msg.sender != null) && !(msg.sender instanceof TaskManager.RequestDispatcherIF))
-                System.out.println(String.format("Warning: InternetAccessManager call with invalid callback %s",
-                        msg.sender.toString()));
+                System.out.printf("Warning: InternetAccessManager call with invalid callback %s%n",
+                        msg.sender.toString());
+            iamMonitor.start();
+            msg.started = System.currentTimeMillis();
             // POST to URL
-            if (msg.type == TYPE_POST_PARAMETERS) {
-                iamMonitor.start();
+            if (msg.type == TYPE_POST_PARAMETERS)
                 excutePost(msg.title, msg.text);
-                iamMonitor.stop();
-                return;
-            }
-            // GET from URL
-            if (msg.type == TYPE_GET_BINARY) {
-                iamMonitor.start();
+                // GET from URL
+            else if (msg.type == TYPE_GET_BINARY)
                 excuteGetForBinary(msg.title, msg.text);
-                iamMonitor.stop();
-            }
-            if (msg.type == TYPE_GET_TEXT) {
-                iamMonitor.start();
+            else if (msg.type == TYPE_GET_TEXT)
                 excuteGetForText(msg.title, msg.text, enc);
-                iamMonitor.stop();
-            }
+            msg.completed = System.currentTimeMillis();
+            iamMonitor.stop();
+            statisticsRecords[statisticsBufferIndex] = new StatisticsRecord(msg.title, msg.started,
+                    msg.completed - msg.started, msg.type, callBackMsg.type);
+            statisticsBufferIndex++;
+            statisticsBufferIndex = (statisticsBufferIndex % STATISTICS_BUFFER_SIZE);
             callback = null;
+        }
+    }
+
+    /**
+     * Get a statistics log for the last STATISTICS_BUFFER_SIZE internet access activities for offline analysis.
+     *
+     * @return the statistics log entries as csv (';'-separated), first line is header.
+     */
+    public String getStatisticsCsv() {
+        StringBuilder csv = new StringBuilder();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        csv.append("started;url;type;durationMillis;result\n");
+        for (int i = 0; i < STATISTICS_BUFFER_SIZE; i++) {
+            int index = (STATISTICS_BUFFER_SIZE + statisticsBufferIndex - i) % STATISTICS_BUFFER_SIZE;
+            StatisticsRecord sr = statisticsRecords[index];
+            if (sr != null) {
+                csv.append(sdf.format(new Date(sr.started))).append(";");
+                csv.append(sr.url).append(";");
+                csv.append(TYPE_STRING[sr.type]).append(";");
+                csv.append(sr.durationMillis).append(";");
+                csv.append(RESULT_STRING[sr.result]).append("\n");
+            }
+        }
+        return csv.toString();
+    }
+
+    /**
+     * Parse a csv-String into the statistics buffer
+     *
+     * @param csv String to parse. Same format as with getStatisticsCsv()
+     */
+    static void initStatisticsCsv(String csv) {
+        String[] statisticsLines = csv.split("\n");
+        // headerStr = "started;url;type;durationMillis;result", see getStatisticsCsv()
+        ArrayList<String> entries;
+        statisticsBufferIndex = 0;
+        statisticsRecords = new StatisticsRecord[STATISTICS_BUFFER_SIZE];
+        if (csv.isEmpty())
+            return;
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        for (String statisticsLine : statisticsLines) {
+            entries = CsvCodec.splitEntries(statisticsLine);
+            long started = 0L;
+            try {
+                started = sdf.parse(entries.get(0)).getTime();
+            } catch (ParseException e) {
+                entries.clear();   // Header line and incorrect lines will not be used.
+            }
+            if (entries.size() == 5) {
+                final String url = entries.get(1);
+                final String typeStr = entries.get(2);
+                int type;
+                for (type = 0; type < TYPE_STRING.length; type++)
+                    if (TYPE_STRING[type].equalsIgnoreCase(typeStr))
+                        break;
+                final int durationMillis = Integer.parseInt(entries.get(3));
+                final String resultStr = entries.get(4);
+                int result;
+                for (result = 0; result < RESULT_STRING.length; result++)
+                    if (RESULT_STRING[result].equalsIgnoreCase(resultStr))
+                        break;
+                StatisticsRecord sr = new StatisticsRecord(url, started, durationMillis, type, result);
+                if (statisticsBufferIndex < statisticsRecords.length)
+                    statisticsRecords[statisticsBufferIndex] = sr;
+                statisticsBufferIndex++;
+            }
         }
     }
 
@@ -632,5 +657,21 @@ public class InternetAccessManager implements TaskManager.RequestDispatcherIF {
             idleCounter = 0;
         }
 
+    }
+
+    static class StatisticsRecord {
+        final String url;
+        final long started;
+        final long durationMillis;
+        final int type;
+        final int result;
+
+        StatisticsRecord(String url, long started, long duration, int type, int result) {
+            this.url = url.substring(0, (url.indexOf('?') >= 0) ? url.indexOf('?') : url.length());
+            this.started = started;
+            this.durationMillis = duration;
+            this.type = type;
+            this.result = result;
+        }
     }
 }

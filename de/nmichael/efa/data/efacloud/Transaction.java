@@ -23,6 +23,34 @@ import java.util.*;
  */
 class Transaction {
 
+    enum TX_TYPE {
+        CREATETABLE("createtable", false, false, false), ADDCOLUMNS("addcolumns", false, false, false), AUTOINCREMENT(
+                "autoincrement", false, false, false), UNIQUE("unique", false, false, false), INSERT("insert", true,
+                true, false), UPDATE("update", true, true, false), DELETE("delete", false, true, false), KEYFIXING(
+                "keyfixing", false, false, true), SELECT("select", false, false, false), SYNCH("synch", false, false,
+                true), LIST("list", false, false, false), NOP("nop", false, false, true), BACKUP("backup", false, false,
+                false), UPLOAD("upload", false, false, false);
+
+        final String typeString;
+        final boolean isInsertOrUpdate;
+        final boolean isWriteAction;
+        final boolean isAllowedOnAuthenticate;
+
+        TX_TYPE(String typeString, boolean isInsertOrUpdate, boolean isWriteAction, boolean isAllowedOnAuthenticate) {
+            this.typeString = typeString;
+            this.isInsertOrUpdate = isInsertOrUpdate;
+            this.isWriteAction = isWriteAction;
+            this.isAllowedOnAuthenticate = isAllowedOnAuthenticate;
+        }
+
+        static TX_TYPE getType(String typeString) {
+            for (TX_TYPE type : TX_TYPE.values())
+                if (type.typeString.equalsIgnoreCase(typeString))
+                    return type;
+            return NOP;
+        }
+        }
+
     // The transaction response codes as text
     static final HashMap<Integer, String> TX_RESULT_CODES = new HashMap<>();
 
@@ -50,13 +78,14 @@ class Transaction {
     public static final String MS_REPLACEMENT_STRING = "\n|-efa-|\n";
     // transaction ID
     public final int ID;
+    public final long createdAt;
     // status control
     private long sentAt = 0;
     private long retries = 0;
     private long resultAt = 0;
     private long closedAt = 0;
     // transaction request
-    public final String type;
+    public final TX_TYPE type;
     public final String tablename;
     /**
      * record is an array of n "key;value" pairs, all entries csv encoded. They can just be appended to a csv-encoded
@@ -96,7 +125,7 @@ class Transaction {
             int resultCode = Integer.parseInt(txElements.get(txElements.size() - 2));
             String resultMessage = txElements.get(txElements.size() - 1);
             // Build the transaction
-            tx = new Transaction(ID, type, tablename, record);
+            tx = new Transaction(ID, TX_TYPE.getType(type), tablename, record);
             tx.sentAt = sentAt;
             tx.retries = retries;
             tx.resultAt = resultAt;
@@ -177,8 +206,9 @@ class Transaction {
      * @param record record data of the transaction to be created. An array of n "key;value" pairs, all entries csv
      *               encoded. They can just be appended to a csv-encoded String to build a valid transaction String.
      */
-    Transaction(int ID, String type, String tablename, String[] record) {
+    Transaction(int ID, TX_TYPE type, String tablename, String[] record) {
         this.ID = (ID == -1) ? TxRequestQueue.getTxId() : ID;
+        this.createdAt = System.currentTimeMillis();
         this.type = type;
         this.tablename = tablename;
         this.record = record;
@@ -191,9 +221,11 @@ class Transaction {
      */
     void logMessage(String action) {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String transactionString = "#" + ID + ", " + type + " (record length: " + ((record == null) ? "null" : "" + record.length) + ")";
+        String transactionString =
+                "#" + ID + ", " + type + " (record length: " + ((record == null) ? "null" : "" + record.length) + ")";
         String dateString = format.format(new Date()) + " [" + action + " for " + tablename + "]: ";
-        TextResource.writeContents(TxRequestQueue.getInstance().apiActivityLogFilePath, dateString + transactionString, true);
+        TextResource.writeContents(TxRequestQueue.logFilePaths.get("API activity"), dateString + transactionString,
+                true);
     }
 
     /**
@@ -272,7 +304,7 @@ class Transaction {
                 else
                     value = fnv.get(1);
                 // cut the value to the maximum length for data write transactions
-                if (type.equalsIgnoreCase("insert") || type.equalsIgnoreCase("update"))
+                if (type.isInsertOrUpdate)
                     value = Daten.tableBuilder.adjustForEfaCloudStorage(value, tablename, field);
                 // ensure the message separator String will not be contained.
                 if (value != null && value.contains(Transaction.MESSAGE_SEPARATOR_STRING))
@@ -323,6 +355,10 @@ class Transaction {
 
     long getRetries() {
         return retries;
+    }
+
+    long getClosedAt() {
+        return closedAt;
     }
 
     void setRetries(long retries) {
