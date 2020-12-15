@@ -2,6 +2,17 @@
 <efaOnlineUpdate>
 
     <Version>
+        <VersionID>2.2.2_53</VersionID>
+        <ReleaseDate>14.12.2020</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa2drv.zip</DownloadUrl>
+        <DownloadSize>4268621</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Change: Abstand unter Footer fuer DRV Briefe verringert</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
         <VersionID>2.2.2_49</VersionID>
         <ReleaseDate>14.11.2020</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa2drv.zip</DownloadUrl>
