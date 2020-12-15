@@ -146,7 +146,7 @@ public class PDFOutput {
             f.write("    <fo:simple-page-master page-height=\"297mm\" page-width=\"210mm\" master-name=\"titelseite\">\n");
             f.write("      <fo:region-body margin-right=\"25mm\" margin-left=\"25mm\" margin-bottom=\"30mm\" margin-top=\"45mm\"/>\n");
             f.write("      <fo:region-before extent=\"42mm\" />\n");
-            f.write("      <fo:region-after extent=\"50mm\" />\n");
+            f.write("      <fo:region-after extent=\"40mm\" />\n");
             f.write("    </fo:simple-page-master>\n");
             f.write("    <fo:simple-page-master page-height=\"297mm\" page-width=\"210mm\" master-name=\"fahrtenhefte\">\n");
             f.write("      <fo:region-body margin-right=\"10mm\" margin-left=\"10mm\" margin-bottom=\"10mm\" margin-top=\"10mm\"/>\n");
