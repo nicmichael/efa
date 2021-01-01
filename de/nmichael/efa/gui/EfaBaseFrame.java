@@ -17,8 +17,6 @@ import de.nmichael.efa.data.types.*;
 import de.nmichael.efa.data.storage.*;
 import de.nmichael.efa.data.*;
 
-import static de.nmichael.efa.gui.BaseDialog.getIcon;
-
 import de.nmichael.efa.gui.util.*;
 import de.nmichael.efa.gui.dataedit.*;
 import de.nmichael.efa.util.*;
@@ -865,11 +863,9 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
                     if ((Daten.project.getProjectStorageType() == IDataAccess.TYPE_EFA_CLOUD) &&
                             (TxRequestQueue.getInstance() != null)) {
                         TxRequestQueue txq = TxRequestQueue.getInstance();
-                        txq.setEfaBaseDialog(this, null);
-                        int efacloudState = txq.getState();
-                        String efaCloudStatus = TxRequestQueue.QUEUE_STATE_SYMBOL.get(efacloudState);
-                        if (efaCloudStatus == null)
-                            efaCloudStatus = TxRequestQueue.QUEUE_STATE_SYMBOL.get(TxRequestQueue.QUEUE_IS_AUTHENTICATING);
+                        if (txq != null)
+                            txq.setEfaGUIrootContainer(this);   // is relevant only at startup
+                        String efaCloudStatus = (txq != null) ? txq.getStateForDisplay() : "";
                         setTitle(
                                 Daten.project.getProjectName() + ": " + logbook.getName() + " - " + Daten.EFA_LONGNAME +
                                         adminNameString + efaCloudStatus);

@@ -14,9 +14,9 @@ import de.nmichael.efa.util.Dialog;
 import de.nmichael.efa.util.International;
 import de.nmichael.efa.util.Logger;
 
-import java.nio.charset.StandardCharsets;
+// import java.nio.charset.StandardCharsets;  Java 8 only
+// import java.util.Base64;  Java 8 only
 import java.text.SimpleDateFormat;
-import java.util.Base64;
 import java.util.Date;
 
 public class TxResponseHandler {
@@ -322,9 +322,10 @@ public class TxResponseHandler {
                 // the result code and result message, trigger transaction handling and close the transactions decode
                 // the transaction response container
                 String txContainerBase64 = txcResponse.replace('-', '/').replace('*', '+').replace('_', '=').trim();
-                String txContainer;
+                String txContainer = "";
                 try {
-                    txContainer = new String(Base64.getDecoder().decode(txContainerBase64), StandardCharsets.UTF_8);
+                    // Java 8: txContainer = new String(Base64.getDecoder().decode(txContainerBase64), StandardCharsets.UTF_8);
+                    txContainer = new String(Base64.decode(txContainerBase64), "UTF-8");  // Java 6
                 } catch (Exception ignored) {
                     txContainer = TxRequestQueue.EFA_CLOUD_VERSION + ";0;503;" + Transaction.TX_RESULT_CODES.get(503) +
                             TxRequestQueue.TX_RESP_DELIMITER;

@@ -105,7 +105,7 @@ public class CsvCodec {
         if (inStr == null)
             return null;
         if (inStr.isEmpty())
-            return new ArrayList<>();
+            return new ArrayList<String>();
         /*
          * add an empty element here and remove it at the end to simplify the algorithm
          */
@@ -114,7 +114,7 @@ public class CsvCodec {
         /*
          * prepare parsing.
          */
-        ArrayList<String> list = new ArrayList<>();
+        ArrayList<String> list = new ArrayList<String>();
         StringBuilder element = new StringBuilder();
         int lc = 0;
         char b = ' ';
@@ -172,7 +172,7 @@ public class CsvCodec {
      * @return an array with all elements of the set.
      */
     public static ArrayList<String> splitLines(String inStr, char quotation) {
-        ArrayList<String> lines = new ArrayList<>();
+        ArrayList<String> lines = new ArrayList<String>();
         boolean inQuotes = false;
         int lastLineStart = 0;
         int endIndex = inStr.length() - 1;

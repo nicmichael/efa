@@ -279,7 +279,7 @@ public class InternetAccessManager implements TaskManager.RequestDispatcherIF {
 
             int bytesRead = 0;
             int lastUpdate = 0;
-            ArrayList<String> fileContents = new ArrayList<>();
+            ArrayList<String> fileContents = new ArrayList<String>();
 
             InputStreamReader inReader = new InputStreamReader(inputStream, charsetName);
             BufferedReader textInputReader = new BufferedReader(inReader);

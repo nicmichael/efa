@@ -14,9 +14,16 @@ import de.nmichael.efa.Daten;
 import de.nmichael.efa.util.International;
 import de.nmichael.efa.util.Logger;
 
-import java.nio.charset.StandardCharsets;
+import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+
+// import java.nio.charset.StandardCharsets;  Java 8 only
+// import java.util.Base64;  Java 8 only
+
+import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Vector;
+import java.util.Date;
 
 /**
  * A container class for data modifications passed to the efaClod Server.
@@ -52,7 +59,7 @@ class Transaction {
         }
 
     // The transaction response codes as text
-    static final HashMap<Integer, String> TX_RESULT_CODES = new HashMap<>();
+    static final HashMap<Integer, String> TX_RESULT_CODES = new HashMap<Integer, String>();
 
     static {
         TX_RESULT_CODES.put(300, "Transaction completed");
@@ -151,7 +158,7 @@ class Transaction {
     private static String[] parseTxRecordString(ArrayList<String> txFullStringElements) {
         // read the record as the inner elements of the transaction
         final int recordStartOffset = 7;  // The first 7 elements are the transaction header fields.
-        ArrayList<String> record = new ArrayList<>();
+        ArrayList<String> record = new ArrayList<String>();
         for (int i = recordStartOffset; i < txFullStringElements.size() - 2; i = i + 2)
             record.add(txFullStringElements.get(i) + ";" +
                     CsvCodec.encodeElement(txFullStringElements.get(i + 1), CsvCodec.DEFAULT_DELIMITER,
@@ -186,8 +193,12 @@ class Transaction {
         String txContainerStr = txContainer.toString();
         txContainerStr = txContainerStr.substring(0, txContainerStr.length() - MESSAGE_SEPARATOR_STRING.length());
         // encode the transaction message container
-        String txContainerBase64;
-        txContainerBase64 = Base64.getEncoder().encodeToString(txContainerStr.getBytes(StandardCharsets.UTF_8));
+        String txContainerBase64 = "";
+        try {
+            // Java8: txContainerBase64 = Base64.getEncoder().encodeToString(txContainerStr.getBytes("UTF-8"));
+            txContainerBase64 = Base64.encodeBytes(txContainerStr.getBytes("UTF-8")); // Java6
+        } catch (UnsupportedEncodingException ignored) {
+        }
 
         // create the txContainerBase64efa which needs no further URL encoding.
         String txContainerBase64efa = txContainerBase64.replace('/', '-').replace('+', '*').replace('=', '_');

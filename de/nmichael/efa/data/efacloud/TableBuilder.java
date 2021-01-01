@@ -28,8 +28,8 @@ public class TableBuilder {
      * it as Default. Strings are by default Varchar(256), only in eight cases, they are made to "Text", see also
      * efa2fieldSpecialDefinitions.
      */
-    private static final HashMap<Integer, String> datatypeDefaults = new HashMap<>();
-    private static final HashMap<Integer, Integer> datatypeSizes = new HashMap<>();
+    private static final HashMap<Integer, String> datatypeDefaults = new HashMap<Integer, String>();
+    private static final HashMap<Integer, Integer> datatypeSizes = new HashMap<Integer, Integer>();
 
     static {
         // Note to length definitions: limiting are the Logbook and Statistics tables, which hit
@@ -59,7 +59,7 @@ public class TableBuilder {
     /**
      * IDataAccess interface data type index to name mapping. Needed to resolve the efa2fieldSpecialDefinitions Strings
      */
-    private static final HashMap<Integer, String> datatypeStrings = new HashMap<>();
+    private static final HashMap<Integer, String> datatypeStrings = new HashMap<Integer, String>();
 
     static {
         datatypeStrings.put(IDataAccess.DATA_STRING, "DATA_STRING");
@@ -193,9 +193,9 @@ public class TableBuilder {
     public static final String fixid_allowed = "efa2logbook efa2messages efa2boatdamages efa2boatreservations";
 
     // cache to hold all special fields for checking when building the tables
-    private final HashMap<String, RecordFieldDefinition> specialFields = new HashMap<>();
+    private final HashMap<String, RecordFieldDefinition> specialFields = new HashMap<String, RecordFieldDefinition>();
     // the complete structure of all storage object types, i. e. MySQL tables.
-    public HashMap<String, StorageObjectTypeDefinition> storageObjectTypes = new HashMap<>();
+    public HashMap<String, StorageObjectTypeDefinition> storageObjectTypes = new HashMap<String, StorageObjectTypeDefinition>();
 
     /**
      * Checks whether the named table is one of the set of common tables. Currently simply checks whether its name
@@ -443,10 +443,10 @@ public class TableBuilder {
         final EfaCloudStorage persistence;
         final boolean isProjectTable;
         boolean versionized;
-        HashMap<String, RecordFieldDefinition> fields = new HashMap<>();
-        ArrayList<String> keys = new ArrayList<>();
-        ArrayList<String> uniques = new ArrayList<>();
-        ArrayList<String> autoincrements = new ArrayList<>();
+        HashMap<String, RecordFieldDefinition> fields = new HashMap<String, RecordFieldDefinition>();
+        ArrayList<String> keys = new ArrayList<String>();
+        ArrayList<String> uniques = new ArrayList<String>();
+        ArrayList<String> autoincrements = new ArrayList<String>();
 
         StorageObjectTypeDefinition(String storageObjectType, EfaCloudStorage persistence) {
             this.storageObjectType = storageObjectType;

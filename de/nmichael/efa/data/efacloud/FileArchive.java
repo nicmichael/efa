@@ -14,7 +14,7 @@ import java.util.zip.ZipOutputStream;
  */
 public class FileArchive {
 
-    private final ArrayList<VFile> files = new ArrayList<>();
+    private final ArrayList<VFile> files = new ArrayList<VFile>();
     private final String zipFilePath;
     private final String tempFilePath;
     private final String charset;
@@ -69,7 +69,7 @@ public class FileArchive {
      * @return all filenames which fit to the given mask
      */
     public Vector<String> getFilenames(String mask) {
-        Vector<String> ret = new Vector<>();
+        Vector<String> ret = new Vector<String>();
         if (!mask.startsWith("*") && !mask.endsWith("*"))
             return ret;
         mask = mask.toLowerCase(Locale.US);
@@ -175,7 +175,7 @@ public class FileArchive {
      * get all file names.
      */
     public Vector<String> getNames(String extension) {
-        Vector<String> names = new Vector<>();
+        Vector<String> names = new Vector<String>();
         for (VFile vf : files)
             if (extension.isEmpty() || vf.fileLocation.toLowerCase(Locale.US).endsWith(extension))
                 names.add(vf.fileLocation);
@@ -288,8 +288,8 @@ public class FileArchive {
             ZipEntry entry;
             while ((entry = stream.getNextEntry()) != null) {
                 // create a buffer to improve copy performance later.
-                ArrayList<byte[]> allBytes = new ArrayList<>();
-                ArrayList<Integer> allBytesLength = new ArrayList<>();
+                ArrayList<byte[]> allBytes = new ArrayList<byte[]>();
+                ArrayList<Integer> allBytesLength = new ArrayList<Integer>();
                 final int slice = 8192;
                 int len;
                 int total = 0;

@@ -1176,14 +1176,9 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
             titleLabel.setText(Daten.EFA_LONGNAME);
         } else {
             TxRequestQueue txq = TxRequestQueue.getInstance();
-            String efaCloudStatus = "";
-            if (txq != null) {
-                txq.setEfaBaseDialog(null, this);
-                int efacloudState = txq.getState();
-                efaCloudStatus = TxRequestQueue.QUEUE_STATE_SYMBOL.get(efacloudState);
-                if (efaCloudStatus == null)
-                    efaCloudStatus = TxRequestQueue.QUEUE_STATE_SYMBOL.get(TxRequestQueue.QUEUE_IS_AUTHENTICATING);
-            }
+            if (txq != null)
+                txq.setEfaGUIrootContainer(this);   // is relevant only at startup
+            String efaCloudStatus = (txq != null) ? txq.getStateForDisplay() : "";
             titleLabel.setText(Daten.EFA_LONGNAME + " [" + Daten.project.getProjectName() +
                     (logbook != null && logbook.isOpen() ? ": " + logbook.getName() : "") +
                     (Daten.project.getMyBoathouseName() != null ? " - " + Daten.project.getMyBoathouseName() : "") +

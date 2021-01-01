@@ -81,7 +81,7 @@ public class EfaCloudStorage extends XMLFile {
     public void modifyServerRecord(DataRecord dataRecord, boolean add, boolean update, boolean delete,
                                    boolean useSynchQueue) {
         String type = (add) ? "insert" : (update) ? "update" : (delete) ? "delete" : "nop";
-        ArrayList<String> record = new ArrayList<>();
+        ArrayList<String> record = new ArrayList<String>();
         for (String field : dataRecord.getFields()) {
             String value = dataRecord.getString(field);
             if ((value != null && value.length() > 0) || update)
@@ -125,7 +125,7 @@ public class EfaCloudStorage extends XMLFile {
      * @return ArrayList<DataRecord> with all retrieved data records.
      */
     public ArrayList<DataRecord> parseCsvTable(String csvString) {
-        ArrayList<DataRecord> ret = new ArrayList<>();
+        ArrayList<DataRecord> ret = new ArrayList<DataRecord>();
         if (csvString.trim().isEmpty())
             return ret;
         // parse the text

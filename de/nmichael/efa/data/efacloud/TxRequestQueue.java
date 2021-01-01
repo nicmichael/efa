@@ -18,6 +18,7 @@ import de.nmichael.efa.util.Dialog;
 import de.nmichael.efa.util.International;
 import de.nmichael.efa.util.Logger;
 
+import java.awt.*;
 import java.io.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -74,7 +75,7 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
     public static final int SYNCH_PERIOD = 60000; // = 60 seconds = 1 minutes
     // If a transaction is busy since more than the RETRY_AFTER_MILLISECONDS period
     // issue a new internet access request.
-    public static final int RETRY_PERIOD = 600000; // = 60 seconds = 1 minute
+    public static final int RETRY_PERIOD = 600000; // = 600 seconds = 10 minute
 
     // timeout for holding a queue locked for manipulation.
     public static final long QUEUE_LOCK_TIMEOUT = 1000;
@@ -125,26 +126,30 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
     public static final int QUEUE_IS_PAUSED = 130;
     public static final int QUEUE_IS_DISCONNECTED = 131;
     public static final int QUEUE_IS_WORKING = 14;
+    public static final int QUEUE_IS_IDLE = 140;            // the idle state is "working" with empty queues
     public static final int QUEUE_IS_SYNCHRONIZING = 15;
-    public static final HashMap<Integer, String> QUEUE_STATE = new HashMap<>();
+    public static final HashMap<Integer, String> QUEUE_STATE = new HashMap<Integer, String>();
 
     static {
         QUEUE_STATE.put(QUEUE_IS_STOPPED, "STOPPED");
         QUEUE_STATE.put(QUEUE_IS_AUTHENTICATING, "AUTHENTICATING");
         QUEUE_STATE.put(QUEUE_IS_PAUSED, "PAUSED");
         QUEUE_STATE.put(QUEUE_IS_DISCONNECTED, "DISCONNECTED");
+        QUEUE_STATE.put(QUEUE_IS_IDLE, "IDLE");
         QUEUE_STATE.put(QUEUE_IS_WORKING, "WORKING");
         QUEUE_STATE.put(QUEUE_IS_SYNCHRONIZING, "SYNCHRONIZING");
     }
-    public static final HashMap<Integer, String> QUEUE_STATE_SYMBOL = new HashMap<>();
+
+    public static final HashMap<Integer, String> QUEUE_STATE_SYMBOL = new HashMap<Integer, String>();
 
     static {
-        QUEUE_STATE_SYMBOL.put(QUEUE_IS_STOPPED, "  (\u21d4 \u25aa)");
-        QUEUE_STATE_SYMBOL.put(QUEUE_IS_AUTHENTICATING, "  (\u21d4 ?)");
-        QUEUE_STATE_SYMBOL.put(QUEUE_IS_PAUSED, "  (\u21d4 \u2551)");
-        QUEUE_STATE_SYMBOL.put(QUEUE_IS_DISCONNECTED, "  (\u21ce !)");
-        QUEUE_STATE_SYMBOL.put(QUEUE_IS_WORKING, "  (\u21d4 \u2714)");
-        QUEUE_STATE_SYMBOL.put(QUEUE_IS_SYNCHRONIZING, " (\u21d4 \u27f3)");
+        QUEUE_STATE_SYMBOL.put(QUEUE_IS_STOPPED, "  \u25aa");
+        QUEUE_STATE_SYMBOL.put(QUEUE_IS_AUTHENTICATING, "  ?");
+        QUEUE_STATE_SYMBOL.put(QUEUE_IS_PAUSED, "  \u2551");
+        QUEUE_STATE_SYMBOL.put(QUEUE_IS_DISCONNECTED, "  \u21ce!");
+        QUEUE_STATE_SYMBOL.put(QUEUE_IS_WORKING, "  \u21d4");
+        QUEUE_STATE_SYMBOL.put(QUEUE_IS_IDLE, "  \u2714");
+        QUEUE_STATE_SYMBOL.put(QUEUE_IS_SYNCHRONIZING, " \u27f3");
     }
 
     private static int txID;                  // the last used transaction ID
@@ -153,26 +158,27 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
     private static TxResponseHandler txr;     // The handler to hand responses over to
 
     // the request queues and their size, locks and file paths.
-    private final Vector<Integer> stateTransitionRequests = new Vector<>();
-    private final ArrayList<Vector<Transaction>> queues = new ArrayList<>();
+    private final Vector<Integer> stateTransitionRequests = new Vector<Integer>();
+    private final ArrayList<Vector<Transaction>> queues = new ArrayList<Vector<Transaction>>();
     private final long[] locks = new long[TX_QUEUE_COUNT];
     private final String[] txFilePath = new String[TX_QUEUE_COUNT];
     private String efacloudLogDir;
 
     private static final long LOG_PERIOD_MILLIS = 14 * (24 * 3600 * 1000);
-    static final HashMap<String, String> logFilePaths = new HashMap<>();
+    static final HashMap<String, String> logFileNames = new HashMap<String, String>();
+    static final HashMap<String, String> logFilePaths = new HashMap<String, String>();
 
     static {
-        logFilePaths.put("efacloud synchronization", "efacloudSynch.log");
-        logFilePaths.put("efacloud status", "efacloudStates.log");
-        logFilePaths.put("API activity", "efacloudApiActivity.log");
-        logFilePaths.put("API errors", "efacloudApiErrors.log");
-        logFilePaths.put("API statistics", "efacloudApiStatistics.log");
-        logFilePaths.put("internet statistics", "efacloudInternetStatistics.log");
+        logFileNames.put("efacloud synchronization", "efacloudSynch.log");
+        logFileNames.put("efacloud status", "efacloudStates.log");
+        logFileNames.put("API activity", "efacloudApiActivity.log");
+        logFileNames.put("API errors", "efacloudApiErrors.log");
+        logFileNames.put("API statistics", "efacloudApiStatistics.log");
+        logFileNames.put("internet statistics", "efacloudInternetStatistics.log");
     }
 
     // The response queue
-    private final ArrayList<TaskManager.RequestMessage> queueResponses = new ArrayList<>();
+    private final ArrayList<TaskManager.RequestMessage> queueResponses = new ArrayList<TaskManager.RequestMessage>();
 
     // The queue state machine parameters
     private int state = QUEUE_IS_STOPPED;
@@ -189,8 +195,7 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
     String efaCloudUrl;
     String username;
     String credentials;
-    private EfaBaseFrame efaBaseFrame;
-    private EfaBoathouseFrame efaBoathouseFrame;
+    private Container efaGUIroot;
 
     // Statistics buffer
     private static final int STATISTICS_BUFFER_SIZE = 5000;
@@ -238,14 +243,22 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
     }
 
     /**
-     * Simple setter. Either of both objects shall be null.
-     * @param efaBaseFrame setter object. Used for status display
-     * @param efaBoathouseFrame setter object. Used for status display
+     * If the GUI root container is null, find it and remember it for later status display. If it was already set, do
+     * nothing.
+     *
+     * @param efaCallingUIelement Container which triggered the setting.
      */
-    public void setEfaBaseDialog(EfaBaseFrame efaBaseFrame, EfaBoathouseFrame efaBoathouseFrame) {
-        this.efaBaseFrame = efaBaseFrame;
-        this.efaBoathouseFrame = efaBoathouseFrame;
+    public void setEfaGUIrootContainer(Container efaCallingUIelement) {
+        if (this.efaGUIroot != null)
+            return;
+        // identify the efa root Container (for either efa boathouse or efa Base)
+        Container efaGUIroot = efaCallingUIelement;
+        while ((efaGUIroot != null) && !(efaGUIroot instanceof EfaBaseFrame) &&
+                !(efaGUIroot instanceof EfaBoathouseFrame))
+            efaGUIroot = efaGUIroot.getParent();
+        this.efaGUIroot = efaGUIroot;
     }
+
     /**
      * Static transaction queue getter. The queue must be initialized first. If not initialized, this returns null.
      *
@@ -261,7 +274,26 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
      * @return the state of operation, e. g. TX_QUEUE_WORKING
      */
     public int getState() {
+        if ((state == QUEUE_IS_WORKING) && ((getQueueSize(TX_BUSY_QUEUE_INDEX) + getQueueSize(TX_PENDING_QUEUE_INDEX) +
+                getQueueSize(TX_SYNCH_QUEUE_INDEX)) == 0))
+            return QUEUE_IS_IDLE;
         return state;
+    }
+
+    /**
+     * Get a status for display in the base frame or boathouse frame top decoration.
+     *
+     * @return the state of operation, e. g. TX_QUEUE_WORKING
+     */
+    public String getStateForDisplay() {
+        String efaCloudStatus = QUEUE_STATE_SYMBOL.get(txq.getState());
+        if (efaCloudStatus == null)
+            efaCloudStatus = TxRequestQueue.QUEUE_STATE_SYMBOL.get(TxRequestQueue.QUEUE_IS_AUTHENTICATING);
+        if ((getQueueSize(TX_BUSY_QUEUE_INDEX) + getQueueSize(TX_PENDING_QUEUE_INDEX) +
+                getQueueSize(TX_SYNCH_QUEUE_INDEX)) == 0)
+            return efaCloudStatus;
+        return efaCloudStatus + " - " + getQueueSize(TX_BUSY_QUEUE_INDEX) + "|" + getQueueSize(TX_PENDING_QUEUE_INDEX) + "|" +
+                getQueueSize(TX_SYNCH_QUEUE_INDEX);
     }
 
     /**
@@ -285,11 +317,11 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String dateString = format.format(new Date()) + " [API-Error]: ";
         if (type == 1)
-            TextResource.writeContents(TxRequestQueue.logFilePaths.get("API errors"), dateString + message, true);
+            TextResource.writeContents(logFilePaths.get("API errors"), dateString + message, true);
         else if (type == 2)
-            TextResource.writeContents(TxRequestQueue.logFilePaths.get("API statistics"), message, false);
+            TextResource.writeContents(logFilePaths.get("API statistics"), message, false);
         else if (type == 3)
-            TextResource.writeContents(TxRequestQueue.logFilePaths.get("internet statistics"), message, false);
+            TextResource.writeContents(logFilePaths.get("internet statistics"), message, false);
 
     }
 
@@ -323,9 +355,9 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
         SimpleDateFormat formatFull = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         SimpleDateFormat formatDay = new SimpleDateFormat("yyyy-MM-dd");
         long now = System.currentTimeMillis();
-        for (String logFilePath : TxRequestQueue.logFilePaths.keySet()) {
-            String fullLogFilePath = efacloudLogDir + File.separator + logFilePaths.get(logFilePath);
-            String logFileContents = TextResource.getContents(new File(fullLogFilePath), "UTF-8");
+        for (String logFileName : logFileNames.keySet()) {
+            String logFilePath = efacloudLogDir + File.separator + logFileNames.get(logFileName);
+            String logFileContents = TextResource.getContents(new File(logFilePath), "UTF-8");
             StringBuilder cleansedLogFile = new StringBuilder();
             if (logFileContents != null) {
                 String[] logFileLines = logFileContents.split("\n");
@@ -343,14 +375,14 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
                     }
                 }
             }
-            if (logFilePath.equalsIgnoreCase("API statistics"))
+            if (logFileName.equalsIgnoreCase("API statistics"))
                 initStatisticsCsv(cleansedLogFile.toString());
-            else if (logFilePath.equalsIgnoreCase("Internet statistics"))
+            else if (logFileName.equalsIgnoreCase("Internet statistics"))
                 InternetAccessManager.initStatisticsCsv(cleansedLogFile.toString());
             else
-                cleansedLogFile.append(formatFull.format(new Date())).append(" [all]: LOG STARTING\n");
-            TextResource.writeContents(fullLogFilePath, cleansedLogFile.toString(), false);
-            logFilePaths.put(logFilePath, fullLogFilePath);
+                cleansedLogFile.append(formatFull.format(new Date())).append(" [@all]: LOG STARTING\n");
+            TextResource.writeContents(logFilePath, cleansedLogFile.toString(), false);
+            logFilePaths.put(logFileName, logFilePath);
         }
 
         // check the URL
@@ -365,7 +397,7 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
         txID = 42;
         txcID = 42;
         for (int i = 0; i < TX_QUEUE_COUNT; i++) {
-            Vector<Transaction> queue = new Vector<>();
+            Vector<Transaction> queue = new Vector<Transaction>();
             queues.add(queue);
             txFilePath[i] = efacloudQueuesDir + File.separator + TX_QUEUE_NAMES[i] + ".txs";
             // permanent queues shall be read from file upon initialization, but only then and except the busy queue.
@@ -380,6 +412,17 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
                     // clear also the disk contents of the busy queue, because these transactions are no more open.
                     TextResource.writeContents(txFilePath[i], "", false);
             releaseQueueLock(i);
+        }
+    }
+
+    /**
+     * Close all logs
+     */
+    private void closeLogs() {
+        for (String logFileName : logFileNames.keySet()) {
+            String logFilePath = logFilePaths.get(logFileName);
+            SimpleDateFormat formatFull = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            TextResource.writeContents(logFilePath, formatFull.format(new Date()) + " [@all]: LOG ENDING\n", true);
         }
     }
 
@@ -401,7 +444,8 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
                             TextResource.getContents(new File(efacloudLogDir + File.separator + logFile), "UTF-8"));
                 fa.putContent(fa.getInstance("txqStatistics.csv", false), txqStatistics);
                 fa.putContent(fa.getInstance("iamStatistics.csv", false), iamStatistics);
-                return Base64.getEncoder().encodeToString(fa.getZipAsBytes());
+                // Java8: return Base64.getEncoder().encodeToString(fa.getZipAsBytes());
+                return Base64.encodeBytes(fa.getZipAsBytes()); // Java6
             } else
                 return "";
         } else
@@ -446,8 +490,10 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
             registerStateChangeRequest(RQ_QUEUE_AUTHENTICATE);
         } catch (Exception e) {
             Dialog.error("Efacloud konnte nicht gestartet werden.\nFehlermeldung: " + e.getMessage());
-            if (queueTimer != null) queueTimer.cancel();
-            if (watchDog != null) watchDog.cancel();
+            if (queueTimer != null)
+                queueTimer.cancel();
+            if (watchDog != null)
+                watchDog.cancel();
         }
     }
 
@@ -492,11 +538,25 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
     /**
      * Display the current status in the GUI.
      */
-    private void showStatusAtGUI() {
-        if (efaBaseFrame != null)
-            efaBaseFrame.setTitle();
-        else if (efaBoathouseFrame != null)
-            efaBoathouseFrame.updateProjectLogbookInfo();
+    public void showStatusAtGUI() {
+        if (efaGUIroot instanceof EfaBaseFrame)
+            ((EfaBaseFrame) efaGUIroot).setTitle();
+        else if (efaGUIroot instanceof EfaBoathouseFrame)
+            ((EfaBoathouseFrame) efaGUIroot).updateProjectLogbookInfo();
+    }
+
+    /**
+     * Drop an invalid state change request at start of the state change request queue to avoid state locking. Provide a
+     * state change log message.
+     */
+    private void dropInvalidStateChangeRequest() {
+        if (stateTransitionRequests.size() == 0)
+            return;
+        txq.synchControl.logSynchMessage(
+                "Dropped invalid state change request. Current: " + TxRequestQueue.QUEUE_STATE.get(txq.getState()) +
+                        ", requested: " + TxRequestQueue.QUEUE_STATE.get(stateTransitionRequests.firstElement()),
+                "@all", null, true);
+        stateTransitionRequests.remove(0);
     }
 
     /**
@@ -536,7 +596,8 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
                             txq.suspendQueue(ACTION_TX_STOP);
                             EfaCloudConfigDialog.deactivateEfacloud();
                             showStatusAtGUI();
-                        }
+                        } else
+                            dropInvalidStateChangeRequest();
                         break;
                     case RQ_QUEUE_AUTHENTICATE:
                         if (state == QUEUE_IS_STOPPED) {
@@ -545,21 +606,21 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
                             showStatusAtGUI();
                             // start with first transaction a "nop" transaction to verify the credentials.
                             appendTransaction(TX_PENDING_QUEUE_INDEX, "nop", "", "sleep;0");
-                            // add a second synch @all transaction to check whether the tables have been
-                            // initialized.
-                            // Use
-                            // a filter which returns a count close to 0 for all tables to save server side
+                            // add a second synch @all transaction to check whether the tables have been initialized.
+                            // Use a filter which returns a count close to 0 for all tables to save server side
                             // performance.
                             long now = System.currentTimeMillis();
                             appendTransaction(TX_PENDING_QUEUE_INDEX, "synch", "@all", "LastModified;" + now, "?;>");
-                        }
+                        } else
+                            dropInvalidStateChangeRequest();
                         break;
                     case RQ_QUEUE_PAUSE:
                         if (state == QUEUE_IS_WORKING) {
                             stateTransitionRequests.remove(0);
                             suspendQueue(RQ_QUEUE_PAUSE);
                             showStatusAtGUI();
-                        }
+                        } else
+                            dropInvalidStateChangeRequest();
                         break;
                     case RQ_QUEUE_RESUME:
                         // case RQ_QUEUE_START:  (same value)
@@ -569,7 +630,8 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
                             state = QUEUE_IS_WORKING;
                             showStatusAtGUI();
                             txq.synchControl.logSynchMessage("Queue activity started", "@all", null, true);
-                        }
+                        } else
+                            dropInvalidStateChangeRequest();
                         break;
                     case RQ_QUEUE_START_SYNCH_DOWNLOAD:
                     case RQ_QUEUE_START_SYNCH_UPLOAD:
@@ -590,7 +652,8 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
                                             "filepath;efacloudLogs.zip", "contents;" + getLogsAsZip());
                                 }
                             }
-                        }
+                        } else
+                            dropInvalidStateChangeRequest();
                         break;
                     case RQ_QUEUE_STOP_SYNCH:          // End of synchronisation process, no manual option.
                         if (state == QUEUE_IS_SYNCHRONIZING) {
@@ -602,12 +665,13 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
                                         .logSynchMessage("Synchronisation transactions completed", "@all", null, false);
                                 txq.synchControl.logSynchMessage("Synchronisation completed", "@all", null, true);
                             }
-                        }
+                        } else
+                            dropInvalidStateChangeRequest();
                         break;
                 }
 
                 // skip any further activity if paused or stopped.
-                if ((txq.state == TxRequestQueue.QUEUE_IS_PAUSED) || (txq.state == TxRequestQueue.QUEUE_IS_STOPPED))
+                if ((txq.state == QUEUE_IS_PAUSED) || (txq.state == QUEUE_IS_STOPPED))
                     return;
 
                 // ============== handle requests ===============
@@ -672,8 +736,12 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
      */
     public void terminate() {
         queueTimer.cancel();
+        watchDog.cancel();
         iam.terminate();
+        closeLogs();
         txq = null;
+        // update status display, remove efacloud part
+        showStatusAtGUI();
     }
 
     /**
@@ -803,7 +871,7 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
                                     isKeyFixingConfirmation || tx.type.isWriteAction));
                     boolean keepOnStop = (action == ACTION_TX_STOP) && isKeyFixingConfirmation;
                     if (!keepOnPause && !keepOnStop) {
-                        if (destinationQueueIndex == TxRequestQueue.TX_DROPPED_QUEUE_INDEX)
+                        if (destinationQueueIndex == TX_DROPPED_QUEUE_INDEX)
                             tx.logMessage("drop");
                         dest.add(tx);
                         addStatistics(tx, destinationQueueIndex);
@@ -819,6 +887,8 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
             writeQueueToFile(destinationQueueIndex);
         releaseQueueLock(sourceQueueIndex);
         releaseQueueLock(destinationQueueIndex);
+        if (!registerActionOnly)
+            showStatusAtGUI();
     }
 
     /**
@@ -994,7 +1064,7 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
      * @return size of the busy queue
      */
     int getBusyQueueSize() {
-        return queues.get(TxRequestQueue.TX_BUSY_QUEUE_INDEX).size();
+        return queues.get(TX_BUSY_QUEUE_INDEX).size();
     }
 
     /**

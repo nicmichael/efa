@@ -69,7 +69,7 @@ public class EfaCloudConfigDialog extends BaseTabbedDialog implements IItemListe
      */
     private void iniItems(AdminRecord admin) {
         this.admin = admin;
-        Vector<IItemType> guiItems = new Vector<>();
+        Vector<IItemType> guiItems = new Vector<IItemType>();
         String category;
         IItemType item;
         int projectStorageType = (Daten.project == null) ? IDataAccess.TYPE_FILE_XML : Daten.project
@@ -125,7 +125,7 @@ public class EfaCloudConfigDialog extends BaseTabbedDialog implements IItemListe
             else if (txq != null) {
                 int state = txq.getState();
                 // If the queue is working options are pause, reset, and manual synch
-                if (state == TxRequestQueue.QUEUE_IS_WORKING) {
+                if ((state == TxRequestQueue.QUEUE_IS_WORKING) || (state == TxRequestQueue.QUEUE_IS_IDLE)) {
                     // Pause
                     guiItems.add(item = new ItemTypeButton(BUTTON_EFACLOUD_PAUSE, IItemType.TYPE_PUBLIC, category,
                             International.getString(International.getString("Kommunikation anhalten"))));
@@ -134,8 +134,10 @@ public class EfaCloudConfigDialog extends BaseTabbedDialog implements IItemListe
                     item.registerItemListener(this);
                     item.setFieldGrid(2, GridBagConstraints.NORTH, GridBagConstraints.NONE);
                     // manual upload synchronization
-                    guiItems.add(item = new ItemTypeButton(BUTTON_EFACLOUD_SYNCH_UPLOAD, IItemType.TYPE_PUBLIC, category,
-                            International.getString(International.getString("Upload Synchronisation starten"))));
+                    guiItems.add(
+                            item = new ItemTypeButton(BUTTON_EFACLOUD_SYNCH_UPLOAD, IItemType.TYPE_PUBLIC, category,
+                                    International
+                                            .getString(International.getString("Upload Synchronisation starten"))));
                     ((ItemTypeButton) item).setIcon(getIcon(IMAGE_EFACLOUD_SYNCH));
                     item.setPadding(0, 0, 20, 20);
                     item.registerItemListener(this);
@@ -197,6 +199,9 @@ public class EfaCloudConfigDialog extends BaseTabbedDialog implements IItemListe
     public static void deactivateEfacloud() {
         Project pr = Daten.project;
         pr.setProjectStorageType(IDataAccess.TYPE_FILE_XML);
+        TxRequestQueue txq = TxRequestQueue.getInstance();
+        if (txq != null)
+            txq.terminate();
         // Store the changed settings
         String prjName = pr.getName();
         try {
@@ -256,6 +261,9 @@ public class EfaCloudConfigDialog extends BaseTabbedDialog implements IItemListe
                         if (txq != null) {
                             txq.clearAllQueues();
                             txq.registerStateChangeRequest(TxRequestQueue.RQ_QUEUE_AUTHENTICATE);
+                            // Initialize the GUI for efacloud Status display
+                            txq.setEfaGUIrootContainer(this);
+                            txq.showStatusAtGUI();
                         }
                     } catch (EfaException e) {
                         de.nmichael.efa.util.Dialog.error(LogString
@@ -265,7 +273,7 @@ public class EfaCloudConfigDialog extends BaseTabbedDialog implements IItemListe
                 }
             }
 
-            // disable efacloud
+            // other efacloud actions
             else if (pr.getProjectStorageType() == IDataAccess.TYPE_EFA_CLOUD) {
                 if (itemType.getName().equalsIgnoreCase(BUTTON_EFACLOUD_DEACTIVATE)) {
                     deactivateEfacloud();
@@ -279,7 +287,7 @@ public class EfaCloudConfigDialog extends BaseTabbedDialog implements IItemListe
                     txq.registerStateChangeRequest(TxRequestQueue.RQ_QUEUE_START_SYNCH_UPLOAD);
                 }
             }
-            this.dispose();
+            this.cancel();    // This call ends the efacloud dialog, it does not cancel any action.
         }
     }
 }

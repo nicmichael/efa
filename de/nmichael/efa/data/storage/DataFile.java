@@ -519,7 +519,7 @@ public abstract class DataFile extends DataAccess {
                     }
                     if (update && !add) {
                         if (currentRecord.getChangeCount() != record.getChangeCount() &&
-                                !inOpeningStorageObject) {
+                                !inOpeningStorageObject && !record.isCopyFromServer) {
                             // Throw an exception!
                             throw new EfaException(Logger.MSG_DATA_DUPLICATERECORD, getUID() + ": Update Conflict for Data Record '" + key.toString() +
                                     "': Current ChangeCount=" + currentRecord.getChangeCount() + ", expected ChangeCount=" + record.getChangeCount(),

@@ -38,7 +38,7 @@ public class TaskManager {
     public static final int UI_SHOW_TOAST = 40;
 
 
-    private final Vector<RequestMessage> taskQueue = new Vector<>();
+    private final Vector<RequestMessage> taskQueue = new Vector<RequestMessage>();
     private int messagesHandled;
     private RequestMessage activeTask = null;
     private Timer timer;
@@ -64,9 +64,12 @@ public class TaskManager {
                     messagesHandled++;
                     activeTask = taskMsg;
                     // no lambda, keep it Java 7 compatible.
-                    Thread timerTaskThread = new Thread(() -> {
-                        requestHandler.handleRequest(taskMsg);
-                        activeTask = null;
+                    Thread timerTaskThread = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            requestHandler.handleRequest(taskMsg);
+                            activeTask = null;
+                        }
                     });
                     timerTaskThread.start();
                 }
