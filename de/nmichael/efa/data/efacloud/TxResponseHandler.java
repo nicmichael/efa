@@ -102,12 +102,16 @@ public class TxResponseHandler {
                 default:
                     txq.shiftTx(TxRequestQueue.TX_BUSY_QUEUE_INDEX, TxRequestQueue.TX_FAILED_QUEUE_INDEX,
                             TxRequestQueue.ACTION_TX_CONTAINER_FAILED, 0, 0);
+                    if (txq.getState() == TxRequestQueue.QUEUE_IS_SYNCHRONIZING)
+                        txq.registerStateChangeRequest(TxRequestQueue.RQ_QUEUE_STOP_SYNCH);
                     break;
                 case 404:  // "Server side busy"
                 case 406:  // "Overload detected"
                 case 407:  // "No data base connection"
                     txq.shiftTx(TxRequestQueue.TX_BUSY_QUEUE_INDEX, TxRequestQueue.TX_BUSY_QUEUE_INDEX,
                             TxRequestQueue.ACTION_TX_RETRY, 0, 0);
+                    if (txq.getState() == TxRequestQueue.QUEUE_IS_SYNCHRONIZING)
+                        txq.registerStateChangeRequest(TxRequestQueue.RQ_QUEUE_STOP_SYNCH);
                     break;
             }
     }

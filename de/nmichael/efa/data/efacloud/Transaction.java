@@ -56,7 +56,7 @@ class Transaction {
                     return type;
             return NOP;
         }
-        }
+    }
 
     // The transaction response codes as text
     static final HashMap<Integer, String> TX_RESULT_CODES = new HashMap<Integer, String>();
@@ -235,8 +235,8 @@ class Transaction {
         String transactionString =
                 "#" + ID + ", " + type + " (record length: " + ((record == null) ? "null" : "" + record.length) + ")";
         String dateString = format.format(new Date()) + " [" + action + " for " + tablename + "]: ";
-        TextResource.writeContents(TxRequestQueue.logFilePaths.get("API activity"), dateString + transactionString,
-                true);
+        TextResource
+                .writeContents(TxRequestQueue.logFilePaths.get("API activity"), dateString + transactionString, true);
     }
 
     /**
@@ -294,6 +294,33 @@ class Transaction {
         if (hasRecord()) {
             toAppendTo.append(d);
             appendTxRecordString(toAppendTo);
+        }
+    }
+
+    /**
+     * Shorten all fields of a record to the given max length
+     *
+     * @param maxLengthField maximum length of a field's value in the failed queue
+     */
+    public void shortenRecord(int maxLengthField) {
+        if (record == null)
+            return;
+        for (int i = 0; i < record.length; i++) {   // request record
+            if (!record[i].trim().isEmpty()) {
+                ArrayList<String> fnv = CsvCodec.splitEntries(record[i].trim());
+                String field = fnv.get(0);
+                String value;
+                if (fnv.size() < 2)
+                    value = "";
+                else
+                    value = fnv.get(1);
+                // cut the value to the maximum length for data write transactions
+                if (value.length() > maxLengthField) {
+                    value = value.substring(0, maxLengthField);
+                    record[i] = field + ";" +
+                            CsvCodec.encodeElement(value, CsvCodec.DEFAULT_DELIMITER, CsvCodec.DEFAULT_QUOTATION);
+                }
+            }
         }
     }
 

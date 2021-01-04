@@ -16,7 +16,7 @@ import de.nmichael.efa.util.*;
 
 public class MetaData {
 
-    private final String dataType;
+    private String dataType;
     protected String[] FIELDS;
     protected int[] TYPES;
     protected HashMap<String,Integer> FIELDIDX;
@@ -24,7 +24,7 @@ public class MetaData {
     protected ArrayList<String[]> indices = new ArrayList<String[]>();
     protected boolean versionized;
 
-    private static final Hashtable<String,MetaData> metaData = new Hashtable<String,MetaData>();
+    private static Hashtable<String,MetaData> metaData = new Hashtable<String,MetaData>();
 
     private MetaData(String dataType) {
         this.dataType = dataType;
@@ -100,13 +100,13 @@ public class MetaData {
     public int getNumberOfFields() {
         return FIELDS.length;
     }
-    
+
     public int getFieldIndex(String fieldName) {
         try {
             return FIELDIDX.get(fieldName).intValue();
         } catch(Exception e) {
             if (Logger.isTraceOn(Logger.TT_XMLFILE, 1)) {
-                Logger.log(Logger.DEBUG, Logger.MSG_DATA_FIELDDOESNOTEXIST, 
+                Logger.log(Logger.DEBUG, Logger.MSG_DATA_FIELDDOESNOTEXIST,
                     "MetaData.getIndex(\""+fieldName+"\") - Field does not exist for DataType " + dataType + "!");
             }
             Logger.logdebug(e);

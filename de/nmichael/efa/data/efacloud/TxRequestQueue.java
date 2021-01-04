@@ -72,13 +72,13 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
     // every SYNCH_PERIOD the client checks for updates at the server side.
     // The update period MUST be at least 5 times the InternetAccessManager timeout.
     // The synchronisation start delay is one SYNCH_PERIOD
-    public static final int SYNCH_PERIOD = 60000; // = 60 seconds = 1 minutes
+    public static final int SYNCH_PERIOD = 180000; // = 180 seconds = 3 minutes
     // If a transaction is busy since more than the RETRY_AFTER_MILLISECONDS period
     // issue a new internet access request.
     public static final int RETRY_PERIOD = 600000; // = 600 seconds = 10 minute
 
     // timeout for holding a queue locked for manipulation.
-    public static final long QUEUE_LOCK_TIMEOUT = 1000;
+    public static final long QUEUE_LOCK_TIMEOUT = 5000;
     // Maximum number of transactions shifted into the pending queue, i. e. of transactions per
     // internet access request. If the internet access is blocked, this will pile upt internet
     // access requests rather than transactions in the pending transactions queue.
@@ -874,6 +874,9 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
                         if (destinationQueueIndex == TX_DROPPED_QUEUE_INDEX)
                             tx.logMessage("drop");
                         dest.add(tx);
+                        // cut failed transactions length to avoid log overload
+                        if (destinationQueueIndex == TX_FAILED_QUEUE_INDEX)
+                            tx.shortenRecord(1024);
                         addStatistics(tx, destinationQueueIndex);
                         src.remove(tx);
                     }
