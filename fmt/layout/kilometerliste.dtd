@@ -1,0 +1,83 @@
+<!ELEMENT kilometerliste (listenkopf, wettBedingungen?, tabelle?,
+		wettZeitraumWarnung?, gruppe*, zusatzTabelle*) >
+
+<!ELEMENT listenkopf (titel?, auswertungsDatum?, auswertungsProgramm?,
+		auswertungsArt?, auswertungsZeitraum?, ausgewertet?) >
+<!ELEMENT ausgewertet (ausgewerteteEintraege?, ausgewertetFuer*,
+		ausgewertetNurFuer?, ausgewertetWettNur?) >
+<!ELEMENT titel (#PCDATA) >
+<!ELEMENT auswertungsDatum (#PCDATA) >
+<!ELEMENT auswertungsProgramm (#PCDATA) >
+<!ELEMENT auswertungsArt (#PCDATA) >
+<!ELEMENT auswertungsZeitraum (#PCDATA) >
+<!ELEMENT ausgewerteteEintraege (#PCDATA) >
+<!ELEMENT ausgewertetFuer (#PCDATA) >
+<!ELEMENT ausgewertetNurFuer (#PCDATA) >
+<!ELEMENT ausgewertetWettNur (#PCDATA) >
+<!ATTLIST auswertungsProgramm url CDATA #IMPLIED >
+<!ATTLIST ausgewertetNurFuer bezeichnung CDATA #REQUIRED >
+		
+<!ELEMENT wettBedingungen (wettBedZeile+) >
+<!ELEMENT wettBedZeile (#PCDATA) >
+<!ATTLIST wettBedZeile
+	fett (true) #IMPLIED
+	kursiv (true) #IMPLIED >
+
+<!ELEMENT tabelle (tabellenTitel, eintrag*) >
+<!ELEMENT tabellenTitel (spaltenTitel+) >
+<!ELEMENT spaltenTitel (#PCDATA) >
+<!ELEMENT eintrag (absnr?, nr?, name?, jahrgang?, status?, bezeichnung?,
+		km?, rudkm?, stmkm?, fahrten?, kmfahrt?, anzversch?,
+		zielfahrten?, fahrtenbuch?, wwListe?) >
+<!ELEMENT absnr (#PCDATA) >
+<!ELEMENT nr (#PCDATA) >
+<!ELEMENT name (#PCDATA) >
+<!ELEMENT jahrgang (#PCDATA) >
+<!ELEMENT status (#PCDATA) >
+<!ELEMENT bezeichnung (#PCDATA) >
+<!ELEMENT km (#PCDATA) >
+<!ELEMENT rudkm (#PCDATA) >
+<!ELEMENT stmkm (#PCDATA) >
+<!ELEMENT fahrten (#PCDATA) >
+<!ELEMENT kmfahrt (#PCDATA) >
+<!ELEMENT anzversch (#PCDATA) >
+<!ELEMENT zielfahrten (#PCDATA) >
+<!ELEMENT fahrtenbuch (fbFeld+) >
+<!ELEMENT fbFeld (#PCDATA) >
+<!ELEMENT wwListe (wwFeld+) >
+<!ELEMENT wwFeld (#PCDATA) >
+<!ATTLIST eintrag zusammenfassung (true) #IMPLIED >
+<!ATTLIST km datei CDATA #IMPLIED
+		breite CDATA #IMPLIED >
+<!ATTLIST rudkm datei CDATA #IMPLIED
+		breite CDATA #IMPLIED >
+<!ATTLIST stmkm datei CDATA #IMPLIED
+		breite CDATA #IMPLIED >
+<!ATTLIST fahrten datei CDATA #IMPLIED
+		breite CDATA #IMPLIED >
+<!ATTLIST kmfahrt datei CDATA #IMPLIED
+		breite CDATA #IMPLIED >
+<!ATTLIST wwFeld selbst (true) #IMPLIED >
+
+<!ELEMENT wettZeitraumWarnung (#PCDATA) >
+
+<!ELEMENT gruppe (gruppenName, wettEintrag*) >
+<!ELEMENT gruppenName (gruppenBez, gruppenJahrg?, gruppenBed?, gruppenZusatz*) >
+<!ELEMENT gruppenBez (#PCDATA) >
+<!ELEMENT gruppenJahrg (#PCDATA) >
+<!ELEMENT gruppenBed (#PCDATA) >
+<!ELEMENT gruppenZusatz (#PCDATA) >
+<!ELEMENT wettEintrag (wettName, wettKilometer?, wettJahrgang?, wettZusatz?, wettDetail*) >
+<!ELEMENT wettName (#PCDATA) >
+<!ELEMENT wettKilometer (#PCDATA) >
+<!ELEMENT wettJahrgang (#PCDATA) >
+<!ELEMENT wettZusatz (#PCDATA) >
+<!ELEMENT wettDetail (wettDetailFeld+) >
+<!ELEMENT wettDetailFeld (#PCDATA) >
+<!ATTLIST wettEintrag erfuellt (true|false) #REQUIRED >
+<!ATTLIST wettZusatz wert1 CDATA #IMPLIED
+                     wert2 CDATA #IMPLIED >
+
+<!ELEMENT zusatzTabelle (zusatzTabelleZeile+) >
+<!ELEMENT zusatzTabelleZeile (zusatzTabelleSpalte+) >
+<!ELEMENT zusatzTabelleSpalte (#PCDATA) >

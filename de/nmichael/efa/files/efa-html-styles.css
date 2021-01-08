@@ -1,0 +1,62 @@
+body                      { font-family:Verdana,Geneva,Arial,Helvetica,sans-serif; color:#222222; }
+
+h1                        { text-align:center; }
+
+table                     { margin-left:auto; margin-right:auto; text-align:center; border-spacing:1px; }
+th                        { text-align:left; padding-left:5px; padding-right:5px; padding-top:1px; padding-bottom:1px; }
+td                        { text-align:left; padding-left:5px; padding-right:5px; padding-top:1px; padding-bottom:1px; }
+
+table.header              { border:solid; border-width:2px; border-color:#444444; border-radius:10px 10px 10px 10px; border-spacing:2px; background-color:#f5f5f5; }
+td.header_name            { border:solid; border-width:1px; border-color:#ffffff; }
+td.header_value           { border:solid; border-width:1px; border-color:#ffffff; font-weight:bold; }
+
+table.data                { border:solid; border-width:2px; border-color:#444444; }
+th.data                   { background-color:#eaeaea; }
+tr.line1                  { background-color:#f5f5f5; }
+tr.line2                  { background-color:#eaeaea; }
+td.entry_pos              { text-align:right; }
+td.entry_data             { text-align:left; }
+td.entry_value            { text-align:right; }
+td.entry_bar              { text-align:left; }
+td.entry_ok               { text-align:left; }
+td.entry_nok              { text-align:left; background-color:#ffaaaa; }
+
+table.additional          { border:solid; border-width:2px; border-color:#444444; border-spacing:0px; background-color:#f5f5f5; }
+th.additional             { border:solid; border-width:1px; border-color:#ffffff; font-weight:bold; }
+td.additional             { border:solid; border-width:1px; border-color:#ffffff; }
+
+table.comp_rules          { background-color:#eeeeee; border:solid; }
+
+table.comp_legend         { width:500px; }
+th.comp_legend            { background-color:#ddddff; }
+td.comp_legend_ok         { background-color:#00ff00; text-align:center; width:250px; }
+td.comp_legend_nok        { background-color:#ffff00; text-align:center; width:250px; }
+
+table.comp_data           { width:100%; }
+th.comp_group             { text-align:left; background-color:#ddddff; }
+td.comp_space             { width:10%; }
+td.comp_entry_ok_name     { width:45%; background-color:#00ff00; }
+td.comp_entry_nok_name    { width:45%; background-color:#ffff00; }
+td.comp_entry_ok_details  { width:45%; background-color:#aaffaa; }
+td.comp_entry_nok_details { width:45%; background-color:#ffffaa; }
+td.comp_entry_all         { width:90%; }
+
+table.comp_entry_details  { width:100%; background-color:#f5f5f5; border:solid; border-width:2px; }
+td.comp_entry_details     { border:solid; border-width:1px; border-color:#ffffff; }
+
+img                       { vertical-align:middle; float:left; margin-left:-3px; display:block; zoom:1; }
+.entry_distance           { background-color:#0000ff; }
+.entry_rowdistance        { background-color:#000080; }
+.entry_coxdistance        { background-color:#6666ff; }
+.entry_sessions           { background-color:#ff0000; }
+.entry_avgdistance        { background-color:#00ff00; }
+.entry_duration           { background-color:#1eddff; }
+.entry_speed              { background-color:#79005a; }
+
+.entry_distance,
+.entry_rowdistance,
+.entry_coxdistance,
+.entry_sessions,
+.entry_avgdistance        { box-shadow:2px 2px 2px 0px #999; border-radius:0px 5px 5px 0px; zoom:1; }
+
+p.warning                 { text-align:center; font-weight:bold; color:#ff0000; }
