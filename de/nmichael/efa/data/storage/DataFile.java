@@ -165,8 +165,8 @@ public abstract class DataFile extends DataAccess {
         if (recover) {
             Logger.log(Logger.WARNING, Logger.MSG_DATA_RECOVERYSTART,
                     LogString.operationStarted(
-                            International.getMessage("Wiederherstellung von {description} aus {filename}",
-                                    descr, filename)));
+                        International.getMessage("Wiederherstellung von {description} aus {filename}",
+                        descr, filename)));
         }
         scn = 0;
         BufferedReader fr = new BufferedReader(new InputStreamReader(new FileInputStream(filename), ENCODING));
@@ -175,12 +175,12 @@ public abstract class DataFile extends DataAccess {
         if (recover) {
             Logger.log(Logger.INFO, Logger.MSG_DATA_RECOVERYSTART,
                     LogString.fileOpened(filename,
-                            getStorageObjectName() + "." + getStorageObjectType() + " [SCN " + getSCN() + "]"));
+                        getStorageObjectName() + "." + getStorageObjectType() + " [SCN " + getSCN() + "]"));
             long latestScn = Journal.getLatestScnFromJournals(getStorageObjectName()+"."+getStorageObjectType(), this.filename);
             if (latestScn < 0) {
                 Logger.log(Logger.ERROR, Logger.MSG_DATA_REPLAYNOJOURNAL,
                         International.getMessage("Kein Journal für Wiederherstellung von {description} gefunden. Wiederhergestellte Daten sind möglicherweise unvollständig (Datenverlust)!",
-                                descr, filename));
+                        descr, filename));
             } else {
                 if (latestScn > scn) {
                     inOpeningStorageObject = true; // don't update LastModified Timestamps, don't increment SCN, don't check assertions!
@@ -195,8 +195,8 @@ public abstract class DataFile extends DataAccess {
             }
             Logger.log(Logger.INFO, Logger.MSG_DATA_RECOVERYFINISHED,
                     LogString.operationFinished(
-                            International.getMessage("Wiederherstellung von {description} aus {filename}",
-                                    descr, filename)) + " SCN=" + scn);
+                        International.getMessage("Wiederherstellung von {description} aus {filename}",
+                        descr, filename)) + " SCN=" + scn);
             return true;
         }
         return false;
@@ -212,7 +212,7 @@ public abstract class DataFile extends DataAccess {
                 recovered = tryOpenStorageObject(filename, false);
             } catch(Exception e1) {
                 if (!new File (filename + BACKUP_MOSTRECENT).exists() &&
-                        !new File (filename + BACKUP_OLDVERSION).exists()) {
+                    !new File (filename + BACKUP_OLDVERSION).exists()) {
                     // no backup files found, so we don't have to even try to recover.
                     // instead, we throw an exception.
                     // our callee may then react by creating a new storage object instead, if he likes
@@ -255,7 +255,7 @@ public abstract class DataFile extends DataAccess {
                     new File(mirrorDir).exists() &&
                     mirrorRelativeFilename != null && mirrorRelativeFilename.length() > 0) {
                 String mirrorFile = mirrorDir + (mirrorDir.endsWith(Daten.fileSep) ? "" : Daten.fileSep)
-                        + mirrorRelativeFilename;
+                                       + mirrorRelativeFilename;
                 File f = new File(mirrorFile);
                 return !f.exists();
             } else {
@@ -398,8 +398,8 @@ public abstract class DataFile extends DataAccess {
 
     public void deleteAllBackups() throws EfaException {
         String[] backups = new String[] {
-                filename + BACKUP_MOSTRECENT,
-                filename + BACKUP_OLDVERSION
+            filename + BACKUP_MOSTRECENT,
+            filename + BACKUP_OLDVERSION
         };
         for (int i = 0; i < backups.length; i++) {
             String backupFIle = backups[i];
@@ -432,11 +432,11 @@ public abstract class DataFile extends DataAccess {
             throw new EfaException(Logger.MSG_DATA_GETLOCKFAILED, getUID() + ": Storage Object is not open", Thread.currentThread().getStackTrace());
         }
         long lockID = (object == null ? dataLocks.getGlobalLock() :
-                dataLocks.getLocalLock(object) );
+                                        dataLocks.getLocalLock(object) );
         if (lockID < 0) {
             throw new EfaException(Logger.MSG_DATA_GETLOCKFAILED, getUID() + ": Could not acquire " +
                     (object == null ? "global lock" :
-                            "local lock on "+object), Thread.currentThread().getStackTrace());
+                                      "local lock on "+object), Thread.currentThread().getStackTrace());
         }
         return lockID;
     }
@@ -491,7 +491,7 @@ public abstract class DataFile extends DataAccess {
         }
 
         if (!inOpeningStorageObject() && isPreModifyRecordCallbackEnabled()) {
-            getPersistence().preModifyRecordCallback(record, add, update, delete);
+                getPersistence().preModifyRecordCallback(record, add, update, delete);
         }
 
         DataKey key = constructKey(record);
@@ -517,7 +517,7 @@ public abstract class DataFile extends DataAccess {
                     }
                     if (update && !add) {
                         if (currentRecord.getChangeCount() != record.getChangeCount() &&
-                                !inOpeningStorageObject && !record.isCopyFromServer) {
+                            !inOpeningStorageObject && !record.isCopyFromServer) {
                             // Throw an exception!
                             throw new EfaException(Logger.MSG_DATA_DUPLICATERECORD, getUID() + ": Update Conflict for Data Record '"+key.toString()+
                                     "': Current ChangeCount="+currentRecord.getChangeCount()+", expected ChangeCount="+record.getChangeCount(),

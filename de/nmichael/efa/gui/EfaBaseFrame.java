@@ -29,7 +29,7 @@ import javax.swing.*;
 import java.util.*;
 import java.util.regex.Pattern;
 
-public class EfaBaseFrame extends BaseDialog implements IItemListener {
+public class        EfaBaseFrame extends BaseDialog implements IItemListener {
 
     public static final int MODE_BASE = 0;
     public static final int MODE_BOATHOUSE = 1;
@@ -146,7 +146,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
     }
 
     public EfaBaseFrame(JDialog parent, int mode, AdminRecord admin,
-                        Logbook logbook, String entryNo) {
+            Logbook logbook, String entryNo) {
         super(parent, Daten.EFA_LONGNAME, null);
         this.mode = mode;
         this.logbook = logbook;
@@ -175,21 +175,21 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
 
     public boolean isModeFull() {
         return getMode() == MODE_BASE ||
-                getMode() == MODE_ADMIN;
+               getMode() == MODE_ADMIN;
     }
 
     public boolean isModeBoathouse() {
         return getMode() == MODE_BOATHOUSE ||
-                getMode() == MODE_BOATHOUSE_START ||
-                getMode() == MODE_BOATHOUSE_START_CORRECT ||
-                getMode() == MODE_BOATHOUSE_FINISH ||
-                getMode() == MODE_BOATHOUSE_LATEENTRY ||
-                getMode() == MODE_BOATHOUSE_ABORT;
+               getMode() == MODE_BOATHOUSE_START ||
+               getMode() == MODE_BOATHOUSE_START_CORRECT ||
+               getMode() == MODE_BOATHOUSE_FINISH ||
+               getMode() == MODE_BOATHOUSE_LATEENTRY ||
+               getMode() == MODE_BOATHOUSE_ABORT;
     }
 
     public boolean isModeAdmin() {
         return getMode() == MODE_ADMIN ||
-                getMode() == MODE_ADMIN_SESSIONS;
+               getMode() == MODE_ADMIN_SESSIONS;
     }
 
     public AdminRecord getAdmin() {
@@ -511,7 +511,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
 
         closesessionButton = new ItemTypeButton("CloseSessionButton", IItemType.TYPE_PUBLIC, null,
                 International.getStringWithMnemonic("Fahrt offen") + " - " +
-                        International.getStringWithMnemonic("jetzt beenden"));
+                International.getStringWithMnemonic("jetzt beenden"));
         closesessionButton.setColor(Color.red);
         closesessionButton.setFieldSize(50, 17);
         closesessionButton.setFieldGrid(4, 1, -1, -1);
@@ -652,7 +652,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         // Destination
         destination = new ItemTypeStringAutoComplete(LogbookRecord.DESTINATIONNAME, "", IItemType.TYPE_PUBLIC, null,
                 International.getStringWithMnemonic("Ziel") + " / " +
-                        International.getStringWithMnemonic("Strecke"), true);
+                International.getStringWithMnemonic("Strecke"), true);
         destination.setFieldSize(400, 19);
         destination.setLabelGrid(1, GridBagConstraints.EAST, GridBagConstraints.NONE);
         destination.setFieldGrid(7, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL);
@@ -757,8 +757,8 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         infoLabel.setText(" ");
         mainInputPanel.add(infoLabel,
                 new GridBagConstraints(0, 18, 8, 1, 0.0, 0.0,
-                        GridBagConstraints.WEST, GridBagConstraints.NONE,
-                        new Insets(10, 20, 10, 20), 0, 0));
+                GridBagConstraints.WEST, GridBagConstraints.NONE,
+                new Insets(10, 20, 10, 20), 0, 0));
 
         // Boat Damage Button
         boatDamageButton = new ItemTypeButton("BOATDAMAGE", IItemType.TYPE_PUBLIC, null, International.getString("Bootsschaden melden"));
@@ -843,7 +843,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
     public void setTitle() {
         String adminName = (getAdmin() != null ? getAdmin().getName() : null);
         String adminNameString = (adminName != null && adminName.length() > 0 ?
-                " [" + adminName + "]" : "");
+            " [" + adminName + "]" : "");
         if (isModeBoathouse()) {
             setTitle(Daten.EFA_LONGNAME);
         } else {
@@ -982,7 +982,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
     }
 
     private DestinationRecord findDestinationFromString(String s,
-                                                        String boathouseName, long validAt) {
+            String boathouseName, long validAt) {
         DestinationRecord r = null;
         try {
             String[] dest = LogbookRecord.getDestinationNameAndVariantFromString(s);
@@ -1078,7 +1078,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
                 }
             }
             return new DataTypeList[] {
-                    watersIdList, watersNameList
+                watersIdList, watersNameList
             };
         } catch(Exception e) {
             Logger.logdebug(e);
@@ -1094,7 +1094,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         if (Logger.isTraceOn(Logger.TT_GUI, 7)) {
             Logger.log(Logger.DEBUG, Logger.MSG_DEBUG_GUI_EFABASEFRAME,
                     "updateBoatVariant(" +
-                            (b != null ? b.getQualifiedName() : "") + ", " + variant + ")");
+                     (b != null ? b.getQualifiedName() : "") + ", " + variant + ")");
         }
         _inUpdateBoatVariant = true;
         try {
@@ -1106,8 +1106,8 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
                 }
 
                 if (variant == -1 && numberOfVariants > 1 && boatvariant.isVisible() &&
-                        currentBoat != null && currentBoat.getId() != null &&
-                        b.getId() != null && currentBoat.getId().equals(b.getId())) {
+                    currentBoat != null && currentBoat.getId() != null &&
+                    b.getId() != null && currentBoat.getId().equals(b.getId())) {
                     variant = EfaUtil.string2int(boatvariant.getValueFromField(), -1);
                 }
 
@@ -1166,7 +1166,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         try {
             if (logbook != null && logbook.isOpen()) {
                 if (logbook.getName().equals(newLogbook.getName()) &&
-                        logbook.getProject().getProjectName().equals(Daten.project.getProjectName())) {
+                    logbook.getProject().getProjectName().equals(Daten.project.getProjectName())) {
                     return;
                 }
                 logbook.close();
@@ -1257,13 +1257,13 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
             }
             if (field == cox) {
                 return (r != null ? r.getCoxAsName(getValidAtTimestamp(r)) +
-                        (Daten.efaConfig.getValuePostfixPersonsWithClubName() ? PersonRecord.getAssociationPostfix(r.getCrewRecord(0, getValidAtTimestamp(r))) : "")
+                                    (Daten.efaConfig.getValuePostfixPersonsWithClubName() ? PersonRecord.getAssociationPostfix(r.getCrewRecord(0, getValidAtTimestamp(r))) : "")
                         : "");
             }
             for (int i = 0; i < crew.length; i++) {
                 if (field == crew[i]) {
                     return (r != null ? r.getCrewAsName(i + 1, getValidAtTimestamp(r)) +
-                            (Daten.efaConfig.getValuePostfixPersonsWithClubName() ? PersonRecord.getAssociationPostfix(r.getCrewRecord(i + 1, getValidAtTimestamp(r))) : "")
+                                    (Daten.efaConfig.getValuePostfixPersonsWithClubName() ? PersonRecord.getAssociationPostfix(r.getCrewRecord(i + 1, getValidAtTimestamp(r))) : "")
                             : "");
                 }
             }
@@ -1277,7 +1277,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
                 return (r != null ? r.getDestinationAndVariantName(getValidAtTimestamp(r),
                         Daten.efaConfig.getValuePrefixDestinationWithWaters(),
                         !isModeBoathouse()
-                ) : "");
+                        ) : "");
             }
             if (field == waters) {
                 return (r != null ? r.getWatersNamesStringList() : "");
@@ -1357,7 +1357,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
             date.requestFocus();
             date.setSelection(0, Integer.MAX_VALUE);
             if (Daten.efaConfig.getValueDefaultValueComments() != null &&
-                    Daten.efaConfig.getValueDefaultValueComments().trim().length() > 0) {
+                Daten.efaConfig.getValueDefaultValueComments().trim().length() > 0) {
                 comments.parseAndShowValue(Daten.efaConfig.getValueDefaultValueComments().trim());
             }
         }
@@ -1372,8 +1372,8 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
 
         // EntryNo
         LogbookRecord r = (isNewRecord || currentRecord == null ?
-                logbook.createLogbookRecord(DataTypeIntString.parseString(entryno.getValue())) :
-                currentRecord);
+            logbook.createLogbookRecord(DataTypeIntString.parseString(entryno.getValue())) :
+            currentRecord);
         r.setEntryId(DataTypeIntString.parseString(entryno.getValue()));
 
         // Date
@@ -1462,7 +1462,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         if (waters.isVisible()) {
             DataTypeList[] wlists = findWaters(waters);
             if (wlists == null || wlists.length == 0 ||
-                    (wlists[0].length() == 0 && wlists[1].length() == 0)) {
+                (wlists[0].length() == 0 && wlists[1].length() == 0)) {
                 r.setWatersIdList(null);
                 r.setWatersNameList(null);
             } else {
@@ -1539,22 +1539,22 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
 
         // run all checks before saving this entry
         if (!checkMisspelledInput() ||
-                !checkDuplicatePersons() ||
-                !checkPersonsForBoatType() ||
-                !checkDuplicateEntry() ||
-                !checkEntryNo() ||
-                !checkBoatCaptain() ||
-                !checkBoatStatus() ||
-                !checkMultiDayTours() ||
-                !checkSessionType() ||
-                !checkDate() ||
-                !checkTime() ||
-                !checkAllowedDateForLogbook() ||
-                !checkAllDataEntered() ||
-                !checkNamesValid() ||
-                !checkUnknownNames() ||
-                !checkProperUnknownNames() ||
-                !checkAllowedPersons()) {
+            !checkDuplicatePersons() ||
+            !checkPersonsForBoatType() ||
+            !checkDuplicateEntry() ||
+            !checkEntryNo() ||
+            !checkBoatCaptain() ||
+            !checkBoatStatus() ||
+            !checkMultiDayTours() ||
+            !checkSessionType() ||
+            !checkDate() ||
+            !checkTime() ||
+            !checkAllowedDateForLogbook() ||
+            !checkAllDataEntered() ||
+            !checkNamesValid() ||
+            !checkUnknownNames() ||
+            !checkProperUnknownNames() ||
+            !checkAllowedPersons()) {
             return false;
         }
 
@@ -1663,19 +1663,19 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
     boolean isEntryChanged() {
         boolean changed =
                 entryno.isChanged() ||
-                        date.isChanged() ||
-                        enddate.isChanged() ||
-                        boat.isChanged() ||
-                        cox.isChanged() ||
-                        boatcaptain.isChanged() ||
-                        starttime.isChanged() ||
-                        endtime.isChanged() ||
-                        destination.isChanged() ||
-                        waters.isChanged() ||
-                        distance.isChanged() ||
-                        comments.isChanged() ||
-                        sessiontype.isChanged() ||
-                        sessiongroup.isChanged();
+                date.isChanged() ||
+                enddate.isChanged() ||
+                boat.isChanged() ||
+                cox.isChanged() ||
+                boatcaptain.isChanged() ||
+                starttime.isChanged() ||
+                endtime.isChanged() ||
+                destination.isChanged() ||
+                waters.isChanged() ||
+                distance.isChanged() ||
+                comments.isChanged() ||
+                sessiontype.isChanged() ||
+                sessiongroup.isChanged();
         for (int i=0; !changed && i<crew.length; i++) {
             changed = crew[i].isChanged();
         }
@@ -1690,10 +1690,10 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
             String txt;
             if (isNewRecord) {
                 txt = International.getString("Der aktuelle Eintrag wurde verändert und noch nicht zum Fahrtenbuch hinzugefügt.") + "\n" +
-                        International.getString("Eintrag hinzufügen?");
+                      International.getString("Eintrag hinzufügen?");
             } else {
                 txt = International.getString("Änderungen an dem aktuellen Eintrag wurden noch nicht gespeichert.") + "\n" +
-                        International.getString("Änderungen speichern?");
+                      International.getString("Änderungen speichern?");
             }
             switch (Dialog.yesNoCancelDialog(International.getString("Eintrag nicht gespeichert"), txt)) {
                 case Dialog.YES:
@@ -1764,9 +1764,9 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         if (notBefore != null) {
             // Test: EndTime < StartTime (where EndTime is at most the configured (add+substract)*2 times smaller)
             if (now.isBefore(notBefore) &&
-                    now.getTimeAsSeconds() + (Daten.efaConfig.getValueEfaDirekt_plusMinutenAbfahrt() +
-                            Daten.efaConfig.getValueEfaDirekt_minusMinutenAnkunft()) * 60 * 2 >
-                            notBefore.getTimeAsSeconds()) {
+                now.getTimeAsSeconds() + (Daten.efaConfig.getValueEfaDirekt_plusMinutenAbfahrt() +
+                Daten.efaConfig.getValueEfaDirekt_minusMinutenAnkunft()) * 60 * 2 >
+                notBefore.getTimeAsSeconds()) {
                 // use StartTime as EndTime instead (avoid overlapping times)
                 now.setHour(notBefore.getHour());
                 now.setMinute(notBefore.getMinute());
@@ -1788,10 +1788,10 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         String date2 = enddate.getValueFromField();
         starttimeInfoLabel.setDescription( (date1 != null && date1.length() > 0 ?
                 " (" + International.getMessage("am {date}", date1) + ")" :
-                "") );
+            "") );
         endtimeInfoLabel.setDescription( (date2 != null && date2.length() > 0 ?
                 " (" + International.getMessage("am {date}", date2) + ")" :
-                "") );
+            "") );
     }
 
     void setDestinationInfo(DestinationRecord r) {
@@ -1831,7 +1831,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         }
 
         if (showDestinationInfo ||
-                (Daten.efaConfig.getValueShowDestinationInfoForInput() && !showWatersInput)) {
+            (Daten.efaConfig.getValueShowDestinationInfoForInput() && !showWatersInput)) {
             destinationInfo.setVisible(true);
         } else {
             destinationInfo.setVisible(false);
@@ -2128,7 +2128,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
             if (currentBoatTypeCoxing.equals(EfaTypes.TYPE_COXING_COXLESS)) {
                 int ret = Dialog.yesNoDialog(International.getString("Steuermann"),
                         International.getString("Du hast für ein steuermannsloses Boot einen Steuermann eingetragen.") + "\n" +
-                                International.getString("Trotzdem speichern?"));
+                        International.getString("Trotzdem speichern?"));
                 if (ret != Dialog.YES) {
                     return false;
                 }
@@ -2137,11 +2137,11 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
 
         // disabled functionality: for unknown boats: If only one person entered as cox, change to crew1
         if (false &&
-                (getMode() == MODE_BOATHOUSE_START ||
-                        getMode() == MODE_BOATHOUSE_START_CORRECT ||
-                        getMode() == MODE_BOATHOUSE_LATEENTRY) &&
-                currentBoat == null && cox.getValueFromField().trim().length() > 0 &&
-                getNumberOfPersonsInBoat() == 1 && crew[0].isVisible()) {
+             (getMode() == MODE_BOATHOUSE_START ||
+              getMode() == MODE_BOATHOUSE_START_CORRECT ||
+              getMode() == MODE_BOATHOUSE_LATEENTRY) &&
+            currentBoat == null && cox.getValueFromField().trim().length() > 0 &&
+            getNumberOfPersonsInBoat() == 1 && crew[0].isVisible()) {
             crew[0].parseAndShowValue(cox.getValueFromField().trim());
             cox.parseAndShowValue("");
         }
@@ -2162,21 +2162,21 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
                 switch (Dialog.auswahlDialog(International.getString("Doppeleintrag") + "?",
                         // @todo (P5) make duplicate entry dialog a bit more readable
                         International.getString("efa hat einen ähnlichen Eintrag im Fahrtenbuch gefunden.") + "\n"
-                                + International.getString("Eventuell hast Du oder jemand anderes die Fahrt bereits eingetragen.") + "\n\n"
-                                + International.getString("Vorhandener Eintrag") + ":\n"
-                                + International.getMessage("#{entry} vom {date} mit {boat}",
-                                duplicate.getEntryId().toString(), duplicate.getDate().toString(), duplicate.getBoatAsName()) + ":\n"
-                                + International.getString("Mannschaft") + ": " + m + "\n"
-                                + International.getString("Abfahrt") + ": " + (duplicate.getStartTime() != null ? duplicate.getStartTime().toString() : "") + "; "
-                                + International.getString("Ankunft") + ": " + (duplicate.getEndTime() != null ? duplicate.getEndTime().toString() : "") + "; "
-                                + International.getString("Ziel") + " / " +
-                                International.getString("Strecke") + ": " + duplicate.getDestinationAndVariantName() + " (" + (duplicate.getDistance() != null ? duplicate.getDistance().getAsFormattedString() : "") + " Km)" + "\n\n"
-                                + International.getString("Bitte füge den aktuellen Eintrag nur hinzu, falls es sich NICHT um einen Doppeleintrag handelt.") + "\n"
-                                + International.getString("Was möchtest Du tun?"),
+                        + International.getString("Eventuell hast Du oder jemand anderes die Fahrt bereits eingetragen.") + "\n\n"
+                        + International.getString("Vorhandener Eintrag") + ":\n"
+                        + International.getMessage("#{entry} vom {date} mit {boat}",
+                        duplicate.getEntryId().toString(), duplicate.getDate().toString(), duplicate.getBoatAsName()) + ":\n"
+                        + International.getString("Mannschaft") + ": " + m + "\n"
+                        + International.getString("Abfahrt") + ": " + (duplicate.getStartTime() != null ? duplicate.getStartTime().toString() : "") + "; "
+                        + International.getString("Ankunft") + ": " + (duplicate.getEndTime() != null ? duplicate.getEndTime().toString() : "") + "; "
+                        + International.getString("Ziel") + " / " +
+                          International.getString("Strecke") + ": " + duplicate.getDestinationAndVariantName() + " (" + (duplicate.getDistance() != null ? duplicate.getDistance().getAsFormattedString() : "") + " Km)" + "\n\n"
+                        + International.getString("Bitte füge den aktuellen Eintrag nur hinzu, falls es sich NICHT um einen Doppeleintrag handelt.") + "\n"
+                        + International.getString("Was möchtest Du tun?"),
                         International.getString("Eintrag hinzufügen")
-                                + " (" + International.getString("kein Doppeleintrag") + ")",
+                        + " (" + International.getString("kein Doppeleintrag") + ")",
                         International.getString("Eintrag nicht hinzufügen")
-                                + " (" + International.getString("Doppeleintrag") + ")",
+                        + " (" + International.getString("Doppeleintrag") + ")",
                         International.getString("Zurück zum Eintrag"))) {
                     case 0: // kein Doppeleintrag: Hinzufügen
                         break;
@@ -2230,9 +2230,9 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
                 }
                 if (printWarnung && // nur warnen, wenn das erste Mal eine zu kleine LfdNr eingegeben wurde!
                         Dialog.yesNoDialog(International.getString("Warnung"),
-                                International.getString("Die Laufende Nummer dieses Eintrags ist kleiner als die des "
-                                        + "letzten Eintrags.") + " " +
-                                        International.getString("Trotzdem speichern?")) == Dialog.NO) {
+                        International.getString("Die Laufende Nummer dieses Eintrags ist kleiner als die des "
+                        + "letzten Eintrags.") + " " +
+                        International.getString("Trotzdem speichern?")) == Dialog.NO) {
                     entryno.requestFocus();
                     return false;
                 }
@@ -2242,7 +2242,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
             if (!currentRecord.getEntryId().toString().equals(entryno.toString())) {
                 if (Dialog.yesNoDialog(International.getString("Warnung"),
                         International.getString("Du hast die Laufende Nummer dieses Eintrags verändert!") + " " +
-                                International.getString("Trotzdem speichern?")) == Dialog.NO) {
+                        International.getString("Trotzdem speichern?")) == Dialog.NO) {
                     entryno.requestFocus();
                     return false;
                 }
@@ -2304,7 +2304,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
             if (efaBoathouseAction != null) {
                 if (efaBoathouseAction.boat == null || // when called from EfaBoathouseFrame before boat is entered
                         (currentBoat != null && currentBoat.getId() != null && // boat changed as part of START_CORRECT
-                                efaBoathouseAction.boat.getId() != currentBoat.getId())) {
+                        efaBoathouseAction.boat.getId() != currentBoat.getId())) {
                     checkMode = 2;
                     efaBoathouseAction.boat = currentBoat;
                 }
@@ -2339,9 +2339,9 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
             DataTypeDate groupStartDate = g.getStartDate();
             DataTypeDate groupEndDate = g.getEndDate();
             if (entryStartDate.isBefore(groupStartDate) || entryStartDate.isAfter(groupEndDate) ||
-                    (entryEndDate.isSet() && (entryEndDate.isBefore(groupStartDate) || entryEndDate.isAfter(groupEndDate))) ) {
+                (entryEndDate.isSet() && (entryEndDate.isBefore(groupStartDate) || entryEndDate.isAfter(groupEndDate))) ) {
                 Dialog.error(International.getMessage("Das Datum des Fahrtenbucheintrags {entry} liegt außerhalb des Zeitraums, "
-                                + "der für die ausgewählte Fahrtgruppe '{name}' angegeben wurde.",
+                        + "der für die ausgewählte Fahrtgruppe '{name}' angegeben wurde.",
                         entryno.getValue(), g.getName()));
                 return false;
             }
@@ -2378,7 +2378,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
             if (newSessType != null && !sessType.equals(newSessType)) {
                 if (Dialog.yesNoDialog(International.getString("Fahrtart"),
                         International.getMessage("Ist diese Fahrt ein(e) {sessiontype}?",
-                                Daten.efaTypes.getValue(EfaTypes.CATEGORY_SESSION, newSessType))) == Dialog.YES) {
+                            Daten.efaTypes.getValue(EfaTypes.CATEGORY_SESSION, newSessType))) == Dialog.YES) {
                     sessType = newSessType;
                     sessiontype.parseAndShowValue(newSessType);
                 }
@@ -2387,14 +2387,14 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         if (dist >= 30000) {
             newSessType = null;
             if (!sessType.equals(EfaTypes.TYPE_SESSION_JUMREGATTA) &&
-                    !sessType.equals(EfaTypes.TYPE_SESSION_LATEENTRY) &&
-                    !sessType.equals(EfaTypes.TYPE_SESSION_REGATTA) &&
-                    !sessType.equals(EfaTypes.TYPE_SESSION_TRAININGCAMP) &&
-                    !sessType.equals(EfaTypes.TYPE_SESSION_TOUR)    ) {
+                !sessType.equals(EfaTypes.TYPE_SESSION_LATEENTRY) &&
+                !sessType.equals(EfaTypes.TYPE_SESSION_REGATTA) &&
+                !sessType.equals(EfaTypes.TYPE_SESSION_TRAININGCAMP) &&
+                !sessType.equals(EfaTypes.TYPE_SESSION_TOUR)    ) {
                 if (sessType.equals(EfaTypes.TYPE_SESSION_TRAINING)) {
                     if (Dialog.yesNoDialog(International.getString("Fahrtart"),
                             International.getMessage("Ist diese Fahrt ein(e) {sessiontype}?",
-                                    Daten.efaTypes.getValue(EfaTypes.CATEGORY_SESSION, EfaTypes.TYPE_SESSION_TRAININGCAMP))) == Dialog.YES) {
+                            Daten.efaTypes.getValue(EfaTypes.CATEGORY_SESSION, EfaTypes.TYPE_SESSION_TRAININGCAMP))) == Dialog.YES) {
                         newSessType = EfaTypes.TYPE_SESSION_TRAININGCAMP;
                     }
                 } else {
@@ -2454,21 +2454,21 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
                 setTime(starttime, Daten.efaConfig.getValueEfaDirekt_plusMinutenAbfahrt(), null);
             }
             if (endtime.isVisible() && !endtime.isSet() &&
-                    (getMode() == MODE_BOATHOUSE_FINISH || getMode() == this.MODE_BOATHOUSE_LATEENTRY)) {
+                (getMode() == MODE_BOATHOUSE_FINISH || getMode() == this.MODE_BOATHOUSE_LATEENTRY)) {
                 setTime(endtime, -Daten.efaConfig.getValueEfaDirekt_minusMinutenAnkunft(), starttime.getTime());
             }
 
             // check whether end time is after start time (or multi day tour)
             if (starttime.isVisible() && endtime.isVisible() &&
-                    starttime.isSet() && endtime.isSet() &&
-                    starttime.getTime().isAfter(endtime.getTime()) &&
-                    endtime.isEditable() &&
-                    !enddate.isSet()) {
+                starttime.isSet() && endtime.isSet() &&
+                starttime.getTime().isAfter(endtime.getTime()) &&
+                endtime.isEditable() &&
+                !enddate.isSet()) {
                 if (Dialog.yesNoDialog(
                         International.getMessage("Ungültige Eingabe im Feld '{field}'",
-                                International.getString("Zeit")),
+                        International.getString("Zeit")),
                         International.getString("Bitte überprüfe die eingetragenen Uhrzeiten.") + "\n" +
-                                International.getString("Ist dieser Eintrag eine Mehrtagsfahrt?")) == Dialog.YES) {
+                        International.getString("Ist dieser Eintrag eine Mehrtagsfahrt?")) == Dialog.YES) {
                     enddate.expandToField();
                     enddate.requestFocus();
                     return false;
@@ -2481,14 +2481,14 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
             // check whether the elapsed time is long enough
             String sType = (sessiontype.isVisible() ? sessiontype.getValue() : null);
             if (!sType.equals(EfaTypes.TYPE_SESSION_LATEENTRY) &&
-                    !sType.equals(EfaTypes.TYPE_SESSION_TRAININGCAMP) &&
-                    starttime.isVisible() && endtime.isVisible() && distance.isVisible() &&
-                    starttime.isSet() && endtime.isSet() && endtime.isEditable() && distance.isSet()) {
+                !sType.equals(EfaTypes.TYPE_SESSION_TRAININGCAMP) &&
+                starttime.isVisible() && endtime.isVisible() && distance.isVisible() &&
+                starttime.isSet() && endtime.isSet() && endtime.isEditable() && distance.isSet()) {
                 long timediff = Math.abs(endtime.getTime().getTimeAsSeconds() - starttime.getTime().getTimeAsSeconds());
                 long dist = distance.getValue().getValueInMeters();
                 if (timediff < 15*60 &&
-                        timediff < dist/10 &&
-                        dist < 100 * 1000) {
+                    timediff < dist/10 &&
+                    dist < 100 * 1000) {
                     // if a short elapsed time (anything less than 15 minutes) has been entered,
                     // then check whether it is plausible; plausible times need to be at least
                     // above 1 s per 10 meters; everything else is unplausible
@@ -2517,8 +2517,8 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
             } else {
                 currentRecord = getFields();
                 String msg = International.getMessage("Das Datum {date} liegt außerhalb des Zeitraums " +
-                                "für dieses Fahrtenbuch ({dateFrom} - {dateTo}) und kann daher nicht gespeichert werden. " +
-                                "Du kannst diesen Eintrag aber zum Nachtrag an den Administrator senden.",
+                        "für dieses Fahrtenbuch ({dateFrom} - {dateTo}) und kann daher nicht gespeichert werden. " +
+                        "Du kannst diesen Eintrag aber zum Nachtrag an den Administrator senden.",
                         (currentRecord.getDate() != null ? currentRecord.getDate().toString() : "?"),
                         logbook.getStartDate().toString(), logbook.getEndDate().toString()) + "\n" +
                         International.getString("Was möchtest Du tun?");
@@ -2537,13 +2537,13 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
                             Daten.project.getMessages(false).createAndSaveMessageRecord(
                                     MessageRecord.TO_ADMIN, International.getString("Nachtrag"),
                                     International.getMessage("Ein Nachtrag für {datum} konnte im Fahrtenbuch {logbook} nicht gespeichert werden, " +
-                                                    "da sein Datum außerhalb des Zeitraums für dieses Fahrtenbuch liegt ({dateFrom} - {dateTo}).",
-                                            currentRecord.getDate().toString(), logbook.getName(),
-                                            logbook.getStartDate().toString(), logbook.getEndDate().toString()) + "\n\n" +
-                                            currentRecord.getLogbookRecordAsStringDescription() + "\n\n"+
-                                            International.getMessage("Der Eintrag wurde als Importdatei {name} abgespeichert " +
-                                                            "und kann durch Import dieser Datei zum entsprechenden Fahrtenbuch hinzugefügt werden.",
-                                                    fname));
+                                                             "da sein Datum außerhalb des Zeitraums für dieses Fahrtenbuch liegt ({dateFrom} - {dateTo}).",
+                                                             currentRecord.getDate().toString(), logbook.getName(),
+                                                             logbook.getStartDate().toString(), logbook.getEndDate().toString()) + "\n\n" +
+                                                             currentRecord.getLogbookRecordAsStringDescription() + "\n\n"+
+                                                             International.getMessage("Der Eintrag wurde als Importdatei {name} abgespeichert " +
+                                                                                      "und kann durch Import dieser Datei zum entsprechenden Fahrtenbuch hinzugefügt werden.",
+                                                                                      fname));
                             Dialog.infoDialog(International.getMessage("{entry} wurde zum Nachtrag an den Admin geschickt und wird erst nach der Bestätigung durch den Admin sichtbar sein.",
                                     entryNo));
                             cancel();
@@ -2587,7 +2587,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
             }
 
             if ((mode == MODE_BOATHOUSE_FINISH || mode == MODE_BOATHOUSE_LATEENTRY) &&
-                    destination.getValue().length() == 0) {
+                destination.getValue().length() == 0) {
                 Dialog.error(International.getString("Bitte trage ein Fahrtziel/Strecke ein!"));
                 destination.requestFocus();
                 return false;
@@ -2595,8 +2595,8 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
 
             // Waters
             if ((mode == MODE_BOATHOUSE_FINISH || mode == MODE_BOATHOUSE_LATEENTRY) &&
-                    Daten.efaConfig.getValueEfaDirekt_gewaesserBeiUnbekanntenZielenPflicht() &&
-                    waters.isVisible() && waters.getValue().length() == 0) {
+                Daten.efaConfig.getValueEfaDirekt_gewaesserBeiUnbekanntenZielenPflicht() &&
+                waters.isVisible() && waters.getValue().length() == 0) {
                 Dialog.error(International.getString("Bitte trage ein Gewässer ein!"));
                 waters.requestFocus();
                 return false;
@@ -2614,7 +2614,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
                 if (isModeFull()) {
                     if (Dialog.yesNoDialog(International.getString("Warnung"),
                             International.getString("Keine Kilometer eingetragen.") + "\n"
-                                    + International.getString("Trotzdem speichern?")) == Dialog.NO) {
+                            + International.getString("Trotzdem speichern?")) == Dialog.NO) {
                         distance.requestFocus();
                         return false;
                     }
@@ -2633,7 +2633,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
             LogbookRecord r = getFields();
             Logger.log(Logger.WARNING, Logger.MSG_EVT_ERRORRECORDINVALIDATTIME,
                     getLogbookRecordStringWithEntryNo() + ": " + msg +
-                            (r != null ? " (" + r.toString() + ")" : ""));
+                    (r != null ? " (" + r.toString() + ")" : ""));
             return true;
 
         }
@@ -2660,7 +2660,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
             }
             if (preferredValidAt > 0 && r != null && !r.isValidAt(preferredValidAt)) {
                 if (!ingoreNameInvalid(r.getQualifiedName(), preferredValidAt,
-                        International.getString("Boot"), boat)) {
+                                       International.getString("Boot"), boat)) {
                     return false;
                 }
             }
@@ -2690,7 +2690,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
             }
             if (preferredValidAt > 0 && r != null && !r.isValidAt(preferredValidAt)) {
                 if (!ingoreNameInvalid(r.getQualifiedName(), preferredValidAt,
-                        International.getString("Ziel"), destination)) {
+                                       International.getString("Ziel"), destination)) {
                     return false;
                 }
             }
@@ -2714,7 +2714,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
                 for (int i = 0; i <= LogbookRecord.CREW_MAX; i++) {
                     String name = (i == 0 ? cox : crew[i-1]).getValueFromField();
                     if (name != null && name.length() > 0 && findPerson(i, getValidAtTimestamp(null)) == null) {
-                        Dialog.error(LogString.itemIsUnknown(name, International.getString("Person")));
+                    Dialog.error(LogString.itemIsUnknown(name, International.getString("Person")));
                         if (i == 0) {
                             cox.requestFocus();
                         } else {
@@ -2782,10 +2782,10 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
                         }
                         String xname = EfaUtil.transformNameParts(name);
                         if (!pname.matcher(xname).matches() &&
-                                !pnameadd.matcher(xname).matches() &&
-                                !pnameclub.matcher(xname).matches() &&
-                                !pnameaddclub.matcher(xname).matches()
-                        ) {
+                            !pnameadd.matcher(xname).matches() &&
+                            !pnameclub.matcher(xname).matches() &&
+                            !pnameaddclub.matcher(xname).matches()
+                            ) {
                             String nameformat = Daten.efaConfig.getValueNameFormatIsFirstNameFirst()
                                     ? International.getString("Vorname") + " "
                                     + International.getString("Nachname")
@@ -2797,7 +2797,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
                                     + nameformat + " (" + International.getString("Namenszusatz") + ")\n"
                                     + nameformat + " [" + International.getString("Verein") + "]\n"
                                     + nameformat + " (" + International.getString("Namenszusatz") + ")" +
-                                    " [" + International.getString("Verein") + "]");
+                                                   " [" + International.getString("Verein") + "]");
                             (i == 0 ? cox : crew[i - 1]).requestFocus();
                             return false;
                         }
@@ -2805,10 +2805,10 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
                     if (list != null) {
                         for (int j=0; j<list.length; j++) {
                             if (list[j] != null && list[j].trim().length() > 0 &&
-                                    name.toLowerCase().indexOf(list[j].trim().toLowerCase()) >= 0) {
+                                name.toLowerCase().indexOf(list[j].trim().toLowerCase()) >= 0) {
                                 Dialog.error(International.getString("Ungültiger Name") + ": " + name + "\n"
                                         + International.getMessage("'{string}' ist nicht erlaubt in Personennamen.",
-                                        list[j].trim().toUpperCase()));
+                                                list[j].trim().toUpperCase()));
                                 (i == 0 ? cox : crew[i - 1]).requestFocus();
                                 return false;
                             }
@@ -2848,24 +2848,24 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
 
                     if (p != null && p.getBoatUsageBan()) {
                         switch (Dialog.auswahlDialog(International.getString("Bootsbenutzungs-Sperre"),
-                                International.getMessage("Für {name} liegt zur Zeit eine Bootsbenutzungs-Sperre vor.", p.getQualifiedName()) +
-                                        "\n" +
-                                        International.getString("Was möchtest Du tun?"),
-                                International.getString("Mannschaft ändern"),
-                                International.getString("Trotzdem benutzen"),
-                                International.getString("Eintrag abbrechen"))) {
-                            case 0:
-                                if (i == 0) {
-                                    cox.requestFocus();
-                                } else {
-                                    crew[i-1].requestFocus();
-                                }
-                                return false;
-                            case 1:
-                                break;
-                            case 2:
-                                cancel();
-                                return false;
+                            International.getMessage("Für {name} liegt zur Zeit eine Bootsbenutzungs-Sperre vor.", p.getQualifiedName()) +
+                            "\n" +
+                            International.getString("Was möchtest Du tun?"),
+                            International.getString("Mannschaft ändern"),
+                            International.getString("Trotzdem benutzen"),
+                            International.getString("Eintrag abbrechen"))) {
+                        case 0:
+                            if (i == 0) {
+                                cox.requestFocus();
+                            } else {
+                                crew[i-1].requestFocus();
+                            }
+                            return false;
+                        case 1:
+                            break;
+                        case 2:
+                            cancel();
+                            return false;
                         }
                     }
 
@@ -2886,8 +2886,8 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
                     }
                 }
                 if (Daten.efaConfig.getValueCheckAllowedPersonsInBoat() &&
-                        nichtErlaubtAnz > 0 &&
-                        nichtErlaubtAnz > currentBoat.getMaxNotInGroup()) {
+                    nichtErlaubtAnz > 0 &&
+                    nichtErlaubtAnz > currentBoat.getMaxNotInGroup()) {
                     String erlaubteGruppen = null;
                     for (int j = 0; j < groupIdList.length(); j++) {
                         GroupRecord g = groups.findGroupRecord(groupIdList.get(j), tstmp);
@@ -2900,9 +2900,9 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
                     }
                     switch (Dialog.auswahlDialog(International.getString("Boot nur für bestimmte Gruppen freigegeben"),
                             International.getMessage("Dieses Boot dürfen nur {list_of_valid_groups} nutzen.", erlaubteGruppen) + "\n"
-                                    + International.getString("Folgende Personen gehören keiner der Gruppen an und dürfen das Boot nicht benutzen:") + " \n"
-                                    + nichtErlaubt + "\n"
-                                    + International.getString("Was möchtest Du tun?"),
+                            + International.getString("Folgende Personen gehören keiner der Gruppen an und dürfen das Boot nicht benutzen:") + " \n"
+                            + nichtErlaubt + "\n"
+                            + International.getString("Was möchtest Du tun?"),
                             International.getString("Anderes Boot wählen"),
                             International.getString("Mannschaft ändern"),
                             International.getString("Trotzdem benutzen"),
@@ -2917,8 +2917,8 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
                             return false;
                         case 2:
                             logBoathouseEvent(Logger.INFO, Logger.MSG_EVT_UNALLOWEDBOATUSAGE,
-                                    International.getString("Unerlaubte Benutzung eines Bootes"),
-                                    myRecord);
+                                              International.getString("Unerlaubte Benutzung eines Bootes"),
+                                              myRecord);
                             break;
                         case 3:
                             cancel();
@@ -2929,7 +2929,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
 
             // Prüfen, ob mind 1 Ruderer (oder Stm) der Gruppe "mind 1 aus Gruppe" im Boot sitzt
             if (Daten.efaConfig.getValueCheckMinOnePersonsFromGroupInBoat() &&
-                    currentBoat.getRequiredGroupId() != null) {
+                currentBoat.getRequiredGroupId() != null) {
                 GroupRecord g = groups.findGroupRecord(currentBoat.getRequiredGroupId(), tstmp);
                 boolean found = false;
                 if (g != null && g.getMemberIdList() != null) {
@@ -2944,7 +2944,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
                 if (g != null && !found) {
                     switch (Dialog.auswahlDialog(International.getString("Boot erfordert bestimmte Berechtigung"),
                             International.getMessage("In diesem Boot muß mindestens ein Mitglied der Gruppe {groupname} sitzen.", g.getName()) + "\n"
-                                    + International.getString("Was möchtest Du tun?"),
+                            + International.getString("Was möchtest Du tun?"),
                             International.getString("Anderes Boot wählen"),
                             International.getString("Mannschaft ändern"),
                             International.getString("Trotzdem benutzen"),
@@ -2959,8 +2959,8 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
                             return false;
                         case 2:
                             logBoathouseEvent(Logger.INFO, Logger.MSG_EVT_UNALLOWEDBOATUSAGE,
-                                    International.getString("Unerlaubte Benutzung eines Bootes"),
-                                    myRecord);
+                                              International.getString("Unerlaubte Benutzung eines Bootes"),
+                                              myRecord);
                             break;
                         case 3:
                             cancel();
@@ -2984,7 +2984,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
 
         // check and prompt to save changes (except for Help and About)
         if (!cmd.equals(EfaMenuButton.BUTTON_HELP) &&
-                !cmd.equals(EfaMenuButton.BUTTON_ABOUT)) {
+            !cmd.equals(EfaMenuButton.BUTTON_ABOUT)) {
             if (!isModeFull() || !promptSaveChangesOk()) {
                 return;
             }
@@ -3386,7 +3386,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
                         }
                         message.append(International.getString("gemeldet am") + ": " + EfaUtil.getCurrentTimeStampYYYY_MM_DD_HH_MM_SS() + "\n");
                         message.append(International.getString("gemeldet von") + ": " + personName +
-                                " (" + logbookRecordText + ")\n\n");
+                                       " (" + logbookRecordText + ")\n\n");
                         message.append(International.getString("Letzte Benutzung") + ":\n" + lastUsage);
 
                         Daten.project.getMessages(false).createAndSaveMessageRecord(personName,
@@ -3401,7 +3401,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
                 if (currentRecord != null) {
                     if (Dialog.yesNoDialog(International.getString("Fahrt beenden"),
                             International.getString("Möchtest du die Fahrt jetzt beenden und den Status des Boots auf verfügbar setzen?")
-                    ) == Dialog.YES) {
+                            ) == Dialog.YES) {
                         currentRecord.setSessionIsOpen(false);
                         updateBoatStatus(true, MODE_BOATHOUSE_FINISH);
                         saveEntry();
@@ -3434,9 +3434,9 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
                 if (isModeBoathouse() || (isModeFull() && isNewRecord )) {
                     distance.setSelection(0, Integer.MAX_VALUE);
                 }
-                if (!distance.isEditable() && distance.hasFocus()) {
-                    efaBaseFrameFocusManager.focusNextItem(distance, distance.getComponent());
-                }
+               if (!distance.isEditable() && distance.hasFocus()) {
+                   efaBaseFrameFocusManager.focusNextItem(distance, distance.getComponent());
+               }
             }
         }
         if (id == FocusEvent.FOCUS_LOST) {
@@ -3486,9 +3486,9 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
                 if (distance.isEditable() && !wasEditable) {
                     distance.requestFocus();
                 }
-                if (!distance.isEditable() && distance.hasFocus()) {
-                    efaBaseFrameFocusManager.focusNextItem(distance, distance.getComponent());
-                }
+               if (!distance.isEditable() && distance.hasFocus()) {
+                   efaBaseFrameFocusManager.focusNextItem(distance, distance.getComponent());
+               }
             }
             if (item == distance) {
                 updateSessionTypeInfo();
@@ -3497,7 +3497,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         if (id == KeyEvent.KEY_PRESSED && event instanceof KeyEvent) {
             KeyEvent e = (KeyEvent)event;
             if ((e.isControlDown() && e.getKeyCode() == KeyEvent.VK_F) || // Ctrl-F
-                    (e.getKeyCode() == KeyEvent.VK_F5)) {                     // F5
+                (e.getKeyCode() == KeyEvent.VK_F5)) {                     // F5
                 if (item instanceof ItemTypeLabelValue) {
                     insertLastValue(e, (ItemTypeLabelValue)item);
                 }
@@ -3513,13 +3513,13 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
                 if (k != null && k.length > 0) {
                     for (int i = 0; i < k.length; i++) {
                         if ( (((String) k[i]).equals("F6")  && e.getKeyCode() == KeyEvent.VK_F6  && hash.get(k[i]) != null ) ||
-                                (((String) k[i]).equals("F7")  && e.getKeyCode() == KeyEvent.VK_F7  && hash.get(k[i]) != null ) ||
-                                (((String) k[i]).equals("F8")  && e.getKeyCode() == KeyEvent.VK_F8  && hash.get(k[i]) != null ) ||
-                                (((String) k[i]).equals("F9")  && e.getKeyCode() == KeyEvent.VK_F9  && hash.get(k[i]) != null ) ||
-                                (((String) k[i]).equals("F10") && e.getKeyCode() == KeyEvent.VK_F10 && hash.get(k[i]) != null ) ||
-                                (((String) k[i]).equals("F11") && (e.getKeyCode() == KeyEvent.VK_F11 || e.getKeyCode() == KeyEvent.VK_STOP) && hash.get(k[i]) != null ) ||
-                                (((String) k[i]).equals("F12") && (e.getKeyCode() == KeyEvent.VK_F12 || e.getKeyCode() == KeyEvent.VK_AGAIN) && hash.get(k[i]) != null )
-                        ) {
+                             (((String) k[i]).equals("F7")  && e.getKeyCode() == KeyEvent.VK_F7  && hash.get(k[i]) != null ) ||
+                             (((String) k[i]).equals("F8")  && e.getKeyCode() == KeyEvent.VK_F8  && hash.get(k[i]) != null ) ||
+                             (((String) k[i]).equals("F9")  && e.getKeyCode() == KeyEvent.VK_F9  && hash.get(k[i]) != null ) ||
+                             (((String) k[i]).equals("F10") && e.getKeyCode() == KeyEvent.VK_F10 && hash.get(k[i]) != null ) ||
+                             (((String) k[i]).equals("F11") && (e.getKeyCode() == KeyEvent.VK_F11 || e.getKeyCode() == KeyEvent.VK_STOP) && hash.get(k[i]) != null ) ||
+                             (((String) k[i]).equals("F12") && (e.getKeyCode() == KeyEvent.VK_F12 || e.getKeyCode() == KeyEvent.VK_AGAIN) && hash.get(k[i]) != null )
+                                ) {
                             comments.parseAndShowValue(comments.getValueFromField() + hash.get(k[i]));
                         }
                     }
@@ -3658,11 +3658,11 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
             DataTypeDistance dist = DataTypeDistance.parseDistance(distance.getValueFromField());
             long days = 1;
             if (enddate != null && enddate.isVisible() && date != null && date.isVisible() &&
-                    date.isSet() && enddate.isSet()) {
+                date.isSet() && enddate.isSet()) {
                 days = enddate.getDate().getDifferenceDays(date.getDate()) + 1;
             }
             if (sess != null && sess.length() > 0 && dist != null &&
-                    (dist.getValueInMeters() >= 40000 || (days == 1 && dist.getValueInMeters() >= 30000))) {
+                (dist.getValueInMeters() >= 40000 || (days == 1 && dist.getValueInMeters() >= 30000))) {
                 if (EfaTypes.couldBeDRVWanderfahrt(sess)) {
                     sessionTypeInfo.setImage(getScaledImage("session_drv_wanderfahrt_ok"));
                     sessionTypeInfoText = "Diese Fahrt zählt als Wanderfahrt im Sinne des DRV.";
@@ -3777,7 +3777,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
                 if (Logger.isTraceOn(Logger.TT_GUI, 7)) {
                     Logger.log(Logger.DEBUG, Logger.MSG_DEBUG_GUI_EFABASEFRAME,
                             "currentBoatUpdateGui(" + newvariant + "): b = " +
-                                    b.getId() + "(" + b.getValidFrom()+"-"+b.getInvalidFrom()+"): " + b.getQualifiedName());
+                            b.getId() + "(" + b.getValidFrom()+"-"+b.getInvalidFrom()+"): " + b.getQualifiedName());
                 }
                 // Update Boat Type selection
                 updateBoatVariant(currentBoat, newvariant);
@@ -3789,8 +3789,8 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
                 if (Logger.isTraceOn(Logger.TT_GUI, 7)) {
                     Logger.log(Logger.DEBUG, Logger.MSG_DEBUG_GUI_EFABASEFRAME,
                             "currentBoatUpdateGui(" + newvariant + "): "
-                                    + "variant="+variant+", idx="+idx+", seats="+currentBoatTypeSeats
-                                    +", coxing="+currentBoatTypeCoxing+", noofseats="+currentBoatNumberOfSeats);
+                            + "variant="+variant+", idx="+idx+", seats="+currentBoatTypeSeats
+                            +", coxing="+currentBoatTypeCoxing+", noofseats="+currentBoatNumberOfSeats);
                 }
                 if (isNewRecord) {
                     if (b.getDefaultDestinationId() != null) {
@@ -3810,7 +3810,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
                 if (Logger.isTraceOn(Logger.TT_GUI, 7)) {
                     Logger.log(Logger.DEBUG, Logger.MSG_DEBUG_GUI_EFABASEFRAME,
                             "currentBoatUpdateGui(" + newvariant + "): No boat found for boat " + boat.getValue() +
-                                    " at " + getValidAtTimestamp(null) + ".");
+                            " at " + getValidAtTimestamp(null) + ".");
                 }
             }
         } catch (Exception e) {
@@ -3945,7 +3945,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         CrewRecord r = crews.getCrew(crewId);
         if (r != null) {
             if (currentBoatTypeCoxing != null && !currentBoatTypeCoxing.equals(EfaTypes.TYPE_COXING_COXLESS) &&
-                    r.getCoxId() != null) {
+                r.getCoxId() != null) {
                 PersonRecord p = Daten.project.getPersons(false).getPerson(r.getCoxId(), getValidAtTimestamp(null));
                 if (p != null) {
                     cox.parseAndShowValue(p.getQualifiedName());
@@ -3961,7 +3961,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
                 }
             }
             if ((r.getBoatCaptainPosition() == 0 && currentBoatTypeCoxing != null && !currentBoatTypeCoxing.equals(EfaTypes.TYPE_COXING_COXLESS)) ||
-                    (r.getBoatCaptainPosition() > 0 && r.getBoatCaptainPosition() <= currentBoatNumberOfSeats)) {
+                (r.getBoatCaptainPosition() > 0 && r.getBoatCaptainPosition() <= currentBoatNumberOfSeats)) {
                 boatcaptain.parseAndShowValue(Integer.toString(r.getBoatCaptainPosition()));
             }
         }
@@ -4033,19 +4033,19 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
                 return efaBaseFrame.enddate;
             }
             if (c == efaBaseFrame.boat.getComponent() ||
-                    c == efaBaseFrame.boat.getButton()) {
+                c == efaBaseFrame.boat.getButton()) {
                 return efaBaseFrame.boat;
             }
             if (c == efaBaseFrame.boatvariant.getComponent()) {
                 return efaBaseFrame.boatvariant;
             }
             if (c == efaBaseFrame.cox.getComponent() ||
-                    c == efaBaseFrame.cox.getButton()) {
+                c == efaBaseFrame.cox.getButton()) {
                 return efaBaseFrame.cox;
             }
             for (int i=0; i<efaBaseFrame.crew.length; i++) {
                 if (c == efaBaseFrame.crew[i].getComponent() ||
-                        c == efaBaseFrame.crew[i].getButton()) {
+                    c == efaBaseFrame.crew[i].getButton()) {
                     return efaBaseFrame.crew[i];
                 }
             }
@@ -4059,11 +4059,11 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
                 return efaBaseFrame.endtime;
             }
             if (c == efaBaseFrame.destination.getComponent() ||
-                    c == efaBaseFrame.destination.getButton()) {
+                c == efaBaseFrame.destination.getButton()) {
                 return efaBaseFrame.destination;
             }
             if (c == efaBaseFrame.waters.getComponent() ||
-                    c == efaBaseFrame.waters.getButton()) {
+                c == efaBaseFrame.waters.getButton()) {
                 return efaBaseFrame.waters;
             }
             if (c == efaBaseFrame.distance.getComponent()) {
@@ -4421,9 +4421,9 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         }
         if (currentRecord == null) {
             String msg =               International.getString("Fahrt korrigieren") + ": " +
-                    International.getMessage("Die gewählte Fahrt #{lfdnr} ({boot}) konnte nicht gefunden werden!",
-                            (item != null && item.boatStatus != null && item.boatStatus.getEntryNo() != null ? item.boatStatus.getEntryNo().toString(): "null"),
-                            (item != null && item.boat != null ? item.boat.getQualifiedName() : (item != null ? item.text : "null")));
+              International.getMessage("Die gewählte Fahrt #{lfdnr} ({boot}) konnte nicht gefunden werden!",
+              (item != null && item.boatStatus != null && item.boatStatus.getEntryNo() != null ? item.boatStatus.getEntryNo().toString(): "null"),
+              (item != null && item.boat != null ? item.boat.getQualifiedName() : (item != null ? item.text : "null")));
             logBoathouseEvent(Logger.ERROR, Logger.MSG_ERR_NOLOGENTRYFORBOAT, msg, null);
             return false;
         }
@@ -4463,9 +4463,9 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         }
         if (currentRecord == null) {
             String msg =               International.getString("Fahrtende") + ": " +
-                    International.getMessage("Die gewählte Fahrt #{lfdnr} ({boot}) konnte nicht gefunden werden!",
-                            (item != null && item.boatStatus != null && item.boatStatus.getEntryNo() != null ? item.boatStatus.getEntryNo().toString(): "null"),
-                            (item != null && item.boat != null ? item.boat.getQualifiedName() : (item != null ? item.text : "null")));
+              International.getMessage("Die gewählte Fahrt #{lfdnr} ({boot}) konnte nicht gefunden werden!",
+              (item != null && item.boatStatus != null && item.boatStatus.getEntryNo() != null ? item.boatStatus.getEntryNo().toString(): "null"),
+              (item != null && item.boat != null ? item.boat.getQualifiedName() : (item != null ? item.text : "null")));
             logBoathouseEvent(Logger.ERROR, Logger.MSG_ERR_NOLOGENTRYFORBOAT, msg, null);
             return false;
         }
@@ -4528,9 +4528,9 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         }
         if (currentRecord == null) {
             String msg =               International.getString("Fahrtende") + ": " +
-                    International.getMessage("Die gewählte Fahrt #{lfdnr} ({boot}) konnte nicht gefunden werden!",
-                            (item != null && item.boatStatus != null && item.boatStatus.getEntryNo() != null ? item.boatStatus.getEntryNo().toString(): "null"),
-                            (item != null && item.boat != null ? item.boat.getQualifiedName() : (item != null ? item.text : "null")));
+              International.getMessage("Die gewählte Fahrt #{lfdnr} ({boot}) konnte nicht gefunden werden!",
+              (item != null && item.boatStatus != null && item.boatStatus.getEntryNo() != null ? item.boatStatus.getEntryNo().toString(): "null"),
+              (item != null && item.boat != null ? item.boat.getQualifiedName() : (item != null ? item.text : "null")));
             logBoathouseEvent(Logger.ERROR, Logger.MSG_ERR_NOLOGENTRYFORBOAT, msg, null);
             return false;
         }
@@ -4555,28 +4555,28 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
             switch(mode) {
                 case MODE_BOATHOUSE_START:
                     logBoathouseEvent(Logger.INFO, Logger.MSG_EVT_TRIPSTART,
-                            International.getString("Fahrtbeginn"),
-                            currentRecord);
+                                      International.getString("Fahrtbeginn"),
+                                      currentRecord);
                     break;
                 case MODE_BOATHOUSE_START_CORRECT:
                     logBoathouseEvent(Logger.INFO, Logger.MSG_EVT_TRIPSTART_CORR,
-                            International.getString("Fahrtbeginn korrigiert"),
-                            currentRecord);
+                                      International.getString("Fahrtbeginn korrigiert"),
+                                      currentRecord);
                     break;
                 case MODE_BOATHOUSE_FINISH:
                     logBoathouseEvent(Logger.INFO, Logger.MSG_EVT_TRIPEND,
-                            International.getString("Fahrtende"),
-                            currentRecord);
+                                      International.getString("Fahrtende"),
+                                      currentRecord);
                     break;
                 case MODE_BOATHOUSE_LATEENTRY:
                     logBoathouseEvent(Logger.INFO, Logger.MSG_EVT_TRIPLATEREC,
-                            International.getString("Nachtrag"),
-                            currentRecord);
+                                      International.getString("Nachtrag"),
+                                      currentRecord);
                     break;
                 case MODE_BOATHOUSE_ABORT:
                     logBoathouseEvent(Logger.INFO, Logger.MSG_EVT_TRIPABORT,
-                            International.getString("Fahrtabbruch"),
-                            currentRecord);
+                                      International.getString("Fahrtabbruch"),
+                                      currentRecord);
                     break;
             }
         } else {
@@ -4587,8 +4587,8 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
 
         // Update boat status
         if (success && currentRecord != null &&
-                mode != MODE_BOATHOUSE_LATEENTRY &&
-                (efaBoathouseAction != null || this.isModeFull())) {
+            mode != MODE_BOATHOUSE_LATEENTRY &&
+            (efaBoathouseAction != null || this.isModeFull())) {
             long tstmp = currentRecord.getValidAtTimestamp();
             BoatStatus boatStatus = Daten.project.getBoatStatus(false);
             BoatRecord boatRecord = currentRecord.getBoatRecord(tstmp);
@@ -4655,7 +4655,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
                     }
 
                     if (boatStatusRecord == null &&
-                            (mode == EfaBaseFrame.MODE_BOATHOUSE_START || mode == EfaBaseFrame.MODE_BOATHOUSE_START_CORRECT)) {
+                        (mode == EfaBaseFrame.MODE_BOATHOUSE_START || mode == EfaBaseFrame.MODE_BOATHOUSE_START_CORRECT)) {
                         // create new status record for unknown boat
                         boatStatusRecord = boatStatus.createBoatStatusRecord(UUID.randomUUID(), currentRecord.getBoatAsName());
                         newBoatStatusRecord = true;
@@ -4688,7 +4688,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
                 boatStatusRecord.setBoatText(currentRecord.getBoatAsName());
                 try {
                     if (boatStatusRecord.getUnknownBoat() && newStatus != null &&
-                            !newStatus.equals(BoatStatusRecord.STATUS_ONTHEWATER)) {
+                        !newStatus.equals(BoatStatusRecord.STATUS_ONTHEWATER)) {
                         boatStatus.data().delete(boatStatusRecord.getKey());
                     } else {
                         if (newBoatStatusRecord) {
@@ -4733,7 +4733,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         if (r != null) {
             long tstmp = r.getValidAtTimestamp();
             infoText = "#" + r.getEntryId().toString() + " - " + r.getBoatAsName(tstmp) + " " +
-                    International.getMessage("mit {crew}", r.getAllCoxAndCrewAsNameString(tstmp));
+                          International.getMessage("mit {crew}", r.getAllCoxAndCrewAsNameString(tstmp));
         }
         return msg + (infoText != null ? ": " + infoText : "");
     }
@@ -4741,7 +4741,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
     void logAdminEvent(String logType, String logKey, String msg, LogbookRecord r) {
         Logger.log(logType, logKey,
                 International.getString("Admin") + " " + (admin != null ? admin.getName() : "<none>") + ": " +
-                        logEventInfoText(logType, logKey, msg, r));
+                logEventInfoText(logType, logKey, msg, r));
     }
 
     public static void logBoathouseEvent(String logType, String logKey, String msg, LogbookRecord r) {

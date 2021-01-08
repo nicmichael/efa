@@ -42,13 +42,13 @@ public abstract class DataAccess implements IDataAccess {
     protected boolean isPreModifyRecordCallbackEnabled = true;
 
     public static IDataAccess createDataAccess(StorageObject persistence,
-                                               int type,
-                                               String storageLocation,
-                                               String storageUsername,
-                                               String storagePassword,
-                                               String storageObjectName,
-                                               String storageObjectType,
-                                               String storageObjectDescription) {
+            int type,
+            String storageLocation,
+            String storageUsername,
+            String storagePassword,
+            String storageObjectName,
+            String storageObjectType,
+            String storageObjectDescription) {
         IDataAccess dataAccess = null;
         switch(type) {
             case IDataAccess.TYPE_FILE_XML:
@@ -63,19 +63,19 @@ public abstract class DataAccess implements IDataAccess {
                 } catch (EfaException e) {
                     Logger.log(Logger.ERROR, Logger.MSG_DATA_DATAACCESS,
                             "DataAccess initialization for " + storageObjectName + "." + storageObjectType + " (type " + type
-                                    + "): authorization failed.");
+                            + "): authorization failed.");
                     return null;
                 }
                 dataAccess.setPersistence(persistence);
                 return dataAccess;
             case IDataAccess.TYPE_EFA_REMOTE:
-                dataAccess = (IDataAccess)new RemoteEfaClient(storageLocation, storageUsername, storagePassword, storageObjectName, storageObjectType, storageObjectDescription);
-                dataAccess.setPersistence(persistence);
+                 dataAccess = (IDataAccess)new RemoteEfaClient(storageLocation, storageUsername, storagePassword, storageObjectName, storageObjectType, storageObjectDescription);
+                 dataAccess.setPersistence(persistence);
                 return dataAccess;
         }
         Logger.log(Logger.ERROR, Logger.MSG_DATA_DATAACCESS,
                 "DataAccess for " + storageObjectName + "." + storageObjectType + " (type " + type +
-                        ") is null");
+                ") is null");
         return null;
     }
 

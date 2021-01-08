@@ -561,7 +561,7 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
 
     private void updateGuiLogo() {
         if (Daten.efaConfig.getValueEfaDirekt_vereinsLogo() != null &&
-                Daten.efaConfig.getValueEfaDirekt_vereinsLogo().length() > 0) {
+            Daten.efaConfig.getValueEfaDirekt_vereinsLogo().length() > 0) {
             try {
                 logoLabel.setIcon(new ImageIcon(Daten.efaConfig.getValueEfaDirekt_vereinsLogo()));
                 logoLabel.setMinimumSize(new Dimension(200, 80));
@@ -978,9 +978,9 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
             exitCode = Daten.program.restart();
         }
 
-        //        if (e != null) {
-        //            super.processWindowEvent(e);
-        //        }
+//        if (e != null) {
+//            super.processWindowEvent(e);
+//        }
         Logger.log(Logger.INFO, Logger.MSG_EVT_EFAEXIT,
                 International.getMessage("Programmende durch {originator}", who));
         super.cancel();
@@ -1771,25 +1771,25 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
             Logger.log(Logger.DEBUG, Logger.MSG_GUI_DEBUGGUI, "toggleAvailableBoats_actionPerformed()");
         }
         try {
-            // die Preferredsize des Panels immer merken
-            Dimension size = boatsAvailablePanel.getPreferredSize();
+              // die Preferredsize des Panels immer merken
+              Dimension size = boatsAvailablePanel.getPreferredSize();
 
-            // Es nun wird immer versucht, Boots- und PersonenPanel aus der GUI zu entfernen.
-            // Dabei muss berücksichtigt werden, dass diese auch NULL sein können -
-            // denn sonst würde eine nullpointerexception auftreten, die zu unerwünschtem
-            // Verhalten führt.
+              // Es nun wird immer versucht, Boots- und PersonenPanel aus der GUI zu entfernen.
+              // Dabei muss berücksichtigt werden, dass diese auch NULL sein können -
+              // denn sonst würde eine nullpointerexception auftreten, die zu unerwünschtem
+              // Verhalten führt.
 
-            if (personsAvailableList.getPanel() != null) {
-                boatsAvailablePanel.remove(personsAvailableList.getPanel());
-            }
-            if (boatsAvailableList.getPanel() != null) {
-                boatsAvailablePanel.remove(boatsAvailableList.getPanel());
-            }
+              if (personsAvailableList.getPanel() != null) {
+                            boatsAvailablePanel.remove(personsAvailableList.getPanel());
+              }
+              if (boatsAvailableList.getPanel() != null) {
+                            boatsAvailablePanel.remove(boatsAvailableList.getPanel());
+              }
 
             if (toggleAvailableBoatsToBoats.isSelected()) {
                 boatsAvailableList.displayOnGui(this, boatsAvailablePanel, BorderLayout.CENTER);
             } else {
-                personsAvailableList.displayOnGui(this, boatsAvailablePanel, BorderLayout.CENTER);
+              personsAvailableList.displayOnGui(this, boatsAvailablePanel, BorderLayout.CENTER);
             }
             boatsAvailablePanel.setPreferredSize(size);
             this.validate();
@@ -2347,7 +2347,7 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
 
     void toggleLogbook(String logbookString) {
         if (Daten.project == null || !Daten.project.isOpen() ||
-                logbook == null || !logbook.isOpen()) {
+            logbook == null || !logbook.isOpen()) {
             return;
         }
         String[] logbooks = logbookString.split(",");

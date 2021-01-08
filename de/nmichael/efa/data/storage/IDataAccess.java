@@ -383,7 +383,7 @@ public interface IDataAccess {
 
     /**
      * Adds an array of new data record to this storage object.
-     * @param record the data records to add
+     * @param records the data records to add
      * @throws Exception if any of the data record already exists or the operation fails for another reason
      */
     public void addAll(DataRecord[] records, long lockID) throws EfaException;
