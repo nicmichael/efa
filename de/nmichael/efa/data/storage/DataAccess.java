@@ -389,7 +389,7 @@ public abstract class DataAccess implements IDataAccess {
                 addAll(recordList.toArray(new DataRecord[0]), -1);
             }
         } catch (Exception e) {
-            throw new EfaException(Logger.MSG_DATA_COPYFROMDATAACCESSFAILED, getUID() +
+            throw new EfaException(Logger.MSG_DATA_COPYFROMDATAACCESSFAILED, getUID() + 
                     ": Restore from DataAccess failed", Thread.currentThread().getStackTrace());
         } finally {
             setInOpeningStorageObject(false);

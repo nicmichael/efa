@@ -306,7 +306,7 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
         mainPanel.add(southPanel, BorderLayout.SOUTH);
         mainPanel.add(centerPanel, BorderLayout.CENTER);
     }
-
+    
     private void openProjectLogbookClubwork() {
         if (Daten.project == null) {
             Logger.log(Logger.ERROR, Logger.MSG_ERR_NOPROJECTOPENED, International.getString("Kein Projekt geöffnet."));
@@ -753,7 +753,7 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
             widgetLeftPanel.removeAll();
             widgetRightPanel.removeAll();
             widgetCenterPanel.removeAll();
-
+            
             if (Daten.efaConfig.getWidgets() == null) {
                 return;
             }
@@ -1113,7 +1113,7 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
                 txq.setEfaGUIrootContainer(this);   // is relevant only at startup
             String efaCloudStatus = (txq != null) ? txq.getStateForDisplay() : "";
             titleLabel.setText(Daten.EFA_LONGNAME + " [" + Daten.project.getProjectName() +
-                    (logbook != null && logbook.isOpen() ? ": " + logbook.getName() : "") +
+                    (logbook != null && logbook.isOpen() ? ": " + logbook.getName() : "") + 
                     (Daten.project.getMyBoathouseName() != null ? " - " + Daten.project.getMyBoathouseName() : "") +
                     "]" + efaCloudStatus);
         }
@@ -1164,7 +1164,7 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
             updateProjectLogbookInfo();
         }
     }
-
+    
     public Project openProject(AdminRecord admin) {
         // project to open
         String projectName = null;
@@ -1258,7 +1258,7 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
             if (admin == null && Daten.project.getCurrentClubworkEfaBoathouse() != null) {
                 clubworkName = Daten.project.getCurrentClubworkEfaBoathouse();
             }
-
+            
             // check whether clubwork exists in project (may have been deleted)
             if (clubworkName != null) {
                 Hashtable<String, String> allClubwork = Daten.project.getClubworks();
@@ -1771,11 +1771,11 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
             Logger.log(Logger.DEBUG, Logger.MSG_GUI_DEBUGGUI, "toggleAvailableBoats_actionPerformed()");
         }
         try {
-              // die Preferredsize des Panels immer merken
-              Dimension size = boatsAvailablePanel.getPreferredSize();
+              // die Preferredsize des Panels immer merken  
+              Dimension size = boatsAvailablePanel.getPreferredSize();           
 
               // Es nun wird immer versucht, Boots- und PersonenPanel aus der GUI zu entfernen.
-              // Dabei muss berücksichtigt werden, dass diese auch NULL sein können -
+              // Dabei muss berücksichtigt werden, dass diese auch NULL sein können - 
               // denn sonst würde eine nullpointerexception auftreten, die zu unerwünschtem
               // Verhalten führt.
 
@@ -1794,7 +1794,7 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
             boatsAvailablePanel.setPreferredSize(size);
             this.validate();
             this.repaint(); // ist erforderlich, damit auch mnemonics richtig geschrieben werden.
-
+            
             updateBoatLists(true);
         } catch (Exception ee) {
         }
@@ -2344,7 +2344,7 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
             Dialog.error(International.getString("Kein Kommando für diesen Button konfiguriert!"));
         }
     }
-
+    
     void toggleLogbook(String logbookString) {
         if (Daten.project == null || !Daten.project.isOpen() ||
             logbook == null || !logbook.isOpen()) {
