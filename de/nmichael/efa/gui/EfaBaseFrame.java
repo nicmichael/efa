@@ -14,6 +14,7 @@ import de.nmichael.efa.*;
 import de.nmichael.efa.core.AdminTask;
 import de.nmichael.efa.core.config.*;
 import de.nmichael.efa.core.items.*;
+import de.nmichael.efa.data.efacloud.TxRequestQueue;
 import de.nmichael.efa.data.types.*;
 import de.nmichael.efa.data.storage.*;
 import de.nmichael.efa.data.*;
@@ -813,8 +814,6 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
     void iniApplication() {
         if (Daten.project == null && isModeBase()) {
             if (Daten.efaConfig.getValueLastProjectEfaBase().length() > 0) {
-                // Set the GUI context to be able to display server synchronisation progress
-                Daten.tableBuilder.guiBaseFrameOnAppLoading = this;
                 Project.openProject(Daten.efaConfig.getValueLastProjectEfaBase(), true);
                 remoteAdmin = (Daten.project != null ? Daten.project.getRemoteAdmin() : null);
                 checkRemoteAdmin();
@@ -840,7 +839,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
 
 
 
-    void setTitle() {
+    public void setTitle() {
         String adminName = (getAdmin() != null ? getAdmin().getName() : null);
         String adminNameString = (adminName != null && adminName.length() > 0 ?
             " [" + adminName + "]" : "");
@@ -853,7 +852,17 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
                 if (!isLogbookReady()) {
                     setTitle(Daten.project.getProjectName() + " - " + Daten.EFA_LONGNAME + adminNameString);
                 } else {
-                    setTitle(Daten.project.getProjectName() + ": " + logbook.getName() + " - " + Daten.EFA_LONGNAME + adminNameString);
+                    if ((Daten.project.getProjectStorageType() == IDataAccess.TYPE_EFA_CLOUD) &&
+                            (TxRequestQueue.getInstance() != null)) {
+                        TxRequestQueue txq = TxRequestQueue.getInstance();
+                        if (txq != null)
+                            txq.setEfaGUIrootContainer(this);   // is relevant only at startup
+                        String efaCloudStatus = (txq != null) ? txq.getStateForDisplay() : "";
+                        setTitle(
+                                Daten.project.getProjectName() + ": " + logbook.getName() + " - " + Daten.EFA_LONGNAME +
+                                        adminNameString + efaCloudStatus);
+                    } else
+                        setTitle(Daten.project.getProjectName() + ": " + logbook.getName() + " - " + Daten.EFA_LONGNAME + adminNameString);
                 }
             }
         }

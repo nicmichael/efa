@@ -477,7 +477,7 @@ public class EfaMenuButton {
                 return false;
             }
             // The only parent for this button is the EfaCloudSynchDialog.
-            EfaCloudSynchDialog dlg = new EfaCloudSynchDialog(parentDialog, admin);
+            EfaCloudConfigDialog dlg = new EfaCloudConfigDialog(parentDialog, admin);
             dlg.showDialog();
         }
 
