@@ -82,8 +82,8 @@ public class EfaCloudConfigDialog extends BaseTabbedDialog implements IItemListe
         String advice = (isEfaRemote) ? International
                 .getString("Für efaRemote kann der efaCloud-Modus nicht aktiviert werden.") : (isXML) ?
                 International.getString("Aktuelles Projekt auf efaCloud umstellen.") + "\n" : International
-                .getMessage("Efacloud Server Kommunikation steuern.\nAktueller Status: {state}", queueState) + "\n";
-        category = "%01%" + International.getString("Efacloud Optionen");
+                .getMessage("efaCloud Server Kommunikation steuern. Aktueller Status: {state}", queueState) + "\n";
+        category = "%01%" + International.getString("efaCloud Optionen");
         guiItems.add(item = new ItemTypeLabel(ACTIVATION_INFO, IItemType.TYPE_PUBLIC, category, advice));
         item.setPadding(0, 0, 20, 20);
         item.setFieldGrid(2, GridBagConstraints.NORTH, GridBagConstraints.NONE);
@@ -114,14 +114,14 @@ public class EfaCloudConfigDialog extends BaseTabbedDialog implements IItemListe
                 item.setNotNull(true);
                 // Add activation change button.
                 guiItems.add(item = new ItemTypeButton(BUTTON_EFACLOUD_ACTIVATE, IItemType.TYPE_PUBLIC, category,
-                        International.getString("Efacloud aktivieren")));
+                        International.getString("efaCloud aktivieren")));
                 ((ItemTypeButton) item).setIcon(getIcon(IMAGE_EFACLOUD_ACTIVATE));
                 item.setPadding(0, 0, 20, 20);
                 item.registerItemListener(this);
                 item.setFieldGrid(2, GridBagConstraints.CENTER, GridBagConstraints.NONE);
             }
 
-            // Add state change tab, if efacloud is active
+            // Add state change tab, if efaCloud is active
             else if (txq != null) {
                 int state = txq.getState();
                 // If the queue is working options are pause, reset, and manual synch
@@ -167,7 +167,7 @@ public class EfaCloudConfigDialog extends BaseTabbedDialog implements IItemListe
                     item.setFieldGrid(2, GridBagConstraints.NORTH, GridBagConstraints.NONE);
                     // Deactivate
                     guiItems.add(item = new ItemTypeButton(BUTTON_EFACLOUD_DEACTIVATE, IItemType.TYPE_PUBLIC, category,
-                            International.getString(International.getString("Efacloud feature deaktivieren"))));
+                            International.getString(International.getString("efaCloud feature deaktivieren"))));
                     ((ItemTypeButton) item).setIcon(getIcon(IMAGE_EFACLOUD_DEACTIVATE));
                     item.setPadding(0, 0, 20, 20);
                     item.registerItemListener(this);
@@ -176,14 +176,14 @@ public class EfaCloudConfigDialog extends BaseTabbedDialog implements IItemListe
                 // any other state. No options to control provided.
                 else {
                     advice = International
-                            .getMessage("Im aktuellen Status {state} gibt es keine Efacloud Option.", queueState);
+                            .getMessage("Im aktuellen Status {state} gibt es keine efaCloud Option.", queueState);
                     guiItems.add(item = new ItemTypeLabel(ACTIVATION_INFO, IItemType.TYPE_PUBLIC, category, advice));
                     item.setPadding(0, 0, 20, 20);
                     item.setFieldGrid(2, GridBagConstraints.NORTH, GridBagConstraints.NONE);
                 }
             } else {
                 advice = International
-                        .getMessage("Im aktuellen Status {state} gibt es keine Efacloud Option.", queueState);
+                        .getMessage("Im aktuellen Status {state} gibt es keine efaCloud Option.", queueState);
                 guiItems.add(item = new ItemTypeLabel(ACTIVATION_INFO, IItemType.TYPE_PUBLIC, category, advice));
                 item.setPadding(0, 0, 20, 20);
                 item.setFieldGrid(2, GridBagConstraints.NORTH, GridBagConstraints.NONE);
@@ -193,7 +193,7 @@ public class EfaCloudConfigDialog extends BaseTabbedDialog implements IItemListe
     }
 
     /**
-     * Deactivate the efacloud feature. Will be called either from this dialog on itemListenerAction or when the
+     * Deactivate the efaCloud feature. Will be called either from this dialog on itemListenerAction or when the
      * transaction queue hits an authentication error.
      */
     public static void deactivateEfacloud() {
@@ -232,7 +232,7 @@ public class EfaCloudConfigDialog extends BaseTabbedDialog implements IItemListe
                 return;
             Project pr = Daten.project;
 
-            // if the current storage type is xml, this method is called to make it efacloud
+            // if the current storage type is xml, this method is called to make it efaCloud
             // That will also trigger a rebuild of the server side tables.
             if (pr.getProjectStorageType() == IDataAccess.TYPE_FILE_XML) {
                 if (itemType.getName().equalsIgnoreCase(BUTTON_EFACLOUD_ACTIVATE)) {
@@ -246,7 +246,7 @@ public class EfaCloudConfigDialog extends BaseTabbedDialog implements IItemListe
                     try {
                         // close the project
                         pr.close();
-                        // if an efacloud configuration was mistyped, the user will deactivate efacloud and
+                        // if an efaCloud configuration was mistyped, the user will deactivate efaCloud and
                         // reactivate it afterwards. Then the queue is running and must be closed to load the new
                         // confiuguration.
                         if (TxRequestQueue.getInstance() != null)
@@ -261,7 +261,7 @@ public class EfaCloudConfigDialog extends BaseTabbedDialog implements IItemListe
                         if (txq != null) {
                             txq.clearAllQueues();
                             txq.registerStateChangeRequest(TxRequestQueue.RQ_QUEUE_AUTHENTICATE);
-                            // Initialize the GUI for efacloud Status display
+                            // Initialize the GUI for efaCloud Status display
                             txq.setEfaGUIrootContainer(this);
                             txq.showStatusAtGUI();
                         }
@@ -273,7 +273,7 @@ public class EfaCloudConfigDialog extends BaseTabbedDialog implements IItemListe
                 }
             }
 
-            // other efacloud actions
+            // other efaCloud actions
             else if (pr.getProjectStorageType() == IDataAccess.TYPE_EFA_CLOUD) {
                 if (itemType.getName().equalsIgnoreCase(BUTTON_EFACLOUD_DEACTIVATE)) {
                     deactivateEfacloud();
@@ -287,7 +287,7 @@ public class EfaCloudConfigDialog extends BaseTabbedDialog implements IItemListe
                     txq.registerStateChangeRequest(TxRequestQueue.RQ_QUEUE_START_SYNCH_UPLOAD);
                 }
             }
-            this.cancel();    // This call ends the efacloud dialog, it does not cancel any action.
+            this.cancel();    // This call ends the efaCloud dialog, it does not cancel any action.
         }
     }
 }

@@ -54,7 +54,7 @@ public class TxResponseHandler {
         String deactivateMessage = "";
         if (authentication_errors > 5) {
             txq.registerStateChangeRequest(TxRequestQueue.RQ_QUEUE_DEACTIVATE);
-            deactivateMessage = International.getString(" - Deaktivire efacloud - ");
+            deactivateMessage = International.getString(" - Deaktivire efaCloud - ");
         }
 
         String errorMessage = International.getMessage(
@@ -72,7 +72,7 @@ public class TxResponseHandler {
             errorMessage = International.getMessage(
                     "Anmeldung von {username} auf efaCloud server {efaCloudUrl} führte zu einem Severfehler " +
                             "(500 internal Server Error). Bitte prüfen sie die Server-Installation. Deaktiviere " +
-                            "Efacloud.", txq.username, txq.efaCloudUrl);
+                            "efaCloud.", txq.username, txq.efaCloudUrl);
             if (authentication_errors > 5)
                 Dialog.error(errorMessage + deactivateMessage);
         } else if (resultCode == 501) {
@@ -230,8 +230,8 @@ public class TxResponseHandler {
                     String[] counts = tx.getResultMessage().split(";");
                     if (counts.length < 10) {
                         String warningMessage = International.getMessage(
-                                "Auf dem Efacloud-Server wurden nur {count} Tabellen und damit weniger als die " +
-                                        "erforderliche Anzahl gefunden.\n" +
+                                "Auf dem efaCloud-Server wurden nur {count} Tabellen und damit weniger als die " +
+                                        "erforderliche Anzahl gefunden. " +
                                         "Sollen die efa-Tabellen jetzt initialisiert werden?", counts.length);
                         if (Dialog.yesNoDialog(International.getString("Server Datenbank unvollständig."),
                                 warningMessage) == Dialog.YES)
@@ -239,6 +239,9 @@ public class TxResponseHandler {
                     }
                 }
             }
+            // also in normal operation a key change can happen and must trigger a key fixing transaction
+            if ((txq.getState() != TxRequestQueue.QUEUE_IS_SYNCHRONIZING) && (tx.getResultCode() == 303))
+                txq.synchControl.fixOneKeyForTable(tx);
             // no specific handling for other ok-type responses.
             // move transaction to the done queue
             txq.shiftTx(TxRequestQueue.TX_BUSY_QUEUE_INDEX, TxRequestQueue.TX_DONE_QUEUE_INDEX,
@@ -275,7 +278,7 @@ public class TxResponseHandler {
         if (type == InternetAccessManager.TYPE_ABORTED) {
             // the transaction container sending was aborted.
             TxResponseContainer txrc = new TxResponseContainer(null);
-            handleTxcError(txrc, text);
+            handleTxcError(txrc, text + ";;" + txcResp.title);
 
             // } else if (type == InternetAccessManager.TYPE_PROGRESS_INFO) { // not relevant
             // } else if (type == InternetAccessManager.TYPE_FILE_SIZE_INFO) { // not relevant

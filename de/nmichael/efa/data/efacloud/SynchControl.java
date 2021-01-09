@@ -161,10 +161,10 @@ class SynchControl {
         }
         String[] txRecord;
         if (oldDr == null)
-            logSynchMessage(International.getString("Schlüsselkorekturfehler. Alter Schlüssel nicht vorhanden: ") +
+            logSynchMessage(International.getString("Schlüsselkorrekturfehler. Alter Schlüssel nicht vorhanden: ") +
                     dataRecords.get(1).getKey().toString(), tx.tablename, dataRecords.get(0).getKey(), false);
         if (newDr != null)
-            logSynchMessage(International.getString("Schlüsselkorekturfehler. Neuer Schlüssel schon belegt: ") +
+            logSynchMessage(International.getString("Schlüsselkorrekturfehler. Neuer Schlüssel schon belegt: ") +
                     dataRecords.get(1).getKey().toString(), tx.tablename, dataRecords.get(0).getKey(), false);
         if ((oldDr != null) && (newDr == null)) {
             logSynchMessage(International.getString("Korrigiere Schlüssel von bisher ") +
@@ -172,34 +172,27 @@ class SynchControl {
             long globalLock = 0L;
             try {
                 globalLock = efaCloudStorage.acquireGlobalLock();
-                efaCloudStorage.modifyLocalRecord(dataRecords.get(1), globalLock, false, false, true);
-                logSynchMessage(International.getString("Schlüsselkorekturfehler. Lösche falschen Datensatz: ") +
-                        dataRecords.get(1).getKey().toString(), tx.tablename, dataRecords.get(0).getKey(), false);
-                efaCloudStorage.releaseGlobalLock(globalLock);
-                globalLock = -1L;
-                globalLock = efaCloudStorage.acquireGlobalLock();
-                efaCloudStorage.modifyLocalRecord(dataRecords.get(0), globalLock, true, false, false);
-                logSynchMessage(International.getString("Schlüsselkorekturfehler. Schreibe richtigen Datensatz: ") +
-                        dataRecords.get(1).getKey().toString(), tx.tablename, dataRecords.get(0).getKey(), false);
-                efaCloudStorage.releaseGlobalLock(globalLock);
-                globalLock = -1L;
+                // start with changing the boat status to enable deletion of the record wih the old EntryId
                 if (tx.tablename.equalsIgnoreCase("efa2logbook")) {
                     int oldEntryId = ((LogbookRecord) dataRecords.get(1)).getEntryId().intValue();
                     int newEntryId = ((LogbookRecord) dataRecords.get(0)).getEntryId().intValue();
-                    globalLock = efaCloudStorage.acquireGlobalLock();
                     adjustBoatStatus(oldEntryId, newEntryId, globalLock);
-                    logSynchMessage(International.getString("Schlüsselkorekturfehler. Korrigiere Bootsstatus: ") +
-                            newEntryId, "efa2boatstatus", null,false);
-                    efaCloudStorage.releaseGlobalLock(globalLock);
-                    globalLock = -1L;
+                    logSynchMessage(
+                            International.getString("Schlüsselkorekturfehler. Korrigiere Bootsstatus: ") + newEntryId,
+                            "efa2boatstatus", null, false);
                 }
-            } catch (Exception ignored) {
-                Logger.log(Logger.WARNING, Logger.MSG_EFACLOUDSYNCH_ERROR, International.getString(
-                        "Konnte globalen Lock nicht bekommen beim Versuch einen Schlüssel zu korrigieren in Tabelle ") +
-                        tx.tablename);
+                efaCloudStorage.modifyLocalRecord(dataRecords.get(1), globalLock, false, false, true);
+                logSynchMessage(International.getString("Schlüsselkorekturfehler. Lösche falschen Datensatz: ") +
+                        dataRecords.get(1).getKey().toString(), tx.tablename, dataRecords.get(0).getKey(), false);
+                efaCloudStorage.modifyLocalRecord(dataRecords.get(0), globalLock, true, false, false);
+                logSynchMessage(International.getString("Schlüsselkorekturfehler. Schreibe richtigen Datensatz: ") +
+                        dataRecords.get(1).getKey().toString(), tx.tablename, dataRecords.get(0).getKey(), false);
+            } catch (Exception e) {
+                Logger.log(Logger.WARNING, Logger.MSG_EFACLOUDSYNCH_ERROR,
+                        International.getString("Fehler beim Versuch einen Schlüssel zu korrigieren in Tabelle ") +
+                                tx.tablename + ": " + e.getMessage());
             } finally {
-                if (globalLock >= 0)
-                    efaCloudStorage.releaseGlobalLock(globalLock);
+                efaCloudStorage.releaseGlobalLock(globalLock);
             }
             // create the record for the fixed key
             txRecord = new String[dataRecords.get(0).getKeyFields().length];
@@ -210,8 +203,11 @@ class SynchControl {
                                 CsvCodec.DEFAULT_QUOTATION);
                 i++;
             }
-        } else
+        } else {
             txRecord = null;
+            if (table_fixing_index < (tables_with_key_fixing_allowed.length - 1))
+                table_fixing_index++; // move to next table to avoid endless loop
+        }
         // return fixed record and request next key to be fixed
         txq.appendTransaction(TX_SYNCH_QUEUE_INDEX, "keyfixing", tables_with_key_fixing_allowed[table_fixing_index],
                 txRecord);

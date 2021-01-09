@@ -29,7 +29,7 @@ import java.util.*;
  *
  * <p>Transaction queues are used to handle the communication with the efaCloud server.
  * All transactions are first locally executed and then appended to a transactions pending queue. From that queue they
- * are forwarded to the efacloud server via the InternetAccessManager. The transactions-pending queue is checked three
+ * are forwarded to the efaCloud server via the InternetAccessManager. The transactions-pending queue is checked three
  * times a second. And all pending transactions (max. 30) are packaged into a single transaction container.</p>
  * <p>The protocol is meant to be used in a serial manner, i. e. no further client request
  * container is issued as long as another one is open and neither completed nor timed out. The transactions of a
@@ -509,7 +509,7 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
             startWatchDog();
             registerStateChangeRequest(RQ_QUEUE_AUTHENTICATE);
         } catch (Exception e) {
-            Dialog.error("Efacloud konnte nicht gestartet werden.\nFehlermeldung: " + e.getMessage());
+            Dialog.error("efaCloud konnte nicht gestartet werden. Fehlermeldung: " + e.getMessage());
             if (queueTimer != null)
                 queueTimer.cancel();
             if (watchDog != null)
@@ -581,7 +581,7 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
     }
 
     /**
-     * Start the queue timer, triggering all efacloud client to server transactions.
+     * Start the queue timer, triggering all efaCloud client to server transactions.
      */
     private void startQueueTimer() {
         // initialize the queue poll timer.
@@ -599,7 +599,7 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
                         txr.handleTxcResponse(rm);
                     } catch (Exception e) {
                         Logger.log(Logger.ERROR, Logger.MSG_EFACLOUDSYNCH_ERROR, International
-                                .getString("Ausnahmefehler bei der Behandlung einer Efacloud-Serverantwort: ") +
+                                .getString("Ausnahmefehler bei der Behandlung einer efaCloud-Serverantwort: ") +
                                 e.toString());
                         Logger.log(e);
                     }
@@ -740,7 +740,7 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
 
                 } catch (Exception e) {
                     Logger.log(Logger.ERROR, Logger.MSG_EFACLOUDSYNCH_ERROR, International
-                            .getString("Ausnahmefehler bei der Behandlung einer Efacloud-Serveranfrage: ") +
+                            .getString("Ausnahmefehler bei der Behandlung einer efaCloud-Serveranfrage: ") +
                             e.toString());
                     Logger.log(e);
                 }
@@ -751,7 +751,7 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
     }
 
     /**
-     * <p><b>ONLY TO BE CALLED BY EFACLOUD DEACTIVATION</b></p><p>Terminate all efacloud activities. This stops the
+     * <p><b>ONLY TO BE CALLED BY EFACLOUD DEACTIVATION</b></p><p>Terminate all efaCloud activities. This stops the
      * efaCloud poll timer and watchdog, the internet access manager's activities and drops the link to the singleton
      * TxRequestQueue instance.</p>
      */
@@ -764,7 +764,7 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
         closeLogs();
         txr = null;
         txq = null;
-        // update status display, remove efacloud part
+        // update status display, remove efaCloud part
         showStatusAtGUI();
     }
 
@@ -778,7 +778,7 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
             public void run() {
                 if (txq.watchdogPreviousPollsCount == txq.pollsCount) {
                     Logger.log(Logger.ERROR, Logger.MSG_EFACLOUDSYNCH_WARNING, International
-                            .getString("Efacloud watchdog hat angeschlagen. Der Timer wurde neu gestartet"));
+                            .getString("efaCloud watchdog hat angeschlagen. Der Timer wurde neu gestartet"));
                     queueTimer.cancel();
                     startQueueTimer();
                 }
@@ -1003,7 +1003,7 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
     }
 
     /**
-     * clear all queues and remove all queue contents from the file system. Shall only be triggered by efacloud
+     * clear all queues and remove all queue contents from the file system. Shall only be triggered by efaCloud
      * activation.
      */
     public void clearAllQueues() {
