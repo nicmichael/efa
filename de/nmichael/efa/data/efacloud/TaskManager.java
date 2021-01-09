@@ -1,3 +1,13 @@
+/*
+ * <pre>
+ * Title:        efa - elektronisches Fahrtenbuch für Ruderer
+ * Copyright:    Copyright (c) 2001-2011 by Nicolas Michael
+ * Website:      http://efa.nmichael.de/
+ * License:      GNU General Public License v2
+ *
+ * @author Nicolas Michael, Martin Glade
+ * @version 2</pre>
+ */
 package de.nmichael.efa.data.efacloud;
 
 import java.util.Timer;
@@ -28,7 +38,7 @@ public class TaskManager {
     public static final int UI_SHOW_TOAST = 40;
 
 
-    private final Vector<RequestMessage> taskQueue = new Vector<>();
+    private final Vector<RequestMessage> taskQueue = new Vector<RequestMessage>();
     private int messagesHandled;
     private RequestMessage activeTask = null;
     private Timer timer;
@@ -54,9 +64,12 @@ public class TaskManager {
                     messagesHandled++;
                     activeTask = taskMsg;
                     // no lambda, keep it Java 7 compatible.
-                    Thread timerTaskThread = new Thread(() -> {
-                        requestHandler.handleRequest(taskMsg);
-                        activeTask = null;
+                    Thread timerTaskThread = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            requestHandler.handleRequest(taskMsg);
+                            activeTask = null;
+                        }
                     });
                     timerTaskThread.start();
                 }
@@ -178,6 +191,9 @@ public class TaskManager {
         public final double value;
         public final Object sender;
         public final RunControl runControl;
+        public final long created;
+        public long started;
+        public long completed;
 
         /**
          * Constructor. Interpretation of the "values to be used by the invoked method" please
@@ -198,6 +214,7 @@ public class TaskManager {
             this.value = value;
             this.sender = sender;
             this.runControl = new RunControl();
+            this.created = System.currentTimeMillis();
         }
 
         @Override

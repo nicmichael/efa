@@ -17,6 +17,7 @@ import java.util.Vector;
 import de.nmichael.efa.Daten;
 import de.nmichael.efa.core.config.AdminRecord;
 import de.nmichael.efa.core.config.EfaTypes;
+import de.nmichael.efa.data.efacloud.TxRequestQueue;
 import de.nmichael.efa.data.storage.Audit;
 import de.nmichael.efa.data.storage.DataAccess;
 import de.nmichael.efa.data.storage.DataFile;
@@ -347,6 +348,10 @@ public class Project extends StorageObject {
             // in order to speed up initial login to a remote project,
             // we will only open the neccesary files on demand
             return true;
+        }
+        if (getProjectStorageType() == IDataAccess.TYPE_EFA_CLOUD) {
+            TxRequestQueue.getInstance(getProjectRecord().getEfaCoudURL(), getProjectStorageUsername(),
+                    getProjectStoragePassword(), getProjectStorageLocation());
         }
         try {
             if (Logger.isTraceOn(Logger.TT_CORE, 3)) {
@@ -886,6 +891,10 @@ public class Project extends StorageObject {
         Set<String> keys = persistenceCache.keySet();
         for (String key : keys) {
             closePersistence(persistenceCache.get(key));
+        }
+        // Close the message queue to the efacloud server
+        if ((getProjectStorageType() == IDataAccess.TYPE_EFA_CLOUD) && (TxRequestQueue.getInstance() != null)) {
+            TxRequestQueue.getInstance().terminate();
         }
         // close the project storage object itself
         closePersistence(this);

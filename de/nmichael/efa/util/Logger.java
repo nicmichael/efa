@@ -413,14 +413,9 @@ public class Logger {
     public static final String MSG_BACKUP_REOPENINGFILES = "BCK017";
 
     // EfaCloudSync
-    public static final String MSG_EFACLOUDSYNCH_STARTED = "ECS001";
-    public static final String MSG_EFACLOUDSYNCH_INFO = "ECS002";
-    public static final String MSG_EFACLOUDSYNCH_ERROR = "ECS003";
-    public static final String MSG_EFACLOUDSYNCH_FINISHEDINFO = "ECS004";
-    public static final String MSG_EFACLOUDSYNCH_FINISHEDWITHERRORS = "ECS005";
-    public static final String MSG_EFACLOUDSYNCH_FINISHED = "ECS006";
-    public static final String MSG_EFACLOUDSYNCH_FAILED = "ECS007";
-    public static final String MSG_EFACLOUDSYNCH_DEBUG = "ECS008";
+    public static final String MSG_EFACLOUDSYNCH_ERROR = "ECS001";
+    public static final String MSG_EFACLOUDSYNCH_WARNING = "ECS002";
+    public static final String MSG_EFACLOUDSYNCH_INFO = "ECS003";
 
     // Statistics
     public static final String MSG_STAT_CALCULATEDENTRIES = "STA001";
@@ -632,7 +627,6 @@ public class Logger {
      * @param type the type of the message, see Logger: Message Types
      * @param key the key for this message, see Logger: Message Keys
      * @param txt the message to be logged
-     * @param sendmail
      */
     public static String log(String type, String key, String txt, boolean msgToAdmin) {
         if (inLogging || stopLogging) {
