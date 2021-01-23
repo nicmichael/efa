@@ -306,6 +306,7 @@ public class ProjectRecord extends DataRecord  {
         setString(STORAGELOCATION, storageLocation);
     }
 
+    public String getEfaCloudURL() { return getString(EFACLOUDURL); }
     public void setEfaCloudURL(String efaCloudURL) {
         setString(EFACLOUDURL, efaCloudURL);
     }

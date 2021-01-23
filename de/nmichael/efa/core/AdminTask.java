@@ -96,7 +96,10 @@ public class AdminTask extends Thread {
     }
 
     private void checkForJavaVersion() {
-        if (EfaUtil.stringFindInt(Daten.javaVersion, 0) < Daten.REQUIRED_JAVA_VERSION) {
+        int javaVersionInt = Integer.parseInt(Daten.javaVersion.split("\\.")[0]);
+        if ((javaVersionInt == 1) && (Daten.javaVersion.split("\\.").length > 2))   // Windows calls java 8 java 1.8_xxx
+            javaVersionInt = Integer.parseInt(Daten.javaVersion.split("\\.")[1]);
+        if (javaVersionInt < Daten.REQUIRED_JAVA_VERSION) {
             long lastCheck = System.currentTimeMillis() - Daten.efaConfig.getValueJavaVersionLastCheck();
             if (lastCheck > 7 * 24 * 60 * 60 * 1000) {
                 Dialog.infoDialog(International.getString("Java Update erforderlich"),

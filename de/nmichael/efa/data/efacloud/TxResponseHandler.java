@@ -12,21 +12,22 @@ package de.nmichael.efa.data.efacloud;
 
 import de.nmichael.efa.util.Dialog;
 import de.nmichael.efa.util.International;
-import de.nmichael.efa.util.Logger;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import static de.nmichael.efa.data.efacloud.TxRequestQueue.TX_BUSY_QUEUE_INDEX;
 
 // import java.nio.charset.StandardCharsets;  Java 8 only
 // import java.util.Base64;  Java 8 only
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 public class TxResponseHandler {
 
     private final TxRequestQueue txq;
-    private int authentication_errors;
+    private int internetabortionCount = 0;
 
     TxResponseHandler(TxRequestQueue txq) {
         this.txq = txq;
-        authentication_errors = 0;
     }
 
     /**
@@ -38,69 +39,54 @@ public class TxResponseHandler {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String transactionString = "#" + tx.ID + ", " + tx.type + ": " + tx.getResultCode() + " - " +
                 Transaction.TX_RESULT_CODES.get(tx.getResultCode());
-        String dateString = format.format(new Date()) + " [receive for " + tx.tablename + "]: ";
+        String dateString = format.format(new Date()) + " [" + tx.tablename + "]: RECEIVE ";
         TextResource
-                .writeContents(TxRequestQueue.logFilePaths.get("API activity"), dateString + transactionString, true);
+                .writeContents(TxRequestQueue.logFilePaths.get("synch and activities"), dateString + transactionString,
+                        true);
     }
 
     /**
-     * In case the authentication fails stop the transaction queue, and alert an error.
+     * In case the authentication fails alert an error. There will be nothing else done, because this actually can
+     * happen an efaCloud startup on a Raspberry Pi due to an erroneous System time. So it just keeps the transaction at
+     * front of the queue and triggers retries.
      *
      * @param resultCode the resultCode of the transaction container.
      */
     void handleAuthenticationError(int resultCode) {
-
-        authentication_errors ++;
-        String deactivateMessage = "";
-        if (authentication_errors > 5) {
-            txq.registerStateChangeRequest(TxRequestQueue.RQ_QUEUE_DEACTIVATE);
-            deactivateMessage = International.getString(" - Deaktivire efaCloud - ");
-        }
-
         String errorMessage = International.getMessage(
                 "Anmeldung von {username} auf efaCloud server {efaCloudUrl} fehlgeschlagen. Unbekannter Fehlertyp " +
-                        "{resultCode}. ",
-                txq.username, txq.efaCloudUrl, "" + resultCode);
+                        "{resultCode}. ", txq.username, txq.efaCloudUrl, "" + resultCode);
         if ((resultCode == 402) || (resultCode == 403)) {
-            txq.registerStateChangeRequest(TxRequestQueue.RQ_QUEUE_DEACTIVATE);
+            errorMessage = International
+                    .getMessage("Anmeldung von {username} auf efaCloud server {efaCloudUrl} abgelehnt.", txq.username,
+                            txq.efaCloudUrl);
+        } else if (resultCode >= 500) {
             errorMessage = International.getMessage(
-                    "Anmeldung von {username} auf efaCloud server {efaCloudUrl} abgelehnt.",
-                    txq.username, txq.efaCloudUrl);
-            if (authentication_errors > 5)
-                Dialog.error(errorMessage + deactivateMessage);
-        } else if (resultCode == 500) {
-            errorMessage = International.getMessage(
-                    "Anmeldung von {username} auf efaCloud server {efaCloudUrl} führte zu einem Severfehler " +
-                            "(500 internal Server Error). Bitte prüfen sie die Server-Installation. Deaktiviere " +
-                            "efaCloud.", txq.username, txq.efaCloudUrl);
-            if (authentication_errors > 5)
-                Dialog.error(errorMessage + deactivateMessage);
-        } else if (resultCode == 501) {
-            errorMessage = International.getMessage("Transaktion führte zu einem Serverfehler " +
-                    "(501 Server response empty). Bitte prüfen sie die Server-Installation, " +
-                    "wenn der Fehler sich wiederholen sollte. Ursache kann auch eine falsche " +
-                    "Systemzeit im Client bei Startup sein.", txq.username, txq.efaCloudUrl);
+                    "Transaktion von {username} auf efaCloud server {efaCloudUrl} führte zu einem Severfehler. Bitte " +
+                            "prüfen sie die Server-Installation.", txq.username, txq.efaCloudUrl);
         }
-        Logger.log(Logger.ERROR, Logger.MSG_EFACLOUDSYNCH_ERROR, errorMessage + deactivateMessage);
+        txq.logApiMessage(errorMessage, 1);
     }
 
     /**
      * <p>Handle the error for a transaction container.</p><p>The transactions go to the failed
      * queue for:</p><ul><li>401 => "Syntax error",</li><li>402 => "Unknown client",</li><li>403 => "Authentication
-     * failed",</li><li>500 => "Internal Server Error",</li><li>501 => "Server response empty",</li><li>503 => "Could not decode server
-     * response",</li></ul></p><p>The transactions get a retry:<ul><li>404 => "Server side busy",</li><li>406 =>
-     * "Overload detected",</li><li>407 => "No data base connection",</li></ul></p><p>Authentication failures 402 and
-     * 403 create an additional error log entry and warning dialog.</p>
+     * failed",</li><li>500 => "Internal Server Error",</li><li>505 => "Server response empty",</li><li>506 => "Internet
+     * connection aborted",</li><li>507 => "Could not decode server response",</li></ul></p><p>The transactions get a
+     * retry:<ul><li>404 => "Server side busy",</li><li>406 => "Overload detected",</li><li>407 => "No data base
+     * connection",
+     * </li></ul></p><p>Authentication
+     * failures 402 and 403 create an additional error log entry and warning dialog.</p>
      *
      * @param txrc container to handle the error for
      */
     private void handleTxcError(TxResponseContainer txrc, String errorMessage) {
-        String droppedTxCnt = "" + txq.getQueueSize(TxRequestQueue.TX_BUSY_QUEUE_INDEX);
+        String droppedTxCnt = "" + txq.getQueueSize(TX_BUSY_QUEUE_INDEX);
         txq.logApiMessage(International.getMessage(
                 "CONTAINER-Fehler bei der Behandlung einer Serverantwort: cresult_code = {resultCode}, " +
                         "cresult_message = {resultMessage}, errorMessage = {errorMessage}. Betroffene, damit " +
-                        "gescheiterte Transaktionen: " +
-                        "{droppedCount}", "" + txrc.cresultCode, txrc.cresultMessage, errorMessage, droppedTxCnt), 1);
+                        "gescheiterte Transaktionen: " + "{droppedCount}", "" + txrc.cresultCode, txrc.cresultMessage,
+                errorMessage, droppedTxCnt), 1);
         // Any error shall force a fallback to normal, because the synchronization process relies on the answers and
         // if they don't come it will not end and continue to block the normal communication
         if (txq.getState() == TxRequestQueue.QUEUE_IS_SYNCHRONIZING) {
@@ -109,20 +95,22 @@ public class TxResponseHandler {
         }
         txq.registerContainerResult(txrc.cresultCode, txrc.cresultMessage);
         if (txq.getState() == TxRequestQueue.QUEUE_IS_AUTHENTICATING) {
-            authentication_errors ++;
             handleAuthenticationError(txrc.cresultCode);
-            txq.registerStateChangeRequest(TxRequestQueue.RQ_QUEUE_DEACTIVATE);
+            // do never remove a failed authentication transaction
         } else
             switch (txrc.cresultCode) {
                 case 402:  // "Unknown client"
                 case 403:  // "Authentication failed"
                     handleAuthenticationError(txrc.cresultCode);
+                    // do never remove a failed authentication transaction
+                    break;
                 case 401:  // "Syntax error"
                 case 500:  // "Internal server error"
-                case 501:  // "Server response empty"
-                case 503:  // "Could not decode server response"
+                case 505:  // "Server response empty"
+                case 506:  // "Internet connection aborted"
+                case 507:  // "Could not decode server response"
                 default:
-                    txq.shiftTx(TxRequestQueue.TX_BUSY_QUEUE_INDEX, TxRequestQueue.TX_FAILED_QUEUE_INDEX,
+                    txq.shiftTx(TX_BUSY_QUEUE_INDEX, TxRequestQueue.TX_FAILED_QUEUE_INDEX,
                             TxRequestQueue.ACTION_TX_CONTAINER_FAILED, 0, 0);
                     if (txq.getState() == TxRequestQueue.QUEUE_IS_SYNCHRONIZING)
                         txq.registerStateChangeRequest(TxRequestQueue.RQ_QUEUE_STOP_SYNCH);
@@ -130,8 +118,7 @@ public class TxResponseHandler {
                 case 404:  // "Server side busy"
                 case 406:  // "Overload detected"
                 case 407:  // "No data base connection"
-                    txq.shiftTx(TxRequestQueue.TX_BUSY_QUEUE_INDEX, TxRequestQueue.TX_BUSY_QUEUE_INDEX,
-                            TxRequestQueue.ACTION_TX_RETRY, 0, 0);
+                    txq.shiftTx(TX_BUSY_QUEUE_INDEX, TX_BUSY_QUEUE_INDEX, TxRequestQueue.ACTION_TX_RETRY, 0, 0);
                     if (txq.getState() == TxRequestQueue.QUEUE_IS_SYNCHRONIZING)
                         txq.registerStateChangeRequest(TxRequestQueue.RQ_QUEUE_STOP_SYNCH);
                     break;
@@ -164,15 +151,14 @@ public class TxResponseHandler {
             case 401:  // "Syntax error"
             case 501:  // "Transaction invalid"
             case 502:  // "Transaction failed"
-                txq.shiftTx(TxRequestQueue.TX_BUSY_QUEUE_INDEX, TxRequestQueue.TX_FAILED_QUEUE_INDEX,
-                        TxRequestQueue.ACTION_TX_CLOSE, tx.ID, 1);
+                txq.shiftTx(TX_BUSY_QUEUE_INDEX, TxRequestQueue.TX_FAILED_QUEUE_INDEX, TxRequestQueue.ACTION_TX_CLOSE,
+                        tx.ID, 1);
                 break;
             case 404:  // "Server side busy"
             case 405:  // "Wrong transaction ID"
             case 406:  // "Overload detected"
             case 407:  // "No data base connection"
-                txq.shiftTx(TxRequestQueue.TX_BUSY_QUEUE_INDEX, TxRequestQueue.TX_BUSY_QUEUE_INDEX,
-                        TxRequestQueue.ACTION_TX_RETRY, tx.ID, 1);
+                txq.shiftTx(TX_BUSY_QUEUE_INDEX, TX_BUSY_QUEUE_INDEX, TxRequestQueue.ACTION_TX_RETRY, tx.ID, 1);
                 break;
         }
     }
@@ -200,7 +186,7 @@ public class TxResponseHandler {
                 try {
                     if (tx.type == Transaction.TX_TYPE.KEYFIXING) {
                         if (tx.getResultCode() == 303)   // result 303 indicates the key change
-                            txq.synchControl.fixOneKeyForTable(tx);
+                            txq.synchControl.fixOneKeyForTable(tx, "");
                         else  // after all keys of one table are fixed, move to next or trigger next step
                             txq.synchControl.fixKeysForNextTable();
                     } else if (tx.type == Transaction.TX_TYPE.SYNCH) {
@@ -216,15 +202,17 @@ public class TxResponseHandler {
                     } else
                         // no specific handling for other ok-type responses.
                         // move transaction to the done queue
-                        txq.shiftTx(TxRequestQueue.TX_BUSY_QUEUE_INDEX, TxRequestQueue.TX_DONE_QUEUE_INDEX,
+                        txq.shiftTx(TX_BUSY_QUEUE_INDEX, TxRequestQueue.TX_DONE_QUEUE_INDEX,
                                 TxRequestQueue.ACTION_TX_CLOSE, tx.ID, 1);
                 } catch (Exception e) {
-                    txq.logApiMessage(International.getMessage(
-                            "Ausnahme-Fehler bei der Behandlung einer Serverantwort: {error}", e.getMessage()), 1);
+                    txq.logApiMessage(International
+                            .getMessage("Ausnahme-Fehler bei der Behandlung einer Serverantwort: {error}",
+                                    e.getMessage()), 1);
                 }
             }
-            // one special case for an ok result: If the queue is authenticating, put it to working
-            if (txq.getState() == TxRequestQueue.QUEUE_IS_AUTHENTICATING) {
+            // one special case for an ok result: If the queue is authenticating or disconnected, put it to working
+            if ((txq.getState() == TxRequestQueue.QUEUE_IS_AUTHENTICATING) ||
+                    (txq.getState() == TxRequestQueue.QUEUE_IS_DISCONNECTED)) {
                 txq.registerStateChangeRequest(TxRequestQueue.RQ_QUEUE_START);
                 if (tx.type == Transaction.TX_TYPE.SYNCH) {
                     String[] counts = tx.getResultMessage().split(";");
@@ -241,11 +229,11 @@ public class TxResponseHandler {
             }
             // also in normal operation a key change can happen and must trigger a key fixing transaction
             if ((txq.getState() != TxRequestQueue.QUEUE_IS_SYNCHRONIZING) && (tx.getResultCode() == 303))
-                txq.synchControl.fixOneKeyForTable(tx);
+                txq.synchControl.fixOneKeyForTable(tx, tx.tablename);
             // no specific handling for other ok-type responses.
             // move transaction to the done queue
-            txq.shiftTx(TxRequestQueue.TX_BUSY_QUEUE_INDEX, TxRequestQueue.TX_DONE_QUEUE_INDEX,
-                    TxRequestQueue.ACTION_TX_CLOSE, tx.ID, 1);
+            txq.shiftTx(TX_BUSY_QUEUE_INDEX, TxRequestQueue.TX_DONE_QUEUE_INDEX, TxRequestQueue.ACTION_TX_CLOSE, tx.ID,
+                    1);
         }
     }
 
@@ -279,6 +267,12 @@ public class TxResponseHandler {
             // the transaction container sending was aborted.
             TxResponseContainer txrc = new TxResponseContainer(null);
             handleTxcError(txrc, text + ";;" + txcResp.title);
+            internetabortionCount++;
+            // Abortion of a container request shall be very rare. And efa shall restart every day anyways, so this
+            // condition typically is hit when facing the raspberry system time adjustment. Restart efa to handle the
+            // situation.
+            if (internetabortionCount > 100)
+                txq.restartEfa();
 
             // } else if (type == InternetAccessManager.TYPE_PROGRESS_INFO) { // not relevant
             // } else if (type == InternetAccessManager.TYPE_FILE_SIZE_INFO) { // not relevant
@@ -294,13 +288,13 @@ public class TxResponseHandler {
                 for (String txm : txrc.txms) {
                     String[] txRespParts = txm.split(TxRequestQueue.TX_RESP_DELIMITER, 3);
                     int txID = 0;
-                    int resultCode = 501;
+                    int resultCode = 501;  // Default if parsing fails
                     try {
                         txID = Integer.parseInt(txRespParts[0]);
                         resultCode = Integer.parseInt(txRespParts[1]);
                     } catch (NumberFormatException ignored) {
                     }
-                    Transaction tx = txq.getTxForID(txID, TxRequestQueue.TX_BUSY_QUEUE_INDEX, true);
+                    Transaction tx = txq.getTxForID(txID, TX_BUSY_QUEUE_INDEX, true);
                     if (tx != null) {
                         tx.setResultCode(resultCode);
                         tx.setCresultCode(txrc.cresultCode);
@@ -311,14 +305,15 @@ public class TxResponseHandler {
                 }
             }
 
-            // clear the queue from the remaining transactions, for which no response was contained.
-            if (txq.getBusyQueueSize() > 0) {
-                String droppedTxCnt = "" + txq.getQueueSize(TxRequestQueue.TX_BUSY_QUEUE_INDEX);
+            // clear the queue from the remaining transactions, for which no response was contained, except in
+            // authenticating state. Then upon all errors it shall be retried.
+            if ((txq.getBusyQueueSize() > 0) && (!txq.busyHeadIsNop())) {
+                String droppedTxCnt = "" + txq.getQueueSize(TX_BUSY_QUEUE_INDEX);
                 txq.logApiMessage(International.getMessage(
                         "Container-Fehler in einer Serverantwort: {droppedCount} Transaktionen " +
                                 "im Container ohne Serverantwort. Sie gelten als gescheitert, vgl. txFailedQueue " +
                                 "Datei", droppedTxCnt), 1);
-                txq.shiftTx(TxRequestQueue.TX_BUSY_QUEUE_INDEX, TxRequestQueue.TX_FAILED_QUEUE_INDEX,
+                txq.shiftTx(TX_BUSY_QUEUE_INDEX, TxRequestQueue.TX_FAILED_QUEUE_INDEX,
                         TxRequestQueue.ACTION_TX_RESP_MISSING, 0, 0);
             }
         }
@@ -348,8 +343,8 @@ public class TxResponseHandler {
             if (txcResponse == null) {
                 this.cID = 0;
                 this.version = 0;
-                this.cresultCode = 500;
-                this.cresultMessage = "Transaction container aborted";
+                this.cresultCode = 506;
+                this.cresultMessage = "Internet connection aborted";
                 this.txms = new String[0];
             } else {
                 // transaction container was received, and the response is returned. Split all transaction, hand over

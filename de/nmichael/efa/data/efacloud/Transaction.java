@@ -12,7 +12,6 @@ package de.nmichael.efa.data.efacloud;
 
 import de.nmichael.efa.Daten;
 import de.nmichael.efa.util.International;
-import de.nmichael.efa.util.Logger;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
@@ -29,9 +28,9 @@ import java.util.Date;
 /**
  * A container class for data modifications passed to the efaClod Server.
  */
-class Transaction {
+public class Transaction {
 
-    enum TX_TYPE {
+    public enum TX_TYPE {
         CREATETABLE("createtable", false, false, false), ADDCOLUMNS("addcolumns", false, false, false), AUTOINCREMENT(
                 "autoincrement", false, false, false), UNIQUE("unique", false, false, false), INSERT("insert", true,
                 true, false), UPDATE("update", true, true, false), DELETE("delete", false, true, false), KEYFIXING(
@@ -76,7 +75,11 @@ class Transaction {
         TX_RESULT_CODES.put(500, "Internal server error");
         TX_RESULT_CODES.put(501, "Transaction invalid");
         TX_RESULT_CODES.put(502, "Transaction failed");
-        TX_RESULT_CODES.put(503, "Could not decode server response");
+        TX_RESULT_CODES.put(503, "No server response in returned transaction response container");
+        TX_RESULT_CODES.put(504, "Transaction response container failed");
+        TX_RESULT_CODES.put(505, "Server response empty");
+        TX_RESULT_CODES.put(506, "Internet connection aborted");
+        TX_RESULT_CODES.put(507, "Could not decode server response");
     }
 
     // the MESSAGE_SEPARATOR_STRING must not contain any regex special character
@@ -141,9 +144,9 @@ class Transaction {
             tx.resultCode = resultCode;
             tx.resultMessage = resultMessage;
         } catch (Exception e) {
-            Logger.log(Logger.ERROR, Logger.MSG_EFACLOUDSYNCH_ERROR, International
-                    .getString("Fehler beim Lesen einer Transaktion vom permanenten Speicher: '{transaction}'",
-                            txFullString));
+            TxRequestQueue.getInstance().logApiMessage(
+                    International.getString("Fehler beim Lesen einer Transaktion vom permanenten Speicher: ") +
+                            txFullString, 1);
         }
         // return result
         return tx;
@@ -188,7 +191,7 @@ class Transaction {
                 .append(txq.credentials);
         for (Transaction tx : txs) {
             tx.appendTxPostString(txContainer);
-            tx.logMessage("send");
+            tx.logMessage("SEND");
             txContainer.append(MESSAGE_SEPARATOR_STRING);
         }
         String txContainerStr = txContainer.toString();
@@ -233,18 +236,18 @@ class Transaction {
      */
     void logMessage(String action) {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String transactionString =
-                "#" + ID + ", " + type + " (record length: " + ((record == null) ? "null" : "" + record.length) + ")";
-        String dateString = format.format(new Date()) + " [" + action + " for " + tablename + "]: ";
+        String transactionString = "#" + ID + ", " + type + International.getString(" (record length: ") +
+                ((record == null) ? "null" : "" + record.length) + ")";
+        String dateString = format.format(new Date()) + " [" + tablename + "]: " + action + " ";
         // truncate log files,
-        File f = new File(TxRequestQueue.logFilePaths.get("API activity"));
+        File f = new File(TxRequestQueue.logFilePaths.get("synch and activities"));
         if ((f.length() > 200000) &&
-                (f.renameTo(new File(TxRequestQueue.logFilePaths.get("API activity") + ".previous"))))
-            TextResource.writeContents(TxRequestQueue.logFilePaths.get("API activity"), dateString + transactionString,
-                    false);
+                (f.renameTo(new File(TxRequestQueue.logFilePaths.get("synch and activities") + ".previous"))))
+            TextResource.writeContents(TxRequestQueue.logFilePaths.get("synch and activities"),
+                    dateString + transactionString, false);
         else
-        TextResource
-                .writeContents(TxRequestQueue.logFilePaths.get("API activity"), dateString + transactionString, true);
+            TextResource.writeContents(TxRequestQueue.logFilePaths.get("synch and activities"),
+                    dateString + transactionString, true);
     }
 
     /**
@@ -265,7 +268,8 @@ class Transaction {
      * pairs.</p>
      *
      * @param toAppendTo StringBuilder to append the transaction to
-     * @param maxlength maximum length of String. Cut only for logging. Set 0 if you want to get the really full String
+     * @param maxlength  maximum length of String. Cut only for logging. Set 0 if you want to get the really full
+     *                   String
      */
     void appendTxFullString(StringBuilder toAppendTo, int maxlength) {
         char d = CsvCodec.DEFAULT_DELIMITER;
@@ -337,7 +341,8 @@ class Transaction {
      * Append the transaction record to the provided StringBuilder. The end is a record value, no delimiter.
      *
      * @param toAppendTo StringBuilder to append the transaction to
-     * @param maxlength maximum length of String. Cut only for logging. Set 0 if you want to get the really full String
+     * @param maxlength  maximum length of String. Cut only for logging. Set 0 if you want to get the really full
+     *                   String
      */
     private void appendTxRecordString(StringBuilder toAppendTo, int maxlength) {
         char d = TxRequestQueue.TX_REQ_DELIMITER;

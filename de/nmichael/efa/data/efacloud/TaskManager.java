@@ -55,7 +55,7 @@ public class TaskManager {
      */
     public TaskManager(final RequestHandlerIF requestHandler,
                        final int timerInterval, final int timerStartDelay) {
-
+        // no lambda, keep it Java 7 compatible.
         TimerTask timerTask = new TimerTask() {
             public void run() {
                 if ((activeTask == null) && !taskQueue.isEmpty()) {
@@ -83,7 +83,7 @@ public class TaskManager {
      * Terminate task manager by canceling timer execution. Call this method prior to dropping the
      * task manager, e. g. by re-instantiation.
      */
-    public void terminate() {
+    public void cancel() {
         timer.cancel();
         timer = null;
         clearQueue();

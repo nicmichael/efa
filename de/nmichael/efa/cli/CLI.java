@@ -46,6 +46,7 @@ public class CLI {
     public static final String MENU_FAHRTENABZEICHEN = "fahrtenabzeichen";
     public static final String MENU_SYNCEFB          = "syncefb";
     public static final String MENU_BACKUP           = "backup";
+    public static final String MENU_EFACLOUD         = "efacloud";
     public static final String MENU_COMMAND          = "command";
 
     public static final int RC_OK                            =  0;
@@ -383,6 +384,9 @@ public class CLI {
         }
         if (mymenu.equals(MENU_BACKUP)) {
             return de.nmichael.efa.cli.MenuBackup.class;
+        }
+        if (mymenu.equals(MENU_EFACLOUD)) {
+            return de.nmichael.efa.cli.MenuEfaCloud.class;
         }
         if (mymenu.equals(MENU_COMMAND)) {
             return de.nmichael.efa.cli.MenuCommand.class;
