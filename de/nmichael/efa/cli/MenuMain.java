@@ -168,8 +168,7 @@ public class MenuMain extends MenuBase {
                 return runCommandWithArgs(args);
             }
             if (cmd.equalsIgnoreCase(CLI.MENU_EFACLOUD)) {
-                if (!cli.getAdminRecord().isAllowedCreateBackup() &&
-                        !cli.getAdminRecord().isAllowedRestoreBackup()) {
+                if (!cli.getAdminRecord().isAllowedAdministerProjectLogbook()) {
                     cli.logerr("You don't have permission to access this function.");
                     return CLI.RC_NO_PERMISSION;
                 }
