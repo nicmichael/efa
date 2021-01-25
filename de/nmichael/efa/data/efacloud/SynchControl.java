@@ -19,6 +19,7 @@ import de.nmichael.efa.data.storage.DataRecord;
 import de.nmichael.efa.data.storage.EfaCloudStorage;
 import de.nmichael.efa.data.types.DataTypeIntString;
 import de.nmichael.efa.ex.EfaException;
+import de.nmichael.efa.util.Dialog;
 import de.nmichael.efa.util.International;
 import de.nmichael.efa.util.Logger;
 
@@ -28,7 +29,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
-import static de.nmichael.efa.data.efacloud.TxRequestQueue.TX_SYNCH_QUEUE_INDEX;
+import static de.nmichael.efa.data.efacloud.TxRequestQueue.*;
 
 class SynchControl {
 
@@ -74,9 +75,9 @@ class SynchControl {
     void logSynchMessage(String logMessage, String tablename, DataKey dataKey, boolean logStateChange) {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String dataKeyStr = (dataKey == null) ? "" : " - " + dataKey.toString();
-        String dateString = format.format(new Date()) + " [" + tablename + dataKeyStr + "]: " + logMessage;
-        String path = (logStateChange) ? TxRequestQueue.logFilePaths
-                .get("efacloud status") : TxRequestQueue.logFilePaths.get("efacloud synchronization");
+        String info = (logStateChange) ? "STATECHANGE " : "SYNCH ";
+        String dateString = format.format(new Date()) + " [" + tablename + dataKeyStr + "]: " + info + logMessage;
+        String path = TxRequestQueue.logFilePaths.get("synch and activities");
         // truncate log files,
         File f = new File(path);
         if ((f.length() > 200000) && (f.renameTo(new File(path + ".previous"))))
@@ -94,21 +95,24 @@ class SynchControl {
     void startSynchProcess(int synch_request) {
         // in case of manually triggered server table reset no further steps needed needed.
         if (synch_request == TxRequestQueue.RQ_QUEUE_START_SYNCH_DELETE) {
-            logSynchMessage("Delete and rebuild of server tables starting", "@all", null, true);
+            logSynchMessage(International.getString("Delete and rebuild of server tables starting"), "@all", null,
+                    true);
             Daten.tableBuilder.initAllServerTables();
             return;
         }
         table_fixing_index = 0;
         synch_upload = synch_request == TxRequestQueue.RQ_QUEUE_START_SYNCH_UPLOAD;
-        logSynchMessage("Synchronisation " + ((synch_upload) ? "upload" : "download") + " starting", "@all", null,
-                true);
+        String synchMessage = (synch_upload) ? International
+                .getString("Synchronisation client to server (upload) starting") : International
+                .getString("Synchronisation server to client (download) starting");
+        logSynchMessage(synchMessage, "@all", null, true);
         // The manually triggered synchronization always takes the full set into account
         LastModifiedLimit = (synch_upload || (timeOfLastSynch < clockoffsetBuffer)) ? 0L :
                 timeOfLastSynch - clockoffsetBuffer;
         timeOfLastSynch = System.currentTimeMillis();
         // request first key to be fixed. The record is empty.
-        txq.appendTransaction(TX_SYNCH_QUEUE_INDEX, "keyfixing", tables_with_key_fixing_allowed[table_fixing_index],
-                (String[]) null);
+        txq.appendTransaction(TX_SYNCH_QUEUE_INDEX, Transaction.TX_TYPE.KEYFIXING,
+                tables_with_key_fixing_allowed[table_fixing_index], (String[]) null);
     }
 
     /**
@@ -120,24 +124,26 @@ class SynchControl {
      */
     private void adjustBoatStatus(int currentEntryNo, int fixedEntryNo, long globalLock) {
         EfaCloudStorage boatstatus = Daten.tableBuilder.getPersistence("efa2boatstatus");
-        DataKeyIterator it = null;
+        DataKeyIterator it;
         try {
             it = boatstatus.getStaticIterator();
             DataKey boatstatuskey = it.getFirst();
             while (boatstatuskey != null) {
                 BoatStatusRecord bsr = (BoatStatusRecord) boatstatus.get(boatstatuskey);
-                int entryNo = bsr.getEntryNo().intValue();
-                if (entryNo == currentEntryNo) {
-                    bsr.setEntryNo(new DataTypeIntString("" + fixedEntryNo));
-                    boatstatus.update(bsr, globalLock);
-                    logSynchMessage(International.getString("Korrigiere EntryNo in BoatStatus"), "efa2boatstatus",
-                            boatstatuskey, false);
+                if (bsr.getEntryNo() != null) {
+                    int entryNo = bsr.getEntryNo().intValue();
+                    if (entryNo == currentEntryNo) {
+                        bsr.setEntryNo(new DataTypeIntString("" + fixedEntryNo));
+                        boatstatus.update(bsr, globalLock);
+                        logSynchMessage(International.getString("Korrigiere EntryNo in BoatStatus"), "efa2boatstatus",
+                                boatstatuskey, false);
+                    }
                 }
                 boatstatuskey = it.getNext();
             }
         } catch (EfaException ignored) {
-            Logger.log(Logger.WARNING, Logger.MSG_EFACLOUDSYNCH_ERROR, International.getString(
-                    "Aktualisierung fehlgeschlagen beim Versuch die EntryNo zu korrigieren in efa2boatstatus"));
+            txq.logApiMessage(International.getString(
+                    "Aktualisierung fehlgeschlagen beim Versuch die EntryNo zu korrigieren in efa2boatstatus."), 1);
         }
     }
 
@@ -145,72 +151,89 @@ class SynchControl {
      * <p>Step 2: Change a data key, based on the server response on a key fixing request.</p><p>This handles the
      * response on a keyfixing request, if a mismatched key was found (result code 303). Will fix the key locally and
      * create a new keyfixing request to inform the server on the execution. This function must only be called, if the
-     * transaction result message contains the record too be fixed.</p>
+     * transaction result message contains the record too be fixed.</p><p>This function may be called by an insert
+     * action, then ir does</p>
      *
-     * @param tx the transaction with the server response needed for fixing
+     * @param tx        the transaction with the server response needed for fixing
+     * @param tablename set to a table name, if just one fixing was required, e.g. after an insert. Set to "" if in
+     *                  synchronizing to trigger the next table, when there is no more key to be fixed.
      */
-    void fixOneKeyForTable(Transaction tx) {
+    void fixOneKeyForTable(Transaction tx, String tablename) {
         EfaCloudStorage efaCloudStorage = Daten.tableBuilder.getPersistence(tx.tablename);
         ArrayList<DataRecord> dataRecords = efaCloudStorage.parseCsvTable(tx.getResultMessage());
         DataRecord oldDr = null;
         DataRecord newDr = null;
+        String[] txRecordForFixedEntry = null;
+        boolean correctionSucceeded = false;
         try {
             oldDr = efaCloudStorage.get(dataRecords.get(1).getKey());
             newDr = efaCloudStorage.get(dataRecords.get(0).getKey());
         } catch (EfaException ignored) {
         }
-        String[] txRecord;
         if (oldDr == null)
             logSynchMessage(International.getString("Schlüsselkorrekturfehler. Alter Schlüssel nicht vorhanden: ") +
                     dataRecords.get(1).getKey().toString(), tx.tablename, dataRecords.get(0).getKey(), false);
         if (newDr != null)
             logSynchMessage(International.getString("Schlüsselkorrekturfehler. Neuer Schlüssel schon belegt: ") +
-                    dataRecords.get(1).getKey().toString(), tx.tablename, dataRecords.get(0).getKey(), false);
+                    dataRecords.get(1).getKey().toString(), tx.tablename, dataRecords.get(1).getKey(), false);
         if ((oldDr != null) && (newDr == null)) {
             logSynchMessage(International.getString("Korrigiere Schlüssel von bisher ") +
                     dataRecords.get(1).getKey().toString(), tx.tablename, dataRecords.get(0).getKey(), false);
             long globalLock = 0L;
             try {
                 globalLock = efaCloudStorage.acquireGlobalLock();
-                // start with changing the boat status to enable deletion of the record wih the old EntryId
+                // the record has a link to the boat status, so it will not be allowed to be deleted. Disable
+                // temporarily the check.
+                efaCloudStorage.setPreModifyRecordCallbackEnabled(false);
+                efaCloudStorage.modifyLocalRecord(dataRecords.get(0), globalLock, true, false, false);
+                efaCloudStorage.releaseGlobalLock(globalLock);
+                logSynchMessage(International.getString("Schlüsselkorektur: Füge richtigen Datensatz hinzu: ") +
+                        dataRecords.get(1).getKey().toString(), tx.tablename, dataRecords.get(0).getKey(), false);
                 if (tx.tablename.equalsIgnoreCase("efa2logbook")) {
                     int oldEntryId = ((LogbookRecord) dataRecords.get(1)).getEntryId().intValue();
                     int newEntryId = ((LogbookRecord) dataRecords.get(0)).getEntryId().intValue();
+                    EfaCloudStorage boatstatus = Daten.tableBuilder.getPersistence("efa2boatstatus");
+                    globalLock = boatstatus.acquireGlobalLock();
                     adjustBoatStatus(oldEntryId, newEntryId, globalLock);
-                    logSynchMessage(
-                            International.getString("Schlüsselkorekturfehler. Korrigiere Bootsstatus: ") + newEntryId,
+                    boatstatus.releaseGlobalLock(globalLock);
+                    logSynchMessage(International.getString("Schlüsselkorektur: Korrigiere Bootsstatus: ") + newEntryId,
                             "efa2boatstatus", null, false);
                 }
+                globalLock = efaCloudStorage.acquireGlobalLock();
                 efaCloudStorage.modifyLocalRecord(dataRecords.get(1), globalLock, false, false, true);
-                logSynchMessage(International.getString("Schlüsselkorekturfehler. Lösche falschen Datensatz: ") +
+                logSynchMessage(International.getString("Schlüsselkorektur: Lösche falschen Datensatz: ") +
                         dataRecords.get(1).getKey().toString(), tx.tablename, dataRecords.get(0).getKey(), false);
-                efaCloudStorage.modifyLocalRecord(dataRecords.get(0), globalLock, true, false, false);
-                logSynchMessage(International.getString("Schlüsselkorekturfehler. Schreibe richtigen Datensatz: ") +
-                        dataRecords.get(1).getKey().toString(), tx.tablename, dataRecords.get(0).getKey(), false);
+                // create the record for the fixed key
+                correctionSucceeded = true;
+                txRecordForFixedEntry = new String[dataRecords.get(0).getKeyFields().length];
+                int i = 0;
+                for (String keyField : dataRecords.get(0).getKeyFields()) {
+                    txRecordForFixedEntry[i] = keyField + ";" +
+                            CsvCodec.encodeElement(dataRecords.get(0).getAsText(keyField), CsvCodec.DEFAULT_DELIMITER,
+                                    CsvCodec.DEFAULT_QUOTATION);
+                    i++;
+                }
             } catch (Exception e) {
-                Logger.log(Logger.WARNING, Logger.MSG_EFACLOUDSYNCH_ERROR,
-                        International.getString("Fehler beim Versuch einen Schlüssel zu korrigieren in Tabelle ") +
-                                tx.tablename + ": " + e.getMessage());
+                txq.logApiMessage(International
+                        .getMessage("Ausnahmefehler beim Versuch einen Schlüssel zu korrigieren in {Tabelle}: {Fehler}.",
+                                tx.tablename, e.getMessage()), 1);
             } finally {
                 efaCloudStorage.releaseGlobalLock(globalLock);
-            }
-            // create the record for the fixed key
-            txRecord = new String[dataRecords.get(0).getKeyFields().length];
-            int i = 0;
-            for (String keyField : dataRecords.get(0).getKeyFields()) {
-                txRecord[i] = keyField + ";" +
-                        CsvCodec.encodeElement(dataRecords.get(0).getAsText(keyField), CsvCodec.DEFAULT_DELIMITER,
-                                CsvCodec.DEFAULT_QUOTATION);
-                i++;
+                efaCloudStorage.setPreModifyRecordCallbackEnabled(true);
             }
         } else {
-            txRecord = null;
-            if (table_fixing_index < (tables_with_key_fixing_allowed.length - 1))
+            // if in synchronizing: trigger the next table, when there is no more key to be fixed.
+            if (tablename.isEmpty() && (table_fixing_index < (tables_with_key_fixing_allowed.length - 1)))
                 table_fixing_index++; // move to next table to avoid endless loop
         }
-        // return fixed record and request next key to be fixed
-        txq.appendTransaction(TX_SYNCH_QUEUE_INDEX, "keyfixing", tables_with_key_fixing_allowed[table_fixing_index],
-                txRecord);
+        // continue anyway, if in synchronizing
+        if (tablename.isEmpty())
+            txq.appendTransaction(TX_SYNCH_QUEUE_INDEX, Transaction.TX_TYPE.KEYFIXING,
+                    tables_with_key_fixing_allowed[table_fixing_index], txRecordForFixedEntry);
+        // confirm the fixing, but only if successfully completed. If not, this will enter an endless loop between
+        // client and server of retrying the keyfixing.
+        else if (txRecordForFixedEntry != null)
+            txq.appendTransaction(TX_PENDING_QUEUE_INDEX, Transaction.TX_TYPE.KEYFIXING, tablename, txRecordForFixedEntry);
     }
 
     /**
@@ -225,10 +248,11 @@ class SynchControl {
     void fixKeysForNextTable() {
         table_fixing_index++;
         if (table_fixing_index < tables_with_key_fixing_allowed.length)
-            txq.appendTransaction(TX_SYNCH_QUEUE_INDEX, "keyfixing", tables_with_key_fixing_allowed[table_fixing_index],
-                    (String[]) null);
+            txq.appendTransaction(TX_SYNCH_QUEUE_INDEX, Transaction.TX_TYPE.KEYFIXING,
+                    tables_with_key_fixing_allowed[table_fixing_index], (String[]) null);
         else
-            txq.appendTransaction(TX_SYNCH_QUEUE_INDEX, "synch", "@all", "LastModified;" + LastModifiedLimit, "?;>");
+            txq.appendTransaction(TX_SYNCH_QUEUE_INDEX, Transaction.TX_TYPE.SYNCH, "@all",
+                    "LastModified;" + LastModifiedLimit, "?;>");
     }
 
     /**
@@ -296,6 +320,26 @@ class SynchControl {
                 }
                 if (returnedKey != null) {
 
+                    // efaLogbook check. The server has only one logbook, the client may use another
+                    // one currently. If server and local record point to  a different year, deactivate efaCloud
+                    if (tx.tablename.equalsIgnoreCase("efa2logbook") && (localRecord != null)) {
+                        String clientyear = ((LogbookRecord) localRecord).getAsString("Date");
+                        String serveryear = ((LogbookRecord) returnedRecord).getAsString("Date");
+                        if ((clientyear != null) && (serveryear != null) &&
+                                !clientyear.substring(6, 10).equalsIgnoreCase(serveryear.substring(6, 10))) {
+                            String wrongYear = International.getMessage(
+                                    "Das Fahrtenbuch auf dem Server gehört zu einem anderen Jahr ({serverYear}), als " +
+                                            "das Fahrtenbuch auf dem Client ({clientYear}). Deaktiviere efaCloud um " +
+                                            "Synchronisationsfehlern vorzubeugen.", serveryear.substring(6, 10),
+                                    clientyear.substring(6, 10));
+                            Logger.log(Logger.WARNING, Logger.MSG_EFACLOUDSYNCH_ERROR, wrongYear);
+                            txq.logApiMessage(wrongYear, 1);
+                            Dialog.error(wrongYear);
+                            txq.registerStateChangeRequest(RQ_QUEUE_PAUSE);
+                            txq.registerStateChangeRequest(RQ_QUEUE_DEACTIVATE);
+                        }
+                    }
+
                     // identify which record is to be used.
                     long serverLastModified = returnedRecord.getLastModified();
                     long localLastModified = (localRecord == null) ? 0L : localRecord.getLastModified();
@@ -322,18 +366,25 @@ class SynchControl {
                     boolean update = (localRecord != null) && serverMoreRecent && isUpdated;
                     boolean delete = (localRecord != null) && serverMoreRecent && isDeleted;
 
-                    // Run update. This update will use the LastModified and ChangeCount of the record to make
-                    // it a true copy of the server side record.
-                    if (insert || update || delete) {
+                    // Check whether record to update matsches at least partially the new version.
+                    if (update && !preUpdateRecordsCompare(localRecord, returnedRecord))
+                        logSynchMessage(International.getString(
+                                "Update-Konflikt bei Datensatz in der Download-Synchronisation, den zu " +
+                                        "aktualisierenden " + "Datensatz bitte manuell bereinigen "), tx.tablename,
+                                localRecord.getKey(), false);
+
+                        // Run update. This update will use the LastModified and ChangeCount of the record to make
+                        // it a true copy of the server side record.
+                    else if (insert || update || delete) {
                         long globalLock = 0;
                         try {
                             // any add modification requires a global lock.
                             globalLock = efaCloudStorage.acquireGlobalLock();
                             efaCloudStorage.modifyLocalRecord(returnedRecord, globalLock, insert, update, delete);
                             efaCloudStorage.releaseGlobalLock(globalLock);
-                            logSynchMessage(International
-                                    .getString("Lokale Replikation des Datensatzes nach Server-seitigem ") +
-                                    lastModification, tx.tablename, returnedRecord.getKey(), false);
+                            logSynchMessage(International.getMessage(
+                                    "Lokale Replikation des Datensatzes nach {modification} auf dem Server.",
+                                    lastModification), tx.tablename, returnedRecord.getKey(), false);
                         } catch (EfaException e) {
                             txq.logApiMessage(International
                                     .getString("Ausnahmefehler bei der lokalen Modifikation eines Datensatzes ") +
@@ -348,12 +399,38 @@ class SynchControl {
         // increase table index and issue select request
         table_synching_index++;
         if (table_synching_index < tables_to_synchronize.size()) {
-            txq.appendTransaction(TX_SYNCH_QUEUE_INDEX, "select", tables_to_synchronize.get(table_synching_index),
-                    "LastModified;" + LastModifiedLimit, "?;>");
+            txq.appendTransaction(TX_SYNCH_QUEUE_INDEX, Transaction.TX_TYPE.SELECT,
+                    tables_to_synchronize.get(table_synching_index), "LastModified;" + LastModifiedLimit, "?;>");
         }
         // if there is no more Table to be synchronized, conclude
         else
             txq.registerStateChangeRequest(TxRequestQueue.RQ_QUEUE_STOP_SYNCH);
+    }
+
+    /**
+     * Compares two records whether it is probable that one is the update of the other. If three or more data fields
+     * differ, it is not beleived that one is an update of the other and a data update conflict is created instead of
+     * updating.
+     *
+     * @param dr1 DataRecord one to compare
+     * @param dr2 DataRecord two to compare
+     * @return true, if the records are of the same type and differ by less than 3 data fields (except LastModified and
+     * LastModification)
+     */
+    private boolean preUpdateRecordsCompare(DataRecord dr1, DataRecord dr2) {
+        if (dr1.getClass() != dr2.getClass())
+            return false;
+        int diff = 0;
+        for (String field : dr1.getFields()) {
+            if (dr1.getAsString(field) == null)
+                diff = (dr2.getAsString(field) == null) ? 0 : 1;
+            else if (dr2.getAsString(field) == null)
+                diff++;
+                // Use String comparison as the compareTo() implementation throws to many different exceptions.
+            else if (!dr1.getAsString(field).equalsIgnoreCase(dr2.getAsString(field)))
+                diff++;
+        }
+        return diff < 3;
     }
 
     /**
@@ -370,9 +447,8 @@ class SynchControl {
             // a response message is received. Handle included records
             EfaCloudStorage persistence = Daten.tableBuilder.getPersistence(tx.tablename);
             if (persistence == null)
-                Logger.log(Logger.ERROR, Logger.MSG_EFACLOUDSYNCH_ERROR,
-                        International.getString("Konnte folgende Tabelle nicht für das Hochladen finden: ") +
-                                tx.tablename);
+                txq.logApiMessage(International.getString("Konnte folgende Tabelle nicht für das Hochladen finden: ") +
+                        tx.tablename, 1);
             else {
                 ArrayList<DataRecord> returnedRecords = persistence.parseCsvTable(tx.getResultMessage());
                 serverRecordsReturned.clear();
@@ -389,14 +465,21 @@ class SynchControl {
                         DataRecord serverRecord = serverRecordsReturned.get(toCheck);
                         if (serverRecord == null)
                             localRecordsToInsertAtServer.add(localRecord);
-                        else if (localRecord.getLastModified() > serverRecord.getLastModified())
-                            localRecordsToUpdateAtServer.add(localRecord);
+                        else if (localRecord.getLastModified() > serverRecord.getLastModified()) {
+                            if (preUpdateRecordsCompare(localRecord, serverRecord))
+                                localRecordsToUpdateAtServer.add(localRecord);
+                            else {
+                                logSynchMessage(International.getString(
+                                        "Update-Konflikt bei Datensatz in der Upload-Synchronisation, den zu " +
+                                                "aktualisierenden Datensatz bitte manuell bereinigen "), tx.tablename,
+                                        toCheck, false);
+                            }
+                        }
                         toCheck = it.getNext();
                     }
                 } catch (EfaException e) {
-                    Logger.log(Logger.ERROR, Logger.MSG_EFACLOUDSYNCH_ERROR,
-                            International.getString("Konnte nicht über die Datensätze iterieren bei Tabelle ") +
-                                    tx.tablename);
+                    txq.logApiMessage(International
+                            .getMessage("Konnte nicht über die Datensätze iterieren bei Tabelle ", tx.tablename), 1);
                 }
                 // append all relevant transactions to the queue. This may be quite a lot and take a while to
                 // be worked through.
@@ -414,8 +497,8 @@ class SynchControl {
         }
         table_synching_index++;
         if (table_synching_index < tables_to_synchronize.size()) {
-            txq.appendTransaction(TX_SYNCH_QUEUE_INDEX, "select", tables_to_synchronize.get(table_synching_index),
-                    "LastModified;" + LastModifiedLimit, "?;>");
+            txq.appendTransaction(TX_SYNCH_QUEUE_INDEX, Transaction.TX_TYPE.SELECT,
+                    tables_to_synchronize.get(table_synching_index), "LastModified;" + LastModifiedLimit, "?;>");
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String dateString = format.format(new Date());
             logSynchMessage(International.getString("Hole Datensätze vom Server mit Modifikation nach ") + dateString,

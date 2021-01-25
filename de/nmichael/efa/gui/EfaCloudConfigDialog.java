@@ -45,7 +45,7 @@ public class EfaCloudConfigDialog extends BaseTabbedDialog implements IItemListe
     private final TxRequestQueue txq;
 
     public EfaCloudConfigDialog(JDialog parent, AdminRecord admin) {
-        super(parent, International.getStringWithMnemonic("EfaCloud"), International.getStringWithMnemonic("Schließen"),
+        super(parent, International.getStringWithMnemonic("efaCloud konfigurieren"), International.getStringWithMnemonic("Schließen"),
                 null, true);
         this.parent = parent;
         this.txq = TxRequestQueue.getInstance();
@@ -82,7 +82,8 @@ public class EfaCloudConfigDialog extends BaseTabbedDialog implements IItemListe
         String advice = (isEfaRemote) ? International
                 .getString("Für efaRemote kann der efaCloud-Modus nicht aktiviert werden.") : (isXML) ?
                 International.getString("Aktuelles Projekt auf efaCloud umstellen.") + "\n" : International
-                .getMessage("efaCloud Server Kommunikation steuern. Aktueller Status: {state}", queueState) + "\n";
+                .getMessage("Server '{URL}'. Aktueller Status: {state}",
+                        Daten.project.getProjectRecord().getEfaCloudURL(), queueState) + "\n";
         category = "%01%" + International.getString("efaCloud Optionen");
         guiItems.add(item = new ItemTypeLabel(ACTIVATION_INFO, IItemType.TYPE_PUBLIC, category, advice));
         item.setPadding(0, 0, 20, 20);
@@ -173,6 +174,16 @@ public class EfaCloudConfigDialog extends BaseTabbedDialog implements IItemListe
                     item.registerItemListener(this);
                     item.setFieldGrid(2, GridBagConstraints.SOUTH, GridBagConstraints.NONE);
                 }
+                // If the queue is disconnected the options are deactivate
+                else if (state == TxRequestQueue.QUEUE_IS_DISCONNECTED) {
+                    // Deactivate
+                    guiItems.add(item = new ItemTypeButton(BUTTON_EFACLOUD_DEACTIVATE, IItemType.TYPE_PUBLIC, category,
+                            International.getString(International.getString("efaCloud feature deaktivieren"))));
+                    ((ItemTypeButton) item).setIcon(getIcon(IMAGE_EFACLOUD_DEACTIVATE));
+                    item.setPadding(0, 0, 20, 20);
+                    item.registerItemListener(this);
+                    item.setFieldGrid(2, GridBagConstraints.SOUTH, GridBagConstraints.NONE);
+                }
                 // any other state. No options to control provided.
                 else {
                     advice = International
@@ -201,7 +212,7 @@ public class EfaCloudConfigDialog extends BaseTabbedDialog implements IItemListe
         pr.setProjectStorageType(IDataAccess.TYPE_FILE_XML);
         TxRequestQueue txq = TxRequestQueue.getInstance();
         if (txq != null)
-            txq.terminate();
+            txq.cancel();
         // Store the changed settings
         String prjName = pr.getName();
         try {
@@ -250,7 +261,7 @@ public class EfaCloudConfigDialog extends BaseTabbedDialog implements IItemListe
                         // reactivate it afterwards. Then the queue is running and must be closed to load the new
                         // confiuguration.
                         if (TxRequestQueue.getInstance() != null)
-                            TxRequestQueue.getInstance().terminate();
+                            TxRequestQueue.getInstance().cancel();
                         // reopen the project.
                         Project.openProject(prjName, false);
                         pr = Daten.project;

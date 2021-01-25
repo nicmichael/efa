@@ -894,7 +894,7 @@ public class Project extends StorageObject {
         }
         // Close the message queue to the efacloud server
         if ((getProjectStorageType() == IDataAccess.TYPE_EFA_CLOUD) && (TxRequestQueue.getInstance() != null)) {
-            TxRequestQueue.getInstance().terminate();
+            TxRequestQueue.getInstance().cancel();
         }
         // close the project storage object itself
         closePersistence(this);

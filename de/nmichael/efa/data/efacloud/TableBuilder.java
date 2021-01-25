@@ -15,6 +15,7 @@ import de.nmichael.efa.data.storage.EfaCloudStorage;
 import de.nmichael.efa.data.storage.IDataAccess;
 import de.nmichael.efa.data.storage.MetaData;
 import de.nmichael.efa.data.storage.StorageObject;
+import de.nmichael.efa.util.International;
 import de.nmichael.efa.util.Logger;
 
 import java.util.ArrayList;
@@ -262,7 +263,8 @@ public class TableBuilder {
             return value;
         RecordFieldDefinition rtf = rtd.fields.get(fieldname);
         if (rtf == null) {
-            Logger.log(Logger.WARNING, Logger.MSG_EFACLOUDSYNCH_ERROR, "Undefined field name: " + fieldname);
+            TxRequestQueue.getInstance().logApiMessage(
+                    International.getMessage("Nicht definierter Feldname: {Feldname}", fieldname), 1);
             return value;
         }
         // reformat date to ISO format YYYY-MM-DD
@@ -412,7 +414,7 @@ public class TableBuilder {
         String tablename = rtd.storageObjectType;
         TxRequestQueue txq = TxRequestQueue.getInstance();
         // create table
-        txq.appendTransaction(TxRequestQueue.TX_SYNCH_QUEUE_INDEX, "createtable", tablename,
+        txq.appendTransaction(TxRequestQueue.TX_SYNCH_QUEUE_INDEX, Transaction.TX_TYPE.CREATETABLE, tablename,
                 rtd.tableDefinitionRecord());
         // add uniques
         if (rtd.uniques.size() > 0)
@@ -420,7 +422,7 @@ public class TableBuilder {
                 String record = unique + ";" +
                         CsvCodec.encodeElement(rtd.fields.get(unique).sqlDefinition, CsvCodec.DEFAULT_DELIMITER,
                                 CsvCodec.DEFAULT_QUOTATION);
-                txq.appendTransaction(TxRequestQueue.TX_SYNCH_QUEUE_INDEX, "unique", tablename, record);
+                txq.appendTransaction(TxRequestQueue.TX_SYNCH_QUEUE_INDEX, Transaction.TX_TYPE.UNIQUE, tablename, record);
             }
         // add autoincrements
         if (rtd.autoincrements.size() > 0)
@@ -430,8 +432,8 @@ public class TableBuilder {
                 String record = autoincrement + ";" +
                         CsvCodec.encodeElement(rtd.fields.get(autoincrement).sqlDefinition, CsvCodec.DEFAULT_DELIMITER,
                                 CsvCodec.DEFAULT_QUOTATION);
-                txq.appendTransaction(TxRequestQueue.TX_SYNCH_QUEUE_INDEX, "unique", tablename, record);
-                txq.appendTransaction(TxRequestQueue.TX_SYNCH_QUEUE_INDEX, "autoincrement", tablename, record);
+                txq.appendTransaction(TxRequestQueue.TX_SYNCH_QUEUE_INDEX, Transaction.TX_TYPE.UNIQUE, tablename, record);
+                txq.appendTransaction(TxRequestQueue.TX_SYNCH_QUEUE_INDEX, Transaction.TX_TYPE.AUTOINCREMENT, tablename, record);
             }
     }
 
