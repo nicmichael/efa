@@ -77,7 +77,8 @@ public class EfaCloudStorage extends XMLFile {
      */
     public void modifyServerRecord(DataRecord dataRecord, boolean add, boolean update, boolean delete,
                                    boolean useSynchQueue) {
-        String type = (add) ? "insert" : (update) ? "update" : (delete) ? "delete" : "nop";
+        Transaction.TX_TYPE type = (add) ? Transaction.TX_TYPE.INSERT : (update) ? Transaction.TX_TYPE.UPDATE :
+                (delete) ? Transaction.TX_TYPE.DELETE : Transaction.TX_TYPE.NOP;
         ArrayList<String> record = new ArrayList<String>();
         for (String field : dataRecord.getFields()) {
             String value = dataRecord.getString(field);
@@ -151,7 +152,7 @@ public class EfaCloudStorage extends XMLFile {
                     String value = (row.get(c) != null ? row.get(c).trim() : null);
                     if ((value != null) && (value.length() > MAX_VALUE_LENGTH)) {
                         Logger.log(Logger.ERROR, Logger.MSG_FILE_PARSEERROR, International.getMessage(
-                                "EfaCloud Tabelle {tablename}: Wert in Datenfeld {datafield} zu lang mit {length} " +
+                                "efaCloud Tabelle {tablename}: Wert in Datenfeld {datafield} zu lang mit {length} " +
                                         "Bytes. Er wird gekürzt. Die ersten 100 Bytes sind: {value}", tablename,
                                 fieldName, "" + value.length(), value.substring(0, 100)));
                         value = value.substring(0, MAX_VALUE_LENGTH);
@@ -169,7 +170,7 @@ public class EfaCloudStorage extends XMLFile {
                     c++;
                 } catch (Exception e) {
                     Logger.log(Logger.ERROR, Logger.MSG_FILE_PARSEERROR, International.getMessage(
-                            "EfaCloud Tabelle {tablename}: Lesefehler für Datenfeld {datafiled} = {value}: {error}",
+                            "efaCloud Tabelle {tablename}: Lesefehler für Datenfeld {datafiled} = {value}: {error}",
                             tablename, fieldName, ((c < row.size()) ? row.get(c) : "???"), e.toString()));
                 }
             }

@@ -60,6 +60,10 @@ public class InternetAccessManager implements TaskManager.RequestDispatcherIF {
     public static int MONITOR_PERIOD = 5000;
     // count of monitor periods after which the transaction is aborted.
     public static int TIME_OUT_MONITOR_PERIODS = 5;
+    // Period of polls on send queue
+    private static final int POLL_PERIOD_MS = 100;
+    // Start delay of polls on send queue
+    private static final int POLL_START_DELAY_MS = 3000;
 
     private static InternetAccessManager iam = null;
     private final TaskManager taskManager;
@@ -82,7 +86,7 @@ public class InternetAccessManager implements TaskManager.RequestDispatcherIF {
      */
     private InternetAccessManager() {
         internetAccessHandler = new InternetAccessHandler();
-        this.taskManager = new TaskManager(internetAccessHandler, 100, 100);
+        this.taskManager = new TaskManager(internetAccessHandler, POLL_PERIOD_MS, POLL_START_DELAY_MS);
     }
 
     /**
@@ -125,8 +129,8 @@ public class InternetAccessManager implements TaskManager.RequestDispatcherIF {
      * Terminate the internet access manager by terminating the task manager and dropping the link to the singleton
      * InternetAccessManager instance. Call this method prior to dropping the task manager, e. g. by re-instantiation.
      */
-    public void terminate() {
-        taskManager.terminate();
+    public void cancel() {
+        taskManager.cancel();
         iam = null;
     }
 
@@ -518,10 +522,10 @@ public class InternetAccessManager implements TaskManager.RequestDispatcherIF {
                 excuteGetForText(msg.title, msg.text, enc);
             msg.completed = System.currentTimeMillis();
             iamMonitor.stop();
-            statisticsRecords[statisticsBufferIndex] = new StatisticsRecord(msg.title, msg.started,
-                    msg.completed - msg.started, msg.type, callBackMsg.type);
             statisticsBufferIndex++;
             statisticsBufferIndex = (statisticsBufferIndex % STATISTICS_BUFFER_SIZE);
+            statisticsRecords[statisticsBufferIndex] = new StatisticsRecord(msg.title, msg.started,
+                    msg.completed - msg.started, msg.type, callBackMsg.type);
             callback = null;
         }
     }
@@ -533,14 +537,18 @@ public class InternetAccessManager implements TaskManager.RequestDispatcherIF {
      */
     public String getStatisticsCsv() {
         StringBuilder csv = new StringBuilder();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String lastUrl = "";
         csv.append("started;url;type;durationMillis;result\n");
         for (int i = 0; i < STATISTICS_BUFFER_SIZE; i++) {
             int index = (STATISTICS_BUFFER_SIZE + statisticsBufferIndex - i) % STATISTICS_BUFFER_SIZE;
             StatisticsRecord sr = statisticsRecords[index];
             if (sr != null) {
-                csv.append(sdf.format(new Date(sr.started))).append(";");
-                csv.append(sr.url).append(";");
+                csv.append(sr.started).append(";");
+                if (!sr.url.equalsIgnoreCase(lastUrl)) {
+                    csv.append(sr.url).append(";");
+                    lastUrl = sr.url;
+                } else
+                    csv.append(".;");
                 csv.append(TYPE_STRING[sr.type]).append(";");
                 csv.append(sr.durationMillis).append(";");
                 csv.append(RESULT_STRING[sr.result]).append("\n");
@@ -562,13 +570,12 @@ public class InternetAccessManager implements TaskManager.RequestDispatcherIF {
         statisticsRecords = new StatisticsRecord[STATISTICS_BUFFER_SIZE];
         if (csv.isEmpty())
             return;
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         for (String statisticsLine : statisticsLines) {
             entries = CsvCodec.splitEntries(statisticsLine);
             long started = 0L;
             try {
-                started = sdf.parse(entries.get(0)).getTime();
-            } catch (ParseException e) {
+                started = Long.parseLong(entries.get(0));
+            } catch (Exception e) {
                 entries.clear();   // Header line and incorrect lines will not be used.
             }
             if (entries.size() == 5) {
@@ -585,9 +592,9 @@ public class InternetAccessManager implements TaskManager.RequestDispatcherIF {
                     if (RESULT_STRING[result].equalsIgnoreCase(resultStr))
                         break;
                 StatisticsRecord sr = new StatisticsRecord(url, started, durationMillis, type, result);
-                if (statisticsBufferIndex < statisticsRecords.length)
-                    statisticsRecords[statisticsBufferIndex] = sr;
                 statisticsBufferIndex++;
+                statisticsBufferIndex = (statisticsBufferIndex % STATISTICS_BUFFER_SIZE);
+                statisticsRecords[statisticsBufferIndex] = sr;
             }
         }
     }
