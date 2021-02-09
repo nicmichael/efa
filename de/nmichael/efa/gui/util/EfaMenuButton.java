@@ -160,7 +160,7 @@ public class EfaMenuButton {
         if ((admin == null || admin.isAllowedAdministerProjectLogbook()) && Daten.efaConfig.getExperimentalFunctionsActivated()) {
             v.add(new EfaMenuButton(MENU_FILE, BUTTON_EFACLOUD,
                     International.getStringWithMnemonic("Datei"),
-                    International.getStringWithMnemonic("EfaCloud"),
+                    International.getStringWithMnemonic("efaCloud"),
                     BaseFrame.getIcon("menu_efacloud.png")));
         }
         if (Daten.efaConfig.getValueUseFunctionalityCanoeingGermany()) {
