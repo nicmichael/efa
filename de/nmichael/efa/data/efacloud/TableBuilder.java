@@ -16,7 +16,6 @@ import de.nmichael.efa.data.storage.IDataAccess;
 import de.nmichael.efa.data.storage.MetaData;
 import de.nmichael.efa.data.storage.StorageObject;
 import de.nmichael.efa.util.International;
-import de.nmichael.efa.util.Logger;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -107,7 +106,7 @@ public class TableBuilder {
     private static final String[] efa2fieldSpecialDefinitions = new String[]{ //
             // autoincrement fields. They are also unique which is ensured programmatically to
             // secure the unique setting if before the autoincrement setting.
-            "efa2logbook;$AUTOINCREMENT;;EntryId",   //
+            // "efa2logbook;$AUTOINCREMENT;;EntryId",   // no autoincrement, all years in table!
             "efa2messages;$AUTOINCREMENT;;MessageId",   //
 
             // unique fields
@@ -262,9 +261,10 @@ public class TableBuilder {
         if (rtd == null)
             return value;
         RecordFieldDefinition rtf = rtd.fields.get(fieldname);
-        if (rtf == null) {
+        if ((rtf == null) && !fieldname.equalsIgnoreCase("Logbookname")) {
             TxRequestQueue.getInstance().logApiMessage(
-                    International.getMessage("Nicht definierter Feldname: {Feldname}", fieldname), 1);
+                    International.getMessage("Warnung - Nicht definierter Feldname: {Feldname}. " +
+                            "Wird ungeprüft übergeben.", fieldname), 1);
             return value;
         }
         // reformat date to ISO format YYYY-MM-DD
@@ -326,6 +326,13 @@ public class TableBuilder {
             rfd = new RecordFieldDefinition(storageObjectType, "ClientSideKey", IDataAccess.DATA_STRING);
             rfd.maxLength = 64;
             rfd.column = metaData.getFields().length + 1;
+            rtd.fields.put(rfd.fieldName, rfd);
+        }
+        // add logbookname for logbook table, the server
+        if (storageObjectType.toLowerCase().equalsIgnoreCase("efa2logbook")) {
+            rfd = new RecordFieldDefinition(storageObjectType, "Logbookname", IDataAccess.DATA_STRING);
+            rfd.maxLength = 256;
+            rfd.column = metaData.getFields().length + 2;
             rtd.fields.put(rfd.fieldName, rfd);
         }
 

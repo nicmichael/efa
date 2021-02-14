@@ -16,13 +16,11 @@ import de.nmichael.efa.core.config.Admins;
 import de.nmichael.efa.gui.EfaBaseFrame;
 import de.nmichael.efa.gui.EfaBoathouseFrame;
 import de.nmichael.efa.gui.EfaCloudConfigDialog;
-import de.nmichael.efa.gui.util.EfaMenuButton;
 import de.nmichael.efa.util.International;
 import de.nmichael.efa.util.Logger;
 
 import java.awt.*;
 import java.io.*;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -69,7 +67,7 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
     // ms with which the watchdog timer starts processing requests
     public static final int WATCHDOG_TIMER_START_DELAY = QUEUE_TIMER_START_DELAY + 120000;
     // ms after which the queue timer processes the next set of requests
-    public static final int WATCHDOG_TIMER_TRIGGER_INTERVAL = 600000; // = 600 seconds = 10 minutes
+    public static final int WATCHDOG_TIMER_TRIGGER_INTERVAL = 1800000; // = 1800 seconds = 30 minutes
 
     // every SYNCH_PERIOD the client checks for updates at the server side.
     // The update period MUST be at least 5 times the InternetAccessManager timeout.
@@ -77,7 +75,7 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
     public static final int SYNCH_PERIOD = 900000; // = 900 seconds = 15 minutes
     // If a transaction is busy since more than the RETRY_AFTER_MILLISECONDS period
     // issue a new internet access request.
-    public static final int RETRY_PERIOD = 60000; // = 60 seconds = 1 minute
+    public static final int RETRY_PERIOD = 120000; // = 60 seconds = 2 minute
 
     // timeout for holding a queue locked for manipulation.
     public static final long QUEUE_LOCK_TIMEOUT = 5000;
@@ -1066,7 +1064,7 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
         }
         if (isPermanentQueue(sourceQueueIndex))
             writeQueueToFile(sourceQueueIndex);
-        if (isPermanentQueue(destinationQueueIndex))
+        if (isPermanentQueue(destinationQueueIndex) && (sourceQueueIndex != destinationQueueIndex))
             writeQueueToFile(destinationQueueIndex);
         releaseQueueLock(sourceQueueIndex);
         releaseQueueLock(destinationQueueIndex);
