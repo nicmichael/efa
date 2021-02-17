@@ -1144,10 +1144,15 @@ public class ProjectRecord extends DataRecord  {
     }
 
     public static String[] getStorageTypeNameStrings() {
-        return new String[]{
+        return Daten.efaConfig.getExperimentalFunctionsActivated() ?
+                new String[]{
                 International.getString("lokales Dateisystem"),
                 Daten.EFA_REMOTE,
                 Daten.EFA_CLOUD
+        } :
+                new String[]{
+                International.getString("lokales Dateisystem"),
+                Daten.EFA_REMOTE
         };
     }
 

@@ -16,6 +16,7 @@ import de.nmichael.efa.data.storage.IDataAccess;
 import de.nmichael.efa.data.storage.MetaData;
 import de.nmichael.efa.data.storage.StorageObject;
 import de.nmichael.efa.util.International;
+import de.nmichael.efa.util.Logger;
 
 import java.util.ArrayList;
 import java.util.Collections;

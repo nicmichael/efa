@@ -320,6 +320,26 @@ class SynchControl {
                 }
                 if (returnedKey != null) {
 
+                    // efaLogbook check. The server has only one logbook, the client may use another
+                    // one currently. If server and local record point to  a different year, deactivate efaCloud
+                    if (tx.tablename.equalsIgnoreCase("efa2logbook") && (localRecord != null)) {
+                        String clientyear = ((LogbookRecord) localRecord).getAsString("Date");
+                        String serveryear = ((LogbookRecord) returnedRecord).getAsString("Date");
+                        if ((clientyear != null) && (serveryear != null) &&
+                                !clientyear.substring(6, 10).equalsIgnoreCase(serveryear.substring(6, 10))) {
+                            String wrongYear = International.getMessage(
+                                    "Das Fahrtenbuch auf dem Server gehört zu einem anderen Jahr ({serverYear}), als " +
+                                            "das Fahrtenbuch auf dem Client ({clientYear}). Deaktiviere efaCloud um " +
+                                            "Synchronisationsfehlern vorzubeugen.", serveryear.substring(6, 10),
+                                    clientyear.substring(6, 10));
+                            Logger.log(Logger.WARNING, Logger.MSG_EFACLOUDSYNCH_ERROR, wrongYear);
+                            txq.logApiMessage(wrongYear, 1);
+                            Dialog.error(wrongYear);
+                            txq.registerStateChangeRequest(RQ_QUEUE_PAUSE);
+                            txq.registerStateChangeRequest(RQ_QUEUE_DEACTIVATE);
+                        }
+                    }
+
                     // identify which record is to be used.
                     long serverLastModified = returnedRecord.getLastModified();
                     long localLastModified = (localRecord == null) ? 0L : localRecord.getLastModified();

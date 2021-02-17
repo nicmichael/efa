@@ -12,6 +12,7 @@ package de.nmichael.efa.cli;
 import de.nmichael.efa.data.efacloud.Transaction;
 import de.nmichael.efa.data.efacloud.TxRequestQueue;
 import de.nmichael.efa.util.International;
+import de.nmichael.efa.util.LogString;
 import de.nmichael.efa.util.Logger;
 
 import java.util.Stack;
