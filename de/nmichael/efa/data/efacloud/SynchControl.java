@@ -480,7 +480,7 @@ class SynchControl {
             txq.appendTransaction(TX_SYNCH_QUEUE_INDEX, Transaction.TX_TYPE.SELECT,
                     tables_to_synchronize.get(table_synching_index), "LastModified;" + LastModifiedLimit, "?;>");
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            String dateString = format.format(new Date());
+            String dateString = format.format(new Date(LastModifiedLimit));
             logSynchMessage(International.getString("Hole Datensätze vom Server mit Modifikation nach ") + dateString,
                     tables_to_synchronize.get(table_synching_index), null, false);
         } else {
