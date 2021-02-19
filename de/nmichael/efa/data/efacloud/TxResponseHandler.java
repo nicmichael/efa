@@ -143,8 +143,8 @@ public class TxResponseHandler {
                 tx.getResultMessage(), txString.toString()), 1);
         // Any error shall force a fallback to normal, because the synchronization process relies on the answers and
         // if they don't come it will not end and continue to block the normal communication
-        if (txq.getState() == TxRequestQueue.RQ_QUEUE_STOP_SYNCH) {
-            txq.registerStateChangeRequest(TxRequestQueue.RQ_QUEUE_RESUME);
+        if (txq.getState() == TxRequestQueue.QUEUE_IS_SYNCHRONIZING) {
+            txq.registerStateChangeRequest(TxRequestQueue.RQ_QUEUE_STOP_SYNCH);
             txq.logApiMessage(International.getString("Die Synchronisation wird beendet."), 1);
         }
         switch (tx.getResultCode()) {
@@ -153,6 +153,9 @@ public class TxResponseHandler {
             case 502:  // "Transaction failed"
                 txq.shiftTx(TX_BUSY_QUEUE_INDEX, TxRequestQueue.TX_FAILED_QUEUE_INDEX, TxRequestQueue.ACTION_TX_CLOSE,
                         tx.ID, 1);
+                if (tx.type.isTableStructureEdit) Dialog.error(
+                        International.getMessage("Fehler bei Tabellenstrukturänderung: {type}. " +
+                                "Strukturänderungen erfordern eine besondere Berechtigung.", tx.type.typeString));
                 break;
             case 404:  // "Server side busy"
             case 405:  // "Wrong transaction ID"

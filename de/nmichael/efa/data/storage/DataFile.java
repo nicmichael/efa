@@ -783,6 +783,17 @@ public abstract class DataFile extends DataAccess {
         modifyRecord(get(key), lockID, false, false, true);
     }
 
+    /**
+     * This function is needed to ensure the deletion is not forwarded to the efacloud server.
+     * For add an update the record is used and contains already the isCopyFromServer flag = true.
+     * For delete, however, the data key is normally used and this has no such flag.
+     */
+    protected void deleteLocal(DataKey key, long lockID) throws EfaException {
+        DataRecord record = get(key);
+        record.isCopyFromServer = true;
+        modifyRecord(record, lockID, false, false, true);
+    }
+
     public void deleteVersionized(DataKey key, int merge) throws EfaException {
         deleteVersionized(key, merge, 0);
     }

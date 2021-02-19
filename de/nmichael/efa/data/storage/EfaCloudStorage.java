@@ -110,8 +110,9 @@ public class EfaCloudStorage extends XMLFile {
             add(dataRecord, lock);
         if (update)
             update(dataRecord, lock);
-        if (delete)
-            delete(constructKey(dataRecord), lock);
+        if (delete) {
+            deleteLocal(constructKey(dataRecord), lock);
+        }
     }
 
     /**
