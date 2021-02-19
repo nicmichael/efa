@@ -222,6 +222,7 @@ public class EfaCloudConfigDialog extends BaseTabbedDialog implements IItemListe
             de.nmichael.efa.util.Dialog
                     .error(LogString.fileSavingFailed(prjName, International.getString("Projekt"), e.toString()));
         }
+        de.nmichael.efa.util.Dialog.infoDialog(International.getString("Bitte starte efa einmal neu."));
     }
 
     /**

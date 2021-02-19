@@ -31,23 +31,30 @@ import java.util.Date;
 public class Transaction {
 
     public enum TX_TYPE {
-        CREATETABLE("createtable", false, false, false), ADDCOLUMNS("addcolumns", false, false, false), AUTOINCREMENT(
-                "autoincrement", false, false, false), UNIQUE("unique", false, false, false), INSERT("insert", true,
-                true, false), UPDATE("update", true, true, false), DELETE("delete", false, true, false), KEYFIXING(
-                "keyfixing", false, false, true), SELECT("select", false, false, false), SYNCH("synch", false, false,
-                true), LIST("list", false, false, false), NOP("nop", false, false, true), BACKUP("backup", false, false,
-                false), UPLOAD("upload", false, false, false);
+        CREATETABLE("createtable", false, true, false, false, false), ADDCOLUMNS("addcolumns", false, true, false, false,
+                false), AUTOINCREMENT("autoincrement", false, true, false, false, false), UNIQUE("unique", false, true, false,
+                false, false), INSERT("insert", true, false,true, false, true), UPDATE("update", true, false,true, false,
+                true), DELETE("delete", false, false,true, false, true), KEYFIXING("keyfixing", false, false,false, true,
+                true), SELECT("select", false, false,false, false, true), SYNCH("synch", false, false,false, true, true), LIST(
+                "list", false, false,false, false, false), NOP("nop", false, false,false, true, false), BACKUP("backup", false,
+                false,false, false, false), UPLOAD("upload", false, false,false, false, false), CRONJOBS("cronjobs", false, false,false,
+                false, false);
 
         final String typeString;
         final boolean isInsertOrUpdate;
+        final boolean isTableStructureEdit;
         final boolean isWriteAction;
         final boolean isAllowedOnAuthenticate;
+        final boolean addLogbookName;
 
-        TX_TYPE(String typeString, boolean isInsertOrUpdate, boolean isWriteAction, boolean isAllowedOnAuthenticate) {
+        TX_TYPE(String typeString, boolean isInsertOrUpdate, boolean isTableStructureEdit, boolean isWriteAction, boolean isAllowedOnAuthenticate,
+                boolean addLogbookName) {
             this.typeString = typeString;
             this.isInsertOrUpdate = isInsertOrUpdate;
+            this.isTableStructureEdit = isTableStructureEdit;
             this.isWriteAction = isWriteAction;
             this.isAllowedOnAuthenticate = isAllowedOnAuthenticate;
+            this.addLogbookName = addLogbookName;
         }
 
         static TX_TYPE getType(String typeString) {
@@ -226,7 +233,20 @@ public class Transaction {
         this.createdAt = System.currentTimeMillis();
         this.type = type;
         this.tablename = tablename;
-        this.record = record;
+        if (type.addLogbookName && tablename.equalsIgnoreCase("efa2logbook")) {
+            String logbookname = ((Daten.project != null) &&
+                    (Daten.project.getCurrentLogbook() != null)) ? Daten.project.getCurrentLogbook().getName() : "nicht_definiert";
+            String[] extendedRecord;
+            if ((record == null) || (record.length == 0))
+                extendedRecord = new String[]{"Logbookname;" + logbookname};
+            else {
+                extendedRecord = new String[record.length + 1];
+                System.arraycopy(record, 0, extendedRecord, 0, record.length);
+                extendedRecord[record.length] = "Logbookname;" + logbookname;
+            }
+            this.record = extendedRecord;
+        } else
+            this.record = record;
     }
 
     /**
@@ -319,7 +339,7 @@ public class Transaction {
         if (record == null)
             return;
         for (int i = 0; i < record.length; i++) {   // request record
-            if (!record[i].trim().isEmpty()) {
+            if ((record[i] != null) && !record[i].trim().isEmpty()) {
                 ArrayList<String> fnv = CsvCodec.splitEntries(record[i].trim());
                 String field = fnv.get(0);
                 String value;
@@ -348,7 +368,7 @@ public class Transaction {
         char d = TxRequestQueue.TX_REQ_DELIMITER;
         int k = 0;
         for (String r : record) {   // request record
-            if (!r.trim().isEmpty()) {
+            if ((r!= null) && !r.trim().isEmpty()) {
                 ArrayList<String> fnv = CsvCodec.splitEntries(r);
                 String field = fnv.get(0);
                 String value;
