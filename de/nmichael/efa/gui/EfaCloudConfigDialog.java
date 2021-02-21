@@ -296,7 +296,7 @@ public class EfaCloudConfigDialog extends BaseTabbedDialog implements IItemListe
                 } else if (itemType.getName().equalsIgnoreCase(BUTTON_EFACLOUD_PAUSE)) {
                     txq.registerStateChangeRequest(TxRequestQueue.RQ_QUEUE_PAUSE);
                 } else if (itemType.getName().equalsIgnoreCase(BUTTON_EFACLOUD_SYNCH_UPLOAD)) {
-                    txq.registerStateChangeRequest(TxRequestQueue.RQ_QUEUE_START_SYNCH_UPLOAD);
+                    txq.registerStateChangeRequest(TxRequestQueue.RQ_QUEUE_START_SYNCH_UPLOAD_ALL);
                 }
             }
             this.cancel();    // This call ends the efaCloud dialog, it does not cancel any action.
