@@ -36,14 +36,20 @@ class SynchControl {
     // The names of the tables which allow the key to be modified upon server side insert
     static final String[] tables_with_key_fixing_allowed = TableBuilder.fixid_allowed.split(" ");
     static final long clockoffsetBuffer = 600000L; // max number of millis which client clock may be offset
+    static final long synch_upload_look_back_ms = 30 * 24 * 3600000L; // period in past to check for upload
 
     long timeOfLastSynch;
     long LastModifiedLimit;
     boolean synch_upload = false;
+    boolean synch_upload_all = false;
 
     int table_fixing_index = -1;
     ArrayList<String> tables_to_synchronize = new ArrayList<String>();
     int table_synching_index = -1;
+    // if a server-proposed new client key is already used, keyfixing repeats endlessly. Detect such a loop
+    // This scenario is no usual case, but always a consequence of some other error. The loop will be notified.
+    private int keyFixingTxCount;
+    private static final int MAX_KEYFIXING_PER_SYNCH_CYCLE = 20;
 
     // when running an upload synchronization the server is first asked for all data keys and last modified
     // timestamps together with the last modification. They are put into records, sorted and qualified
@@ -101,14 +107,16 @@ class SynchControl {
             return;
         }
         table_fixing_index = 0;
+        keyFixingTxCount = 0;
+        synch_upload_all = synch_request == TxRequestQueue.RQ_QUEUE_START_SYNCH_UPLOAD_ALL;
         synch_upload = synch_request == TxRequestQueue.RQ_QUEUE_START_SYNCH_UPLOAD;
-        String synchMessage = (synch_upload) ? International
+        String synchMessage = (synch_upload || synch_upload_all) ? International
                 .getString("Synchronisation client to server (upload) starting") : International
                 .getString("Synchronisation server to client (download) starting");
         logSynchMessage(synchMessage, "@all", null, true);
         // The manually triggered synchronization always takes the full set into account
-        LastModifiedLimit = (synch_upload || (timeOfLastSynch < clockoffsetBuffer)) ? 0L :
-                timeOfLastSynch - clockoffsetBuffer;
+        LastModifiedLimit = (synch_upload_all || (timeOfLastSynch < clockoffsetBuffer)) ? 0L : (synch_upload) ?
+                System.currentTimeMillis() - synch_upload_look_back_ms : timeOfLastSynch - clockoffsetBuffer;
         timeOfLastSynch = System.currentTimeMillis();
         // request first key to be fixed. The record is empty.
         txq.appendTransaction(TX_SYNCH_QUEUE_INDEX, Transaction.TX_TYPE.KEYFIXING,
@@ -226,12 +234,21 @@ class SynchControl {
             if (tablename.isEmpty() && (table_fixing_index < (tables_with_key_fixing_allowed.length - 1)))
                 table_fixing_index++; // move to next table to avoid endless loop
         }
+        // Before continuing to fix keys, check whether the limit of fixing per synch cycle is reached
+        keyFixingTxCount ++;
+        if (keyFixingTxCount > MAX_KEYFIXING_PER_SYNCH_CYCLE) {
+            txq.logApiMessage(International.getString(
+                    "Maximale Anzahl der pro Synchronisation zulässigen Korrekturen erreicht, " +
+                            "vermute Endlosschleife. Abbruch der Synchronisation."), 1);
+            txq.registerStateChangeRequest(RQ_QUEUE_STOP_SYNCH);
+            return;
+        }
         // continue anyway, if in synchronizing
         if (tablename.isEmpty())
             txq.appendTransaction(TX_SYNCH_QUEUE_INDEX, Transaction.TX_TYPE.KEYFIXING,
                     tables_with_key_fixing_allowed[table_fixing_index], txRecordForFixedEntry);
-        // confirm the fixing, but only if successfully completed. If not, this will enter an endless loop between
-        // client and server of retrying the keyfixing.
+            // confirm the fixing, but only if successfully completed. If not, this will enter an endless loop between
+            // client and server of retrying the keyfixing.
         else if (txRecordForFixedEntry != null)
             txq.appendTransaction(TX_PENDING_QUEUE_INDEX, Transaction.TX_TYPE.KEYFIXING, tablename, txRecordForFixedEntry);
     }
@@ -243,7 +260,8 @@ class SynchControl {
      * LastModified timestamp. For server-to-client-synchronization (downlad) it will use the last synch timestamp and
      * add a 'clockoffsetBuffer' overlapping period for the case of mismatching clocks between server and client,
      * because the LastModified value is set by the modifier, which may be the server or another client. For
-     * client_to_server-Synchronisation (upload) it will always use 0L, so read all records.</p>
+     * client_to_server-Synchronisation (upload) it will use now - 30 days for CLI triggered upload, and 0L for
+     * manually triggered upload, i. e. read all records.</p>
      */
     void fixKeysForNextTable() {
         table_fixing_index++;
@@ -319,26 +337,6 @@ class SynchControl {
                 } catch (EfaException ignored) {
                 }
                 if (returnedKey != null) {
-
-                    // efaLogbook check. The server has only one logbook, the client may use another
-                    // one currently. If server and local record point to  a different year, deactivate efaCloud
-                    if (tx.tablename.equalsIgnoreCase("efa2logbook") && (localRecord != null)) {
-                        String clientyear = ((LogbookRecord) localRecord).getAsString("Date");
-                        String serveryear = ((LogbookRecord) returnedRecord).getAsString("Date");
-                        if ((clientyear != null) && (serveryear != null) &&
-                                !clientyear.substring(6, 10).equalsIgnoreCase(serveryear.substring(6, 10))) {
-                            String wrongYear = International.getMessage(
-                                    "Das Fahrtenbuch auf dem Server gehört zu einem anderen Jahr ({serverYear}), als " +
-                                            "das Fahrtenbuch auf dem Client ({clientYear}). Deaktiviere efaCloud um " +
-                                            "Synchronisationsfehlern vorzubeugen.", serveryear.substring(6, 10),
-                                    clientyear.substring(6, 10));
-                            Logger.log(Logger.WARNING, Logger.MSG_EFACLOUDSYNCH_ERROR, wrongYear);
-                            txq.logApiMessage(wrongYear, 1);
-                            Dialog.error(wrongYear);
-                            txq.registerStateChangeRequest(RQ_QUEUE_PAUSE);
-                            txq.registerStateChangeRequest(RQ_QUEUE_DEACTIVATE);
-                        }
-                    }
 
                     // identify which record is to be used.
                     long serverLastModified = returnedRecord.getLastModified();
@@ -463,9 +461,11 @@ class SynchControl {
                     while (toCheck != null) {
                         DataRecord localRecord = persistence.get(toCheck);
                         DataRecord serverRecord = serverRecordsReturned.get(toCheck);
-                        if (serverRecord == null)
-                            localRecordsToInsertAtServer.add(localRecord);
-                        else if (localRecord.getLastModified() > serverRecord.getLastModified()) {
+                        long localLastModified = localRecord.getLastModified();
+                        if (serverRecord == null) {
+                            if (localLastModified > LastModifiedLimit)
+                                localRecordsToInsertAtServer.add(localRecord);
+                        } else if (localLastModified > serverRecord.getLastModified()) {
                             if (preUpdateRecordsCompare(localRecord, serverRecord))
                                 localRecordsToUpdateAtServer.add(localRecord);
                             else {
