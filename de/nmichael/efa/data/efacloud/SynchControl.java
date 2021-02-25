@@ -238,7 +238,7 @@ class SynchControl {
         keyFixingTxCount ++;
         if (keyFixingTxCount > MAX_KEYFIXING_PER_SYNCH_CYCLE) {
             txq.logApiMessage(International.getString(
-                    "Maximale Anzahl der pro Synchronisation zlässigen Korrekturen erreicht, " +
+                    "Maximale Anzahl der pro Synchronisation zulässigen Korrekturen erreicht, " +
                             "vermute Endlosschleife. Abbruch der Synchronisation."), 1);
             txq.registerStateChangeRequest(RQ_QUEUE_STOP_SYNCH);
             return;
