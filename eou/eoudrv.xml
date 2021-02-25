@@ -2,6 +2,17 @@
 <efaOnlineUpdate>
 
     <Version>
+        <VersionID>2.2.2_55</VersionID>
+        <ReleaseDate>25.02.2021</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa2drv.zip</DownloadUrl>
+        <DownloadSize>4268669</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Gruppen 1d/2d fuer DRV-Fahrtenabzeichen hinzugefuegt</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
         <VersionID>2.2.2_53</VersionID>
         <ReleaseDate>14.12.2020</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa2drv.zip</DownloadUrl>
