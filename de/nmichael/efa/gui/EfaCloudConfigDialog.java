@@ -184,6 +184,19 @@ public class EfaCloudConfigDialog extends BaseTabbedDialog implements IItemListe
                     item.registerItemListener(this);
                     item.setFieldGrid(2, GridBagConstraints.SOUTH, GridBagConstraints.NONE);
                 }
+                // if stuck either in synchronizing or in authenticating, pause and subsequent deactivation is needed
+                // to be able fix the configuration offline.
+                else if ((state == TxRequestQueue.QUEUE_IS_SYNCHRONIZING)
+                        || (state == TxRequestQueue.QUEUE_IS_AUTHENTICATING)) {
+                    // Pause
+                    guiItems.add(item = new ItemTypeButton(BUTTON_EFACLOUD_PAUSE, IItemType.TYPE_PUBLIC, category,
+                            International.getString(International.getString(
+                                    "Kommunikation anhalten (Notfall)"))));
+                    ((ItemTypeButton) item).setIcon(getIcon(IMAGE_EFACLOUD_PAUSE));
+                    item.setPadding(0, 0, 20, 20);
+                    item.registerItemListener(this);
+                    item.setFieldGrid(2, GridBagConstraints.NORTH, GridBagConstraints.NONE);
+                }
                 // any other state. No options to control provided.
                 else {
                     advice = International
@@ -296,7 +309,7 @@ public class EfaCloudConfigDialog extends BaseTabbedDialog implements IItemListe
                 } else if (itemType.getName().equalsIgnoreCase(BUTTON_EFACLOUD_PAUSE)) {
                     txq.registerStateChangeRequest(TxRequestQueue.RQ_QUEUE_PAUSE);
                 } else if (itemType.getName().equalsIgnoreCase(BUTTON_EFACLOUD_SYNCH_UPLOAD)) {
-                    txq.registerStateChangeRequest(TxRequestQueue.RQ_QUEUE_START_SYNCH_UPLOAD);
+                    txq.registerStateChangeRequest(TxRequestQueue.RQ_QUEUE_START_SYNCH_UPLOAD_ALL);
                 }
             }
             this.cancel();    // This call ends the efaCloud dialog, it does not cancel any action.
