@@ -2,13 +2,24 @@
 <efaOnlineUpdate>
 
     <Version>
+        <VersionID>2.3.0_#1</VersionID>
+        <ReleaseDate>25.02.2021</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa230.zip</DownloadUrl>
+        <DownloadSize>4246281</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Neu: efaCloud Beta</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
         <VersionID>2.2.2_54</VersionID>
         <ReleaseDate>15.12.2020</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa222.zip</DownloadUrl>
         <DownloadSize>4099434</DownloadSize>
 
         <Changes lang="de">
-            <ChangeItem>New: Meldegend fuer DRV-Fahrtenabzeichen aktualisiert</ChangeItem>
+            <ChangeItem>Neu: Meldegend fuer DRV-Fahrtenabzeichen aktualisiert</ChangeItem>
         </Changes>
     </Version>
 
@@ -19,11 +30,11 @@
         <DownloadSize>4099451</DownloadSize>
 
         <Changes lang="de">
-            <ChangeItem>New: efa ueberprueft regelmaessig, ob Java Version 8 oder neuer verwendet wird und warnt ggf.</ChangeItem>
+            <ChangeItem>Neu: efa ueberprueft regelmaessig, ob Java Version 8 oder neuer verwendet wird und warnt ggf.</ChangeItem>
             <ChangeItem>Bugfix: Ueberfluessige .java Dateien aus efa.jar entfernt</ChangeItem>
         </Changes>
         <Changes lang="en">
-            <ChangeItem>New: efa checks periodically if Java version 8 or newer is being used and warns if not</ChangeItem>
+            <ChangeItem>Neu: efa checks periodically if Java version 8 or newer is being used and warns if not</ChangeItem>
             <ChangeItem>Bugfix: Removed unnecessary .java files from efa.jar</ChangeItem>
         </Changes>
     </Version>
@@ -120,7 +131,7 @@
             <ChangeItem>Bugfix: Correct placement of dialogs in environments with multiple monitors</ChangeItem>
             <ChangeItem>Bugfix: Session cancel dialog can now be cancled with ESC</ChangeItem>
             <ChangeItem>Bugfix: Broken switching between person and boat selection lists fixed</ChangeItem>
-            <ChangeItem>New: reservation details of overlapping reservations are now shown</ChangeItem>
+            <ChangeItem>Neu: reservation details of overlapping reservations are now shown</ChangeItem>
         </Changes>
     </Version>
 
