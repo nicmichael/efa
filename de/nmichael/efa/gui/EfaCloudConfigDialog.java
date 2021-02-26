@@ -129,7 +129,7 @@ public class EfaCloudConfigDialog extends BaseTabbedDialog implements IItemListe
                 if ((state == TxRequestQueue.QUEUE_IS_WORKING) || (state == TxRequestQueue.QUEUE_IS_IDLE)) {
                     // Pause
                     guiItems.add(item = new ItemTypeButton(BUTTON_EFACLOUD_PAUSE, IItemType.TYPE_PUBLIC, category,
-                            International.getString(International.getString("Kommunikation anhalten"))));
+                            International.getString("Kommunikation anhalten")));
                     ((ItemTypeButton) item).setIcon(getIcon(IMAGE_EFACLOUD_PAUSE));
                     item.setPadding(0, 0, 20, 20);
                     item.registerItemListener(this);
@@ -137,8 +137,7 @@ public class EfaCloudConfigDialog extends BaseTabbedDialog implements IItemListe
                     // manual upload synchronization
                     guiItems.add(
                             item = new ItemTypeButton(BUTTON_EFACLOUD_SYNCH_UPLOAD, IItemType.TYPE_PUBLIC, category,
-                                    International
-                                            .getString(International.getString("Upload Synchronisation starten"))));
+                                    International.getString("Upload Synchronisation starten")));
                     ((ItemTypeButton) item).setIcon(getIcon(IMAGE_EFACLOUD_SYNCH));
                     item.setPadding(0, 0, 20, 20);
                     item.registerItemListener(this);
@@ -151,7 +150,7 @@ public class EfaCloudConfigDialog extends BaseTabbedDialog implements IItemListe
                     item.setPadding(0, 0, 20, 20);
                     item.setFieldGrid(2, GridBagConstraints.SOUTH, GridBagConstraints.NONE);
                     guiItems.add(item = new ItemTypeButton(BUTTON_EFACLOUD_DELETE, IItemType.TYPE_PUBLIC, category,
-                            International.getString(International.getString("Server initialisieren"))));
+                            International.getString("Server initialisieren")));
                     ((ItemTypeButton) item).setIcon(getIcon(IMAGE_EFACLOUD_DELETE));
                     item.setPadding(0, 0, 20, 20);
                     item.registerItemListener(this);
@@ -161,14 +160,14 @@ public class EfaCloudConfigDialog extends BaseTabbedDialog implements IItemListe
                 else if (state == TxRequestQueue.QUEUE_IS_PAUSED) {
                     // Resume
                     guiItems.add(item = new ItemTypeButton(BUTTON_EFACLOUD_START, IItemType.TYPE_PUBLIC, category,
-                            International.getString(International.getString("Kommunikation aufnehmen"))));
+                            International.getString("Kommunikation aufnehmen")));
                     ((ItemTypeButton) item).setIcon(getIcon(IMAGE_EFACLOUD_START));
                     item.setPadding(0, 0, 20, 20);
                     item.registerItemListener(this);
                     item.setFieldGrid(2, GridBagConstraints.NORTH, GridBagConstraints.NONE);
                     // Deactivate
                     guiItems.add(item = new ItemTypeButton(BUTTON_EFACLOUD_DEACTIVATE, IItemType.TYPE_PUBLIC, category,
-                            International.getString(International.getString("efaCloud feature deaktivieren"))));
+                            International.getString("efaCloud deaktivieren")));
                     ((ItemTypeButton) item).setIcon(getIcon(IMAGE_EFACLOUD_DEACTIVATE));
                     item.setPadding(0, 0, 20, 20);
                     item.registerItemListener(this);
@@ -178,7 +177,7 @@ public class EfaCloudConfigDialog extends BaseTabbedDialog implements IItemListe
                 else if (state == TxRequestQueue.QUEUE_IS_DISCONNECTED) {
                     // Deactivate
                     guiItems.add(item = new ItemTypeButton(BUTTON_EFACLOUD_DEACTIVATE, IItemType.TYPE_PUBLIC, category,
-                            International.getString(International.getString("efaCloud feature deaktivieren"))));
+                            International.getString("efaCloud deaktivieren")));
                     ((ItemTypeButton) item).setIcon(getIcon(IMAGE_EFACLOUD_DEACTIVATE));
                     item.setPadding(0, 0, 20, 20);
                     item.registerItemListener(this);
@@ -190,8 +189,8 @@ public class EfaCloudConfigDialog extends BaseTabbedDialog implements IItemListe
                         || (state == TxRequestQueue.QUEUE_IS_AUTHENTICATING)) {
                     // Pause
                     guiItems.add(item = new ItemTypeButton(BUTTON_EFACLOUD_PAUSE, IItemType.TYPE_PUBLIC, category,
-                            International.getString(International.getString(
-                                    "Kommunikation anhalten (Notfall)"))));
+                            International.getString("Kommunikation anhalten") + 
+                                    " (" +  International.getString("Notfall") + ")"));
                     ((ItemTypeButton) item).setIcon(getIcon(IMAGE_EFACLOUD_PAUSE));
                     item.setPadding(0, 0, 20, 20);
                     item.registerItemListener(this);
