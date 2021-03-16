@@ -115,7 +115,7 @@ public class EfaCloudConfigDialog extends BaseTabbedDialog implements IItemListe
                 item.setNotNull(true);
                 // Add activation change button.
                 guiItems.add(item = new ItemTypeButton(BUTTON_EFACLOUD_ACTIVATE, IItemType.TYPE_PUBLIC, category,
-                        International.getString("efaCloud aktivieren")));
+                        International.getMessage("{item} aktivieren", Daten.EFA_CLOUD)));
                 ((ItemTypeButton) item).setIcon(getIcon(IMAGE_EFACLOUD_ACTIVATE));
                 item.setPadding(0, 0, 20, 20);
                 item.registerItemListener(this);
@@ -167,7 +167,7 @@ public class EfaCloudConfigDialog extends BaseTabbedDialog implements IItemListe
                     item.setFieldGrid(2, GridBagConstraints.NORTH, GridBagConstraints.NONE);
                     // Deactivate
                     guiItems.add(item = new ItemTypeButton(BUTTON_EFACLOUD_DEACTIVATE, IItemType.TYPE_PUBLIC, category,
-                            International.getString("efaCloud deaktivieren")));
+                            International.getMessage("{item} deaktivieren", Daten.EFA_CLOUD)));
                     ((ItemTypeButton) item).setIcon(getIcon(IMAGE_EFACLOUD_DEACTIVATE));
                     item.setPadding(0, 0, 20, 20);
                     item.registerItemListener(this);
@@ -177,7 +177,7 @@ public class EfaCloudConfigDialog extends BaseTabbedDialog implements IItemListe
                 else if (state == TxRequestQueue.QUEUE_IS_DISCONNECTED) {
                     // Deactivate
                     guiItems.add(item = new ItemTypeButton(BUTTON_EFACLOUD_DEACTIVATE, IItemType.TYPE_PUBLIC, category,
-                            International.getString("efaCloud deaktivieren")));
+                            International.getMessage("{item} deaktivieren", Daten.EFA_CLOUD)));
                     ((ItemTypeButton) item).setIcon(getIcon(IMAGE_EFACLOUD_DEACTIVATE));
                     item.setPadding(0, 0, 20, 20);
                     item.registerItemListener(this);

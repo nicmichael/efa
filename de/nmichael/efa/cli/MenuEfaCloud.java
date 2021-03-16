@@ -54,7 +54,7 @@ public class MenuEfaCloud extends MenuBase {
         else if (command.equalsIgnoreCase(CMD_CRONJOBS))
             txq.appendTransaction(TxRequestQueue.TX_PENDING_QUEUE_INDEX, Transaction.TX_TYPE.CRONJOBS, "@All");
         Logger.log(Logger.INFO, Logger.MSG_CORE_CRONJOB,
-                International.getMessage("Efacloud Kommando {command} übergeben.", command));
+                International.getMessage("efaCloud Kommando {command} übergeben.", command));
         return CLI.RC_OK;
     }
 

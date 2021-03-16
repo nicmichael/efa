@@ -264,8 +264,9 @@ public class TableBuilder {
         RecordFieldDefinition rtf = rtd.fields.get(fieldname);
         if ((rtf == null) && !fieldname.equalsIgnoreCase("Logbookname")) {
             TxRequestQueue.getInstance().logApiMessage(
-                    International.getMessage("Warnung - Nicht definierter Feldname: {Feldname}. " +
-                            "Wird ungeprüft übergeben.", fieldname), 1);
+                    International.getString("Warnung") + " - " +
+                    International.getMessage("Nicht definierter Feldname {fieldname} " +
+                            "wird ungeprüft übergeben.", fieldname), 1);
             return value;
         }
         // reformat date to ISO format YYYY-MM-DD

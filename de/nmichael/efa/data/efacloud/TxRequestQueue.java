@@ -596,7 +596,8 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
             registerStateChangeRequest(RQ_QUEUE_AUTHENTICATE);
         } catch (Exception e) {
             Logger.log(Logger.ERROR, Logger.MSG_EFACLOUDSYNCH_ERROR,
-                    International.getString("efaCloud konnte nicht gestartet werden. Fehlermeldung: ") +
+                    International.getString("efaCloud konnte nicht gestartet werden.") +
+                            " " + International.getString("Fehlermeldung") + ": " +
                             e.getMessage());
             if (queueTimer != null)
                 queueTimer.cancel();
@@ -621,7 +622,7 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
         shiftTx(TX_SYNCH_QUEUE_INDEX, TX_DROPPED_QUEUE_INDEX, dropAction, 0, 0);
         shiftTx(TX_SYNCH_QUEUE_INDEX, TX_PENDING_QUEUE_INDEX, ACTION_TX_MOVE, 0, 0);
         txq.synchControl
-                .logSynchMessage(International.getString("Änderung der Aktivtät der Serverkommunikation: ") + message,
+                .logSynchMessage(International.getString("Änderung der Aktivtät der Serverkommunikation") + ": " + message,
                         "@all", null, true);
     }
 
