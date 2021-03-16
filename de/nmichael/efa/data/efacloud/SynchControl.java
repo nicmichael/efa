@@ -407,7 +407,7 @@ class SynchControl {
 
     /**
      * Compares two records whether it is probable that one is the update of the other. If three or more data fields
-     * differ, it is not beleived that one is an update of the other and a data update conflict is created instead of
+     * differ, it is not believed that one is an update of the other and a data update conflict is created instead of
      * updating.
      *
      * @param dr1 DataRecord one to compare
@@ -428,7 +428,7 @@ class SynchControl {
             else if (!dr1.getAsString(field).equalsIgnoreCase(dr2.getAsString(field)))
                 diff++;
         }
-        return diff < 3;
+        return diff < 5; // ChangeCount and LastModified are always different
     }
 
     /**
