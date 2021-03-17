@@ -230,7 +230,7 @@ public class FTPClient {
         items[3] = new ItemTypeString("FILE", (ftp.getFile() != null ? ftp.getFile() : ""),
                 IItemType.TYPE_PUBLIC, "", International.getString("Dateiname"));
         items[4] = new ItemTypeBoolean("PASV", ftp.isPasv(),
-                IItemType.TYPE_PUBLIC, "", International.getString("PASV Mode"));
+                IItemType.TYPE_PUBLIC, "", International.getString("PASV Modus"));
         if (MultiInputDialog.showInputDialog((JDialog)null, International.getString("FTP-Upload"), items)) {
             String file = items[3].toString();
             if (file != null && !file.startsWith("/")) {
