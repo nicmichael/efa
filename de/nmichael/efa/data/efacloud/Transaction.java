@@ -152,8 +152,8 @@ public class Transaction {
             tx.resultMessage = resultMessage;
         } catch (Exception e) {
             TxRequestQueue.getInstance().logApiMessage(
-                    International.getString("Fehler beim Lesen einer Transaktion vom permanenten Speicher: ") +
-                            txFullString, 1);
+                    International.getString("Fehler beim Lesen einer Transaktion vom permanenten Speicher") +
+                            ": " + txFullString, 1);
         }
         // return result
         return tx;
@@ -256,7 +256,7 @@ public class Transaction {
      */
     void logMessage(String action) {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String transactionString = "#" + ID + ", " + type + International.getString(" (record length: ") +
+        String transactionString = "#" + ID + ", " + type + " (record length: " +
                 ((record == null) ? "null" : "" + record.length) + ")";
         String dateString = format.format(new Date()) + " [" + tablename + "]: " + action + " ";
         // truncate log files,

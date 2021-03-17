@@ -105,7 +105,7 @@ public class AdminTask extends Thread {
                 Dialog.infoDialog(International.getString("Java Update erforderlich"),
                     International.getMessage("Die verwendete Java Version {version} ist zu alt und wird demnächst nicht mehr unterstützt.", Daten.javaVersion) + "\n" +
                     International.getMessage("Um efa auch in Zukunft weiter verwenden zu können, installiere bitte Java Version {version} oder neuer.", Daten.REQUIRED_JAVA_VERSION) + "\n" +
-                    International.getString("Weitere Informationen auf http://efa.nmichael.de/download.html"));
+                    International.getMessage("Weitere Informationen auf {url}", "http://efa.nmichael.de/download.html"));
                 Daten.efaConfig.setValueJavaVersionLastCheck(System.currentTimeMillis());
             }
         }

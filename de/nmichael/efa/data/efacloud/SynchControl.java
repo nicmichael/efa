@@ -101,7 +101,7 @@ class SynchControl {
     void startSynchProcess(int synch_request) {
         // in case of manually triggered server table reset no further steps needed needed.
         if (synch_request == TxRequestQueue.RQ_QUEUE_START_SYNCH_DELETE) {
-            logSynchMessage(International.getString("Delete and rebuild of server tables starting"), "@all", null,
+            logSynchMessage("Delete and rebuild of server tables starting", "@all", null,
                     true);
             Daten.tableBuilder.initAllServerTables();
             return;
@@ -151,7 +151,7 @@ class SynchControl {
             }
         } catch (EfaException ignored) {
             txq.logApiMessage(International.getString(
-                    "Aktualisierung fehlgeschlagen beim Versuch die EntryNo zu korrigieren in efa2boatstatus."), 1);
+                    "Aktualisierung fehlgeschlagen beim Versuch die EntryNo zu korrigieren in BoatStatus."), 1);
         }
     }
 
@@ -179,14 +179,16 @@ class SynchControl {
         } catch (EfaException ignored) {
         }
         if (oldDr == null)
-            logSynchMessage(International.getString("Schlüsselkorrekturfehler. Alter Schlüssel nicht vorhanden: ") +
+            logSynchMessage(International.getString("Schlüsselkorrekturfehler") + ". " +
+                    International.getString("Alter Schlüssel nicht vorhanden") + ": " +
                     dataRecords.get(1).getKey().toString(), tx.tablename, dataRecords.get(0).getKey(), false);
         if (newDr != null)
-            logSynchMessage(International.getString("Schlüsselkorrekturfehler. Neuer Schlüssel schon belegt: ") +
+            logSynchMessage(International.getString("Schlüsselkorrekturfehler") + ". " +
+                    International.getString("Neuer Schlüssel schon belegt") + ": " +
                     dataRecords.get(1).getKey().toString(), tx.tablename, dataRecords.get(1).getKey(), false);
         if ((oldDr != null) && (newDr == null)) {
-            logSynchMessage(International.getString("Korrigiere Schlüssel von bisher ") +
-                    dataRecords.get(1).getKey().toString(), tx.tablename, dataRecords.get(0).getKey(), false);
+            logSynchMessage(International.getMessage("Korrigiere Schlüssel (ursprünglich: {key})",
+                    dataRecords.get(1).getKey().toString()), tx.tablename, dataRecords.get(0).getKey(), false);
             long globalLock = 0L;
             try {
                 globalLock = efaCloudStorage.acquireGlobalLock();
@@ -195,7 +197,8 @@ class SynchControl {
                 efaCloudStorage.setPreModifyRecordCallbackEnabled(false);
                 efaCloudStorage.modifyLocalRecord(dataRecords.get(0), globalLock, true, false, false);
                 efaCloudStorage.releaseGlobalLock(globalLock);
-                logSynchMessage(International.getString("Schlüsselkorektur: Füge richtigen Datensatz hinzu: ") +
+                logSynchMessage(International.getString("Schlüsselkorektur") + ": " +
+                        International.getString("Füge richtigen Datensatz hinzu") + ": " +
                         dataRecords.get(1).getKey().toString(), tx.tablename, dataRecords.get(0).getKey(), false);
                 if (tx.tablename.equalsIgnoreCase("efa2logbook")) {
                     int oldEntryId = ((LogbookRecord) dataRecords.get(1)).getEntryId().intValue();
@@ -204,12 +207,14 @@ class SynchControl {
                     globalLock = boatstatus.acquireGlobalLock();
                     adjustBoatStatus(oldEntryId, newEntryId, globalLock);
                     boatstatus.releaseGlobalLock(globalLock);
-                    logSynchMessage(International.getString("Schlüsselkorektur: Korrigiere Bootsstatus: ") + newEntryId,
+                    logSynchMessage(International.getString("Schlüsselkorektur") + ": " +
+                            International.getString("Korrigiere Bootsstatus") + ": " + newEntryId,
                             "efa2boatstatus", null, false);
                 }
                 globalLock = efaCloudStorage.acquireGlobalLock();
                 efaCloudStorage.modifyLocalRecord(dataRecords.get(1), globalLock, false, false, true);
-                logSynchMessage(International.getString("Schlüsselkorektur: Lösche falschen Datensatz: ") +
+                logSynchMessage(International.getString("Schlüsselkorektur") + ": " +
+                        International.getString("Lösche falschen Datensatz") + ": " +
                         dataRecords.get(1).getKey().toString(), tx.tablename, dataRecords.get(0).getKey(), false);
                 // create the record for the fixed key
                 correctionSucceeded = true;
@@ -299,11 +304,11 @@ class SynchControl {
         // start synchronization
         table_synching_index = -1;
         if (synch_upload) {
-            logSynchMessage(International.getString("Starte upload Synchronisation für Tabellen."), tn.toString(), null,
+            logSynchMessage(International.getString("Starte Upload Synchronisation für Tabellen."), tn.toString(), null,
                     false);
             nextTableForUploadSynch(null);  // Upload needs two steps: first synch, then insert & update txs
         } else {
-            logSynchMessage(International.getString("Starte download Synchronisation für Tabellen."), tn.toString(),
+            logSynchMessage(International.getString("Starte Download Synchronisation für Tabellen."), tn.toString(),
                     null, false);
             nextTableForDownloadSelect(null);  // Download runs in a single step, staring immediately with select
         }
@@ -366,9 +371,9 @@ class SynchControl {
 
                     // Check whether record to update matsches at least partially the new version.
                     if (update && !preUpdateRecordsCompare(localRecord, returnedRecord))
-                        logSynchMessage(International.getString(
-                                "Update-Konflikt bei Datensatz in der Download-Synchronisation, den zu " +
-                                        "aktualisierenden " + "Datensatz bitte manuell bereinigen "), tx.tablename,
+                        logSynchMessage(International.getMessage(
+                                        "Update-Konflikt bei Datensatz in der {type}-Synchronisation.", "Download") +
+                                        " " + International.getString("Bitte bereinige den Datensatz manuell."), tx.tablename,
                                 localRecord.getKey(), false);
 
                         // Run update. This update will use the LastModified and ChangeCount of the record to make
@@ -445,8 +450,8 @@ class SynchControl {
             // a response message is received. Handle included records
             EfaCloudStorage persistence = Daten.tableBuilder.getPersistence(tx.tablename);
             if (persistence == null)
-                txq.logApiMessage(International.getString("Konnte folgende Tabelle nicht für das Hochladen finden: ") +
-                        tx.tablename, 1);
+                txq.logApiMessage(International.getMessage("Konnte folgende Tabelle nicht für das Hochladen finden: {table}",
+                        tx.tablename), 1);
             else {
                 ArrayList<DataRecord> returnedRecords = persistence.parseCsvTable(tx.getResultMessage());
                 serverRecordsReturned.clear();
@@ -469,9 +474,9 @@ class SynchControl {
                             if (preUpdateRecordsCompare(localRecord, serverRecord))
                                 localRecordsToUpdateAtServer.add(localRecord);
                             else {
-                                logSynchMessage(International.getString(
-                                        "Update-Konflikt bei Datensatz in der Upload-Synchronisation, den zu " +
-                                                "aktualisierenden Datensatz bitte manuell bereinigen "), tx.tablename,
+                                logSynchMessage(International.getMessage(
+                                        "Update-Konflikt bei Datensatz in der {type}-Synchronisation.", "Upload") +
+                                        " " + International.getString("Bitte bereinige den Datensatz manuell."), tx.tablename,
                                         toCheck, false);
                             }
                         }
@@ -485,12 +490,12 @@ class SynchControl {
                 // be worked through.
                 for (DataRecord localRecordToInsertAtServer : localRecordsToInsertAtServer) {
                     persistence.modifyServerRecord(localRecordToInsertAtServer, true, false, false, true);
-                    logSynchMessage(International.getString("Füge Datensatz auf Server ein für Tabelle "), tx.tablename,
+                    logSynchMessage(International.getString("Füge Datensatz auf Server ein für Tabelle") + " ", tx.tablename,
                             localRecordToInsertAtServer.getKey(), false);
                 }
                 for (DataRecord localRecordToUpdateAtServer : localRecordsToUpdateAtServer) {
                     persistence.modifyServerRecord(localRecordToUpdateAtServer, false, true, false, true);
-                    logSynchMessage(International.getString("Aktualisiere Datensatz auf Server für Tabelle "),
+                    logSynchMessage(International.getString("Aktualisiere Datensatz auf Server für Tabelle") + " ",
                             tx.tablename, localRecordToUpdateAtServer.getKey(), false);
                 }
             }
@@ -501,14 +506,14 @@ class SynchControl {
                     tables_to_synchronize.get(table_synching_index), "LastModified;" + LastModifiedLimit, "?;>");
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String dateString = format.format(new Date(LastModifiedLimit));
-            logSynchMessage(International.getString("Hole Datensätze vom Server mit Modifikation nach ") + dateString,
+            logSynchMessage(International.getMessage("Hole Datensätze vom Server mit Modifikation nach {date}", dateString),
                     tables_to_synchronize.get(table_synching_index), null, false);
         } else {
             // This TX_QUEUE_STOP_SYNCH request will stay a while in the loop, because it will only be handled after
             // all transactions of the synch queue have been processed.
             txq.registerStateChangeRequest(TxRequestQueue.RQ_QUEUE_STOP_SYNCH);
             logSynchMessage(International.getString(
-                    "Transaktionen für Synchronisation vollständig angestoßen. Warte auf " + "Fertigstellung."), "@all",
+                    "Transaktionen für Synchronisation vollständig angestoßen. Warte auf Fertigstellung."), "@all",
                     null, false);
         }
     }
