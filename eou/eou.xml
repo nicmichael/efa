@@ -2,13 +2,16 @@
 <efaOnlineUpdate>
 
     <Version>
-        <VersionID>2.3.0_#1</VersionID>
-        <ReleaseDate>25.02.2021</ReleaseDate>
+        <VersionID>2.3.0_00</VersionID>
+        <ReleaseDate>16.03.2021</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa230.zip</DownloadUrl>
-        <DownloadSize>4246281</DownloadSize>
+        <DownloadSize>4249267</DownloadSize>
 
         <Changes lang="de">
-            <ChangeItem>Neu: efaCloud Beta</ChangeItem>
+            <ChangeItem>Neu: efaCloud - efa in der Cloud (experimentell)</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>New: efaCloud - efa in the Cloud (experimental)</ChangeItem>
         </Changes>
     </Version>
 
