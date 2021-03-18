@@ -2,6 +2,17 @@
 <efaOnlineUpdate>
 
     <Version>
+        <VersionID>2.3.0_01</VersionID>
+        <ReleaseDate>18.03.2021</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa230.zip</DownloadUrl>
+        <DownloadSize>4249302</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Lizenztext aktualisiert</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
         <VersionID>2.3.0_00</VersionID>
         <ReleaseDate>16.03.2021</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa230.zip</DownloadUrl>

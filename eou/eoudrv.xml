@@ -2,6 +2,17 @@
 <efaOnlineUpdate>
 
     <Version>
+        <VersionID>2.3.0_01</VersionID>
+        <ReleaseDate>18.03.2021</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa2drv.zip</DownloadUrl>
+        <DownloadSize>4418530</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Gruppenzuweisung in DRV-Fahrtenwettbewerbs-Auswertung korrigiert</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
         <VersionID>2.2.2_55</VersionID>
         <ReleaseDate>25.02.2021</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa2drv.zip</DownloadUrl>
