@@ -1,12 +1,12 @@
             efa - elektronisches Fahrtenbuch fuer Rudern und Kanu
               (efa - electronic Logbook for Rowing and Canoeing)
-                   Copyright (c) 2001-20 by Nicolas Michael
+                   Copyright (c) 2001-21 by Nicolas Michael
 		 --------------------------------------------
 
 Nicolas Michael              http://efa.nmichael.de
-Helmstr. 9                   info@efa.nmichael.de
-10827 Berlin                 fax: +49 30 2639173-01729
-GERMANY
+570 Eureka St                info@efa.nmichael.de
+San Francisco, CA 94114      fax: +49 30 2639173-01729
+USA
 
 
 Dieses Programm ist freie Software: Sie koennen es unter den Bedingungen
