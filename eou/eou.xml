@@ -2,6 +2,22 @@
 <efaOnlineUpdate>
 
     <Version>
+        <VersionID>2.3.0_02</VersionID>
+        <ReleaseDate>20.03.2021</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa230.zip</DownloadUrl>
+        <DownloadSize>4418530</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: NullPointerException beim Beenden einer Fahrt korrigiert</ChangeItem>
+            <ChangeItem>New: User Statistics bei remote Online-Update</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Bugfix: NullPointerException fixed when finishing a session</ChangeItem>
+            <ChangeItem>New: User Statistics during remote Online Update</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
         <VersionID>2.3.0_01</VersionID>
         <ReleaseDate>18.03.2021</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa230.zip</DownloadUrl>
