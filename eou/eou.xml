@@ -2,10 +2,18 @@
 <efaOnlineUpdate>
 
     <Version>
+        <VersionID>2.3.0_03</VersionID>
+        <ReleaseDate>20.03.2021</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa230.zip</DownloadUrl>
+        <DownloadSize>4249419</DownloadSize>
+        <!-- no changes -->
+    </Version>
+
+    <Version>
         <VersionID>2.3.0_02</VersionID>
         <ReleaseDate>20.03.2021</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa230.zip</DownloadUrl>
-        <DownloadSize>4418530</DownloadSize>
+        <DownloadSize>4249549</DownloadSize>
 
         <Changes lang="de">
             <ChangeItem>Bugfix: NullPointerException beim Beenden einer Fahrt korrigiert</ChangeItem>
