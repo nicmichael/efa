@@ -232,7 +232,8 @@ public class OnlineUpdate {
                     "&club=" + URLEncoder.encode(Daten.project.getClubName(), "ISO-8859-1") +
                     "&efa.version=" + URLEncoder.encode(newVersionName, "ISO-8859-1") +
                     (Daten.EFALIVE_VERSION != null ? "&efalive.version=" + URLEncoder.encode(Daten.EFALIVE_VERSION, "ISO-8859-1") : "") +
-                    "&java.version=" + URLEncoder.encode(Daten.javaVersion, "ISO-8859-1"));
+                    "&java.version=" + URLEncoder.encode(Daten.javaVersion, "ISO-8859-1") +
+                    "&app=" + URLEncoder.encode(Daten.applName, "ISO-8859-1"));
             out.flush();
             out.close();
             InputStream in = new BufferedInputStream(connection.getInputStream());
