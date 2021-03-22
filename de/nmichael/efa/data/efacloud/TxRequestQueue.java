@@ -782,6 +782,7 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
                             break;
                         case RQ_QUEUE_START_SYNCH_DOWNLOAD:
                         case RQ_QUEUE_START_SYNCH_UPLOAD:
+                        case RQ_QUEUE_START_SYNCH_UPLOAD_ALL:
                         case RQ_QUEUE_START_SYNCH_DELETE:
                             if ((currentState == QUEUE_IS_WORKING) || (currentState == QUEUE_IS_IDLE)) {
                                 if ((queues.get(TX_PENDING_QUEUE_INDEX).size() == 0) &&
