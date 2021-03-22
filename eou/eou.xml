@@ -2,6 +2,21 @@
 <efaOnlineUpdate>
 
     <Version>
+        <VersionID>2.3.0_05</VersionID>
+        <ReleaseDate>22.03.2021</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa230.zip</DownloadUrl>
+        <DownloadSize>4249632</DownloadSize>
+        <Changes lang="de">
+            <ChangeItem>Bugfix: efaCloud Upload-Fehler (manueller Upload) korrigiert</ChangeItem>
+            <ChangeItem>Bugfix: NullPointerException in efaCloud-Konfiguration korrigiert, wenn kein Projekt geoeffnet ist</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Bugfix: efaCloud Upload error (manual upload) fixed</ChangeItem>
+            <ChangeItem>Bugfix: NullPointerException in efaCloud configuration fixed when no project is opened</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
         <VersionID>2.3.0_04</VersionID>
         <ReleaseDate>20.03.2021</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa230.zip</DownloadUrl>
