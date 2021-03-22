@@ -480,14 +480,14 @@ public class EfaMenuButton {
             EfaCloudConfigDialog dlg = null;
             if (Daten.project == null)
                 Dialog.infoDialog(International
-                        .getString("Zur efaCloud Konfiguration bitte erst ein Projekt öffnen."));
+                        .getString("Zur efaCloud-Konfiguration bitte erst ein Projekt öffnen."));
             try {
                 dlg = new EfaCloudConfigDialog(parentDialog, admin);
             } catch (Exception ignored) {
             }
             if (dlg != null) dlg.showDialog();
             else Dialog.infoDialog(International
-                    .getString("EfaCloud Konfiguration konnte nicht geöffnet werden."));
+                    .getString("efaCloud-Konfiguration konnte nicht geöffnet werden."));
         }
 
         if (action.equals(BUTTON_UPDATE)) {
