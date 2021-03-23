@@ -4456,18 +4456,9 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         saveButton.setDescription(International.getStringWithMnemonic("Fahrt beenden"));
         currentRecord = null;
         try {
-            // @todo WORKAROUND
-            // As a workaround for https://github.com/nicmichael/efa/issues/34, we restore the
-            // original implementation for projects not using efaCloud until a final solution
-            // is found.
-            if (logbook.data().getStorageType() != IDataAccess.TYPE_EFA_CLOUD) {
-                // original implementation before efaCloud
-                currentRecord = logbook.getLogbookRecord(item.boatStatus.getEntryNo());
-            } else {
-                // New implementation in efaCloud. Causes NPE (in non-efaCloud usage).
-                // Need to investigage why. See https://github.com/nicmichael/efa/issues/34
-                currentRecord = logbook.getLogbookRecord(item.boat.getBoatStatus().getEntryNo());
-            }
+            currentRecord = logbook.getLogbookRecord(item.boatStatus.getEntryNo());
+            // New implementation in efaCloud. Causes NPE (in non-efaCloud usage). Removed.
+            // currentRecord = logbook.getLogbookRecord(item.boat.getBoatStatus().getEntryNo());
         } catch(Exception e) {
             Logger.log(e);
         }
