@@ -2,6 +2,19 @@
 <efaOnlineUpdate>
 
     <Version>
+        <VersionID>2.3.0_06</VersionID>
+        <ReleaseDate>23.03.2021</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa230.zip</DownloadUrl>
+        <DownloadSize>4249529</DownloadSize>
+        <Changes lang="de">
+            <ChangeItem>Bugfix: NullPointerException in efaCloud beim Beenden einer Fahrt mit unbekanntem Boot oder Doppeleintrag korrigiert</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Bugfix: NullPointerException fixed when finishing a session of an unknown or double-booked boat in efaCloud</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
         <VersionID>2.3.0_05</VersionID>
         <ReleaseDate>22.03.2021</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa230.zip</DownloadUrl>
