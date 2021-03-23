@@ -118,6 +118,7 @@ class SynchControl {
         LastModifiedLimit = (synch_upload_all || (timeOfLastSynch < clockoffsetBuffer)) ? 0L : (synch_upload) ?
                 System.currentTimeMillis() - synch_upload_look_back_ms : timeOfLastSynch - clockoffsetBuffer;
         timeOfLastSynch = System.currentTimeMillis();
+        synch_upload = synch_upload || synch_upload_all;
         // request first key to be fixed. The record is empty.
         txq.appendTransaction(TX_SYNCH_QUEUE_INDEX, Transaction.TX_TYPE.KEYFIXING,
                 tables_with_key_fixing_allowed[table_fixing_index], (String[]) null);
