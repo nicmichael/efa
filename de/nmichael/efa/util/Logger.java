@@ -21,7 +21,9 @@ public class Logger {
     private static final int LOGGING_THRESHOLD      = 1000; // max LOGGING_THRESHOLD logging messages per second
     private static final int LOGGING_THRESHOLD_ERR  = 100;  // max LOGGING_THRESHOLD logging messages per second
     private static final int LOGGING_CHECK_FILESIZE = 1000; // number of log messages after which to check file size
-    private static final int MAX_LOG_FILE_SIZE = 1048576;
+    private static final int MAX_LOG_FILE_SIZE = 1048576*10; // max file size of log file before log rotate. 
+    														// 1M may be too small for big boat houses and many EFA_CLI calls. Updated to 10M. 
+    														// efa will quit logging if a log file exceeds 10 times this size.
     
     private static final int MAX_LOGMSG_SIZE = 10*1024; // max. 10 Kb for log message
     private static final int MAX_LASTLOGMSG_SIZE = 1024; // max. 1 Kb to remember last log messages
@@ -520,17 +522,23 @@ public class Logger {
         String baklog = null;
         if (logfile != null) {
             try {
-                // ggf. alte, zu große Logdatei archivieren
-                try {
-                    // Wenn Logdatei zu groß ist, die alte Logdatei verschieben
-                    File log = new File(Daten.efaLogfile);
-                    if (log.exists() && log.length() > MAX_LOG_FILE_SIZE) {
-                        baklog = EfaUtil.moveAndEmptyFile(Daten.efaLogfile, Daten.efaBaseConfig.efaUserDirectory + "backup" + Daten.fileSep);
-                    }
-                } catch (Exception e) {
-                    LogString.logError_fileArchivingFailed(Daten.efaLogfile, International.getString("Logdatei"));
-                }
-
+                // Archive an existing, too big logfile.
+                // This is allowed only when the current main program is EFA_BOATHOUSE.
+            	// If another efa program, e.g. EFA_CLI would rotate the logfile while EFA_BOATHOUSE is running in background,
+            	// EFA_BOATHOUSE would no longer be able to log into the former or the new logfile.
+            	//
+            	// So in conclusion, a rotation of the logfile only takes place during the startup of EFA_BOATHOUSE.
+            	if (Daten.applID==Daten.APPL_EFABH) {
+	            	try {
+	                    // Wenn Logdatei zu groß ist, die alte Logdatei verschieben
+	                    File log = new File(Daten.efaLogfile);
+	                    if (log.exists() && log.length() > MAX_LOG_FILE_SIZE) {
+	                        baklog = EfaUtil.moveAndEmptyFile(Daten.efaLogfile, Daten.efaBaseConfig.efaUserDirectory + "backup" + Daten.fileSep);
+	                    }
+	                } catch (Exception e) {
+	                    LogString.logError_fileArchivingFailed(Daten.efaLogfile, International.getString("Logdatei"));
+	                }
+            	}
                 Logger.log(Logger.DEBUG, Logger.MSG_LOGGER_ACTIVATING,
                         "Logfile being set to: " + Daten.efaLogfile);
 
