@@ -285,6 +285,15 @@ public class TxResponseHandler {
             txq.registerContainerResult(txrc.cresultCode, txrc.cresultMessage);
             if (txrc.cresultCode >= 400) {
                 handleTxcError(txrc, "Anwendungsfehler");
+            } else if (txrc.cresultCode == 304) {
+                long lowa = Long.MIN_VALUE;
+                try {
+                    lowa = Long.parseLong(txrc.cresultMessage);
+                } catch (Exception ignored) {
+                    // just drop invalid responses to a synch check
+                }
+                if (lowa > txq.synchControl.timeOfLastSynch)
+                    txq.registerStateChangeRequest(TxRequestQueue.RQ_QUEUE_START_SYNCH_DOWNLOAD);
             } else {
                 // handle all transactions contained
                 for (String txm : txrc.txms) {
@@ -349,6 +358,15 @@ public class TxResponseHandler {
                 this.cresultMessage = "Internet connection aborted";
                 this.txms = new String[0];
             } else {
+                // Synch check response is received, detected by the ";" character
+               if (txcResponse.contains(";")) {
+                    this.cID = 0;
+                    this.version = 0;
+                    this.cresultCode = 304;  // "Valid synchronisation check response"
+                    this.cresultMessage = txcResponse.split(";", 2)[0];
+                    this.txms = new String[0];
+                    return;
+                }
                 // transaction container was received, and the response is returned. Split all transaction, hand over
                 // the result code and result message, trigger transaction handling and close the transactions decode
                 // the transaction response container
