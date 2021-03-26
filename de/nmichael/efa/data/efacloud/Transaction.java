@@ -71,6 +71,7 @@ public class Transaction {
     static {
         TX_RESULT_CODES.put(300, "Transaction completed");
         TX_RESULT_CODES.put(303, "Transaction completed and data key mismatch detected");
+        TX_RESULT_CODES.put(304, "Valid synchronisation check response");  // only used for containers
         TX_RESULT_CODES.put(400, "XHTTPrequest Error"); // (client side generated error, javascript version only)
         TX_RESULT_CODES.put(401, "Syntax error");
         TX_RESULT_CODES.put(402, "Unknown client");
