@@ -60,30 +60,33 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
     public static final String URL_API_LOCATION = "/api/posttx.php";
 
     // ms with which the queue timer starts processing requests. Use 3 seconds to ensure the project has settled.
-    public static final int QUEUE_TIMER_START_DELAY = 3000;
+    private static final int QUEUE_TIMER_START_DELAY = 3000;
     // ms after which the queue timer processes the next set of requests
-    public static final int QUEUE_TIMER_TRIGGER_INTERVAL = 300;
+    static final int QUEUE_TIMER_TRIGGER_INTERVAL = 300;
     // Count of polls to run a lowa request. Multiply with QUEUE_TIMER_TRIGGER_INTERVAL for te time
-    private static final int SYNCH_CHECK_POLLS_PERIOD = 100;    // = 30000 ms = 0.5 minutes
+    private static final int SYNCH_CHECK_PERIOD_DEFAULT = 30000;    // = 30000 ms = 0.5 minutes
+    static int synch_check_polls_period = SYNCH_CHECK_PERIOD_DEFAULT / QUEUE_TIMER_TRIGGER_INTERVAL;
 
     // every SYNCH_PERIOD the client checks for updates at the server side.
     // The update period MUST be at least 5 times the InternetAccessManager timeout.
     // The synchronisation start delay is one SYNCH_PERIOD
-    public static final int SYNCH_PERIOD = 3600000; // = 3600 seconds = 1 hour
+    static final int SYNCH_PERIOD_DEFAULT = 3600000; // = 3600 seconds = 1 hour
+    static int synch_period = SYNCH_PERIOD_DEFAULT; // = 3600 seconds = 1 hour
+
     // If a transaction is busy since more than the RETRY_AFTER_MILLISECONDS period
     // issue a new internet access request.
-    public static final int RETRY_PERIOD = 120000; // = 60 seconds = 2 minute
+    private static final int RETRY_PERIOD = 120000; // = 120 seconds = 2 minute
 
     // timeout for holding a queue locked for manipulation.
-    public static final long QUEUE_LOCK_TIMEOUT = 5000;
+    private static final long QUEUE_LOCK_TIMEOUT = 5000;
     // Maximum number of transactions shifted into the pending queue, i. e. of transactions per
     // internet access request. If the internet access is blocked, this will pile upt internet
     // access requests rather than transactions in the pending transactions queue.
-    public static final int PENDING_QUEUE_MAX_SHIFT_SIZE = 10;
+    private static final int PENDING_QUEUE_MAX_SHIFT_SIZE = 10;
     // Maximum count of transactions in the done and dropped queues, needed only for debugging. Upload transaction
     // can use considerable memory space
-    public static final int DONE_QUEUE_MAX_TXS = 50;
-    public static final int DROPPED_QUEUE_MAX_TXS = 50;
+    private static final int DONE_QUEUE_MAX_TXS = 50;
+    private static final int DROPPED_QUEUE_MAX_TXS = 50;
 
     // Transaction queue indices and names.
     public static final int TX_SYNCH_QUEUE_INDEX = 0;
@@ -866,7 +869,7 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
                         }
                         // check whether to start synchronisation, if neither busy nor pending requests are there
                         else if ((txq.getState() == QUEUE_IS_IDLE) &&
-                                (polltime - synchControl.timeOfLastSynch > SYNCH_PERIOD)) {
+                                (polltime - synchControl.timeOfLastSynch > synch_period)) {
                             // use the opportunity to clear the done and dropped queue, which will else be a memory leak
                             while (queues.get(TX_DONE_QUEUE_INDEX).size() > DONE_QUEUE_MAX_TXS)
                                 queues.get(TX_DONE_QUEUE_INDEX).remove(0);
@@ -876,7 +879,7 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
                             queues.get(TX_SYNCH_QUEUE_INDEX).clear();
                             registerStateChangeRequest(RQ_QUEUE_START_SYNCH_DOWNLOAD);
                         } else if ((txq.getState() == QUEUE_IS_IDLE) &&
-                                ((pollsCount % SYNCH_CHECK_POLLS_PERIOD) == (SYNCH_CHECK_POLLS_PERIOD - 1))) {
+                                ((pollsCount % synch_check_polls_period) == (synch_check_polls_period - 1))) {
                             // send it to the internet access manager.
                             String postURLplus = txq.efaCloudUrl + "?lowa=" + username;
                             // For the InternetAccessManager semantics of a RequestMessage, see InternetAccessManager
