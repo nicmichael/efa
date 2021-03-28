@@ -227,6 +227,32 @@ public class TxResponseHandler {
                                 warningMessage) == Dialog.YES)
                             txq.registerStateChangeRequest(TxRequestQueue.RQ_QUEUE_START_SYNCH_DELETE);
                     }
+                } else if (tx.type == Transaction.TX_TYPE.NOP) {
+                    // Parameter settings can be transported via the NOP transaction.
+                    String[] cfg = tx.getResultMessage().split(";");
+                    for (String param : cfg) {
+                        if (param.contains("=")) {
+                            String name = param.split("=", 2)[0];
+                            int val = -1;
+                            try {
+                                val = Integer.parseInt(param.split("=", 2)[1]);
+                            } catch (Exception ignored) {
+                            }
+                            if (val > 0) {
+                                if (name.equalsIgnoreCase("synch_check_period"))
+                                    TxRequestQueue.synch_check_polls_period =
+                                            1000 * val / TxRequestQueue.QUEUE_TIMER_TRIGGER_INTERVAL;
+                                else if (name.equalsIgnoreCase("synch_period"))
+                                    TxRequestQueue.synch_period = 1000 * val;
+                            }
+                            if (val == 0) {
+                                if (name.equalsIgnoreCase("synch_check_period"))
+                                    TxRequestQueue.synch_check_polls_period = Integer.MAX_VALUE;
+                                else if (name.equalsIgnoreCase("synch_period"))
+                                    TxRequestQueue.synch_period = TxRequestQueue.SYNCH_PERIOD_DEFAULT;
+                            }
+                        }
+                    }
                 }
             }
             // also in normal operation a key change can happen and must trigger a key fixing transaction
