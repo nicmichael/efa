@@ -60,33 +60,33 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
     public static final String URL_API_LOCATION = "/api/posttx.php";
 
     // ms with which the queue timer starts processing requests. Use 3 seconds to ensure the project has settled.
-    public static final int QUEUE_TIMER_START_DELAY = 3000;
+    private static final int QUEUE_TIMER_START_DELAY = 3000;
     // ms after which the queue timer processes the next set of requests
-    public static final int QUEUE_TIMER_TRIGGER_INTERVAL = 300;
-
-    // ms with which the watchdog timer starts processing requests
-    public static final int WATCHDOG_TIMER_START_DELAY = QUEUE_TIMER_START_DELAY + 120000;
-    // ms after which the queue timer processes the next set of requests
-    public static final int WATCHDOG_TIMER_TRIGGER_INTERVAL = 1800000; // = 1800 seconds = 30 minutes
+    static final int QUEUE_TIMER_TRIGGER_INTERVAL = 300;
+    // Count of polls to run a lowa request. Multiply with QUEUE_TIMER_TRIGGER_INTERVAL for te time
+    private static final int SYNCH_CHECK_PERIOD_DEFAULT = 30000;    // = 30000 ms = 0.5 minutes
+    static int synch_check_polls_period = SYNCH_CHECK_PERIOD_DEFAULT / QUEUE_TIMER_TRIGGER_INTERVAL;
 
     // every SYNCH_PERIOD the client checks for updates at the server side.
     // The update period MUST be at least 5 times the InternetAccessManager timeout.
     // The synchronisation start delay is one SYNCH_PERIOD
-    public static final int SYNCH_PERIOD = 900000; // = 900 seconds = 15 minutes
+    static final int SYNCH_PERIOD_DEFAULT = 3600000; // = 3600 seconds = 1 hour
+    static int synch_period = SYNCH_PERIOD_DEFAULT; // = 3600 seconds = 1 hour
+
     // If a transaction is busy since more than the RETRY_AFTER_MILLISECONDS period
     // issue a new internet access request.
-    public static final int RETRY_PERIOD = 120000; // = 60 seconds = 2 minute
+    private static final int RETRY_PERIOD = 120000; // = 120 seconds = 2 minute
 
     // timeout for holding a queue locked for manipulation.
-    public static final long QUEUE_LOCK_TIMEOUT = 5000;
+    private static final long QUEUE_LOCK_TIMEOUT = 5000;
     // Maximum number of transactions shifted into the pending queue, i. e. of transactions per
     // internet access request. If the internet access is blocked, this will pile upt internet
     // access requests rather than transactions in the pending transactions queue.
-    public static final int PENDING_QUEUE_MAX_SHIFT_SIZE = 10;
+    private static final int PENDING_QUEUE_MAX_SHIFT_SIZE = 10;
     // Maximum count of transactions in the done and dropped queues, needed only for debugging. Upload transaction
     // can use considerable memory space
-    public static final int DONE_QUEUE_MAX_TXS = 50;
-    public static final int DROPPED_QUEUE_MAX_TXS = 50;
+    private static final int DONE_QUEUE_MAX_TXS = 50;
+    private static final int DROPPED_QUEUE_MAX_TXS = 50;
 
     // Transaction queue indices and names.
     public static final int TX_SYNCH_QUEUE_INDEX = 0;
@@ -202,7 +202,6 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
 
     // poll timer, internet access manager and connection settings
     private Timer queueTimer;
-    private Timer watchDog;
     private long pollsCount;                   // a counter incrementing on each queue poll cycle
     private long watchdogPreviousPollsCount;   // the pollsCount value at the previous watchdog trigger event.
     private final InternetAccessManager iam;
@@ -592,16 +591,14 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
         watchdogPreviousPollsCount = 0L;
         try {
             startQueueTimer();
-            startWatchDog();
             registerStateChangeRequest(RQ_QUEUE_AUTHENTICATE);
         } catch (Exception e) {
             Logger.log(Logger.ERROR, Logger.MSG_EFACLOUDSYNCH_ERROR,
-                    International.getString("efaCloud konnte nicht gestartet werden. Fehlermeldung: ") +
+                    International.getString("efaCloud konnte nicht gestartet werden.") +
+                            " " + International.getString("Fehlermeldung") + ": " +
                             e.getMessage());
             if (queueTimer != null)
                 queueTimer.cancel();
-            if (watchDog != null)
-                watchDog.cancel();
         }
     }
 
@@ -621,7 +618,7 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
         shiftTx(TX_SYNCH_QUEUE_INDEX, TX_DROPPED_QUEUE_INDEX, dropAction, 0, 0);
         shiftTx(TX_SYNCH_QUEUE_INDEX, TX_PENDING_QUEUE_INDEX, ACTION_TX_MOVE, 0, 0);
         txq.synchControl
-                .logSynchMessage(International.getString("Änderung der Aktivtät der Serverkommunikation: ") + message,
+                .logSynchMessage(International.getString("Änderung der Aktivtät der Serverkommunikation") + ": " + message,
                         "@all", null, true);
     }
 
@@ -782,6 +779,7 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
                             break;
                         case RQ_QUEUE_START_SYNCH_DOWNLOAD:
                         case RQ_QUEUE_START_SYNCH_UPLOAD:
+                        case RQ_QUEUE_START_SYNCH_UPLOAD_ALL:
                         case RQ_QUEUE_START_SYNCH_DELETE:
                             if ((currentState == QUEUE_IS_WORKING) || (currentState == QUEUE_IS_IDLE)) {
                                 if ((queues.get(TX_PENDING_QUEUE_INDEX).size() == 0) &&
@@ -871,7 +869,7 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
                         }
                         // check whether to start synchronisation, if neither busy nor pending requests are there
                         else if ((txq.getState() == QUEUE_IS_IDLE) &&
-                                (polltime - synchControl.timeOfLastSynch > SYNCH_PERIOD)) {
+                                (polltime - synchControl.timeOfLastSynch > synch_period)) {
                             // use the opportunity to clear the done and dropped queue, which will else be a memory leak
                             while (queues.get(TX_DONE_QUEUE_INDEX).size() > DONE_QUEUE_MAX_TXS)
                                 queues.get(TX_DONE_QUEUE_INDEX).remove(0);
@@ -880,6 +878,15 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
                             // The synch transactions queue is never stored, so it needs not to be read from file.
                             queues.get(TX_SYNCH_QUEUE_INDEX).clear();
                             registerStateChangeRequest(RQ_QUEUE_START_SYNCH_DOWNLOAD);
+                        } else if ((txq.getState() == QUEUE_IS_IDLE) &&
+                                ((pollsCount % synch_check_polls_period) == (synch_check_polls_period - 1))) {
+                            // send it to the internet access manager.
+                            String postURLplus = txq.efaCloudUrl + "?lowa=" + username;
+                            // For the InternetAccessManager semantics of a RequestMessage, see InternetAccessManager
+                            // class information.
+                            TaskManager.RequestMessage rq = new TaskManager.RequestMessage(postURLplus, "",
+                                    InternetAccessManager.TYPE_POST_PARAMETERS, 0.0, txq);
+                            iam.sendRequest(rq);
                         }
                     }
 
@@ -902,7 +909,6 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
     public void cancel() {
         Logger.log(Logger.INFO, Logger.MSG_EFACLOUDSYNCH_INFO, "Schließe Server-Kommunikation.");
         queueTimer.cancel();
-        watchDog.cancel();
         iam.cancel();
         clearAllQueues();
         txq.synchControl = null;
@@ -911,27 +917,6 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
         txq = null;
         // update status display, remove efaCloud part
         showStatusAtGUI();
-    }
-
-    /**
-     * Start the watchdog. It will check every 10 minutes whether the queueTimer is still running by comparing the last
-     * polltimer count with the current one.. If
-     */
-    private void startWatchDog() {
-        TimerTask watchdogTask = new TimerTask() {
-            @Override
-            public void run() {
-                if (txq.watchdogPreviousPollsCount == txq.pollsCount) {
-                    Logger.log(Logger.ERROR, Logger.MSG_EFACLOUDSYNCH_ERROR,
-                            International.getString("Watchdog hat angeschlagen. Neustart der Serverkommunikation."));
-                    // Restart the entire queue.
-                    txq = TxRequestQueue.getInstance(txq.efaCloudUrl, txq.username, txq.password, txq.storageLocation);
-                }
-                txq.watchdogPreviousPollsCount = txq.pollsCount;
-            }
-        };
-        watchDog = new Timer();
-        watchDog.scheduleAtFixedRate(watchdogTask, WATCHDOG_TIMER_START_DELAY, WATCHDOG_TIMER_TRIGGER_INTERVAL);
     }
 
     /**

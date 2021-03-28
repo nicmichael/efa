@@ -13,6 +13,7 @@ package de.nmichael.efa.data.storage;
 
 import de.nmichael.efa.data.efacloud.*;
 import de.nmichael.efa.ex.EfaException;
+import de.nmichael.efa.util.Dialog;
 import de.nmichael.efa.util.International;
 import de.nmichael.efa.util.Logger;
 
@@ -46,6 +47,9 @@ public class EfaCloudStorage extends XMLFile {
         super(directory, filename, extension, description);
         this.txQueue = TxRequestQueue.getInstance();
         tablename = getStorageObjectType();
+        if (this.txQueue == null)
+            Dialog.error(International.getMessage("Fehler bei der Initialisierung der Tabelle {tablename}. " +
+                    "Bitte prüfe die Projektkonfiguration.", tablename));
     }
 
     @Override

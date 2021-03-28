@@ -4456,7 +4456,9 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         saveButton.setDescription(International.getStringWithMnemonic("Fahrt beenden"));
         currentRecord = null;
         try {
-            currentRecord = logbook.getLogbookRecord(item.boat.getBoatStatus().getEntryNo());
+            currentRecord = logbook.getLogbookRecord(item.boatStatus.getEntryNo());
+            // New implementation in efaCloud. Causes NPE (in non-efaCloud usage). Removed.
+            // currentRecord = logbook.getLogbookRecord(item.boat.getBoatStatus().getEntryNo());
         } catch(Exception e) {
             Logger.log(e);
         }

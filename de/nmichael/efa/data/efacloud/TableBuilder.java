@@ -191,6 +191,13 @@ public class TableBuilder {
             "$allTables;CHANGECOUNT;DATA_LONGINT;ChangeCount",  //
             "$allTables;LASTMODIFIED;DATA_LONGINT;LastModified"};
 
+    // the number of different data field when updating the record server to client. To avoid deletion of records by
+    // key mismatch or other severe mistakes. Default is 5. THis here are the exceptions.
+    public static HashMap<String, Integer> allowedMismatches = new HashMap<>();
+    static {
+        allowedMismatches.put("efa2boatstatus", 8);
+        allowedMismatches.put("efa2logbook", 6);
+    }
     public static final String fixid_allowed = "efa2logbook efa2messages efa2boatdamages efa2boatreservations";
 
     // cache to hold all special fields for checking when building the tables
@@ -264,8 +271,9 @@ public class TableBuilder {
         RecordFieldDefinition rtf = rtd.fields.get(fieldname);
         if ((rtf == null) && !fieldname.equalsIgnoreCase("Logbookname")) {
             TxRequestQueue.getInstance().logApiMessage(
-                    International.getMessage("Warnung - Nicht definierter Feldname: {Feldname}. " +
-                            "Wird ungeprüft übergeben.", fieldname), 1);
+                    International.getString("Warnung") + " - " +
+                    International.getMessage("Nicht definierter Feldname {fieldname} " +
+                            "wird ungeprüft übergeben.", fieldname), 1);
             return value;
         }
         // reformat date to ISO format YYYY-MM-DD
@@ -309,6 +317,10 @@ public class TableBuilder {
         StorageObjectTypeDefinition rtd = new StorageObjectTypeDefinition(storageObjectType,
                 (EfaCloudStorage) persistence.data());
         storageObjectTypes.put(storageObjectType, rtd);
+        // the maximum number of allowed field mismatches in case of synchronization. If exceeded an error is
+        // issued instead of doing the update. ChangeCount and LastModified are always different, so three
+        // other values may differ as default. Boat status and logbook have more, see definition above.
+        allowedMismatches.putIfAbsent(storageObjectType, 5);
         for (int i = 0; i < metaData.getFields().length; i++) {
             RecordFieldDefinition rfd = new RecordFieldDefinition(storageObjectType, metaData.getFields()[i],
                     metaData.getFieldType(i));

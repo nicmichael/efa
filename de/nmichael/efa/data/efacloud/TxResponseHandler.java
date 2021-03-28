@@ -54,15 +54,15 @@ public class TxResponseHandler {
      */
     void handleAuthenticationError(int resultCode) {
         String errorMessage = International.getMessage(
-                "Anmeldung von {username} auf efaCloud server {efaCloudUrl} fehlgeschlagen. Unbekannter Fehlertyp " +
-                        "{resultCode}. ", txq.username, txq.efaCloudUrl, "" + resultCode);
+                "Anmeldung von {username} auf efaCloud Server {efaCloudUrl} fehlgeschlagen.", txq.username, txq.efaCloudUrl) +
+                " " + International.getMessage("Unbekannter Fehlertyp: {resultCode}", resultCode);
         if ((resultCode == 402) || (resultCode == 403)) {
             errorMessage = International
-                    .getMessage("Anmeldung von {username} auf efaCloud server {efaCloudUrl} abgelehnt.", txq.username,
+                    .getMessage("Anmeldung von {username} auf efaCloud Server {efaCloudUrl} abgelehnt.", txq.username,
                             txq.efaCloudUrl);
         } else if (resultCode >= 500) {
             errorMessage = International.getMessage(
-                    "Transaktion von {username} auf efaCloud server {efaCloudUrl} führte zu einem Severfehler. Bitte " +
+                    "Transaktion von {username} auf efaCloud Server {efaCloudUrl} führte zu einem Severfehler. Bitte " +
                             "prüfen sie die Server-Installation.", txq.username, txq.efaCloudUrl);
         }
         txq.logApiMessage(errorMessage, 1);
@@ -82,11 +82,10 @@ public class TxResponseHandler {
      */
     private void handleTxcError(TxResponseContainer txrc, String errorMessage) {
         String droppedTxCnt = "" + txq.getQueueSize(TX_BUSY_QUEUE_INDEX);
-        txq.logApiMessage(International.getMessage(
-                "CONTAINER-Fehler bei der Behandlung einer Serverantwort: cresult_code = {resultCode}, " +
-                        "cresult_message = {resultMessage}, errorMessage = {errorMessage}. Betroffene, damit " +
-                        "gescheiterte Transaktionen: " + "{droppedCount}", "" + txrc.cresultCode, txrc.cresultMessage,
-                errorMessage, droppedTxCnt), 1);
+        txq.logApiMessage(International.getString("Container-Fehler bei der Behandlung einer Serverantwort") +
+                String.format(": cresult_code = %s, cresult_message = %s, errorMessage = %s.",
+                        txrc.cresultCode, txrc.cresultMessage, errorMessage) +
+                        International.getMessage("Betroffene (gescheiterte) Transaktionen: {droppedCount}", droppedTxCnt), 1);
         // Any error shall force a fallback to normal, because the synchronization process relies on the answers and
         // if they don't come it will not end and continue to block the normal communication
         if (txq.getState() == TxRequestQueue.QUEUE_IS_SYNCHRONIZING) {
@@ -228,6 +227,32 @@ public class TxResponseHandler {
                                 warningMessage) == Dialog.YES)
                             txq.registerStateChangeRequest(TxRequestQueue.RQ_QUEUE_START_SYNCH_DELETE);
                     }
+                } else if (tx.type == Transaction.TX_TYPE.NOP) {
+                    // Parameter settings can be transported via the NOP transaction.
+                    String[] cfg = tx.getResultMessage().split(";");
+                    for (String param : cfg) {
+                        if (param.contains("=")) {
+                            String name = param.split("=", 2)[0];
+                            int val = -1;
+                            try {
+                                val = Integer.parseInt(param.split("=", 2)[1]);
+                            } catch (Exception ignored) {
+                            }
+                            if (val > 0) {
+                                if (name.equalsIgnoreCase("synch_check_period"))
+                                    TxRequestQueue.synch_check_polls_period =
+                                            1000 * val / TxRequestQueue.QUEUE_TIMER_TRIGGER_INTERVAL;
+                                else if (name.equalsIgnoreCase("synch_period"))
+                                    TxRequestQueue.synch_period = 1000 * val;
+                            }
+                            if (val == 0) {
+                                if (name.equalsIgnoreCase("synch_check_period"))
+                                    TxRequestQueue.synch_check_polls_period = Integer.MAX_VALUE;
+                                else if (name.equalsIgnoreCase("synch_period"))
+                                    TxRequestQueue.synch_period = TxRequestQueue.SYNCH_PERIOD_DEFAULT;
+                            }
+                        }
+                    }
                 }
             }
             // also in normal operation a key change can happen and must trigger a key fixing transaction
@@ -286,6 +311,15 @@ public class TxResponseHandler {
             txq.registerContainerResult(txrc.cresultCode, txrc.cresultMessage);
             if (txrc.cresultCode >= 400) {
                 handleTxcError(txrc, "Anwendungsfehler");
+            } else if (txrc.cresultCode == 304) {
+                long lowa = Long.MIN_VALUE;
+                try {
+                    lowa = Long.parseLong(txrc.cresultMessage);
+                } catch (Exception ignored) {
+                    // just drop invalid responses to a synch check
+                }
+                if (lowa > txq.synchControl.timeOfLastSynch)
+                    txq.registerStateChangeRequest(TxRequestQueue.RQ_QUEUE_START_SYNCH_DOWNLOAD);
             } else {
                 // handle all transactions contained
                 for (String txm : txrc.txms) {
@@ -350,6 +384,15 @@ public class TxResponseHandler {
                 this.cresultMessage = "Internet connection aborted";
                 this.txms = new String[0];
             } else {
+                // Synch check response is received, detected by the ";" character
+               if (txcResponse.contains(";")) {
+                    this.cID = 0;
+                    this.version = 0;
+                    this.cresultCode = 304;  // "Valid synchronisation check response"
+                    this.cresultMessage = txcResponse.split(";", 2)[0];
+                    this.txms = new String[0];
+                    return;
+                }
                 // transaction container was received, and the response is returned. Split all transaction, hand over
                 // the result code and result message, trigger transaction handling and close the transactions decode
                 // the transaction response container

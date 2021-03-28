@@ -71,6 +71,7 @@ public class Transaction {
     static {
         TX_RESULT_CODES.put(300, "Transaction completed");
         TX_RESULT_CODES.put(303, "Transaction completed and data key mismatch detected");
+        TX_RESULT_CODES.put(304, "Valid synchronisation check response");  // only used for containers
         TX_RESULT_CODES.put(400, "XHTTPrequest Error"); // (client side generated error, javascript version only)
         TX_RESULT_CODES.put(401, "Syntax error");
         TX_RESULT_CODES.put(402, "Unknown client");
@@ -152,8 +153,8 @@ public class Transaction {
             tx.resultMessage = resultMessage;
         } catch (Exception e) {
             TxRequestQueue.getInstance().logApiMessage(
-                    International.getString("Fehler beim Lesen einer Transaktion vom permanenten Speicher: ") +
-                            txFullString, 1);
+                    International.getString("Fehler beim Lesen einer Transaktion vom permanenten Speicher") +
+                            ": " + txFullString, 1);
         }
         // return result
         return tx;
@@ -256,7 +257,7 @@ public class Transaction {
      */
     void logMessage(String action) {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String transactionString = "#" + ID + ", " + type + International.getString(" (record length: ") +
+        String transactionString = "#" + ID + ", " + type + " (record length: " +
                 ((record == null) ? "null" : "" + record.length) + ")";
         String dateString = format.format(new Date()) + " [" + tablename + "]: " + action + " ";
         // truncate log files,

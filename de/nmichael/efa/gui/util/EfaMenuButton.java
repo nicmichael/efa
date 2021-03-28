@@ -477,8 +477,17 @@ public class EfaMenuButton {
                 return false;
             }
             // The only parent for this button is the EfaCloudSynchDialog.
-            EfaCloudConfigDialog dlg = new EfaCloudConfigDialog(parentDialog, admin);
-            dlg.showDialog();
+            EfaCloudConfigDialog dlg = null;
+            if (Daten.project == null)
+                Dialog.infoDialog(International
+                        .getString("Zur efaCloud-Konfiguration bitte erst ein Projekt öffnen."));
+            try {
+                dlg = new EfaCloudConfigDialog(parentDialog, admin);
+            } catch (Exception ignored) {
+            }
+            if (dlg != null) dlg.showDialog();
+            else Dialog.infoDialog(International
+                    .getString("efaCloud-Konfiguration konnte nicht geöffnet werden."));
         }
 
         if (action.equals(BUTTON_UPDATE)) {
