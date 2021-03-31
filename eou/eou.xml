@@ -2,6 +2,19 @@
 <efaOnlineUpdate>
 
     <Version>
+        <VersionID>2.3.0_07</VersionID>
+        <ReleaseDate>30.03.2021</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa230.zip</DownloadUrl>
+        <DownloadSize>4250040</DownloadSize>
+        <Changes lang="de">
+            <ChangeItem>Bugfix: efaCloud Fast-Sync alle 30 Sekunden (Verringerung der Latenz der Sichtbarkeit von Aenderungen verschiedener Clients)</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Bugfix: efaCloud Fast-Sync every 30 seconds (latency reduction for changes of multiple clients becoming visible to others)</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
         <VersionID>2.3.0_06</VersionID>
         <ReleaseDate>23.03.2021</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa230.zip</DownloadUrl>
