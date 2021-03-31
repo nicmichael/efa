@@ -227,6 +227,32 @@ public class TxResponseHandler {
                                 warningMessage) == Dialog.YES)
                             txq.registerStateChangeRequest(TxRequestQueue.RQ_QUEUE_START_SYNCH_DELETE);
                     }
+                } else if (tx.type == Transaction.TX_TYPE.NOP) {
+                    // Parameter settings can be transported via the NOP transaction.
+                    String[] cfg = tx.getResultMessage().split(";");
+                    for (String param : cfg) {
+                        if (param.contains("=")) {
+                            String name = param.split("=", 2)[0];
+                            int val = -1;
+                            try {
+                                val = Integer.parseInt(param.split("=", 2)[1]);
+                            } catch (Exception ignored) {
+                            }
+                            if (val > 0) {
+                                if (name.equalsIgnoreCase("synch_check_period"))
+                                    TxRequestQueue.synch_check_polls_period =
+                                            1000 * val / TxRequestQueue.QUEUE_TIMER_TRIGGER_INTERVAL;
+                                else if (name.equalsIgnoreCase("synch_period"))
+                                    TxRequestQueue.synch_period = 1000 * val;
+                            }
+                            if (val == 0) {
+                                if (name.equalsIgnoreCase("synch_check_period"))
+                                    TxRequestQueue.synch_check_polls_period = Integer.MAX_VALUE;
+                                else if (name.equalsIgnoreCase("synch_period"))
+                                    TxRequestQueue.synch_period = TxRequestQueue.SYNCH_PERIOD_DEFAULT;
+                            }
+                        }
+                    }
                 }
             }
             // also in normal operation a key change can happen and must trigger a key fixing transaction
@@ -285,6 +311,15 @@ public class TxResponseHandler {
             txq.registerContainerResult(txrc.cresultCode, txrc.cresultMessage);
             if (txrc.cresultCode >= 400) {
                 handleTxcError(txrc, "Anwendungsfehler");
+            } else if (txrc.cresultCode == 304) {
+                long lowa = Long.MIN_VALUE;
+                try {
+                    lowa = Long.parseLong(txrc.cresultMessage);
+                } catch (Exception ignored) {
+                    // just drop invalid responses to a synch check
+                }
+                if (lowa > txq.synchControl.timeOfLastSynch)
+                    txq.registerStateChangeRequest(TxRequestQueue.RQ_QUEUE_START_SYNCH_DOWNLOAD);
             } else {
                 // handle all transactions contained
                 for (String txm : txrc.txms) {
@@ -349,6 +384,15 @@ public class TxResponseHandler {
                 this.cresultMessage = "Internet connection aborted";
                 this.txms = new String[0];
             } else {
+                // Synch check response is received, detected by the ";" character
+               if (txcResponse.contains(";")) {
+                    this.cID = 0;
+                    this.version = 0;
+                    this.cresultCode = 304;  // "Valid synchronisation check response"
+                    this.cresultMessage = txcResponse.split(";", 2)[0];
+                    this.txms = new String[0];
+                    return;
+                }
                 // transaction container was received, and the response is returned. Split all transaction, hand over
                 // the result code and result message, trigger transaction handling and close the transactions decode
                 // the transaction response container

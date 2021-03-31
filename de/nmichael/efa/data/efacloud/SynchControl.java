@@ -371,7 +371,7 @@ class SynchControl {
                     boolean delete = (localRecord != null) && serverMoreRecent && isDeleted;
 
                     // Check whether record to update matsches at least partially the new version.
-                    if (update && !preUpdateRecordsCompare(localRecord, returnedRecord))
+                    if (update && !preUpdateRecordsCompare(localRecord, returnedRecord, tx.tablename))
                         logSynchMessage(International.getMessage(
                                         "Update-Konflikt bei Datensatz in der {type}-Synchronisation.", "Download") +
                                         " " + International.getString("Bitte bereinige den Datensatz manuell."), tx.tablename,
@@ -391,7 +391,8 @@ class SynchControl {
                                     lastModification), tx.tablename, returnedRecord.getKey(), false);
                         } catch (EfaException e) {
                             txq.logApiMessage(International
-                                    .getString("Ausnahmefehler bei der lokalen Modifikation eines Datensatzes ") +
+                                    .getMessage("Ausnahmefehler bei der lokalen Modifikation eines Datensatzes in {Tabelle} ",
+                                            tx.tablename) +
                                     e.getMessage() + "\n" + e.getStackTraceAsString(), 1);
                         } finally {
                             efaCloudStorage.releaseGlobalLock(globalLock);
@@ -418,10 +419,11 @@ class SynchControl {
      *
      * @param dr1 DataRecord one to compare
      * @param dr2 DataRecord two to compare
+     * @param tableName the table name to look up how many fields may be different.
      * @return true, if the records are of the same type and differ by less than 3 data fields (except LastModified and
      * LastModification)
      */
-    private boolean preUpdateRecordsCompare(DataRecord dr1, DataRecord dr2) {
+    private boolean preUpdateRecordsCompare(DataRecord dr1, DataRecord dr2, String tableName) {
         if (dr1.getClass() != dr2.getClass())
             return false;
         int diff = 0;
@@ -434,7 +436,8 @@ class SynchControl {
             else if (!dr1.getAsString(field).equalsIgnoreCase(dr2.getAsString(field)))
                 diff++;
         }
-        return diff < 5; // ChangeCount and LastModified are always different
+        return (TableBuilder.allowedMismatches.get(tableName) != null) &&
+                (diff <= TableBuilder.allowedMismatches.get(tableName)); // ChangeCount and LastModified are always different
     }
 
     /**
@@ -472,7 +475,7 @@ class SynchControl {
                             if (localLastModified > LastModifiedLimit)
                                 localRecordsToInsertAtServer.add(localRecord);
                         } else if (localLastModified > serverRecord.getLastModified()) {
-                            if (preUpdateRecordsCompare(localRecord, serverRecord))
+                            if (preUpdateRecordsCompare(localRecord, serverRecord, tx.tablename))
                                 localRecordsToUpdateAtServer.add(localRecord);
                             else {
                                 logSynchMessage(International.getMessage(
