@@ -55,6 +55,7 @@ public class PDFOutput {
         String header = EfaUtil.saveImage("DRV_Briefkopf_header.gif", "gif", Daten.efaTmpDirectory, true, true, true);
         String footer = EfaUtil.saveImage("DRV_Briefkopf_footer.gif", "gif", Daten.efaTmpDirectory, true, true, true);
         String fontSize = "10pt";
+        String fontSizeSm = "8pt";
 
         f.write("  <fo:page-sequence master-reference=\"titelseite\" force-page-count=\"no-force\">\n");
 
@@ -109,7 +110,7 @@ public class PDFOutput {
         f.write("               <fo:block font-size=\"" + fontSize + "\" font-weight=\"bold\">" + (rechnung ? "Rechnungsnummer" : "Bestätigungsnummer") + ":</fo:block>\n");
         f.write("            </fo:table-cell>\n");
         f.write("            <fo:table-cell height=\"25mm\">\n");
-        f.write("               <fo:block font-size=\"" + fontSize + "\" font-weight=\"bold\">" + ew.verein_name + "</fo:block>\n");
+        f.write("               <fo:block font-size=\"" + (ew.verein_name.length() < 55 ? fontSize : fontSizeSm) + "\" font-weight=\"bold\">" + ew.verein_name + "</fo:block>\n");
         f.write("               <fo:block font-size=\"" + fontSize + "\" font-weight=\"bold\">" + ew.verein_mitglnr + "</fo:block>\n");
         f.write("               <fo:block font-size=\"" + fontSize + "\" font-weight=\"bold\">" + qnr + "</fo:block>\n");
         f.write("            </fo:table-cell>\n");
