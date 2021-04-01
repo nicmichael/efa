@@ -2,6 +2,18 @@
 <efaOnlineUpdate>
 
     <Version>
+        <VersionID>2.3.0_08</VersionID>
+        <ReleaseDate>31.03.2021</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa2drv.zip</DownloadUrl>
+        <DownloadSize>4419005</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>New: Ausgabe von Name des Meldenden und email in Uebersicht</ChangeItem>
+            <ChangeItem>Bugfix: Kleinere Schriftgroesse bei langen Vereinsnamen um Zeilen-Umbruch zu verhindern</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
         <VersionID>2.3.0_01</VersionID>
         <ReleaseDate>18.03.2021</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa2drv.zip</DownloadUrl>
