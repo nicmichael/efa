@@ -2,6 +2,17 @@
 <efaOnlineUpdate>
 
     <Version>
+        <VersionID>2.3.0_09</VersionID>
+        <ReleaseDate>11.04.2021</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa2drv.zip</DownloadUrl>
+        <DownloadSize>4414349</DownloadSize>
+        <Changes lang="de">
+            <ChangeItem>Change: Bedingungen fuer DRV-Fahrtenabzeichen 2021 angepasst</ChangeItem>
+            <ChangeItem>Change: Fusszeile im Anschreiben angepasst</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
         <VersionID>2.3.0_08</VersionID>
         <ReleaseDate>31.03.2021</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa2drv.zip</DownloadUrl>
