@@ -370,7 +370,7 @@ class SynchControl {
                     boolean update = (localRecord != null) && serverMoreRecent && isUpdated;
                     boolean delete = (localRecord != null) && serverMoreRecent && isDeleted;
 
-                    // Check whether record to update matsches at least partially the new version.
+                    // Check whether record to update matches at least partially the new version.
                     if (update && !preUpdateRecordsCompare(localRecord, returnedRecord, tx.tablename))
                         logSynchMessage(International.getMessage(
                                         "Update-Konflikt bei Datensatz in der {type}-Synchronisation.", "Download") +
@@ -420,24 +420,28 @@ class SynchControl {
      * @param dr1 DataRecord one to compare
      * @param dr2 DataRecord two to compare
      * @param tableName the table name to look up how many fields may be different.
-     * @return true, if the records are of the same type and differ by less than 3 data fields (except LastModified and
-     * LastModification)
+     * @return true, if the records are of the same type and differ in only a tolerable amount of data fields
      */
     private boolean preUpdateRecordsCompare(DataRecord dr1, DataRecord dr2, String tableName) {
         if (dr1.getClass() != dr2.getClass())
             return false;
         int diff = 0;
         for (String field : dr1.getFields()) {
-            if (dr1.getAsString(field) == null)
-                diff = (dr2.getAsString(field) == null) ? 0 : 1;
-            else if (dr2.getAsString(field) == null)
-                diff++;
-                // Use String comparison as the compareTo() implementation throws to many different exceptions.
-            else if (!dr1.getAsString(field).equalsIgnoreCase(dr2.getAsString(field)))
-                diff++;
+            if (!field.equalsIgnoreCase("ChangeCount")
+                    && !field.equalsIgnoreCase("LastModified")
+                    && !field.equalsIgnoreCase("LastModification")) {
+                if (dr1.getAsString(field) == null)
+                    diff = (dr2.getAsString(field) == null) ? 0 : 1;
+                else if (dr2.getAsString(field) == null)
+                    diff++;
+                    // Use String comparison as the compareTo() implementation throws to many different exceptions.
+                else if (!dr1.getAsString(field).equalsIgnoreCase(dr2.getAsString(field)))
+                    diff++;
+            }
         }
-        return (TableBuilder.allowedMismatches.get(tableName) != null) &&
-                (diff <= TableBuilder.allowedMismatches.get(tableName)); // ChangeCount and LastModified are always different
+        int allowedMismatches = (TableBuilder.allowedMismatches.get(tableName) == null) ?
+                TableBuilder.allowedMismatchesDefault : TableBuilder.allowedMismatches.get(tableName);
+        return (diff <= allowedMismatches);
     }
 
     /**

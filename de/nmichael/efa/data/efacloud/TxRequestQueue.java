@@ -203,13 +203,10 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
     // poll timer, internet access manager and connection settings
     private Timer queueTimer;
     private long pollsCount;                   // a counter incrementing on each queue poll cycle
-    private long watchdogPreviousPollsCount;   // the pollsCount value at the previous watchdog trigger event.
     private final InternetAccessManager iam;
     String efaCloudUrl;
     String username;
-    private final String storageLocation;
     String credentials;
-    private final String password;
     private Container efaGUIroot;
 
     // Statistics buffer
@@ -381,21 +378,21 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
      * @param message the message which shall be logged. Note that API message are not logged in the standard way,
      *                because such logging will create a message which itself turn can fail which creates another
      *                message asf ending possibly in en endless loop.
-     * @param type    set 1 for Error, 2 for API Statistics, 3 for Internet Statistics
+     * @param type    set 0 for Info, 1 for Error, 2 for API Statistics, 3 for Internet Statistics
      */
-    void logApiMessage(String message, int type) {
+    public void logApiMessage(String message, int type) {
 
         // remove line breaks in log message
-        if (type == 1) {
+        if (type < 2) {
             message = message.replace("\n", " // ");
             if (message.length() > 1024)
-                message = message.substring(0, 1024);
+                message = message.substring(0, 1024) + " ...";
         }
 
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String info = (type == 1) ? " API ERROR " : " API INFO ";
+        String info = (type == 1) ? " ERROR " : " INFO ";
         String dateString = format.format(new Date()) + info;
-        if (type == 1) {
+        if (type < 2) {
             // truncate log files,
             File f = new File(logFilePaths.get("synch and activities"));
             if ((f.length() > 200000) && (f.renameTo(new File(logFilePaths.get("synch and activities") + ".previous"))))
@@ -515,11 +512,31 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
     }
 
     /**
+     * provide an audit file of the current setup for support purposes.
+     */
+    public void saveAuditInformation() {
+        TextResource.writeContents(efacloudLogDir + File.separator + "auditinfo.txt",
+                Daten.tableBuilder.getAuditInformation(), false);
+        String txqAuditInfo =
+                "Transaction queue audit information:\n" + "------------------------------------\n" + "\ntxq: " +
+                        txq.toString() + "\nstate: " + txq.state + "\nusername: " + txq.username +
+                        "\npassword (appr. length): " + (txq.credentials.length() - txq.username.length() - 2) +
+                        "\nefaCloudUrl: " + txq.efaCloudUrl + "\npollsCount: " + txq.pollsCount +
+                        "\nlogLastModified: " + txq.logLastModified + "\nstorageLocationRoot: " +
+                        txq.storageLocationRoot + "\nsynch_period: " + TxRequestQueue.synch_period +
+                        "\nsynch_check_polls_period: " + TxRequestQueue.synch_check_polls_period +
+                        "\nsynchControl.timeOfLastSynch: " + synchControl.timeOfLastSynch +
+                        "\nsynchControl.LastModifiedLimit: " + synchControl.LastModifiedLimit;
+        TextResource.writeContents(efacloudLogDir + File.separator + "auditinfo.txt", txqAuditInfo, true);
+    }
+
+    /**
      * Get the log files, post the statistics locally and return all as base64 encoded zip-Archive for server upload.
      */
     private String getLogsAsZip() {
         String txqStatistics = txq.getStatisticsCsv();
         String iamStatistics = iam.getStatisticsCsv();
+        saveAuditInformation();
         logApiMessage(txqStatistics, 2);
         logApiMessage(iamStatistics, 3);
         File efacloudLogDirF = new File(efacloudLogDir);
@@ -555,8 +572,6 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
     private TxRequestQueue(String efaCloudUrl, String username, String password, String storageLocation) {
 
         this.username = username;
-        this.password = password;
-        this.storageLocation = storageLocation;
         // combine the credentials to a transaction container prefix.
         this.credentials =
                 username + TX_REQ_DELIMITER + CsvCodec.encodeElement(password, TX_REQ_DELIMITER, TX_QUOTATION) +
@@ -588,7 +603,6 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
     private void startTimers() {
         // start queue timer and watchdog
         pollsCount = 0L;
-        watchdogPreviousPollsCount = 0L;
         try {
             startQueueTimer();
             registerStateChangeRequest(RQ_QUEUE_AUTHENTICATE);
@@ -787,6 +801,7 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
                                     stateTransitionRequests.remove(0);
                                     txq.setState(QUEUE_IS_SYNCHRONIZING);
                                     showStatusAtGUI();
+                                    saveAuditInformation();
                                     txq.synchControl.startSynchProcess(stateChangeRequest);
                                     // use the synchronization trigger also to gather statistics and logs.
                                     if (stateChangeRequest == RQ_QUEUE_START_SYNCH_DOWNLOAD) {
@@ -1037,7 +1052,7 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
                     boolean keepOnStop = (action == ACTION_TX_STOP) && isKeyFixingConfirmation;
                     if (!keepOnPause && !keepOnStop) {
                         if (destinationQueueIndex == TX_DROPPED_QUEUE_INDEX)
-                            tx.logMessage("DROP");
+                            txq.logApiMessage("#" + tx.ID + ", " + tx.type + " [" + tx.tablename + "]: " + "Transaction dropped", 1);
                         dest.add(tx);
                         // cut failed transactions length to avoid log overload
                         if (destinationQueueIndex == TX_FAILED_QUEUE_INDEX)

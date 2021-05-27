@@ -10,6 +10,7 @@
  */
 package de.nmichael.efa.data.efacloud;
 
+import de.nmichael.efa.Daten;
 import de.nmichael.efa.util.Dialog;
 import de.nmichael.efa.util.International;
 
@@ -60,10 +61,16 @@ public class TxResponseHandler {
             errorMessage = International
                     .getMessage("Anmeldung von {username} auf efaCloud Server {efaCloudUrl} abgelehnt.", txq.username,
                             txq.efaCloudUrl);
+            Dialog.error(errorMessage);
+            txq.registerStateChangeRequest(TxRequestQueue.RQ_QUEUE_PAUSE);
+            txq.saveAuditInformation();
         } else if (resultCode >= 500) {
             errorMessage = International.getMessage(
                     "Transaktion von {username} auf efaCloud Server {efaCloudUrl} führte zu einem Severfehler. Bitte " +
                             "prüfen sie die Server-Installation.", txq.username, txq.efaCloudUrl);
+            Dialog.error(errorMessage);
+            txq.registerStateChangeRequest(TxRequestQueue.RQ_QUEUE_PAUSE);
+            txq.saveAuditInformation();
         }
         txq.logApiMessage(errorMessage, 1);
     }
@@ -244,15 +251,19 @@ public class TxResponseHandler {
                                             1000 * val / TxRequestQueue.QUEUE_TIMER_TRIGGER_INTERVAL;
                                 else if (name.equalsIgnoreCase("synch_period"))
                                     TxRequestQueue.synch_period = 1000 * val;
+                                else if (name.equalsIgnoreCase("group_memberidlist_size"))
+                                    Daten.tableBuilder.adjustGroupMemberIdListSize(val);
                             }
                             if (val == 0) {
                                 if (name.equalsIgnoreCase("synch_check_period"))
                                     TxRequestQueue.synch_check_polls_period = Integer.MAX_VALUE;
                                 else if (name.equalsIgnoreCase("synch_period"))
                                     TxRequestQueue.synch_period = TxRequestQueue.SYNCH_PERIOD_DEFAULT;
+                                // if group_memberidlist_size is 0 do nothing, the default is already set.
                             }
                         }
                     }
+                    txq.saveAuditInformation();
                 }
             }
             // also in normal operation a key change can happen and must trigger a key fixing transaction
