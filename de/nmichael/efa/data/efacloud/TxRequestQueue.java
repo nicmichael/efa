@@ -207,6 +207,7 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
     String efaCloudUrl;
     String username;
     String credentials;
+    public String serverWelcomeMessage;
     private Container efaGUIroot;
 
     // Statistics buffer
@@ -775,6 +776,10 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
                             if ((currentState == QUEUE_IS_PAUSED) || (currentState == QUEUE_IS_DISCONNECTED) ||
                                     (currentState == QUEUE_IS_AUTHENTICATING)) {
                                 stateTransitionRequests.remove(0);
+                                // Redo the first transaction. Increase the retry counter and update the sentAt timestamp.
+                                shiftTx(TX_BUSY_QUEUE_INDEX, TX_BUSY_QUEUE_INDEX, ACTION_TX_RETRY, 0, 0);
+                                TaskManager.RequestMessage rq = Transaction.createIamRequest(queues.get(TX_BUSY_QUEUE_INDEX));
+                                iam.sendRequest(rq);
                                 txq.setState(QUEUE_IS_WORKING);
                                 if (currentState == QUEUE_IS_DISCONNECTED)
                                     Logger.log(Logger.INFO, Logger.MSG_EFACLOUDSYNCH_INFO, International
@@ -810,6 +815,8 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
                                         // not contain the synchronization process transactions.
                                         appendTransaction(TX_PENDING_QUEUE_INDEX, Transaction.TX_TYPE.UPLOAD, "zip",
                                                 "filepath;efacloudLogs.zip", "contents;" + getLogsAsZip());
+                                        // Add a NOP transaction to synchronize the configuration
+                                        appendTransaction(TX_PENDING_QUEUE_INDEX, Transaction.TX_TYPE.NOP, "", "sleep;2");
                                     }
                                 }
                             } else

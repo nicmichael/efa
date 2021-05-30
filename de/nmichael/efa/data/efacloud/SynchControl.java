@@ -392,7 +392,7 @@ class SynchControl {
                         } catch (EfaException e) {
                             txq.logApiMessage(International
                                     .getMessage("Ausnahmefehler bei der lokalen Modifikation eines Datensatzes in {Tabelle} ",
-                                            tx.tablename) +
+                                            tx.tablename) + "\n" + returnedRecord.encodeAsString() + "\n" +
                                     e.getMessage() + "\n" + e.getStackTraceAsString(), 1);
                         } finally {
                             efaCloudStorage.releaseGlobalLock(globalLock);

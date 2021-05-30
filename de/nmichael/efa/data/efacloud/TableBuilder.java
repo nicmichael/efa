@@ -198,6 +198,7 @@ public class TableBuilder {
     static {
         allowedMismatches.put("efa2boatstatus", 6);
         allowedMismatches.put("efa2logbook", 4);
+        allowedMismatches.put("efa2fahrtenabzeichen", 4);
     }
     public static final String fixid_allowed = "efa2logbook efa2messages efa2boatdamages efa2boatreservations";
 
