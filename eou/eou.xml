@@ -2,6 +2,26 @@
 <efaOnlineUpdate>
 
     <Version>
+        <VersionID>2.3.0_10</VersionID>
+        <ReleaseDate>10.06.2021</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa230.zip</DownloadUrl>
+        <DownloadSize>4245993</DownloadSize>
+        <Changes lang="de">
+            <ChangeItem>Bugfix [efaCloud]: Gruppen mit mehr als 27 Mitgliedern nun möglich</ChangeItem>
+            <ChangeItem>Bugfix [efaCloud]: efaCloud und efaCLI nun kompatibel. Allerdings keine efaCloud Kommandos über efaCLI</ChangeItem>
+            <ChangeItem>Bugfix [efaCloud]: efaRemote + efaCloud getestet</ChangeItem>
+            <ChangeItem>Bugfix [efaCloud]: Toleranz der Fehlerprüfung optimiert</ChangeItem>
+            <ChangeItem>Bugfix [efaCloud]: Hinweisdialog bei fehlschlagen der Authentifizierung am Server</ChangeItem>
+            <ChangeItem>Bugfix [efaCloud]: verwaiste Konfigurationsreste in Konfigurationsmenü "Daten" durch Hinweis uf den richtigen Ort ersetzt.</ChangeItem>
+            <ChangeItem>Bugfix [efaCloud]: Bei Datensatzinkonsistenz enthält die Fehlermeldung nun den nicht aktualisierten Datensatz</ChangeItem>
+            <ChangeItem>Bugfix [efaCloud]: efa2fahrtenabzeichen wird mit bis zu 4 Abweichungen noch aktualisiert</ChangeItem>
+            <ChangeItem>Bugfix [efaCloud]: Eine Info über den Stand des Servers (server_welcome_message) wird nun im efaCloud Konfigurationsdialog mit angezeigt (braucht Serverversion 2.3.0_12)</ChangeItem>
+            <ChangeItem>Bugfix [efaCloud]: Server => client Konfigurationsinformation wird nun mit jeder Synchronisation neu übertragen, nicht nur bei Neustart. Resume nach Pausieren Fehler behoben.</ChangeItem>
+            <ChangeItem>Bugfix [efaCloud]: Verbesserte Dartsellung des Fehlers bei der initialen Verbindung zur Vereinfachung der Fehlerbehebung bei der ersten efaCloud Konfiguration</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
         <VersionID>2.3.0_09</VersionID>
         <ReleaseDate>11.04.2021</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa230.zip</DownloadUrl>
