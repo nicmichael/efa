@@ -10,6 +10,7 @@
  */
 package de.nmichael.efa.data.efacloud;
 
+import de.nmichael.efa.Daten;
 import de.nmichael.efa.util.Dialog;
 import de.nmichael.efa.util.International;
 
@@ -54,18 +55,13 @@ public class TxResponseHandler {
      */
     void handleAuthenticationError(int resultCode) {
         String errorMessage = International.getMessage(
-                "Anmeldung von {username} auf efaCloud Server {efaCloudUrl} fehlgeschlagen.", txq.username, txq.efaCloudUrl) +
-                " " + International.getMessage("Unbekannter Fehlertyp: {resultCode}", resultCode);
-        if ((resultCode == 402) || (resultCode == 403)) {
-            errorMessage = International
-                    .getMessage("Anmeldung von {username} auf efaCloud Server {efaCloudUrl} abgelehnt.", txq.username,
-                            txq.efaCloudUrl);
-        } else if (resultCode >= 500) {
-            errorMessage = International.getMessage(
-                    "Transaktion von {username} auf efaCloud Server {efaCloudUrl} führte zu einem Severfehler. Bitte " +
-                            "prüfen sie die Server-Installation.", txq.username, txq.efaCloudUrl);
-        }
+                "Anmeldung von {username} auf efaCloud Server {efaCloudUrl} fehlgeschlagen.\nFehlermeldung: {errmsg}",
+                txq.username, txq.efaCloudUrl, resultCode + ": " + Transaction.TX_RESULT_CODES.get(resultCode));
+        Dialog.error(errorMessage);
+        txq.registerStateChangeRequest(TxRequestQueue.RQ_QUEUE_DEACTIVATE);
+        txq.saveAuditInformation();
         txq.logApiMessage(errorMessage, 1);
+        txq.serverWelcomeMessage = errorMessage;
     }
 
     /**
@@ -163,6 +159,8 @@ public class TxResponseHandler {
                 txq.shiftTx(TX_BUSY_QUEUE_INDEX, TX_BUSY_QUEUE_INDEX, TxRequestQueue.ACTION_TX_RETRY, tx.ID, 1);
                 break;
         }
+        if (txq.getState() == TxRequestQueue.QUEUE_IS_AUTHENTICATING)
+            handleAuthenticationError(tx.getResultCode());
     }
 
     /**
@@ -233,26 +231,34 @@ public class TxResponseHandler {
                     for (String param : cfg) {
                         if (param.contains("=")) {
                             String name = param.split("=", 2)[0];
-                            int val = -1;
-                            try {
-                                val = Integer.parseInt(param.split("=", 2)[1]);
-                            } catch (Exception ignored) {
-                            }
-                            if (val > 0) {
-                                if (name.equalsIgnoreCase("synch_check_period"))
-                                    TxRequestQueue.synch_check_polls_period =
-                                            1000 * val / TxRequestQueue.QUEUE_TIMER_TRIGGER_INTERVAL;
-                                else if (name.equalsIgnoreCase("synch_period"))
-                                    TxRequestQueue.synch_period = 1000 * val;
-                            }
-                            if (val == 0) {
-                                if (name.equalsIgnoreCase("synch_check_period"))
-                                    TxRequestQueue.synch_check_polls_period = Integer.MAX_VALUE;
-                                else if (name.equalsIgnoreCase("synch_period"))
-                                    TxRequestQueue.synch_period = TxRequestQueue.SYNCH_PERIOD_DEFAULT;
+                            if (name.equalsIgnoreCase("server_welcome_message"))
+                                txq.serverWelcomeMessage = param.split("=", 2)[1].replace("//", "\n");
+                            else {
+                                int val = -1;
+                                try {
+                                    val = Integer.parseInt(param.split("=", 2)[1]);
+                                } catch (Exception ignored) {
+                                }
+                                if (val > 0) {
+                                    if (name.equalsIgnoreCase("synch_check_period"))
+                                        TxRequestQueue.synch_check_polls_period =
+                                                1000 * val / TxRequestQueue.QUEUE_TIMER_TRIGGER_INTERVAL;
+                                    else if (name.equalsIgnoreCase("synch_period"))
+                                        TxRequestQueue.synch_period = 1000 * val;
+                                    else if (name.equalsIgnoreCase("group_memberidlist_size"))
+                                        Daten.tableBuilder.adjustGroupMemberIdListSize(val);
+                                }
+                                if (val == 0) {
+                                    if (name.equalsIgnoreCase("synch_check_period"))
+                                        TxRequestQueue.synch_check_polls_period = Integer.MAX_VALUE;
+                                    else if (name.equalsIgnoreCase("synch_period"))
+                                        TxRequestQueue.synch_period = TxRequestQueue.SYNCH_PERIOD_DEFAULT;
+                                    // if group_memberidlist_size is 0 do nothing, the default is already set.
+                                }
                             }
                         }
                     }
+                    txq.saveAuditInformation();
                 }
             }
             // also in normal operation a key change can happen and must trigger a key fixing transaction

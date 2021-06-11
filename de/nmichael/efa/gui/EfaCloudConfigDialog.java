@@ -79,11 +79,14 @@ public class EfaCloudConfigDialog extends BaseTabbedDialog implements IItemListe
         boolean isEfaCloud = projectStorageType == IDataAccess.TYPE_EFA_CLOUD;
 
         String queueState = (txq == null) ? "UNDEFINED" : TxRequestQueue.QUEUE_STATE.get(txq.getState());
+        String serverInfo = ((txq == null) || (txq.serverWelcomeMessage == null)
+                || (txq.serverWelcomeMessage.isEmpty())) ? "" :
+                "\nServer-Information:\n" + txq.serverWelcomeMessage;
         String advice = (isEfaRemote) ? International
                 .getString("Für efaRemote kann der efaCloud-Modus nicht aktiviert werden.") : (isXML) ?
                 International.getString("Aktuelles Projekt auf efaCloud umstellen.") + "\n" : International
-                .getMessage("Server '{URL}'. Aktueller Status: {state}",
-                        Daten.project.getProjectRecord().getEfaCloudURL(), queueState) + "\n";
+                .getMessage("Server '{URL}'. Aktueller Status: {state}{serverinfo}",
+                        Daten.project.getProjectRecord().getEfaCloudURL(), queueState, serverInfo) + "\n";
         category = "%01%" + International.getString("efaCloud Optionen");
         guiItems.add(item = new ItemTypeLabel(ACTIVATION_INFO, IItemType.TYPE_PUBLIC, category, advice));
         item.setPadding(0, 0, 20, 20);
@@ -200,14 +203,16 @@ public class EfaCloudConfigDialog extends BaseTabbedDialog implements IItemListe
                 else {
                     advice = International
                             .getMessage("Im aktuellen Status {state} gibt es keine efaCloud Option.", queueState);
-                    guiItems.add(item = new ItemTypeLabel(ACTIVATION_INFO, IItemType.TYPE_PUBLIC, category, advice));
+                    guiItems.add(item = new ItemTypeLabel(ACTIVATION_INFO, IItemType.TYPE_PUBLIC, category, advice
+                            + serverInfo));
                     item.setPadding(0, 0, 20, 20);
                     item.setFieldGrid(2, GridBagConstraints.NORTH, GridBagConstraints.NONE);
                 }
             } else {
                 advice = International
                         .getMessage("Im aktuellen Status {state} gibt es keine efaCloud Option.", queueState);
-                guiItems.add(item = new ItemTypeLabel(ACTIVATION_INFO, IItemType.TYPE_PUBLIC, category, advice));
+                guiItems.add(item = new ItemTypeLabel(ACTIVATION_INFO, IItemType.TYPE_PUBLIC, category, advice
+                        + serverInfo));
                 item.setPadding(0, 0, 20, 20);
                 item.setFieldGrid(2, GridBagConstraints.NORTH, GridBagConstraints.NONE);
             }

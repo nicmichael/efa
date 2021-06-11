@@ -199,7 +199,8 @@ public class Transaction {
                 .append(txq.credentials);
         for (Transaction tx : txs) {
             tx.appendTxPostString(txContainer);
-            tx.logMessage("SEND");
+            txq.logApiMessage("#" + tx.ID + ", " + tx.type + " [" + tx.tablename + "]: Transaction sent. Record length: "
+                    + ((tx.record == null) ? "null" : "" + tx.record.length), 0);
             txContainer.append(MESSAGE_SEPARATOR_STRING);
         }
         String txContainerStr = txContainer.toString();
@@ -248,27 +249,6 @@ public class Transaction {
             this.record = extendedRecord;
         } else
             this.record = record;
-    }
-
-    /**
-     * Append a log message to the synch log.
-     *
-     * @param action the action triggering the log activity
-     */
-    void logMessage(String action) {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String transactionString = "#" + ID + ", " + type + " (record length: " +
-                ((record == null) ? "null" : "" + record.length) + ")";
-        String dateString = format.format(new Date()) + " [" + tablename + "]: " + action + " ";
-        // truncate log files,
-        File f = new File(TxRequestQueue.logFilePaths.get("synch and activities"));
-        if ((f.length() > 200000) &&
-                (f.renameTo(new File(TxRequestQueue.logFilePaths.get("synch and activities") + ".previous"))))
-            TextResource.writeContents(TxRequestQueue.logFilePaths.get("synch and activities"),
-                    dateString + transactionString, false);
-        else
-            TextResource.writeContents(TxRequestQueue.logFilePaths.get("synch and activities"),
-                    dateString + transactionString, true);
     }
 
     /**
