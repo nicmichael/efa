@@ -16,7 +16,6 @@ import de.nmichael.efa.data.storage.IDataAccess;
 import de.nmichael.efa.data.storage.MetaData;
 import de.nmichael.efa.data.storage.StorageObject;
 import de.nmichael.efa.util.International;
-import de.nmichael.efa.util.Logger;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -191,12 +190,15 @@ public class TableBuilder {
             "$allTables;CHANGECOUNT;DATA_LONGINT;ChangeCount",  //
             "$allTables;LASTMODIFIED;DATA_LONGINT;LastModified"};
 
+    public static final int allowedMismatchesDefault = 3;
     // the number of different data field when updating the record server to client. To avoid deletion of records by
-    // key mismatch or other severe mistakes. Default is 5. THis here are the exceptions.
-    public static HashMap<String, Integer> allowedMismatches = new HashMap<String, Integer>();
+    // key mismatch or other severe mistakes. Default is <= 3, not counting ChangeCount, LastModified, and LastModification.
+    // This here are the exceptions.
+    public static final HashMap<String, Integer> allowedMismatches = new HashMap<String, Integer>();
     static {
-        allowedMismatches.put("efa2boatstatus", 8);
-        allowedMismatches.put("efa2logbook", 6);
+        allowedMismatches.put("efa2boatstatus", 6);
+        allowedMismatches.put("efa2logbook", 4);
+        allowedMismatches.put("efa2fahrtenabzeichen", 4);
     }
     public static final String fixid_allowed = "efa2logbook efa2messages efa2boatdamages efa2boatreservations";
 
@@ -301,6 +303,27 @@ public class TableBuilder {
     }
 
     /**
+     * Return an information on the current data base structure as is expected at the server side.
+     * @return information on the current data base structure
+     */
+    public String getAuditInformation() {
+        StringBuilder auditInformation = new StringBuilder("TableBuilder audit information:\n");
+        auditInformation.append("-------------------------------\n");
+        for (String storageObjectTypeName : this.storageObjectTypes.keySet()) {
+            StorageObjectTypeDefinition rtd = this.storageObjectTypes.get(storageObjectTypeName);
+            auditInformation.append("Table: ").append(storageObjectTypeName).append(" (").append(rtd.recordSize)
+                    .append(")\n");
+            for (String recordFieldName : rtd.fields.keySet()) {
+                RecordFieldDefinition rfd = rtd.fields.get(recordFieldName);
+                auditInformation.append(recordFieldName).append(" (").append(datatypeStrings.get(rfd.datatypeIndex))
+                        .append(":").append(rfd.recordfieldsize).append("), ");
+            }
+            auditInformation.append("\n");
+        }
+        auditInformation.append("\n").append("\n");
+        return auditInformation.toString();
+    }
+    /**
      * Add a storage object type's metadata to the TableBuilder structure. Will do nothing, if the data storage object
      * type already exists.
      *
@@ -317,16 +340,13 @@ public class TableBuilder {
         StorageObjectTypeDefinition rtd = new StorageObjectTypeDefinition(storageObjectType,
                 (EfaCloudStorage) persistence.data());
         storageObjectTypes.put(storageObjectType, rtd);
-        // the maximum number of allowed field mismatches in case of synchronization. If exceeded an error is
-        // issued instead of doing the update. ChangeCount and LastModified are always different, so three
-        // other values may differ as default. Boat status and logbook have more, see definition above.
-        allowedMismatches.put(storageObjectType, 5);
         for (int i = 0; i < metaData.getFields().length; i++) {
             RecordFieldDefinition rfd = new RecordFieldDefinition(storageObjectType, metaData.getFields()[i],
                     metaData.getFieldType(i));
             checkSpecialField(rfd);
             rfd.column = metaData.getFieldIndex(metaData.getFields()[i]);
             rtd.fields.put(rfd.fieldName, rfd);
+            rtd.recordSize = rtd.recordSize + rfd.recordfieldsize;
         }
         // add LastModification field for all tables to declare data record deletion to the client
         RecordFieldDefinition rfd = new RecordFieldDefinition(storageObjectType, "LastModification",
@@ -334,19 +354,22 @@ public class TableBuilder {
         rfd.maxLength = 8;
         rfd.column = metaData.getFields().length;
         rtd.fields.put(rfd.fieldName, rfd);
+        rtd.recordSize = rtd.recordSize + rfd.recordfieldsize;
         // add ClientSideKey field for tables which allow for key correction
         if (fixid_allowed.contains(storageObjectType.toLowerCase())) {
             rfd = new RecordFieldDefinition(storageObjectType, "ClientSideKey", IDataAccess.DATA_STRING);
             rfd.maxLength = 64;
             rfd.column = metaData.getFields().length + 1;
             rtd.fields.put(rfd.fieldName, rfd);
+            rtd.recordSize = rtd.recordSize + rfd.recordfieldsize;
         }
         // add logbookname for logbook table, the server
-        if (storageObjectType.toLowerCase().equalsIgnoreCase("efa2logbook")) {
+        if (storageObjectType.equalsIgnoreCase("efa2logbook")) {
             rfd = new RecordFieldDefinition(storageObjectType, "Logbookname", IDataAccess.DATA_STRING);
             rfd.maxLength = 256;
             rfd.column = metaData.getFields().length + 2;
             rtd.fields.put(rfd.fieldName, rfd);
+            rtd.recordSize = rtd.recordSize + rfd.recordfieldsize;
         }
 
         rtd.versionized = metaData.isVersionized();
@@ -458,6 +481,24 @@ public class TableBuilder {
     }
 
     /**
+     * Special purpose hack: adjust the record field size of the MemberIdList in efa2groups, in order to allow for
+     * larger groups.
+     *
+     * @param newGroupMemberIdListSize new record field size (default is the default for DATA_LIST_UUID)
+     */
+    public void adjustGroupMemberIdListSize(int newGroupMemberIdListSize) {
+        StorageObjectTypeDefinition rtd = storageObjectTypes.get("efa2groups");
+        if (rtd != null) {
+            RecordFieldDefinition rfd = rtd.fields.get("MemberIdList");
+            if (rfd != null) {
+                rtd.recordSize = rtd.recordSize - rfd.recordfieldsize + newGroupMemberIdListSize;
+                rfd.maxLength = newGroupMemberIdListSize;
+                rfd.recordfieldsize = newGroupMemberIdListSize;
+            }
+        }
+    }
+
+    /**
      * Small inner container holding a storage object type definition to provide structure
      */
     private static class StorageObjectTypeDefinition {
@@ -465,6 +506,7 @@ public class TableBuilder {
         final EfaCloudStorage persistence;
         final boolean isProjectTable;
         boolean versionized;
+        int recordSize = 0;
         HashMap<String, RecordFieldDefinition> fields = new HashMap<String, RecordFieldDefinition>();
         ArrayList<String> keys = new ArrayList<String>();
         ArrayList<String> uniques = new ArrayList<String>();
@@ -509,18 +551,19 @@ public class TableBuilder {
         int datatypeIndex;   // The Index as used in metaData class
         int column;
         int maxLength;
+        int recordfieldsize;
         boolean isDate;
         String sqlDefinition;
 
         /**
-         * Set properties datatype and sqlDefinition
+         * Set properties datatype and sqlDefinition and determine the field size. Adjust to custom settings.
          *
          * @param datatypeIndex data type index as in metaData to be used
          */
         void setDatatype(int datatypeIndex) {
             this.datatypeIndex = datatypeIndex;
-            maxLength = (datatypeSizes.get(datatypeIndex) == null) ? 0 : (datatypeSizes.get(datatypeIndex) -
-                    2);  // two characters safety margin.
+            maxLength = (datatypeSizes.get(datatypeIndex) == null) ? 0 : datatypeSizes.get(datatypeIndex);
+            recordfieldsize = (datatypeIndex == IDataAccess.DATA_TEXT) ? 8 : maxLength;
             sqlDefinition = datatypeDefaults.get(datatypeIndex);
             isDate = datatypeIndex == IDataAccess.DATA_DATE;
         }
@@ -537,8 +580,9 @@ public class TableBuilder {
             // resolve String representation to integer. Reverse use of the hashmap, because it will only
             // occur during bootstrap a separate static hash map definition makes limited sense. Forward use is in
             // "toString()" function, so more often.
+            String dataType = elements[2];
             for (int i : datatypeStrings.keySet())
-                if (datatypeStrings.get(i).equalsIgnoreCase(elements[2]))
+                if (datatypeStrings.get(i).equalsIgnoreCase(dataType))
                     setDatatype(i);
             fieldName = elements[3];
         }
@@ -554,7 +598,6 @@ public class TableBuilder {
             this.storageObjectType = recordType;
             constantName = field.toUpperCase();
             setDatatype(datatypeIndex);
-            maxLength = (datatypeSizes.get(datatypeIndex) == null) ? 0 : datatypeSizes.get(datatypeIndex);
             fieldName = field;
             sqlDefinition = datatypeDefaults.get(datatypeIndex);
         }

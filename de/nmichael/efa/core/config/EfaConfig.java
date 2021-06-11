@@ -1233,9 +1233,9 @@ public class EfaConfig extends StorageObject implements IItemFactory {
                     IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_DATAACCESS, CATEGORY_DATAREMOTE),
                     "efaOnline Update Interval (sec)"));
 
-            addParameter(dataRemoteEfaCloudSynchIntervalSecs = new ItemTypeLong("DataRemoteEfaCloudSynchIntervalSecs", 24 * 3600, 600, 7 * 24*3600,
-                    IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_DATAACCESS, CATEGORY_DATACLOUD),
-                    "efaCloud Synch Interval (sec)"));
+            addParameter(new ItemTypeLabel("_EfaCloudLabel",
+                    IItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_DATAACCESS, CATEGORY_DATACLOUD),
+                    International.getString("Bitte konfiguriere efaCloud über das Menü Datei > efaCloud.")));
 
         }
     }
