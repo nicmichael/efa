@@ -2,6 +2,16 @@
 <efaOnlineUpdate>
 
     <Version>
+        <VersionID>2.3.0_11</VersionID>
+        <ReleaseDate>19.06.2021</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa230.zip</DownloadUrl>
+        <DownloadSize>4246311</DownloadSize>
+        <Changes lang="de">
+            <ChangeItem>Neu: Wettbewerbsbedingungen fuer LRV-Sommer-Wettbewerb 2021 aktualisiert</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
         <VersionID>2.3.0_10</VersionID>
         <ReleaseDate>10.06.2021</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa230.zip</DownloadUrl>
