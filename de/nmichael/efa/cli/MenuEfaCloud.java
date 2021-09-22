@@ -29,12 +29,14 @@ public class MenuEfaCloud extends MenuBase {
     }
 
     public void printHelpContext() {
-        printUsage(CMD_SYNCH_UPLOAD,  "[none]", "efaCloud upload to server");
+        printUsage(CMD_SYNCH_UPLOAD,  "[only efaBths]", "trigger upload of last 30 days local data changes to server");
+        printUsage(CMD_BACKUP,  "[only efaBths]", "trigger backup at efaCloud server (no local action at all.)");
+        printUsage(CMD_CRONJOBS,  "[only efaBths]", "trigger all daily jobs at efaCloud server.");
     }
 
     private int efaCloudAction(String args, String command) {
         if (!cli.getAdminRecord().isAllowedCreateBackup()) {
-            cli.logerr("You don't have permission to access this function.");
+            cli.logerr("You don't have permission to access this function. Needed is 'isAllowedCreateBackup'");
             return CLI.RC_NO_PERMISSION;
         }
         Vector<String> options = super.getCommandOptions(args);
@@ -44,8 +46,11 @@ public class MenuEfaCloud extends MenuBase {
         }
 
         TxRequestQueue txq = TxRequestQueue.getInstance();
-        if (txq == null)
+        if (txq == null) {
+            cli.logerr(International.getString("efaCloud Kommandos können nicht remote oder per efaCLI " +
+                    "ausgeführt werden, sondern nur als automatische Abläufe in efaBootshaus."));
             return CLI.RC_COMMAND_FAILED;
+        }
 
         if (command.equalsIgnoreCase(CMD_SYNCH_UPLOAD))
             txq.registerStateChangeRequest(TxRequestQueue.RQ_QUEUE_START_SYNCH_UPLOAD);
