@@ -12,6 +12,7 @@ package de.nmichael.efa.data.efacloud;
 
 import de.nmichael.efa.util.Dialog;
 import de.nmichael.efa.util.International;
+import de.nmichael.efa.util.Logger;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -55,17 +56,18 @@ public class TxResponseHandler {
     void handleAuthenticationError(int resultCode) {
         String errorMessage = International.getMessage(
                 "Anmeldung von {username} auf efaCloud Server {efaCloudUrl} fehlgeschlagen.", txq.username, txq.efaCloudUrl) +
-                " " + International.getMessage("Unbekannter Fehlertyp: {resultCode}", resultCode);
+                " " + International.getMessage("Fehler: {resultCode}", resultCode);
         if ((resultCode == 402) || (resultCode == 403)) {
             errorMessage = International
                     .getMessage("Anmeldung von {username} auf efaCloud Server {efaCloudUrl} abgelehnt.", txq.username,
                             txq.efaCloudUrl);
-        } else if (resultCode >= 500) {
-            errorMessage = International.getMessage(
-                    "Transaktion von {username} auf efaCloud Server {efaCloudUrl} führte zu einem Severfehler. Bitte " +
-                            "prüfen sie die Server-Installation.", txq.username, txq.efaCloudUrl);
+        } else if (resultCode == 506) {
+            errorMessage = International
+                    .getMessage("Anmeldung von {username} auf efaCloud Server {efaCloudUrl} fehlgeschlagen.", txq.username, txq.efaCloudUrl) +
+                    " " + International.getString("Fehler bei der Internet-Verbindung oder der Serverkonfiguration.");
         }
         txq.logApiMessage(errorMessage, 1);
+        Logger.log(Logger.INFO, Logger.MSG_EFACLOUDSYNCH_ERROR, errorMessage);
     }
 
     /**

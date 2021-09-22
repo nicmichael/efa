@@ -203,13 +203,10 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
     // poll timer, internet access manager and connection settings
     private Timer queueTimer;
     private long pollsCount;                   // a counter incrementing on each queue poll cycle
-    private long watchdogPreviousPollsCount;   // the pollsCount value at the previous watchdog trigger event.
     private final InternetAccessManager iam;
     String efaCloudUrl;
     String username;
-    private final String storageLocation;
     String credentials;
-    private final String password;
     private Container efaGUIroot;
 
     // Statistics buffer
@@ -331,6 +328,10 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
      */
     private void setState(int stateToSet) {
         state = stateToSet;
+        txq.synchControl.logSynchMessage(
+                International
+                        .getMessage("Statuswechsel der Serverkommunikation zu {Status}", QUEUE_STATE.get(stateToSet)),
+                "@all", null, true);
     }
 
     /**
@@ -434,7 +435,6 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
 
         // initialize log paths and cleanse files.
         SimpleDateFormat formatFull = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        SimpleDateFormat formatDay = new SimpleDateFormat("yyyy-MM-dd");
         long now = System.currentTimeMillis();
         for (String logFileName : logFileNames.keySet()) {
             String logFilePath = efacloudLogDir + File.separator + logFileNames.get(logFileName);
@@ -555,8 +555,6 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
     private TxRequestQueue(String efaCloudUrl, String username, String password, String storageLocation) {
 
         this.username = username;
-        this.password = password;
-        this.storageLocation = storageLocation;
         // combine the credentials to a transaction container prefix.
         this.credentials =
                 username + TX_REQ_DELIMITER + CsvCodec.encodeElement(password, TX_REQ_DELIMITER, TX_QUOTATION) +
@@ -569,7 +567,7 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
         // wait for the system time to settle. When running on a raspberryPI this may occur after
         // program launch, even up to two - three minutes later. Before this isn't completed, do not start
         // any timer.
-        String logFilePath = efacloudLogDir + File.separator + logFileNames.get(logFileNames.get(0));
+        String logFilePath = efacloudLogDir + File.separator + logFileNames.get("synch and activities");
         waitForTimeToSettle(logFilePath);
 
         // initialize the internet access manager. This shall be the last action in the constructor.
@@ -588,7 +586,6 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
     private void startTimers() {
         // start queue timer and watchdog
         pollsCount = 0L;
-        watchdogPreviousPollsCount = 0L;
         try {
             startQueueTimer();
             registerStateChangeRequest(RQ_QUEUE_AUTHENTICATE);
@@ -613,7 +610,7 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
      */
     private void suspendQueue(int dropAction) {
         txq.setState((dropAction == ACTION_TX_STOP) ? QUEUE_IS_STOPPED : QUEUE_IS_PAUSED);
-        String message = (dropAction == ACTION_TX_STOP) ? "stopped" : "paused";
+        String message = (dropAction == ACTION_TX_STOP) ? "stopped" : "paused/disconnected";
         shiftTx(TX_PENDING_QUEUE_INDEX, TX_DROPPED_QUEUE_INDEX, dropAction, 0, 0);
         shiftTx(TX_SYNCH_QUEUE_INDEX, TX_DROPPED_QUEUE_INDEX, dropAction, 0, 0);
         shiftTx(TX_SYNCH_QUEUE_INDEX, TX_PENDING_QUEUE_INDEX, ACTION_TX_MOVE, 0, 0);
@@ -751,7 +748,7 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
                                     (currentState == QUEUE_IS_AUTHENTICATING) ||
                                     (currentState == QUEUE_IS_SYNCHRONIZING)) {
                                 stateTransitionRequests.remove(0);
-                                suspendQueue(RQ_QUEUE_PAUSE);
+                                suspendQueue(ACTION_TX_PAUSE);
                                 showStatusAtGUI();
                             } else
                                 dropInvalidStateChangeRequest();
@@ -849,14 +846,15 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
                             checkForAndHandleTimeout();
                             // handle new pending requests, if currently no request is busy
                         else if (queues.get(TX_PENDING_QUEUE_INDEX).size() > 0) {
+                            boolean pendingHeadIsNop = (queues.get(TX_PENDING_QUEUE_INDEX).firstElement().type ==
+                                    Transaction.TX_TYPE.NOP);
                             // the first NOP transaction shall always be alone in a container
                             // to ensure it is retried, until the connections is established.
-                            int shiftSize = (queues.get(TX_PENDING_QUEUE_INDEX).firstElement().type ==
-                                    Transaction.TX_TYPE.NOP) ? 1 : PENDING_QUEUE_MAX_SHIFT_SIZE;
+                            int shiftSize = (pendingHeadIsNop) ? 1 : PENDING_QUEUE_MAX_SHIFT_SIZE;
                             shiftTx(TX_PENDING_QUEUE_INDEX, TX_BUSY_QUEUE_INDEX, ACTION_TX_SEND, 0, shiftSize);
                             // Remove te connection loss indication when the busy queue was cleared.
                             if (txq.getState() == QUEUE_IS_DISCONNECTED)
-                                txq.setState(QUEUE_IS_WORKING);
+                                txq.setState((pendingHeadIsNop) ? QUEUE_IS_AUTHENTICATING : QUEUE_IS_WORKING);
                             // read the transactions to use them
                             TaskManager.RequestMessage rq = Transaction
                                     .createIamRequest(queues.get(TX_BUSY_QUEUE_INDEX));
@@ -1195,35 +1193,6 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
             logApiMessage(International.getMessage(
                     "Fehler beim Schreiben einer Transaktion für Queue {Typ} auf den permanenten Speicher. " +
                             "Transaktion: {Transaktion}", txFilePath[queueIndex], qString), 1);
-    }
-
-    /**
-     * <p>Read the permanently stored transactions from the storage. The respective queue will be
-     * cleared and filled with the file's contents. The file's content will stay on the storage after reading .</p><p>
-     * YOU MUST OBTAIN THE QUEUE LOCK BEFORE AND RELEASE IT AFTERWARDS, because this procedure does not manipulate the
-     * locks.</p>
-     *
-     * @param queueIndex queue index of the queue to be read.
-     */
-    private void readQueueFromFile(int queueIndex) {
-        Vector<Transaction> qr = queues.get(queueIndex);
-        // clear queue first
-        qr.clear();
-        // read file
-        File txFile = new File(txFilePath[queueIndex]);
-        if (!txFile.exists())
-            return;
-        String txFileContents = TextResource.getContents(txFile, "UTF-8");
-        if (txFileContents == null || txFileContents.length() == 0)
-            return;
-        // parse and add transactions
-        String[] txsRead = txFileContents.split(Transaction.MESSAGE_SEPARATOR_STRING_REGEX);
-        for (String txRead : txsRead)
-            if (txRead.length() > 1) {
-                Transaction tx = Transaction.parseTxFullString(txRead);
-                if (tx != null)
-                    queues.get(queueIndex).add(tx);
-            }
     }
 
     /**

@@ -76,7 +76,7 @@ class SynchControl {
      * @param logMessage     the message to be written
      * @param tablename      the name of the affected table
      * @param dataKey        the datakey of the affected record
-     * @param logStateChange set true to append the log to the stae change log rather than the synch log
+     * @param logStateChange set true to start entry with STATECHANGE rather than SYNCH
      */
     void logSynchMessage(String logMessage, String tablename, DataKey dataKey, boolean logStateChange) {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
