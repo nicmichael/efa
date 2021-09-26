@@ -13,6 +13,7 @@ package de.nmichael.efa.data.efacloud;
 import de.nmichael.efa.Daten;
 import de.nmichael.efa.util.Dialog;
 import de.nmichael.efa.util.International;
+import de.nmichael.efa.util.Logger;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -55,12 +56,20 @@ public class TxResponseHandler {
      */
     void handleAuthenticationError(int resultCode) {
         String errorMessage = International.getMessage(
-                "Anmeldung von {username} auf efaCloud Server {efaCloudUrl} fehlgeschlagen.\nFehlermeldung: {errmsg}",
-                txq.username, txq.efaCloudUrl, resultCode + ": " + Transaction.TX_RESULT_CODES.get(resultCode));
-        Dialog.error(errorMessage);
-        txq.registerStateChangeRequest(TxRequestQueue.RQ_QUEUE_DEACTIVATE);
+                "Anmeldung von {username} auf efaCloud Server {efaCloudUrl} fehlgeschlagen.", txq.username, txq.efaCloudUrl) +
+                " " + International.getMessage("Fehler: {resultCode}", resultCode);
+        if ((resultCode == 402) || (resultCode == 403)) {
+            errorMessage = International
+                    .getMessage("Anmeldung von {username} auf efaCloud Server {efaCloudUrl} abgelehnt.", txq.username,
+                            txq.efaCloudUrl);
+        } else if (resultCode == 506) {
+            errorMessage = International
+                    .getMessage("Anmeldung von {username} auf efaCloud Server {efaCloudUrl} fehlgeschlagen.", txq.username, txq.efaCloudUrl) +
+                    " " + International.getString("Fehler bei der Internet-Verbindung oder der Serverkonfiguration.");
+        }
         txq.saveAuditInformation();
         txq.logApiMessage(errorMessage, 1);
+        Logger.log(Logger.INFO, Logger.MSG_EFACLOUDSYNCH_ERROR, errorMessage);
         txq.serverWelcomeMessage = errorMessage;
     }
 
@@ -159,8 +168,6 @@ public class TxResponseHandler {
                 txq.shiftTx(TX_BUSY_QUEUE_INDEX, TX_BUSY_QUEUE_INDEX, TxRequestQueue.ACTION_TX_RETRY, tx.ID, 1);
                 break;
         }
-        if (txq.getState() == TxRequestQueue.QUEUE_IS_AUTHENTICATING)
-            handleAuthenticationError(tx.getResultCode());
     }
 
     /**
