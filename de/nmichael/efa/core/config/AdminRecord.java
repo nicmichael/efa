@@ -385,6 +385,37 @@ public class AdminRecord extends DataRecord implements IItemListener {
         return getBool(EXECCOMMAND);
     }
 
+    public void mapEfaCloudWorkflowsAndConcessions(int workflows, int concessions, String role) {
+        HashMap<String, Integer> roleToWorkflow = new HashMap<String, Integer>();
+        if (role.equalsIgnoreCase("board")) {
+            workflows = workflows | 25187808;   // some selected
+            concessions = concessions | 7;      // only for messages to admin
+        }
+        else
+            if (role.equalsIgnoreCase("admin")) {
+                workflows = workflows | 134217727;  // just all
+                concessions = concessions | 63;     // just all
+            }
+        String[] workflowNames = new String[] { "EditAdmins", "ChangePassword", "AdministerProjectLogbook",
+                "AdministerProjectClubwork", "EditLogbook", "EditBoats", "EditBoatStatus", "EditBoatReservation",
+                "EditBoatDamages", "EditPersons", "EditClubwork", "EditGroups", "EditCrews", "EditFahrtenabzeichen",
+                "EditDestinations", "AdvancedEdit", "Configuration", "EditStatistics", "SyncKanuEfb",
+                "RemoteAccess", "ShowLogfile", "ExitEfa", "LockEfa", "Backup", "Restore", "UpdateEfa", "ExecCommand" };
+        int flag = 1;
+        for (String workflowName : workflowNames) {
+            setBool(workflowName, ((flag & workflows) > 0));
+            flag = flag * 2;
+        }
+        String[] concessionNames = new String[] {
+                "MsgReadAdmin", "MsgMarkReadAdmin", "MsgAutoMarkReadAdmin", "MsgReadBoatMaintenance",
+                "MsgMarkReadBoatMaintenance", "MsgAutoMarkReadBoatMaintenance" };
+        flag = 1;
+        for (String concessionName : concessionNames) {
+            setBool(concessionName, ((flag & concessions) > 0));
+            flag = flag * 2;
+        }
+    }
+
     public String[] getQualifiedNameFields() {
         return new String[] { NAME };
     }

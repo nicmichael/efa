@@ -39,9 +39,9 @@ public class TxResponseHandler {
      */
     void logMessage(Transaction tx) {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String transactionString = "#" + tx.ID + ", " + tx.type + ": " + tx.getResultCode() + " - " +
+        String transactionString = tx.type + "_RESP [" + tx.tablename + "]: " + tx.getResultCode() + " - " +
                 Transaction.TX_RESULT_CODES.get(tx.getResultCode());
-        String dateString = format.format(new Date()) + " [" + tx.tablename + "]: RECEIVE ";
+        String dateString = format.format(new Date()) + " INFO tx" + tx.ID + ", ";
         TextResource
                 .writeContents(TxRequestQueue.logFilePaths.get("synch and activities"), dateString + transactionString,
                         true);
@@ -56,15 +56,18 @@ public class TxResponseHandler {
      */
     void handleAuthenticationError(int resultCode) {
         String errorMessage = International.getMessage(
-                "Anmeldung von {username} auf efaCloud Server {efaCloudUrl} fehlgeschlagen.", txq.username, txq.efaCloudUrl) +
+                "Anmeldung von {username} auf efaCloud Server {efaCloudUrl} fehlgeschlagen.",
+                txq.getAdminUserID(), txq.efaCloudUrl) +
                 " " + International.getMessage("Fehler: {resultCode}", resultCode);
         if ((resultCode == 402) || (resultCode == 403)) {
             errorMessage = International
-                    .getMessage("Anmeldung von {username} auf efaCloud Server {efaCloudUrl} abgelehnt.", txq.username,
+                    .getMessage("Anmeldung von {username} auf efaCloud Server {efaCloudUrl} abgelehnt.",
+                            txq.getAdminUserID(),
                             txq.efaCloudUrl);
         } else if (resultCode == 506) {
             errorMessage = International
-                    .getMessage("Anmeldung von {username} auf efaCloud Server {efaCloudUrl} fehlgeschlagen.", txq.username, txq.efaCloudUrl) +
+                    .getMessage("Anmeldung von {username} auf efaCloud Server {efaCloudUrl} fehlgeschlagen.",
+                            txq.getAdminUserID(), txq.efaCloudUrl) +
                     " " + International.getString("Fehler bei der Internet-Verbindung oder der Serverkonfiguration.");
         }
         txq.saveAuditInformation();
@@ -416,19 +419,22 @@ public class TxResponseHandler {
                     // StandardCharsets.UTF_8);
                     txContainer = new String(Base64.decode(txContainerBase64), "UTF-8");  // Java 6
                 } catch (Exception ignored) {
-                    txContainer = TxRequestQueue.EFA_CLOUD_VERSION + ";0;503;" + Transaction.TX_RESULT_CODES.get(503) +
+                    txContainer = TxRequestQueue.efa_cloud_used_api_version + ";0;503;" + Transaction.TX_RESULT_CODES.get(503) +
                             TxRequestQueue.TX_RESP_DELIMITER;
                 }
 
                 // parse the transaction response container header
                 String[] headerAndContent = txContainer.split(TxRequestQueue.TX_RESP_DELIMITER, 5);
-                // TODO: handling of cID and version information in transaction response container.
                 int cID = 0;
                 int version = 0;
                 int cresult_code = 0;
                 try {
                     cID = Integer.parseInt(headerAndContent[0]);
                     version = Integer.parseInt(headerAndContent[1]);
+                    // adjust API protocol version to the common maximum
+                    if ((version > TxRequestQueue.efa_cloud_used_api_version) &&
+                            (version <= TxRequestQueue.EFA_CLOUD_MAX_API_VERSION))
+                        TxRequestQueue.efa_cloud_used_api_version = version;
                     cresult_code = Integer.parseInt(headerAndContent[2]);
                 } catch (NumberFormatException ignored) {
                 }

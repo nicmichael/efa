@@ -48,7 +48,7 @@ public class EfaMenuButton {
 
     public final static String MENU_ADMINISTRATION      = "ADMINISTRATION";
     public final static String BUTTON_LOGBOOK           = "LOGBOOK";
-    public final static String BUTTON_CLUBWORKBOOK = "CLUBWORKBOOK";
+    public final static String BUTTON_CLUBWORKBOOK      = "CLUBWORKBOOK";
     public final static String BUTTON_LOGBOOKLIST       = "LOGBOOKLIST";
     public final static String BUTTON_SESSIONGROUPS     = "SESSIONGROUPS";
     public final static String BUTTON_BOATS             = "BOATS";

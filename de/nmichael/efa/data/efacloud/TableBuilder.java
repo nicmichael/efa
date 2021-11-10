@@ -241,13 +241,13 @@ public class TableBuilder {
             return;
         // handle the special constant name values
         StorageObjectTypeDefinition rtd = storageObjectTypes.get(rfd.storageObjectType);
-        if (sprfd.constantName.equalsIgnoreCase("$AUTOINCREMENT"))
+        if (sprfd.constantName.equalsIgnoreCase("$AUTOINCREMENT")) {
             rtd.autoincrements.add(rfd.fieldName);
-        else if (sprfd.constantName.equalsIgnoreCase("$UNIQUE"))
+            rfd.isAutoincrement = "x";
+        } else if (sprfd.constantName.equalsIgnoreCase("$UNIQUE")) {
             rtd.uniques.add(rfd.fieldName);
-        else if (sprfd.constantName.equalsIgnoreCase("$KEY"))
-            rtd.keys.add(rfd.fieldName);
-        else if (!sprfd.constantName.startsWith("$")) {
+            rfd.isUnique = "x";
+        } else if (!sprfd.constantName.startsWith("$")) {
             if (!sprfd.constantName.equalsIgnoreCase(rfd.fieldName))
                 rfd.constantName = sprfd.constantName;
             // handle the special data type values.
@@ -271,7 +271,8 @@ public class TableBuilder {
         if (rtd == null)
             return value;
         RecordFieldDefinition rtf = rtd.fields.get(fieldname);
-        if ((rtf == null) && !fieldname.equalsIgnoreCase("Logbookname")) {
+        if ((rtf == null) && !fieldname.equalsIgnoreCase("Logbookname")
+                && !fieldname.equalsIgnoreCase("Clubworkbookname")) {
             TxRequestQueue.getInstance().logApiMessage(
                     International.getString("Warnung") + " - " +
                     International.getMessage("Nicht definierter Feldname {fieldname} " +
@@ -340,10 +341,14 @@ public class TableBuilder {
         StorageObjectTypeDefinition rtd = new StorageObjectTypeDefinition(storageObjectType,
                 (EfaCloudStorage) persistence.data());
         storageObjectTypes.put(storageObjectType, rtd);
+        String[] keyFields = metaData.getKeyFields();
         for (int i = 0; i < metaData.getFields().length; i++) {
             RecordFieldDefinition rfd = new RecordFieldDefinition(storageObjectType, metaData.getFields()[i],
                     metaData.getFieldType(i));
             checkSpecialField(rfd);
+            for (String keyField : keyFields)
+                if (metaData.getFields()[i].equalsIgnoreCase(keyField))
+                    rfd.isKey = "x";
             rfd.column = metaData.getFieldIndex(metaData.getFields()[i]);
             rtd.fields.put(rfd.fieldName, rfd);
             rtd.recordSize = rtd.recordSize + rfd.recordfieldsize;
@@ -355,7 +360,7 @@ public class TableBuilder {
         rfd.column = metaData.getFields().length;
         rtd.fields.put(rfd.fieldName, rfd);
         rtd.recordSize = rtd.recordSize + rfd.recordfieldsize;
-        // add ClientSideKey field for tables which allow for key correction
+        // add ClientSideKey field at server side for tables which allow for key correction
         if (fixid_allowed.contains(storageObjectType.toLowerCase())) {
             rfd = new RecordFieldDefinition(storageObjectType, "ClientSideKey", IDataAccess.DATA_STRING);
             rfd.maxLength = 64;
@@ -363,7 +368,7 @@ public class TableBuilder {
             rtd.fields.put(rfd.fieldName, rfd);
             rtd.recordSize = rtd.recordSize + rfd.recordfieldsize;
         }
-        // add logbookname for logbook table, the server
+        // add logbookname for logbook table on the server
         if (storageObjectType.equalsIgnoreCase("efa2logbook")) {
             rfd = new RecordFieldDefinition(storageObjectType, "Logbookname", IDataAccess.DATA_STRING);
             rfd.maxLength = 256;
@@ -371,6 +376,15 @@ public class TableBuilder {
             rtd.fields.put(rfd.fieldName, rfd);
             rtd.recordSize = rtd.recordSize + rfd.recordfieldsize;
         }
+        // add clubworkbookname for clubwork table on the server
+        if (storageObjectType.equalsIgnoreCase("efa2clubwork")) {
+            rfd = new RecordFieldDefinition(storageObjectType, "Clubworkbookname", IDataAccess.DATA_STRING);
+            rfd.maxLength = 256;
+            rfd.column = metaData.getFields().length + 2;
+            rtd.fields.put(rfd.fieldName, rfd);
+            rtd.recordSize = rtd.recordSize + rfd.recordfieldsize;
+        }
+        rtd.tableDefinitionRecord(false);
 
         rtd.versionized = metaData.isVersionized();
     }
@@ -458,7 +472,7 @@ public class TableBuilder {
         TxRequestQueue txq = TxRequestQueue.getInstance();
         // create table
         txq.appendTransaction(TxRequestQueue.TX_SYNCH_QUEUE_INDEX, Transaction.TX_TYPE.CREATETABLE, tablename,
-                rtd.tableDefinitionRecord());
+                rtd.tableDefinitionRecord(false));
         // add uniques
         if (rtd.uniques.size() > 0)
             for (String unique : rtd.uniques) {
@@ -520,22 +534,34 @@ public class TableBuilder {
 
         /**
          * Return the full table definition record, consisting of field;value - Strings
-         *
+         * @param storeToRamdisk
+         *          set true to save the definition to "/ramdisk". Only used during development.
          * @return full table definition record
          */
-        String[] tableDefinitionRecord() {
+        String[] tableDefinitionRecord(boolean storeToRamdisk) {
             String[] tdr = new String[fields.size()];
-            //# Use the //# commented lines to create a set of SQL table definitions for documentation or testing
-            //# StringBuilder sqlCmd = new StringBuilder();
-            //# sqlCmd.append("CREATE TABLE `").append(persistence.getStorageObjectType()).append("` (\n");
+            StringBuilder tDef = new StringBuilder();
+            tDef.append("storageObjectType;fieldName;constantName;datatypeIndex;dataType;column;maxLength;recordfieldsize;unique;key;autoincrement\n");
             for (String fieldname : fields.keySet()) {
                 RecordFieldDefinition rfd = fields.get(fieldname);
                 // neither the field name nor the sqlDefinition need csv encoding.
-                tdr[rfd.column] = rfd.fieldName + ";" + rfd.sqlDefinition;
-                //# sqlCmd.append("`").append(rfd.fieldName).append("` ").append(rfd.sqlDefinition).append(",\n");
+                if (tdr.length > rfd.column)
+                    tdr[rfd.column] = rfd.fieldName + ";" + rfd.sqlDefinition;
+                tDef.append(rfd.storageObjectType).append(";")
+                        .append(rfd.fieldName).append(";")
+                        .append(rfd.constantName).append(";")
+                        .append(rfd.datatypeIndex).append(";")
+                        .append(datatypeStrings.get(rfd.datatypeIndex)).append(";")
+                        .append(rfd.column).append(";")
+                        .append(rfd.maxLength).append(";")
+                        .append(rfd.recordfieldsize).append(";")
+                        .append(rfd.isUnique).append(";")
+                        .append(rfd.isKey).append(";")
+                        .append(rfd.isAutoincrement).append("\n");
             }
-            //# String sqlcmd = sqlCmd.substring(0, sqlCmd.length() - 2) + "\n);";
-            //# TextResource.writeContents("/ramdisk/" + persistence.getStorageObjectType() + ".sql", sqlcmd, false);
+            if (storeToRamdisk)
+                TextResource.writeContents("/ramdisk/" + persistence.getStorageObjectType() + ".tDef.csv",
+                        tDef.toString(), false); //#
             return tdr;
         }
 
@@ -554,6 +580,9 @@ public class TableBuilder {
         int recordfieldsize;
         boolean isDate;
         String sqlDefinition;
+        String isUnique = "";
+        String isKey = "";
+        String isAutoincrement = "";
 
         /**
          * Set properties datatype and sqlDefinition and determine the field size. Adjust to custom settings.
