@@ -11,9 +11,7 @@
 package de.nmichael.efa.data.efacloud;
 
 import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLConnection;
+import java.net.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -80,6 +78,69 @@ public class InternetAccessManager implements TaskManager.RequestDispatcherIF {
 
     //private boolean debug = false;
     //private StringBuilder debugLog = new StringBuilder();
+
+    /**
+     * Simple text reader, see https://stackoverflow.com/questions/4328711/read-url-to-string-in-few-lines-of-java-code.
+     * This is synchronous, i. e. it pauses the program execution until the response is available.
+     * So be careful when using it.
+     *
+     * @param url url to read text from
+     * @param postParamaters parameters to be posted. Set "" to create get request.
+     * @return the text retrieved. On errors: an error message preceded by "#ERROR: "
+     */
+    public static String getText(String url, String postParamaters) {
+        URL website;
+        try {
+            website = new URL(url);
+        } catch (MalformedURLException mfe) {
+            return "#ERROR: " + mfe;
+        }
+        HttpURLConnection connection;
+
+        try {
+            connection = (HttpURLConnection) website.openConnection();
+        } catch (IOException ioe) {
+            return "#ERROR: " + ioe;
+        }
+        if (! postParamaters.isEmpty()) {
+            try {
+                connection.setRequestMethod("POST");
+            } catch (ProtocolException pe) {
+                return "#ERROR: " + pe;
+            }
+            connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+            connection.setRequestProperty("Content-Length", "" + postParamaters.getBytes().length);
+            connection.setRequestProperty("Content-Language", "en-US");
+            connection.setUseCaches(false);
+            connection.setDoInput(true);
+            connection.setDoOutput(true);
+            // Send request
+            DataOutputStream wr;
+            try {
+                wr = new DataOutputStream(connection.getOutputStream());
+                wr.writeBytes(postParamaters);
+                wr.flush();
+                wr.close();
+            } catch (IOException ioe) {
+                return "#ERROR: " + ioe;
+            }
+        }
+
+        BufferedReader in;
+        StringBuilder response = new StringBuilder();;
+        try {
+            in = new BufferedReader(
+                    new InputStreamReader(
+                            connection.getInputStream()));
+            String inputLine;
+            while ((inputLine = in.readLine()) != null)
+                response.append(inputLine);
+            in.close();
+        } catch (IOException ioe) {
+            return "#ERROR: " + ioe;
+        }
+        return response.toString();
+    }
 
     /**
      * Constructor. Instantiates the corresponding task manager. Private for singleton usage.

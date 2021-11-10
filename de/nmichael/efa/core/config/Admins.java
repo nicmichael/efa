@@ -11,6 +11,7 @@
 package de.nmichael.efa.core.config;
 
 import de.nmichael.efa.*;
+import de.nmichael.efa.data.efacloud.TxRequestQueue;
 import de.nmichael.efa.ex.*;
 import de.nmichael.efa.util.*;
 import de.nmichael.efa.data.storage.*;
@@ -187,9 +188,40 @@ public class Admins extends StorageObject {
         }
         AdminRecord admin = getAdmin(name);
         if (admin == null || admin.getPassword() == null) {
-            return null;
+            // for efaCloud configurations the user may also be authenticated using the efaCloud server
+            // authentication. On any error admin will be null.
+            if ((Daten.project == null) ||
+                    (Daten.project.getProjectStorageType() != IDataAccess.TYPE_EFA_CLOUD))
+                return null;
+            TxRequestQueue txq = TxRequestQueue.getInstance();
+            if (txq == null)
+                return null;
+            if ((txq.getState() == TxRequestQueue.QUEUE_IS_PAUSED) || (txq.getState() == TxRequestQueue.QUEUE_IS_STOPPED)
+                || (txq.getState() == TxRequestQueue.QUEUE_IS_DISCONNECTED)) {
+                Dialog.error(International.getString(
+                        "Admin login am efaCloud-Server zur Zeit nicht möglich, die Verbindung ist unterbrochen."));
+                return null;
+            }
+            if (TxRequestQueue.efa_cloud_used_api_version < 2) {
+                Dialog.error(International.getString(
+                        "Admin login am efaCloud-Server benötigt dort Version 2.3.1 und höher."));
+                return null;
+            }
+            EfaCloudUsers efaCloudUsers = Daten.project.getEfaCloudUsers(true);
+            EfaCloudUserRecord ecr = efaCloudUsers.login(this, name, password);
+            if (ecr == null)
+                return null;
+            admin = new AdminRecord(this, MetaData.getMetaData(Admins.DATATYPE));
+            admin.setName(ecr.getAdminName());
+            admin.setEmail(ecr.getEmail());
+            admin.mapEfaCloudWorkflowsAndConcessions(ecr.getWorkflows(), ecr.getConcessions(), ecr.getRole());
+            admin.makeSurePermissionsAreCorrect();
+            txq = TxRequestQueue.getInstance();
+            txq.setAdminCredentials(ecr.getAdminName(),Integer.toString(ecr.getEfaCloudUserID()), password);
+            return admin;
         }
         if (admin.getPassword().equals(new DataTypePasswordHashed(password))) {
+            // local admin, do not change the efaCloud credentials.
             return admin;
         }
         return null;

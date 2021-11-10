@@ -82,7 +82,7 @@ class SynchControl {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String dataKeyStr = (dataKey == null) ? "" : " - " + dataKey.toString();
         String info = (logStateChange) ? "STATECHANGE " : "SYNCH ";
-        String dateString = format.format(new Date()) + " [" + tablename + dataKeyStr + "]: " + info + logMessage;
+        String dateString = format.format(new Date()) + " INFO state, [" + tablename + dataKeyStr + "]: " + info + logMessage;
         String path = TxRequestQueue.logFilePaths.get("synch and activities");
         // truncate log files,
         File f = new File(path);
@@ -521,7 +521,7 @@ class SynchControl {
             // all transactions of the synch queue have been processed.
             txq.registerStateChangeRequest(TxRequestQueue.RQ_QUEUE_STOP_SYNCH);
             logSynchMessage(International.getString(
-                    "Transaktionen für Synchronisation vollständig angestoßen. Warte auf Fertigstellung."), "@all",
+                    "Transaktionen für Synchronisation vollständig angestoßen. Warte auf Fertigstellung."), "",
                     null, false);
         }
     }
