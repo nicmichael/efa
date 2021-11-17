@@ -103,7 +103,7 @@ public class CompetitionLRVBerlinSommer extends Competition {
         String[] zb3 = erforderlicheZielfahrten > 3 ? zf[3].getBereicheAsArray() : null;
 
         if (erforderlicheZielfahrten == 2) {
-            // hack for Covid
+            // hack for Covid (2020)
             for (int b0 = 0; b0 < zb0.length; b0++) {
                 for (int b1 = 0; b1 < zb1.length; b1++) {
                     Vector zbs = new Vector();
@@ -120,6 +120,30 @@ public class CompetitionLRVBerlinSommer extends Competition {
             }
             return false;
         }
+
+        if (erforderlicheZielfahrten == 3) {
+            // hack for Covid (2021)
+        for (int b0 = 0; b0 < zb0.length; b0++) {
+                for (int b1 = 0; b1 < zb1.length; b1++) {
+                    for (int b2 = 0; b2 < zb2.length; b2++) {
+                        Vector zbs = new Vector();
+                        if (!zbs.contains(zb0[b0])) {
+                            zbs.add(zb0[b0]);
+                        }
+                        if (!zbs.contains(zb1[b1])) {
+                            zbs.add(zb1[b1]);
+                        }
+                        if (!zbs.contains(zb2[b2])) {
+                            zbs.add(zb2[b2]);
+                        }
+                        if (zbs.size() == erforderlicheZielfahrten) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+
         if (erforderlicheZielfahrten != 4) {
             return false; // not supported
         }
@@ -161,7 +185,8 @@ public class CompetitionLRVBerlinSommer extends Competition {
         }
 
         // special case if we require less than 4 Zielfahrten (hack for Covid)
-        if (erforderlicheZielfahrten < 4) {
+        if (erforderlicheZielfahrten == 2) {
+            // Covid 2020
             Zielfahrt[] zf = new Zielfahrt[erforderlicheZielfahrten];
             for (int i=0; i<size - 1; i++) {
                 for (int j=i+1; j<size; j++) {
@@ -175,6 +200,25 @@ public class CompetitionLRVBerlinSommer extends Competition {
             return null;
         }
 
+        if (erforderlicheZielfahrten == 3) {
+            // Covid 2021
+            Zielfahrt[] zf = new Zielfahrt[erforderlicheZielfahrten];
+            for (int f0 = 0; f0 < size - 2; f0++) {
+                for (int f1 = f0 + 1; f1 < size - 1; f1++) {
+                    for (int f2 = f1 + 1; f2 < size; f2++) {
+                        zf[0] = (Zielfahrt) zielfahrten.get(f0);
+                        zf[1] = (Zielfahrt) zielfahrten.get(f1);
+                        zf[2] = (Zielfahrt) zielfahrten.get(f2);
+                        if (zfErfuellt(zf, erforderlicheZielfahrten)) {
+                            return zf;
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
+        // normal case: 4 Zielfahrten
         Zielfahrt[] zf = new Zielfahrt[4];
 
         for (int f0 = 0; f0 < size - 3; f0++) {
