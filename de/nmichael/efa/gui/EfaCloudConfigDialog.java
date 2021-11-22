@@ -38,7 +38,6 @@ public class EfaCloudConfigDialog extends BaseTabbedDialog implements IItemListe
     private static final String BUTTON_EFACLOUD_START = "BUTTON_EFACLOUD_START";
     private static final String BUTTON_EFACLOUD_SYNCH_UPLOAD = "BUTTON_EFACLOUD_SYNCH_UPLOAD";
     private static final String BUTTON_EFACLOUD_PAUSE = "BUTTON_EFACLOUD_PAUSE";
-    private static final String BUTTON_EFACLOUD_DELETE = "BUTTON_EFACLOUD_DELETE";
 
     private AdminRecord admin;
     private final JDialog parent;
@@ -311,8 +310,6 @@ public class EfaCloudConfigDialog extends BaseTabbedDialog implements IItemListe
             else if (pr.getProjectStorageType() == IDataAccess.TYPE_EFA_CLOUD) {
                 if (itemType.getName().equalsIgnoreCase(BUTTON_EFACLOUD_DEACTIVATE)) {
                     deactivateEfacloud();
-                } else if (itemType.getName().equalsIgnoreCase(BUTTON_EFACLOUD_DELETE)) {
-                    txq.registerStateChangeRequest(TxRequestQueue.RQ_QUEUE_START_SYNCH_DELETE);
                 } else if (itemType.getName().equalsIgnoreCase(BUTTON_EFACLOUD_START)) {
                     txq.registerStateChangeRequest(TxRequestQueue.RQ_QUEUE_START);
                 } else if (itemType.getName().equalsIgnoreCase(BUTTON_EFACLOUD_PAUSE)) {

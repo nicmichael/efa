@@ -230,10 +230,8 @@ public class TxResponseHandler {
                         String warningMessage = International.getMessage(
                                 "Auf dem efaCloud-Server wurden nur {count} Tabellen und damit weniger als die " +
                                         "erforderliche Anzahl gefunden. " +
-                                        "Sollen die efa-Tabellen jetzt initialisiert werden?", counts.length);
-                        if (Dialog.yesNoDialog(International.getString("Server Datenbank unvollständig."),
-                                warningMessage) == Dialog.YES)
-                            txq.registerStateChangeRequest(TxRequestQueue.RQ_QUEUE_START_SYNCH_DELETE);
+                                        "Bitte prüfe die Server-Installation.", counts.length);
+                        Dialog.infoDialog(International.getString("Server Datenbank unvollständig."), warningMessage);
                     }
                 } else if (tx.type == Transaction.TX_TYPE.NOP) {
                     // Parameter settings can be transported via the NOP transaction.
@@ -243,6 +241,8 @@ public class TxResponseHandler {
                             String name = param.split("=", 2)[0];
                             if (name.equalsIgnoreCase("server_welcome_message"))
                                 txq.serverWelcomeMessage = param.split("=", 2)[1].replace("//", "\n");
+                            else if (name.equalsIgnoreCase("db_layout"))
+                                Daten.tableBuilder.mapServerDBLayout(param.split("=", 2)[1]);
                             else {
                                 int val = -1;
                                 try {

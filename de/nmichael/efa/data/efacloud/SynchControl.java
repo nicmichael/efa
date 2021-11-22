@@ -39,6 +39,7 @@ class SynchControl {
     static final long synch_upload_look_back_ms = 30 * 24 * 3600000L; // period in past to check for upload
 
     long timeOfLastSynch;
+    long timeOfLastSynchUploadAll = 0L;
     long LastModifiedLimit;
     boolean synch_upload = false;
     boolean synch_upload_all = false;
@@ -99,16 +100,14 @@ class SynchControl {
      * @param synch_request stet true to run an upload synchronization, false to run a download synchronization
      */
     void startSynchProcess(int synch_request) {
-        // in case of manually triggered server table reset no further steps needed needed.
-        if (synch_request == TxRequestQueue.RQ_QUEUE_START_SYNCH_DELETE) {
-            logSynchMessage("Delete and rebuild of server tables starting", "@all", null,
-                    true);
-            Daten.tableBuilder.initAllServerTables();
-            return;
-        }
         table_fixing_index = 0;
         keyFixingTxCount = 0;
         synch_upload_all = synch_request == TxRequestQueue.RQ_QUEUE_START_SYNCH_UPLOAD_ALL;
+        if (synch_upload_all) {
+            TextResource.writeContents(txq.efacloudLogDir + File.separator + "last_synch_upload_all",
+                    "" + System.currentTimeMillis(), true);
+            timeOfLastSynchUploadAll = System.currentTimeMillis();
+        }
         synch_upload = synch_request == TxRequestQueue.RQ_QUEUE_START_SYNCH_UPLOAD;
         String synchMessage = (synch_upload || synch_upload_all) ? International
                 .getString("Synchronisation client to server (upload) starting") : International
@@ -350,7 +349,7 @@ class SynchControl {
                     boolean serverMoreRecent = (serverLastModified > localLastModified);
 
                     // Special case autoincrement counter fields: always use the larger value, even if it is older.
-                    if (tx.tablename.equalsIgnoreCase("efa2aoutoincrement")) {
+                    if (tx.tablename.equalsIgnoreCase("efa2autoincrement")) {
                         long lmaxReturned = Long.parseLong(returnedRecord.getAsString("LongValue"));
                         long lmaxLocal = Long.parseLong(returnedRecord.getAsString("LongValue"));
                         long imaxReturned = Long.parseLong(returnedRecord.getAsString("IntValue"));
@@ -362,6 +361,7 @@ class SynchControl {
                     String lastModification = efaCloudStorage.getLastModification(returnedRecord);
                     // a legacy problem. If the database was initialized by the client, it contains copies of
                     // the local data records which have no LastModification entries.
+                    // TODO: if statement can be removed once versions 2.3.0_xx become obsolete
                     if (lastModification == null)
                         lastModification = "updated";
                     boolean isDeleted = lastModification.equalsIgnoreCase("delete");
