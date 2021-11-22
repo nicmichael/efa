@@ -20,6 +20,7 @@ import de.nmichael.efa.util.International;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Locale;
 
 public class TableBuilder {
 
@@ -30,6 +31,8 @@ public class TableBuilder {
      */
     private static final HashMap<Integer, String> datatypeDefaults = new HashMap<Integer, String>();
     private static final HashMap<Integer, Integer> datatypeSizes = new HashMap<Integer, Integer>();
+    // special definition for the longer default size of MemberIdList in efa2Groups from efa 2.3.1 onwards
+    private static final int DATA_LONG_LIST_UUID = 109;
 
     static {
         // Note to length definitions: limiting are the Logbook and Statistics tables, which hit
@@ -46,11 +49,12 @@ public class TableBuilder {
         datatypeDefaults.put(IDataAccess.DATA_LIST_INTEGER, "Varchar(192) NULL DEFAULT NULL");
         datatypeDefaults.put(IDataAccess.DATA_LIST_STRING, "Varchar(1480) NULL DEFAULT NULL");  // see above
         datatypeDefaults.put(IDataAccess.DATA_LIST_UUID, "Varchar(1024) NULL DEFAULT NULL");
+        datatypeDefaults.put(DATA_LONG_LIST_UUID, "Varchar(9300) NULL DEFAULT NULL");
         datatypeDefaults.put(IDataAccess.DATA_LONGINT, "BigInt NULL DEFAULT NULL");
         datatypeDefaults.put(IDataAccess.DATA_PASSWORDC, "Varchar(256) NULL DEFAULT NULL");
         datatypeDefaults.put(IDataAccess.DATA_PASSWORDH, "Varchar(256) NULL DEFAULT NULL");
         datatypeDefaults.put(IDataAccess.DATA_STRING, "Varchar(192) NULL DEFAULT NULL");  // see above
-        datatypeDefaults.put(IDataAccess.DATA_TEXT, "Text(65536) NULL DEFAULT NULL");
+        datatypeDefaults.put(IDataAccess.DATA_TEXT, "Text(65535) NULL DEFAULT NULL");
         datatypeDefaults.put(IDataAccess.DATA_TIME, "Time NULL DEFAULT NULL");
         datatypeDefaults.put(IDataAccess.DATA_UUID, "Varchar(64) NULL DEFAULT NULL");
         datatypeDefaults.put(IDataAccess.DATA_VIRTUAL, "Varchar(256) NULL DEFAULT NULL");
@@ -79,6 +83,7 @@ public class TableBuilder {
         datatypeStrings.put(IDataAccess.DATA_LIST_STRING, "DATA_LIST_STRING");
         datatypeStrings.put(IDataAccess.DATA_LIST_INTEGER, "DATA_LIST_INTEGER");
         datatypeStrings.put(IDataAccess.DATA_LIST_UUID, "DATA_LIST_UUID");
+        datatypeStrings.put(DATA_LONG_LIST_UUID, "DATA_LONG_LIST_UUID");
         datatypeStrings.put(IDataAccess.DATA_VIRTUAL, "DATA_VIRTUAL");
     }
 
@@ -108,6 +113,7 @@ public class TableBuilder {
             // secure the unique setting if before the autoincrement setting.
             // "efa2logbook;$AUTOINCREMENT;;EntryId",   // no autoincrement, all years in table!
             "efa2messages;$AUTOINCREMENT;;MessageId",   //
+            "efaCloudUsers;$AUTOINCREMENT;;ID",   //
 
             // unique fields
             "efa2autoincrement;$UNIQUE;;Sequence",   //
@@ -115,13 +121,15 @@ public class TableBuilder {
             "efa2clubwork;$UNIQUE;;Id",   //
             "efa2crews;$UNIQUE;;Id",   //
             "efa2fahrtenabzeichen;$UNIQUE;;PersonId",   //
+            "efa2messages;$UNIQUE;;MessageId",   //
             "efa2project;$UNIQUE;;Type",   //
             "efa2sessiongroups;$UNIQUE;;Id",   //
             "efa2statistics;$UNIQUE;;Id",   //
             "efa2status;$UNIQUE;;Id",   //
             "efa2waters;$UNIQUE;;Id",   //
+            "efaCloudUsers;$UNIQUE;;ID",   //
 
-            // String fields which need more then 192 characters length
+            // String fields which need more than 192 characters length
             "efa2boatdamages;DESCRIPTION;DATA_TEXT;Description",   //
             "efa2boatdamages;LOGBOOKTEXT;DATA_TEXT;LogbookText",   //
             "efa2boats;TYPEDESCRIPTION;DATA_TEXT;TypeDescription",   //
@@ -141,6 +149,7 @@ public class TableBuilder {
             "efa2boatreservations;VRESERVATIONDATE;DATA_VIRTUAL;VirtualReservationDate",   //
             "efa2boatreservations;VPERSON;DATA_VIRTUAL;VirtualPerson",   //
             "efa2clubwork;WORKDATE;DATA_DATE;Date",   //
+            "efa2groups;MEMBERIDLIST;DATA_LONG_LIST_UUID;MemberIdList",   //
             "efa2persons;EXCLUDEFROMSTATISTIC;DATA_BOOLEAN;ExcludeFromStatistics",   //
             "efa2persons;EXCLUDEFROMCOMPETE;DATA_BOOLEAN;ExcludeFromCompetition",   //
             "efa2persons;EXCLUDEFROMCLUBWORK;DATA_BOOLEAN;ExcludeFromClubwork",   //
@@ -206,6 +215,8 @@ public class TableBuilder {
     private final HashMap<String, RecordFieldDefinition> specialFields = new HashMap<String, RecordFieldDefinition>();
     // the complete structure of all storage object types, i. e. MySQL tables.
     public HashMap<String, StorageObjectTypeDefinition> storageObjectTypes = new HashMap<String, StorageObjectTypeDefinition>();
+    // The result of server / client db layout comparison
+    public String dbLayoutComparison = "No comparison yet done.";
 
     /**
      * Checks whether the named table is one of the set of common tables. Currently simply checks whether its name
@@ -321,9 +332,14 @@ public class TableBuilder {
             }
             auditInformation.append("\n");
         }
+        auditInformation.append("\n")
+                .append("Comparison of data base layout client <-> server:\n")
+                .append("-------------------------------------------------\n")
+                .append(this.dbLayoutComparison);
         auditInformation.append("\n").append("\n");
         return auditInformation.toString();
     }
+
     /**
      * Add a storage object type's metadata to the TableBuilder structure. Will do nothing, if the data storage object
      * type already exists.
@@ -371,7 +387,7 @@ public class TableBuilder {
         // add logbookname for logbook table on the server
         if (storageObjectType.equalsIgnoreCase("efa2logbook")) {
             rfd = new RecordFieldDefinition(storageObjectType, "Logbookname", IDataAccess.DATA_STRING);
-            rfd.maxLength = 256;
+            rfd.maxLength = 192;
             rfd.column = metaData.getFields().length + 2;
             rtd.fields.put(rfd.fieldName, rfd);
             rtd.recordSize = rtd.recordSize + rfd.recordfieldsize;
@@ -379,7 +395,7 @@ public class TableBuilder {
         // add clubworkbookname for clubwork table on the server
         if (storageObjectType.equalsIgnoreCase("efa2clubwork")) {
             rfd = new RecordFieldDefinition(storageObjectType, "Clubworkbookname", IDataAccess.DATA_STRING);
-            rfd.maxLength = 256;
+            rfd.maxLength = 192;
             rfd.column = metaData.getFields().length + 2;
             rtd.fields.put(rfd.fieldName, rfd);
             rtd.recordSize = rtd.recordSize + rfd.recordfieldsize;
@@ -422,24 +438,6 @@ public class TableBuilder {
     }
 
     /**
-     * Get a set of table names for up- and download activities
-     *
-     * @param useProject set true to get the project data tables
-     * @param useConfig  set true to get the configuration tables
-     * @return set of requested table names
-     */
-    public synchronized StorageObjectTypeDefinition[] getTables(boolean useProject, boolean useConfig) {
-        StorageObjectTypeDefinition[] tables = new StorageObjectTypeDefinition[storageObjectTypes.keySet().size()];
-        int i = 0;
-        for (String tablename : storageObjectTypes.keySet()) {
-            StorageObjectTypeDefinition rtd = storageObjectTypes.get(tablename);
-            if ((rtd.isProjectTable && useProject) || (!rtd.isProjectTable && useConfig))
-                tables[i++] = rtd;
-        }
-        return tables;
-    }
-
-    /**
      * Return the EfaCloud storage persistence object of a table.
      *
      * @param tablename the table searched.
@@ -449,49 +447,6 @@ public class TableBuilder {
         if (storageObjectTypes.get(tablename) == null)
             return null;
         return storageObjectTypes.get(tablename).persistence;
-    }
-
-    /**
-     * (Re)Build all efa tables by iterating through all using initServerTable. All tables will be empty afterwards.
-     */
-    public void initAllServerTables() {
-        for (String storageObjectType : storageObjectTypes.keySet())
-            initServerTable(storageObjectType);
-    }
-
-    /**
-     * Build an efa table at the server side by issuing three respective API commands: createtable (including all
-     * columns), autoincrement and unique. This method is performed synchronously. Note the defintion of "createtable":
-     * If a table with the given name exists, it will be dropped
-     *
-     * @param storageObjectType storageType of table to be built, e.g. "efa2persons".
-     */
-    public void initServerTable(String storageObjectType) {
-        StorageObjectTypeDefinition rtd = this.storageObjectTypes.get(storageObjectType);
-        String tablename = rtd.storageObjectType;
-        TxRequestQueue txq = TxRequestQueue.getInstance();
-        // create table
-        txq.appendTransaction(TxRequestQueue.TX_SYNCH_QUEUE_INDEX, Transaction.TX_TYPE.CREATETABLE, tablename,
-                rtd.tableDefinitionRecord(false));
-        // add uniques
-        if (rtd.uniques.size() > 0)
-            for (String unique : rtd.uniques) {
-                String record = unique + ";" +
-                        CsvCodec.encodeElement(rtd.fields.get(unique).sqlDefinition, CsvCodec.DEFAULT_DELIMITER,
-                                CsvCodec.DEFAULT_QUOTATION);
-                txq.appendTransaction(TxRequestQueue.TX_SYNCH_QUEUE_INDEX, Transaction.TX_TYPE.UNIQUE, tablename, record);
-            }
-        // add autoincrements
-        if (rtd.autoincrements.size() > 0)
-            for (String autoincrement : rtd.autoincrements) {
-                // autoincrement fields must also be unique which is ensured programmatically to
-                // secure the unique setting if before the autoincrement setting.
-                String record = autoincrement + ";" +
-                        CsvCodec.encodeElement(rtd.fields.get(autoincrement).sqlDefinition, CsvCodec.DEFAULT_DELIMITER,
-                                CsvCodec.DEFAULT_QUOTATION);
-                txq.appendTransaction(TxRequestQueue.TX_SYNCH_QUEUE_INDEX, Transaction.TX_TYPE.UNIQUE, tablename, record);
-                txq.appendTransaction(TxRequestQueue.TX_SYNCH_QUEUE_INDEX, Transaction.TX_TYPE.AUTOINCREMENT, tablename, record);
-            }
     }
 
     /**
@@ -510,6 +465,77 @@ public class TableBuilder {
                 rfd.recordfieldsize = newGroupMemberIdListSize;
             }
         }
+    }
+
+    /**
+     * Parse a server provided data base layout and compare with local layout
+     * @param serverDBLayout the server data base layout as was returned by the server within NOP rwquest.
+     * @return The comparison result. Empty, if no difference was identified.
+     */
+    public void mapServerDBLayout(String serverDBLayout) {
+        String[] tables = serverDBLayout.split("\\|T\\|");
+        if (tables.length < 2) {
+            dbLayoutComparison = "No table separator detected in layout.";
+            return;
+        }
+        StringBuilder findings = new StringBuilder();
+        for (String table : tables) {
+            // ignore db_layout_version value
+            if (table.startsWith("t:")) {
+                String[] columns = table.split("\\|C\\|");
+                String tname = "unknown";
+                StorageObjectTypeDefinition rtd = null;
+                for (String column : columns) {
+                    String cname = "unknown";
+                    if (column.startsWith("t:")) {
+                        tname = column.substring(2);
+                        rtd = storageObjectTypes.get(tname);
+                        if (rtd == null)
+                            findings.append("No local table '").append(tname)
+                                    .append("'\n");
+                    }
+                    else if (column.startsWith("c:") && (rtd != null) && (column.indexOf("=") > 0)) {
+                        cname = column.substring(2).split("=", 2)[0];
+                        RecordFieldDefinition rfd = rtd.fields.get(cname);
+                        if (rfd == null) {
+                            findings.append("No local column '").append(cname)
+                                        .append("'").append(" in table '").append(tname)
+                                        .append("'\n");
+                        } else {
+                            String[] cdef = (column + "|padded").split("=", 2)[1].split("\\|");
+                            // type;size;nullAllowed;default;unique;autoincrement
+                            if (! rfd.sqlDefinition.toLowerCase(Locale.ROOT).startsWith(cdef[0].toLowerCase(Locale.ROOT)))
+                                findings.append("Column type differs for '").append(cname)
+                                        .append("'").append(" in table '").append(tname)
+                                        .append("' - server:").append(cdef[0])
+                                        .append("' - local:").append(rfd.sqlDefinition.toLowerCase(Locale.ROOT))
+                                        .append("'\n");
+                            if (rfd.maxLength > (Integer.parseInt(cdef[1]) + 1))
+                                findings.append("Column size differs for '").append(cname)
+                                        .append("'").append(" in table '").append(tname)
+                                        .append("' - server:").append(cdef[1])
+                                        .append("' - local:").append(rfd.maxLength)
+                                        .append("'\n");
+                            if (((rfd.isUnique.length() > 0) && (cdef[4].length() == 0))
+                                    || ((rfd.isUnique.length() == 0) && (cdef[4].length() > 0)))
+                                findings.append("Column unique property differs for '").append(cname)
+                                        .append("'").append(" in table '").append(tname)
+                                        .append("' - server:").append(cdef[4])
+                                        .append("' - local:").append(rfd.isUnique)
+                                        .append("'\n");
+                            if (((rfd.isAutoincrement.length() > 0) && (cdef[5].length() == 0))
+                                    || ((rfd.isAutoincrement.length() == 0) && (cdef[5].length() > 0)))
+                                findings.append("Column autoincrement property differs for '").append(cname)
+                                        .append("'").append(" in table '").append(tname)
+                                        .append("' - server:").append(cdef[5])
+                                        .append("' - local:").append(rfd.isAutoincrement)
+                                        .append("'\n");
+                        }
+                    }
+                }
+            }
+        }
+        dbLayoutComparison = findings.toString();
     }
 
     /**

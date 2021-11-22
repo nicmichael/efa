@@ -77,6 +77,7 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
     // The synchronisation start delay is one SYNCH_PERIOD
     static final int SYNCH_PERIOD_DEFAULT = 3600000; // = 3600 seconds = 1 hour
     static int synch_period = SYNCH_PERIOD_DEFAULT; // = 3600 seconds = 1 hour
+    static final int SYNCH_UPLOAD_PERIOD_DEFAULT = 86400000;  // = 86400 seconds = 24 hours
 
     // If a transaction is busy since more than the RETRY_AFTER_MILLISECONDS period
     // issue a new internet access request.
@@ -126,7 +127,7 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
     public static final int RQ_QUEUE_START_SYNCH_DOWNLOAD = 5;  // from WORKING to SYNCHRONIZING
     public static final int RQ_QUEUE_START_SYNCH_UPLOAD = 6;    // from WORKING to SYNCHRONIZING the last 30 days
     public static final int RQ_QUEUE_START_SYNCH_UPLOAD_ALL = 61; // from WORKING to SYNCHRONIZING all data sets
-    public static final int RQ_QUEUE_START_SYNCH_DELETE = 7;    // from WORKING to SYNCHRONIZING
+    // Obsolete from 2.3.1: public static final int RQ_QUEUE_START_SYNCH_DELETE = 7;    // from WORKING to SYNCHRONIZING
     public static final int RQ_QUEUE_STOP_SYNCH = 8;            // form SYNCHRONIZING to WORKING
     public static final HashMap<Integer, String> RQ_QUEUE_STATE = new HashMap<Integer, String>();
 
@@ -137,7 +138,7 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
         RQ_QUEUE_STATE.put(RQ_QUEUE_PAUSE, "PAUSE");
         RQ_QUEUE_STATE.put(RQ_QUEUE_START_SYNCH_DOWNLOAD, "SYNCH_DOWNLOAD");
         RQ_QUEUE_STATE.put(RQ_QUEUE_START_SYNCH_UPLOAD, "SYNCH_UPLOAD");
-        RQ_QUEUE_STATE.put(RQ_QUEUE_START_SYNCH_DELETE, "SYNCH_DELETE");
+        // Obsolete from 2.3.1: RQ_QUEUE_STATE.put(RQ_QUEUE_START_SYNCH_DELETE, "SYNCH_DELETE");
         RQ_QUEUE_STATE.put(RQ_QUEUE_STOP_SYNCH, "STOP_SYNCH");
     }
 
@@ -185,7 +186,7 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
     private final long[] locks = new long[TX_QUEUE_COUNT];
     private final String[] txFilePath = new String[TX_QUEUE_COUNT];
     private String storageLocationRoot;
-    private String efacloudLogDir;
+    protected String efacloudLogDir;
     private long logLastModified;
 
     private static final long LOG_PERIOD_MILLIS = 14 * (24 * 3600 * 1000);
@@ -314,7 +315,8 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
      * Clar the admin credentials, i.e. fall back to boathouse credentials.
      */
     public void clearAdminCredentials() {
-        txq.logApiMessage("state, []: Ending admin session for efaCloudUserID " + this.adminEfaCloudUserID, 0);
+        if (txq != null)
+            txq.logApiMessage("state, []: Ending admin session for efaCloudUserID " + this.adminEfaCloudUserID, 0);
         this.adminCredentials = "";
         this.adminEfaCloudUserID = "";
         this.adminSessionMessage = "";
@@ -514,7 +516,6 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
             TextResource.writeContents(logFilePath, cleansedLogFile.toString(), false);
             logFilePaths.put(logFileName, logFilePath);
         }
-
     }
 
     /**
@@ -666,6 +667,7 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
             this.efaCloudUrl = efaCloudUrl + URL_API_LOCATION;
         }
         else this.efaCloudUrl = efaCloudUrl;
+        clearAdminCredentials();
 
         // initialize all file paths and queues
         initPathsAndLogs(efaCloudUrl, storageLocation);
@@ -890,7 +892,7 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
                         case RQ_QUEUE_START_SYNCH_DOWNLOAD:
                         case RQ_QUEUE_START_SYNCH_UPLOAD:
                         case RQ_QUEUE_START_SYNCH_UPLOAD_ALL:
-                        case RQ_QUEUE_START_SYNCH_DELETE:
+                            // Obsolete from 2.3.1: case RQ_QUEUE_START_SYNCH_DELETE:
                             if ((currentState == QUEUE_IS_WORKING) || (currentState == QUEUE_IS_IDLE)) {
                                 if ((queues.get(TX_PENDING_QUEUE_INDEX).size() == 0) &&
                                         (queues.get(TX_BUSY_QUEUE_INDEX).size() == 0)) {
@@ -994,6 +996,7 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
                             // The synch transactions queue is never stored, so it needs not to be read from file.
                             queues.get(TX_SYNCH_QUEUE_INDEX).clear();
                             registerStateChangeRequest(RQ_QUEUE_START_SYNCH_DOWNLOAD);
+                        // or run a fast synch poll, if due.
                         } else if ((txq.getState() == QUEUE_IS_IDLE) &&
                                 ((pollsCount % synch_check_polls_period) == (synch_check_polls_period - 1))) {
                             // send it to the internet access manager.
@@ -1003,6 +1006,22 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
                             TaskManager.RequestMessage rq = new TaskManager.RequestMessage(postURLplus, "",
                                     InternetAccessManager.TYPE_POST_PARAMETERS, 0.0, txq);
                             iam.sendRequest(rq);
+                        // or run a full upload, if due.
+                        } else if ((txq.getState() == QUEUE_IS_IDLE) &&
+                                ((System.currentTimeMillis() - synchControl.timeOfLastSynchUploadAll) > SYNCH_UPLOAD_PERIOD_DEFAULT)) {
+                            // first read the stored value, if there is one.
+                            String last_synch_upload_all = TextResource.getContents(
+                                    new File(txq.efacloudLogDir + File.separator + "last_synch_upload_all"),
+                                    "UTF-8");
+                            try {
+                                synchControl.timeOfLastSynchUploadAll = Long.parseLong((last_synch_upload_all == null) ?
+                                        "0" : last_synch_upload_all);
+                            } catch (Exception e) {
+                                synchControl.timeOfLastSynchUploadAll = 0L;
+                            }
+                            // check again, if an upload is due.
+                            if (((System.currentTimeMillis() - synchControl.timeOfLastSynchUploadAll) > SYNCH_UPLOAD_PERIOD_DEFAULT))
+                                txq.registerStateChangeRequest(TxRequestQueue.RQ_QUEUE_START_SYNCH_UPLOAD_ALL);
                         }
                     }
 
