@@ -282,8 +282,11 @@ public class TableBuilder {
         if (rtd == null)
             return value;
         RecordFieldDefinition rtf = rtd.fields.get(fieldname);
-        if ((rtf == null) && !fieldname.equalsIgnoreCase("Logbookname")
-                && !fieldname.equalsIgnoreCase("Clubworkbookname")) {
+        // log a warning, if an unknown field name is hit - except the field names
+        // for the logbook and clubwor names which do not exist at the client side.
+        if (rtf == null) {
+            if (!fieldname.equalsIgnoreCase("Logbookname")
+                    && !fieldname.equalsIgnoreCase("Clubworkbookname"))
             TxRequestQueue.getInstance().logApiMessage(
                     International.getString("Warnung") + " - " +
                     International.getMessage("Nicht definierter Feldname {fieldname} " +
