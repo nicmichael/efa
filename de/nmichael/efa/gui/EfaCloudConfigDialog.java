@@ -275,23 +275,20 @@ public class EfaCloudConfigDialog extends BaseTabbedDialog implements IItemListe
                         TxRequestQueue txq = TxRequestQueue.getInstance();
                         if (txq != null) {
                             String txqCheckURL = txq.checkURL();
-                            if (! txqCheckURL.isEmpty()) {
-                                de.nmichael.efa.util.Dialog.error(International
-                                        .getString("Verbindung zum Server fehlgeschlagen.\nBitte prüfe die URL genau auf Richtigkeit, auch http vs. https"));
-                                pr.setProjectStorageType(IDataAccess.TYPE_FILE_XML);
-                                this.cancel();
-                                return;
-                            }
                             String txqCheckCredentials = txq.checkCredentials();
                             if (! txqCheckCredentials.isEmpty()) {
-                                de.nmichael.efa.util.Dialog.error(International
-                                        .getMessage("Autorisierung am Server fehlgeschlagen:\n{Fehler}", txqCheckCredentials));
+                                String error = International
+                                        .getMessage("Autorisierung am Server fehlgeschlagen:\n{Fehler}", txqCheckCredentials);
+                                if (! txqCheckURL.isEmpty())
+                                    error = error + International
+                                            .getString("Wenn auf dem Server efaCloud 2.3.1 oder höher installiert ist, ist schon die URL falsch.");
+                                de.nmichael.efa.util.Dialog.error(error);
                                 pr.setProjectStorageType(IDataAccess.TYPE_FILE_XML);
                                 this.cancel();
                                 return;
                             }
                             de.nmichael.efa.util.Dialog.infoDialog(International.getString("Konfiguration erfolgreich"),
-                                    International.getString("efaCloud wurde erfolgreich aktiviert."));
+                                    International.getString("efaCloud wurde erfolgreich aktiviert. Bitte starte efa nun neu."));
                             txq.clearAllQueues();
                             txq.registerStateChangeRequest(TxRequestQueue.RQ_QUEUE_AUTHENTICATE);
                             // Initialize the GUI for efaCloud Status display
