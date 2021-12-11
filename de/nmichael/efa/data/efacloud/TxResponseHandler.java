@@ -432,9 +432,9 @@ public class TxResponseHandler {
                     cID = Integer.parseInt(headerAndContent[0]);
                     version = Integer.parseInt(headerAndContent[1]);
                     // adjust API protocol version to the common maximum
-                    if ((version > TxRequestQueue.efa_cloud_used_api_version) &&
-                            (version <= TxRequestQueue.EFA_CLOUD_MAX_API_VERSION))
-                        TxRequestQueue.efa_cloud_used_api_version = version;
+                    if (version > TxRequestQueue.efa_cloud_used_api_version)
+                        TxRequestQueue.efa_cloud_used_api_version = Math.min(version,
+                                TxRequestQueue.EFA_CLOUD_MAX_API_VERSION);
                     cresult_code = Integer.parseInt(headerAndContent[2]);
                 } catch (NumberFormatException ignored) {
                 }

@@ -322,9 +322,6 @@ public abstract class BaseDialog extends JDialog implements ActionListener {
     }
 
     public void closeButton_actionPerformed(ActionEvent e) {
-        if ((this instanceof AdminDialog) && (Daten.project.getProjectStorageType() == IDataAccess.TYPE_EFA_CLOUD)
-                && (TxRequestQueue.getInstance() != null))
-            TxRequestQueue.getInstance().clearAdminCredentials();
         cancel();
     }
 

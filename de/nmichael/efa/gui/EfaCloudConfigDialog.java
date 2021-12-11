@@ -277,8 +277,8 @@ public class EfaCloudConfigDialog extends BaseTabbedDialog implements IItemListe
                             String txqCheckURL = txq.checkURL();
                             String txqCheckCredentials = txq.checkCredentials();
                             if (! txqCheckCredentials.isEmpty()) {
-                                String error = International
-                                        .getMessage("Autorisierung am Server fehlgeschlagen:\n{Fehler}", txqCheckCredentials);
+                                String error = String.format("%s: %s",
+                                        International.getString("Autorisierung am Server fehlgeschlagen"), txqCheckCredentials);
                                 if (! txqCheckURL.isEmpty())
                                     error = error + International
                                             .getString("Wenn auf dem Server efaCloud 2.3.1 oder höher installiert ist, ist schon die URL falsch.");

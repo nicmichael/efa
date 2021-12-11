@@ -70,6 +70,46 @@ public class AdminRecord extends DataRecord implements IItemListener {
     public static final String BACKUP                = "Backup";
     public static final String RESTORE               = "Restore";
 
+    // from efa 2.3.1 onwards admin privileges will be managed at the cloud server side using two 32 bit bitmaps
+    // They are mapped to the local flags using the sequence as defined below. You MUST NOT CHANGE THE SEQUENCE.
+    private static final String[] workflowNames = new String[] {
+            EDITADMINS,
+            CHANGEPASSWORD,
+            ADMINPROJECTLOGBOOK,
+            ADMINPROJECTCLUBWORK,
+            EDITLOGBOOK,
+            EDITBOATS,
+            EDITBOATSTATUS,
+            EDITBOATRESERVATION,
+            EDITBOATDAMAGES,
+            EDITPERSONS,
+            EDITCLUBWORK,
+            EDITGROUPS,
+            EDITCREWS,
+            EDITFAHRTENABZEICHEN,
+            EDITDESTINATIONS,
+            ADVANCEDEDIT,
+            CONFIGURATION,
+            EDITSTATISTICS,
+            SYNCKANUEFB,
+            REMOTEACCESS,
+            SHOWLOGFILE,
+            EXITEFA,
+            LOCKEFA,
+            BACKUP,
+            RESTORE,
+            UPDATEEFA,
+            EXECCOMMAND
+    };
+    private static final String[] concessionNames = new String[] {
+            MSGREADADMIN,
+            MSGREADBOATMAINT,
+            MSGMARKREADADMIN,
+            MSGMARKREADBOATMAINT,
+            MSGAUTOREADADMIN,
+            MSGAUTOREADBOATMAINT
+    };
+
     private boolean isRemoteAdmin = false;
 
     public static void initialize() {
@@ -118,6 +158,14 @@ public class AdminRecord extends DataRecord implements IItemListener {
 
     public AdminRecord(Admins admins, MetaData metaData) {
         super(admins, metaData);
+    }
+
+    public AdminRecord(Admins admins, EfaCloudUserRecord ecr) {
+        super(admins, MetaData.getMetaData(Admins.DATATYPE));
+        setName(ecr.getAdminName());
+        setEmail(ecr.getEmail());
+        mapEfaCloudWorkflowsAndConcessions(ecr.getWorkflows(), ecr.getConcessions(), ecr.getRole());
+        makeSurePermissionsAreCorrect();
     }
 
     public DataRecord createDataRecord() { // used for cloning
@@ -396,19 +444,11 @@ public class AdminRecord extends DataRecord implements IItemListener {
                 workflows = workflows | 134217727;  // just all
                 concessions = concessions | 63;     // just all
             }
-        String[] workflowNames = new String[] { "EditAdmins", "ChangePassword", "AdministerProjectLogbook",
-                "AdministerProjectClubwork", "EditLogbook", "EditBoats", "EditBoatStatus", "EditBoatReservation",
-                "EditBoatDamages", "EditPersons", "EditClubwork", "EditGroups", "EditCrews", "EditFahrtenabzeichen",
-                "EditDestinations", "AdvancedEdit", "Configuration", "EditStatistics", "SyncKanuEfb",
-                "RemoteAccess", "ShowLogfile", "ExitEfa", "LockEfa", "Backup", "Restore", "UpdateEfa", "ExecCommand" };
         int flag = 1;
         for (String workflowName : workflowNames) {
             setBool(workflowName, ((flag & workflows) > 0));
             flag = flag * 2;
         }
-        String[] concessionNames = new String[] {
-                "MsgReadAdmin", "MsgMarkReadAdmin", "MsgAutoMarkReadAdmin", "MsgReadBoatMaintenance",
-                "MsgMarkReadBoatMaintenance", "MsgAutoMarkReadBoatMaintenance" };
         flag = 1;
         for (String concessionName : concessionNames) {
             setBool(concessionName, ((flag & concessions) > 0));

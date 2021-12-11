@@ -211,11 +211,7 @@ public class Admins extends StorageObject {
             EfaCloudUserRecord ecr = efaCloudUsers.login(this, name, password);
             if (ecr == null)
                 return null;
-            admin = new AdminRecord(this, MetaData.getMetaData(Admins.DATATYPE));
-            admin.setName(ecr.getAdminName());
-            admin.setEmail(ecr.getEmail());
-            admin.mapEfaCloudWorkflowsAndConcessions(ecr.getWorkflows(), ecr.getConcessions(), ecr.getRole());
-            admin.makeSurePermissionsAreCorrect();
+            admin = new AdminRecord(this, ecr);
             txq = TxRequestQueue.getInstance();
             txq.setAdminCredentials(ecr.getAdminName(),Integer.toString(ecr.getEfaCloudUserID()), password);
             return admin;

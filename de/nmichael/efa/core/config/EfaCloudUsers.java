@@ -146,11 +146,7 @@ public class EfaCloudUsers extends StorageObject {
         try {
             EfaCloudUserRecord ecr = verifiy_credentials(name, password);
             if (ecr != null) {
-                AdminRecord ar = new AdminRecord(admins, MetaData.getMetaData(Admins.DATATYPE));
-                ar.setName(ecr.getAdminName());
-                ar.setEmail(ecr.getEmail());
-                ar.mapEfaCloudWorkflowsAndConcessions(ecr.getWorkflows(), ecr.getConcessions(), ecr.getRole());
-                ar.makeSurePermissionsAreCorrect();
+                new AdminRecord(admins, ecr);
                 return ecr;
             } else
                 return null;

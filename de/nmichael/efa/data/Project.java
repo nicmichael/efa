@@ -983,7 +983,7 @@ public class Project extends StorageObject {
                         c = Messages.class;
                     }
                     if (storageObjectType.equals(EfaCloudUsers.DATATYPE) && storageObjectName.equals(STORAGEOBJECT_EFACLOUDUSERS)) {
-                        c = Messages.class;
+                        c = EfaCloudUsers.class;
                     }
                     if (storageObjectType.equals(Logbook.DATATYPE)) {
                         c = Logbook.class;

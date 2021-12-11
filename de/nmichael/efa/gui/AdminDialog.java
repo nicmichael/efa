@@ -12,6 +12,8 @@ package de.nmichael.efa.gui;
 
 import de.nmichael.efa.Daten;
 import de.nmichael.efa.core.AdminTask;
+import de.nmichael.efa.data.efacloud.TxRequestQueue;
+import de.nmichael.efa.data.storage.IDataAccess;
 import de.nmichael.efa.util.*;
 import de.nmichael.efa.core.config.*;
 import de.nmichael.efa.core.items.*;
@@ -241,6 +243,13 @@ public class AdminDialog extends BaseDialog implements IItemListener {
 
     public void keyAction(ActionEvent evt) {
         _keyAction(evt);
+    }
+
+    public void closeButton_actionPerformed(ActionEvent e) {
+        if ((Daten.project.getProjectStorageType() == IDataAccess.TYPE_EFA_CLOUD)
+                && (TxRequestQueue.getInstance() != null))
+            TxRequestQueue.getInstance().clearAdminCredentials();
+        cancel();
     }
 
     public void itemListenerAction(IItemType itemType, AWTEvent event) {
