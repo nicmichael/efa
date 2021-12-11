@@ -105,7 +105,7 @@ class SynchControl {
         synch_upload_all = synch_request == TxRequestQueue.RQ_QUEUE_START_SYNCH_UPLOAD_ALL;
         if (synch_upload_all) {
             TextResource.writeContents(txq.efacloudLogDir + File.separator + "last_synch_upload_all",
-                    "" + System.currentTimeMillis(), true);
+                    "" + System.currentTimeMillis(), false);
             timeOfLastSynchUploadAll = System.currentTimeMillis();
         }
         synch_upload = synch_request == TxRequestQueue.RQ_QUEUE_START_SYNCH_UPLOAD;
@@ -327,75 +327,85 @@ class SynchControl {
             // a response message is received. Handle included records
             EfaCloudStorage efaCloudStorage = Daten.tableBuilder.getPersistence(tx.tablename);
             // Read all records and all last modifications.
-            ArrayList<DataRecord> returnedRecords = efaCloudStorage.parseCsvTable(tx.getResultMessage());
-            for (DataRecord returnedRecord : returnedRecords) {
-                // get the local record for comparison
-                DataRecord localRecord = null;
-                DataKey returnedKey = null;
-                try {
-                    boolean recordHasCompleteKey = efaCloudStorage.hasCompleteKey(returnedRecord);
-                    if (recordHasCompleteKey) {
-                        returnedKey = efaCloudStorage.constructKey(returnedRecord);
-                        if (returnedKey != null)
-                            localRecord = efaCloudStorage.get(returnedKey);
+            if (efaCloudStorage != null) {
+                ArrayList<DataRecord> returnedRecords = efaCloudStorage.parseCsvTable(tx.getResultMessage());
+                for (DataRecord returnedRecord : returnedRecords) {
+                    // get the local record for comparison
+                    DataRecord localRecord = null;
+                    DataKey returnedKey = null;
+                    try {
+                        boolean recordHasCompleteKey = efaCloudStorage.hasCompleteKey(returnedRecord);
+                        if (recordHasCompleteKey) {
+                            returnedKey = efaCloudStorage.constructKey(returnedRecord);
+                            if (returnedKey != null)
+                                localRecord = efaCloudStorage.get(returnedKey);
+                        }
+                    } catch (EfaException ignored) {
                     }
-                } catch (EfaException ignored) {
-                }
-                if (returnedKey != null) {
+                    if (returnedKey != null) {
 
-                    // identify which record is to be used.
-                    long serverLastModified = returnedRecord.getLastModified();
-                    long localLastModified = (localRecord == null) ? 0L : localRecord.getLastModified();
-                    boolean serverMoreRecent = (serverLastModified > localLastModified);
+                        // identify which record is to be used.
+                        long serverLastModified = returnedRecord.getLastModified();
+                        long localLastModified = (localRecord == null) ? 0L : localRecord.getLastModified();
+                        boolean serverMoreRecent = (serverLastModified > localLastModified);
 
-                    // Special case autoincrement counter fields: always use the larger value, even if it is older.
-                    if (tx.tablename.equalsIgnoreCase("efa2autoincrement")) {
-                        long lmaxReturned = Long.parseLong(returnedRecord.getAsString("LongValue"));
-                        long lmaxLocal = Long.parseLong(returnedRecord.getAsString("LongValue"));
-                        long imaxReturned = Long.parseLong(returnedRecord.getAsString("IntValue"));
-                        long imaxLocal = Long.parseLong(returnedRecord.getAsString("IntValue"));
-                        serverMoreRecent = (lmaxReturned > 0) ? (lmaxReturned > lmaxLocal) : (imaxReturned > imaxLocal);
-                    }
+                        // Special case autoincrement counter fields: always use the larger value, even if it is older.
+                        if (tx.tablename.equalsIgnoreCase("efa2autoincrement")) {
+                            long lmaxReturned = 0;
+                            long lmaxLocal = 0;
+                            long imaxReturned = 0;
+                            long imaxLocal = 0;
+                            try {
+                                lmaxReturned = Long.parseLong(returnedRecord.getAsString("LongValue"));
+                                lmaxLocal = Long.parseLong(returnedRecord.getAsString("LongValue"));
+                                imaxReturned = Long.parseLong(returnedRecord.getAsString("IntValue"));
+                                imaxLocal = Long.parseLong(returnedRecord.getAsString("IntValue"));
+                            } catch (Exception ignored) {
+                            }
+                            serverMoreRecent = (lmaxReturned > 0) ? (lmaxReturned > lmaxLocal) : (imaxReturned >
+                                    imaxLocal);
+                        }
 
-                    // identify what to do, may be nothing, in particular if the record had been changed by this client
-                    String lastModification = efaCloudStorage.getLastModification(returnedRecord);
-                    // a legacy problem. If the database was initialized by the client, it contains copies of
-                    // the local data records which have no LastModification entries.
-                    // TODO: if statement can be removed once versions 2.3.0_xx become obsolete
-                    if (lastModification == null)
-                        lastModification = "updated";
-                    boolean isDeleted = lastModification.equalsIgnoreCase("delete");
-                    boolean isUpdated = lastModification.equalsIgnoreCase("update");
-                    boolean insert = (localRecord == null) && !isDeleted;
-                    boolean update = (localRecord != null) && serverMoreRecent && isUpdated;
-                    boolean delete = (localRecord != null) && serverMoreRecent && isDeleted;
+                        // identify what to do, may be nothing, in particular if the record had been changed by this client
+                        String lastModification = efaCloudStorage.getLastModification(returnedRecord);
+                        // a legacy problem. If the database was initialized by the client, it contains copies of
+                        // the local data records which have no LastModification entries.
+                        // TODO: if statement can be removed once versions 2.3.0_xx become obsolete
+                        if (lastModification == null)
+                            lastModification = "updated";
+                        boolean isDeleted = lastModification.equalsIgnoreCase("delete");
+                        boolean isUpdated = lastModification.equalsIgnoreCase("update");
+                        boolean insert = (localRecord == null) && !isDeleted;
+                        boolean update = (localRecord != null) && serverMoreRecent && isUpdated;
+                        boolean delete = (localRecord != null) && serverMoreRecent && isDeleted;
 
-                    // Check whether record to update matches at least partially the new version.
-                    if (update && !preUpdateRecordsCompare(localRecord, returnedRecord, tx.tablename))
-                        logSynchMessage(International.getMessage(
-                                        "Update-Konflikt bei Datensatz in der {type}-Synchronisation.", "Download") +
-                                        " " + International.getString("Bitte bereinige den Datensatz manuell."), tx.tablename,
-                                localRecord.getKey(), false);
-
-                        // Run update. This update will use the LastModified and ChangeCount of the record to make
-                        // it a true copy of the server side record.
-                    else if (insert || update || delete) {
-                        long globalLock = 0;
-                        try {
-                            // any add modification requires a global lock.
-                            globalLock = efaCloudStorage.acquireGlobalLock();
-                            efaCloudStorage.modifyLocalRecord(returnedRecord, globalLock, insert, update, delete);
-                            efaCloudStorage.releaseGlobalLock(globalLock);
+                        // Check whether record to update matches at least partially the new version.
+                        if (update && !preUpdateRecordsCompare(localRecord, returnedRecord, tx.tablename))
                             logSynchMessage(International.getMessage(
-                                    "Lokale Replikation des Datensatzes nach {modification} auf dem Server.",
-                                    lastModification), tx.tablename, returnedRecord.getKey(), false);
-                        } catch (EfaException e) {
-                            txq.logApiMessage(International
-                                    .getMessage("Ausnahmefehler bei der lokalen Modifikation eines Datensatzes in {Tabelle} ",
-                                            tx.tablename) + "\n" + returnedRecord.encodeAsString() + "\n" +
-                                    e.getMessage() + "\n" + e.getStackTraceAsString(), 1);
-                        } finally {
-                            efaCloudStorage.releaseGlobalLock(globalLock);
+                                            "Update-Konflikt bei Datensatz in der {type}-Synchronisation.", "Download") +
+                                            " " + International.getString("Bitte bereinige den Datensatz manuell."), tx.tablename,
+                                    localRecord.getKey(), false);
+
+                            // Run update. This update will use the LastModified and ChangeCount of the record to make
+                            // it a true copy of the server side record.
+                        else if (insert || update || delete) {
+                            long globalLock = 0;
+                            try {
+                                // any add modification requires a global lock.
+                                globalLock = efaCloudStorage.acquireGlobalLock();
+                                efaCloudStorage.modifyLocalRecord(returnedRecord, globalLock, insert, update, delete);
+                                efaCloudStorage.releaseGlobalLock(globalLock);
+                                logSynchMessage(International.getMessage(
+                                        "Lokale Replikation des Datensatzes nach {modification} auf dem Server.",
+                                        lastModification), tx.tablename, returnedRecord.getKey(), false);
+                            } catch (EfaException e) {
+                                txq.logApiMessage(International.getMessage(
+                                        "Ausnahmefehler bei der lokalen Modifikation eines Datensatzes in {Tabelle} ",
+                                        tx.tablename) + "\n" + returnedRecord.encodeAsString() + "\n" + e.getMessage() +
+                                        "\n" + e.getStackTraceAsString(), 1);
+                            } finally {
+                                efaCloudStorage.releaseGlobalLock(globalLock);
+                            }
                         }
                     }
                 }
