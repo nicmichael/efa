@@ -38,7 +38,6 @@ public class EfaCloudConfigDialog extends BaseTabbedDialog implements IItemListe
     private static final String BUTTON_EFACLOUD_START = "BUTTON_EFACLOUD_START";
     private static final String BUTTON_EFACLOUD_SYNCH_UPLOAD = "BUTTON_EFACLOUD_SYNCH_UPLOAD";
     private static final String BUTTON_EFACLOUD_PAUSE = "BUTTON_EFACLOUD_PAUSE";
-    private static final String BUTTON_EFACLOUD_DELETE = "BUTTON_EFACLOUD_DELETE";
 
     private AdminRecord admin;
     private final JDialog parent;
@@ -81,7 +80,7 @@ public class EfaCloudConfigDialog extends BaseTabbedDialog implements IItemListe
         String queueState = (txq == null) ? "UNDEFINED" : TxRequestQueue.QUEUE_STATE.get(txq.getState());
         String serverInfo = ((txq == null) || (txq.serverWelcomeMessage == null)
                 || (txq.serverWelcomeMessage.isEmpty())) ? "" :
-                "\nServer-Information:\n" + txq.serverWelcomeMessage;
+                "\nServer-Information:\n" + txq.serverWelcomeMessage + txq.adminSessionMessage;
         String advice = (isEfaRemote) ? International
                 .getString("Für efaRemote kann der efaCloud-Modus nicht aktiviert werden.") : (isXML) ?
                 International.getString("Aktuelles Projekt auf efaCloud umstellen.") + "\n" : International
@@ -145,19 +144,6 @@ public class EfaCloudConfigDialog extends BaseTabbedDialog implements IItemListe
                     item.setPadding(0, 0, 20, 20);
                     item.registerItemListener(this);
                     item.setFieldGrid(2, GridBagConstraints.CENTER, GridBagConstraints.NONE);
-                    // server side table rebuild
-                    String warning = International.getString("Datenbank auf dem Server initialisieren.") + "\n" +
-                            International.getString("LÖSCHT ALLE DATEN AUF DEM EFACLOUD SERVER.") + "\n" +
-                            International.getString("KANN NICHT RÜCKGÄNGIG GEMACHT WERDEN.");
-                    guiItems.add(item = new ItemTypeLabel(ACTIVATION_INFO, IItemType.TYPE_PUBLIC, category, warning));
-                    item.setPadding(0, 0, 20, 20);
-                    item.setFieldGrid(2, GridBagConstraints.SOUTH, GridBagConstraints.NONE);
-                    guiItems.add(item = new ItemTypeButton(BUTTON_EFACLOUD_DELETE, IItemType.TYPE_PUBLIC, category,
-                            International.getString("Server initialisieren")));
-                    ((ItemTypeButton) item).setIcon(getIcon(IMAGE_EFACLOUD_DELETE));
-                    item.setPadding(0, 0, 20, 20);
-                    item.registerItemListener(this);
-                    item.setFieldGrid(2, GridBagConstraints.SOUTH, GridBagConstraints.NONE);
                 }
                 // If the queue is paused the options are resume or deactivate
                 else if (state == TxRequestQueue.QUEUE_IS_PAUSED) {
@@ -288,6 +274,21 @@ public class EfaCloudConfigDialog extends BaseTabbedDialog implements IItemListe
                         // try to prove the provided login data
                         TxRequestQueue txq = TxRequestQueue.getInstance();
                         if (txq != null) {
+                            String txqCheckURL = txq.checkURL();
+                            String txqCheckCredentials = txq.checkCredentials();
+                            if (! txqCheckCredentials.isEmpty()) {
+                                String error = String.format("%s: %s",
+                                        International.getString("Autorisierung am Server fehlgeschlagen"), txqCheckCredentials);
+                                if (! txqCheckURL.isEmpty())
+                                    error = error + International
+                                            .getString("Wenn auf dem Server efaCloud 2.3.1 oder höher installiert ist, ist schon die URL falsch.");
+                                de.nmichael.efa.util.Dialog.error(error);
+                                pr.setProjectStorageType(IDataAccess.TYPE_FILE_XML);
+                                this.cancel();
+                                return;
+                            }
+                            de.nmichael.efa.util.Dialog.infoDialog(International.getString("Konfiguration erfolgreich"),
+                                    International.getString("efaCloud wurde erfolgreich aktiviert. Bitte starte efa nun neu."));
                             txq.clearAllQueues();
                             txq.registerStateChangeRequest(TxRequestQueue.RQ_QUEUE_AUTHENTICATE);
                             // Initialize the GUI for efaCloud Status display
@@ -306,8 +307,6 @@ public class EfaCloudConfigDialog extends BaseTabbedDialog implements IItemListe
             else if (pr.getProjectStorageType() == IDataAccess.TYPE_EFA_CLOUD) {
                 if (itemType.getName().equalsIgnoreCase(BUTTON_EFACLOUD_DEACTIVATE)) {
                     deactivateEfacloud();
-                } else if (itemType.getName().equalsIgnoreCase(BUTTON_EFACLOUD_DELETE)) {
-                    txq.registerStateChangeRequest(TxRequestQueue.RQ_QUEUE_START_SYNCH_DELETE);
                 } else if (itemType.getName().equalsIgnoreCase(BUTTON_EFACLOUD_START)) {
                     txq.registerStateChangeRequest(TxRequestQueue.RQ_QUEUE_START);
                 } else if (itemType.getName().equalsIgnoreCase(BUTTON_EFACLOUD_PAUSE)) {
