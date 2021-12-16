@@ -11,11 +11,8 @@
 package de.nmichael.efa.data.efacloud;
 
 import de.nmichael.efa.Daten;
-import de.nmichael.efa.util.International;
 
-import java.io.File;
 import java.io.UnsupportedEncodingException;
-import java.text.SimpleDateFormat;
 
 // import java.nio.charset.StandardCharsets;  Java 8 only
 // import java.util.Base64;  Java 8 only
@@ -23,7 +20,6 @@ import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Vector;
-import java.util.Date;
 
 /**
  * A container class for data modifications passed to the efaClod Server.
@@ -36,7 +32,8 @@ public class Transaction {
                 false, false), INSERT("insert", true, false,true, false, true), UPDATE("update", true, false,true, false,
                 true), DELETE("delete", false, false,true, false, true), KEYFIXING("keyfixing", false, false,false, true,
                 true), SELECT("select", false, false,false, false, true), SYNCH("synch", false, false,false, true, true), LIST(
-                "list", false, false,false, false, false), NOP("nop", false, false,false, true, false), BACKUP("backup", false,
+                "list", false, false,false, false, false), NOP("nop", false, false,false, true, false),
+                 VERIFY("verify", false, false,false, false, false), BACKUP("backup", false,
                 false,false, false, false), UPLOAD("upload", false, false,false, false, false), CRONJOBS("cronjobs", false, false,false,
                 false, false);
 
@@ -45,16 +42,16 @@ public class Transaction {
         final boolean isTableStructureEdit;
         final boolean isWriteAction;
         final boolean isAllowedOnAuthenticate;
-        final boolean addLogbookName;
+        final boolean addBookName;
 
         TX_TYPE(String typeString, boolean isInsertOrUpdate, boolean isTableStructureEdit, boolean isWriteAction, boolean isAllowedOnAuthenticate,
-                boolean addLogbookName) {
+                boolean addBookName) {
             this.typeString = typeString;
             this.isInsertOrUpdate = isInsertOrUpdate;
             this.isTableStructureEdit = isTableStructureEdit;
             this.isWriteAction = isWriteAction;
             this.isAllowedOnAuthenticate = isAllowedOnAuthenticate;
-            this.addLogbookName = addLogbookName;
+            this.addBookName = addBookName;
         }
 
         static TX_TYPE getType(String typeString) {
@@ -119,75 +116,13 @@ public class Transaction {
     private String cresultMessage = "";
 
     /**
-     * Parse the full transaction String as read from permanent storage. The reverse function to appendTxFullString();
-     *
-     * @return the transaction parsed. Returns null on errors.
-     */
-    static Transaction parseTxFullString(String txFullString) {
-        if (txFullString.trim().isEmpty())
-            return null;
-        Transaction tx = null;
-        try {
-            // Parse csv-String. Returns all decoded elements.
-            ArrayList<String> txElements = CsvCodec.splitEntries(txFullString);
-            // Parse elements.
-            int ID = Integer.parseInt(txElements.get(0));
-            long sentAt = Long.parseLong(txElements.get(1));
-            int retries = Integer.parseInt(txElements.get(2));
-            long resultAt = Long.parseLong(txElements.get(3));
-            long closedAt = Long.parseLong(txElements.get(4));
-            String type = txElements.get(5);
-            String tablename = txElements.get(6);
-            // parse the record
-            String[] record = parseTxRecordString(txElements);
-            // add the result. The result code and result message are always the last two elements.
-            int resultCode = Integer.parseInt(txElements.get(txElements.size() - 2));
-            String resultMessage = txElements.get(txElements.size() - 1);
-            // Build the transaction
-            tx = new Transaction(ID, TX_TYPE.getType(type), tablename, record);
-            tx.sentAt = sentAt;
-            tx.retries = retries;
-            tx.resultAt = resultAt;
-            tx.closedAt = closedAt;
-            tx.resultCode = resultCode;
-            tx.resultMessage = resultMessage;
-        } catch (Exception e) {
-            TxRequestQueue.getInstance().logApiMessage(
-                    International.getString("Fehler beim Lesen einer Transaktion vom permanenten Speicher") +
-                            ": " + txFullString, 1);
-        }
-        // return result
-        return tx;
-    }
-
-    /**
-     * Parse the record part of a full transaction String as read from permanent storage. The reverse function to
-     * appendTxRecordString();
-     *
-     * @param txFullStringElements the fullString split into elements using the csv-parser
-     * @return the record as used by the transaction constructor.
-     */
-    private static String[] parseTxRecordString(ArrayList<String> txFullStringElements) {
-        // read the record as the inner elements of the transaction
-        final int recordStartOffset = 7;  // The first 7 elements are the transaction header fields.
-        ArrayList<String> record = new ArrayList<String>();
-        for (int i = recordStartOffset; i < txFullStringElements.size() - 2; i = i + 2)
-            record.add(txFullStringElements.get(i) + ";" +
-                    CsvCodec.encodeElement(txFullStringElements.get(i + 1), CsvCodec.DEFAULT_DELIMITER,
-                            CsvCodec.DEFAULT_QUOTATION));
-        String[] rArray = new String[record.size()];
-        for (int i = 0; i < record.size(); i++)
-            rArray[i] = record.get(i);
-        return rArray;
-    }
-
-    /**
      * Create an internet access request for the InternetAccessManager for a bundle of transaction messages.
      *
      * @param txs the transactions to be encoded.
+     * @param credentials the credentials which shall be used.
      * @return the properly formatted IAM message.
      */
-    static TaskManager.RequestMessage createIamRequest(Vector<Transaction> txs) {
+    static TaskManager.RequestMessage createIamRequest(Vector<Transaction> txs, String credentials) {
 
         if (txs == null || txs.size() == 0)
             return null;
@@ -195,11 +130,11 @@ public class Transaction {
         // Create the transaction container.
         TxRequestQueue txq = TxRequestQueue.getInstance();
         StringBuilder txContainer = new StringBuilder();
-        txContainer.append(TxRequestQueue.EFA_CLOUD_VERSION).append(d).append(TxRequestQueue.getTxcId()).append(d)
-                .append(txq.credentials);
+        txContainer.append(TxRequestQueue.efa_cloud_used_api_version).append(d).append(TxRequestQueue.getTxcId()).append(d)
+                .append(credentials);
         for (Transaction tx : txs) {
             tx.appendTxPostString(txContainer);
-            txq.logApiMessage("#" + tx.ID + ", " + tx.type + " [" + tx.tablename + "]: Transaction sent. Record length: "
+            txq.logApiMessage("tx" + tx.ID + ", " + tx.type + " [" + tx.tablename + "]: Transaction sent. Record length: "
                     + ((tx.record == null) ? "null" : "" + tx.record.length), 0);
             txContainer.append(MESSAGE_SEPARATOR_STRING);
         }
@@ -223,6 +158,32 @@ public class Transaction {
     }
 
     /**
+     * Create a single NOP request used for check of connectivity when activating efaCloud (Does not use the request
+     * queue, but runs synchronously.)
+     * @param credentials the user credentials, end with a ';'
+     * @return the container to be added, already encoded
+     */
+    public static String createSingleNopRequestContainer(String credentials) {
+        char d = TxRequestQueue.TX_REQ_DELIMITER;
+        StringBuilder txContainer = new StringBuilder();
+        txContainer.append(TxRequestQueue.efa_cloud_used_api_version).append(d)
+                .append(TxRequestQueue.getTxcId()).append(d).append(credentials);
+        txContainer.append(1).append(d)        //
+                .append(0).append(d)     //
+                .append(TX_TYPE.NOP).append(d)        //
+                .append("@All");  //  if no record is available there must be no dangling ';'
+        // encode the transaction message container
+        String txContainerBase64 = "";
+        try {
+            // Java8: txContainerBase64 = Base64.getEncoder().encodeToString(txContainerStr.getBytes("UTF-8"));
+            txContainerBase64 = Base64.encodeBytes(txContainer.toString().getBytes("UTF-8")); // Java6
+        } catch (UnsupportedEncodingException ignored) {
+        }
+        // create the txContainerBase64efa which needs no further URL encoding.
+        return txContainerBase64.replace('/', '-').replace('+', '*').replace('=', '_');
+    }
+
+    /**
      * Constructor. Creates the transaction and adds a new transaction ID.
      *
      * @param ID     ID of transaction to be created. Set -1 to auto increment the ID
@@ -235,7 +196,8 @@ public class Transaction {
         this.createdAt = System.currentTimeMillis();
         this.type = type;
         this.tablename = tablename;
-        if (type.addLogbookName && tablename.equalsIgnoreCase("efa2logbook")) {
+        // add the logbook's name, if required
+        if (type.addBookName && tablename.equalsIgnoreCase("efa2logbook")) {
             String logbookname = ((Daten.project != null) &&
                     (Daten.project.getCurrentLogbook() != null)) ? Daten.project.getCurrentLogbook().getName() : "nicht_definiert";
             String[] extendedRecord;
@@ -247,6 +209,20 @@ public class Transaction {
                 extendedRecord[record.length] = "Logbookname;" + logbookname;
             }
             this.record = extendedRecord;
+        } else
+            // add the clubworkbook's name, if required
+            if (type.addBookName && tablename.equalsIgnoreCase("efa2clubwork")) {
+                String clubworkbookname = ((Daten.project != null) &&
+                        (Daten.project.getCurrentClubwork() != null)) ? Daten.project.getCurrentClubwork().getName() : "nicht_definiert";
+                String[] extendedRecord;
+                if ((record == null) || (record.length == 0))
+                    extendedRecord = new String[]{"ClubworkbookName;" + clubworkbookname};
+                else {
+                    extendedRecord = new String[record.length + 1];
+                    System.arraycopy(record, 0, extendedRecord, 0, record.length);
+                    extendedRecord[record.length] = "ClubworkbookName;" + clubworkbookname;
+                }
+                this.record = extendedRecord;
         } else
             this.record = record;
     }
@@ -389,11 +365,11 @@ public class Transaction {
         return sentAt;
     }
 
-    int getResultCode() {
+    public int getResultCode() {
         return resultCode;
     }
 
-    String getResultMessage() {
+    public String getResultMessage() {
         return resultMessage;
     }
 

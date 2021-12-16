@@ -21,6 +21,8 @@ import de.nmichael.efa.util.Logger;
 
 import java.awt.*;
 import java.io.*;
+import java.net.URL;
+import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -52,7 +54,10 @@ import java.util.*;
  */
 public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
 
-    public static final int EFA_CLOUD_VERSION = 1;
+    // API protocol versions: 1: first implementation; 2: added VERIFY statement; 3: (planned: use of ecrid keys)
+    public static final int EFA_CLOUD_MAX_API_VERSION = 2;
+    // depending on the server response the api version is adjusted to the common maximum
+    public static int efa_cloud_used_api_version = 1;
 
     public static final char TX_REQ_DELIMITER = ';';
     public static final String TX_RESP_DELIMITER = ";";
@@ -72,10 +77,11 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
     // The synchronisation start delay is one SYNCH_PERIOD
     static final int SYNCH_PERIOD_DEFAULT = 3600000; // = 3600 seconds = 1 hour
     static int synch_period = SYNCH_PERIOD_DEFAULT; // = 3600 seconds = 1 hour
+    static final int SYNCH_UPLOAD_PERIOD_DEFAULT = 86400000;  // = 86400 seconds = 24 hours
 
     // If a transaction is busy since more than the RETRY_AFTER_MILLISECONDS period
     // issue a new internet access request.
-    private static final int RETRY_PERIOD = 120000; // = 120 seconds = 2 minute
+    public static final int RETRY_PERIOD = 120000; // = 120 seconds = 2 minutes
 
     // timeout for holding a queue locked for manipulation.
     private static final long QUEUE_LOCK_TIMEOUT = 5000;
@@ -121,7 +127,7 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
     public static final int RQ_QUEUE_START_SYNCH_DOWNLOAD = 5;  // from WORKING to SYNCHRONIZING
     public static final int RQ_QUEUE_START_SYNCH_UPLOAD = 6;    // from WORKING to SYNCHRONIZING the last 30 days
     public static final int RQ_QUEUE_START_SYNCH_UPLOAD_ALL = 61; // from WORKING to SYNCHRONIZING all data sets
-    public static final int RQ_QUEUE_START_SYNCH_DELETE = 7;    // from WORKING to SYNCHRONIZING
+    // Obsolete from 2.3.1: public static final int RQ_QUEUE_START_SYNCH_DELETE = 7;    // from WORKING to SYNCHRONIZING
     public static final int RQ_QUEUE_STOP_SYNCH = 8;            // form SYNCHRONIZING to WORKING
     public static final HashMap<Integer, String> RQ_QUEUE_STATE = new HashMap<Integer, String>();
 
@@ -132,7 +138,7 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
         RQ_QUEUE_STATE.put(RQ_QUEUE_PAUSE, "PAUSE");
         RQ_QUEUE_STATE.put(RQ_QUEUE_START_SYNCH_DOWNLOAD, "SYNCH_DOWNLOAD");
         RQ_QUEUE_STATE.put(RQ_QUEUE_START_SYNCH_UPLOAD, "SYNCH_UPLOAD");
-        RQ_QUEUE_STATE.put(RQ_QUEUE_START_SYNCH_DELETE, "SYNCH_DELETE");
+        // Obsolete from 2.3.1: RQ_QUEUE_STATE.put(RQ_QUEUE_START_SYNCH_DELETE, "SYNCH_DELETE");
         RQ_QUEUE_STATE.put(RQ_QUEUE_STOP_SYNCH, "STOP_SYNCH");
     }
 
@@ -180,7 +186,7 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
     private final long[] locks = new long[TX_QUEUE_COUNT];
     private final String[] txFilePath = new String[TX_QUEUE_COUNT];
     private String storageLocationRoot;
-    private String efacloudLogDir;
+    protected String efacloudLogDir;
     private long logLastModified;
 
     private static final long LOG_PERIOD_MILLIS = 14 * (24 * 3600 * 1000);
@@ -204,10 +210,13 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
     private Timer queueTimer;
     private long pollsCount;                   // a counter incrementing on each queue poll cycle
     private final InternetAccessManager iam;
-    String efaCloudUrl;
-    String username;
-    String credentials;
+    final String efaCloudUrl;
+    private final String username;
+    private final String credentials;
+    private String adminCredentials = "";  // the admin credentials are used during admin sessions in efaBths
+    private String adminEfaCloudUserID = "";
     public String serverWelcomeMessage;
+    public String adminSessionMessage;
     private Container efaGUIroot;
 
     // Statistics buffer
@@ -286,6 +295,41 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
     }
 
     /**
+     * Set the admin credentials. Called by admin login in efaBths. Once set, admin credentials are used for
+     * all transactions in the pending queue. Call clearAdminCredentials() to end the admin session.
+     * @param adminName the admin name within the efa client
+     * @param efaCloudUserID the admins efaCloudUserID
+     * @param password the admins efaCloud password (plain text, not hash, will not be stored)
+     */
+    public void setAdminCredentials(String adminName, String efaCloudUserID, String password) {
+        // combine the credentials to a transaction container prefix.
+        this.adminCredentials =
+                efaCloudUserID + TX_REQ_DELIMITER + CsvCodec.encodeElement(password, TX_REQ_DELIMITER, TX_QUOTATION) +
+                        TX_REQ_DELIMITER;
+        this.adminSessionMessage = " [admin: " + adminName + "]";
+        this.adminEfaCloudUserID = "" + efaCloudUserID;
+        txq.logApiMessage("state, []: Starting admin session with efaCloudUserID " + efaCloudUserID, 0);
+    }
+
+    /**
+     * Clar the admin credentials, i.e. fall back to boathouse credentials.
+     */
+    public void clearAdminCredentials() {
+        if (txq != null)
+            txq.logApiMessage("state, []: Ending admin session for efaCloudUserID " + this.adminEfaCloudUserID, 0);
+        this.adminCredentials = "";
+        this.adminEfaCloudUserID = "";
+        this.adminSessionMessage = "";
+    }
+
+    String getCredentials() {
+        return (adminCredentials.length() > 0) ? adminCredentials : credentials;
+    }
+
+    String getAdminUserID() {
+        return (adminCredentials.length() > 0) ? adminEfaCloudUserID : username;
+    }
+    /**
      * For raspberryPi without clock the system time changes after a little while when having received the ntp answer.
      * That confuses all timers. Use the last log file time stamp to check, wheher this is still to be expected.
      */
@@ -332,7 +376,7 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
         txq.synchControl.logSynchMessage(
                 International
                         .getMessage("Statuswechsel der Serverkommunikation zu {Status}", QUEUE_STATE.get(stateToSet)),
-                "@all", null, true);
+                "", null, true);
     }
 
     /**
@@ -468,17 +512,9 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
                 else if (logFileName.equalsIgnoreCase("Internet statistics"))
                     InternetAccessManager.initStatisticsCsv(cleansedLogFile.toString());
             } else
-                cleansedLogFile.append(formatFull.format(new Date())).append(" [@all]: LOG STARTING\n");
+                cleansedLogFile.append(formatFull.format(new Date())).append(" INFO state, []: LOG STARTING\n");
             TextResource.writeContents(logFilePath, cleansedLogFile.toString(), false);
             logFilePaths.put(logFileName, logFilePath);
-        }
-
-        // check the URL
-        this.efaCloudUrl = efaCloudUrl;
-        if (!this.efaCloudUrl.endsWith(URL_API_LOCATION)) {
-            if (this.efaCloudUrl.endsWith("/"))
-                this.efaCloudUrl = this.efaCloudUrl.substring(0, this.efaCloudUrl.length() - 1);
-            this.efaCloudUrl += URL_API_LOCATION;
         }
     }
 
@@ -511,7 +547,8 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
         for (String logFileName : logFileNames.keySet()) {
             String logFilePath = logFilePaths.get(logFileName);
             SimpleDateFormat formatFull = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            TextResource.writeContents(logFilePath, formatFull.format(new Date()) + " [@all]: LOG ENDING\n\n", true);
+            TextResource.writeContents(logFilePath, formatFull.format(new Date())
+                    + " INFO state, []: LOG ENDING\n\n", true);
         }
     }
 
@@ -524,7 +561,7 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
         String txqAuditInfo =
                 "Transaction queue audit information:\n" + "------------------------------------\n" + "\ntxq: " +
                         txq.toString() + "\nstate: " + txq.state + "\nusername: " + txq.username +
-                        "\npassword (appr. length): " + (txq.credentials.length() - txq.username.length() - 2) +
+                        "\npassword (appr. length): " + (txq.getCredentials().length() - txq.username.length() - 2) +
                         "\nefaCloudUrl: " + txq.efaCloudUrl + "\npollsCount: " + txq.pollsCount +
                         "\nlogLastModified: " + txq.logLastModified + "\nstorageLocationRoot: " +
                         txq.storageLocationRoot + "\nsynch_period: " + TxRequestQueue.synch_period +
@@ -563,6 +600,48 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
     }
 
     /**
+     * Check the provided Url on connectivity and credentials to provide an appropriate error message to the user.
+     * @return error message or "", if all is ok.
+     */
+    public String checkURL() {
+        String testUrl = this.efaCloudUrl.replace(URL_API_LOCATION,"/api/ping.php");
+        String testResponse = InternetAccessManager.getText(testUrl, "");
+        if (testResponse.trim().equalsIgnoreCase("ping"))
+            return "";
+        else
+            return testResponse;
+    }
+
+    /**
+     * Check the provided Url on connectivity and credentials to provide an appropriate error message to the user.
+     * @return error message or "", if all is ok.
+     */
+    public String checkCredentials() {
+        String testResponse = InternetAccessManager.getText(this.efaCloudUrl,
+                "txc=" + Transaction.createSingleNopRequestContainer(this.credentials));
+        String txContainerBase64 = testResponse.replace('-', '/').replace('*', '+').replace('_', '=').trim();
+        String txContainer = "";
+        try {
+            // Java 8: txContainer = new String(Base64.getDecoder().decode(txContainerBase64),
+            // StandardCharsets.UTF_8);
+            txContainer = new String(Base64.decode(txContainerBase64), "UTF-8");  // Java 6
+        } catch (Exception ignored) {
+            return "#ERROR: Format error in response.";
+        }
+        String[] headerAndContent = txContainer.split(TxRequestQueue.TX_RESP_DELIMITER, 5);
+        if (headerAndContent.length < 4)
+            return "#ERROR: Syntax error in response.";
+        try {
+            int cresult_code = Integer.parseInt(headerAndContent[2]);
+            if (cresult_code != 300)
+                return "#ERROR: " + headerAndContent[2] + ", " + headerAndContent[3];
+        } catch (NumberFormatException ignored) {
+            return "#ERROR: Syntax error in response.";
+        }
+        return "";
+    }
+
+    /**
      * Private constructor to run the queue as singleton class. There must not be more than one queue per client
      * active.
      *
@@ -580,6 +659,15 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
         this.credentials =
                 username + TX_REQ_DELIMITER + CsvCodec.encodeElement(password, TX_REQ_DELIMITER, TX_QUOTATION) +
                         TX_REQ_DELIMITER;
+
+        // check the URL
+        if (!efaCloudUrl.endsWith(URL_API_LOCATION)) {
+            if (efaCloudUrl.endsWith("/"))
+                efaCloudUrl = efaCloudUrl.substring(0, efaCloudUrl.length() - 1);
+            this.efaCloudUrl = efaCloudUrl + URL_API_LOCATION;
+        }
+        else this.efaCloudUrl = efaCloudUrl;
+        clearAdminCredentials();
 
         // initialize all file paths and queues
         initPathsAndLogs(efaCloudUrl, storageLocation);
@@ -637,7 +725,7 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
         shiftTx(TX_SYNCH_QUEUE_INDEX, TX_PENDING_QUEUE_INDEX, ACTION_TX_MOVE, 0, 0);
         txq.synchControl
                 .logSynchMessage(International.getString("Änderung der Aktivtät der Serverkommunikation") + ": " + message,
-                        "@all", null, true);
+                        "", null, true);
     }
 
     /**
@@ -661,7 +749,8 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
                                 efaCloudUrl));
             }
             txq.setState(QUEUE_IS_DISCONNECTED);
-            TaskManager.RequestMessage rq = Transaction.createIamRequest(queues.get(TX_BUSY_QUEUE_INDEX));
+            TaskManager.RequestMessage rq = Transaction.createIamRequest(queues.get(TX_BUSY_QUEUE_INDEX),
+                    getCredentials());
             iam.sendRequest(rq);
         }
     }
@@ -702,7 +791,7 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
                 "Ungültiger Wechsel des efaCloud-Kommunikationsstatus verworfen: in {Status} kann {Requested} " +
                         "({Bedeutung}) nicht als Folge auftreten.", TxRequestQueue.QUEUE_STATE.get(txq.getState()),
                 "" + stateTransitionRequests.firstElement(),
-                TxRequestQueue.RQ_QUEUE_STATE.get(stateTransitionRequests.firstElement())), "@all", null, true);
+                TxRequestQueue.RQ_QUEUE_STATE.get(stateTransitionRequests.firstElement())), "", null, true);
         stateTransitionRequests.remove(0);
     }
 
@@ -781,7 +870,8 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
                                 stateTransitionRequests.remove(0);
                                 // Redo the first transaction. Increase the retry counter and update the sentAt timestamp.
                                 shiftTx(TX_BUSY_QUEUE_INDEX, TX_BUSY_QUEUE_INDEX, ACTION_TX_RETRY, 0, 0);
-                                TaskManager.RequestMessage rq = Transaction.createIamRequest(queues.get(TX_BUSY_QUEUE_INDEX));
+                                TaskManager.RequestMessage rq = Transaction
+                                        .createIamRequest(queues.get(TX_BUSY_QUEUE_INDEX), getCredentials());
                                 iam.sendRequest(rq);
                                 txq.setState(QUEUE_IS_WORKING);
                                 if (currentState == QUEUE_IS_DISCONNECTED)
@@ -790,10 +880,10 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
                                 else if (currentState == QUEUE_IS_AUTHENTICATING)
                                     txq.synchControl
                                             .logSynchMessage(International.getString("Serverkommunkation gestartet."),
-                                                    "@all", null, true);
+                                                    "", null, true);
                                 else
                                     txq.synchControl.logSynchMessage(
-                                            International.getString("Serverkommunikation wieder aufgenommen."), "@all",
+                                            International.getString("Serverkommunikation wieder aufgenommen."), "",
                                             null, true);
                                 showStatusAtGUI();
                             } else
@@ -802,7 +892,7 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
                         case RQ_QUEUE_START_SYNCH_DOWNLOAD:
                         case RQ_QUEUE_START_SYNCH_UPLOAD:
                         case RQ_QUEUE_START_SYNCH_UPLOAD_ALL:
-                        case RQ_QUEUE_START_SYNCH_DELETE:
+                            // Obsolete from 2.3.1: case RQ_QUEUE_START_SYNCH_DELETE:
                             if ((currentState == QUEUE_IS_WORKING) || (currentState == QUEUE_IS_IDLE)) {
                                 if ((queues.get(TX_PENDING_QUEUE_INDEX).size() == 0) &&
                                         (queues.get(TX_BUSY_QUEUE_INDEX).size() == 0)) {
@@ -820,6 +910,7 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
                                                 "filepath;efacloudLogs.zip", "contents;" + getLogsAsZip());
                                         // Add a NOP transaction to synchronize the configuration
                                         appendTransaction(TX_PENDING_QUEUE_INDEX, Transaction.TX_TYPE.NOP, "", "sleep;2");
+                                        // Both transactions will use admin credentials in admin mode
                                     }
                                 }
                             } else
@@ -833,7 +924,7 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
                                     showStatusAtGUI();
                                     txq.synchControl.logSynchMessage(
                                             International.getString("Synchronisationstransaktionen abgeschlossen"),
-                                            "@all", null, false);
+                                            "", null, false);
                                 }
                             } else
                                 dropInvalidStateChangeRequest();
@@ -860,8 +951,9 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
                         else if (queues.get(TX_SYNCH_QUEUE_INDEX).size() > 0) {
                             shiftTx(TX_SYNCH_QUEUE_INDEX, TX_BUSY_QUEUE_INDEX, ACTION_TX_SEND, 0,
                                     PENDING_QUEUE_MAX_SHIFT_SIZE);
+                            // synchronization activities always use the default credentials, never the admin ones.
                             TaskManager.RequestMessage rq = Transaction
-                                    .createIamRequest(queues.get(TX_BUSY_QUEUE_INDEX));
+                                    .createIamRequest(queues.get(TX_BUSY_QUEUE_INDEX), credentials);
                             iam.sendRequest(rq);
                         } else
                             txq.registerStateChangeRequest(RQ_QUEUE_STOP_SYNCH);
@@ -885,7 +977,7 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
                                 txq.setState((pendingHeadIsNop) ? QUEUE_IS_AUTHENTICATING : QUEUE_IS_WORKING);
                             // read the transactions to use them
                             TaskManager.RequestMessage rq = Transaction
-                                    .createIamRequest(queues.get(TX_BUSY_QUEUE_INDEX));
+                                    .createIamRequest(queues.get(TX_BUSY_QUEUE_INDEX), getCredentials());
                             iam.sendRequest(rq);
                         }
                         // it occurred that the queue was disconnected, but had no pending transaction. That will
@@ -904,6 +996,7 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
                             // The synch transactions queue is never stored, so it needs not to be read from file.
                             queues.get(TX_SYNCH_QUEUE_INDEX).clear();
                             registerStateChangeRequest(RQ_QUEUE_START_SYNCH_DOWNLOAD);
+                        // or run a fast synch poll, if due.
                         } else if ((txq.getState() == QUEUE_IS_IDLE) &&
                                 ((pollsCount % synch_check_polls_period) == (synch_check_polls_period - 1))) {
                             // send it to the internet access manager.
@@ -913,6 +1006,22 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
                             TaskManager.RequestMessage rq = new TaskManager.RequestMessage(postURLplus, "",
                                     InternetAccessManager.TYPE_POST_PARAMETERS, 0.0, txq);
                             iam.sendRequest(rq);
+                        // or run a full upload, if due.
+                        } else if ((txq.getState() == QUEUE_IS_IDLE) &&
+                                ((System.currentTimeMillis() - synchControl.timeOfLastSynchUploadAll) > SYNCH_UPLOAD_PERIOD_DEFAULT)) {
+                            // first read the stored value, if there is one.
+                            String last_synch_upload_all = TextResource.getContents(
+                                    new File(txq.efacloudLogDir + File.separator + "last_synch_upload_all"),
+                                    "UTF-8");
+                            try {
+                                synchControl.timeOfLastSynchUploadAll = Long.parseLong((last_synch_upload_all == null) ?
+                                        "0" : last_synch_upload_all);
+                            } catch (Exception e) {
+                                synchControl.timeOfLastSynchUploadAll = 0L;
+                            }
+                            // check again, if an upload is due.
+                            if (((System.currentTimeMillis() - synchControl.timeOfLastSynchUploadAll) > SYNCH_UPLOAD_PERIOD_DEFAULT))
+                                txq.registerStateChangeRequest(TxRequestQueue.RQ_QUEUE_START_SYNCH_UPLOAD_ALL);
                         }
                     }
 
@@ -1233,19 +1342,21 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
     }
 
     /**
-     * Create a new transaction and append it to the pending queue. If the queue is stopped, nothing will be appended.
+     * Create a new transaction with an object which will be notified on the transaction result and append it to the
+     * pending queue. Used ONLY for the VERIFY transaction. If the queue is stopped, nothing will be appended.
      * If the queue is authenticating, only "nop" transactions will be appended.
      *
-     * @param queueIndex index of the queu to append the transaction to. Must be TX_PENDING_QUEUE_INDEX or
-     *                   TX_FIX_QUEUE_INDEX
-     * @param type       type of message to be appended
-     * @param tablename  tablename for transaction
-     * @param record     record data of the transaction to be created. An array of n "key; value" pairs, all entries csv
-     *                   encoded. If there is no record, e. g. for a first keyfixing request, set it to (String[]) null
+     * @param queueIndex   index of the queu to append the transaction to. Must be TX_PENDING_QUEUE_INDEX or
+     *                     TX_FIX_QUEUE_INDEX
+     * @param type         type of message to be appended
+     * @param toBeNotified an object to be notified when the result is received.
+     * @param tablename    tablename for transaction
+     * @param record       record data of the transaction to be created. An array of n "key; value" pairs, all entries csv
+     *                     encoded. If there is no record, e. g. for a first keyfixing request, set it to (String[]) null
      */
-    public void appendTransaction(int queueIndex, Transaction.TX_TYPE type, String tablename, String... record) {
+    public Transaction appendTransaction(int queueIndex, Transaction.TX_TYPE type, Object toBeNotified, String tablename, String... record) {
         if (txq.getState() == QUEUE_IS_STOPPED)
-            return;
+            return null;
         // in authentication mode only structure check and building is allowed
         boolean allowedTransaction = (txq.getState() != QUEUE_IS_AUTHENTICATING) //
                 || type == Transaction.TX_TYPE.NOP //
@@ -1254,7 +1365,7 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
                 || type == Transaction.TX_TYPE.UNIQUE //
                 || type == Transaction.TX_TYPE.AUTOINCREMENT;
         if (!allowedTransaction)
-            return;
+            return null;
         Transaction tx = new Transaction(-1, type, tablename, record);
         // try to get the queues lock. This will exit with a release lock exception after lock timeout.
         //noinspection StatementWithEmptyBody
@@ -1265,6 +1376,23 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
         if (isPermanentQueue(queueIndex))
             writeQueueToFile(queueIndex);
         releaseQueueLock(queueIndex);
+        return tx;
+    }
+
+    /**
+     * Default to create a new transaction and append it to the pending queue. If the queue is stopped, nothing will be appended.
+     * If the queue is authenticating, only "nop" transactions will be appended.
+     *
+     * @param queueIndex   index of the queu to append the transaction to. Must be TX_PENDING_QUEUE_INDEX or
+     *                     TX_FIX_QUEUE_INDEX
+     * @param type         type of message to be appended
+     * @param tablename    tablename for transaction
+     * @param record       record data of the transaction to be created. An array of n "key; value" pairs, all entries csv
+     *                     encoded. If there is no record, e. g. for a first keyfixing request, set it to (String[]) null
+     */
+    public void appendTransaction(int queueIndex, Transaction.TX_TYPE type, String tablename, String... record) {
+        appendTransaction(queueIndex, type, null, tablename, record);
+        // the transaction is not returned as default (asynchronous transaction handling).
     }
 
     @Override

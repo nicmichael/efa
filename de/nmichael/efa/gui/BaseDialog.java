@@ -11,6 +11,8 @@
 package de.nmichael.efa.gui;
 
 import de.nmichael.efa.*;
+import de.nmichael.efa.data.efacloud.TxRequestQueue;
+import de.nmichael.efa.data.storage.IDataAccess;
 import de.nmichael.efa.util.*;
 import de.nmichael.efa.util.Dialog;
 import de.nmichael.efa.core.items.*;
