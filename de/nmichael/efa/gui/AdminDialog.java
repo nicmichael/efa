@@ -245,11 +245,12 @@ public class AdminDialog extends BaseDialog implements IItemListener {
         _keyAction(evt);
     }
 
+    @Override
     public void closeButton_actionPerformed(ActionEvent e) {
         if ((Daten.project.getProjectStorageType() == IDataAccess.TYPE_EFA_CLOUD)
                 && (TxRequestQueue.getInstance() != null))
             TxRequestQueue.getInstance().clearAdminCredentials();
-        cancel();
+        super.closeButton_actionPerformed(e);
     }
 
     public void itemListenerAction(IItemType itemType, AWTEvent event) {
