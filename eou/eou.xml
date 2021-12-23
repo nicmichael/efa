@@ -2,6 +2,19 @@
 <efaOnlineUpdate>
 
     <Version>
+        <VersionID>2.3.1_00</VersionID>
+        <ReleaseDate>22.12.2021</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa231.zip</DownloadUrl>
+        <DownloadSize>4255809</DownloadSize>
+        <Changes lang="de">
+            <ChangeItem>efaCloud-Optimierungen mit zentraler Admin-Verwaltung</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>efaCloud optimizations with centralized admin management</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
         <VersionID>2.3.0_14</VersionID>
         <ReleaseDate>19.11.2021</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa230.zip</DownloadUrl>
