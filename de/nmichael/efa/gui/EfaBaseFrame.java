@@ -577,7 +577,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         cox.setFieldSize(200, 19);
         cox.setLabelGrid(1, GridBagConstraints.EAST, GridBagConstraints.NONE);
         cox.setFieldGrid(2, GridBagConstraints.WEST, GridBagConstraints.NONE);
-        cox.setAutoCompleteData(autoCompleteListPersons);
+        cox.setAutoCompleteData(autoCompleteListPersons, true);
         cox.setChecks(true, true);
         cox.setBackgroundColorWhenFocused(Daten.efaConfig.getValueEfaDirekt_colorizeInputField() ? Color.yellow : null);
         cox.displayOnGui(this, mainInputPanel, 0, 4);
@@ -594,7 +594,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
             crew[j].setFieldSize(200, 19);
             crew[j].setLabelGrid(1, GridBagConstraints.EAST, GridBagConstraints.NONE);
             crew[j].setFieldGrid((left ? 2 : 3), GridBagConstraints.WEST, GridBagConstraints.NONE);
-            crew[j].setAutoCompleteData(autoCompleteListPersons);
+            crew[j].setAutoCompleteData(autoCompleteListPersons, true);
             crew[j].setChecks(true, true);
             crew[j].setBackgroundColorWhenFocused(Daten.efaConfig.getValueEfaDirekt_colorizeInputField() ? Color.yellow : null);
             crew[j].displayOnGui(this, mainInputPanel, (left ? 0 : 4), 5 + j%4);
