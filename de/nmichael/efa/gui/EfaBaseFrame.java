@@ -3406,6 +3406,8 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
                         saveEntry();
                         navigateInLogbook(0);
                     }
+                } else {
+                    iniGuiMain();
                 }
             }
             if (item == saveButton) {
