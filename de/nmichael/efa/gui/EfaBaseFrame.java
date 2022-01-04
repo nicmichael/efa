@@ -3405,9 +3405,8 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
                         updateBoatStatus(true, MODE_BOATHOUSE_FINISH);
                         saveEntry();
                         navigateInLogbook(0);
+                        autoCompleteListPersons.reset();
                     }
-                } else {
-                    iniGuiMain();
                 }
             }
             if (item == saveButton) {
@@ -4776,6 +4775,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         if (mode != EfaBaseFrame.MODE_BOATHOUSE_ABORT) {
             this.setVisible(false);
             Dialog.frameClosed(this);
+            autoCompleteListPersons.reset();
         }
         efaBoathouseFrame.showEfaBoathouseFrame(efaBoathouseAction, currentRecord);
     }
