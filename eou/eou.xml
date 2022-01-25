@@ -2,6 +2,19 @@
 <efaOnlineUpdate>
 
     <Version>
+        <VersionID>2.3.1_01</VersionID>
+        <ReleaseDate>24.01.2022</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa231.zip</DownloadUrl>
+        <DownloadSize>4256121</DownloadSize>
+        <Changes lang="de">
+            <ChangeItem>Neu: Verbesserte Auto-Complete Listen schlagen nur Personen vor, die noch nicht fuer das Boot ausgewaehlt sind</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>New: Improved Auto-Complete lists only suggest persons which haven't yet been selected for this boat</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
         <VersionID>2.3.1_00</VersionID>
         <ReleaseDate>22.12.2021</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa231.zip</DownloadUrl>

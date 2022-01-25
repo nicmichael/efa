@@ -2,6 +2,16 @@
 <efaOnlineUpdate>
 
     <Version>
+        <VersionID>2.3.1_01</VersionID>
+        <ReleaseDate>24.01.2022</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa2drv.zip</DownloadUrl>
+        <DownloadSize>4425516</DownloadSize>
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Anpassung der Schluesselerstellung und Signierung von Schluesseln an neue Java-Verionen</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
         <VersionID>2.3.0_09</VersionID>
         <ReleaseDate>11.04.2021</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa2drv.zip</DownloadUrl>

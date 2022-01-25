@@ -42,12 +42,12 @@ import javax.swing.plaf.ColorUIResource;
 public class Daten {
 
     public final static String VERSION            = "2.3.1"; // Version für die Ausgabe (z.B. 2.1.0, kann aber auch Zusätze wie "alpha" o.ä. enthalten)
-    public final static String VERSIONID          = "2.3.1_00";   // VersionsID: Format: "X.Y.Z_MM"; final-Version z.B. 1.4.0_00; beta-Version z.B. 1.4.0_#1
-    public final static String VERSIONRELEASEDATE = "22.12.2021";  // Release Date: TT.MM.JJJJ
+    public final static String VERSIONID          = "2.3.1_01";   // VersionsID: Format: "X.Y.Z_MM"; final-Version z.B. 1.4.0_00; beta-Version z.B. 1.4.0_#1
+    public final static String VERSIONRELEASEDATE = "24.01.2022";  // Release Date: TT.MM.JJJJ
     public final static String MAJORVERSION       = "2";
     public final static String PROGRAMMID         = "EFA.231"; // Versions-ID für Wettbewerbsmeldungen
     public final static String PROGRAMMID_DRV     = "EFADRV.231"; // Versions-ID für Wettbewerbsmeldungen
-    public final static String COPYRIGHTYEAR      = "21";   // aktuelles Jahr (Copyright (c) 2001-COPYRIGHTYEAR)
+    public final static String COPYRIGHTYEAR      = "22";   // aktuelles Jahr (Copyright (c) 2001-COPYRIGHTYEAR)
     public final static int REQUIRED_JAVA_VERSION = 8;
 
     // enable/disable development functions for next version
