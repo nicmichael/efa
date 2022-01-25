@@ -78,6 +78,7 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
     static final int SYNCH_PERIOD_DEFAULT = 3600000; // = 3600 seconds = 1 hour
     static int synch_period = SYNCH_PERIOD_DEFAULT; // = 3600 seconds = 1 hour
     static final int SYNCH_UPLOAD_PERIOD_DEFAULT = 86400000;  // = 86400 seconds = 24 hours
+    static final int STATS_UPLOAD_PERIOD_MIN = 86400000;  // = 86400 seconds = 24 hours
 
     // If a transaction is busy since more than the RETRY_AFTER_MILLISECONDS period
     // issue a new internet access request.
@@ -218,6 +219,7 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
     public String serverWelcomeMessage;
     public String adminSessionMessage;
     private Container efaGUIroot;
+    private long lastStatsUpload = 0L;
 
     // Statistics buffer
     private static final int STATISTICS_BUFFER_SIZE = 5000;
@@ -906,8 +908,11 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
                                         // because the queue state is QUEUE_IS_SYNCHRONIZING this transaction will not
                                         // be processed until the synchronization is completed. It will nevertheless
                                         // not contain the synchronization process transactions.
-                                        appendTransaction(TX_PENDING_QUEUE_INDEX, Transaction.TX_TYPE.UPLOAD, "zip",
-                                                "filepath;efacloudLogs.zip", "contents;" + getLogsAsZip());
+                                        if ((System.currentTimeMillis() - lastStatsUpload) > STATS_UPLOAD_PERIOD_MIN) {
+                                            appendTransaction(TX_PENDING_QUEUE_INDEX, Transaction.TX_TYPE.UPLOAD, "zip",
+                                                    "filepath;efacloudLogs.zip", "contents;" + getLogsAsZip());
+                                            lastStatsUpload = System.currentTimeMillis();
+                                        }
                                         // Add a NOP transaction to synchronize the configuration
                                         appendTransaction(TX_PENDING_QUEUE_INDEX, Transaction.TX_TYPE.NOP, "", "sleep;2");
                                         // Both transactions will use admin credentials in admin mode
@@ -1360,10 +1365,7 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
         // in authentication mode only structure check and building is allowed
         boolean allowedTransaction = (txq.getState() != QUEUE_IS_AUTHENTICATING) //
                 || type == Transaction.TX_TYPE.NOP //
-                || type == Transaction.TX_TYPE.SYNCH//
-                || type == Transaction.TX_TYPE.CREATETABLE //
-                || type == Transaction.TX_TYPE.UNIQUE //
-                || type == Transaction.TX_TYPE.AUTOINCREMENT;
+                || type == Transaction.TX_TYPE.SYNCH;
         if (!allowedTransaction)
             return null;
         Transaction tx = new Transaction(-1, type, tablename, record);

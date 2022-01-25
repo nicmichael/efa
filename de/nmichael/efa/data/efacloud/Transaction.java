@@ -11,7 +11,9 @@
 package de.nmichael.efa.data.efacloud;
 
 import de.nmichael.efa.Daten;
+import de.nmichael.efa.data.storage.EfaCloudStorage;
 
+import java.io.File;
 import java.io.UnsupportedEncodingException;
 
 // import java.nio.charset.StandardCharsets;  Java 8 only
@@ -27,9 +29,7 @@ import java.util.Vector;
 public class Transaction {
 
     public enum TX_TYPE {
-        CREATETABLE("createtable", false, true, false, false, false), ADDCOLUMNS("addcolumns", false, true, false, false,
-                false), AUTOINCREMENT("autoincrement", false, true, false, false, false), UNIQUE("unique", false, true, false,
-                false, false), INSERT("insert", true, false,true, false, true), UPDATE("update", true, false,true, false,
+        INSERT("insert", true, false,true, false, true), UPDATE("update", true, false,true, false,
                 true), DELETE("delete", false, false,true, false, true), KEYFIXING("keyfixing", false, false,false, true,
                 true), SELECT("select", false, false,false, false, true), SYNCH("synch", false, false,false, true, true), LIST(
                 "list", false, false,false, false, false), NOP("nop", false, false,false, true, false),
@@ -140,6 +140,10 @@ public class Transaction {
         }
         String txContainerStr = txContainer.toString();
         txContainerStr = txContainerStr.substring(0, txContainerStr.length() - MESSAGE_SEPARATOR_STRING.length());
+
+        // uncomment for debugging
+        // TextResource.writeContents("/ramdisk/tmp", txContainerStr, true);
+
         // encode the transaction message container
         String txContainerBase64 = "";
         try {
@@ -198,7 +202,16 @@ public class Transaction {
         this.tablename = tablename;
         // add the logbook's name, if required
         if (type.addBookName && tablename.equalsIgnoreCase("efa2logbook")) {
-            String logbookname = ((Daten.project != null) &&
+            EfaCloudStorage ecs = Daten.tableBuilder.getPersistence(tablename);
+            String logbookname;
+            if (ecs != null) {
+                // e.g. /home/efa2/data/project/2021.efa2logbook
+                // default is the name of open storage which may differ from the project records current logbook
+                // in particular during the automatic logbook change process at new year.
+                String[] logbookpath = ecs.getFilename().split(File.separator);
+                logbookname = logbookpath[logbookpath.length - 1].split("\\.")[0];
+            } else
+                 logbookname = ((Daten.project != null) &&
                     (Daten.project.getCurrentLogbook() != null)) ? Daten.project.getCurrentLogbook().getName() : "nicht_definiert";
             String[] extendedRecord;
             if ((record == null) || (record.length == 0))

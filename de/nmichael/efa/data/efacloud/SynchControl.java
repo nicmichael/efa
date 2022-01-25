@@ -172,7 +172,6 @@ class SynchControl {
         DataRecord oldDr = null;
         DataRecord newDr = null;
         String[] txRecordForFixedEntry = null;
-        boolean correctionSucceeded = false;
         try {
             oldDr = efaCloudStorage.get(dataRecords.get(1).getKey());
             newDr = efaCloudStorage.get(dataRecords.get(0).getKey());
@@ -217,7 +216,6 @@ class SynchControl {
                         International.getString("Lösche falschen Datensatz") + ": " +
                         dataRecords.get(1).getKey().toString(), tx.tablename, dataRecords.get(0).getKey(), false);
                 // create the record for the fixed key
-                correctionSucceeded = true;
                 txRecordForFixedEntry = new String[dataRecords.get(0).getKeyFields().length];
                 int i = 0;
                 for (String keyField : dataRecords.get(0).getKeyFields()) {
