@@ -35,14 +35,15 @@ class SynchControl {
 
     // The names of the tables which allow the key to be modified upon server side insert
     static final String[] tables_with_key_fixing_allowed = TableBuilder.fixid_allowed.split(" ");
-    static final long clockoffsetBuffer = 600000L; // max number of millis which client clock may be offset
+    static final long clockoffsetBuffer = 600000L; // max number of millis which client clock may be offset, 10 mins
     static final long synch_upload_look_back_ms = 30 * 24 * 3600000L; // period in past to check for upload
+    static final long surely_newer_after_ms = 24 * 3600000L; // delta of LastModified to indicate for sure a newer record
 
     long timeOfLastSynch;
-    long timeOfLastSynchUploadAll = 0L;
     long LastModifiedLimit;
     boolean synch_upload = false;
     boolean synch_upload_all = false;
+    boolean synch_download_all = false;
 
     int table_fixing_index = -1;
     ArrayList<String> tables_to_synchronize = new ArrayList<String>();
@@ -103,21 +104,16 @@ class SynchControl {
         table_fixing_index = 0;
         keyFixingTxCount = 0;
         synch_upload_all = synch_request == TxRequestQueue.RQ_QUEUE_START_SYNCH_UPLOAD_ALL;
-        if (synch_upload_all) {
-            TextResource.writeContents(txq.efacloudLogDir + File.separator + "last_synch_upload_all",
-                    "" + System.currentTimeMillis(), false);
-            timeOfLastSynchUploadAll = System.currentTimeMillis();
-        }
-        synch_upload = synch_request == TxRequestQueue.RQ_QUEUE_START_SYNCH_UPLOAD;
-        String synchMessage = (synch_upload || synch_upload_all) ? International
+        synch_upload = synch_request == TxRequestQueue.RQ_QUEUE_START_SYNCH_UPLOAD || synch_upload_all;
+        synch_download_all = !synch_upload && (timeOfLastSynch < clockoffsetBuffer);
+        String synchMessage = (synch_upload) ? International
                 .getString("Synchronisation client to server (upload) starting") : International
                 .getString("Synchronisation server to client (download) starting");
         logSynchMessage(synchMessage, "@all", null, true);
         // The manually triggered synchronization always takes the full set into account
-        LastModifiedLimit = (synch_upload_all || (timeOfLastSynch < clockoffsetBuffer)) ? 0L : (synch_upload) ?
+        LastModifiedLimit = (synch_upload_all || synch_download_all) ? 0L : (synch_upload) ?
                 System.currentTimeMillis() - synch_upload_look_back_ms : timeOfLastSynch - clockoffsetBuffer;
         timeOfLastSynch = System.currentTimeMillis();
-        synch_upload = synch_upload || synch_upload_all;
         // request first key to be fixed. The record is empty.
         txq.appendTransaction(TX_SYNCH_QUEUE_INDEX, Transaction.TX_TYPE.KEYFIXING,
                 tables_with_key_fixing_allowed[table_fixing_index], (String[]) null);
@@ -326,6 +322,24 @@ class SynchControl {
             EfaCloudStorage efaCloudStorage = Daten.tableBuilder.getPersistence(tx.tablename);
             // Read all records and all last modifications.
             if (efaCloudStorage != null) {
+
+                // if it is a full synch collect all local data Keys to find unmatched local records
+                ArrayList<DataRecord> unmatchedLocalRecords = new ArrayList<DataRecord>();
+                if (synch_download_all) {
+                    try {
+                        DataKeyIterator localTableIterator = efaCloudStorage.getStaticIterator();
+                        DataKey dataKey = localTableIterator.getNext();
+                        DataRecord cachedLocalRecord = efaCloudStorage.get(dataKey);
+                        while (cachedLocalRecord != null) {
+                            unmatchedLocalRecords.add(cachedLocalRecord);
+                            dataKey = localTableIterator.getNext();
+                            cachedLocalRecord = efaCloudStorage.get(dataKey);
+                        }
+                    } catch (EfaException ignored) {
+                        // if combined upload fails by whatever reason, ignore it.
+                    }
+                }
+
                 ArrayList<DataRecord> returnedRecords = efaCloudStorage.parseCsvTable(tx.getResultMessage());
                 for (DataRecord returnedRecord : returnedRecords) {
                     // get the local record for comparison
@@ -341,6 +355,10 @@ class SynchControl {
                     } catch (EfaException ignored) {
                     }
                     if (returnedKey != null) {
+
+                        // remove the reference to this record from the cached list
+                        if (synch_download_all && (localRecord != null))
+                            unmatchedLocalRecords.remove(localRecord);
 
                         // identify which record is to be used.
                         long serverLastModified = returnedRecord.getLastModified();
@@ -376,6 +394,9 @@ class SynchControl {
                         boolean insert = (localRecord == null) && !isDeleted;
                         boolean update = (localRecord != null) && serverMoreRecent && isUpdated;
                         boolean delete = (localRecord != null) && serverMoreRecent && isDeleted;
+                        boolean localMoreRecent = (serverLastModified < (localLastModified - surely_newer_after_ms));
+                        boolean localRecentChange = ((System.currentTimeMillis() - localLastModified) >
+                                synch_upload_look_back_ms);
 
                         // Check whether record to update matches at least partially the new version.
                         if (update && !preUpdateRecordsCompare(localRecord, returnedRecord, tx.tablename))
@@ -384,8 +405,8 @@ class SynchControl {
                                             " " + International.getString("Bitte bereinige den Datensatz manuell."), tx.tablename,
                                     localRecord.getKey(), false);
 
-                            // Run update. This update will use the LastModified and ChangeCount of the record to make
-                            // it a true copy of the server side record.
+                        // Run update. This update will use the LastModified and ChangeCount of the record to make
+                        // it a true copy of the server side record.
                         else if (insert || update || delete) {
                             long globalLock = 0;
                             try {
@@ -404,6 +425,24 @@ class SynchControl {
                             } finally {
                                 efaCloudStorage.releaseGlobalLock(globalLock);
                             }
+                        }
+                        // local copy is more recent, upload it, if a full download was requested
+                        else if (synch_download_all && localMoreRecent && localRecentChange && (localRecord != null)) {
+                            efaCloudStorage.modifyServerRecord(localRecord, true, false, false, true);
+                            logSynchMessage(International.getString("Aktualisiere Datensatz auf Server für Tabelle") + " ",
+                                    efaCloudStorage.getStorageObjectType(), localRecord.getKey(), false);
+                        }
+                    }
+                }
+                // if a full download is executed, use this to also upload recent local changes
+                if (synch_download_all) {
+                    for (DataRecord unmatched : unmatchedLocalRecords) {
+                        boolean localRecentChange = ((System.currentTimeMillis() - unmatched.getLastModified()) >
+                                synch_upload_look_back_ms);
+                        if (localRecentChange) {
+                            efaCloudStorage.modifyServerRecord(unmatched, true, false, false, true);
+                            logSynchMessage(International.getString("Füge Datensatz auf Server ein für Tabelle") + " ",
+                                    tx.tablename, unmatched.getKey(), false);
                         }
                     }
                 }

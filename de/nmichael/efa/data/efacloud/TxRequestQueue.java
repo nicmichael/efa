@@ -77,7 +77,6 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
     // The synchronisation start delay is one SYNCH_PERIOD
     static final int SYNCH_PERIOD_DEFAULT = 3600000; // = 3600 seconds = 1 hour
     static int synch_period = SYNCH_PERIOD_DEFAULT; // = 3600 seconds = 1 hour
-    static final int SYNCH_UPLOAD_PERIOD_DEFAULT = 86400000;  // = 86400 seconds = 24 hours
     static final int STATS_UPLOAD_PERIOD_MIN = 86400000;  // = 86400 seconds = 24 hours
 
     // If a transaction is busy since more than the RETRY_AFTER_MILLISECONDS period
@@ -898,16 +897,18 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
                             if ((currentState == QUEUE_IS_WORKING) || (currentState == QUEUE_IS_IDLE)) {
                                 if ((queues.get(TX_PENDING_QUEUE_INDEX).size() == 0) &&
                                         (queues.get(TX_BUSY_QUEUE_INDEX).size() == 0)) {
+                                    // prepare synchronization
                                     stateTransitionRequests.remove(0);
                                     txq.setState(QUEUE_IS_SYNCHRONIZING);
                                     showStatusAtGUI();
                                     saveAuditInformation();
+                                    // start synchronization
                                     txq.synchControl.startSynchProcess(stateChangeRequest);
-                                    // use the synchronization trigger also to gather statistics and logs.
+                                    // use the synchronization trigger also to update parameters and upload statistics and logs.
+                                    // Because the queue state is QUEUE_IS_SYNCHRONIZING this transaction will not
+                                    // be processed until the synchronization is completed.
                                     if (stateChangeRequest == RQ_QUEUE_START_SYNCH_DOWNLOAD) {
-                                        // because the queue state is QUEUE_IS_SYNCHRONIZING this transaction will not
-                                        // be processed until the synchronization is completed. It will nevertheless
-                                        // not contain the synchronization process transactions.
+                                        // upload statistics, if due.
                                         if ((System.currentTimeMillis() - lastStatsUpload) > STATS_UPLOAD_PERIOD_MIN) {
                                             appendTransaction(TX_PENDING_QUEUE_INDEX, Transaction.TX_TYPE.UPLOAD, "zip",
                                                     "filepath;efacloudLogs.zip", "contents;" + getLogsAsZip());
@@ -1011,22 +1012,6 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
                             TaskManager.RequestMessage rq = new TaskManager.RequestMessage(postURLplus, "",
                                     InternetAccessManager.TYPE_POST_PARAMETERS, 0.0, txq);
                             iam.sendRequest(rq);
-                        // or run a full upload, if due.
-                        } else if ((txq.getState() == QUEUE_IS_IDLE) &&
-                                ((System.currentTimeMillis() - synchControl.timeOfLastSynchUploadAll) > SYNCH_UPLOAD_PERIOD_DEFAULT)) {
-                            // first read the stored value, if there is one.
-                            String last_synch_upload_all = TextResource.getContents(
-                                    new File(txq.efacloudLogDir + File.separator + "last_synch_upload_all"),
-                                    "UTF-8");
-                            try {
-                                synchControl.timeOfLastSynchUploadAll = Long.parseLong((last_synch_upload_all == null) ?
-                                        "0" : last_synch_upload_all);
-                            } catch (Exception e) {
-                                synchControl.timeOfLastSynchUploadAll = 0L;
-                            }
-                            // check again, if an upload is due.
-                            if (((System.currentTimeMillis() - synchControl.timeOfLastSynchUploadAll) > SYNCH_UPLOAD_PERIOD_DEFAULT))
-                                txq.registerStateChangeRequest(TxRequestQueue.RQ_QUEUE_START_SYNCH_UPLOAD_ALL);
                         }
                     }
 
