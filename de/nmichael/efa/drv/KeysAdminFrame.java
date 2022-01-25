@@ -351,9 +351,9 @@ public class KeysAdminFrame extends JDialog implements ActionListener {
 
             ca.runKeytool("-genkey"
                     + " -alias " + alias + "_priv"
-                    + " -keyalg DSA -keysize 1024 -sigalg SHA1withDSA"
+                    + " -keyalg RSA -keysize 4096 -sigalg SHA256withRSA"
                     + " -validity " + tage
-                    + " -dname CN=Deutscher\\sRuderverband,O=" + cn + ",C=DE\"", Main.drvConfig.keyPassword);
+                    + " -dname CN=\"Deutscher_Ruderverband,O=" + cn + ",C=DE\"", Main.drvConfig.keyPassword);
 
             ca.runKeytool("-certreq -alias " + alias + "_priv"
                     + " -file " + Daten.efaTmpDirectory + "certreq.csr", Main.drvConfig.keyPassword);
