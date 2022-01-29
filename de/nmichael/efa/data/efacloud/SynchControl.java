@@ -37,7 +37,7 @@ class SynchControl {
     static final String[] tables_with_key_fixing_allowed = TableBuilder.fixid_allowed.split(" ");
     static final long clockoffsetBuffer = 600000L; // max number of millis which client clock may be offset, 10 mins
     static final long synch_upload_look_back_ms = 30 * 24 * 3600000L; // period in past to check for upload
-    static final long surely_newer_after_ms = 24 * 3600000L; // delta of LastModified to indicate for sure a newer record
+    static final long surely_newer_after_ms = 600000L; // delta of LastModified to indicate for sure a newer record
 
     long timeOfLastSynch;
     long LastModifiedLimit;
@@ -324,16 +324,16 @@ class SynchControl {
             if (efaCloudStorage != null) {
 
                 // if it is a full synch collect all local data Keys to find unmatched local records
-                ArrayList<DataRecord> unmatchedLocalRecords = new ArrayList<DataRecord>();
+                HashMap<String, DataRecord> unmatchedLocalKeys = new HashMap<String, DataRecord>();
                 if (synch_download_all) {
                     try {
                         DataKeyIterator localTableIterator = efaCloudStorage.getStaticIterator();
-                        DataKey dataKey = localTableIterator.getNext();
-                        DataRecord cachedLocalRecord = efaCloudStorage.get(dataKey);
-                        while (cachedLocalRecord != null) {
-                            unmatchedLocalRecords.add(cachedLocalRecord);
+                        DataKey dataKey = localTableIterator.getFirst();
+                        DataRecord cachedRecord = efaCloudStorage.get(dataKey);
+                        while (dataKey != null) {
+                            unmatchedLocalKeys.put(dataKey.encodeAsString(), cachedRecord);
                             dataKey = localTableIterator.getNext();
-                            cachedLocalRecord = efaCloudStorage.get(dataKey);
+                            cachedRecord = efaCloudStorage.get(dataKey);
                         }
                     } catch (EfaException ignored) {
                         // if combined upload fails by whatever reason, ignore it.
@@ -358,7 +358,7 @@ class SynchControl {
 
                         // remove the reference to this record from the cached list
                         if (synch_download_all && (localRecord != null))
-                            unmatchedLocalRecords.remove(localRecord);
+                            unmatchedLocalKeys.put(returnedKey.encodeAsString(), null);
 
                         // identify which record is to be used.
                         long serverLastModified = returnedRecord.getLastModified();
@@ -436,13 +436,17 @@ class SynchControl {
                 }
                 // if a full download is executed, use this to also upload recent local changes
                 if (synch_download_all) {
-                    for (DataRecord unmatched : unmatchedLocalRecords) {
-                        boolean localRecentChange = ((System.currentTimeMillis() - unmatched.getLastModified()) >
-                                synch_upload_look_back_ms);
-                        if (localRecentChange) {
-                            efaCloudStorage.modifyServerRecord(unmatched, true, false, false, true);
-                            logSynchMessage(International.getString("Füge Datensatz auf Server ein für Tabelle") + " ",
-                                    tx.tablename, unmatched.getKey(), false);
+                    for (String unmatched : unmatchedLocalKeys.keySet()) {
+                        DataRecord cachedRecord = unmatchedLocalKeys.get(unmatched);
+                        if (cachedRecord != null) {
+                            boolean localRecentChange = ((System.currentTimeMillis() - cachedRecord.getLastModified()) >
+                                    synch_upload_look_back_ms);
+                            if (localRecentChange) {
+                                efaCloudStorage.modifyServerRecord(cachedRecord, true, false, false, true);
+                                logSynchMessage(
+                                        International.getString("Füge Datensatz auf Server ein für Tabelle") + " ", tx.tablename,
+                                        cachedRecord.getKey(), false);
+                            }
                         }
                     }
                 }
