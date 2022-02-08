@@ -2,6 +2,22 @@
 <efaOnlineUpdate>
 
     <Version>
+        <VersionID>2.3.1_02</VersionID>
+        <ReleaseDate>08.02.2022</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa231.zip</DownloadUrl>
+        <DownloadSize>4256352</DownloadSize>
+        <Changes lang="de">
+            <ChangeItem>Neu: Wettbewerbsbedingungen fuer Fahrtenabzeichen 2022 angepasst</ChangeItem>
+            <ChangeItem>Bugfix: efaCloud Bugfix bei Fahrtenbuchwechsel</ChangeItem>
+            <ChangeItem>Bugfix: Fehler bei Handhabung von Dezimalzahlen im Import behoben</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Bugfix: efaCloud Bugfix for logbook change</ChangeItem>
+            <ChangeItem>Bugfix: Bug for import of decimal numbers fixed</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
         <VersionID>2.3.1_01</VersionID>
         <ReleaseDate>24.01.2022</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa231.zip</DownloadUrl>
