@@ -159,6 +159,10 @@ public abstract class DataRecord implements Cloneable, Comparable {
         return metaData.getFieldType(i);
     }
 
+    public int getFieldType(String fieldName) {
+        return metaData.getFieldType(fieldName);
+    }
+
     public String[] getKeyFields() {
         return metaData.getKeyFields();
     }
