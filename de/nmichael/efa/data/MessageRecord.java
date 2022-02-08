@@ -238,7 +238,7 @@ public class MessageRecord extends DataRecord {
 
     public TableItem[] getGuiTableItems() {
         TableItem[] items = new TableItem[4];
-        items[0] = new TableItem(getDate().toString() + " " + getTime().toString());
+        items[0] = new TableItem((getDate() == null) ? "" : getDate().toString() + " " + getTime().toString());
         items[1] = new TableItem(getFrom());
         items[2] = new TableItem(getToAsName());
         items[3] = new TableItem(getSubject());

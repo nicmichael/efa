@@ -140,6 +140,7 @@ public class TableBuilder {
             "efa2project;DESCRIPTION;DATA_TEXT;Description",   //
 
             // Other fields which need data type corrections
+            "efa2logbook;ALLCREWNAMES;DATA_LIST_STRING;AllCrewNames",   //  List of virtual names, not single virtual
             "efa2persons;BIRTHDAY;DATA_STRING;Birthday",   // The field may only contain the birth year.
 
             // Fields with efa constant names which are not the uppercase field name

@@ -215,9 +215,13 @@ public class TxResponseHandler {
                         txq.shiftTx(TX_BUSY_QUEUE_INDEX, TxRequestQueue.TX_DONE_QUEUE_INDEX,
                                 TxRequestQueue.ACTION_TX_CLOSE, tx.ID, 1);
                 } catch (Exception e) {
+                    StringBuilder stackTrace = new StringBuilder();
+                    for (StackTraceElement ste : e.getStackTrace()) {
+                        stackTrace.append(ste).append("\n");
+                    }
                     txq.logApiMessage(International
                             .getMessage("Ausnahme-Fehler bei der Behandlung einer Serverantwort: {error}",
-                                    e.getMessage()), 1);
+                                    stackTrace.toString()), 1);
                 }
             }
             // one special case for an ok result: If the queue is authenticating or disconnected, put it to working
