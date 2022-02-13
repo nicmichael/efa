@@ -366,7 +366,7 @@ public class PDFOutput {
                 writeRow(f, "Signatur:", sig.getSignaturString(), fontSize);
                 writeRow(f, "elektronisches Fahrtenheft (zur Eingabe):", 
                         EfaUtil.replace(EfaUtil.replace(sig.toString(), ";", "~~~~~", true), "~~~~~", "; ", true),
-                        smallFontSize, "Consolas"); // Consolas, Courier
+                        smallFontSize, null); // Consolas, Courier
                 f.write("                </fo:table-body>\n");
                 f.write("              </fo:table>\n");
                 f.write("            </fo:table-cell>\n");
