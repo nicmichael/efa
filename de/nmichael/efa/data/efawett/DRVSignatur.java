@@ -172,6 +172,24 @@ public class DRVSignatur {
         }
     }
 
+    private static Signature getSignature(Key key) throws Exception {
+        Exception ex = null;
+        for (String sigInstance : new String[] { "SHA1withDSA", "SHA256withRSA" }) {
+            try {
+                Signature sig = Signature.getInstance(sigInstance);
+                if (key instanceof PrivateKey) {
+                    sig.initSign((PrivateKey)key);
+                } else {
+                    sig.initVerify((PublicKey)key);
+                }
+                return sig;
+            } catch (Exception e) {
+                ex = e;
+            }
+        }
+        throw ex;
+    }
+
     // Konstruktor zum Erstellen einer Signatur
     public DRVSignatur(String teilnNr, 
             String vorname, String nachname, String jahrgang, int anzAbzeichen,
@@ -249,10 +267,9 @@ public class DRVSignatur {
             byte[] string = stringToSign.getBytes("ISO-8859-1");
 
             // String signieren
-            Signature dsa = Signature.getInstance("SHA1withDSA");
-            dsa.initSign(privKey);
-            dsa.update(string);
-            this.signatur = dsa.sign();
+            Signature sig = getSignature(privKey);
+            sig.update(string);
+            this.signatur = sig.sign();
 
             // Schlüsselnummer der Signatur voranstellen
             byte[] keySig = new byte[this.signatur.length + 2];
@@ -326,10 +343,9 @@ public class DRVSignatur {
 
                                         // Signatur überprüfen
                                         byte[] string = stringToSign.getBytes("ISO-8859-1");
-                                        Signature dsa = Signature.getInstance("SHA1withDSA");
-                                        dsa.initVerify(pubKey);
-                                        dsa.update(string);
-                                        if (dsa.verify(this.signatur)) {
+                                        Signature sig = getSignature(pubKey);
+                                        sig.update(string);
+                                        if (sig.verify(this.signatur)) {
                                             this.signatureState = SIG_VALID;
                                         } else {
                                             this.signatureState = SIG_INVALID;
