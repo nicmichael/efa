@@ -45,9 +45,14 @@ public class PDFOutput {
     }
 
     private static void writeRow(BufferedWriter f, String field, String value, String fontSize) throws IOException {
+        writeRow(f, field, value, fontSize, null);
+    }
+
+    private static void writeRow(BufferedWriter f, String field, String value, String fontSize, String fontFamily) throws IOException {
         f.write("                  <fo:table-row>\n");
         f.write("                    <fo:table-cell border=\"0.5pt #000000 solid\" padding-left=\"1pt\"><fo:block>" + field + "</fo:block></fo:table-cell>\n");
-        f.write("                    <fo:table-cell border=\"0.5pt #000000 solid\" padding-left=\"1pt\"><fo:block font-size=\"" + fontSize + "\">" + value + "</fo:block></fo:table-cell>\n");
+        f.write("                    <fo:table-cell border=\"0.5pt #000000 solid\" padding-left=\"1pt\"><fo:block font-size=\"" + fontSize + "\"" +
+                (fontFamily != null ? " font-family=\"" + fontFamily + "\""  : "") + ">" + value + "</fo:block></fo:table-cell>\n");
         f.write("                  </fo:table-row>\n");
     }
     
@@ -361,7 +366,7 @@ public class PDFOutput {
                 writeRow(f, "Signatur:", sig.getSignaturString(), fontSize);
                 writeRow(f, "elektronisches Fahrtenheft (zur Eingabe):", 
                         EfaUtil.replace(EfaUtil.replace(sig.toString(), ";", "~~~~~", true), "~~~~~", "; ", true),
-                        smallFontSize);
+                        smallFontSize, "Consolas"); // Consolas, Courier
                 f.write("                </fo:table-body>\n");
                 f.write("              </fo:table>\n");
                 f.write("            </fo:table-cell>\n");
