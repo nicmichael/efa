@@ -225,7 +225,14 @@ public class Transaction {
         } else
             // add the clubworkbook's name, if required
             if (type.addBookName && tablename.equalsIgnoreCase("efa2clubwork")) {
-                String clubworkbookname = ((Daten.project != null) &&
+                EfaCloudStorage ecs = Daten.tableBuilder.getPersistence(tablename);
+                String clubworkbookname;
+                if (ecs != null) {
+                    // See comments for logbookname above.
+                    String clubworkbookFname = ecs.getFilename().substring(ecs.getFilename().lastIndexOf(File.separatorChar) + 1);
+                    clubworkbookname = clubworkbookFname.split("\\.")[0];
+                } else
+                    clubworkbookname = ((Daten.project != null) &&
                         (Daten.project.getCurrentClubwork() != null)) ? Daten.project.getCurrentClubwork().getName() : "nicht_definiert";
                 String[] extendedRecord;
                 if ((record == null) || (record.length == 0))
