@@ -2,6 +2,23 @@
 <efaOnlineUpdate>
 
     <Version>
+        <VersionID>2.3.1_03</VersionID>
+        <ReleaseDate>06.03.2022</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa231.zip</DownloadUrl>
+        <DownloadSize>4270666</DownloadSize>
+        <Changes lang="de">
+            <ChangeItem>Neu: Verbesserte Uebersetzung nach Franzoesisch</ChangeItem>
+            <ChangeItem>Bugfix: efaCloud Synchronisationsfehler unter Windows behoben</ChangeItem>
+            <ChangeItem>Bugfix: Fehler bei Handhabung von Dezimalzahlen im Import behoben</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>New: Improved transation to French</ChangeItem>
+            <ChangeItem>Bugfix: efaCloud synchronization problem under Windows fixed</ChangeItem>
+            <ChangeItem>Bugfix: Bug for import of decimal numbers fixed</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
         <VersionID>2.3.1_02</VersionID>
         <ReleaseDate>08.02.2022</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa231.zip</DownloadUrl>
