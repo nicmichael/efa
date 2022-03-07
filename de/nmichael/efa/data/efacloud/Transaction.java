@@ -205,11 +205,11 @@ public class Transaction {
             EfaCloudStorage ecs = Daten.tableBuilder.getPersistence(tablename);
             String logbookname;
             if (ecs != null) {
-                // e.g. /home/efa2/data/project/2021.efa2logbook
+                // e.g. /home/efa2/data/project/2021.efa2logbook or \efa2\data\project\2021.efa2logbook
                 // default is the name of open storage which may differ from the project records current logbook
                 // in particular during the automatic logbook change process at new year.
-                String[] logbookpath = ecs.getFilename().split(File.separator);
-                logbookname = logbookpath[logbookpath.length - 1].split("\\.")[0];
+                String logbookFname = ecs.getFilename().substring(ecs.getFilename().lastIndexOf(File.separatorChar) + 1);
+                logbookname = logbookFname.split("\\.")[0];
             } else
                  logbookname = ((Daten.project != null) &&
                     (Daten.project.getCurrentLogbook() != null)) ? Daten.project.getCurrentLogbook().getName() : "nicht_definiert";
@@ -225,7 +225,14 @@ public class Transaction {
         } else
             // add the clubworkbook's name, if required
             if (type.addBookName && tablename.equalsIgnoreCase("efa2clubwork")) {
-                String clubworkbookname = ((Daten.project != null) &&
+                EfaCloudStorage ecs = Daten.tableBuilder.getPersistence(tablename);
+                String clubworkbookname;
+                if (ecs != null) {
+                    // See comments for logbookname above.
+                    String clubworkbookFname = ecs.getFilename().substring(ecs.getFilename().lastIndexOf(File.separatorChar) + 1);
+                    clubworkbookname = clubworkbookFname.split("\\.")[0];
+                } else
+                    clubworkbookname = ((Daten.project != null) &&
                         (Daten.project.getCurrentClubwork() != null)) ? Daten.project.getCurrentClubwork().getName() : "nicht_definiert";
                 String[] extendedRecord;
                 if ((record == null) || (record.length == 0))
