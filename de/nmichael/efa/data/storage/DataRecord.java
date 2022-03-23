@@ -883,9 +883,9 @@ public abstract class DataRecord implements Cloneable, Comparable {
             case IDataAccess.DATA_DOUBLE:
                 return (s.length() > 0 ? Double.parseDouble(s) : IDataAccess.UNDEFINED_LONG);
             case IDataAccess.DATA_DECIMAL:
-                return DataTypeDecimal.parseDecimal(s);
+                return DataTypeDecimal.parseDecimal(s, false);
             case IDataAccess.DATA_DISTANCE:
-                return DataTypeDistance.parseDistance(s);
+                return DataTypeDistance.parseDistance(s, false);
             case IDataAccess.DATA_BOOLEAN:
                 return (s.length() > 0 ? Boolean.parseBoolean(s) : false);
             case IDataAccess.DATA_DATE:

@@ -148,7 +148,7 @@ public class SearchLogbookDialog extends BaseTabbedDialog implements IItemListen
                 IItemType.TYPE_PUBLIC, CAT_SPECIAL, International.getString("nicht zurückgetragene Einträge")));
         items.add(eLargeDistance = new ItemTypeBoolean("ESEARCH_LARGEDISTANCE", true,
                 IItemType.TYPE_PUBLIC, CAT_SPECIAL, International.getString("Einträge mit Kilometern größer als") + ": "));
-        items.add(eLargeDistanceDistance = new ItemTypeDistance("ESEARCH_LARGEDISTANCEDISTANCE", DataTypeDistance.parseDistance("30 "+DataTypeDistance.KILOMETERS),
+        items.add(eLargeDistanceDistance = new ItemTypeDistance("ESEARCH_LARGEDISTANCEDISTANCE", DataTypeDistance.parseDistance("30 "+DataTypeDistance.KILOMETERS, true),
                 IItemType.TYPE_PUBLIC, CAT_SPECIAL, null));
         eLargeDistance.setFieldGrid(1, GridBagConstraints.WEST, GridBagConstraints.NONE);
         eLargeDistanceDistance.setOffsetXY(1, -1); // show behind eLargeDistance Checkbox

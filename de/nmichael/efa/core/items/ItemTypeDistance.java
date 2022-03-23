@@ -42,7 +42,7 @@ public class ItemTypeDistance extends ItemTypeLabelTextfield {
             if (value.length() == 0 && !isNotNullSet()) {
                 this.value.unset();
             } else {
-                this.value = DataTypeDistance.parseDistance(value);
+                this.value = DataTypeDistance.parseDistance(value, true);
             }
         } catch (Exception e) {
             if (dlg == null) {
