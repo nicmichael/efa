@@ -2,6 +2,19 @@
 <efaOnlineUpdate>
 
     <Version>
+        <VersionID>2.3.1_04</VersionID>
+        <ReleaseDate>22.03.2022</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa231.zip</DownloadUrl>
+        <DownloadSize>4270829</DownloadSize>
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Korrektur fuer fehlendes Dezimalkomma in Darstellung von Entfernungen und anderen Dezimalwerten</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Fix for missing decimal point in display of distances and other decimal values</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
         <VersionID>2.3.1_03</VersionID>
         <ReleaseDate>06.03.2022</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa231.zip</DownloadUrl>

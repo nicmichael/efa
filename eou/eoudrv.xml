@@ -2,6 +2,16 @@
 <efaOnlineUpdate>
 
     <Version>
+        <VersionID>2.3.1_04</VersionID>
+        <ReleaseDate>22.03.2022</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa2drv.zip</DownloadUrl>
+        <DownloadSize>4440857</DownloadSize>
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Fehlendes DRV-Schluessel Zertifikat wird automatisch heruntergeladen und in Meldebestaetigungen geschrieben</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
         <VersionID>2.3.1_02</VersionID>
         <ReleaseDate>08.02.2022</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa2drv.zip</DownloadUrl>
