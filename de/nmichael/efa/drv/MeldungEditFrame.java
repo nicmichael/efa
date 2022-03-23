@@ -2333,6 +2333,15 @@ public class MeldungEditFrame extends JDialog implements ActionListener {
                 int itmp = EfaUtil.string2date(Main.drvConfig.schluessel, 0, 0, 0).tag;
                 String pubkey_alias = "drv" + (itmp < 10 ? "0" : "") + itmp;
                 String certFile = Daten.efaDataDirectory + pubkey_alias + ".cert";
+                if (!EfaUtil.canOpenFile(certFile)) {
+                    Logger.log(Logger.INFO, String.format("Zertifikatdatei %s nicht gefunden. Lade Datei von efa.rudern.de ...", certFile));
+                    String url = Daten.DRV_CERTS_URL + pubkey_alias + ".cert";
+                    if (DownloadThread.getFile(this, url , certFile, true)) {
+                        Logger.log(Logger.INFO, String.format("Zertifikatdatei %s erfolgreich heruntergeladen!", certFile));
+                    } else {
+                        Dialog.error(String.format("Zertifikatdatei %s nicht gefunden und Donwload von %s fehlgeschlagen.", certFile, url));
+                    }
+                }
                 if (EfaUtil.canOpenFile(certFile)) {
                     try {
                         int filesize = (int) (new File(certFile)).length();
@@ -2343,7 +2352,6 @@ public class MeldungEditFrame extends JDialog implements ActionListener {
                         String data = Base64.encodeBytes(buf);
                         f.keyName = pubkey_alias;
                         f.keyDataBase64 = EfaUtil.replace(data, "\n", "", true);
-                        ;
                     } catch (Exception ee) {
                         EfaUtil.foo();
                     }
