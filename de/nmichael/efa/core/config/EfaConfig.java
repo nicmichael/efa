@@ -154,6 +154,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
     private ItemTypeString traceTopic;
     private ItemTypeInteger traceLevel;
     private ItemTypeLong efaVersionLastCheck;
+    private ItemTypeLong javaVersionLastCheck;
     private ItemTypeString version;
     private ItemTypeBoolean efaDirekt_zielBeiFahrtbeginnPflicht;
     private ItemTypeBoolean efaDirekt_gewaesserBeiUnbekanntenZielenPflicht;
@@ -442,7 +443,10 @@ public class EfaConfig extends StorageObject implements IItemFactory {
                     "efa version"));
             addParameter(efaVersionLastCheck = new ItemTypeLong("EfaVersionLastCheck", 0, 0, Long.MAX_VALUE,
                     IItemType.TYPE_INTERNAL,BaseTabbedDialog.makeCategory(CATEGORY_INTERNAL),
-                    "efa last checked for new version"));
+                    "efa last checked for new efa version"));
+            addParameter(javaVersionLastCheck = new ItemTypeLong("JavaVersionLastCheck", 0, 0, Long.MAX_VALUE,
+                    IItemType.TYPE_INTERNAL,BaseTabbedDialog.makeCategory(CATEGORY_INTERNAL),
+                    "efa last checked for new java version"));
             addParameter(countEfaStarts = new ItemTypeInteger("EfaStartsCounter", 0, 0, Integer.MAX_VALUE, false,
                     IItemType.TYPE_INTERNAL,BaseTabbedDialog.makeCategory(CATEGORY_INTERNAL),
                     "efa start counter"));
@@ -1229,9 +1233,9 @@ public class EfaConfig extends StorageObject implements IItemFactory {
                     IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_DATAACCESS, CATEGORY_DATAREMOTE),
                     "efaOnline Update Interval (sec)"));
 
-            addParameter(dataRemoteEfaCloudSynchIntervalSecs = new ItemTypeLong("DataRemoteEfaCloudSynchIntervalSecs", 24 * 3600, 600, 7 * 24*3600,
-                    IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_DATAACCESS, CATEGORY_DATACLOUD),
-                    "efaCloud Synch Interval (sec)"));
+            addParameter(new ItemTypeLabel("_EfaCloudLabel",
+                    IItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_DATAACCESS, CATEGORY_DATACLOUD),
+                    International.getString("Bitte konfiguriere efaCloud über das Menü Datei > efaCloud.")));
 
         }
     }
@@ -1518,6 +1522,14 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 
     public void setValueEfaVersionLastCheck(long timestamp) {
         setValue(efaVersionLastCheck, Long.toString(timestamp));
+    }
+
+    public long getValueJavaVersionLastCheck() {
+        return javaVersionLastCheck.getValue();
+    }
+
+    public void setValueJavaVersionLastCheck(long timestamp) {
+        setValue(javaVersionLastCheck, Long.toString(timestamp));
     }
 
     public String getValueVersion() {

@@ -9,15 +9,15 @@
  */
 package de.nmichael.efa.data.types;
 
+import java.time.LocalTime;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+
 import de.nmichael.efa.Daten;
 import de.nmichael.efa.core.config.EfaTypes;
-import static de.nmichael.efa.data.types.DataTypeDistance.KILOMETERS;
-import static de.nmichael.efa.data.types.DataTypeDistance.MILES;
 import de.nmichael.efa.util.EfaUtil;
 import de.nmichael.efa.util.International;
 import de.nmichael.efa.util.TMJ;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 
 public class DataTypeDate implements Cloneable, Comparable<DataTypeDate> {
 
@@ -148,6 +148,7 @@ public class DataTypeDate implements Cloneable, Comparable<DataTypeDate> {
     }
 
     public void ensureCorrectDate() {
+    	
         if (!isSet()) {
             return;
         }
@@ -158,8 +159,9 @@ public class DataTypeDate implements Cloneable, Comparable<DataTypeDate> {
         if (!fourdigit && year < 1900) {
             year += 1900;
         }
-        if (!fourdigit && year < 1920) {
-            year += 100;
+        // see efautil.correctDate() -> everything <1980 will be put to the next century.
+        if (!fourdigit && year < 1980) {
+            year += 100; 
         }
         if (month < 0 || month > 12) { // treat month==0 as "unset month" and don't correct it
             month = 1;
@@ -529,6 +531,31 @@ public class DataTypeDate implements Cloneable, Comparable<DataTypeDate> {
                 return International.getString("Sonntag");
         }
         return EfaTypes.TEXT_UNKNOWN;
+    }
+    
+    /**
+     * Converts the Java Weekday of the current instance to an EfaTypes weekday.
+     * 
+     * @return The string representing the value of EFA type of the day of the week
+     */
+    public String getWeekdayAsEfaType() {
+        switch (toCalendar().get(Calendar.DAY_OF_WEEK)) {
+	        case Calendar.MONDAY:
+	            return EfaTypes.TYPE_WEEKDAY_MONDAY;
+	        case Calendar.TUESDAY:
+	            return EfaTypes.TYPE_WEEKDAY_TUESDAY;
+	        case Calendar.WEDNESDAY:
+	            return EfaTypes.TYPE_WEEKDAY_WEDNESDAY;
+	        case Calendar.THURSDAY:
+	            return EfaTypes.TYPE_WEEKDAY_THURSDAY;
+	        case Calendar.FRIDAY:
+	            return EfaTypes.TYPE_WEEKDAY_FRIDAY;
+	        case Calendar.SATURDAY:
+	            return EfaTypes.TYPE_WEEKDAY_SATURDAY;
+	        case Calendar.SUNDAY:
+	            return EfaTypes.TYPE_WEEKDAY_SUNDAY;
+	    }
+        return EfaTypes.TEXT_UNKNOWN;	
     }
 
     public static String[] makeDistanceUnitValueArray() {
