@@ -64,7 +64,9 @@ public class PersonRecord extends DataRecord implements IItemFactory {
     private static String CAT_ADDRESS = "%03%" + International.getString("Adresse");
     private static String CAT_GROUPS = "%04%" + International.getString("Gruppen");
     private static String CAT_FREEUSE = "%05%" + International.getString("Freie Verwendung");
-    private static Pattern qnamePattern = Pattern.compile("(.+) \\(([^\\(\\)]+)\\)");
+    //private static Pattern qnamePattern = Pattern.compile("(.+) \\(([^\\(\\)]+)\\)");
+    private static Pattern qnamePattern = Pattern.compile("(.+) \\(([^\\(\\)]+)\\)"); 
+    private static Pattern vereinsnamePattern = Pattern.compile("(.+) \\[([^\\(\\)]+)\\]"); 
 
     public static void initialize() {
         Vector<String> f = new Vector<String>();
@@ -557,14 +559,23 @@ public class PersonRecord extends DataRecord implements IItemFactory {
     }
 
     public static String[] tryGetFirstLastNameAndAffix(String s) {
-        Matcher m = qnamePattern.matcher(s);
         String name = s.trim();
         String affix = null;
+        String vereinsname=null;
+
+        Matcher m = vereinsnamePattern.matcher(s);
+        if (m.matches()) {
+        	name= m.group(1).trim();
+        	vereinsname=m.group(2).trim();
+        }        
+        m = qnamePattern.matcher(name);
         if (m.matches()) {
             name = m.group(1).trim();
             affix = m.group(2).trim();
         }
 
+
+        
         boolean firstFirst = Daten.efaConfig.getValueNameFormatIsFirstNameFirst();
         String firstName = (firstFirst ? name : null); // if first and last name cannot be found, ...
         String lastName = (firstFirst ? null : name);  // ... use full name as either first or last
@@ -579,7 +590,7 @@ public class PersonRecord extends DataRecord implements IItemFactory {
             firstName = name.substring(pos + 2);
             lastName = name.substring(0, pos).trim();
         }
-        return new String[]{firstName, lastName, affix};
+        return new String[]{firstName, lastName, affix, vereinsname};
     }
 
     public static String[] tryGetNameAndAffix(String s) {
@@ -716,14 +727,21 @@ public class PersonRecord extends DataRecord implements IItemFactory {
         v.add(item = new ItemTypeDate(PersonRecord.BIRTHDAY, getBirthday(),
                 IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("Geburtstag")));
         ((ItemTypeDate) item).setAllowYearOnly(true);
-
+        
+        //If club members are allowed to add new members on the fly, the association name (club name) 
+        //shall be easily entered. (https://github.com/nicmichael/efa/issues/23)
+        //If so, the association name should be editable for the members as well.
+        //so the association name has to be visible in non-admin-mode.
+        v.add(item = new ItemTypeString(PersonRecord.ASSOCIATION, getAssocitation(),
+                IItemType.TYPE_PUBLIC, CAT_MOREDATA, International.getString("Verein")));
+        
         if (admin != null && admin.isAllowedEditPersons()) {
             v.add(item = new ItemTypeStringList(PersonRecord.STATUSID, (getStatusId() != null ? getStatusId().toString() : status.getStatusOther().getId().toString()),
                     status.makeStatusArray(Status.ARRAY_STRINGLIST_VALUES), status.makeStatusArray(Status.ARRAY_STRINGLIST_DISPLAY),
                     IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("Status")));
 
-            v.add(item = new ItemTypeString(PersonRecord.ASSOCIATION, getAssocitation(),
-                    IItemType.TYPE_PUBLIC, CAT_MOREDATA, International.getString("Verein")));
+            //v.add(item = new ItemTypeString(PersonRecord.ASSOCIATION, getAssocitation(),
+            //        IItemType.TYPE_PUBLIC, CAT_MOREDATA, International.getString("Verein")));
             v.add(item = new ItemTypeString(PersonRecord.MEMBERSHIPNO, getMembershipNo(),
                     IItemType.TYPE_PUBLIC, CAT_MOREDATA, International.getString("Mitgliedsnummer")));
             v.add(item = new ItemTypeString(PersonRecord.PASSWORD, getPassword(),

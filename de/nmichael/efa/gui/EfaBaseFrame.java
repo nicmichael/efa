@@ -1974,6 +1974,11 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
                 r.setNameAffix(name[2]);
                 anyNameSet = true;
             }
+            if (name != null && name[3] != null) {
+            	r.setAssocitation(name[3]);
+            	anyNameSet = true;
+            }
+            
             if (!anyNameSet && s != null) {
                 r.setFirstName(s);
             }
