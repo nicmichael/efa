@@ -1175,30 +1175,34 @@ public class MeldungEditFrame extends JDialog implements ActionListener {
                 hGruppe.put("1a", new Integer(1));
                 this.mGruppe.addItem("1b (Männer 31-60)");
                 hGruppe.put("1b", new Integer(2));
-                this.mGruppe.addItem("1c (Männer 61-??)");
+                this.mGruppe.addItem("1c (Männer 61-75)");
                 hGruppe.put("1c", new Integer(3));
+                this.mGruppe.addItem("1d (Männer 76-??)");
+                hGruppe.put("1d", new Integer(4));
                 this.mGruppe.addItem("1x (Männer 50% Beh.)");
-                hGruppe.put("1 (50% Behinderung)", new Integer(4));
+                hGruppe.put("1 (50% Behinderung)", new Integer(5));
                 this.mGruppe.addItem("2a (Frauen 19-30)");
-                hGruppe.put("2a", new Integer(5));
+                hGruppe.put("2a", new Integer(6));
                 this.mGruppe.addItem("2b (Frauen 31-60)");
-                hGruppe.put("2b", new Integer(6));
-                this.mGruppe.addItem("2c (Frauen 61-??)");
-                hGruppe.put("2c", new Integer(7));
+                hGruppe.put("2b", new Integer(7));
+                this.mGruppe.addItem("2c (Frauen 61-75)");
+                hGruppe.put("2c", new Integer(8));
+                this.mGruppe.addItem("2d (Frauen 76-??)");
+                hGruppe.put("2d", new Integer(9));
                 this.mGruppe.addItem("2x (Frauen 50% Beh.)");
-                hGruppe.put("2 (50% Behinderung)", new Integer(8));
+                hGruppe.put("2 (50% Behinderung)", new Integer(10));
                 this.mGruppe.addItem("3a (Jugend 8-10)");
-                hGruppe.put("3a", new Integer(9));
+                hGruppe.put("3a", new Integer(11));
                 this.mGruppe.addItem("3b (Jugend 11-12)");
-                hGruppe.put("3b", new Integer(10));
+                hGruppe.put("3b", new Integer(12));
                 this.mGruppe.addItem("3c (Jugend 13-14)");
-                hGruppe.put("3c", new Integer(11));
+                hGruppe.put("3c", new Integer(13));
                 this.mGruppe.addItem("3d (Jugend 15-16)");
-                hGruppe.put("3d", new Integer(12));
+                hGruppe.put("3d", new Integer(14));
                 this.mGruppe.addItem("3e (Jugend 17-18)");
-                hGruppe.put("3e", new Integer(13));
+                hGruppe.put("3e", new Integer(15));
                 this.mGruppe.addItem("3f (Jugend 50% Beh.)");
-                hGruppe.put("3f (50% Behinderung)", new Integer(14));
+                hGruppe.put("3f (50% Behinderung)", new Integer(16));
 
                 hAbzeichen.put("", "ungültig");
                 hAbzeichen.put(EfaWettMeldung.ABZEICHEN_ERW_EINF, "Erwachsene einfach");
@@ -2329,6 +2333,15 @@ public class MeldungEditFrame extends JDialog implements ActionListener {
                 int itmp = EfaUtil.string2date(Main.drvConfig.schluessel, 0, 0, 0).tag;
                 String pubkey_alias = "drv" + (itmp < 10 ? "0" : "") + itmp;
                 String certFile = Daten.efaDataDirectory + pubkey_alias + ".cert";
+                if (!EfaUtil.canOpenFile(certFile)) {
+                    Logger.log(Logger.INFO, String.format("Zertifikatdatei %s nicht gefunden. Lade Datei von efa.rudern.de ...", certFile));
+                    String url = Daten.DRV_CERTS_URL + pubkey_alias + ".cert";
+                    if (DownloadThread.getFile(this, url , certFile, true)) {
+                        Logger.log(Logger.INFO, String.format("Zertifikatdatei %s erfolgreich heruntergeladen!", certFile));
+                    } else {
+                        Dialog.error(String.format("Zertifikatdatei %s nicht gefunden und Donwload von %s fehlgeschlagen.", certFile, url));
+                    }
+                }
                 if (EfaUtil.canOpenFile(certFile)) {
                     try {
                         int filesize = (int) (new File(certFile)).length();
@@ -2339,7 +2352,6 @@ public class MeldungEditFrame extends JDialog implements ActionListener {
                         String data = Base64.encodeBytes(buf);
                         f.keyName = pubkey_alias;
                         f.keyDataBase64 = EfaUtil.replace(data, "\n", "", true);
-                        ;
                     } catch (Exception ee) {
                         EfaUtil.foo();
                     }

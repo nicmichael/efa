@@ -2179,6 +2179,8 @@ public class MeldungenIndexFrame extends JDialog implements ActionListener {
             f.write("<tr><th>Verein</th><th>Status</th>"
                     + (MELDTYP == MELD_WANDERRUDERSTATISTIK ? "<th>Gewässer</th>" : "<th>Fahrtenhefte</th>") + 
                     "<th>Gewertet</th>" +
+                    "<th>Meldender</th>" +
+                    "<th>email</th>" +
                     "</tr>\n");
 
             for (DatenFelder d = Main.drvConfig.meldungenIndex.getCompleteFirst(); d != null; d = Main.drvConfig.meldungenIndex.getCompleteNext()) {
@@ -2188,6 +2190,8 @@ public class MeldungenIndexFrame extends JDialog implements ActionListener {
                 String verein = d.get(MeldungenIndex.VEREIN);
                 String status = MeldungenIndex.ST_NAMES[EfaUtil.string2int(d.get(MeldungenIndex.STATUS), MeldungenIndex.ST_UNBEKANNT)];
                 String feld3 = "";
+                String contact = "";
+                String email = "";
                 if (MELDTYP == MELD_WANDERRUDERSTATISTIK) {
                     DatenFelder ms = Main.drvConfig.meldestatistik.getExactComplete(d.get(MeldungenIndex.MITGLNR));
                     if (ms != null) {
@@ -2229,11 +2233,14 @@ public class MeldungenIndexFrame extends JDialog implements ActionListener {
                         }
                         
                     }
+                    contact = efw.meld_name != null ? efw.meld_name : "";
+                    email = efw.meld_email != null ? efw.meld_email : "";
                 }
                 String count = gewertet + " / " + total;
                 
                 f.write("<tr><td>" + verein + "</td><td>" + status + 
-                        "</td><td>" + feld3 + "</td><td>" + count + "</td></tr>\n");
+                        "</td><td>" + feld3 + "</td><td>" + count + 
+                        "</td><td>" + contact + "</td><td>" + email + "</td></tr>\n");
             }
             f.write("</table>\n");
             f.write("</body></html>\n");

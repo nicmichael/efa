@@ -34,41 +34,54 @@ public class CA {
     }
   }
 
-  public boolean runKeytool(String cmd, char[] keypass) {
-    String showCmd = cmd + " -keystore "+Daten.efaDataDirectory+Main.drvConfig.KEYSTORE_FILE +
-           (keypass != null ? " -keypass ***" : "") +
-           " -storepass ***";
-    cmd += " -keystore "+Daten.efaDataDirectory+Main.drvConfig.KEYSTORE_FILE +
-           (keypass != null ? " -keypass " + new String(keypass) : "") +
-           " -storepass " + new String(Main.drvConfig.keyPassword);
-    Logger.log(Logger.INFO,"Starte Keytool: "+showCmd);
-    String[] cmdarr = EfaUtil.kommaList2Arr(cmd,' ');
-    for (int i=0; i<cmdarr.length; i++) cmdarr[i] = EfaUtil.replace(cmdarr[i],"\\s"," ",true);
-    try {
-        // up to Java 7:
-        //sun.security.tools.KeyTool.main(cmdarr);
-        
-        // new with support for both Java < 8 and Java > 8
-        try {
-            // try Java 7 class name
-            String classname = "sun.security.tools.KeyTool";
-            Class[] args = new Class[1];
-            Class.forName(classname).getMethod("main", String[].class).invoke(null, cmdarr);
-        } catch(Throwable t) {
-            // try Java 8 class name
-            String classname = "sun.security.tools.keytool.Main";
-            Class[] args = new Class[1];
-            Class c = Class.forName(classname);
-            Method m = c.getMethod("main", String[].class);
-            m.invoke(null, cmdarr);
+    public boolean runKeytool(String cmd, char[] keypass) {
+        boolean runExec = true;
+
+        String exec =(runExec ? System.getProperty("java.home") + Daten.fileSep + "bin" + Daten.fileSep + "keytool " : "" );
+        String showCmd = exec + cmd + " -keystore " + Daten.efaDataDirectory + Main.drvConfig.KEYSTORE_FILE
+                + (keypass != null ? " -keypass ***" : "")
+                + " -storepass ***";
+        cmd = exec + cmd + " -keystore " + Daten.efaDataDirectory + Main.drvConfig.KEYSTORE_FILE
+                + (keypass != null ? " -keypass " + new String(keypass) : "")
+                + " -storepass " + new String(Main.drvConfig.keyPassword);
+        Logger.log(Logger.INFO, "Starte Keytool in Java Version " + Daten.javaVersion + ": " + showCmd);
+        String[] cmdarr = EfaUtil.kommaList2Arr(cmd, ' ');
+        for (int i = 0; i < cmdarr.length; i++) {
+            cmdarr[i] = EfaUtil.replace(cmdarr[i], "\\s", " ", true);
         }
-    } catch(Throwable ex) {
-        Logger.log(Logger.ERROR, "Konnte Keytool nicht starten: " + ex);
-        Dialog.error("Konnte Keytool nicht starten: " + ex);
-        return false;
+        try {
+            if (runExec) {
+                if (!EfaUtil.execCmd(cmd)) {
+                    Logger.log(Logger.ERROR, "Failed to run keytool: " + showCmd);
+                    Dialog.error("Failed to run keytool: " + showCmd);
+                }
+            } else {
+                // up to Java 7:
+                //sun.security.tools.KeyTool.main(cmdarr);
+                // new with support for both Java < 8 and Java > 8
+                try {
+                    // try Java 7 class name
+                    Logger.log(Logger.INFO, "Starte Keytool fuer Java 7: " + showCmd);
+                    String classname = "sun.security.tools.KeyTool";
+                    Class[] args = new Class[1];
+                    Class.forName(classname).getMethod("main", String[].class).invoke(null, cmdarr);
+                } catch (Throwable t) {
+                    // try Java 8 class name
+                    Logger.log(Logger.INFO, "Starte Keytool fuer Java 8: " + showCmd);
+                    String classname = "sun.security.tools.keytool.Main";
+                    Class[] args = new Class[1];
+                    Class c = Class.forName(classname);
+                    Method m = c.getMethod("main", String[].class);
+                    m.invoke(null, cmdarr);
+                }
+            }
+        } catch (Throwable ex) {
+            Logger.log(Logger.ERROR, "Konnte Keytool nicht starten: " + ex);
+            Dialog.error("Konnte Keytool nicht starten: " + ex);
+            return false;
+        }
+        return true;
     }
-    return true;
-  }
 
   private void printOutput(String stream, InputStream in) {
     try {

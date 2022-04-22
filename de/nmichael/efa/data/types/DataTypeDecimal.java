@@ -36,9 +36,9 @@ public class DataTypeDecimal {
         normalize();
     }
 
-    public static DataTypeDecimal parseDecimal(String s) {
+    public static DataTypeDecimal parseDecimal(String s, boolean fromGUI) {
         DataTypeDecimal decimal = new DataTypeDecimal();
-        decimal.setDecimal(s);
+        decimal.setDecimal(s, fromGUI);
         return decimal;
     }
 
@@ -48,7 +48,11 @@ public class DataTypeDecimal {
         normalize();
     }
 
-    public void setDecimal(String s) {
+    public void setDecimal(String s, boolean fromGUI) {
+        if (fromGUI) {
+            s = EfaUtil.replace(s, Character.toString(International.getThousandsSeparator()), "");
+            s = EfaUtil.replace(s, Character.toString(International.getDecimalSeparator()), ".");
+        }
         value = 0;
         decimalPlaces = 0;
         boolean positive = true;
@@ -135,6 +139,12 @@ public class DataTypeDecimal {
                     precisionDiff *= 10;
                 }
                 fraction = fraction / precisionDiff;
+            } else if (maxDecimalPlaces > decimalPlaces) {
+                long precisionDiff = 1;
+                for (int i = decimalPlaces; i < maxDecimalPlaces; i++) {
+                    precisionDiff *= 10;
+                }
+                fraction = fraction * precisionDiff;
             }
             if (maxDecimalPlaces == 0) {
                 return Long.toString(value / precision);

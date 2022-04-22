@@ -16,7 +16,9 @@ import java.util.Vector;
 
 import de.nmichael.efa.Daten;
 import de.nmichael.efa.core.config.AdminRecord;
+import de.nmichael.efa.core.config.EfaCloudUsers;
 import de.nmichael.efa.core.config.EfaTypes;
+import de.nmichael.efa.data.efacloud.TxRequestQueue;
 import de.nmichael.efa.data.storage.Audit;
 import de.nmichael.efa.data.storage.DataAccess;
 import de.nmichael.efa.data.storage.DataFile;
@@ -59,6 +61,7 @@ public class Project extends StorageObject {
     public static final String STORAGEOBJECT_WATERS = "waters";
     public static final String STORAGEOBJECT_STATISTICS = "statistics";
     public static final String STORAGEOBJECT_MESSAGES = "messages";
+    public static final String STORAGEOBJECT_EFACLOUDUSERS = "efacloudusers";
     private Hashtable<String, StorageObject> persistenceCache = new Hashtable<String, StorageObject>();
     protected IDataAccess remoteDataAccess; // used for ClubRecord and LogbookRecord, if TYPE_EFA_REMOTE
     private String myIdentifier = null;
@@ -348,6 +351,10 @@ public class Project extends StorageObject {
             // we will only open the neccesary files on demand
             return true;
         }
+        if (getProjectStorageType() == IDataAccess.TYPE_EFA_CLOUD) {
+            TxRequestQueue.getInstance(getProjectRecord().getEfaCoudURL(), getProjectStorageUsername(),
+                    getProjectStoragePassword(), getProjectStorageLocation());
+        }
         try {
             if (Logger.isTraceOn(Logger.TT_CORE, 3)) {
                 Logger.log(Logger.DEBUG, Logger.MSG_DEBUG_DATA, "Opening all Project Data ...");
@@ -370,6 +377,8 @@ public class Project extends StorageObject {
             getWaters(true);
             getStatistics(true);
             getMessages(true);
+            if (getProjectStorageType() == IDataAccess.TYPE_EFA_CLOUD)
+                getEfaCloudUsers(true);
             if (Logger.isTraceOn(Logger.TT_CORE, 3)) {
                 Logger.log(Logger.DEBUG, Logger.MSG_DEBUG_DATA, "All Project Data opened.");
             }
@@ -467,6 +476,8 @@ public class Project extends StorageObject {
         data.add(getWaters(false));
         data.add(getStatistics(false));
         data.add(getMessages(false));
+        if (getProjectStorageType() == IDataAccess.TYPE_EFA_CLOUD)
+            data.add(getEfaCloudUsers(false));
         String[] logbookNames = getAllLogbookNames();
         for (int i = 0; logbookNames != null && i < logbookNames.length; i++) {
             data.add(getLogbook(logbookNames[i], false));
@@ -887,6 +898,10 @@ public class Project extends StorageObject {
         for (String key : keys) {
             closePersistence(persistenceCache.get(key));
         }
+        // Close the message queue to the efacloud server
+        if ((getProjectStorageType() == IDataAccess.TYPE_EFA_CLOUD) && (TxRequestQueue.getInstance() != null)) {
+            TxRequestQueue.getInstance().cancel();
+        }
         // close the project storage object itself
         closePersistence(this);
     }
@@ -966,6 +981,9 @@ public class Project extends StorageObject {
                     }
                     if (storageObjectType.equals(Messages.DATATYPE) && storageObjectName.equals(STORAGEOBJECT_MESSAGES)) {
                         c = Messages.class;
+                    }
+                    if (storageObjectType.equals(EfaCloudUsers.DATATYPE) && storageObjectName.equals(STORAGEOBJECT_EFACLOUDUSERS)) {
+                        c = EfaCloudUsers.class;
                     }
                     if (storageObjectType.equals(Logbook.DATATYPE)) {
                         c = Logbook.class;
@@ -1354,6 +1372,11 @@ public class Project extends StorageObject {
     public Messages getMessages(boolean createNewIfDoesntExist) {
         return (Messages) getPersistence(Messages.class, STORAGEOBJECT_MESSAGES, Messages.DATATYPE,
                 createNewIfDoesntExist, International.getString("Nachrichten"));
+    }
+
+    public EfaCloudUsers getEfaCloudUsers(boolean createNewIfDoesntExist) {
+        return (EfaCloudUsers) getPersistence(EfaCloudUsers.class, STORAGEOBJECT_EFACLOUDUSERS, EfaCloudUsers.DATATYPE,
+                createNewIfDoesntExist, International.getString("EfaCloud-Nutzer"));
     }
 
     public void setProjectDescription(String description) {

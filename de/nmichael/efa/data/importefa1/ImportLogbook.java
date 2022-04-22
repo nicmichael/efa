@@ -193,7 +193,7 @@ public class ImportLogbook extends ImportBase {
                     }
                 }
                 
-                r.setDistance(DataTypeDistance.parseDistance(d.get(Fahrtenbuch.BOOTSKM) + DataTypeDistance.KILOMETERS));
+                r.setDistance(DataTypeDistance.parseDistance(d.get(Fahrtenbuch.BOOTSKM) + DataTypeDistance.KILOMETERS, false));
                 if (d.get(Fahrtenbuch.BEMERK).length() > 0) {
                     r.setComments(d.get(Fahrtenbuch.BEMERK));
                 }

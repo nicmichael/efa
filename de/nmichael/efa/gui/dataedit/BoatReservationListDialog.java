@@ -164,4 +164,19 @@ public class BoatReservationListDialog extends DataListDialog {
             return null;
         }
     }
+	protected void createSpecificItemTypeRecordTable() {
+        table = new BoatReservationItemTypeDataRecordTable("TABLE",
+                persistence.createNewRecord().getGuiTableHeader(),
+                persistence, validAt, admin,
+                filterFieldName, filterFieldValue, // defaults are null
+                actionText, actionType, actionImage, // default actions: new, edit, delete
+                this,
+                IItemType.TYPE_PUBLIC, "BASE_CAT", getTitle());
+	}
+	
+	protected void iniDialog() throws Exception {
+		super.iniDialog();
+		//show only matching items by default in BoatDamageListDialog 
+		table.setIsFilterSet(true);
+	}
 }
