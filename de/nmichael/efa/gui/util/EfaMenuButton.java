@@ -48,7 +48,7 @@ public class EfaMenuButton {
 
     public final static String MENU_ADMINISTRATION      = "ADMINISTRATION";
     public final static String BUTTON_LOGBOOK           = "LOGBOOK";
-    public final static String BUTTON_CLUBWORKBOOK = "CLUBWORKBOOK";
+    public final static String BUTTON_CLUBWORKBOOK      = "CLUBWORKBOOK";
     public final static String BUTTON_LOGBOOKLIST       = "LOGBOOKLIST";
     public final static String BUTTON_SESSIONGROUPS     = "SESSIONGROUPS";
     public final static String BUTTON_BOATS             = "BOATS";
@@ -160,7 +160,7 @@ public class EfaMenuButton {
         if ((admin == null || admin.isAllowedAdministerProjectLogbook()) && Daten.efaConfig.getExperimentalFunctionsActivated()) {
             v.add(new EfaMenuButton(MENU_FILE, BUTTON_EFACLOUD,
                     International.getStringWithMnemonic("Datei"),
-                    International.getStringWithMnemonic("EfaCloud"),
+                    International.getStringWithMnemonic("efaCloud"),
                     BaseFrame.getIcon("menu_efacloud.png")));
         }
         if (Daten.efaConfig.getValueUseFunctionalityCanoeingGermany()) {
@@ -477,8 +477,17 @@ public class EfaMenuButton {
                 return false;
             }
             // The only parent for this button is the EfaCloudSynchDialog.
-            EfaCloudSynchDialog dlg = new EfaCloudSynchDialog(parentDialog, admin);
-            dlg.showDialog();
+            EfaCloudConfigDialog dlg = null;
+            if (Daten.project == null)
+                Dialog.infoDialog(International
+                        .getString("Zur efaCloud-Konfiguration bitte erst ein Projekt öffnen."));
+            try {
+                dlg = new EfaCloudConfigDialog(parentDialog, admin);
+            } catch (Exception ignored) {
+            }
+            if (dlg != null) dlg.showDialog();
+            else Dialog.infoDialog(International
+                    .getString("efaCloud-Konfiguration konnte nicht geöffnet werden."));
         }
 
         if (action.equals(BUTTON_UPDATE)) {

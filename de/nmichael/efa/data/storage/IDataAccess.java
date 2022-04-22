@@ -41,6 +41,7 @@ public interface IDataAccess {
     public static final int DATA_INTSTRING = 10;      // Number-String mixed String
     public static final int DATA_PASSWORDH = 11;     // DataTypePasswordHashed
     public static final int DATA_PASSWORDC = 12;     // DataTypePasswordCrypted
+    public static final int DATA_TEXT = 13;          // String. Text is used by Efacloud for fields needing > 256 characters length
     public static final int DATA_LIST_STRING = 100;  // String-based list
     public static final int DATA_LIST_INTEGER = 101; // Integer-based list
     public static final int DATA_LIST_UUID = 108;    // UUID-based list
@@ -382,7 +383,7 @@ public interface IDataAccess {
 
     /**
      * Adds an array of new data record to this storage object.
-     * @param record the data records to add
+     * @param records the data records to add
      * @throws Exception if any of the data record already exists or the operation fails for another reason
      */
     public void addAll(DataRecord[] records, long lockID) throws EfaException;

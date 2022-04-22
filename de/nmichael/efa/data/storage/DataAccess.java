@@ -57,10 +57,8 @@ public abstract class DataAccess implements IDataAccess {
                 return dataAccess;
             case IDataAccess.TYPE_EFA_CLOUD:
                 Project p = Daten.project;
-                String efaCloudURL = p.getProjectRecord().getEfaCoudURL();
                 try {
-                    dataAccess = new EfaCloudStorage(efaCloudURL, storageLocation, storageUsername,
-                            storagePassword, storageObjectName, storageObjectType,
+                    dataAccess = new EfaCloudStorage(storageLocation, storageObjectName, storageObjectType,
                             storageObjectDescription);
                 } catch (EfaException e) {
                     Logger.log(Logger.ERROR, Logger.MSG_DATA_DATAACCESS,
@@ -234,6 +232,16 @@ public abstract class DataAccess implements IDataAccess {
             throw new EfaException(Logger.MSG_DATA_FIELDDOESNOTEXIST, getUID() + ": Field Name does not exist: "+fieldName, Thread.currentThread().getStackTrace());
         }
         return i.intValue();
+    }
+
+    public boolean hasCompleteKey(DataRecord record) {
+        if ((keyFields.length >= 1) && (record.get(keyFields[0]) == null))
+            return false;
+        if ((keyFields.length >= 2) && (record.get(keyFields[1]) == null))
+            return false;
+        if ((keyFields.length >= 3) && (record.get(keyFields[2]) == null))
+            return false;
+        return true;
     }
 
     public DataKey constructKey(DataRecord record) throws EfaException {

@@ -29,6 +29,8 @@ import javax.swing.*;
 
 // @i18n complete
 public class BoatDamageListDialog extends DataListDialog {
+	
+	protected ItemTypeBoolean showOpenDamagesOnly;
 
     public BoatDamageListDialog(Frame parent, AdminRecord admin) {
         super(parent, International.getString("Bootsschäden"), Daten.project.getBoatDamages(false), 0, admin);
@@ -135,5 +137,53 @@ public class BoatDamageListDialog extends DataListDialog {
                 return false;
         }
     }
-
+    
+	protected void createSpecificItemTypeRecordTable() {
+        table = new BoatDamageItemTypeDataRecordTable("TABLE",
+                persistence.createNewRecord().getGuiTableHeader(),
+                persistence, validAt, admin,
+                filterFieldName, filterFieldValue, // defaults are null
+                actionText, actionType, actionImage, // default actions: new, edit, delete
+                this,
+                IItemType.TYPE_PUBLIC, "BASE_CAT", getTitle());
+	}
+	
+	protected void iniDialog() throws Exception {
+		super.iniDialog();
+		//show only matching items by default in BoatDamageListDialog 
+		table.setIsFilterSet(true);
+	}
+	
+    protected void iniControlPanel() {
+    	// we want to put an additional element after the control panel
+    	super.iniControlPanel();
+    	this.iniBoatDamageListFilter();
+    }
+	
+	private void iniBoatDamageListFilter() {
+		JPanel myControlPanel= new JPanel();
+    	
+    	showOpenDamagesOnly = new ItemTypeBoolean("SHOW_ACTIVE_DAMAGES_ONLY",
+                true,
+                IItemType.TYPE_PUBLIC, "", International.getString("nur offene Bootsschäden"));
+    	showOpenDamagesOnly.setPadding(0, 0, 0, 0);
+    	showOpenDamagesOnly.displayOnGui(this, myControlPanel, 0, 0);
+    	showOpenDamagesOnly.registerItemListener(this);
+        mainPanel.add(myControlPanel, BorderLayout.NORTH);
+	}    
+	
+    public void itemListenerAction(IItemType itemType, AWTEvent event) {
+    	
+    	// handle our special filter for active damages, else use default item handler
+    	if (itemType==showOpenDamagesOnly) {
+    		
+    		 if (event.getID() == ActionEvent.ACTION_PERFORMED) {
+    			 showOpenDamagesOnly.getValueFromGui();
+    			 ((BoatDamageItemTypeDataRecordTable) table).setShowOpenDamagesOnly(showOpenDamagesOnly.getValue());	 
+    		 }
+    		
+    	} else {
+    		super.itemListenerAction(itemType, event);
+    	}
+    }
 }

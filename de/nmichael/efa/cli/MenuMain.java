@@ -167,6 +167,14 @@ public class MenuMain extends MenuBase {
                 menuStack.push(CLI.MENU_BACKUP);
                 return runCommandWithArgs(args);
             }
+            if (cmd.equalsIgnoreCase(CLI.MENU_EFACLOUD)) {
+                if (!cli.getAdminRecord().isAllowedAdministerProjectLogbook()) {
+                    cli.logerr("You don't have permission to access this function.");
+                    return CLI.RC_NO_PERMISSION;
+                }
+                menuStack.push(CLI.MENU_EFACLOUD);
+                return runCommandWithArgs(args);
+            }
             if (cmd.equalsIgnoreCase(CLI.MENU_COMMAND)) {
                 if (!cli.getAdminRecord().isAllowedExecCommand()) {
                     cli.logerr("You don't have permission to access this function.");

@@ -482,6 +482,13 @@ public class International {
         return decimalSeparator;
     }
 
+    public static char getThousandsSeparator() {
+        if (numberFormat == null) {
+            initialize();
+        }
+        return decimalSeparator == '.' ? ',' : '.';
+    }
+
     public static char getSpaceOrDash() {
         String l = getLanguageID();
         return (l.equals("de") ? '-' : ' ');

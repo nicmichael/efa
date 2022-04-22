@@ -91,6 +91,8 @@ public class SessionGroupListDialog extends DataListDialog {
         if (selectedSessionGroupId != null) {
             table.selectValue(selectedSessionGroupId.toString());
         }
+        //by default only display matching elements in the table
+        table.setIsFilterSet(true);
     }
 
     public void keyAction(ActionEvent evt) {
@@ -133,4 +135,13 @@ public class SessionGroupListDialog extends DataListDialog {
         return selectedRecord;
     }
     
+	protected void createSpecificItemTypeRecordTable() {
+        table = new SessionGroupItemTypeDataRecordTable("TABLE",
+                persistence.createNewRecord().getGuiTableHeader(),
+                persistence, validAt, admin,
+                filterFieldName, filterFieldValue, // defaults are null
+                actionText, actionType, actionImage, // default actions: new, edit, delete
+                this,
+                IItemType.TYPE_PUBLIC, "BASE_CAT", getTitle());
+	}
 }

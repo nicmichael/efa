@@ -12,6 +12,7 @@ package de.nmichael.efa.gui;
 
 import de.nmichael.efa.*;
 import de.nmichael.efa.core.CrontabThread;
+import de.nmichael.efa.data.efacloud.TxRequestQueue;
 import de.nmichael.efa.gui.util.*;
 import de.nmichael.efa.gui.widgets.*;
 import de.nmichael.efa.util.*;
@@ -476,10 +477,10 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
         toggleAvailableBoatsToPersons.setVisible(Daten.efaConfig.getValueEfaDirekt_listAllowToggleBoatsPersons());
 
         // Boat Lists
-        boatsAvailableList = new ItemTypeBoatstatusList("BOATSAVAILABLELIST", IItemType.TYPE_PUBLIC, "", International.getStringWithMnemonic("verfügbare Boote"), this);
-        personsAvailableList = new ItemTypeBoatstatusList("PERSONSAVAILABLELIST", IItemType.TYPE_PUBLIC, "", International.getStringWithMnemonic("Personen"), this);
-        boatsOnTheWaterList = new ItemTypeBoatstatusList("BOATSONTHEWATERLIST", IItemType.TYPE_PUBLIC, "", International.getStringWithMnemonic("Boote auf Fahrt"), this);
-        boatsNotAvailableList = new ItemTypeBoatstatusList("BOATSNOTAVAILABLELIST", IItemType.TYPE_PUBLIC, "", International.getStringWithMnemonic("nicht verfügbare Boote"), this);
+        boatsAvailableList = new ItemTypeBoatstatusList("BOATSAVAILABLELIST", IItemType.TYPE_PUBLIC, "", International.getStringWithMnemonic("verfügbare Boote"), this, Daten.efaConfig.getValueEfaBoathouseFilterTextfieldStandardLists());
+        personsAvailableList = new ItemTypeBoatstatusList("PERSONSAVAILABLELIST", IItemType.TYPE_PUBLIC, "", International.getStringWithMnemonic("Personen"), this,Daten.efaConfig.getValueEfaBoathouseFilterTextfieldStandardLists());
+        boatsOnTheWaterList = new ItemTypeBoatstatusList("BOATSONTHEWATERLIST", IItemType.TYPE_PUBLIC, "", International.getStringWithMnemonic("Boote auf Fahrt"), this,Daten.efaConfig.getValueEfaBoathouseFilterTextfieldStandardLists());
+        boatsNotAvailableList = new ItemTypeBoatstatusList("BOATSNOTAVAILABLELIST", IItemType.TYPE_PUBLIC, "", International.getStringWithMnemonic("nicht verfügbare Boote"), this,Daten.efaConfig.getValueEfaBoathouseFilterTextfieldBoatsNotAvailableList());
         boatsAvailableList.setFieldSize(200, 400);
         personsAvailableList.setFieldSize(200, 400);
         boatsOnTheWaterList.setFieldSize(200, 300);
@@ -1103,14 +1104,18 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
         Daten.haltProgram(exitCode);
     }
 
-    private void updateProjectLogbookInfo() {
+    public void updateProjectLogbookInfo() {
         if (Daten.project == null || !Daten.project.isOpen()) {
             titleLabel.setText(Daten.EFA_LONGNAME);
         } else {
+            TxRequestQueue txq = TxRequestQueue.getInstance();
+            if (txq != null)
+                txq.setEfaGUIrootContainer(this);   // is relevant only at startup
+            String efaCloudStatus = (txq != null) ? txq.getStateForDisplay() : "";
             titleLabel.setText(Daten.EFA_LONGNAME + " [" + Daten.project.getProjectName() +
                     (logbook != null && logbook.isOpen() ? ": " + logbook.getName() : "") + 
                     (Daten.project.getMyBoathouseName() != null ? " - " + Daten.project.getMyBoathouseName() : "") +
-                    "]");
+                    "]" + efaCloudStatus);
         }
     }
 
