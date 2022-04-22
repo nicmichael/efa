@@ -213,14 +213,10 @@ public abstract class DataListDialog extends BaseDialog implements IItemListener
             mainTablePanel.add(filterName, BorderLayout.NORTH);
             mainTablePanel.setBorder(new EmptyBorder(10,0,0,0));
         }
-
-        table = new ItemTypeDataRecordTable("TABLE",
-                persistence.createNewRecord().getGuiTableHeader(),
-                persistence, validAt, admin,
-                filterFieldName, filterFieldValue, // defaults are null
-                actionText, actionType, actionImage, // default actions: new, edit, delete
-                this,
-                IItemType.TYPE_PUBLIC, "BASE_CAT", getTitle());
+        
+        // Instanciates the table variable with the specific type which is needed. 
+        createSpecificItemTypeRecordTable();
+        
         table.setSorting(sortByColumn, sortAscending);
         table.setFontSize(tableFontSize);
         table.setMarkedCellColor(markedCellColor);
@@ -253,6 +249,21 @@ public abstract class DataListDialog extends BaseDialog implements IItemListener
         setRequestFocus(table);
         this.validate();
     }
+
+    /**
+     * Instanciates the table variable to the specific subtype of ItemTypeDataRecord that is needed
+     * by the subclass of DataListDialog.
+     * Default implementation creates a standard ItemTypeDataRecordTable.
+     */
+	protected void createSpecificItemTypeRecordTable() {
+		table = new ItemTypeDataRecordTable("TABLE",
+                persistence.createNewRecord().getGuiTableHeader(),
+                persistence, validAt, admin,
+                filterFieldName, filterFieldValue, // defaults are null
+                actionText, actionType, actionImage, // default actions: new, edit, delete
+                this,
+                IItemType.TYPE_PUBLIC, "BASE_CAT", getTitle());
+	}
 
     protected void iniControlPanel() {
         if (persistence != null && persistence.data().getMetaData().isVersionized()) {

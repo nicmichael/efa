@@ -48,26 +48,46 @@ public class AdminListDialog extends DataListDialog {
             actionType = null; // only ADD, EDIT, DELETE (no IMPORT, EXPORT)
         } else {
             efaLiveRepair = Daten.admins.isEfaLiveAdminExists();
-            actionText = new String[]{
+            if (Daten.project.getProjectStorageType() == IDataAccess.TYPE_EFA_CLOUD) {
+                actionText = new String[]{
+                        ItemTypeDataRecordTable.ACTIONTEXT_EDIT,
+                        ItemTypeDataRecordTable.ACTIONTEXT_DELETE,
+                        (efaLiveRepair
+                                ? International.getMessage("Admin '{name}' reparieren", Admins.EFALIVEADMIN)
+                                : International.getMessage("Admin '{name}' erstellen", Admins.EFALIVEADMIN))
+                };
+                actionType = new int[]{
+                        ItemTypeDataRecordTable.ACTION_EDIT,
+                        ItemTypeDataRecordTable.ACTION_DELETE,
+                        ACTION_EFALIVE_ADMIN
+                };
+                actionImage = new String[]{
+                        IMAGE_EDIT,
+                        IMAGE_DELETE,
+                        IMAGE_REPAIR
+                };
+            } else {
+                actionText = new String[]{
                         ItemTypeDataRecordTable.ACTIONTEXT_NEW,
                         ItemTypeDataRecordTable.ACTIONTEXT_EDIT,
                         ItemTypeDataRecordTable.ACTIONTEXT_DELETE,
                         (efaLiveRepair
                         ? International.getMessage("Admin '{name}' reparieren", Admins.EFALIVEADMIN)
                         : International.getMessage("Admin '{name}' erstellen", Admins.EFALIVEADMIN))
-                    };
-            actionType = new int[]{
+                        };
+                actionType = new int[]{
                         ItemTypeDataRecordTable.ACTION_NEW,
                         ItemTypeDataRecordTable.ACTION_EDIT,
                         ItemTypeDataRecordTable.ACTION_DELETE,
                         ACTION_EFALIVE_ADMIN
-                    };
-            actionImage = new String[]{
+                        };
+                actionImage = new String[]{
                         IMAGE_ADD,
                         IMAGE_EDIT,
                         IMAGE_DELETE,
                         IMAGE_REPAIR
-                    };
+                        };
+            }
         }
     }
 

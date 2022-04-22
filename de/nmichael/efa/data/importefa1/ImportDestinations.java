@@ -112,7 +112,7 @@ public class ImportDestinations extends ImportBase {
                     boolean newRecord = (r == null);
                     r = destinations.createDestinationRecord((r != null ? r.getId() : UUID.randomUUID()));
                     r.setName(EfaUtil.replace(d.get(Ziele.NAME),"+","&",true));
-                    r.setDistance(DataTypeDistance.parseDistance(d.get(Ziele.KM) + DataTypeDistance.KILOMETERS));
+                    r.setDistance(DataTypeDistance.parseDistance(d.get(Ziele.KM) + DataTypeDistance.KILOMETERS, false));
                     if (d.get(Ziele.BEREICH).length() > 0) {
                         r.setDestinationAreas(new ZielfahrtFolge(getZielbereiche(d)));
                     }

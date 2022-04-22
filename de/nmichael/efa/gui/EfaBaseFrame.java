@@ -14,6 +14,7 @@ import de.nmichael.efa.*;
 import de.nmichael.efa.core.AdminTask;
 import de.nmichael.efa.core.config.*;
 import de.nmichael.efa.core.items.*;
+import de.nmichael.efa.data.efacloud.TxRequestQueue;
 import de.nmichael.efa.data.types.*;
 import de.nmichael.efa.data.storage.*;
 import de.nmichael.efa.data.*;
@@ -576,7 +577,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         cox.setFieldSize(200, 19);
         cox.setLabelGrid(1, GridBagConstraints.EAST, GridBagConstraints.NONE);
         cox.setFieldGrid(2, GridBagConstraints.WEST, GridBagConstraints.NONE);
-        cox.setAutoCompleteData(autoCompleteListPersons);
+        cox.setAutoCompleteData(autoCompleteListPersons, true);
         cox.setChecks(true, true);
         cox.setBackgroundColorWhenFocused(Daten.efaConfig.getValueEfaDirekt_colorizeInputField() ? Color.yellow : null);
         cox.displayOnGui(this, mainInputPanel, 0, 4);
@@ -593,7 +594,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
             crew[j].setFieldSize(200, 19);
             crew[j].setLabelGrid(1, GridBagConstraints.EAST, GridBagConstraints.NONE);
             crew[j].setFieldGrid((left ? 2 : 3), GridBagConstraints.WEST, GridBagConstraints.NONE);
-            crew[j].setAutoCompleteData(autoCompleteListPersons);
+            crew[j].setAutoCompleteData(autoCompleteListPersons, true);
             crew[j].setChecks(true, true);
             crew[j].setBackgroundColorWhenFocused(Daten.efaConfig.getValueEfaDirekt_colorizeInputField() ? Color.yellow : null);
             crew[j].displayOnGui(this, mainInputPanel, (left ? 0 : 4), 5 + j%4);
@@ -813,8 +814,6 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
     void iniApplication() {
         if (Daten.project == null && isModeBase()) {
             if (Daten.efaConfig.getValueLastProjectEfaBase().length() > 0) {
-                // Set the GUI context to be able to display server synchronisation progress
-                Daten.tableBuilder.guiBaseFrameOnAppLoading = this;
                 Project.openProject(Daten.efaConfig.getValueLastProjectEfaBase(), true);
                 remoteAdmin = (Daten.project != null ? Daten.project.getRemoteAdmin() : null);
                 checkRemoteAdmin();
@@ -840,7 +839,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
 
 
 
-    void setTitle() {
+    public void setTitle() {
         String adminName = (getAdmin() != null ? getAdmin().getName() : null);
         String adminNameString = (adminName != null && adminName.length() > 0 ?
             " [" + adminName + "]" : "");
@@ -853,7 +852,17 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
                 if (!isLogbookReady()) {
                     setTitle(Daten.project.getProjectName() + " - " + Daten.EFA_LONGNAME + adminNameString);
                 } else {
-                    setTitle(Daten.project.getProjectName() + ": " + logbook.getName() + " - " + Daten.EFA_LONGNAME + adminNameString);
+                    if ((Daten.project.getProjectStorageType() == IDataAccess.TYPE_EFA_CLOUD) &&
+                            (TxRequestQueue.getInstance() != null)) {
+                        TxRequestQueue txq = TxRequestQueue.getInstance();
+                        if (txq != null)
+                            txq.setEfaGUIrootContainer(this);   // is relevant only at startup
+                        String efaCloudStatus = (txq != null) ? txq.getStateForDisplay() : "";
+                        setTitle(
+                                Daten.project.getProjectName() + ": " + logbook.getName() + " - " + Daten.EFA_LONGNAME +
+                                        adminNameString + efaCloudStatus);
+                    } else
+                        setTitle(Daten.project.getProjectName() + ": " + logbook.getName() + " - " + Daten.EFA_LONGNAME + adminNameString);
                 }
             }
         }
@@ -3411,6 +3420,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
                         updateBoatStatus(true, MODE_BOATHOUSE_FINISH);
                         saveEntry();
                         navigateInLogbook(0);
+                        autoCompleteListPersons.reset();
                     }
                 }
             }
@@ -3660,7 +3670,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
     void updateSessionTypeInfo() {
         if (sessiontype != null && sessiontype.isVisible() && Daten.efaConfig.getValueUseFunctionalityRowingGermany()) {
             String sess = sessiontype.getValueFromField();
-            DataTypeDistance dist = DataTypeDistance.parseDistance(distance.getValueFromField());
+            DataTypeDistance dist = DataTypeDistance.parseDistance(distance.getValueFromField(), true);
             long days = 1;
             if (enddate != null && enddate.isVisible() && date != null && date.isVisible() &&
                 date.isSet() && enddate.isSet()) {
@@ -4463,6 +4473,8 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         currentRecord = null;
         try {
             currentRecord = logbook.getLogbookRecord(item.boatStatus.getEntryNo());
+            // New implementation in efaCloud. Causes NPE (in non-efaCloud usage). Removed.
+            // currentRecord = logbook.getLogbookRecord(item.boat.getBoatStatus().getEntryNo());
         } catch(Exception e) {
             Logger.log(e);
         }
@@ -4778,6 +4790,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         if (mode != EfaBaseFrame.MODE_BOATHOUSE_ABORT) {
             this.setVisible(false);
             Dialog.frameClosed(this);
+            autoCompleteListPersons.reset();
         }
         efaBoathouseFrame.showEfaBoathouseFrame(efaBoathouseAction, currentRecord);
     }

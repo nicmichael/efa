@@ -388,6 +388,11 @@ public class DataImport extends ProgressTask {
                             String value = (fields.size() > i ? fields.get(i) : null);
                             if (value != null && value.length() > 0) {
                                 try {
+                                    // special locale handling of imported decimals
+                                    if (dummyRecord.getFieldType(header[i]) == IDataAccess.DATA_DECIMAL) {
+                                        value = EfaUtil.replace(value, Character.toString(International.getThousandsSeparator()), "");
+                                        value = EfaUtil.replace(value, Character.toString(International.getDecimalSeparator()), ".");
+                                    }
                                     if (!r.setFromText(header[i], value.trim())) {
                                         logImportWarning(r, "Value '" + value + "' for Field '"+header[i] + "' corrected to '" + r.getAsText(header[i]) + "'");
                                     }

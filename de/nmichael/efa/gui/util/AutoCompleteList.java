@@ -35,7 +35,7 @@ public class AutoCompleteList {
     private long efaConfigSCN = -1;
     private long validFrom = -1;
     private long validUntil = Long.MAX_VALUE;
-    private Vector<String> dataVisible = new Vector<String>();;
+    private Vector<String> dataVisible = new Vector<String>();
     private Hashtable<String,ValidInfo> name2valid = new Hashtable<String,ValidInfo>();
     private Hashtable<String,String> lower2realVisible = new Hashtable<String,String>();;
     private Hashtable<String,String> lower2realInvisible = new Hashtable<String,String>();;
@@ -523,11 +523,18 @@ public class AutoCompleteList {
         return v;
     }
 
+    public void reset() {
+        dataVisible = new Vector<String>();
+        dataVisible.addAll(name2valid.keySet());
+        sort();
+        lastPrefix = null;
+        pos = 0;
+    }
+
     public static void main(String[] args) {
         Vector<String> v = getPermutations("a b c", 7);
         for (int i=0; i<v.size(); i++) {
             System.out.println(v.get(i));
         }
     }
-    
 }

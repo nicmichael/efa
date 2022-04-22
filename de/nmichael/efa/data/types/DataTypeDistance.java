@@ -71,14 +71,14 @@ public class DataTypeDistance {
         return units;
     }
 
-    public static DataTypeDistance parseDistance(String s) {
+    public static DataTypeDistance parseDistance(String s, boolean fromGUI) {
         DataTypeDistance distance = new DataTypeDistance();
         if (s != null) {
             Matcher m = pattern.matcher(s.trim().toLowerCase());
             if (m.lookingAt()) {
                 String dist = m.group(1);
                 String unit = m.group(2);
-                distance.value = DataTypeDecimal.parseDecimal(dist);
+                distance.value = DataTypeDecimal.parseDecimal(dist, fromGUI);
                 if (unit.equals(KILOMETERS)) {
                     distance.unit = UnitType.km;
                     distance.value.setDecimal(distance.value.getValue(3), 3);
@@ -102,9 +102,9 @@ public class DataTypeDistance {
 
     public static DataTypeDistance getDistance(long distanceInDefaultUnit) {
         if (getDefaultUnit() == UnitType.km) {
-            return parseDistance(Long.toString(distanceInDefaultUnit) + " " + METERS);
+            return parseDistance(Long.toString(distanceInDefaultUnit) + " " + METERS, false);
         } else {
-            return parseDistance(Long.toString(distanceInDefaultUnit) + " " + YARDS);
+            return parseDistance(Long.toString(distanceInDefaultUnit) + " " + YARDS, false);
         }
     }
 
@@ -337,7 +337,7 @@ public class DataTypeDistance {
         for (int i=0; i<args.length; i++) {
             String s = args[i];
             System.out.println("Input: >>>"+s+"<<<");
-            DataTypeDistance dist = DataTypeDistance.parseDistance(s);
+            DataTypeDistance dist = DataTypeDistance.parseDistance(s, true);
             System.out.println("Distance : "+dist.toString());
             System.out.println("in meters: "+dist.getValueInMeters());
             System.out.println("in yards : "+dist.getValueInYards());
