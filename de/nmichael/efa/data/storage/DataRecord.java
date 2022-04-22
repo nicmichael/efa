@@ -34,11 +34,13 @@ public abstract class DataRecord implements Cloneable, Comparable {
     protected StorageObject persistence;
     protected MetaData metaData;
     protected Object[] data;
+    protected String LastModification = null;    // Needed for efacloud synchronization
+    protected boolean isCopyFromServer = false;  // Needed for efacloud synchronization
 
     public DataRecord(StorageObject persistence, MetaData metaData) {
         this.persistence = persistence;
         this.metaData = metaData;
-        Daten.tableBuilder.addDataRecord(persistence, metaData);
+        Daten.tableBuilder.addDataRecordReference(persistence, metaData);
         data = new Object[metaData.getNumberOfFields()];
         if (metaData.versionized) {
             setAlwaysValid();
@@ -155,6 +157,10 @@ public abstract class DataRecord implements Cloneable, Comparable {
 
     public int getFieldType(int i) {
         return metaData.getFieldType(i);
+    }
+
+    public int getFieldType(String fieldName) {
+        return metaData.getFieldType(fieldName);
     }
 
     public String[] getKeyFields() {
@@ -877,9 +883,9 @@ public abstract class DataRecord implements Cloneable, Comparable {
             case IDataAccess.DATA_DOUBLE:
                 return (s.length() > 0 ? Double.parseDouble(s) : IDataAccess.UNDEFINED_LONG);
             case IDataAccess.DATA_DECIMAL:
-                return DataTypeDecimal.parseDecimal(s);
+                return DataTypeDecimal.parseDecimal(s, false);
             case IDataAccess.DATA_DISTANCE:
-                return DataTypeDistance.parseDistance(s);
+                return DataTypeDistance.parseDistance(s, false);
             case IDataAccess.DATA_BOOLEAN:
                 return (s.length() > 0 ? Boolean.parseBoolean(s) : false);
             case IDataAccess.DATA_DATE:
