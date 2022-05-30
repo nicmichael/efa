@@ -3655,7 +3655,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
     void updateSessionTypeInfo() {
         if (sessiontype != null && sessiontype.isVisible() && Daten.efaConfig.getValueUseFunctionalityRowingGermany()) {
             String sess = sessiontype.getValueFromField();
-            DataTypeDistance dist = DataTypeDistance.parseDistance(distance.getValueFromField());
+            DataTypeDistance dist = DataTypeDistance.parseDistance(distance.getValueFromField(), true);
             long days = 1;
             if (enddate != null && enddate.isVisible() && date != null && date.isVisible() &&
                 date.isSet() && enddate.isSet()) {

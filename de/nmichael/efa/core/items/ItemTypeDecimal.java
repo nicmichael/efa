@@ -45,7 +45,7 @@ public class ItemTypeDecimal extends ItemTypeLabelTextfield {
             if (value.length() == 0 && !isNotNullSet()) {
                 this.value.unset();
             } else {
-                this.value = DataTypeDecimal.parseDecimal(value);
+                this.value = DataTypeDecimal.parseDecimal(value, true);
                 if (onlyPositiveOrNull && this.value.getValue(decimalPlaces) < 0) {
                     this.value.setDecimal(0, decimalPlaces);
                 }
