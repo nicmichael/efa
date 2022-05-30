@@ -21,8 +21,6 @@ import de.nmichael.efa.util.Logger;
 
 import java.awt.*;
 import java.io.*;
-import java.net.URL;
-import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -461,12 +459,10 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
      * Initialize all file paths, URL, and queues. Part of condtructor but split into separae function to improve code
      * readability.
      *
-     * @param efaCloudUrl     efaCloud server URL. Note the special feaure to allow for all certificates when using
-     *                        httpx as protocol identifier instead of https.
      * @param storageLocation the storageLocation directory without the File.separator ending to store the retry
      *                        transactions to.
      */
-    private void initPathsAndLogs(String efaCloudUrl, String storageLocation) {
+    private void initPathsAndLogs(String storageLocation) {
 
         // initialize log directories.
         storageLocationRoot = (storageLocation.endsWith(File.separator)) ? storageLocation
@@ -592,6 +588,24 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
                                 TextResource.getContents(new File(efacloudLogDir + File.separator + logFile), "UTF-8"));
                 fa.putContent(fa.getInstance("txqStatistics.csv", false), txqStatistics);
                 fa.putContent(fa.getInstance("iamStatistics.csv", false), iamStatistics);
+
+                // add config files
+                String projectFileName = storageLocationRoot + File.separator + "data" + File.separator + Daten.project.getName() +
+                        ".efa2project";
+                String projectFile = TextResource.getContents(new File(projectFileName), "UTF-8");
+                if ((projectFile == null) || projectFile.isEmpty())
+                    projectFile = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
+                fa.putContent(fa.getInstance(Daten.project.getName() + ".efa2project", false), projectFile);
+                String configDirName = storageLocationRoot + File.separator + "cfg" + File.separator;
+                String[] cfgFnames = new String[] {
+                        "configuration.efa2config", "types.efa2types", "wett.cfg", "wettdefs.cfg"
+                };
+                for (String cfgFname : cfgFnames) {
+                    String cfgFile = TextResource.getContents(new File(configDirName + cfgFname), "UTF-8");
+                    if ((cfgFile == null))
+                        cfgFile = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
+                    fa.putContent(fa.getInstance(cfgFname, false), cfgFile);
+                }
                 // Java8: return Base64.getEncoder().encodeToString(fa.getZipAsBytes());
                 return Base64.encodeBytes(fa.getZipAsBytes()); // Java6
             } else
@@ -604,24 +618,11 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
      * Check the provided Url on connectivity and credentials to provide an appropriate error message to the user.
      * @return error message or "", if all is ok.
      */
-    public String checkURL() {
-        String testUrl = this.efaCloudUrl.replace(URL_API_LOCATION,"/api/ping.php");
-        String testResponse = InternetAccessManager.getText(testUrl, "");
-        if (testResponse.trim().equalsIgnoreCase("ping"))
-            return "";
-        else
-            return testResponse;
-    }
-
-    /**
-     * Check the provided Url on connectivity and credentials to provide an appropriate error message to the user.
-     * @return error message or "", if all is ok.
-     */
     public String checkCredentials() {
         String testResponse = InternetAccessManager.getText(this.efaCloudUrl,
                 "txc=" + Transaction.createSingleNopRequestContainer(this.credentials));
         String txContainerBase64 = testResponse.replace('-', '/').replace('*', '+').replace('_', '=').trim();
-        String txContainer = "";
+        String txContainer;
         try {
             // Java 8: txContainer = new String(Base64.getDecoder().decode(txContainerBase64),
             // StandardCharsets.UTF_8);
@@ -671,7 +672,7 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
         clearAdminCredentials();
 
         // initialize all file paths and queues
-        initPathsAndLogs(efaCloudUrl, storageLocation);
+        initPathsAndLogs(storageLocation);
         initQueues();
 
         // wait for the system time to settle. When running on a raspberryPI this may occur after
@@ -1339,12 +1340,11 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
      * @param queueIndex   index of the queu to append the transaction to. Must be TX_PENDING_QUEUE_INDEX or
      *                     TX_FIX_QUEUE_INDEX
      * @param type         type of message to be appended
-     * @param toBeNotified an object to be notified when the result is received.
      * @param tablename    tablename for transaction
      * @param record       record data of the transaction to be created. An array of n "key; value" pairs, all entries csv
      *                     encoded. If there is no record, e. g. for a first keyfixing request, set it to (String[]) null
      */
-    public Transaction appendTransaction(int queueIndex, Transaction.TX_TYPE type, Object toBeNotified, String tablename, String... record) {
+    public Transaction appendTransaction(int queueIndex, Transaction.TX_TYPE type, String tablename, String... record) {
         if (txq.getState() == QUEUE_IS_STOPPED)
             return null;
         // in authentication mode only structure check and building is allowed
@@ -1364,22 +1364,6 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
             writeQueueToFile(queueIndex);
         releaseQueueLock(queueIndex);
         return tx;
-    }
-
-    /**
-     * Default to create a new transaction and append it to the pending queue. If the queue is stopped, nothing will be appended.
-     * If the queue is authenticating, only "nop" transactions will be appended.
-     *
-     * @param queueIndex   index of the queu to append the transaction to. Must be TX_PENDING_QUEUE_INDEX or
-     *                     TX_FIX_QUEUE_INDEX
-     * @param type         type of message to be appended
-     * @param tablename    tablename for transaction
-     * @param record       record data of the transaction to be created. An array of n "key; value" pairs, all entries csv
-     *                     encoded. If there is no record, e. g. for a first keyfixing request, set it to (String[]) null
-     */
-    public void appendTransaction(int queueIndex, Transaction.TX_TYPE type, String tablename, String... record) {
-        appendTransaction(queueIndex, type, null, tablename, record);
-        // the transaction is not returned as default (asynchronous transaction handling).
     }
 
     @Override

@@ -19,9 +19,7 @@ import de.nmichael.efa.data.storage.DataRecord;
 import de.nmichael.efa.data.storage.EfaCloudStorage;
 import de.nmichael.efa.data.types.DataTypeIntString;
 import de.nmichael.efa.ex.EfaException;
-import de.nmichael.efa.util.Dialog;
 import de.nmichael.efa.util.International;
-import de.nmichael.efa.util.Logger;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -88,10 +86,7 @@ class SynchControl {
         String path = TxRequestQueue.logFilePaths.get("synch and activities");
         // truncate log files,
         File f = new File(path);
-        if ((f.length() > 200000) && (f.renameTo(new File(path + ".previous"))))
-            TextResource.writeContents(path, dateString, false);
-        else
-            TextResource.writeContents(path, dateString, true);
+        TextResource.writeContents(path, dateString, (f.length() <= 200000) || (!f.renameTo(new File(path + ".previous"))));
     }
 
     /**
@@ -395,13 +390,15 @@ class SynchControl {
                         boolean update = (localRecord != null) && serverMoreRecent && isUpdated;
                         boolean delete = (localRecord != null) && serverMoreRecent && isDeleted;
                         boolean localMoreRecent = (serverLastModified < (localLastModified - surely_newer_after_ms));
-                        boolean localRecentChange = ((System.currentTimeMillis() - localLastModified) >
+                        boolean localRecentChange = ((System.currentTimeMillis() - localLastModified) <
                                 synch_upload_look_back_ms);
 
                         // Check whether record to update matches at least partially the new version.
-                        if (update && !preUpdateRecordsCompare(localRecord, returnedRecord, tx.tablename))
+                        String preUpdateRecordsCompareResult = preUpdateRecordsCompare(localRecord, returnedRecord, tx.tablename);
+                        if (update && !preUpdateRecordsCompareResult.isEmpty())
                             logSynchMessage(International.getMessage(
-                                            "Update-Konflikt bei Datensatz in der {type}-Synchronisation.", "Download") +
+                                            "Update-Konflikt bei Datensatz in der {type}-Synchronisation. Unterschiedlich sind: {fields}",
+                                            "Download", preUpdateRecordsCompareResult) +
                                             " " + International.getString("Bitte bereinige den Datensatz manuell."), tx.tablename,
                                     localRecord.getKey(), false);
 
@@ -470,29 +467,37 @@ class SynchControl {
      *
      * @param dr1 DataRecord one to compare
      * @param dr2 DataRecord two to compare
-     * @param tableName the table name to look up how many fields may be different.
+     * @param tablename the table name to look up how many fields may be different.
      * @return true, if the records are of the same type and differ in only a tolerable amount of data fields
      */
-    private boolean preUpdateRecordsCompare(DataRecord dr1, DataRecord dr2, String tableName) {
-        if (dr1.getClass() != dr2.getClass())
-            return false;
+    private String preUpdateRecordsCompare(DataRecord dr1, DataRecord dr2, String tablename) {
+        if ((dr1 == null) || (dr2 == null) || (dr1.getClass() != dr2.getClass()))
+            return "type mismatch";
+        int allowedMismatches = (TableBuilder.allowedMismatches.get(tablename) == null) ?
+                TableBuilder.allowedMismatchesDefault : TableBuilder.allowedMismatches.get(tablename);
+        if (allowedMismatches == 0) return "";    // no check required: e.g. case fahrtenhefte
         int diff = 0;
+        StringBuilder fieldList = new StringBuilder();
         for (String field : dr1.getFields()) {
             if (!field.equalsIgnoreCase("ChangeCount")
                     && !field.equalsIgnoreCase("LastModified")
                     && !field.equalsIgnoreCase("LastModification")) {
-                if (dr1.getAsString(field) == null)
-                    diff = (dr2.getAsString(field) == null) ? 0 : 1;
-                else if (dr2.getAsString(field) == null)
+                if (dr1.getAsString(field) == null) {
+                    if (dr2.getAsString(field) != null) {
+                        fieldList.append(field).append(", ");
+                        diff ++;
+                    }
+                } else if (dr2.getAsString(field) == null) {
+                    fieldList.append(field).append(", ");
                     diff++;
                     // Use String comparison as the compareTo() implementation throws to many different exceptions.
-                else if (!dr1.getAsString(field).equalsIgnoreCase(dr2.getAsString(field)))
+                } else if (!dr1.getAsString(field).equalsIgnoreCase(dr2.getAsString(field))) {
+                    fieldList.append(field).append(", ");
                     diff++;
+                }
             }
         }
-        int allowedMismatches = (TableBuilder.allowedMismatches.get(tableName) == null) ?
-                TableBuilder.allowedMismatchesDefault : TableBuilder.allowedMismatches.get(tableName);
-        return (diff <= allowedMismatches);
+        return (diff <= allowedMismatches) ? "" : fieldList.toString();
     }
 
     /**
@@ -530,11 +535,13 @@ class SynchControl {
                             if (localLastModified > LastModifiedLimit)
                                 localRecordsToInsertAtServer.add(localRecord);
                         } else if (localLastModified > serverRecord.getLastModified()) {
-                            if (preUpdateRecordsCompare(localRecord, serverRecord, tx.tablename))
+                            String preUpdateRecordsCompareResult = preUpdateRecordsCompare(localRecord, serverRecord, tx.tablename);
+                            if (!preUpdateRecordsCompareResult.isEmpty())
                                 localRecordsToUpdateAtServer.add(localRecord);
                             else {
                                 logSynchMessage(International.getMessage(
-                                        "Update-Konflikt bei Datensatz in der {type}-Synchronisation.", "Upload") +
+                                        "Update-Konflikt bei Datensatz in der {type}-Synchronisation. Unterschiedlich sind: {fields}",
+                                        "Upload", preUpdateRecordsCompareResult) +
                                         " " + International.getString("Bitte bereinige den Datensatz manuell."), tx.tablename,
                                         toCheck, false);
                             }

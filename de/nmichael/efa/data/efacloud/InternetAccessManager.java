@@ -12,8 +12,6 @@ package de.nmichael.efa.data.efacloud;
 
 import java.io.*;
 import java.net.*;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -76,11 +74,8 @@ public class InternetAccessManager implements TaskManager.RequestDispatcherIF {
     private static int statisticsBufferIndex;
     private static StatisticsRecord[] statisticsRecords;
 
-    //private boolean debug = false;
-    //private StringBuilder debugLog = new StringBuilder();
-
     /**
-     * Simple text reader, see https://stackoverflow.com/questions/4328711/read-url-to-string-in-few-lines-of-java-code.
+     * Simple text reader, see stackoverflow.com/questions/4328711/read-url-to-string-in-few-lines-of-java-code.
      * This is synchronous, i. e. it pauses the program execution until the response is available.
      * So be careful when using it.
      *
@@ -127,7 +122,7 @@ public class InternetAccessManager implements TaskManager.RequestDispatcherIF {
         }
 
         BufferedReader in;
-        StringBuilder response = new StringBuilder();;
+        StringBuilder response = new StringBuilder();
         try {
             in = new BufferedReader(
                     new InputStreamReader(
@@ -227,7 +222,7 @@ public class InternetAccessManager implements TaskManager.RequestDispatcherIF {
          * contains:<ul><li>title: the outFpath</li><li>text: the text returned, if the content type of the response was
          * "text..." or possibly an error message</li><li>type: the result type, see Pparameters of this class
          * definition</li><li>value: always 0.0</li><li>sender: this instance</li> </ul><p> Based on a snippet taken
-         * from "http://www.xyzws .com/Javafaq/how-to-use-httpurlconnection-call_post-data -to-web-server/139"</p>
+         * from "www.xyzws.com/Javafaq/how-to-use-httpurlconnection-call_post-data-to-web-server/139"</p>
          *
          * @param postURLplus URL for call_post request plus "?" plus encoded parameters for POST request. The
          *                    urlParameters is a URL encoded string. Example: String urlParameters = "fName=" +
@@ -235,7 +230,7 @@ public class InternetAccessManager implements TaskManager.RequestDispatcherIF {
          * @param outFpath    file to store response to. The response may be text or binary. If outFpath is empty,
          *                    nothing will be stored, e. g. for expected text.
          */
-        private void excutePost(String postURLplus, String outFpath) {
+        private void executePost(String postURLplus, String outFpath) {
 
             URL url;
             String[] postURLplusParts = postURLplus.split("\\?", 2);
@@ -463,7 +458,7 @@ public class InternetAccessManager implements TaskManager.RequestDispatcherIF {
          *                    resource. Thus, even, if the retrieved file has an appropriate charset meta tag, this will
          *                    not be recognized
          */
-        private void excuteGetForText(String getURL, String outFpath, String charsetName) {
+        private void executeGetForText(String getURL, String outFpath, String charsetName) {
 
             int fileSize;
 
@@ -508,7 +503,7 @@ public class InternetAccessManager implements TaskManager.RequestDispatcherIF {
          * @param getURL   url to get text from
          * @param outFpath file path to put the data to.
          */
-        private void excuteGetForBinary(String getURL, String outFpath) {
+        private void executeGetForBinary(String getURL, String outFpath) {
             int fileSize;
             URL urlToRead;
             try {
@@ -575,12 +570,12 @@ public class InternetAccessManager implements TaskManager.RequestDispatcherIF {
             msg.started = System.currentTimeMillis();
             // POST to URL
             if (msg.type == TYPE_POST_PARAMETERS)
-                excutePost(msg.title, msg.text);
+                executePost(msg.title, msg.text);
                 // GET from URL
             else if (msg.type == TYPE_GET_BINARY)
-                excuteGetForBinary(msg.title, msg.text);
+                executeGetForBinary(msg.title, msg.text);
             else if (msg.type == TYPE_GET_TEXT)
-                excuteGetForText(msg.title, msg.text, enc);
+                executeGetForText(msg.title, msg.text, enc);
             msg.completed = System.currentTimeMillis();
             iamMonitor.stop();
             statisticsBufferIndex++;
