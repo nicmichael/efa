@@ -182,20 +182,10 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
     private final Vector<Integer> stateTransitionRequests = new Vector<Integer>();
     final ArrayList<Vector<Transaction>> queues = new ArrayList<Vector<Transaction>>();
     private final long[] locks = new long[TX_QUEUE_COUNT];
-    private final String[] txFilePath = new String[TX_QUEUE_COUNT];
     private String storageLocationRoot;
     protected String efacloudLogDir;
     private long logLastModified;
-
-    private static final long LOG_PERIOD_MILLIS = 14 * (24 * 3600 * 1000);
-    static final HashMap<String, String> logFileNames = new HashMap<String, String>();
-    static final HashMap<String, String> logFilePaths = new HashMap<String, String>();
-
-    static {
-        logFileNames.put("synch and activities", "efacloud.log");
-        logFileNames.put("API statistics", "efacloudApiStatistics.log");
-        logFileNames.put("internet statistics", "efacloudInternetStatistics.log");
-    }
+    static String logFilePath;
 
     // The response queue
     private final ArrayList<TaskManager.RequestMessage> queueResponses = new ArrayList<TaskManager.RequestMessage>();
@@ -217,11 +207,6 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
     public String adminSessionMessage;
     private Container efaGUIroot;
     private long lastStatsUpload = 0L;
-
-    // Statistics buffer
-    private static final int STATISTICS_BUFFER_SIZE = 5000;
-    private static int statisticsBufferIndex = 0;
-    private static StatisticsRecord[] statisticsRecords;
 
     /**
      * Get a new transaction ID and increment the counter.
@@ -426,7 +411,7 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
      * @param message the message which shall be logged. Note that API message are not logged in the standard way,
      *                because such logging will create a message which itself turn can fail which creates another
      *                message asf ending possibly in en endless loop.
-     * @param type    set 0 for Info, 1 for Error, 2 for API Statistics, 3 for Internet Statistics
+     * @param type    set 0 for Info, 1 for Error
      */
     public void logApiMessage(String message, int type) {
 
@@ -442,17 +427,13 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
         String dateString = format.format(new Date()) + info;
         if (type < 2) {
             // truncate log files,
-            File f = new File(logFilePaths.get("synch and activities"));
-            if ((f.length() > 200000) && (f.renameTo(new File(logFilePaths.get("synch and activities") + ".previous"))))
-                TextResource.writeContents(logFilePaths.get("synch and activities"),
+            File f = new File(logFilePath);
+            if ((f.length() > 200000) && (f.renameTo(new File(logFilePath + ".previous"))))
+                TextResource.writeContents(logFilePath,
                         "[Log continued]\n" + dateString + message, false);
             else
-                TextResource.writeContents(logFilePaths.get("synch and activities"), dateString + message, true);
-        } else if (type == 2)  // for statistics the message contains the entire data set.
-            TextResource.writeContents(logFilePaths.get("API statistics"), message, false);
-        else if (type == 3)  // for statistics the message contains the entire data set.
-            TextResource.writeContents(logFilePaths.get("internet statistics"), message, false);
-
+                TextResource.writeContents(logFilePath, dateString + message, true);
+        }
     }
 
     /**
@@ -469,70 +450,37 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
                 .substring(0, storageLocation.lastIndexOf(File.separator)) : storageLocation;
         storageLocationRoot = storageLocationRoot.substring(0, storageLocationRoot.lastIndexOf(File.separator));
         storageLocationRoot = storageLocationRoot.substring(0, storageLocationRoot.lastIndexOf(File.separator));
+        // remove the efacloud log and transactions directories of previous efa program versions
+        efacloudLogDir = storageLocationRoot + File.separator + "log" + File.separator + Daten.project.getName();
+        deleteRecursive(new File(efacloudLogDir));
         // get the project name out of the root path
-        efacloudLogDir = storageLocationRoot + File.separator + "log" + File.separator + Daten.project.getName() +
-                File.separator + "efacloudlogs";
+        efacloudLogDir = storageLocationRoot + File.separator + "log" + File.separator + "efaCloud" +
+                File.separator + Daten.project.getName();
         //noinspection ResultOfMethodCallIgnored
         new File(efacloudLogDir).mkdirs();
 
         // initialize log paths and cleanse files.
         SimpleDateFormat formatFull = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        long now = System.currentTimeMillis();
-        for (String logFileName : logFileNames.keySet()) {
-            String logFilePath = efacloudLogDir + File.separator + logFileNames.get(logFileName);
-            logLastModified = ((logLastModified == 0) && (new File(logFilePath)).exists()) ? (new File(logFilePath))
+        logFilePath = efacloudLogDir + File.separator + "efacloud.log";
+        File efaCloudLogFile = new File(logFilePath);
+        logLastModified = ((logLastModified == 0) && efaCloudLogFile.exists()) ? efaCloudLogFile
                     .lastModified() : logLastModified;
-            String logFileContents = TextResource.getContents(new File(logFilePath), "UTF-8");
-            StringBuilder cleansedLogFile = new StringBuilder();
-            if ((logFileName.equalsIgnoreCase("API statistics")) ||
-                    (logFileName.equalsIgnoreCase("Internet statistics"))) {
-                if (logFileContents != null) {
-                    String[] logFileLines = logFileContents.split("\n");
-                    for (String logFileLine : logFileLines) {
-                        if (!logFileLine.isEmpty()) {
-                            long logEntryTime = 0L;
-                            if (logFileLine.indexOf(";") > 0) {
-                                String logEntryDate = logFileLine.substring(0, logFileLine.indexOf(";"));
-                                try {
-                                    logEntryTime = Long.parseLong(logEntryDate);
-                                } catch (Exception ignored) {
-                                    // delete all lines which do not start with a date by making their logEntryTime = 0
-                                }
-                            }
-                            if ((now - logEntryTime) < LOG_PERIOD_MILLIS)
-                                cleansedLogFile.append(logFileLine).append("\n");
-                        }
-                    }
-                }
-                if (logFileName.equalsIgnoreCase("API statistics"))
-                    initStatisticsCsv(cleansedLogFile.toString());
-                else if (logFileName.equalsIgnoreCase("Internet statistics"))
-                    InternetAccessManager.initStatisticsCsv(cleansedLogFile.toString());
-            } else
-                cleansedLogFile.append(formatFull.format(new Date())).append(" INFO state, []: LOG STARTING\n");
-            TextResource.writeContents(logFilePath, cleansedLogFile.toString(), false);
-            logFilePaths.put(logFileName, logFilePath);
-        }
+        if (efaCloudLogFile.exists())
+            //noinspection ResultOfMethodCallIgnored
+            efaCloudLogFile.renameTo(new File(logFilePath + ".previous"));
+        TextResource.writeContents(logFilePath, formatFull.format(new Date()) + " INFO state, []: LOG STARTING\n", false);
     }
 
     /**
      * Initialize the queue content. This will also remove all stored queue transactions from previous efa runs.
      */
     private void initQueues() {
-        String efacloudQueuesDir =
-                storageLocationRoot + File.separator + "log" + File.separator + Daten.project.getName() +
-                        File.separator + "efacloudqueues";
-        //noinspection ResultOfMethodCallIgnored
-        new File(efacloudQueuesDir).mkdirs();
         // initialize the queue indices
         txID = 42;
         txcID = 42;
         for (int i = 0; i < TX_QUEUE_COUNT; i++) {
             Vector<Transaction> queue = new Vector<Transaction>();
             queues.add(queue);
-            txFilePath[i] = efacloudQueuesDir + File.separator + TX_QUEUE_NAMES[i] + ".txs";
-            // clear also the disk contents of the busy queue, because these transactions are no more open.
-            TextResource.writeContents(txFilePath[i], "", false);
             releaseQueueLock(i);
         }
     }
@@ -541,12 +489,9 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
      * Close all logs
      */
     private void closeLogs() {
-        for (String logFileName : logFileNames.keySet()) {
-            String logFilePath = logFilePaths.get(logFileName);
-            SimpleDateFormat formatFull = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            TextResource.writeContents(logFilePath, formatFull.format(new Date())
+        SimpleDateFormat formatFull = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        TextResource.writeContents(logFilePath, formatFull.format(new Date())
                     + " INFO state, []: LOG ENDING\n\n", true);
-        }
     }
 
     /**
@@ -572,22 +517,15 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
      * Get the log files, post the statistics locally and return all as base64 encoded zip-Archive for server upload.
      */
     private String getLogsAsZip() {
-        String txqStatistics = txq.getStatisticsCsv();
-        String iamStatistics = iam.getStatisticsCsv();
         saveAuditInformation();
-        logApiMessage(txqStatistics, 2);
-        logApiMessage(iamStatistics, 3);
         File efacloudLogDirF = new File(efacloudLogDir);
         if (efacloudLogDirF.exists()) {
             String[] logFiles = efacloudLogDirF.list();
             if (logFiles != null) {
                 FileArchive fa = new FileArchive(null, "UTF-8");
                 for (String logFile : logFiles)
-                    if (!logFile.endsWith("previous"))
-                        fa.putContent(fa.getInstance(logFile, false),
+                    fa.putContent(fa.getInstance(logFile, false),
                                 TextResource.getContents(new File(efacloudLogDir + File.separator + logFile), "UTF-8"));
-                fa.putContent(fa.getInstance("txqStatistics.csv", false), txqStatistics);
-                fa.putContent(fa.getInstance("iamStatistics.csv", false), iamStatistics);
 
                 // add config files
                 String projectFileName = storageLocationRoot + File.separator + "data" + File.separator + Daten.project.getName() +
@@ -678,7 +616,7 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
         // wait for the system time to settle. When running on a raspberryPI this may occur after
         // program launch, even up to two - three minutes later. Before this isn't completed, do not start
         // any timer.
-        String logFilePath = efacloudLogDir + File.separator + logFileNames.get("synch and activities");
+        String logFilePath = efacloudLogDir + File.separator + "efacloud.log";
         waitForTimeToSettle(logFilePath);
 
         // initialize the internet access manager. This shall be the last action in the constructor.
@@ -1089,19 +1027,6 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
     }
 
     /**
-     * Tell, whether e a queue is stored on disk. Stored on disk are the queues for transactions pending, busy or
-     * failed. In memory queues are those for synchronization, dropped, or done transactions. They may be lost when
-     * rebooting.
-     *
-     * @param queueIndex the queue, for which the property is requested
-     * @return true, if the queue is stored on disc and false , if it resides in memory.
-     */
-    private boolean isPermanentQueue(int queueIndex) {
-        return queueIndex == TX_PENDING_QUEUE_INDEX || queueIndex == TX_BUSY_QUEUE_INDEX ||
-                queueIndex == TX_FAILED_QUEUE_INDEX;
-    }
-
-    /**
      * Check the busy queue head
      *
      * @return true, if the first transaction within the busy queue is a NOP transaction. This shall always be kept,
@@ -1168,17 +1093,12 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
                         // cut failed transactions length to avoid log overload
                         if (destinationQueueIndex == TX_FAILED_QUEUE_INDEX)
                             tx.shortenRecord(1024);
-                        addStatistics(tx, destinationQueueIndex);
                         src.remove(tx);
                     }
                 }
             }
             i++;
         }
-        if (isPermanentQueue(sourceQueueIndex))
-            writeQueueToFile(sourceQueueIndex);
-        if (isPermanentQueue(destinationQueueIndex) && (sourceQueueIndex != destinationQueueIndex))
-            writeQueueToFile(destinationQueueIndex);
         releaseQueueLock(sourceQueueIndex);
         releaseQueueLock(destinationQueueIndex);
         if (!registerActionOnly)
@@ -1205,7 +1125,6 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
             }
         }
         // size didn't change, so no change to queueSizes
-        writeQueueToFile(TX_BUSY_QUEUE_INDEX);
         releaseQueueLock(TX_BUSY_QUEUE_INDEX);
     }
 
@@ -1274,14 +1193,6 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
      * activation.
      */
     public void clearAllQueues() {
-        for (String txFilePath : this.txFilePath) {
-            File queueFile = new File(txFilePath);
-            if (queueFile.exists()) {
-                //noinspection ResultOfMethodCallIgnored
-                queueFile.renameTo(new File(txFilePath + ".bak"));
-                TextResource.writeContents(txFilePath, "", false);
-            }
-        }
         for (Vector<Transaction> queue : queues)
             queue.clear();
     }
@@ -1293,34 +1204,6 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
      */
     private void releaseQueueLock(int queueIndex) {
         locks[queueIndex] = -1;
-    }
-
-    /**
-     * <p>Write a queue to the storage. Transactions will be written to the file and deleted from the respective
-     * queue after writing.
-     * </p><p> YOU MUST OBTAIN THE QUEUE LOCK BEFORE AND RELEASE IT AFTERWARDS, because this procedure
-     * does not manipulate the locks.</p>
-     *
-     * @param queueIndex queue index of the queue to be written.
-     */
-    private void writeQueueToFile(int queueIndex) {
-        Vector<Transaction> qw = queues.get(queueIndex);
-        // compile queue
-        StringBuilder txFileContents = new StringBuilder();
-        if (!qw.isEmpty()) {
-            for (Transaction tx : qw) {
-                tx.appendTxFullString(txFileContents, 0);
-                txFileContents.append(Transaction.MESSAGE_SEPARATOR_STRING);
-            }
-        }
-        // Write queue
-        String qString = (qw.size() == 0) ? "" : txFileContents
-                .substring(0, txFileContents.length() - Transaction.MESSAGE_SEPARATOR_STRING.length());
-        boolean written = TextResource.writeContents(txFilePath[queueIndex], qString, false);
-        if (!written)
-            logApiMessage(International.getMessage(
-                    "Fehler beim Schreiben einer Transaktion für Queue {Typ} auf den permanenten Speicher. " +
-                            "Transaktion: {Transaktion}", txFilePath[queueIndex], qString), 1);
     }
 
     /**
@@ -1360,8 +1243,6 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
             // wait
             ;
         queues.get(queueIndex).add(tx);
-        if (isPermanentQueue(queueIndex))
-            writeQueueToFile(queueIndex);
         releaseQueueLock(queueIndex);
         return tx;
     }
@@ -1375,137 +1256,21 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
     }
 
     /**
-     * Add a statistics entry for a transaction shift, if applicable
-     *
-     * @param tx               transaction shifted
-     * @param destinationQueue index of the destination queue of the shift
-     */
-    void addStatistics(Transaction tx, int destinationQueue) {
-        if ((destinationQueue != TX_DROPPED_QUEUE_INDEX) && (destinationQueue != TX_FAILED_QUEUE_INDEX) &&
-                (destinationQueue != TX_DONE_QUEUE_INDEX))
-            return;
-        statisticsRecords[statisticsBufferIndex] = new StatisticsRecord(tx, destinationQueue);
-        statisticsBufferIndex++;
-        statisticsBufferIndex = (statisticsBufferIndex % STATISTICS_BUFFER_SIZE);
-    }
-
-    /**
-     * Get a statistics log for the last STATISTICS_BUFFER_SIZE internet access activities for offline analysis.
-     *
-     * @return the statistics log entries as csv (';'-separated), first line is header.
-     */
-    private String getStatisticsCsv() {
-        StringBuilder csv = new StringBuilder();
-        String lastTablename = "";
-        csv.append("created;type;tablename;waitedMillis;retries;processedMillis;result\n");
-        for (int i = 0; i < STATISTICS_BUFFER_SIZE; i++) {
-            int index = (STATISTICS_BUFFER_SIZE + statisticsBufferIndex - i) % STATISTICS_BUFFER_SIZE;
-            StatisticsRecord sr = statisticsRecords[index];
-            if (sr != null) {
-                csv.append(sr.created).append(";");
-                csv.append(sr.type.typeString).append(";");
-                if (!sr.tablename.equalsIgnoreCase(lastTablename)) {
-                    csv.append(sr.tablename).append(";");
-                    lastTablename = sr.tablename;
-                } else
-                    csv.append(".;");
-                csv.append(sr.waitedMillis).append(";");
-                csv.append(sr.retries).append(";");
-                csv.append(sr.processedMillis).append(";");
-                csv.append(sr.result).append("\n");
-            }
+     * Little helper to remove a directory like rm -r. Needed to manage logs.
+     * see stackoverflow.com/questions/779519/delete-directories-recursively-in-java
+     * @param path Root File Path
+     * @return true if the file and all sub files/directories have been removed
+    */
+    public static boolean deleteRecursive(File path){
+        if (!path.exists()) return true;
+        boolean ret = true;
+        if (path.isDirectory()){
+            File[] files = path.listFiles();
+            if (files != null)
+                for (File f : files)
+                    ret = ret && deleteRecursive(f);
         }
-        return csv.toString();
-    }
-
-    /**
-     * Parse a csv-String into the statistics buffer
-     *
-     * @param csv String to parse. Same format as with getStatisticsCsv()
-     */
-    private static void initStatisticsCsv(String csv) {
-        String[] statisticsLines = csv.split("\n");
-        // headerStr = "created;type;tablename;waitedMillis;retries;processedMillis;result", see getStatisticsCsv()
-        ArrayList<String> entries;
-        statisticsBufferIndex = 0;
-        statisticsRecords = new StatisticsRecord[STATISTICS_BUFFER_SIZE];
-        if (csv.isEmpty())
-            return;
-        for (String statisticsLine : statisticsLines) {
-            entries = CsvCodec.splitEntries(statisticsLine);
-            long created = 0L;
-            try {
-                created = Long.parseLong(entries.get(0));
-            } catch (Exception e) {
-                entries.clear();   // Header line and incorrect lines will not be used.
-            }
-            if (entries.size() == 7) {
-                final Transaction.TX_TYPE type = Transaction.TX_TYPE.getType(entries.get(1));
-                final String tablename = entries.get(2);
-                final int waitedMillis = Integer.parseInt(entries.get(3));
-                final int retries = Integer.parseInt(entries.get(4));
-                final int processedMillis = Integer.parseInt(entries.get(5));
-                final String result = entries.get(6);
-                StatisticsRecord sr = new StatisticsRecord(type, tablename, created, waitedMillis, retries,
-                        processedMillis, result);
-                if (statisticsBufferIndex < statisticsRecords.length)
-                    statisticsRecords[statisticsBufferIndex] = sr;
-                statisticsBufferIndex++;
-                statisticsBufferIndex = (statisticsBufferIndex % STATISTICS_BUFFER_SIZE);
-            }
-        }
-    }
-
-    /**
-     * Little container for a statistics record to facilitate API statistics gathering.
-     */
-    static class StatisticsRecord {
-        final Transaction.TX_TYPE type;
-        final String tablename;
-        final long created;
-        final int waitedMillis;
-        final int retries;
-        final int processedMillis;
-        final String result;
-
-        /**
-         * Simple constructor
-         *
-         * @param tx               transaction shifted
-         * @param destinationQueue index of the destination queue of the shift
-         */
-        StatisticsRecord(Transaction tx, int destinationQueue) {
-            this.type = tx.type;
-            this.tablename = tx.tablename;
-            this.created = tx.createdAt;
-            this.waitedMillis = (tx.getSentAt() == 0) ? 0 : (int) (tx.getSentAt() - tx.createdAt);
-            this.processedMillis = (tx.getClosedAt() == 0) ? 0 : (int) (tx.getClosedAt() - tx.getSentAt());
-            this.retries = (int) tx.getRetries();
-            this.result = (destinationQueue == TX_DROPPED_QUEUE_INDEX) ? "dropped" : ((destinationQueue ==
-                    TX_FAILED_QUEUE_INDEX) ? "failed" : "done");
-        }
-
-        /**
-         * Simple constructor
-         *
-         * @param type            The transaction type
-         * @param tablename       The transactions target table
-         * @param created         timestamp of transaction creation
-         * @param waitedMillis    wait time in milli seconds
-         * @param retries         retries of the transaction due to internet connection failures
-         * @param processedMillis time of processing the transactions
-         * @param result          transactio result type
-         */
-        StatisticsRecord(Transaction.TX_TYPE type, String tablename, long created, int waitedMillis, int retries,
-                         int processedMillis, String result) {
-            this.type = type;
-            this.tablename = tablename;
-            this.created = created;
-            this.waitedMillis = waitedMillis;
-            this.processedMillis = processedMillis;
-            this.retries = retries;
-            this.result = result;
-        }
+        return ret && path.delete();
     }
 
 }

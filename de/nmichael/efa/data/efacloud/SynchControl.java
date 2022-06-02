@@ -83,7 +83,7 @@ class SynchControl {
         String dataKeyStr = (dataKey == null) ? "" : " - " + dataKey.toString();
         String info = (logStateChange) ? "STATECHANGE " : "SYNCH ";
         String dateString = format.format(new Date()) + " INFO state, [" + tablename + dataKeyStr + "]: " + info + logMessage;
-        String path = TxRequestQueue.logFilePaths.get("synch and activities");
+        String path = TxRequestQueue.logFilePath;
         // truncate log files,
         File f = new File(path);
         TextResource.writeContents(path, dateString, (f.length() <= 200000) || (!f.renameTo(new File(path + ".previous"))));
@@ -468,11 +468,21 @@ class SynchControl {
      * @param dr1 DataRecord one to compare
      * @param dr2 DataRecord two to compare
      * @param tablename the table name to look up how many fields may be different.
-     * @return true, if the records are of the same type and differ in only a tolerable amount of data fields
+     * @return empty String, if the records are of the same type and differ in only a tolerable amount of data fields
      */
     private String preUpdateRecordsCompare(DataRecord dr1, DataRecord dr2, String tablename) {
         if ((dr1 == null) || (dr2 == null) || (dr1.getClass() != dr2.getClass()))
             return "type mismatch";
+        // if archiving is executed or an archived record is restored, do not check for mismatches
+        // because the archived record stub will have all fields changed.
+        String archiveIDcarrier = "Name";
+        if (tablename.equalsIgnoreCase("efa2persons") ||
+                tablename.equalsIgnoreCase("efa2clubwork")) archiveIDcarrier = "LastName";
+        if (tablename.equalsIgnoreCase("efa2messages")) archiveIDcarrier = "Subject";
+        String ln1 = dr1.getAsString(archiveIDcarrier);
+        String ln2 = dr2.getAsString(archiveIDcarrier);
+        if (((ln1 != null) && ln1.startsWith("archiveID:")) || ((ln2 != null) && ln2.startsWith("archiveID:")))
+                return "";
         int allowedMismatches = (TableBuilder.allowedMismatches.get(tablename) == null) ?
                 TableBuilder.allowedMismatchesDefault : TableBuilder.allowedMismatches.get(tablename);
         if (allowedMismatches == 0) return "";    // no check required: e.g. case fahrtenhefte
