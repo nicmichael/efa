@@ -38,6 +38,13 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
         this.efaBoathouseFrame = efaBoathouseFrame;
     }
 
+    public ItemTypeBoatstatusList(String name,
+            int type, String category, String description,
+            EfaBoathouseFrame efaBoathouseFrame, boolean showFilterField) {
+        super(name, type, category, description, showFilterField);
+        this.efaBoathouseFrame = efaBoathouseFrame;
+    }
+    
     public void setBoatStatusData(Vector<BoatStatusRecord> v, Logbook logbook, String other) {
         Vector<ItemTypeListData> vdata = sortBootsList(v, logbook);
         if (other != null) {
