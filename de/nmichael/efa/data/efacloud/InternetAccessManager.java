@@ -12,8 +12,6 @@ package de.nmichael.efa.data.efacloud;
 
 import java.io.*;
 import java.net.*;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -39,7 +37,6 @@ public class InternetAccessManager implements TaskManager.RequestDispatcherIF {
     public static final int TYPE_POST_PARAMETERS = 0;
     public static final int TYPE_GET_BINARY = 1;
     public static final int TYPE_GET_TEXT = 2;
-    private static final String[] TYPE_STRING = new String[]{"post", "get bin", "get txt"};
 
     public static final int VALUE_TEXT_ENCODING_ISO8859_1 = 0;
     public static final int VALUE_TEXT_ENCODING_UTF8 = 1;
@@ -48,7 +45,6 @@ public class InternetAccessManager implements TaskManager.RequestDispatcherIF {
     public static final int TYPE_ABORTED = 2;
     public static final int TYPE_COMPLETED = 3;
     public static final int TYPE_PENDING = 4;
-    private static final String[] RESULT_STRING = new String[]{"", "progress info", "aborted", "completed", "pending"};
     // public static final int TYPE_FILE_SIZE_INFO = 5;
 
     private static final int UPDATE_INTERVAL_BYTES = 16 * 1024;
@@ -71,16 +67,8 @@ public class InternetAccessManager implements TaskManager.RequestDispatcherIF {
     // for debugging set debugFilePath to a valid location.
     public String debugFilePath = null;
 
-    // Statistics buffer
-    private static final int STATISTICS_BUFFER_SIZE = 5000;
-    private static int statisticsBufferIndex;
-    private static StatisticsRecord[] statisticsRecords;
-
-    //private boolean debug = false;
-    //private StringBuilder debugLog = new StringBuilder();
-
     /**
-     * Simple text reader, see https://stackoverflow.com/questions/4328711/read-url-to-string-in-few-lines-of-java-code.
+     * Simple text reader, see stackoverflow.com/questions/4328711/read-url-to-string-in-few-lines-of-java-code.
      * This is synchronous, i. e. it pauses the program execution until the response is available.
      * So be careful when using it.
      *
@@ -127,7 +115,7 @@ public class InternetAccessManager implements TaskManager.RequestDispatcherIF {
         }
 
         BufferedReader in;
-        StringBuilder response = new StringBuilder();;
+        StringBuilder response = new StringBuilder();
         try {
             in = new BufferedReader(
                     new InputStreamReader(
@@ -227,7 +215,7 @@ public class InternetAccessManager implements TaskManager.RequestDispatcherIF {
          * contains:<ul><li>title: the outFpath</li><li>text: the text returned, if the content type of the response was
          * "text..." or possibly an error message</li><li>type: the result type, see Pparameters of this class
          * definition</li><li>value: always 0.0</li><li>sender: this instance</li> </ul><p> Based on a snippet taken
-         * from "http://www.xyzws .com/Javafaq/how-to-use-httpurlconnection-call_post-data -to-web-server/139"</p>
+         * from "www.xyzws.com/Javafaq/how-to-use-httpurlconnection-call_post-data-to-web-server/139"</p>
          *
          * @param postURLplus URL for call_post request plus "?" plus encoded parameters for POST request. The
          *                    urlParameters is a URL encoded string. Example: String urlParameters = "fName=" +
@@ -235,7 +223,7 @@ public class InternetAccessManager implements TaskManager.RequestDispatcherIF {
          * @param outFpath    file to store response to. The response may be text or binary. If outFpath is empty,
          *                    nothing will be stored, e. g. for expected text.
          */
-        private void excutePost(String postURLplus, String outFpath) {
+        private void executePost(String postURLplus, String outFpath) {
 
             URL url;
             String[] postURLplusParts = postURLplus.split("\\?", 2);
@@ -463,7 +451,7 @@ public class InternetAccessManager implements TaskManager.RequestDispatcherIF {
          *                    resource. Thus, even, if the retrieved file has an appropriate charset meta tag, this will
          *                    not be recognized
          */
-        private void excuteGetForText(String getURL, String outFpath, String charsetName) {
+        private void executeGetForText(String getURL, String outFpath, String charsetName) {
 
             int fileSize;
 
@@ -508,7 +496,7 @@ public class InternetAccessManager implements TaskManager.RequestDispatcherIF {
          * @param getURL   url to get text from
          * @param outFpath file path to put the data to.
          */
-        private void excuteGetForBinary(String getURL, String outFpath) {
+        private void executeGetForBinary(String getURL, String outFpath) {
             int fileSize;
             URL urlToRead;
             try {
@@ -575,88 +563,15 @@ public class InternetAccessManager implements TaskManager.RequestDispatcherIF {
             msg.started = System.currentTimeMillis();
             // POST to URL
             if (msg.type == TYPE_POST_PARAMETERS)
-                excutePost(msg.title, msg.text);
+                executePost(msg.title, msg.text);
                 // GET from URL
             else if (msg.type == TYPE_GET_BINARY)
-                excuteGetForBinary(msg.title, msg.text);
+                executeGetForBinary(msg.title, msg.text);
             else if (msg.type == TYPE_GET_TEXT)
-                excuteGetForText(msg.title, msg.text, enc);
+                executeGetForText(msg.title, msg.text, enc);
             msg.completed = System.currentTimeMillis();
             iamMonitor.stop();
-            statisticsBufferIndex++;
-            statisticsBufferIndex = (statisticsBufferIndex % STATISTICS_BUFFER_SIZE);
-            statisticsRecords[statisticsBufferIndex] = new StatisticsRecord(msg.title, msg.started,
-                    msg.completed - msg.started, msg.type, callBackMsg.type);
             callback = null;
-        }
-    }
-
-    /**
-     * Get a statistics log for the last STATISTICS_BUFFER_SIZE internet access activities for offline analysis.
-     *
-     * @return the statistics log entries as csv (';'-separated), first line is header.
-     */
-    public String getStatisticsCsv() {
-        StringBuilder csv = new StringBuilder();
-        String lastUrl = "";
-        csv.append("started;url;type;durationMillis;result\n");
-        for (int i = 0; i < STATISTICS_BUFFER_SIZE; i++) {
-            int index = (STATISTICS_BUFFER_SIZE + statisticsBufferIndex - i) % STATISTICS_BUFFER_SIZE;
-            StatisticsRecord sr = statisticsRecords[index];
-            if (sr != null) {
-                csv.append(sr.started).append(";");
-                if (!sr.url.equalsIgnoreCase(lastUrl)) {
-                    csv.append(sr.url).append(";");
-                    lastUrl = sr.url;
-                } else
-                    csv.append(".;");
-                csv.append(TYPE_STRING[sr.type]).append(";");
-                csv.append(sr.durationMillis).append(";");
-                csv.append(RESULT_STRING[sr.result]).append("\n");
-            }
-        }
-        return csv.toString();
-    }
-
-    /**
-     * Parse a csv-String into the statistics buffer
-     *
-     * @param csv String to parse. Same format as with getStatisticsCsv()
-     */
-    static void initStatisticsCsv(String csv) {
-        String[] statisticsLines = csv.split("\n");
-        // headerStr = "started;url;type;durationMillis;result", see getStatisticsCsv()
-        ArrayList<String> entries;
-        statisticsBufferIndex = 0;
-        statisticsRecords = new StatisticsRecord[STATISTICS_BUFFER_SIZE];
-        if (csv.isEmpty())
-            return;
-        for (String statisticsLine : statisticsLines) {
-            entries = CsvCodec.splitEntries(statisticsLine);
-            long started = 0L;
-            try {
-                started = Long.parseLong(entries.get(0));
-            } catch (Exception e) {
-                entries.clear();   // Header line and incorrect lines will not be used.
-            }
-            if (entries.size() == 5) {
-                final String url = entries.get(1);
-                final String typeStr = entries.get(2);
-                int type;
-                for (type = 0; type < TYPE_STRING.length; type++)
-                    if (TYPE_STRING[type].equalsIgnoreCase(typeStr))
-                        break;
-                final int durationMillis = Integer.parseInt(entries.get(3));
-                final String resultStr = entries.get(4);
-                int result;
-                for (result = 0; result < RESULT_STRING.length; result++)
-                    if (RESULT_STRING[result].equalsIgnoreCase(resultStr))
-                        break;
-                StatisticsRecord sr = new StatisticsRecord(url, started, durationMillis, type, result);
-                statisticsBufferIndex++;
-                statisticsBufferIndex = (statisticsBufferIndex % STATISTICS_BUFFER_SIZE);
-                statisticsRecords[statisticsBufferIndex] = sr;
-            }
         }
     }
 
@@ -727,19 +642,4 @@ public class InternetAccessManager implements TaskManager.RequestDispatcherIF {
 
     }
 
-    static class StatisticsRecord {
-        final String url;
-        final long started;
-        final long durationMillis;
-        final int type;
-        final int result;
-
-        StatisticsRecord(String url, long started, long duration, int type, int result) {
-            this.url = url.substring(0, (url.indexOf('?') >= 0) ? url.indexOf('?') : url.length());
-            this.started = started;
-            this.durationMillis = duration;
-            this.type = type;
-            this.result = result;
-        }
-    }
 }

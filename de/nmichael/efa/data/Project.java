@@ -476,8 +476,6 @@ public class Project extends StorageObject {
         data.add(getWaters(false));
         data.add(getStatistics(false));
         data.add(getMessages(false));
-        if (getProjectStorageType() == IDataAccess.TYPE_EFA_CLOUD)
-            data.add(getEfaCloudUsers(false));
         String[] logbookNames = getAllLogbookNames();
         for (int i = 0; logbookNames != null && i < logbookNames.length; i++) {
             data.add(getLogbook(logbookNames[i], false));
