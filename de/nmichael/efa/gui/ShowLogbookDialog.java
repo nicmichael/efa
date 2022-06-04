@@ -17,6 +17,7 @@ import de.nmichael.efa.data.storage.DataKeyIterator;
 import de.nmichael.efa.data.types.DataTypeIntString;
 import de.nmichael.efa.gui.util.AutoCompleteList;
 import de.nmichael.efa.gui.util.TableSorter;
+import de.nmichael.efa.gui.util.TableHeaderCellRendererBold;
 import de.nmichael.efa.util.*;
 import de.nmichael.efa.util.Dialog;
 import java.awt.*;
@@ -226,6 +227,16 @@ public class ShowLogbookDialog extends BaseDialog implements IItemListener {
         ButtonRenderer buttonRenderer = new ButtonRenderer();
         table.getColumn("C").setCellRenderer(buttonRenderer);
         table.getColumn("C").setCellEditor(new ButtonEditor(buttonRenderer));
+        
+        // Update for standard tables: increase row height for better readability
+        Font f = this.getFont();
+        FontMetrics fm = this.getFontMetrics(f);
+        table.setRowHeight(fm.getHeight()+4);
+        
+        // Update for standard tables: Replace default header renderer with bold+dark background renderer 
+        javax.swing.table.TableCellRenderer l_originalRenderer = table.getTableHeader().getDefaultRenderer();
+        table.getTableHeader().setDefaultRenderer(new TableHeaderCellRendererBold(l_originalRenderer));
+        
         updateNestedTableHeight();
         sorter.addMouseListenerToHeaderInTable(table);
         scrollPane.getViewport().add(table, null);
