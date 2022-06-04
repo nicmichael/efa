@@ -73,7 +73,7 @@ public class EfaCloudUsers extends StorageObject {
         String[] verificationRecord = new String[]{
                 "efaAdminName;" + name,
                 "password;" + CsvCodec.encodeElement(password, CsvCodec.DEFAULT_DELIMITER, CsvCodec.DEFAULT_QUOTATION)};
-        Transaction txv = txq.appendTransaction(TxRequestQueue.TX_PENDING_QUEUE_INDEX, Transaction.TX_TYPE.VERIFY, this,
+        Transaction txv = txq.appendTransaction(TxRequestQueue.TX_PENDING_QUEUE_INDEX, Transaction.TX_TYPE.VERIFY,
                 "efaCloudUsers", verificationRecord);
         if (txv == null) {
             txq.logApiMessage("Failed to append VERIFY transaction to the tx pending queue.", 1);

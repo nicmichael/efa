@@ -43,7 +43,7 @@ public class TxResponseHandler {
                 Transaction.TX_RESULT_CODES.get(tx.getResultCode());
         String dateString = format.format(new Date()) + " INFO tx" + tx.ID + ", ";
         TextResource
-                .writeContents(TxRequestQueue.logFilePaths.get("synch and activities"), dateString + transactionString,
+                .writeContents(TxRequestQueue.logFilePath, dateString + transactionString,
                         true);
     }
 
@@ -417,7 +417,7 @@ public class TxResponseHandler {
                 // the result code and result message, trigger transaction handling and close the transactions decode
                 // the transaction response container
                 String txContainerBase64 = txcResponse.replace('-', '/').replace('*', '+').replace('_', '=').trim();
-                String txContainer = "";
+                String txContainer;
                 try {
                     // Java 8: txContainer = new String(Base64.getDecoder().decode(txContainerBase64),
                     // StandardCharsets.UTF_8);

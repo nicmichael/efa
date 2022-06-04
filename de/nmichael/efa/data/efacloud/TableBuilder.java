@@ -208,7 +208,7 @@ public class TableBuilder {
     static {
         allowedMismatches.put("efa2boatstatus", 6);
         allowedMismatches.put("efa2logbook", 4);
-        allowedMismatches.put("efa2fahrtenabzeichen", 4);
+        allowedMismatches.put("efa2fahrtenabzeichen", 0);  // All can change
     }
     public static final String fixid_allowed = "efa2logbook efa2messages efa2boatdamages efa2boatreservations";
 
@@ -252,12 +252,9 @@ public class TableBuilder {
         if (sprfd == null)
             return;
         // handle the special constant name values
-        StorageObjectTypeDefinition rtd = storageObjectTypes.get(rfd.storageObjectType);
         if (sprfd.constantName.equalsIgnoreCase("$AUTOINCREMENT")) {
-            rtd.autoincrements.add(rfd.fieldName);
             rfd.isAutoincrement = "x";
         } else if (sprfd.constantName.equalsIgnoreCase("$UNIQUE")) {
-            rtd.uniques.add(rfd.fieldName);
             rfd.isUnique = "x";
         } else if (!sprfd.constantName.startsWith("$")) {
             if (!sprfd.constantName.equalsIgnoreCase(rfd.fieldName))
@@ -288,7 +285,7 @@ public class TableBuilder {
         if (rtf == null) {
             if (!fieldname.equalsIgnoreCase("Logbookname")
                     && !fieldname.equalsIgnoreCase("Clubworkbookname"))
-            TxRequestQueue.getInstance().logApiMessage(
+                TxRequestQueue.getInstance().logApiMessage(
                     International.getString("Warnung") + " - " +
                     International.getMessage("Nicht definierter Feldname {fieldname} " +
                             "wird ungeprüft übergeben.", fieldname), 1);
@@ -404,8 +401,6 @@ public class TableBuilder {
             rtd.fields.put(rfd.fieldName, rfd);
             rtd.recordSize = rtd.recordSize + rfd.recordfieldsize;
         }
-        rtd.tableDefinitionRecord(false);
-
         rtd.versionized = metaData.isVersionized();
     }
 
@@ -474,7 +469,6 @@ public class TableBuilder {
     /**
      * Parse a server provided data base layout and compare with local layout
      * @param serverDBLayout the server data base layout as was returned by the server within NOP rwquest.
-     * @return The comparison result. Empty, if no difference was identified.
      */
     public void mapServerDBLayout(String serverDBLayout) {
         String[] tables = serverDBLayout.split("\\|T\\|");
@@ -490,7 +484,7 @@ public class TableBuilder {
                 String tname = "unknown";
                 StorageObjectTypeDefinition rtd = null;
                 for (String column : columns) {
-                    String cname = "unknown";
+                    String cname;
                     if (column.startsWith("t:")) {
                         tname = column.substring(2);
                         rtd = storageObjectTypes.get(tname);
@@ -553,46 +547,11 @@ public class TableBuilder {
         int recordSize = 0;
         HashMap<String, RecordFieldDefinition> fields = new HashMap<String, RecordFieldDefinition>();
         ArrayList<String> keys = new ArrayList<String>();
-        ArrayList<String> uniques = new ArrayList<String>();
-        ArrayList<String> autoincrements = new ArrayList<String>();
 
         StorageObjectTypeDefinition(String storageObjectType, EfaCloudStorage persistence) {
             this.storageObjectType = storageObjectType;
             this.persistence = persistence;
             isProjectTable = Backup.isProjectDataAccess(persistence.getStorageObjectType());
-        }
-
-        /**
-         * Return the full table definition record, consisting of field;value - Strings
-         * @param storeToRamdisk
-         *          set true to save the definition to "/ramdisk". Only used during development.
-         * @return full table definition record
-         */
-        String[] tableDefinitionRecord(boolean storeToRamdisk) {
-            String[] tdr = new String[fields.size()];
-            StringBuilder tDef = new StringBuilder();
-            tDef.append("storageObjectType;fieldName;constantName;datatypeIndex;dataType;column;maxLength;recordfieldsize;unique;key;autoincrement\n");
-            for (String fieldname : fields.keySet()) {
-                RecordFieldDefinition rfd = fields.get(fieldname);
-                // neither the field name nor the sqlDefinition need csv encoding.
-                if (tdr.length > rfd.column)
-                    tdr[rfd.column] = rfd.fieldName + ";" + rfd.sqlDefinition;
-                tDef.append(rfd.storageObjectType).append(";")
-                        .append(rfd.fieldName).append(";")
-                        .append(rfd.constantName).append(";")
-                        .append(rfd.datatypeIndex).append(";")
-                        .append(datatypeStrings.get(rfd.datatypeIndex)).append(";")
-                        .append(rfd.column).append(";")
-                        .append(rfd.maxLength).append(";")
-                        .append(rfd.recordfieldsize).append(";")
-                        .append(rfd.isUnique).append(";")
-                        .append(rfd.isKey).append(";")
-                        .append(rfd.isAutoincrement).append("\n");
-            }
-            if (storeToRamdisk)
-                TextResource.writeContents("/ramdisk/" + persistence.getStorageObjectType() + ".tDef.csv",
-                        tDef.toString(), false); //#
-            return tdr;
         }
 
     }

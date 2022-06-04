@@ -274,14 +274,10 @@ public class EfaCloudConfigDialog extends BaseTabbedDialog implements IItemListe
                         // try to prove the provided login data
                         TxRequestQueue txq = TxRequestQueue.getInstance();
                         if (txq != null) {
-                            String txqCheckURL = txq.checkURL();
                             String txqCheckCredentials = txq.checkCredentials();
                             if (! txqCheckCredentials.isEmpty()) {
                                 String error = String.format("%s: %s",
                                         International.getString("Autorisierung am Server fehlgeschlagen"), txqCheckCredentials);
-                                if (! txqCheckURL.isEmpty())
-                                    error = error + International
-                                            .getString("Wenn auf dem Server efaCloud 2.3.1 oder höher installiert ist, ist schon die URL falsch.");
                                 de.nmichael.efa.util.Dialog.error(error);
                                 pr.setProjectStorageType(IDataAccess.TYPE_FILE_XML);
                                 this.cancel();
@@ -296,6 +292,8 @@ public class EfaCloudConfigDialog extends BaseTabbedDialog implements IItemListe
                             txq.showStatusAtGUI();
                         }
                     } catch (EfaException e) {
+                        // in case of activation failure, set the project back to XML.
+                        pr.setProjectStorageType(IDataAccess.TYPE_FILE_XML);
                         de.nmichael.efa.util.Dialog.error(LogString
                                 .fileSavingFailed(prjName, International.getString("Projekt"), e.toString()));
                         return;
