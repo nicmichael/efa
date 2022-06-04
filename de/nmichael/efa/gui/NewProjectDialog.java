@@ -362,6 +362,18 @@ public class NewProjectDialog extends StepwiseDialog implements IItemListener {
                 dlg1.showDialog();
                 logbookName = dlg1.getNewestLogbookName();
                 break;
+            default: // when the user hits ESC create a new logbook
+                NewLogbookDialog dlg2 = null;
+                if (getParentJDialog() != null) {
+                    dlg2 = new NewLogbookDialog(getParentJDialog());
+                }
+                if (getParentFrame() != null) {
+                    dlg2 = new NewLogbookDialog(getParentFrame());
+                }
+                logbookName = dlg2.newLogbookDialog();
+                break;
+            	
+            	
         }
         return logbookName;
     }

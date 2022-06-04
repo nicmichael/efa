@@ -2865,6 +2865,14 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
                         case 2:
                             cancel();
                             return false;
+                        default: //default when the user hits VK_ESCAPE: change crew
+                            if (i == 0) {
+                                cox.requestFocus();
+                            } else {
+                                crew[i-1].requestFocus();
+                            }
+                            return false;                    	
+                            	
                         }
                     }
 
@@ -2922,6 +2930,9 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
                         case 3:
                             cancel();
                             return false;
+                        default: //default when the user hits VK_ESCAPE: change crew
+                            crew[0].requestFocus();
+                            return false;                            
                     }
                 }
             }
@@ -2964,6 +2975,10 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
                         case 3:
                             cancel();
                             return false;
+                            
+                        default: //default when the user hits VK_ESCAPE: change crew
+                            crew[0].requestFocus();
+                            return false;                        	
                     }
                 }
             }
