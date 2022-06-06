@@ -1457,14 +1457,21 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
             } else if (boatsNotAvailableList.isFocusOwner()) {
                 boatsNotAvailableList.setSelectedIndex(0);
             } else {
-                if (toggleAvailableBoatsToBoats.isSelected()) {
-                    boatsAvailableList.requestFocus();
+            	if (toggleAvailableBoatsToBoats.isSelected()) {
+            		//Requesting a focus brings the containing JFrame to front on Linux systems.
+            		//On Windows systems, the task bar entry of efaBoatHouse gets a highlight.
+            		//We only want to request focus for a list on the main window 
+            		//if efaBoatHouse is already focused itself.           		
+                	if (this.isFocused()) {
+                		boatsAvailableList.requestFocus();
+                	}
                     boatsAvailableList.setSelectedIndex(0);
                 } else {
-                    personsAvailableList.requestFocus();
+                	if (this.isFocused()) {
+                		personsAvailableList.requestFocus();
+                	}
                     personsAvailableList.setSelectedIndex(0);
                 }
-
             }
             if (Logger.isTraceOn(Logger.TT_GUI, 8)) {
                 Logger.log(Logger.DEBUG, Logger.MSG_GUI_DEBUGGUI, "updateBoatLists(" + listChanged + ") - done");
