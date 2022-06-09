@@ -2,6 +2,27 @@
 <efaOnlineUpdate>
 
     <Version>
+        <VersionID>2.3.2_00</VersionID>
+        <ReleaseDate>04.06.2022</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa232.zip</DownloadUrl>
+        <DownloadSize>4269537</DownloadSize>
+        <Changes lang="de">
+            <ChangeItem>Neu: Filter fuer Liste der verfuegbaren Boote und Boote auf Fahrt</ChangeItem>
+            <ChangeItem>Neu: Verbesserte Darstellung von Tabellen</ChangeItem>
+            <ChangeItem>Neu: Anpassung der Logik zur Änderung des Vereinsarbeitsbuches an die Logik zur Veränderung des Fahrtenbuches bei der Verwendung in efaCloud</ChangeItem>
+            <ChangeItem>Bugfix: Fehlerkorrektur für efaCloud auf Windows Systemen</ChangeItem>
+            <ChangeItem>Bugfix: Verbesserung der Synchronisierung mit efaCloud</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Neu: Filter for lists with available boats and boats on the water</ChangeItem>
+            <ChangeItem>Neu: Improved display of tables</ChangeItem>
+            <ChangeItem>Neu: Improved handling of club work in efaCloud</ChangeItem>
+            <ChangeItem>Bugfix: efaCloud bugfixes on Windows</ChangeItem>
+            <ChangeItem>Bugfix: Improved efaCloud synchronization</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
         <VersionID>2.3.1_04</VersionID>
         <ReleaseDate>22.03.2022</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa231.zip</DownloadUrl>
