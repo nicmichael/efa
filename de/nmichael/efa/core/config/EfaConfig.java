@@ -170,6 +170,8 @@ public class EfaConfig extends StorageObject implements IItemFactory {
     private ItemTypeBoolean efaBoathouseOnlyEnterKnownDestinations;
     private ItemTypeBoolean efaBoathouseOnlyEnterKnownWaters;
     private ItemTypeBoolean efaBoathouseStrictUnknownPersons;
+    private ItemTypeBoolean efaBoathouseFilterTextfieldStandardLists;
+    private ItemTypeBoolean efaBoathouseFilterTextfieldBoatsNotAvailableList;
     private ItemTypeString efaBoathouseNonAllowedUnknownPersonNames;
     private ItemTypeBoolean efaDirekt_eintragHideUnnecessaryInputFields;
     private ItemTypeInteger efaDirekt_plusMinutenAbfahrt;
@@ -234,6 +236,8 @@ public class EfaConfig extends StorageObject implements IItemFactory {
     private ItemTypeBoolean efaDirekt_fensterNichtVerschiebbar;
     private ItemTypeBoolean efaDirekt_immerImVordergrund;
     private ItemTypeBoolean efaDirekt_immerImVordergrundBringToFront;
+    private ItemTypeBoolean efaDirekt_tabelleShowTooltip;
+    private ItemTypeBoolean efaDirekt_tabelleAlternierendeZeilenfarben;
     private ItemTypeStringList efaDirekt_bnrMsgToAdminDefaultRecipient;
     private ItemTypeBoolean efaDirekt_bnrError_admin;
     private ItemTypeBoolean efaDirekt_bnrError_bootswart;
@@ -799,6 +803,12 @@ public class EfaConfig extends StorageObject implements IItemFactory {
             addParameter(efaDirekt_immerImVordergrundBringToFront = new ItemTypeBoolean("EfaBoathouseWindowAlwaysOnTopBringToFront", false,
                     IItemType.TYPE_INTERNAL,BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
                     International.getString("efa immer im Vordergrund") + " (bringToFront)"));
+            addParameter(efaDirekt_tabelleShowTooltip = new ItemTypeBoolean("EfaBoathouseTablesShowTooltip", true, 
+            		IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
+            		International.getString("Tabellen mit Tooltipps für zu lange Texte")));              
+            addParameter(efaDirekt_tabelleAlternierendeZeilenfarben = new ItemTypeBoolean("EfaBoathouseTablesAlternatingRowColor", true, 
+            		IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
+            		International.getString("Tabellen mit alternierenden Zeilenfarben")));
             addParameter(efaDirekt_fontSize = new ItemTypeInteger("EfaBoathouseFontSize", 16, 6, 32, false,
                     IItemType.TYPE_PUBLIC,BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
                     International.getString("Schriftgröße in Punkten (6 bis 32, Standard: 12)")));
@@ -816,6 +826,13 @@ public class EfaConfig extends StorageObject implements IItemFactory {
                     IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
                     International.getMessage("Fahrtziel in der Liste {list} anzeigen",
                     International.getString("Boote auf Fahrt"))));
+            // ===================== BOATHOUSE: Filter text fields ============================
+            addParameter(efaBoathouseFilterTextfieldStandardLists = new ItemTypeBoolean("efaBoathouseFilterTextfieldStandardLists", true, 
+            		IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
+            		International.getString("Filter-Feld über Standard Listen")));
+            addParameter(efaBoathouseFilterTextfieldBoatsNotAvailableList = new ItemTypeBoolean("efaBoathouseFilterTextfieldBoatsNotAvailableList", false, 
+            		IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
+            		International.getString("Filter-Feld über Liste nicht verfügbarer Boote")));
             addParameter(efaDirekt_sortByAnzahl = new ItemTypeBoolean("BoatListSortBySeats", true,
                     IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
                     International.getString("sortiere Boote nach Anzahl der Bootsplätze")));
@@ -842,6 +859,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
                     International.getString("Bitte schließe die Hallentore."),
                     IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
                     International.getString("Erinnerungstext zum Schließen der Bootshalle")));
+
             addParameter(efaDirekt_maxFBAnzeigenFahrten = new ItemTypeInteger("LogbookDisplayEntriesMaxNumber", 100, 1, Integer.MAX_VALUE, false,
                     IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
                     International.getString("Fahrtenbuch anzeigen") + ": " + International.getString("maximale Anzahl von Fahrten")));
@@ -1828,6 +1846,14 @@ public class EfaConfig extends StorageObject implements IItemFactory {
         return efaBoathouseShowLastFromWaterNotificationText.getValue();
     }
 
+    public boolean getValueEfaBoathouseFilterTextfieldStandardLists () {
+        return efaBoathouseFilterTextfieldStandardLists.getValue();
+    }
+    
+    public boolean getValueEfaBoathouseFilterTextfieldBoatsNotAvailableList () {
+        return efaBoathouseFilterTextfieldBoatsNotAvailableList.getValue();
+    }
+    
     public boolean getValueEfaDirekt_showUhr() {
         return efaDirekt_showUhr.getValue();
     }
@@ -1858,6 +1884,14 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 
     public boolean getValueEfaDirekt_immerImVordergrundBringToFront() {
         return efaDirekt_immerImVordergrundBringToFront.getValue();
+    }
+    
+    public boolean getValueEfaDirekt_tabelleShowTooltip() {
+    	return efaDirekt_tabelleShowTooltip.getValue();
+    }
+    
+    public boolean getValueEfaDirekt_tabelleAlternierendeZeilenFarben() {
+    	return efaDirekt_tabelleAlternierendeZeilenfarben.getValue();
     }
 
     public String getValueEfaDirekt_bnrMsgToAdminDefaultRecipient() {
