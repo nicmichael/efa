@@ -200,15 +200,23 @@ public class TableBuilder {
             "$allTables;CHANGECOUNT;DATA_LONGINT;ChangeCount",  //
             "$allTables;LASTMODIFIED;DATA_LONGINT;LastModified"};
 
-    public static final int allowedMismatchesDefault = 3;
-    // the number of different data field when updating the record server to client. To avoid deletion of records by
-    // key mismatch or other severe mistakes. Default is <= 3, not counting ChangeCount, LastModified, and LastModification.
+    public static final int allowedMismatchesDefault = 4;
+    // the number of different data fields when updating the record server to client. To avoid deletion of records by
+    // key mismatch or other severe mistakes. Default is <= 4, not counting ChangeCount, LastModified, and LastModification.
     // This here are the exceptions.
     public static final HashMap<String, Integer> allowedMismatches = new HashMap<String, Integer>();
     static {
+        allowedMismatches.put("efa2boatdamages", 8);
+        allowedMismatches.put("efa2boatreservations", 6);
+        allowedMismatches.put("efa2boats", 8);
         allowedMismatches.put("efa2boatstatus", 6);
-        allowedMismatches.put("efa2logbook", 4);
+        allowedMismatches.put("efa2crews", 0);  // All may change
         allowedMismatches.put("efa2fahrtenabzeichen", 0);  // All can change
+        allowedMismatches.put("efa2groups", 8);
+        allowedMismatches.put("efa2logbook", 8);  // includes virtual fields
+        allowedMismatches.put("efa2messages", 0);  // All may change
+        allowedMismatches.put("efa2persons", 6);
+        allowedMismatches.put("efa2statistics", 0);  // All may change
     }
     public static final String fixid_allowed = "efa2logbook efa2messages efa2boatdamages efa2boatreservations";
 
