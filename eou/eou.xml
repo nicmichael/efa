@@ -2,6 +2,23 @@
 <efaOnlineUpdate>
 
     <Version>
+        <VersionID>2.3.2_01</VersionID>
+        <ReleaseDate>28.10.2022</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa232.zip</DownloadUrl>
+        <DownloadSize>4380228</DownloadSize>
+        <Changes lang="de">
+            <ChangeItem>Neu: JavaMail Update auf Version 1.6.2</ChangeItem>
+            <ChangeItem>Bugfix: Ungueltige Personen in Personen-Auswahlliste (https://github.com/nicmichael/efa/issues/62)</ChangeItem>
+            <ChangeItem>Bugfix: Personen-Auswwahlliste schrumpft in efaBasis (https://github.com/nicmichael/efa/issues/67)</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Neu: JavaMail Update to Version 1.6.2</ChangeItem>
+            <ChangeItem>Bugfix: Invalid persons in person selection list (https://github.com/nicmichael/efa/issues/62)</ChangeItem>
+            <ChangeItem>Bugfix: Person selection list loses entries in efaBase (https://github.com/nicmichael/efa/issues/67)</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
         <VersionID>2.3.2_00</VersionID>
         <ReleaseDate>04.06.2022</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa232.zip</DownloadUrl>
