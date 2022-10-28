@@ -36,6 +36,7 @@ public class AutoCompleteList {
     private long validFrom = -1;
     private long validUntil = Long.MAX_VALUE;
     private Vector<String> dataVisible = new Vector<String>();
+    private Vector<String> dataVisibleBackup = new Vector<String>(); // backup of dataVisible to restore removed entries
     private Hashtable<String,ValidInfo> name2valid = new Hashtable<String,ValidInfo>();
     private Hashtable<String,String> lower2realVisible = new Hashtable<String,String>();;
     private Hashtable<String,String> lower2realInvisible = new Hashtable<String,String>();;
@@ -180,6 +181,7 @@ public class AutoCompleteList {
                     }
                 }
                 sort();
+                dataVisibleBackup = new Vector<String>(dataVisible);
             }
         } catch (Exception e) {
         }
@@ -524,9 +526,7 @@ public class AutoCompleteList {
     }
 
     public void reset() {
-        dataVisible = new Vector<String>();
-        dataVisible.addAll(name2valid.keySet());
-        sort();
+        dataVisible = new Vector<String>(dataVisibleBackup);
         lastPrefix = null;
         pos = 0;
     }
