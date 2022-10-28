@@ -190,6 +190,24 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
         return data.size();
     }
 
+    // returns the size of the list when the filter text field is applied.
+    // if no filter is set, the list data size is returned.
+    public int filteredSize() {
+    	ListModel theList = null;
+    	
+        if (showFilterField==true) {
+        	theList = list.getModel();
+        } else {
+        	theList = data;
+        }
+        
+        if (theList==null) {
+        	return 0;
+        } else {
+        	return theList.getSize();
+        }
+    }
+    
     public String getItemText(int idx) {
         if (idx >= 0 && idx < data.size()) {
             return data.get(idx).text;
@@ -339,6 +357,7 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
 	        filterPanel.add(myFilterLabel, BorderLayout.WEST);
 	        filterPanel.add(filterTextField, BorderLayout.CENTER);
 	        panelDescriptionAndFilter.add(filterPanel, BorderLayout.SOUTH);
+	        this.field=filterTextField; // by this, when the boat status list receives focus, and the filter text field is visible, the filter text field gets the focus.
         }
 
         mypanel.add(panelDescriptionAndFilter, BorderLayout.NORTH);
