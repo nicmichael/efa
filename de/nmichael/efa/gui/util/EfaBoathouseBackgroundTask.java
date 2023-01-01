@@ -146,6 +146,9 @@ public class EfaBoathouseBackgroundTask extends Thread {
                 // Fokus-Kontrolle
                 checkFocus();
 
+                // Filter-Felder leeren nach Zeitintervall
+                checkFilterTextFields();
+                
                 // Speicher-Überwachung
                 checkMemory();
 
@@ -172,6 +175,10 @@ public class EfaBoathouseBackgroundTask extends Thread {
         } // end: while(true)
     } // end: run
 
+    private void checkFilterTextFields() {
+    	efaBoathouseFrame.clearListFilterAfterInterval();
+    }
+    
     private void updateProjectInfo() {
         try {
             if (Daten.project != null) {
