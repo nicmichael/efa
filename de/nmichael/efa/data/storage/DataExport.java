@@ -10,9 +10,21 @@
 
 package de.nmichael.efa.data.storage;
 
-import de.nmichael.efa.util.*;
-import java.io.*;
-import java.util.*;
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Hashtable;
+import java.util.Locale;
+import java.util.Vector;
+
+import de.nmichael.efa.data.types.DataTypeDate;
+import de.nmichael.efa.data.types.DataTypeDecimal;
+import de.nmichael.efa.util.EfaUtil;
+import de.nmichael.efa.util.Logger;
 
 public class DataExport {
 
@@ -23,7 +35,8 @@ public class DataExport {
 
     public enum Format {
         xml,
-        csv
+        csv,
+        csv_bom_utf8
     }
 
     private StorageObject storageObject;
@@ -37,9 +50,17 @@ public class DataExport {
     private String exportType;
     private boolean versionized;
     private String lastError;
+    
+    private String csvDelimiter;
+    private String csvQuote;
+    private Locale csvLocale;
+
+	private DecimalFormat csvDecimalFormat=null;
+	private DateFormat csvDateFormat=null;
 
     public DataExport(StorageObject storageObject, long validAt, Vector<DataRecord> selection,
-            String[] fields, Format format, String encoding, String filename, String exportType) {
+            String[] fields, Format format, String encoding, String filename, String exportType, 
+            String csvDelim, String csvQuote, Locale csvLocale ) {
         this.storageObject = storageObject;
         this.validAt = validAt;
         this.selection = selection;
@@ -50,6 +71,15 @@ public class DataExport {
         this.exportType = exportType;
         this.versionized = storageObject.data().getMetaData().isVersionized();
         this.exportAllLatest = versionized && selection == null && validAt < 0;
+        
+        this.csvDelimiter = csvDelim;
+        this.csvQuote = csvQuote;
+        this.csvLocale= csvLocale;
+
+    	if (this.csvLocale!=null) {  //if a locale is defined, get the formatters for float and date
+    		this.csvDecimalFormat= new DecimalFormat("#.##",DecimalFormatSymbols.getInstance(csvLocale));
+    		this.csvDateFormat = DateFormat.getDateInstance(DateFormat.SHORT,csvLocale);
+    	}  
     }
 
     public int runExport() {
@@ -60,9 +90,15 @@ public class DataExport {
                 fw.write("<?xml version=\"1.0\" encoding=\""+encoding+"\"?>\n");
                 fw.write("<" + FIELD_EXPORT + " " + EXPORT_TYPE + "=\"" + exportType + "\">\n");
             }
-            if (format == Format.csv) {
+            
+            if (format == Format.csv_bom_utf8) {
+            	//BOM is needed for CSV files with UTF-8 to be imported with excel
+            	fw.write('\ufeff');
+            }
+            
+            if (format == Format.csv || format == Format.csv_bom_utf8 ) {
                 for (int i=0; i<fields.length; i++) {
-                    fw.write( (i > 0 ? "|" : "") + fields[i]);
+                    fw.write( (i > 0 ? csvDelimiter : "") + fields[i]);
                 }
                 fw.write("\n");
             }
@@ -121,21 +157,58 @@ public class DataExport {
                 if (format == Format.xml) {
                     fw.write("<" + DataRecord.ENCODING_RECORD + ">");
                 }
+                
                 for (int i = 0; i < fields.length; i++) {
                     String value = r.getAsText(fields[i]);
+                    
                     if (format == Format.xml) {
                         if (value != null && value.length() > 0) {
                             fw.write("<" + fields[i] + ">" + EfaUtil.escapeXml(value) + "</" + fields[i] + ">");
                         }
                     }
-                    if (format == Format.csv) {
-                        fw.write((i > 0 ? "|" : "") + (value != null ? EfaUtil.replace(value, "|", "", true) : ""));
+                    
+                    if (format == Format.csv || format == Format.csv_bom_utf8) {
+
+                    	int iFieldType=getAbstractFieldType(r, fields[i]);
+
+                    	Boolean isTextField= (iFieldType==IDataAccess.DATA_TEXT);
+                        Boolean isFloatField = (iFieldType==IDataAccess.DATA_DOUBLE);
+                        Boolean isDateField = (iFieldType==IDataAccess.DATA_DATE);                    	
+
+                    	if (isTextField) {
+                    		//if (and only if) we export a string type field, include quotes, als long as the value is not empty 
+                            fw.write((i > 0 ? csvDelimiter : "") + 
+                            		(value != null ? csvQuote : "") + 
+                            		(value != null ? EfaUtil.replace(value, csvDelimiter, "", true) : "") +
+                            		(value != null ? csvQuote : ""));
+
+                    	} else if (isFloatField && csvLocale!=null) { 
+                    		Object value1=r.get(fields[i]);
+                    		value=null;
+                    		if (value1!= null) {
+                    			if (value1.getClass() == DataTypeDecimal.class) {
+                            		value = csvDecimalFormat.format(((DataTypeDecimal) value1).getValue());
+                    			} else {
+                    				value=csvDecimalFormat.format(value1);
+                    			}
+                    		}
+                            fw.write((i > 0 ? csvDelimiter : "") + (value != null ? EfaUtil.replace(value, csvDelimiter, "", true) : ""));
+
+                    	} else if (isDateField && csvLocale!=null) {
+                    		DataTypeDate value2= (DataTypeDate) r.get(fields[i]);
+                    		value = (value2!=null ? csvDateFormat.format(value2.getDate()) : null);
+                            fw.write((i > 0 ? csvDelimiter : "") + (value != null ? EfaUtil.replace(value, csvDelimiter, "", true) : ""));
+
+                    	} else {
+                            fw.write((i > 0 ? csvDelimiter : "") + (value != null ? EfaUtil.replace(value, csvDelimiter, "", true) : ""));                    		
+                    	}
                     }
                 }
+                    
                 if (format == Format.xml) {
                     fw.write("</" + DataRecord.ENCODING_RECORD + ">\n");
                 }
-                if (format == Format.csv) {
+                if (format == Format.csv || format==Format.csv_bom_utf8) {
                     fw.write("\n");
                 }
                 return true; // exported
@@ -151,4 +224,40 @@ public class DataExport {
         return lastError;
     }
 
+    /*
+     * Checks if a field is a textfield in the datarecord.
+     * textfields need quotes when exported to CSV.
+     */
+        private int getAbstractFieldType (DataRecord r, String fieldName) {
+        	try {
+    	    	int fieldType=r.getFieldType(fieldName);
+
+    	    	if (fieldType == IDataAccess.DATA_STRING 
+    	    			|| fieldType == IDataAccess.DATA_TEXT 
+    	    			|| fieldType == IDataAccess.DATA_UUID
+       					|| fieldType == IDataAccess.DATA_INTSTRING
+    					|| fieldType == IDataAccess.DATA_PASSWORDH
+    					|| fieldType == IDataAccess.DATA_PASSWORDC
+    					|| fieldType == IDataAccess.DATA_LIST_STRING
+    					|| fieldType == IDataAccess.DATA_LIST_INTEGER
+    					|| fieldType == IDataAccess.DATA_LIST_UUID) {
+    					return IDataAccess.DATA_TEXT;
+    			}
+
+    			if (fieldType==IDataAccess.DATA_DECIMAL || fieldType == IDataAccess.DATA_DOUBLE) {
+    				return IDataAccess.DATA_DOUBLE;
+    			}
+
+    			if (fieldType==IDataAccess.DATA_DATE ) {
+    				return IDataAccess.DATA_DATE; 
+    			}
+
+    			return IDataAccess.DATA_INTEGER;
+
+        	} catch (Exception e) {
+        		//return text field format, if fieldtype cannot be determinded
+        		//for instance for virtual fields like "boat" which replaces actual datafields like "boatid" and "boatname"
+        		return IDataAccess.DATA_TEXT;
+        	}
+        }
 }
