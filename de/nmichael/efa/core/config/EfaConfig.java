@@ -8,7 +8,6 @@ package de.nmichael.efa.core.config;
 import de.nmichael.efa.core.EfaSec;
 import de.nmichael.efa.Daten;
 import de.nmichael.efa.core.items.*;
-import de.nmichael.efa.data.BoatRecord;
 import de.nmichael.efa.data.MessageRecord;
 import de.nmichael.efa.data.storage.*;
 import de.nmichael.efa.data.types.*;
@@ -290,7 +289,10 @@ public class EfaConfig extends StorageObject implements IItemFactory {
     private ItemTypeHashtable<String> typesStatus;
     private ItemTypeString kanuEfb_urlLogin;
     private ItemTypeString kanuEfb_urlRequest;
+    private ItemTypeDate kanuEfb_SyncTripsAfterDate;
+    private ItemTypeBoolean kanuEfb_Fullsync;    
     private ItemTypeMultiSelectList<String> kanuEfb_boatTypes;
+    private ItemTypeBoolean kanuEfb_TidyXML;
     private ItemTypeBoolean dataPreModifyRecordCallbackEnabled;
     private ItemTypeBoolean dataAuditCorrectErrors;
     private ItemTypeLong dataFileSaveInterval;
@@ -400,8 +402,22 @@ public class EfaConfig extends StorageObject implements IItemFactory {
     public boolean updateValue(String name, String value) {
         try {
             EfaConfigRecord r = (EfaConfigRecord)data().get(EfaConfigRecord.getKey(name));
-            r.setValue(value);
-            data().update(r);
+            
+            //There may be a setting which is not yet present in efaconfigrecord.
+            //Then we add this value, instead of updating it.
+            //needed for listbox-based config values like efa->efb sync boat types.
+
+            if ((r == null) ) {
+            	// for some reason, configuration values starting with "_" are not to be saved in efa configuration files. So we skip those entries.
+            	if (!name.startsWith("_")) {
+            		addValue(name, value);
+            	}
+            } else {
+            	r.setValue(value);
+            	data().update(r);
+            }
+
+
             return true;
         } catch(Exception e) {
             return false;
@@ -1076,6 +1092,15 @@ public class EfaConfig extends StorageObject implements IItemFactory {
             addParameter(kanuEfb_urlRequest = new ItemTypeString("KanuEfbUrlRequest", "https://efb.kanu-efb.de/services",
                     IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_SYNC, CATEGORY_KANUEFB),
                     "Request URL"));
+            addParameter(kanuEfb_Fullsync = new ItemTypeBoolean("KanuEfb_FullSync", false, 
+            		ItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_SYNC, CATEGORY_KANUEFB), 
+            		"Fahrtenbuch immer komplett übertragen (statt nur neue und geänderte Fahrten)"));
+            addParameter(kanuEfb_SyncTripsAfterDate = new ItemTypeDate("KanuEfb_SyncTripsAfterDate", new DataTypeDate(01,01,1970), 
+            		ItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_SYNC, CATEGORY_KANUEFB), 
+            		"Nur Fahrten synchronisieren mit Beginndatum >="));
+            addParameter(kanuEfb_TidyXML = new ItemTypeBoolean("KanuEfb_TidyXML", false, 
+            		ItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_SYNC, CATEGORY_KANUEFB), 
+            		"XML-Antworten von EFB-Schulungssystem von unzulässigen Daten bereinigen"));
 
             // ============================= LOCALE =============================
             addParameter(language = new ItemTypeStringList("_Language", Daten.efaBaseConfig.language,
@@ -2115,6 +2140,17 @@ public class EfaConfig extends StorageObject implements IItemFactory {
         return kanuEfb_urlRequest.getValue();
     }
 
+    public DataTypeDate getValueKanuEfb_SyncTripsAfterDate() {
+    	return kanuEfb_SyncTripsAfterDate.getDate();
+    }
+
+    public Boolean getValueKanuEfb_FullSync() {
+    	return kanuEfb_Fullsync.getValue();
+    }
+
+    public Boolean getValueKanuEfb_TidyXML() {
+    	return kanuEfb_TidyXML.getValue();
+    }
     public boolean getValueDataPreModifyRecordCallbackEnabled() {
         return dataPreModifyRecordCallbackEnabled.getValue();
     }
@@ -2500,15 +2536,11 @@ public class EfaConfig extends StorageObject implements IItemFactory {
                 IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_TYPES,CATEGORY_TYPES_STAT),
                 International.getString("Status")));
         
-        addParameter(kanuEfb_boatTypes = new ItemTypeMultiSelectList<String>("KanuEfbBoatTypes", getCanoeBoatTypes(),
+        addParameter(kanuEfb_boatTypes = new ItemTypeMultiSelectList<String>("KanuEfbBoatTypes", getCanoeBoatTypes(getValue("KanuEfbBoatTypes")),
                 Daten.efaTypes.makeBoatTypeArray(EfaTypes.ARRAY_STRINGLIST_VALUES), Daten.efaTypes.makeBoatTypeArray(EfaTypes.ARRAY_STRINGLIST_DISPLAY),
                 getValueUseFunctionalityCanoeingGermany() ? IItemType.TYPE_PUBLIC : IItemType.TYPE_EXPERT,
                 BaseTabbedDialog.makeCategory(CATEGORY_SYNC, CATEGORY_KANUEFB),
                 International.onlyFor("Fahrten mit folgenden Bootstypen mit Kanu-eFB synchronisieren", "de")));
-        String myValue = getValue("KanuEfbBoatTypes");
-        if (myValue != null && myValue.length() > 0) {
-            kanuEfb_boatTypes.parseValue(myValue);
-        }
         
         typesStatus.setAllowed(false, false);
         iniTypes(typesGender, EfaTypes.CATEGORY_GENDER);
@@ -2582,24 +2614,26 @@ public class EfaConfig extends StorageObject implements IItemFactory {
         return null;
     }
     
-    public DataTypeList<String> getCanoeBoatTypes() {
+    private DataTypeList<String> getCanoeBoatTypes(String myValue) {
         EfaTypes t = getMyEfaTypes();
         if (t == null) {
             return new DataTypeList<String>(new String[0]); // happens during startup
         }
-        return new DataTypeList<String>(t.getDefaultCanoeBoatTypes());
+
+        if (myValue != null && myValue.length() > 0) {
+            return new DataTypeList<String>().parseList(myValue, IDataAccess.DATA_STRING);
+        } else {
+        	return new DataTypeList<String>(t.getDefaultCanoeBoatTypes());
+        }	
+        
     }
     
-    public boolean isCanoeBoatType(BoatRecord r) {
-        Object[] types = kanuEfb_boatTypes.getValues();
-        for (int i=0; r != null && i<r.getNumberOfVariants(); i++) {
-            for (int j=0; types != null && j<types.length; j++) {
-                if (types[j] != null && types[j].toString().equals(r.getTypeType(i))) {
-                    return true;
-                }
-            }
-        }
-        return false;
+    public String getCanoeBoatTypes() {
+    	return kanuEfb_boatTypes.toString();
+    }
+
+    public Object[] getValueKanuEfb_CanoeBoatTypes() {
+    	return kanuEfb_boatTypes.getValues();
     }
 
     class ConfigValueUpdateThread extends Thread {
@@ -2636,6 +2670,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
                         while (k != null) {
                             EfaConfigRecord r = (EfaConfigRecord) data().get(k);
                             if (r.getName().startsWith("_")) {
+                                k=it.getNext(); //without this line, this loop would never stop                            	
                                 continue; // it shouldn't happen that such a value actually made it into the file, but you never know...
                             }
                             IItemType item = configValues.get(r.getName());
