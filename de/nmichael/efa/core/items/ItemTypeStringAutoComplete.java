@@ -499,7 +499,7 @@ public class ItemTypeStringAutoComplete extends ItemTypeString implements AutoCo
                     LogString.itemIsUnknown(name, International.getString("Name")) + "\n" +
                    International.getString("Meintest Du ...?"));
             for (int i=0; i<neighbours.size(); i++) {
-                item.addItem(neighbours.get(i), neighbours.get(i), false, '\0');
+                item.addItem(neighbours.get(i), neighbours.get(i), neighbours.get(i), false, '\0');
             }
             item.setFieldSize(300, 200);
 

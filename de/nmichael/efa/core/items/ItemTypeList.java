@@ -37,13 +37,18 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
     String incrementalSearch = "";
     int iconWidth = 0;
     int iconHeight = 0;
-    private static final String LIST_SECTION_STRING = "---------- ";
+    protected static final String LIST_SECTION_STRING = "------";
+    private static final String STR_DESTINATION_DELIMITER=     	"     -> ";
+    //Spacings for pretty rendering
+    private static final int SPACING_BOATNAME_DESTINATION = 60; //60 pixels
+	private static final int HORZ_SINGLE_BORDER=5;
     private boolean showFilterField = false;
+    private boolean showPrettyList=false;
     
     class ListDataCellRenderer extends DefaultListCellRenderer {
         public Component getListCellRendererComponent(JList list, Object value,
-                int index, boolean iss, boolean chf) {
-            super.getListCellRendererComponent(list, value, index, iss, chf);
+                int index, boolean isSelected, boolean chf) {
+            super.getListCellRendererComponent(list, value, index, isSelected, chf);
 
             if (iconWidth > 0 && iconHeight > 0) {
                 try {
@@ -85,29 +90,124 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
                     }
                     setIcon(icon);
                 } catch(Exception eignore) {
+                		Logger.logdebug(eignore);
                 }
             }
-            return this;
-        }
+
+            if (showPrettyList) {
+	            ItemTypeListData item = (ItemTypeListData)value;
+
+	            if (item.separator) {
+	                if (!isSelected) { setBackground(new Color(240,240,240)); }
+
+                    this.setHorizontalAlignment(LEFT);
+	                long listWidth=Math.max(80,list.getParent().getWidth()-2*HORZ_SINGLE_BORDER-2);
+                    long tableWidth=listWidth-Math.max(iconWidth,0)-4;
+            		this.setText("<html><table border=0 cellpadding=0 cellspacing=0 width='"+tableWidth+ "'>"
+            				+ "<tr><td align=center>"+item.text+"</td></tr>"
+            						+ "</table></html>");	                
+
+	            	this.setBorder(BorderFactory.createEmptyBorder(2, HORZ_SINGLE_BORDER, 2, HORZ_SINGLE_BORDER));
+
+	            } else { // not a separator
+
+	            	String theText=item.text;
+	            	boolean cutText=false;
+
+	            	if (theText.contains(STR_DESTINATION_DELIMITER)) {
+	            		//an item with a destination delimiter is a current session.
+	            		//for better readability, we then split the boat name and the destination
+	            		//boat name is left-aligned, destination is right-aligned in a html table
+	            		//(programming this in pure swing would be exhausting).
+
+	            		//furthermore, the destination string is cut off on the right side,
+	            		//if boat name including destination is wider than the list width.
+	            		//so on a current session, boat name is displayed in full, and 
+	            		//most part of the destination. The shorter the boat name, the more of 
+	            		//the destination can be shown.
+	            		String[] itemParts= theText.split(STR_DESTINATION_DELIMITER);
+	            		String firstPart="";
+	            		String secondPart="";
+	            		if (itemParts.length>1) {
+	            			for (int i=0; i<itemParts.length-1; i++) {
+	            				firstPart=firstPart.concat(itemParts[i]);
+	            			}
+	            			firstPart=firstPart.trim();
+	            			secondPart=itemParts[itemParts.length-1].trim();
+
+	            		} else {
+	            			//itemparts=0 oder 1
+	            			firstPart=item.text;
+	            			secondPart="";
+	            		}
+
+	            		long listWidth=Math.max(80,list.getParent().getWidth()-2*HORZ_SINGLE_BORDER-2);
+
+	            		long firstPartLength=label.getFontMetrics(label.getFont()).stringWidth(firstPart);
+	            		long maxStringWidth =listWidth-SPACING_BOATNAME_DESTINATION-firstPartLength-4;
+	            		if (iconWidth >0 ) {
+	            			maxStringWidth= listWidth-SPACING_BOATNAME_DESTINATION-(iconWidth)-firstPartLength-4;
+	            		}
+
+	                    int stringWidth = label.getFontMetrics(label.getFont()).stringWidth(secondPart);
+
+	                    //listWidth can be zero directly after start of efaBoatHouse, so we stop under this condition.
+	                    while (listWidth>0 &&(stringWidth>maxStringWidth) && (secondPart.length()>0)) {
+	                    	secondPart=secondPart.substring(0,secondPart.length()-1).trim();
+	                    	stringWidth = label.getFontMetrics(label.getFont()).stringWidth(secondPart);
+	                    	cutText=true;
+	                    }
+
+	                    if (cutText &&secondPart.length()>0) {secondPart+="&hellip;";}
+	                    long tableWidth=listWidth-Math.max(iconWidth,0)-4;
+	            		this.setText("<html><table border=0 cellpadding=0 cellspacing=0 width='"+tableWidth+ "'>"
+	            				+ "<tr><td align=left>"+firstPart+"</td><td align=right><font color=#888888>"+secondPart+"</font></td></tr>"
+	            						+ "</table></html>");
+	            		setHorizontalAlignment(JLabel.LEFT);
+		            	this.setBorder(BorderFactory.createEmptyBorder(2, HORZ_SINGLE_BORDER, 2, HORZ_SINGLE_BORDER)); 
+	            	} else {
+		            	setHorizontalAlignment(JLabel.LEFT);
+		            	this.setBorder(BorderFactory.createEmptyBorder(2, HORZ_SINGLE_BORDER, 2, HORZ_SINGLE_BORDER)); 
+	            	}
+
+	            }
+            }
+        return this;
     }
+
+}
+
 
     class ItemTypeListData {
         String text;
+        String toolTipText;
+        String toolTipFilterText;
         Object object;
         boolean separator;
         int section;
         String image;
         Color[] colors;
-        public ItemTypeListData(String text, Object object, boolean separator, int section) {
-            ini(text, object, separator, section, null, null);
+        public ItemTypeListData(String text, String toolTipText, Object object, boolean separator, int section) {
+            ini(text, toolTipText, object, separator, section, null, null);
         }
-        public ItemTypeListData(String text, Object object, boolean separator, int section,
+        public ItemTypeListData(String text, String toolTipText, Object object, boolean separator, int section, 
                 String image, Color[] colors) {
-            ini(text, object, separator, section, image, colors);
+            ini(text, toolTipText, object, separator, section, image, colors);
         }
-        private void ini(String text, Object object, boolean separator, int section,
+        private void ini(String text, String toolTipText, Object object, boolean separator, int section, 
                 String image, Color[] colors) {
             this.text = text;
+            this.toolTipText = toolTipText;
+            if (toolTipText!=null) {
+            	try {
+            		//this removes all html tags from the tooltiptext. 
+            		//although it is told it may be unsafe to remove tags by regular expressions, it works.
+            		this.toolTipFilterText = toolTipText.replaceAll("<[^\\P{Graph}>]+(?: [^\\P{Graph}>]*)*>", "");
+            	} catch (Exception e) {
+            		Logger.log(e);
+            		this.toolTipFilterText=null; // just in case the removal of html tags fails, set tooltippfiltertext to null.
+            	}
+            } 
             this.object = object;
             this.separator = separator;
             this.section = section;
@@ -117,15 +217,24 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
         public String toString() {
             return text;
         }
+        public String getFilterableText() {
+        	if (toolTipFilterText!=null) {
+        		return text.concat(toolTipFilterText);
+        	} else {
+        		return text;
+        	}
+
+        }
     }
 
     public ItemTypeList(String name,
-            int type, String category, String description, boolean showFilterField) {
+            int type, String category, String description, boolean showFilterField, boolean showPrettyList) {
         this.name = name;
         this.type = type;
         this.category = category;
         this.description = description;
         this.showFilterField = showFilterField;
+        this.showPrettyList= showPrettyList;
         data = new DefaultListModel<ItemTypeListData>();
     }
     
@@ -140,17 +249,17 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
     }
 
     public IItemType copyOf() {
-        return new ItemTypeList(name, type, category, description, this.showFilterField);
+        return new ItemTypeList(name, type, category, description, this.showFilterField, this.showPrettyList);
     }
 
-    public void addItem(String text, Object object, boolean separator, char separatorHotkey) {
-        data.addElement(new ItemTypeListData(text, object, separator, separatorHotkey));
+    public void addItem(String text, String toolTipText, Object object, boolean separator, char separatorHotkey) {
+        data.addElement(new ItemTypeListData(text, toolTipText, object, separator, separatorHotkey));
         filter();
     }
 
-    public void addItem(String text, Object object, boolean separator, char separatorHotkey,
+    public void addItem(String text, String toolTipText, Object object, boolean separator, char separatorHotkey,
             String image, Color[] colors) {
-        data.addElement(new ItemTypeListData(text, object, separator, separatorHotkey, image, colors));
+        data.addElement(new ItemTypeListData(text, toolTipText, object, separator, separatorHotkey, image, colors));
         filter();
     }
 
@@ -183,6 +292,10 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
         }
     }
 
+    /* returns the number of items in the list.
+     * not all may be visible. If you want to get the size of the filtered list,
+     * use @see filteredSize() instead.
+     */
     public int size() {
         if (data == null) {
             return 0;
@@ -225,7 +338,9 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
     void clearIncrementalSearch() {
             incrementalSearch = "";
             if (list != null) {
-                list.setToolTipText(null);
+            	if (Daten.efaConfig.getValueEfaBoathouseExtdToolTips()==false) {
+            		list.setToolTipText(null);
+            	}
             }
     }
 
@@ -257,7 +372,10 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
     private JPanel setupPanel(Window dlg) {
         this.dlg = dlg;
 
-        list = new JList();
+        list = createNewListWithTooltippSupport();
+        if (Daten.efaConfig.getValueEfaBoathouseExtdToolTips()) {
+        }
+        
         if (this.showFilterField) {
 	        filterTextField =new JTextField();
 	        filterTextField.getDocument().addDocumentListener(this);
@@ -266,8 +384,11 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
 	        filterTextField.setMargin(new Insets(0,2,0,0));
         }
         popup = new JPopupMenu();
-        scrollPane = new JScrollPane();
+        //Vertical scrollbar shall be shown always, because better ListCellRendering does not work optically well when
+        //scrollbar is shown only when needed
+        scrollPane = new JScrollPane(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         this.field = scrollPane;
+        
         mypanel = new JPanel();
         mypanel.setLayout(new BorderLayout());
 
@@ -314,11 +435,15 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
                 list_keyReleased(e);
             }
         });
-        list.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(MouseEvent e) {
-                ((JList) e.getSource()).setToolTipText(null); // remove tool tip from scrolling/searching
-            }
-        });
+    	if (Daten.efaConfig.getValueEfaBoathouseExtdToolTips()==false) { 
+			list.addMouseListener(new java.awt.event.MouseAdapter() {
+	            public void mouseEntered(MouseEvent e) {
+	            	try {
+            			((JList) e.getSource()).setToolTipText(null); // remove tool tip from scrolling/searching
+	            	} catch (Exception ee) {
+	            		Logger.logdebug(ee);
+	            	}}});
+        }
 
         EfaMouseListener listener = new EfaMouseListener(list, popup, this, Daten.efaConfig.getValueEfaDirekt_autoPopupOnBoatLists());
         list.addMouseListener(listener);
@@ -366,22 +491,6 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
         return mypanel;
     }
 
-    /*
-     * Creates a Panel - 
-     * 	left side: a Label with a Displaytext
-     *   center: the filter text field
-     */
-     private JPanel createPanelForFilterTextfield(JTextField theFilter, String theDisplayText) {
-     	JPanel myPanel=new JPanel();
-     	myPanel.setBorder(new EmptyBorder(4,0,4,0));//4 pix space top and bottom
-     	myPanel.setLayout(new BorderLayout());
-     	JLabel myLabel = new JLabel();
-     	myLabel.setText(theDisplayText);
-     	mypanel.add(myLabel, BorderLayout.WEST);
-     	mypanel.add(theFilter, BorderLayout.CENTER);
-     	return mypanel;
-     }
-     
     public void actionPerformed(ActionEvent e) {
         if (listener != null) {
             listener.itemListenerAction(this, e);
@@ -426,7 +535,7 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
         if (list != null && list.getFirstVisibleIndex() >= 0 && list.getSelectedIndex() < 0) {
             list.setSelectedIndex(0);
         }
-        clearIncrementalSearch();
+        //clearIncrementalSearch(); // it's better to comment this out, cannot hold 100% backwards compatibility with incremental search
         if (listener != null) {
             listener.itemListenerAction(this, e);
         }
@@ -462,7 +571,7 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
 
                 if (incrementalSearch == null || incrementalSearch.length() == 0) {
                     // if we haven't searched for anything before, jump to the start of this section
-                    while (start > 0 && !((String) theData.get(start).text).startsWith(LIST_SECTION_STRING)) {
+                    while (start > 0 && !(theData.get(start).separator)) {
                         start--;
                     }
                 }
@@ -512,21 +621,23 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
                 list.scrollRectToVisible(rect);
             }
 
-            Rectangle rect = list.getVisibleRect();
-            if (search.startsWith("---")) {
-                list.setToolTipText(null);
-            } else {
-                list.setToolTipText((search.length() > 0 ? search : null));
-                int origDelay = ToolTipManager.sharedInstance().getInitialDelay();
-                ToolTipManager.sharedInstance().setInitialDelay(0);
-                ToolTipManager.sharedInstance().mouseMoved(
-                        new MouseEvent(list, 0, 0, 0,
-                        10, rect.y + rect.height - 50,
-                        0, false));
-                ToolTipManager.sharedInstance().setInitialDelay(origDelay);
+            if (Daten.efaConfig.getValueEfaBoathouseExtdToolTips()==false) {
+	            Rectangle rect = list.getVisibleRect();
+	            if (search.startsWith(LIST_SECTION_STRING)) {
+	                list.setToolTipText(null);
+	            } else {
+	                list.setToolTipText((search.length() > 0 ? search : null));
+	                int origDelay = ToolTipManager.sharedInstance().getInitialDelay();
+	                ToolTipManager.sharedInstance().setInitialDelay(0);
+	                ToolTipManager.sharedInstance().mouseMoved(
+	                        new MouseEvent(list, 0, 0, 0,
+	                        10, rect.y + rect.height - 50,
+	                        0, false));
+	                ToolTipManager.sharedInstance().setInitialDelay(origDelay);
+	            }
             }
 
-        } catch (Exception ee) { /* just to be sure */ }
+        } catch (Exception ee) { Logger.logdebug(ee);/* just to be sure */ }
     }
 
     public Object getSelectedValue() {
@@ -541,6 +652,18 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
         }
     }
 
+    public boolean getSelectedItemIsSeparator() {
+        try {
+            if (list == null || list.isSelectionEmpty()) {
+                return false;
+            }
+            ItemTypeListData item = (ItemTypeListData)list.getSelectedValue();
+            return item.separator;
+        } catch (Exception e) {
+            return false;
+        }    	
+    }
+    
     public String getSelectedText() {
         try {
             if (list == null || list.isSelectionEmpty()) {
@@ -621,21 +744,21 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
     	if (this.showFilterField) {
 	    
     		DefaultListModel<ItemTypeListData> theModel = new DefaultListModel<ItemTypeList.ItemTypeListData>();
-			String s = filterTextField.getText();
+			String s = filterTextField.getText().trim();
 	        if (!s.isEmpty()) {
 	        	
 	        	for (int i=0; i< data.getSize();i++) {
 	        		ItemTypeListData item = data.getElementAt(i);
-		            if (item.toString().toLowerCase().contains(s.toLowerCase())||item.toString().startsWith(LIST_SECTION_STRING)){
+		            if (item.separator || item.getFilterableText().toLowerCase().contains(s.toLowerCase())){
 		                theModel.addElement(item);
 		            }
 	        	}
 	        	
 	        	// we have a problem if there are section strings at the end of the list
-	        	// remove all entrys from the bottom which start with LIST_SECTION_STRING
+	        	// remove all entries from the bottom which start with LIST_SECTION_STRING
 	
 	        	for (int i= theModel.getSize()-1; i>=0;i--) {
-	        		if (theModel.getElementAt(i).toString().startsWith(LIST_SECTION_STRING)){
+	        		if (theModel.getElementAt(i).separator){
 	        			theModel.removeElementAt(i);
 	        		}
 	        		else {
@@ -647,9 +770,36 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
 		     } else {
 		    	list.setModel(data);
 		     }
-        }
+	        selectFirstMatchingElement();
+        } //if showFilterTextField
 
     }
+    
+    private void selectFirstMatchingElement() {
+    	int index=1; //start with item 1 as item 0 is always "<other boat>" or "<other person>"
+		DefaultListModel <ItemTypeListData> theData= (DefaultListModel)list.getModel();
+    	  // check whether we should really select this item
+
+		if (filterTextField.getText().trim().length()==0){
+			index=0;
+		} else { 
+			while (index >= 0 && index < theData.size() && (theData.get(index).separator)) {
+	            index += 1;
+	        }
+		}
+		if (index>=theData.size()) {
+        	//no element could be found which is not a separator and not "<other boat>" or "<other person>"
+        	//so we select the first element nonetheless
+        	index=0;
+        }
+
+        if (index >= 0 && index < theData.size()) {
+            list.setSelectedIndex(index);
+            Rectangle rect = list.getCellBounds(index, (index + 15 >= theData.size() ? theData.size() - 1 : index + 15));
+            list.scrollRectToVisible(rect);
+        }
+
+    }    
     
     public void keyPressed(KeyEvent e) {
     	
@@ -658,7 +808,7 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
     public void keyReleased(KeyEvent e) {
     	
     	if (e.getComponent().equals(filterTextField)) {
-	    	if (e.getKeyCode()== KeyEvent.VK_ENTER || e.getKeyCode() == KeyEvent.VK_DOWN) {
+	    	if (e.getKeyCode()== KeyEvent.VK_ENTER || e.getKeyCode() == KeyEvent.VK_DOWN || e.getKeyCode() == KeyEvent.VK_UP) {
 	    		list.requestFocus();
 	    	} else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
 	    		if (this.showFilterField) {
@@ -671,5 +821,29 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
     
     public void keyTyped(KeyEvent e) {
     	
+    }
+    
+    private JList createNewListWithTooltippSupport() {
+    	return new JList() {
+
+    		public String getToolTipText(MouseEvent me) {
+	          try {
+		        	if ((this.getToolTipText()!=null) && !this.getToolTipText().isEmpty()){
+		        		return this.getToolTipText();
+		            } else {     	
+			        	int index = locationToIndex(me.getPoint());
+			            if (index > -1) {
+			            	ItemTypeListData item = (ItemTypeListData) getModel().getElementAt(index);
+			               return item.toolTipText;
+			            }
+	          }
+	        	}
+	          catch (Exception e) {
+	        	  Logger.logdebug(e);
+	            return "";
+	            }
+	          return "";
+	        }
+    	};
     }
 }
