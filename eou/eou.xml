@@ -2,6 +2,19 @@
 <efaOnlineUpdate>
 
     <Version>
+        <VersionID>2.3.2_02</VersionID>
+        <ReleaseDate>21.01.2023</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa232.zip</DownloadUrl>
+        <DownloadSize>4380077</DownloadSize>
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Erweiterte Lock Timeout Diagnostics</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Additional log timeout diagnostics</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
         <VersionID>2.3.2_01</VersionID>
         <ReleaseDate>28.10.2022</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa232.zip</DownloadUrl>
