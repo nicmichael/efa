@@ -76,9 +76,9 @@ public class DataLocks {
                             "Lock Timeout at " + now +
                             " (" + Thread.currentThread().getName() + "[" + Thread.currentThread().getId() + "]" +
                             "): " + lock.toString());
-                    Logger.logStackTrace(Logger.DEBUG, Logger.MSG_DEBUG_GENERIC, "Lock Timeout Thread",
+                    Logger.logStackTrace(Logger.WARNING, Logger.MSG_DATA_LOCKTIMEOUT, "Lock Timeout Thread",
                             Thread.currentThread().getStackTrace());
-                    Logger.logStackTrace(Logger.DEBUG, Logger.MSG_DEBUG_GENERIC, "Lock Owner Thread",
+                    Logger.logStackTrace(Logger.WARNING, Logger.MSG_DATA_LOCKTIMEOUT, "Lock Owner Thread",
                             lock.getLockOwner().getStackTrace());
                     locks.remove(lock.getLockObject());
                     count++;
