@@ -2,6 +2,19 @@
 <efaOnlineUpdate>
 
     <Version>
+        <VersionID>2.3.2_03</VersionID>
+        <ReleaseDate>21.01.2023</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa232.zip</DownloadUrl>
+        <DownloadSize>4379916</DownloadSize>
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Standard Lock Timeout auf 30 Sekunden erhoeht</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Increased default lock timeout to 30 sec</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
         <VersionID>2.3.2_02</VersionID>
         <ReleaseDate>21.01.2023</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa232.zip</DownloadUrl>
