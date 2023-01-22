@@ -49,9 +49,9 @@ public class DataLocks {
      *                                                                  no level of read consistency supported.
      */
 
-    public static final long LOCK_TIMEOUT_DEFAULT = 10000;        //  10,000 ms
+    public static final long LOCK_TIMEOUT_DEFAULT = 30000;        //  30,000 ms
     public static final long LOCK_TIMEOUT_LONG    = 120000;       // 120,000 ms
-    public static       long LOCK_TIMEOUT = LOCK_TIMEOUT_DEFAULT; //  10,000 ms
+    public static       long LOCK_TIMEOUT = LOCK_TIMEOUT_DEFAULT; //  30,000 ms
     public static final long SLEEP_RETRY  =    10; //     10 ms
 
     private final Hashtable<DataKey,DataLock> locks = new Hashtable<DataKey,DataLock>();
