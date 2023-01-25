@@ -547,9 +547,9 @@ public class TableBuilder {
     /**
      * Small inner container holding a storage object type definition to provide structure
      */
-    private static class StorageObjectTypeDefinition {
+    public static class StorageObjectTypeDefinition {
         final String storageObjectType;
-        final EfaCloudStorage persistence;
+        public EfaCloudStorage persistence;
         final boolean isProjectTable;
         boolean versionized;
         int recordSize = 0;
