@@ -1457,14 +1457,21 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
             } else if (boatsNotAvailableList.isFocusOwner()) {
                 boatsNotAvailableList.setSelectedIndex(0);
             } else {
-                if (toggleAvailableBoatsToBoats.isSelected()) {
-                    boatsAvailableList.requestFocus();
+            	if (toggleAvailableBoatsToBoats.isSelected()) {
+            		//Requesting a focus brings the containing JFrame to front on Linux systems.
+            		//On Windows systems, the task bar entry of efaBoatHouse gets a highlight.
+            		//We only want to request focus for a list on the main window 
+            		//if efaBoatHouse is already focused itself.           		
+                	if (this.isFocused()) {
+                		boatsAvailableList.requestFocus();
+                	}
                     boatsAvailableList.setSelectedIndex(0);
                 } else {
-                    personsAvailableList.requestFocus();
+                	if (this.isFocused()) {
+                		personsAvailableList.requestFocus();
+                	}
                     personsAvailableList.setSelectedIndex(0);
                 }
-
             }
             if (Logger.isTraceOn(Logger.TT_GUI, 8)) {
                 Logger.log(Logger.DEBUG, Logger.MSG_GUI_DEBUGGUI, "updateBoatLists(" + listChanged + ") - done");
@@ -1674,6 +1681,7 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
         boatsNotAvailableList.clearPopup();
     }
 
+    //displays a text for the selected list element in the status label.
     void showBoatStatus(int listnr, ItemTypeBoatstatusList list, int direction) {
         if (Daten.project == null) {
             return;
@@ -1685,14 +1693,22 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
             while (item == null) {
                 try {
                     item = getSelectedListItem(list);
-                    if (list != personsAvailableList) {
-                        name = item.text;
+                    // it is possible that item is null when no item is selected in list.
+                    if (item!=null) {
+	                    if (list != personsAvailableList) {
+	                        name = item.text;
+	                    } else {
+	                        name = item.person.getQualifiedName();
+	                    }
                     } else {
-                        name = item.person.getQualifiedName();
+                    	name=null;
                     }
                 } catch (Exception e) {
                 }
                 if (name == null || name.startsWith("---")) {
+                	//name is not set. So we try to select a single item 
+                	//in the list heading forward direction or backward direction
+                	//from the current selected index, we want to find an item                	
                     item = null;
                     try {
                         int i = list.getSelectedIndex() + direction;
@@ -1700,7 +1716,9 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
                             i = 1; // i<0 kann nur erreicht werden, wenn vorher i=0 und direction=-1; dann darf nicht auf i=0 gesprungen werden, da wir dort herkommen, sondern auf i=1
                             direction = 1;
                         }
-                        if (i >= list.size()) {
+                        //Lists can be filtered. So, we have to check if listindex
+                        //exceeds the resulting number of items when the filter is applied
+                        if (i >= list.filteredSize()) {
                             return;
                         }
                         list.setSelectedIndex(i);
