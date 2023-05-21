@@ -205,7 +205,7 @@ public class BoatStatusRecord extends DataRecord {
     public String getDestination() {
         LogbookRecord r = getLogbookRecord(); 	
         if (r==null) {
-        	return null;
+        	return "";
         } else {
         	return r.getDestinationAndVariantName();
         }
