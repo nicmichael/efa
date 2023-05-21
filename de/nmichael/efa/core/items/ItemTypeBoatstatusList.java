@@ -542,8 +542,18 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
     			return International.getString("Bootsschaden");
     		} else if (isCommentBoardReservation(bs.getComment())) {
     			return getBoatReservationString(bs.getBoatId(), 0, false);
+    		} else {
+    			//Boat is not available, but neither damage nor reservation.
+    			//so maybe it's a boat on a multi-day tour, regatta or whatsoever.
+    			//if the current BoatStatus has a destination set, show the destination.
+        		String value=bs.getDestination();
+        		if (value!=null && !value.isEmpty()) {
+        			return value; // 
+        		} else { 
+        			return "";
+        		}
     		}
-    	return "";
+
     	}
     	return "";
     }

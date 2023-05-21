@@ -153,8 +153,8 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
     	} else {
     		firstPart=theText;
     	}
-    	return firstPart;
-    }
+    	return firstPart.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+    }   
     
     /*
      * Creates a HTML table consisting of two rows.
