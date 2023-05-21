@@ -201,6 +201,16 @@ public class BoatStatusRecord extends DataRecord {
         return r != null && isOnTheWaterShowNotAvailable(r.getSessionType(), r.getEndDate());
     }
 
+    /* gets the destination for the current boat depending on the logbook */
+    public String getDestination() {
+        LogbookRecord r = getLogbookRecord(); 	
+        if (r==null) {
+        	return null;
+        } else {
+        	return r.getDestinationAndVariantName();
+        }
+    }    
+    
     public void setOnlyInBoathouseId(int boathouseId) {
         setString(ONLYINBOATHOUSEID, (boathouseId < 0 ? null : Integer.toString(boathouseId)));
     }

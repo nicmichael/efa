@@ -1389,8 +1389,8 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
                 boatsOnTheWaterList.setItems(null);
                 boatsNotAvailableList.setItems(null);
                 if (Daten.project == null) {
-                    boatsAvailableList.addItem("*** " + International.getString("Kein Projekt geöffnet.") + " ***", null, null, false, '\0');
-                    personsAvailableList.addItem("*** " + International.getString("Kein Projekt geöffnet.") + " ***", null, null, false, '\0'); 
+                    boatsAvailableList.addItem("*** " + International.getString("Kein Projekt geöffnet.") + " ***", null, null, null, false, '\0');
+                    personsAvailableList.addItem("*** " + International.getString("Kein Projekt geöffnet.") + " ***", null, null, null, false, '\0'); 
                 }
                 boatsAvailableList.showValue();
                 personsAvailableList.showValue();

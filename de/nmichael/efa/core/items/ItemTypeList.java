@@ -40,7 +40,7 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
     protected static final String LIST_SECTION_STRING = "------";
     private static final String STR_DESTINATION_DELIMITER=     	"     -> ";
     //Spacings for pretty rendering
-    private static final int SPACING_BOATNAME_DESTINATION = 60; //60 pixels
+    private static final int SPACING_BOATNAME_SECONDPART  = 60; //60 pixels
 	private static final int HORZ_SINGLE_BORDER=5;
     private boolean showFilterField = false;
     private boolean showPrettyList=false;
@@ -52,43 +52,7 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
 
             if (iconWidth > 0 && iconHeight > 0) {
                 try {
-                    ItemTypeListData item = (ItemTypeListData)value;
-                    ImageIcon icon = null;
-                    if (item.image != null) {
-                        icon = BaseDialog.getIcon(item.image);
-                    }
-                    if (icon == null) {
-                        BufferedImage image = new BufferedImage(iconWidth, iconHeight,
-                                BufferedImage.TYPE_INT_ARGB);
-                        Graphics2D g = image.createGraphics();
-                        if (item.colors != null && item.colors.length > 0) {
-                            if (item.colors.length == 1) {
-                                g.setColor(item.colors[0]);
-                                g.fillOval(0, 0, iconWidth, iconHeight);
-                            } else {
-                                int currentAngle = 90;
-                                int anglePerColor = 360 / item.colors.length;
-                                for (int i=0; i<item.colors.length; i++) {
-                                    g.setColor(item.colors[i]);
-                                    g.fillArc(0, 0, iconWidth, iconHeight,
-                                            currentAngle % 360, anglePerColor);
-                                    currentAngle += anglePerColor;
-                                }
-                            }
-                        } else {
-                            if (!item.separator) {
-                                g.setColor(new Color (230,230,230));
-                                g.fillOval(0, 0, iconWidth, iconHeight);
-                            }
-                        }
-                        icon = new ImageIcon(image);
-                    }
-                    if (icon.getIconWidth() > iconWidth
-                            || icon.getIconHeight() > iconHeight) {
-                        icon = new ImageIcon(icon.getImage().getScaledInstance(iconWidth, iconHeight,
-                                Image.SCALE_SMOOTH));
-                    }
-                    setIcon(icon);
+                	BuildIcon(value);
                 } catch(Exception eignore) {
                 		Logger.logdebug(eignore);
                 }
@@ -96,85 +60,137 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
 
             if (showPrettyList) {
 	            ItemTypeListData item = (ItemTypeListData)value;
-
+	         
 	            if (item.separator) {
 	                if (!isSelected) { setBackground(new Color(240,240,240)); }
-
+	                
                     this.setHorizontalAlignment(LEFT);
 	                long listWidth=Math.max(80,list.getParent().getWidth()-2*HORZ_SINGLE_BORDER-2);
                     long tableWidth=listWidth-Math.max(iconWidth,0)-4;
             		this.setText("<html><table border=0 cellpadding=0 cellspacing=0 width='"+tableWidth+ "'>"
             				+ "<tr><td align=center>"+item.text+"</td></tr>"
             						+ "</table></html>");	                
-
+	                
 	            	this.setBorder(BorderFactory.createEmptyBorder(2, HORZ_SINGLE_BORDER, 2, HORZ_SINGLE_BORDER));
-
+	          	
 	            } else { // not a separator
+            	
+            		this.setText(getHTMLTableFor(getFirstPart(item.text), item.secondaryElement));
 
-	            	String theText=item.text;
-	            	boolean cutText=false;
-
-	            	if (theText.contains(STR_DESTINATION_DELIMITER)) {
-	            		//an item with a destination delimiter is a current session.
-	            		//for better readability, we then split the boat name and the destination
-	            		//boat name is left-aligned, destination is right-aligned in a html table
-	            		//(programming this in pure swing would be exhausting).
-
-	            		//furthermore, the destination string is cut off on the right side,
-	            		//if boat name including destination is wider than the list width.
-	            		//so on a current session, boat name is displayed in full, and 
-	            		//most part of the destination. The shorter the boat name, the more of 
-	            		//the destination can be shown.
-	            		String[] itemParts= theText.split(STR_DESTINATION_DELIMITER);
-	            		String firstPart="";
-	            		String secondPart="";
-	            		if (itemParts.length>1) {
-	            			for (int i=0; i<itemParts.length-1; i++) {
-	            				firstPart=firstPart.concat(itemParts[i]);
-	            			}
-	            			firstPart=firstPart.trim();
-	            			secondPart=itemParts[itemParts.length-1].trim();
-
-	            		} else {
-	            			//itemparts=0 oder 1
-	            			firstPart=item.text;
-	            			secondPart="";
-	            		}
-
-	            		long listWidth=Math.max(80,list.getParent().getWidth()-2*HORZ_SINGLE_BORDER-2);
-
-	            		long firstPartLength=label.getFontMetrics(label.getFont()).stringWidth(firstPart);
-	            		long maxStringWidth =listWidth-SPACING_BOATNAME_DESTINATION-firstPartLength-4;
-	            		if (iconWidth >0 ) {
-	            			maxStringWidth= listWidth-SPACING_BOATNAME_DESTINATION-(iconWidth)-firstPartLength-4;
-	            		}
-
-	                    int stringWidth = label.getFontMetrics(label.getFont()).stringWidth(secondPart);
-
-	                    //listWidth can be zero directly after start of efaBoatHouse, so we stop under this condition.
-	                    while (listWidth>0 &&(stringWidth>maxStringWidth) && (secondPart.length()>0)) {
-	                    	secondPart=secondPart.substring(0,secondPart.length()-1).trim();
-	                    	stringWidth = label.getFontMetrics(label.getFont()).stringWidth(secondPart);
-	                    	cutText=true;
-	                    }
-
-	                    if (cutText &&secondPart.length()>0) {secondPart+="&hellip;";}
-	                    long tableWidth=listWidth-Math.max(iconWidth,0)-4;
-	            		this.setText("<html><table border=0 cellpadding=0 cellspacing=0 width='"+tableWidth+ "'>"
-	            				+ "<tr><td align=left>"+firstPart+"</td><td align=right><font color=#888888>"+secondPart+"</font></td></tr>"
-	            						+ "</table></html>");
-	            		setHorizontalAlignment(JLabel.LEFT);
-		            	this.setBorder(BorderFactory.createEmptyBorder(2, HORZ_SINGLE_BORDER, 2, HORZ_SINGLE_BORDER)); 
-	            	} else {
-		            	setHorizontalAlignment(JLabel.LEFT);
-		            	this.setBorder(BorderFactory.createEmptyBorder(2, HORZ_SINGLE_BORDER, 2, HORZ_SINGLE_BORDER)); 
-	            	}
-
-	            }
+            		setHorizontalAlignment(JLabel.LEFT);
+	            	this.setBorder(BorderFactory.createEmptyBorder(2, HORZ_SINGLE_BORDER, 2, HORZ_SINGLE_BORDER)); 
+            
+	            } //if not a separator
             }
         return this;
     }
 
+    /* 
+     * Set icon for a boat depending on the groups who can row with this boat
+     */
+    private void BuildIcon(Object value) {
+    	
+        ItemTypeListData item = (ItemTypeListData)value;
+        ImageIcon icon = null;
+        if (item.image != null) {
+            icon = BaseDialog.getIcon(item.image);
+        }
+        if (icon == null) {
+            BufferedImage image = new BufferedImage(iconWidth, iconHeight,
+                    BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g = image.createGraphics();
+            if (item.colors != null && item.colors.length > 0) {
+                if (item.colors.length == 1) {
+                    g.setColor(item.colors[0]);
+                    g.fillOval(0, 0, iconWidth, iconHeight);
+                } else {
+                    int currentAngle = 90;
+                    int anglePerColor = 360 / item.colors.length;
+                    for (int i=0; i<item.colors.length; i++) {
+                        g.setColor(item.colors[i]);
+                        g.fillArc(0, 0, iconWidth, iconHeight,
+                                currentAngle % 360, anglePerColor);
+                        currentAngle += anglePerColor;
+                    }
+                }
+            } else {
+                if (!item.separator) {
+                    g.setColor(new Color (230,230,230));
+                    g.fillOval(0, 0, iconWidth, iconHeight);
+                }
+            }
+            icon = new ImageIcon(image);
+        }
+        if (icon.getIconWidth() > iconWidth
+                || icon.getIconHeight() > iconHeight) {
+            icon = new ImageIcon(icon.getImage().getScaledInstance(iconWidth, iconHeight,
+                    Image.SCALE_SMOOTH));
+        }
+        setIcon(icon);
+
+    }
+    
+    private String getFirstPart(String theText) {
+    	
+		String firstPart="";
+		
+    	if (theText.contains(STR_DESTINATION_DELIMITER)) {
+    		//an item with a destination delimiter is a current session.
+    		//for better readability, we then split the boat name and the destination
+    		//boat name is left-aligned, destination is right-aligned in a html table
+    		//(programming this in pure swing would be exhausting).
+
+    		String[] itemParts= theText.split(STR_DESTINATION_DELIMITER);
+    		if (itemParts.length>1) {
+    			for (int i=0; i<itemParts.length-1; i++) {
+    				firstPart=firstPart.concat(itemParts[i]);
+    			}
+    			firstPart=firstPart.trim();
+    		} else {
+    			//itemparts=0 oder 1
+    			firstPart=theText.trim();
+    		}
+    	} else {
+    		firstPart=theText;
+    	}
+    	return firstPart;
+    }
+    
+    /*
+     * Creates a HTML table consisting of two rows.
+     * - left row (usually boat name) gets all neccessary space
+     * - right row gets remaining space and is truncated on the right side, if contents do not fit.
+     *   also, right row contents are rendered in grey text color.
+     */
+    private String getHTMLTableFor(String firstPart, String secondPart) {
+    	boolean cutText = false;
+
+    	if (secondPart == null) {secondPart="";}
+    	
+		long listWidth=Math.max(80,list.getParent().getWidth()-2*HORZ_SINGLE_BORDER-2);
+
+		long firstPartLength=label.getFontMetrics(label.getFont()).stringWidth(firstPart);
+		long maxStringWidth =listWidth-SPACING_BOATNAME_SECONDPART-firstPartLength-4;
+		if (iconWidth >0 ) {
+			maxStringWidth= listWidth-SPACING_BOATNAME_SECONDPART-(iconWidth)-firstPartLength-4;
+		}
+		
+        int stringWidth = label.getFontMetrics(label.getFont()).stringWidth(secondPart);
+        
+        //listWidth can be zero directly after start of efaBoatHouse, so we stop under this condition.
+        while (listWidth>0 &&(stringWidth>maxStringWidth) && (secondPart.length()>0)) {
+        	secondPart=secondPart.substring(0,secondPart.length()-1).trim();
+        	stringWidth = label.getFontMetrics(label.getFont()).stringWidth(secondPart);
+        	cutText=true;
+        }
+
+        if (cutText &&secondPart.length()>0) {secondPart+="&hellip;";}
+        long tableWidth=listWidth-Math.max(iconWidth,0)-4;
+		return "<html><table border=0 cellpadding=0 cellspacing=0 width='"+tableWidth+ "'>"
+				+ "<tr><td align=left>"+firstPart+"</td><td align=right><font color=#888888>"+secondPart+"</font></td></tr>"
+						+ "</table></html>";
+		
+    }
 }
 
 
@@ -182,19 +198,20 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
         String text;
         String toolTipText;
         String toolTipFilterText;
+        String secondaryElement;
         Object object;
         boolean separator;
         int section;
         String image;
         Color[] colors;
-        public ItemTypeListData(String text, String toolTipText, Object object, boolean separator, int section) {
-            ini(text, toolTipText, object, separator, section, null, null);
+        public ItemTypeListData(String text, String toolTipText, String secondaryElement, Object object, boolean separator, int section) {
+            ini(text, toolTipText, secondaryElement, object, separator, section, null, null);
         }
-        public ItemTypeListData(String text, String toolTipText, Object object, boolean separator, int section, 
+        public ItemTypeListData(String text, String toolTipText, String secondaryElement, Object object, boolean separator, int section, 
                 String image, Color[] colors) {
-            ini(text, toolTipText, object, separator, section, image, colors);
+            ini(text, toolTipText, secondaryElement, object, separator, section, image, colors);
         }
-        private void ini(String text, String toolTipText, Object object, boolean separator, int section, 
+        private void ini(String text, String toolTipText, String secondaryElement, Object object, boolean separator, int section, 
                 String image, Color[] colors) {
             this.text = text;
             this.toolTipText = toolTipText;
@@ -213,6 +230,7 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
             this.section = section;
             this.image = image;
             this.colors = colors;
+            this.secondaryElement = secondaryElement;
         }
         public String toString() {
             return text;
@@ -252,14 +270,14 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
         return new ItemTypeList(name, type, category, description, this.showFilterField, this.showPrettyList);
     }
 
-    public void addItem(String text, String toolTipText, Object object, boolean separator, char separatorHotkey) {
-        data.addElement(new ItemTypeListData(text, toolTipText, object, separator, separatorHotkey));
+    public void addItem(String text, String toolTipText, String secondaryItem, Object object, boolean separator, char separatorHotkey) {
+        data.addElement(new ItemTypeListData(text, toolTipText, secondaryItem, object, separator, separatorHotkey));
         filter();
     }
 
-    public void addItem(String text, String toolTipText, Object object, boolean separator, char separatorHotkey,
+    public void addItem(String text, String toolTipText, String secondaryItem, Object object, boolean separator, char separatorHotkey,
             String image, Color[] colors) {
-        data.addElement(new ItemTypeListData(text, toolTipText, object, separator, separatorHotkey, image, colors));
+        data.addElement(new ItemTypeListData(text, toolTipText, secondaryItem, object, separator, separatorHotkey, image, colors));
         filter();
     }
 
