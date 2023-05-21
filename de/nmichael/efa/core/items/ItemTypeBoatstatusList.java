@@ -57,6 +57,7 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
         list.setSelectedIndex(-1);
         setItems(vdata);
         showValue();
+        list.repaint();
     }
 
     private Vector<ItemTypeListData> sortBootsList(Vector<BoatStatusRecord> v, Logbook logbook) {
