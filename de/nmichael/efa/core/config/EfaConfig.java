@@ -292,6 +292,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
     private ItemTypeDate kanuEfb_SyncTripsAfterDate;
     private ItemTypeBoolean kanuEfb_Fullsync;    
     private ItemTypeMultiSelectList<String> kanuEfb_boatTypes;
+	private ItemTypeBoolean kanuEfb_SyncUnknownBoats;
     private ItemTypeBoolean kanuEfb_TidyXML;
     private ItemTypeBoolean dataPreModifyRecordCallbackEnabled;
     private ItemTypeBoolean dataAuditCorrectErrors;
@@ -1171,6 +1172,9 @@ public class EfaConfig extends StorageObject implements IItemFactory {
                     International.getMessage("Fehlende Standard-Bootstypen für {rowing_or_canoeing} neu generieren",
                     International.getString("Kanufahren"))));
             buildTypes();
+			addParameter(kanuEfb_SyncUnknownBoats = new ItemTypeBoolean("KanuEfb_SyncUnknownBoats", false, ItemType.TYPE_PUBLIC,
+					BaseTabbedDialog.makeCategory(CATEGORY_SYNC, CATEGORY_KANUEFB),
+					"Fahrten mit unbekannten Booten synchronisieren"));
 
             // ============================= WIDGETS =============================
             addParameter(efaDirekt_showUhr = new ItemTypeBoolean("WidgetClockEnabled", true,
@@ -2148,6 +2152,10 @@ public class EfaConfig extends StorageObject implements IItemFactory {
     	return kanuEfb_Fullsync.getValue();
     }
 
+	public Boolean getValueKanuEfb_SyncUnknownBoats() { 
+		return kanuEfb_SyncUnknownBoats.getValue();
+	}
+	
     public Boolean getValueKanuEfb_TidyXML() {
     	return kanuEfb_TidyXML.getValue();
     }

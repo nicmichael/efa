@@ -35,7 +35,7 @@ class KanuEfbStatistics {
     	if (value) {alreadySyncedTripCnt++;}
     }
 
-    public void incrementNonSupportedBoatTypeTriCntIfTrue(boolean value) {
+    public void incrementKnownBoatNonSupportedBoatTypeTripCntIfTrue(boolean value) {
     	if (value) {nonSupportedBoatTypeTripCnt++;}
     }
     
