@@ -22,6 +22,7 @@ import de.nmichael.efa.gui.util.*;
 import java.awt.image.BufferedImage;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 
 public class ItemTypeList extends ItemType implements ActionListener, DocumentListener, KeyListener {
@@ -42,8 +43,10 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
     //Spacings for pretty rendering
     private static final int SPACING_BOATNAME_SECONDPART  = 60; //60 pixels
 	private static final int HORZ_SINGLE_BORDER=5;
+	private static Border _emptyBorder = new EmptyBorder(2, HORZ_SINGLE_BORDER, 2, HORZ_SINGLE_BORDER);
+	private static Color _separatorBackground = new Color(240,240,240);
     private boolean showFilterField = false;
-    private boolean showPrettyList=false;
+	private boolean showTwoColumnList=false;
     
     class ListDataCellRenderer extends DefaultListCellRenderer {
         public Component getListCellRendererComponent(JList list, Object value,
@@ -54,37 +57,78 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
                 try {
                 	BuildIcon(value);
                 } catch(Exception eignore) {
-                		Logger.logdebug(eignore);
+                		Logger.log(eignore);
                 }
             }
 
-            if (showPrettyList) {
-	            ItemTypeListData item = (ItemTypeListData)value;
-	         
-	            if (item.separator) {
-	                if (!isSelected) { setBackground(new Color(240,240,240)); }
-	                
-                    this.setHorizontalAlignment(LEFT);
-	                long listWidth=Math.max(80,list.getParent().getWidth()-2*HORZ_SINGLE_BORDER-2);
-                    long tableWidth=listWidth-Math.max(iconWidth,0)-4;
-            		this.setText("<html><table border=0 cellpadding=0 cellspacing=0 width='"+tableWidth+ "'>"
-            				+ "<tr><td align=center>"+item.text+"</td></tr>"
-            						+ "</table></html>");	                
-	                
-	            	this.setBorder(BorderFactory.createEmptyBorder(2, HORZ_SINGLE_BORDER, 2, HORZ_SINGLE_BORDER));
-	          	
-	            } else { // not a separator
+            try {
+            	this.setBorder(_emptyBorder);
             	
-            		this.setText(getHTMLTableFor(getFirstPart(item.text), item.secondaryElement));
+            	if (showTwoColumnList) {
+            		/* Pretty lists
+            		 * Data is put together in ItemTypeBoatStatuslist.sortBootsList and sortMemberList
+            		 * 
+            		 * - Center separator texts, with grey background
+					 * - left side: original data
+					 * 
+            		 * Available boats: (right side)
+            		 * - show today's next reservation of a boat 
+            		 * 
+            		 * Boats on water: (right side)
+            		 * - show destination of a boat 
+            		 * 
+            		 * Unavailable boats
+            		 * - show "boat damage" if the boatcomment begins with this text on the l
+            		 * - show destination of boat
+            		 * - show reservation end if boat is reserved
+            		 * 
+            		 * Performance
+            		 * - only create a HTML table when neccessary. Creation of HTML tables consume a lot of 
+            		 *   time, due to string concatenation.
+            		 */
+            		
+		            //at startup, the efa boathouse frame is not visible, but the renderer is invoked.
+		            //then, the list width may be zero. Do nothing then.  
+		            if (list.getParent().getWidth()>0) {
+			            ItemTypeListData item = (ItemTypeListData)value;
 
-            		setHorizontalAlignment(JLabel.LEFT);
-	            	this.setBorder(BorderFactory.createEmptyBorder(2, HORZ_SINGLE_BORDER, 2, HORZ_SINGLE_BORDER)); 
-            
-	            } //if not a separator
+		            	if (item.separator) {
+			                if (!isSelected) { setBackground(_separatorBackground); }
+		                    this.setHorizontalAlignment(JLabel.CENTER);
+			            } else { // not a separator
+			            	if (item.secondaryElement!=null) {
+			            		//only build the p
+			            		this.setText(getHTMLTableFor(item.text, item.secondaryElement));
+			            	} 
+		            		setHorizontalAlignment(JLabel.LEFT);
+		            
+			            } //if not a separator
+		            }//if parent width>0
+	            }// if showTowColumnList
+            	else {
+		            ItemTypeListData item = (ItemTypeListData)value;            		
+	            	if (item.separator) {
+		                if (!isSelected) { setBackground(_separatorBackground); }
+	                    //why don't we put this on center?
+		                //because in "boats on the water list", the list items can get very long
+		                //when they also contain a destination. Then the "center" mode may look bad
+		                //for very long 
+		                this.setHorizontalAlignment(JLabel.LEFT);
+	            	} else {
+	                    this.setHorizontalAlignment(JLabel.LEFT);
+	            	}
+            	}
+
+	            
+            } catch(Exception eignore) {
+            	Logger.log(eignore);
             }
+		            
         return this;
     }
 
+
+        
     /* 
      * Set icon for a boat depending on the groups who can row with this boat
      */
@@ -130,32 +174,7 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
 
     }
     
-    private String getFirstPart(String theText) {
-    	
-		String firstPart="";
-		
-    	if (theText.contains(STR_DESTINATION_DELIMITER)) {
-    		//an item with a destination delimiter is a current session.
-    		//for better readability, we then split the boat name and the destination
-    		//boat name is left-aligned, destination is right-aligned in a html table
-    		//(programming this in pure swing would be exhausting).
 
-    		String[] itemParts= theText.split(STR_DESTINATION_DELIMITER);
-    		if (itemParts.length>1) {
-    			for (int i=0; i<itemParts.length-1; i++) {
-    				firstPart=firstPart.concat(itemParts[i]);
-    			}
-    			firstPart=firstPart.trim();
-    		} else {
-    			//itemparts=0 oder 1
-    			firstPart=theText.trim();
-    		}
-    	} else {
-    		firstPart=theText;
-    	}
-    	return firstPart.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
-    }   
-    
     /*
      * Creates a HTML table consisting of two rows.
      * - left row (usually boat name) gets all neccessary space
@@ -163,32 +182,57 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
      *   also, right row contents are rendered in grey text color.
      */
     private String getHTMLTableFor(String firstPart, String secondPart) {
-    	boolean cutText = false;
+    	
+    	// der Aufbau der HTML-Tabelle ist wegen dem Kürzen des secondPart performancelastig,
+    	// wenn es eine volle Bootstabelle gibt. Bei ~200 Booten und einem Raspi3
+    	// braucht das Aufbauen der Liste der verfügbaren Boote 400-800 Millisekunden mit HTML-Tabelle,
+    	// statt 20-40 Millisekunden ohne. Das merkt man schon sehr.
+    	// Daher wird eine HTML-Tabelle nur dann aufgebaut, wenn es einen secondPart gibt.
+    	
+    	if (secondPart== null) {
+    		return firstPart;
+    	} else if ((secondPart.trim().isEmpty())) {
+    		return firstPart;
+    	}
 
-    	if (secondPart == null) {secondPart="";}
+    	//es gibt einen Secondpart, jetzt lohnt sich eine HTML-Tabelle
+    	boolean cutText = false;
     	
 		long listWidth=Math.max(80,list.getParent().getWidth()-2*HORZ_SINGLE_BORDER-2);
-
-		long firstPartLength=label.getFontMetrics(label.getFont()).stringWidth(firstPart);
-		long maxStringWidth =listWidth-SPACING_BOATNAME_SECONDPART-firstPartLength-4;
+		FontMetrics myFontMetrics = label.getFontMetrics(label.getFont());
+		
+		long firstPartLength= myFontMetrics.stringWidth(firstPart);
+		long maxStringWidth = listWidth-SPACING_BOATNAME_SECONDPART-firstPartLength-4;
+		long characterWidth = myFontMetrics.stringWidth("X");
+		
 		if (iconWidth >0 ) {
 			maxStringWidth= listWidth-SPACING_BOATNAME_SECONDPART-(iconWidth)-firstPartLength-4;
 		}
 		
-        int stringWidth = label.getFontMetrics(label.getFont()).stringWidth(secondPart);
+        int stringWidth = myFontMetrics.stringWidth(secondPart);
         
         //listWidth can be zero directly after start of efaBoatHouse, so we stop under this condition.
         while (listWidth>0 &&(stringWidth>maxStringWidth) && (secondPart.length()>0)) {
-        	secondPart=secondPart.substring(0,secondPart.length()-1).trim();
-        	stringWidth = label.getFontMetrics(label.getFont()).stringWidth(secondPart);
+        	// Performance: Strings which are very much longer than maxStringWitdh must be reduced faster than just
+        	//one character per iteration.
+        	int cutChars=(int)Math.abs((int)(maxStringWidth-stringWidth)/characterWidth); 
+        	cutChars=(int)Math.min(secondPart.length(), cutChars); // limit cut items to length of second part
+        	
+        	secondPart=secondPart.substring(0,secondPart.length()-(int)Math.max(((cutChars)),1)).trim();
+        	stringWidth = myFontMetrics.stringWidth(secondPart);
         	cutText=true;
         }
 
-        if (cutText &&secondPart.length()>0) {secondPart+="&hellip;";}
-        long tableWidth=listWidth-Math.max(iconWidth,0)-4;
-		return "<html><table border=0 cellpadding=0 cellspacing=0 width='"+tableWidth+ "'>"
-				+ "<tr><td align=left>"+firstPart+"</td><td align=right><font color=#888888>"+secondPart+"</font></td></tr>"
-						+ "</table></html>";
+        if (cutText &&secondPart.length()>0) {secondPart+="\u2026";} //append an ellipsis
+        Integer tableWidth =new Integer((int)listWidth-Math.max(iconWidth,0)-4);
+        
+        return  "<html><table border=0 cellpadding=0 cellspacing=0 width='"
+        		.concat(tableWidth.toString())
+        		.concat("'><tr><td align=left>")
+        		.concat(EfaUtil.escapeHtml(firstPart))
+        		.concat("</td><td align=right><font color=#888888>")
+        		.concat(EfaUtil.escapeHtml(secondPart))
+        		.concat("</font></td></tr></table></html>");
 		
     }
 }
@@ -252,7 +296,7 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
         this.category = category;
         this.description = description;
         this.showFilterField = showFilterField;
-        this.showPrettyList= showPrettyList;
+        this.showTwoColumnList= showPrettyList;
         data = new DefaultListModel<ItemTypeListData>();
     }
     
@@ -267,7 +311,7 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
     }
 
     public IItemType copyOf() {
-        return new ItemTypeList(name, type, category, description, this.showFilterField, this.showPrettyList);
+        return new ItemTypeList(name, type, category, description, this.showFilterField, this.showTwoColumnList);
     }
 
     public void addItem(String text, String toolTipText, String secondaryItem, Object object, boolean separator, char separatorHotkey) {
@@ -391,8 +435,6 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
         this.dlg = dlg;
 
         list = createNewListWithTooltippSupport();
-        if (Daten.efaConfig.getValueEfaBoathouseExtdToolTips()) {
-        }
         
         if (this.showFilterField) {
 	        filterTextField =new JTextField();
@@ -419,6 +461,10 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
             }
             if (color != null) {
                 label.setForeground(color);
+            }
+            if (backgroundColor != null) {
+            	label.setBackground(backgroundColor);
+            	label.setOpaque(true);
             }
             label.setFont(label.getFont().deriveFont(Font.BOLD));
 
@@ -863,5 +909,13 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
 	          return "";
 	        }
     	};
+    }
+    
+    public Boolean getShowTwoColumnList() {
+    	return showTwoColumnList;
+    }
+    
+    public void setShowTwoColumnList(boolean twoColumns) {
+    	showTwoColumnList=twoColumns;
     }
 }

@@ -59,13 +59,16 @@ public class BoatReservationEditDialog extends UnversionizedDataEditDialog imple
             }
             for (IItemType it : allGuiItems) {
                 if (it.getName().equals(BoatReservationRecord.DAYOFWEEK)) {
-                    it.setVisible(type.equals(BoatReservationRecord.TYPE_WEEKLY));
+                    it.setVisible(type.equals(BoatReservationRecord.TYPE_WEEKLY) ||
+                    		type.equals(BoatReservationRecord.TYPE_WEEKLY_LIMITED));
                 }
                 if (it.getName().equals(BoatReservationRecord.DATEFROM)) {
-                    it.setVisible(type.equals(BoatReservationRecord.TYPE_ONETIME));
+                    it.setVisible(type.equals(BoatReservationRecord.TYPE_ONETIME) ||
+                    		type.equals(BoatReservationRecord.TYPE_WEEKLY_LIMITED));
                 }
                 if (it.getName().equals(BoatReservationRecord.DATETO)) {
-                    it.setVisible(type.equals(BoatReservationRecord.TYPE_ONETIME));
+                    it.setVisible(type.equals(BoatReservationRecord.TYPE_ONETIME) ||
+                    		type.equals(BoatReservationRecord.TYPE_WEEKLY_LIMITED));
                 }
             }
         }

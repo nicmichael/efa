@@ -10,14 +10,34 @@
 
 package de.nmichael.efa.data;
 
-import de.nmichael.efa.data.storage.*;
-import de.nmichael.efa.data.types.*;
-import de.nmichael.efa.core.items.*;
-import de.nmichael.efa.core.config.*;
-import de.nmichael.efa.gui.util.*;
-import de.nmichael.efa.util.*;
-import de.nmichael.efa.*;
-import java.util.*;
+import java.awt.GridBagConstraints;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.UUID;
+import java.util.Vector;
+
+import de.nmichael.efa.Daten;
+import de.nmichael.efa.core.config.AdminRecord;
+import de.nmichael.efa.core.config.EfaTypes;
+import de.nmichael.efa.core.items.IItemType;
+import de.nmichael.efa.core.items.ItemTypeDate;
+import de.nmichael.efa.core.items.ItemTypeLabel;
+import de.nmichael.efa.core.items.ItemTypeRadioButtons;
+import de.nmichael.efa.core.items.ItemTypeString;
+import de.nmichael.efa.core.items.ItemTypeStringAutoComplete;
+import de.nmichael.efa.core.items.ItemTypeStringList;
+import de.nmichael.efa.core.items.ItemTypeTime;
+import de.nmichael.efa.data.storage.DataKey;
+import de.nmichael.efa.data.storage.DataRecord;
+import de.nmichael.efa.data.storage.IDataAccess;
+import de.nmichael.efa.data.storage.MetaData;
+import de.nmichael.efa.data.types.DataTypeDate;
+import de.nmichael.efa.data.types.DataTypeTime;
+import de.nmichael.efa.gui.util.TableItem;
+import de.nmichael.efa.gui.util.TableItemHeader;
+import de.nmichael.efa.util.EfaUtil;
+import de.nmichael.efa.util.International;
+import de.nmichael.efa.util.Logger;
 
 // @i18n complete
 
@@ -28,6 +48,7 @@ public class BoatReservationRecord extends DataRecord {
     // =========================================================================
     public static final String TYPE_ONETIME        = "ONETIME";
     public static final String TYPE_WEEKLY         = "WEEKLY";
+    public static final String TYPE_WEEKLY_LIMITED = "WEEKLY_LIMITED";
 
     // =========================================================================
     // Field Names
@@ -193,33 +214,40 @@ public class BoatReservationRecord extends DataRecord {
         return s;
     }
 
-    private String getDateDescription(DataTypeDate date, String weekday, DataTypeTime time) {
+    private String getDateDescription(DataTypeDate date, String weekday, DataTypeTime time, String extension) {
         if (date == null && weekday == null) {
             return "";
         }
         return (date != null ? date.toString() : Daten.efaTypes.getValueWeekday(weekday)) +
-                (time != null ? " " + time.toString() : "");
+                (time != null ? " " + time.toString() : "") + " "+ extension;
     }
 
     public String getDateTimeFromDescription() {
         String type = getType();
         if (type != null && type.equals(TYPE_ONETIME)) {
-            return getDateDescription(getDateFrom(), null, getTimeFrom());
+            return getDateDescription(getDateFrom(), null, getTimeFrom(), "");
         }
         if (type != null && type.equals(TYPE_WEEKLY)) {
-            return getDateDescription(null, getDayOfWeek(), getTimeFrom());
+            return getDateDescription(null, getDayOfWeek(), getTimeFrom(),"");
         }
+        if (type != null && type.equals(TYPE_WEEKLY_LIMITED)) {
+            return getDateDescription(null, getDayOfWeek(), getTimeFrom(), "("+getDateFrom()+" - "+getDateTo()+")");
+        }
+        
         return "";
     }
 
     public String getDateTimeToDescription() {
         String type = getType();
         if (type != null && type.equals(TYPE_ONETIME)) {
-            return getDateDescription(getDateTo(), null, getTimeTo());
+            return getDateDescription(getDateTo(), null, getTimeTo(),"");
         }
         if (type != null && type.equals(TYPE_WEEKLY)) {
-            return getDateDescription(null, getDayOfWeek(), getTimeTo());
+            return getDateDescription(null, getDayOfWeek(), getTimeTo(),"");
         }
+        if (type != null && type.equals(TYPE_WEEKLY_LIMITED)) {
+            return getDateDescription(null, getDayOfWeek(), getTimeFrom(), "("+getDateFrom()+" - "+getDateTo()+")");
+        }        
         return "";
     }
 
@@ -360,6 +388,62 @@ public class BoatReservationRecord extends DataRecord {
         return -1;
     }
 
+    
+    /**
+    * Determines the milliseconds it takes until the reservation is valid.
+    * 0 for actual ongoing reservations; >0 for reservations which become valid in the future.
+    *
+    * @return milliseconds until this reservation has it's next occurrency.
+    */
+   public long getReservationValidInMinutes() {
+       try {
+    	   
+    	   long now = System.currentTimeMillis();
+    	   
+           DataTypeDate dateFrom = null;
+           DataTypeDate dateTo = null;
+           DataTypeTime timeFrom = null;
+           DataTypeTime timeTo = null;
+           if (this.getType().equals(TYPE_ONETIME)) {
+               dateFrom = this.getDateFrom();
+               dateTo   = this.getDateTo();
+               timeFrom = this.getTimeFrom();
+               timeTo   = this.getTimeTo();
+           }
+           if (this.getType().equals(TYPE_WEEKLY)) {
+               GregorianCalendar cal = new GregorianCalendar();
+               cal.setTimeInMillis(now);
+               int this_weekday = cal.get(Calendar.DAY_OF_WEEK);
+               int reservation_weekday = EfaUtil.getCalendarWeekDayFromEfaWeekDay(this.getDayOfWeek());
+               int daysDifference = (reservation_weekday-this_weekday);
+               if (daysDifference <0) {//reservierungstag liegt vorher
+            	   daysDifference=daysDifference+7; //einfach 7 Tage draufzählen - dann sind das die Anzahl der Tage bis zum nächsten Auftreten
+               }
+               dateFrom = new DataTypeDate(now);
+               dateFrom.addDays(daysDifference); // suche das nächste Auftreten 
+               dateTo   = new DataTypeDate(now);
+               dateTo.addDays(daysDifference);
+               timeFrom = this.getTimeFrom();
+               timeTo   = this.getTimeTo();
+           }
+           long resStart = dateFrom.getTimestamp(timeFrom);
+           long resEnd   = dateTo.getTimestamp(timeTo);
+
+           // ist die vorliegende Reservierung jetzt gültig
+           if (now >= resStart && now <= resEnd) {
+               return 0;
+           } else {
+        	   return (resStart-now)/(60 * 1000); // anzahl der Minuten, bis die Reservierung aktiv wird
+           }
+           
+       } catch (Exception e) {
+           Logger.logdebug(e);
+       }
+       return -1;
+   }
+    
+
+    
     public boolean isObsolete(long now) {
         try {
             if (this.getType().equals(TYPE_WEEKLY)) {
@@ -371,6 +455,8 @@ public class BoatReservationRecord extends DataRecord {
                 long resEnd   = dateTo.getTimestamp(timeTo);
                 return now > resEnd;
             }
+            
+            
         } catch (Exception e) {
             Logger.logdebug(e);
         }
@@ -415,45 +501,82 @@ public class BoatReservationRecord extends DataRecord {
         IItemType item;
         Vector<IItemType> v = new Vector<IItemType>();
         String boatName = getBoatName();
+        int DATETIME_FIELDLENGTH=120;
 
         ItemTypeDate dateFrom;
         ItemTypeTime timeFrom;
 
+        //Grid layout
+        /*
+         *    1         |    2      |    3        |     4      |      5      |     6     |
+         * art d. res.  | (*) einmalig   ( ) wöchentlich  ( ) ...                        |
+         * von (tag)    | VON       |  separator  | bis (tag)   |  BIS   	  |			 | 
+         * Wochentag    | DROPDOWN_WOCHENTAG                                             |
+         * von (zeit)   | VON       |  separator  |bis (zeit)   |  BIS        |          |
+         * Reserviert f.| RES FUER                                            | BUTTON   |
+         * ReservieGrun | RESGRUND                                                       |
+         * Telefonf.    | TELEFON                                                        |
+         */
+        
+        
         v.add(item = new ItemTypeLabel("GUI_BOAT_NAME",
                 IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getMessage("Reservierung für {boat}", boatName)));
         item.setPadding(0, 0, 0, 10);
         v.add(item = new ItemTypeRadioButtons(BoatReservationRecord.TYPE, (getType() != null && getType().length() > 0 ? getType() : TYPE_ONETIME),
                 new String[] {
                     TYPE_ONETIME,
-                    TYPE_WEEKLY
+                    TYPE_WEEKLY,
+                    TYPE_WEEKLY_LIMITED
                 },
                 new String[] {
                     International.getString("einmalig"),
                     International.getString("wöchentlich"),
+                    International.getString("wöchentlich (begrenzt)")
                 },
                 IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("Art der Reservierung")));
-        v.add(item = new ItemTypeStringList(BoatReservationRecord.DAYOFWEEK, getDayOfWeek(),
-                    EfaTypes.makeDayOfWeekArray(EfaTypes.ARRAY_STRINGLIST_VALUES), EfaTypes.makeDayOfWeekArray(EfaTypes.ARRAY_STRINGLIST_DISPLAY),
-                    IItemType.TYPE_PUBLIC, CAT_BASEDATA,
-                    International.getString("Wochentag")));
-        item.setNotNull(true);
+
+        //Field takes 3 grids, filled horizontally
+        item.setFieldGrid(4, -1, GridBagConstraints.HORIZONTAL);
+        item.setPadding(-1, -1, -1, 15);
+        // new order of elements:
+        // date from        date to
+        // Weekday
+        // time from	    time to
+        // so that the weekdray dropdownlists separates the dates from the times,
+        // but corresponding date & time are on the same column
+        
         v.add(item = new ItemTypeDate(BoatReservationRecord.DATEFROM, getDateFrom(),
                 IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("Von") + " (" +
                 International.getString("Tag") + ")"));
         item.setNotNull(true);
         dateFrom = (ItemTypeDate)item;
-        v.add(item = new ItemTypeTime(BoatReservationRecord.TIMEFROM, getTimeFrom(),
-                IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("Von") + " (" +
-                International.getString("Zeit") + ")"));
-        ((ItemTypeTime)item).enableSeconds(false);
-        item.setNotNull(true);
-        timeFrom = (ItemTypeTime)item;
+        dateFrom.setFieldSize(DATETIME_FIELDLENGTH, 0);
+
         v.add(item = new ItemTypeDate(BoatReservationRecord.DATETO, getDateTo(),
                 IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("Bis") + " (" +
                 International.getString("Tag") + ")"));
         item.setNotNull(true);
         ((ItemTypeDate)item).setMustBeAfter(dateFrom, true);
         ItemTypeDate dateTo = (ItemTypeDate)item;
+        dateTo.setIsItemOnSameRowAsPreviousItem(true);
+        dateTo.setFieldSize(DATETIME_FIELDLENGTH, 0);
+        dateTo.setLabelGrid(-1, GridBagConstraints.EAST, -1); // right-handed label looks better.
+        
+        v.add(item = new ItemTypeStringList(BoatReservationRecord.DAYOFWEEK, getDayOfWeek(),
+                EfaTypes.makeDayOfWeekArray(EfaTypes.ARRAY_STRINGLIST_VALUES), EfaTypes.makeDayOfWeekArray(EfaTypes.ARRAY_STRINGLIST_DISPLAY),
+                IItemType.TYPE_PUBLIC, CAT_BASEDATA,
+                International.getString("Wochentag")));
+        item.setNotNull(true);
+        item.setFieldGrid(4, -1, GridBagConstraints.HORIZONTAL);
+
+        v.add(item = new ItemTypeTime(BoatReservationRecord.TIMEFROM, getTimeFrom(),
+                IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("Von") + " (" +
+                International.getString("Zeit") + ")"));
+        ((ItemTypeTime)item).enableSeconds(false);
+        item.setNotNull(true);
+        timeFrom = (ItemTypeTime)item;
+        item.setFieldSize(DATETIME_FIELDLENGTH,0);
+
         v.add(item = new ItemTypeTime(BoatReservationRecord.TIMETO, getTimeTo(),
                 IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("Bis") + " (" +
                 International.getString("Zeit") + ")"));
@@ -461,6 +584,10 @@ public class BoatReservationRecord extends DataRecord {
         ((ItemTypeTime)item).setReferenceTime(DataTypeTime.time235959());
         item.setNotNull(true);
         ((ItemTypeTime)item).setMustBeAfter(dateFrom, timeFrom, dateTo, false);
+        ((ItemTypeTime)item).setIsItemOnSameRowAsPreviousItem(true);
+        item.setFieldSize(DATETIME_FIELDLENGTH,0);
+        ((ItemTypeTime)item).setLabelGrid(-1, GridBagConstraints.EAST, -1); // right-handed label looks better.
+        
         v.add(item = getGuiItemTypeStringAutoComplete(BoatReservationRecord.PERSONID, null,
                     IItemType.TYPE_PUBLIC, CAT_BASEDATA,
                     getPersistence().getProject().getPersons(false), System.currentTimeMillis(), System.currentTimeMillis(),
@@ -472,10 +599,18 @@ public class BoatReservationRecord extends DataRecord {
             ((ItemTypeStringAutoComplete)item).parseAndShowValue(getPersonName());
         }
         item.setNotNull(true);
+        // Hinter dem reserviert für gibt es noch einen Auswahlbutton, daher nur zwei Grids weit
+        item.setFieldGrid(4, -1, GridBagConstraints.HORIZONTAL);
+        item.setPadding(-1, -1, 20, 2);
+        
         v.add(item = new ItemTypeString(BoatReservationRecord.REASON, getReason(),
                 IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("Reservierungsgrund")));
+        item.setFieldGrid(4, -1, GridBagConstraints.HORIZONTAL);
+        item.setFieldSize(350, -1);
+        
         v.add(item = new ItemTypeString(BoatReservationRecord.CONTACT, getContact(),
                 IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("Telefon für Rückfragen")));
+        item.setFieldGrid(4, -1, GridBagConstraints.HORIZONTAL);
 
         // Virtual Fields hidden internal, only for list output and export/import
         v.add(item = new ItemTypeString(BoatReservationRecord.VBOAT, getBoatName(),

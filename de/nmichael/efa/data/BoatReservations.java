@@ -175,6 +175,7 @@ public class BoatReservations extends StorageObject {
                         
                     }
                 }
+                
                 if (r.getType().equals(BoatReservationRecord.TYPE_ONETIME)) {
                     assertFieldNotEmpty(record, BoatReservationRecord.DATEFROM);
                     assertFieldNotEmpty(record, BoatReservationRecord.DATETO);

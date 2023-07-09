@@ -56,6 +56,7 @@ public class EfaUtil {
         str = replaceString(str, "<", "&lt;");
         str = replaceString(str, ">", "&gt;");
         str = replaceString(str, "\"", "&quot;");
+        str = replaceString(str, "\u2026","&hellip;");
         return str;
     }
 
@@ -1355,6 +1356,17 @@ public class EfaUtil {
             default:
                 return "";
         }
+    }
+    
+    public static int getCalendarWeekDayFromEfaWeekDay(String efaWeekDay) {
+    	if (efaWeekDay.equals(EfaTypes.TYPE_WEEKDAY_MONDAY)) {return 2;}
+    	if (efaWeekDay.equals(EfaTypes.TYPE_WEEKDAY_TUESDAY)) {return 3;}
+    	if (efaWeekDay.equals(EfaTypes.TYPE_WEEKDAY_WEDNESDAY)) {return 4;}
+    	if (efaWeekDay.equals(EfaTypes.TYPE_WEEKDAY_THURSDAY)) {return 5;}
+    	if (efaWeekDay.equals(EfaTypes.TYPE_WEEKDAY_FRIDAY)) {return 6;}
+    	if (efaWeekDay.equals(EfaTypes.TYPE_WEEKDAY_SATURDAY)) {return 7;}
+    	if (efaWeekDay.equals(EfaTypes.TYPE_WEEKDAY_SUNDAY)) {return 1;}
+    	return 1; //Default use Sunday 
     }
 
     // prüft, ob im String s das Zeichen pos ein "+" ist. Falls der String zu kurz ist, wird false geliefert

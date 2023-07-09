@@ -172,8 +172,9 @@ public class EfaConfig extends StorageObject implements IItemFactory {
     private ItemTypeBoolean efaBoathouseStrictUnknownPersons;
     private ItemTypeBoolean efaBoathouseFilterTextfieldStandardLists;
     private ItemTypeBoolean efaBoathouseFilterTextfieldBoatsNotAvailableList;
-    private ItemTypeBoolean efaBoathouseBetterListLook;
+    private ItemTypeBoolean efaBoathouseTwoColumnList;
     private ItemTypeBoolean efaBoathouseExtdToolTips;
+    private ItemTypeBoolean efaBoathouseBoatListWithReservationInfo;
     private ItemTypeString efaBoathouseNonAllowedUnknownPersonNames;
     private ItemTypeBoolean efaDirekt_eintragHideUnnecessaryInputFields;
     private ItemTypeInteger efaDirekt_plusMinutenAbfahrt;
@@ -315,6 +316,9 @@ public class EfaConfig extends StorageObject implements IItemFactory {
     private Vector<IWidget> widgets;
     private ItemTypeItemList crontab;
 
+    private Color tableSelectionBackgroundColor = new Color(75,134,193);
+    private Color tableSelectionForegroundColor = Color.WHITE;
+    
     // private internal data
     private HashMap<String,IItemType> configValues; // always snychronize on this object!!
     private Vector<String> configValueNames;
@@ -835,12 +839,16 @@ public class EfaConfig extends StorageObject implements IItemFactory {
             addParameter(efaBoathouseFilterTextfieldBoatsNotAvailableList = new ItemTypeBoolean("efaBoathouseFilterTextfieldBoatsNotAvailableList", false, 
             		IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
             		International.getString("Filter-Feld über Liste nicht verfügbarer Boote")));
-            addParameter(efaBoathouseBetterListLook= new ItemTypeBoolean("efaBoathouseBetterListLook", true, 
+            addParameter(efaBoathouseTwoColumnList= new ItemTypeBoolean("efaBoathouseTwoColumnList", true, 
             		IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
-            		International.getString("Bootshaus-Listen mit verbesserter Darstellung")));
+            		International.getString("Bootshaus-Listen mit zwei Spalten darstellen")));
 			addParameter(efaBoathouseExtdToolTips = new ItemTypeBoolean("efaBoathouseExtdToolTips", true,
 					IItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
 					International.getString("Bootshaus-Listen mit Tooltips")));            
+			addParameter(efaBoathouseBoatListWithReservationInfo = new ItemTypeBoolean("efaBoathouseBoatListWithReservationInfo", true,
+					IItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
+					International.getString("Bootshaus-Listen mit Reservierungsdaten")));            
+			
             addParameter(efaDirekt_sortByAnzahl = new ItemTypeBoolean("BoatListSortBySeats", true,
                     IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
                     International.getString("sortiere Boote nach Anzahl der Bootsplätze")));
@@ -1862,12 +1870,16 @@ public class EfaConfig extends StorageObject implements IItemFactory {
         return efaBoathouseFilterTextfieldBoatsNotAvailableList.getValue();
     }
     
-    public boolean getValueEfaBoathouseBetterListLook() {
-    	return efaBoathouseBetterListLook.getValue();
+    public boolean getValueEfaBoathouseTwoColumnList() {
+    	return efaBoathouseTwoColumnList.getValue();
     }
 
 	public boolean getValueEfaBoathouseExtdToolTips() {
 		return efaBoathouseExtdToolTips.getValue();
+	}
+	
+	public boolean getValueEfaBoathouseBoatListReservationInfo(){
+		return efaBoathouseBoatListWithReservationInfo.getValue();
 	}
 	
 	public boolean getValueEfaDirekt_showUhr() {
@@ -2241,6 +2253,14 @@ public class EfaConfig extends StorageObject implements IItemFactory {
         }
     }
 
+    public Color getTableSelectionBackgroundColor() {
+    	return tableSelectionBackgroundColor;
+    }
+    
+    public Color getTableSelectionForegroundColor() {
+    	return tableSelectionForegroundColor;
+    }
+    
     public Vector<IItemType> getGuiItems() {
         Vector<IItemType> items = new Vector<IItemType>();
         for (int i=0; i<configValueNames.size(); i++) {

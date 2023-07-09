@@ -44,7 +44,7 @@ public abstract class ItemType implements IItemType {
     protected int padXbefore = 0;
     protected int padXafter = 0;
     protected int padYbefore = 0;
-    protected int padYafter = 0;
+    protected int padYafter = 1;
     protected boolean notNull = false;
     protected int fieldWidth = 300;
     protected int fieldHeight = 19;
