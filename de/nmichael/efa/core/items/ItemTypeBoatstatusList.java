@@ -14,6 +14,7 @@ import java.util.*;
 import de.nmichael.efa.*;
 import de.nmichael.efa.core.config.*;
 import de.nmichael.efa.util.*;
+import de.nmichael.efa.util.EfaUtil;
 import de.nmichael.efa.gui.*;
 import de.nmichael.efa.data.*;
 import de.nmichael.efa.data.storage.DataKey;
@@ -393,7 +394,7 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
    	    		// reservations only relevant if boat is available or NOT available.
    	    		// boats on the water only get destination strings.
    				if (bli.boat!=null && showReservation && (!boatStatus.equals(BoatStatusRecord.STATUS_ONTHEWATER))) {
-   					boatReservation= getBoatReservationString(bli.boat.getId(), rTodayCache, 480, true);
+   					boatReservation= getBoatReservationString(bli.boat.getId(), rTodayCache, EfaUtil.getRemainingMinutesToday(), true);
    					if (boatReservation==null) {boatReservation="";}
    				}
    				
@@ -568,7 +569,7 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
 
     	if (showReservation && showInList.equals(BoatStatusRecord.STATUS_AVAILABLE)) {
 	    		//available list: show next reservation within 8 hours as secondary item
-	    		return getBoatReservationString(bs.getBoatId(), rTodayCache, 480, false);
+	    		return getBoatReservationString(bs.getBoatId(), rTodayCache, EfaUtil.getRemainingMinutesToday(), false);
 
     	} else if (showDestination && showInList.equals(BoatStatusRecord.STATUS_ONTHEWATER) ) {
     		//Boat is on the water: we show the destination as secondary item

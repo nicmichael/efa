@@ -1566,7 +1566,7 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
 	                    boolean show = (!r.getInvisible()) &&
 	                                   (!r.getDeleted());
 	                    if (show) {
-	                        if (r.getReservationValidInMinutes(now, 480) >= 0) { // get reservations in the next 8 hours
+	                        if (r.getReservationValidInMinutes(now, EfaUtil.getRemainingMinutesToday()) >= 0) { // get reservations in the next 8 hours
 	                        	//store the reservation 
 	                        	result.add(r);
 	                        }

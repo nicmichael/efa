@@ -9,32 +9,54 @@
  */
 package de.nmichael.efa.util;
 
-import de.nmichael.efa.efa1.Synonyme;
-import de.nmichael.efa.efa1.DatenFelder;
-import de.nmichael.efa.core.config.EfaTypes;
-import de.nmichael.efa.*;
-import de.nmichael.efa.core.CrontabThread;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.zip.*;
-import java.io.*;
-import java.awt.event.*;
-import java.awt.Window;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Window;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.NetworkInterface;
 import java.net.URL;
 import java.net.URLConnection;
-import javax.swing.JComponent;
-import java.security.*;
+import java.security.MessageDigest;
+import java.text.SimpleDateFormat;
+import java.util.AbstractList;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.GregorianCalendar;
+import java.util.Hashtable;
+import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipOutputStream;
+
 import javax.mail.internet.InternetAddress;
+import javax.swing.JComponent;
+
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
+
+import de.nmichael.efa.Daten;
+import de.nmichael.efa.core.CrontabThread;
+import de.nmichael.efa.core.config.EfaTypes;
+import de.nmichael.efa.data.types.DataTypeTime;
+import de.nmichael.efa.efa1.DatenFelder;
+import de.nmichael.efa.efa1.Synonyme;
 
 // @i18n complete
 public class EfaUtil {
@@ -2078,6 +2100,23 @@ public class EfaUtil {
         return null;
     }
 
+    
+    /*
+     * Calculates the remaining minutes until today, 23:59:00
+     */
+    public static long getRemainingMinutesToday() {
+    	
+    	long value = 0;
+    	
+    	DataTypeTime nowTime = DataTypeTime.now();
+
+    	value = (23-nowTime.getHour())*60; // 60 minutes per Hour
+    	value = value + (59 - nowTime.getMinute());
+    	
+    	return value;
+    	
+    }    
+    
     public static void main(String args[]) {
         String text = "abc & def";
         System.out.println(text + " -> EfaUtil.escapeXml() = " + EfaUtil.escapeXml(text));
