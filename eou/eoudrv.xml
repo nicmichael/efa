@@ -2,6 +2,14 @@
 <efaOnlineUpdate>
 
     <Version>
+        <VersionID>0.0.0_00</VersionID>
+        <ReleaseDate>00.00.0000</ReleaseDate>
+        <Changes lang="de">
+            <ChangeItem>THIS BRANCH IS NO LONGER USED FOR RELEASES. PLEASE USE THE MASTER BRANCH.</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
         <VersionID>2.3.1_04</VersionID>
         <ReleaseDate>22.03.2022</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa2drv.zip</DownloadUrl>
