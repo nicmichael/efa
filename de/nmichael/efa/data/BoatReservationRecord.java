@@ -48,7 +48,6 @@ public class BoatReservationRecord extends DataRecord {
     // =========================================================================
     public static final String TYPE_ONETIME        = "ONETIME";
     public static final String TYPE_WEEKLY         = "WEEKLY";
-    public static final String TYPE_WEEKLY_LIMITED = "WEEKLY_LIMITED";
 
     // =========================================================================
     // Field Names
@@ -230,10 +229,11 @@ public class BoatReservationRecord extends DataRecord {
         if (type != null && type.equals(TYPE_WEEKLY)) {
             return getDateDescription(null, getDayOfWeek(), getTimeFrom(),"");
         }
+        /* used in the future 
         if (type != null && type.equals(TYPE_WEEKLY_LIMITED)) {
             return getDateDescription(null, getDayOfWeek(), getTimeFrom(), "("+getDateFrom()+" - "+getDateTo()+")");
         }
-        
+        */
         return "";
     }
 
@@ -245,9 +245,11 @@ public class BoatReservationRecord extends DataRecord {
         if (type != null && type.equals(TYPE_WEEKLY)) {
             return getDateDescription(null, getDayOfWeek(), getTimeTo(),"");
         }
+        /* used in the future
         if (type != null && type.equals(TYPE_WEEKLY_LIMITED)) {
             return getDateDescription(null, getDayOfWeek(), getTimeFrom(), "("+getDateFrom()+" - "+getDateTo()+")");
         }        
+        */
         return "";
     }
 
@@ -501,82 +503,45 @@ public class BoatReservationRecord extends DataRecord {
         IItemType item;
         Vector<IItemType> v = new Vector<IItemType>();
         String boatName = getBoatName();
-        int DATETIME_FIELDLENGTH=120;
 
         ItemTypeDate dateFrom;
         ItemTypeTime timeFrom;
 
-        //Grid layout
-        /*
-         *    1         |    2      |    3        |     4      |      5      |     6     |
-         * art d. res.  | (*) einmalig   ( ) wöchentlich  ( ) ...                        |
-         * von (tag)    | VON       |  separator  | bis (tag)   |  BIS   	  |			 | 
-         * Wochentag    | DROPDOWN_WOCHENTAG                                             |
-         * von (zeit)   | VON       |  separator  |bis (zeit)   |  BIS        |          |
-         * Reserviert f.| RES FUER                                            | BUTTON   |
-         * ReservieGrun | RESGRUND                                                       |
-         * Telefonf.    | TELEFON                                                        |
-         */
-        
-        
         v.add(item = new ItemTypeLabel("GUI_BOAT_NAME",
                 IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getMessage("Reservierung für {boat}", boatName)));
         item.setPadding(0, 0, 0, 10);
         v.add(item = new ItemTypeRadioButtons(BoatReservationRecord.TYPE, (getType() != null && getType().length() > 0 ? getType() : TYPE_ONETIME),
                 new String[] {
                     TYPE_ONETIME,
-                    TYPE_WEEKLY,
-                    TYPE_WEEKLY_LIMITED
+                    TYPE_WEEKLY
                 },
                 new String[] {
                     International.getString("einmalig"),
                     International.getString("wöchentlich"),
-                    International.getString("wöchentlich (begrenzt)")
                 },
                 IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("Art der Reservierung")));
-
-        //Field takes 3 grids, filled horizontally
-        item.setFieldGrid(4, -1, GridBagConstraints.HORIZONTAL);
-        item.setPadding(-1, -1, -1, 15);
-        // new order of elements:
-        // date from        date to
-        // Weekday
-        // time from	    time to
-        // so that the weekdray dropdownlists separates the dates from the times,
-        // but corresponding date & time are on the same column
-        
+        v.add(item = new ItemTypeStringList(BoatReservationRecord.DAYOFWEEK, getDayOfWeek(),
+                    EfaTypes.makeDayOfWeekArray(EfaTypes.ARRAY_STRINGLIST_VALUES), EfaTypes.makeDayOfWeekArray(EfaTypes.ARRAY_STRINGLIST_DISPLAY),
+                    IItemType.TYPE_PUBLIC, CAT_BASEDATA,
+                    International.getString("Wochentag")));
+        item.setNotNull(true);
         v.add(item = new ItemTypeDate(BoatReservationRecord.DATEFROM, getDateFrom(),
                 IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("Von") + " (" +
                 International.getString("Tag") + ")"));
         item.setNotNull(true);
         dateFrom = (ItemTypeDate)item;
-        dateFrom.setFieldSize(DATETIME_FIELDLENGTH, 0);
-
-        v.add(item = new ItemTypeDate(BoatReservationRecord.DATETO, getDateTo(),
-                IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("Bis") + " (" +
-                International.getString("Tag") + ")"));
-        item.setNotNull(true);
-        ((ItemTypeDate)item).setMustBeAfter(dateFrom, true);
-        ItemTypeDate dateTo = (ItemTypeDate)item;
-        dateTo.setIsItemOnSameRowAsPreviousItem(true);
-        dateTo.setFieldSize(DATETIME_FIELDLENGTH, 0);
-        dateTo.setLabelGrid(-1, GridBagConstraints.EAST, -1); // right-handed label looks better.
-        
-        v.add(item = new ItemTypeStringList(BoatReservationRecord.DAYOFWEEK, getDayOfWeek(),
-                EfaTypes.makeDayOfWeekArray(EfaTypes.ARRAY_STRINGLIST_VALUES), EfaTypes.makeDayOfWeekArray(EfaTypes.ARRAY_STRINGLIST_DISPLAY),
-                IItemType.TYPE_PUBLIC, CAT_BASEDATA,
-                International.getString("Wochentag")));
-        item.setNotNull(true);
-        item.setFieldGrid(4, -1, GridBagConstraints.HORIZONTAL);
-
         v.add(item = new ItemTypeTime(BoatReservationRecord.TIMEFROM, getTimeFrom(),
                 IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("Von") + " (" +
                 International.getString("Zeit") + ")"));
         ((ItemTypeTime)item).enableSeconds(false);
         item.setNotNull(true);
         timeFrom = (ItemTypeTime)item;
-        item.setFieldSize(DATETIME_FIELDLENGTH,0);
-
+        v.add(item = new ItemTypeDate(BoatReservationRecord.DATETO, getDateTo(),
+                IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("Bis") + " (" +
+                International.getString("Tag") + ")"));
+        item.setNotNull(true);
+        ((ItemTypeDate)item).setMustBeAfter(dateFrom, true);
+        ItemTypeDate dateTo = (ItemTypeDate)item;
         v.add(item = new ItemTypeTime(BoatReservationRecord.TIMETO, getTimeTo(),
                 IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("Bis") + " (" +
                 International.getString("Zeit") + ")"));
@@ -584,10 +549,6 @@ public class BoatReservationRecord extends DataRecord {
         ((ItemTypeTime)item).setReferenceTime(DataTypeTime.time235959());
         item.setNotNull(true);
         ((ItemTypeTime)item).setMustBeAfter(dateFrom, timeFrom, dateTo, false);
-        ((ItemTypeTime)item).setIsItemOnSameRowAsPreviousItem(true);
-        item.setFieldSize(DATETIME_FIELDLENGTH,0);
-        ((ItemTypeTime)item).setLabelGrid(-1, GridBagConstraints.EAST, -1); // right-handed label looks better.
-        
         v.add(item = getGuiItemTypeStringAutoComplete(BoatReservationRecord.PERSONID, null,
                     IItemType.TYPE_PUBLIC, CAT_BASEDATA,
                     getPersistence().getProject().getPersons(false), System.currentTimeMillis(), System.currentTimeMillis(),
@@ -599,18 +560,10 @@ public class BoatReservationRecord extends DataRecord {
             ((ItemTypeStringAutoComplete)item).parseAndShowValue(getPersonName());
         }
         item.setNotNull(true);
-        // Hinter dem reserviert für gibt es noch einen Auswahlbutton, daher nur zwei Grids weit
-        item.setFieldGrid(4, -1, GridBagConstraints.HORIZONTAL);
-        item.setPadding(-1, -1, 20, 2);
-        
         v.add(item = new ItemTypeString(BoatReservationRecord.REASON, getReason(),
                 IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("Reservierungsgrund")));
-        item.setFieldGrid(4, -1, GridBagConstraints.HORIZONTAL);
-        item.setFieldSize(350, -1);
-        
         v.add(item = new ItemTypeString(BoatReservationRecord.CONTACT, getContact(),
                 IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("Telefon für Rückfragen")));
-        item.setFieldGrid(4, -1, GridBagConstraints.HORIZONTAL);
 
         // Virtual Fields hidden internal, only for list output and export/import
         v.add(item = new ItemTypeString(BoatReservationRecord.VBOAT, getBoatName(),

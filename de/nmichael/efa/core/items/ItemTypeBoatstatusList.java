@@ -45,8 +45,8 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
 
     public ItemTypeBoatstatusList(String name,
             int type, String category, String description,
-            EfaBoathouseFrame efaBoathouseFrame, boolean showFilterField, boolean showPrettyList) {
-        super(name, type, category, description, showFilterField, showPrettyList);
+            EfaBoathouseFrame efaBoathouseFrame, boolean showFilterField, boolean showTwoColumnList) {
+        super(name, type, category, description, showFilterField, showTwoColumnList);
         this.efaBoathouseFrame = efaBoathouseFrame;
     }
     
@@ -64,10 +64,27 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
         list.repaint();
     }
 
+    /**
+     * 
+     * @param v current BoatStatusRecords
+     * @param logbook logbook to look into
+     * @param todaysReservations Vector of BoatReservationRecords which are valid today. Sorted by Boat and timestamp when the reservation gets valid.
+     * @return sorted Boat list elements which can be put into the boat lists in efaBoatHouse
+     * 
+     */
+    
+    /*
+     * As there may be several hundreds of boats in a list, this method runs within the main thread of efa boathouse,
+     * and efaboathouse is often run on an raspberry pi, this method needs to be optimized for performance.
+     * 
+     * So any element which is read within a loop is put into a variable - so for instance, the efaConfig values are determined just once
+     * instead of for every single BoatStatusRecord element.
+     */
     private Vector<ItemTypeListData> sortBootsList(Vector<BoatStatusRecord> v, Logbook logbook,Vector <BoatReservationRecord> todaysReservations) {
     	try {
     	// return empty list if no data available.
     	if (v == null || v.size() == 0 || logbook == null) {
+    		return new Vector <ItemTypeListData>();
         }
 
         long now = System.currentTimeMillis();
@@ -80,6 +97,10 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
         boolean sortByAnzahl =  Daten.efaConfig.getValueEfaDirekt_sortByAnzahl();
         boolean sortByRigger = Daten.efaConfig.getValueEfaDirekt_sortByRigger();
         boolean sortByType = Daten.efaConfig.getValueEfaDirekt_sortByType();
+        
+        //Determine whether or not to show the colored icons in front of a boat
+        //which visualize which group of persons can use a boat.
+        //Colored icons get shown when there exists at least one valid person group.
         
         Hashtable<UUID, Color> groupColors = new Hashtable<UUID, Color>();
         try {
@@ -99,6 +120,7 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
             Logger.logdebug(e);
         }
         
+        // Build the list elements for the boat list.
         Vector<BoatString> bsv = new Vector<BoatString>();
         for (int i = 0; i < v.size(); i++) {
             BoatStatusRecord sr = v.get(i);
@@ -217,7 +239,11 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
                 bs.colors = colors;
                 bs.record = item;
 
-                // we only have to put the destination in the item text if we dont' have the pretty lists active.
+                // destination is only shown for boats on the water, and if efaConfig says that destination shall be shown
+                // for boats on the water list.
+
+                // we only have to put the destination in the item text if the two column layout is _in_active.
+                // if two column layout is active, the destination is put into the BoatListItem.secondaryItem right at the end of this method.
                 if (showDestination && (!this.getShowTwoColumnList())  &&
                     BoatStatusRecord.STATUS_ONTHEWATER.equals(sr.getCurrentStatus()) &&
                     sr.getEntryNo() != null && sr.getEntryNo().length() > 0) {
@@ -551,7 +577,8 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
 	        		} else {
 	            		return International.getMessage("Reserviert(r)_ab_{timestamp}", res.getTimeFrom().toString(false)).trim();
 	        		}
-	        	} else if (res.getType().equals(BoatReservationRecord.TYPE_WEEKLY) || res.getType().equals(BoatReservationRecord.TYPE_WEEKLY_LIMITED)){
+	        	} else if (res.getType().equals(BoatReservationRecord.TYPE_WEEKLY) 
+	        			  /*|| res.getType().equals(BoatReservationRecord.TYPE_WEEKLY_LIMITED) used in the future  */){
 	        		if (res.getReservationValidInMinutes()<=0) {//aktuell laufende Reservierungen? //weekly ist immer am aktuellen Tag..
 	        			return International.getMessage("Reserviert(r)_bis_{timestamp}", res.getTimeTo().toString(false)).trim();
 	        		} else {
@@ -568,7 +595,7 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
     	String showInList = bs.getShowInList();
 
     	if (showReservation && showInList.equals(BoatStatusRecord.STATUS_AVAILABLE)) {
-	    		//available list: show next reservation within 8 hours as secondary item
+	    		//available list: show next reservation today as secondary item
 	    		return getBoatReservationString(bs.getBoatId(), rTodayCache, EfaUtil.getRemainingMinutesToday(), false);
 
     	} else if (showDestination && showInList.equals(BoatStatusRecord.STATUS_ONTHEWATER) ) {

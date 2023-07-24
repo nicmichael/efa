@@ -1476,7 +1476,7 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
                     if (Logger.isTraceOn(Logger.TT_GUI, 9)) {
                         Logger.log(Logger.DEBUG, Logger.MSG_GUI_DEBUGGUI, "updateBoatLists(" + listChanged + ") - setting boatsOnTheWaterList and boatsNotAvailableList - done");
                     }
-                    Logger.log(Logger.INFO, "Aufrufzeiten: "+ strDebugTimes);
+                    Logger.log(Logger.DEBUG, Logger.MSG_GUI_DEBUGGUI, "Aufrufzeiten: "+ strDebugTimes);
                 }
             }
 

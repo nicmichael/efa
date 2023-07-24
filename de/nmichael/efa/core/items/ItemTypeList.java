@@ -290,13 +290,13 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
     }
 
     public ItemTypeList(String name,
-            int type, String category, String description, boolean showFilterField, boolean showPrettyList) {
+            int type, String category, String description, boolean showFilterField, boolean showTwoColumnList) {
         this.name = name;
         this.type = type;
         this.category = category;
         this.description = description;
         this.showFilterField = showFilterField;
-        this.showTwoColumnList= showPrettyList;
+        this.showTwoColumnList= showTwoColumnList;
         data = new DefaultListModel<ItemTypeListData>();
     }
     
