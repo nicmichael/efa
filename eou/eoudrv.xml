@@ -2,10 +2,106 @@
 <efaOnlineUpdate>
 
     <Version>
+        <VersionID>2.3.3_00</VersionID>
+        <ReleaseDate>TO.DO.2023</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa233.zip</DownloadUrl>
+        <DownloadSize></DownloadSize>
+        <Changes lang="de">
+            <ChangeItem>Neu: efa 2.3.3 erfordert mindestens Java Version 8</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.3.1_04</VersionID>
+        <ReleaseDate>22.03.2022</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa2drv.zip</DownloadUrl>
+        <DownloadSize>4440857</DownloadSize>
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Fehlendes DRV-Schluessel Zertifikat wird automatisch heruntergeladen und in Meldebestaetigungen geschrieben</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.3.1_02</VersionID>
+        <ReleaseDate>08.02.2022</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa2drv.zip</DownloadUrl>
+        <DownloadSize>4425977</DownloadSize>
+        <Changes lang="de">
+            <ChangeItem>Neu: Wettbewerbsbedingungen fuer Fahrtenabzeichen 2022 angepasst</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.3.1_01</VersionID>
+        <ReleaseDate>24.01.2022</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa2drv.zip</DownloadUrl>
+        <DownloadSize>4425516</DownloadSize>
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Anpassung der Schluesselerstellung und Signierung von Schluesseln an neue Java-Verionen</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.3.0_09</VersionID>
+        <ReleaseDate>11.04.2021</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa2drv.zip</DownloadUrl>
+        <DownloadSize>4414349</DownloadSize>
+        <Changes lang="de">
+            <ChangeItem>Change: Bedingungen fuer DRV-Fahrtenabzeichen 2021 angepasst</ChangeItem>
+            <ChangeItem>Change: Fusszeile im Anschreiben angepasst</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.3.0_08</VersionID>
+        <ReleaseDate>31.03.2021</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa2drv.zip</DownloadUrl>
+        <DownloadSize>4419005</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>New: Ausgabe von Name des Meldenden und email in Uebersicht</ChangeItem>
+            <ChangeItem>Bugfix: Kleinere Schriftgroesse bei langen Vereinsnamen um Zeilen-Umbruch zu verhindern</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.3.0_01</VersionID>
+        <ReleaseDate>18.03.2021</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa2drv.zip</DownloadUrl>
+        <DownloadSize>4418530</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Gruppenzuweisung in DRV-Fahrtenwettbewerbs-Auswertung korrigiert</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.2_55</VersionID>
+        <ReleaseDate>25.02.2021</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa2drv.zip</DownloadUrl>
+        <DownloadSize>4268669</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Gruppen 1d/2d fuer DRV-Fahrtenabzeichen hinzugefuegt</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.2_53</VersionID>
+        <ReleaseDate>14.12.2020</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa2drv.zip</DownloadUrl>
+        <DownloadSize>4268621</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Change: Abstand unter Footer fuer DRV Briefe verringert</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
         <VersionID>2.2.2_49</VersionID>
         <ReleaseDate>14.11.2020</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa2drv.zip</DownloadUrl>
-        <DownloadSize></DownloadSize>
+        <DownloadSize>4314533</DownloadSize>
 
         <Changes lang="de">
             <ChangeItem>Neu: Briefkopf/Anschreiben aktualisiert</ChangeItem>

@@ -77,16 +77,29 @@ class SynchControl {
      * @param tablename      the name of the affected table
      * @param dataKey        the datakey of the affected record
      * @param logStateChange set true to start entry with STATECHANGE rather than SYNCH
+     * @param isError        set true to log a synchronization error in the respective file.
      */
-    void logSynchMessage(String logMessage, String tablename, DataKey dataKey, boolean logStateChange) {
+    private void logSynchMessage(String logMessage, String tablename, DataKey dataKey, boolean logStateChange, boolean isError) {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String dataKeyStr = (dataKey == null) ? "" : " - " + dataKey.toString();
         String info = (logStateChange) ? "STATECHANGE " : "SYNCH ";
         String dateString = format.format(new Date()) + " INFO state, [" + tablename + dataKeyStr + "]: " + info + logMessage;
-        String path = TxRequestQueue.logFilePath;
+        String path = (isError) ? synchErrorFilePath : TxRequestQueue.logFilePath;
         // truncate log files,
         File f = new File(path);
         TextResource.writeContents(path, dateString, (f.length() <= 200000) || (!f.renameTo(new File(path + ".previous"))));
+    }
+
+    /**
+     * Write a log message to the synch log.
+     *
+     * @param logMessage     the message to be written
+     * @param tablename      the name of the affected table
+     * @param dataKey        the datakey of the affected record
+     * @param logStateChange set true to start entry with STATECHANGE rather than SYNCH
+     */
+    void logSynchMessage(String logMessage, String tablename, DataKey dataKey, boolean logStateChange) {
+        logSynchMessage(logMessage, tablename, dataKey, logStateChange, false);
     }
 
     /**
@@ -216,9 +229,11 @@ class SynchControl {
                     i++;
                 }
             } catch (Exception e) {
-                txq.logApiMessage(International
+                String errorMessage = International
                         .getMessage("Ausnahmefehler beim Versuch einen Schlüssel zu korrigieren in {Tabelle}: {Fehler}.",
-                                tx.tablename, e.getMessage()), 1);
+                                tx.tablename, e.getMessage());
+                txq.logApiMessage(errorMessage, 1);
+                logSynchMessage(errorMessage, tx.tablename, oldDr.getKey(), false, true);
             } finally {
                 efaCloudStorage.releaseGlobalLock(globalLock);
                 efaCloudStorage.setPreModifyRecordCallbackEnabled(true);
@@ -400,7 +415,7 @@ class SynchControl {
                                             "Update-Konflikt bei Datensatz in der {type}-Synchronisation. Unterschiedlich sind: {fields}",
                                             "Download", preUpdateRecordsCompareResult) +
                                             " " + International.getString("Bitte bereinige den Datensatz manuell."), tx.tablename,
-                                    localRecord.getKey(), false);
+                                    localRecord.getKey(), false, true);
 
                         // Run update. This update will use the LastModified and ChangeCount of the record to make
                         // it a true copy of the server side record.
@@ -415,10 +430,12 @@ class SynchControl {
                                         "Lokale Replikation des Datensatzes nach {modification} auf dem Server.",
                                         lastModification), tx.tablename, returnedRecord.getKey(), false);
                             } catch (EfaException e) {
-                                txq.logApiMessage(International.getMessage(
+                                String errorMessage = International.getMessage(
                                         "Ausnahmefehler bei der lokalen Modifikation eines Datensatzes in {Tabelle} ",
                                         tx.tablename) + "\n" + returnedRecord.encodeAsString() + "\n" + e.getMessage() +
-                                        "\n" + e.getStackTraceAsString(), 1);
+                                        "\n" + e.getStackTraceAsString();
+                                txq.logApiMessage(errorMessage, 1);
+                                logSynchMessage(errorMessage, tx.tablename, returnedRecord.getKey(), false, true);
                             } finally {
                                 efaCloudStorage.releaseGlobalLock(globalLock);
                             }

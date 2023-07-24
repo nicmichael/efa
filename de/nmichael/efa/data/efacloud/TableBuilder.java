@@ -30,13 +30,11 @@ public class TableBuilder {
      * efa2fieldSpecialDefinitions.
      */
     private static final HashMap<Integer, String> datatypeDefaults = new HashMap<Integer, String>();
-    private static final HashMap<Integer, Integer> datatypeSizes = new HashMap<Integer, Integer>();
-    // special definition for the longer default size of MemberIdList in efa2Groups from efa 2.3.1 onwards
-    private static final int DATA_LONG_LIST_UUID = 109;
+    private static final HashMap<Integer, Integer> datatypeMaxlen = new HashMap<Integer, Integer>();
 
     static {
         // Note to length definitions: limiting are the Logbook and Statistics tables, which hit
-        // the 65k row length limitation of MySQL. Therefore "DATA_STRING" is only 192 characters
+        // the 65k row length limitation of MySQL. Therefor "DATA_STRING" is only 192 characters
         // and DATA_LIST_STRING not more than "1480". The table statistics has then only 4.400
         // characters left. Entries are cut as soon as they reach the limit - 2 characters.
         datatypeDefaults.put(IDataAccess.DATA_BOOLEAN, "Varchar(12) NULL DEFAULT NULL"); // true, false
@@ -49,7 +47,6 @@ public class TableBuilder {
         datatypeDefaults.put(IDataAccess.DATA_LIST_INTEGER, "Varchar(192) NULL DEFAULT NULL");
         datatypeDefaults.put(IDataAccess.DATA_LIST_STRING, "Varchar(1480) NULL DEFAULT NULL");  // see above
         datatypeDefaults.put(IDataAccess.DATA_LIST_UUID, "Varchar(1024) NULL DEFAULT NULL");
-        datatypeDefaults.put(DATA_LONG_LIST_UUID, "Varchar(9300) NULL DEFAULT NULL");
         datatypeDefaults.put(IDataAccess.DATA_LONGINT, "BigInt NULL DEFAULT NULL");
         datatypeDefaults.put(IDataAccess.DATA_PASSWORDC, "Varchar(256) NULL DEFAULT NULL");
         datatypeDefaults.put(IDataAccess.DATA_PASSWORDH, "Varchar(256) NULL DEFAULT NULL");
@@ -83,7 +80,6 @@ public class TableBuilder {
         datatypeStrings.put(IDataAccess.DATA_LIST_STRING, "DATA_LIST_STRING");
         datatypeStrings.put(IDataAccess.DATA_LIST_INTEGER, "DATA_LIST_INTEGER");
         datatypeStrings.put(IDataAccess.DATA_LIST_UUID, "DATA_LIST_UUID");
-        datatypeStrings.put(DATA_LONG_LIST_UUID, "DATA_LONG_LIST_UUID");
         datatypeStrings.put(IDataAccess.DATA_VIRTUAL, "DATA_VIRTUAL");
     }
 
@@ -94,11 +90,11 @@ public class TableBuilder {
         for (Integer dtk : datatypeDefaults.keySet()) {
             String sqld = datatypeDefaults.get(dtk);
             if (sqld.indexOf('(') < 0)
-                // this applies for date, time, int bigint asf. which have no explicit size definition.
+                // this applies for date, time, int bigint asf. which have no explicit maximum length.
                 // They shall not be corrected, which is stimulated by a size 0.
-                datatypeSizes.put(dtk, 0);
+                datatypeMaxlen.put(dtk, 0);
             else
-                datatypeSizes.put(dtk, Integer.parseInt(sqld.substring(sqld.indexOf('(') + 1, sqld.indexOf(')'))));
+                datatypeMaxlen.put(dtk, Integer.parseInt(sqld.substring(sqld.indexOf('(') + 1, sqld.indexOf(')'))));
         }
     }
 
@@ -135,6 +131,7 @@ public class TableBuilder {
             "efa2boats;TYPEDESCRIPTION;DATA_TEXT;TypeDescription",   //
             "efa2boatstatus;COMMENT;DATA_TEXT;Comment",   //
             "efa2clubwork;DESCRIPTION;DATA_TEXT;Description",   //
+            "efa2groups;MEMBERIDLIST;DATA_TEXT;MemberIdList",   //
             "efa2logbook;COMMENTS;DATA_TEXT;Comments",   //
             "efa2messages;TEXT;DATA_TEXT;Text",   //
             "efa2project;DESCRIPTION;DATA_TEXT;Description",   //
@@ -150,7 +147,6 @@ public class TableBuilder {
             "efa2boatreservations;VRESERVATIONDATE;DATA_VIRTUAL;VirtualReservationDate",   //
             "efa2boatreservations;VPERSON;DATA_VIRTUAL;VirtualPerson",   //
             "efa2clubwork;WORKDATE;DATA_DATE;Date",   //
-            "efa2groups;MEMBERIDLIST;DATA_LONG_LIST_UUID;MemberIdList",   //
             "efa2persons;EXCLUDEFROMSTATISTIC;DATA_BOOLEAN;ExcludeFromStatistics",   //
             "efa2persons;EXCLUDEFROMCOMPETE;DATA_BOOLEAN;ExcludeFromCompetition",   //
             "efa2persons;EXCLUDEFROMCLUBWORK;DATA_BOOLEAN;ExcludeFromClubwork",   //
@@ -200,15 +196,23 @@ public class TableBuilder {
             "$allTables;CHANGECOUNT;DATA_LONGINT;ChangeCount",  //
             "$allTables;LASTMODIFIED;DATA_LONGINT;LastModified"};
 
-    public static final int allowedMismatchesDefault = 3;
-    // the number of different data field when updating the record server to client. To avoid deletion of records by
-    // key mismatch or other severe mistakes. Default is <= 3, not counting ChangeCount, LastModified, and LastModification.
+    public static final int allowedMismatchesDefault = 4;
+    // the number of different data fields when updating the record server to client. To avoid deletion of records by
+    // key mismatch or other severe mistakes. Default is <= 4, not counting ChangeCount, LastModified, and LastModification.
     // This here are the exceptions.
     public static final HashMap<String, Integer> allowedMismatches = new HashMap<String, Integer>();
     static {
+        allowedMismatches.put("efa2boatdamages", 8);
+        allowedMismatches.put("efa2boatreservations", 6);
+        allowedMismatches.put("efa2boats", 8);
         allowedMismatches.put("efa2boatstatus", 6);
-        allowedMismatches.put("efa2logbook", 4);
+        allowedMismatches.put("efa2crews", 0);  // All may change
         allowedMismatches.put("efa2fahrtenabzeichen", 0);  // All can change
+        allowedMismatches.put("efa2groups", 8);
+        allowedMismatches.put("efa2logbook", 8);  // includes virtual fields
+        allowedMismatches.put("efa2messages", 0);  // All may change
+        allowedMismatches.put("efa2persons", 6);
+        allowedMismatches.put("efa2statistics", 0);  // All may change
     }
     public static final String fixid_allowed = "efa2logbook efa2messages efa2boatdamages efa2boatreservations";
 
@@ -309,7 +313,10 @@ public class TableBuilder {
         // The maxLength == 0 indicates that no cutting shall apply
         if (rtf.maxLength == 0)
             return value;
-        if (value.length() >= rtf.maxLength)
+        // do not cut numbers, Ids or similar. That will create illegalArgument exceptions when reading back.
+        if (((rtf.datatypeIndex == IDataAccess.DATA_STRING) || (rtf.datatypeIndex == IDataAccess.DATA_TEXT)
+                || (rtf.datatypeIndex == IDataAccess.DATA_LIST_STRING) || (rtf.datatypeIndex == IDataAccess.DATA_VIRTUAL))
+                && (value.length() >= rtf.maxLength))
             return value.substring(0, rtf.maxLength - 4) + " ...";
         else
             return value;
@@ -324,12 +331,12 @@ public class TableBuilder {
         auditInformation.append("-------------------------------\n");
         for (String storageObjectTypeName : this.storageObjectTypes.keySet()) {
             StorageObjectTypeDefinition rtd = this.storageObjectTypes.get(storageObjectTypeName);
-            auditInformation.append("Table: ").append(storageObjectTypeName).append(" (").append(rtd.recordSize)
+            auditInformation.append("Table: ").append(storageObjectTypeName).append(" (record size appr.").append(rtd.recordSize)
                     .append(")\n");
             for (String recordFieldName : rtd.fields.keySet()) {
                 RecordFieldDefinition rfd = rtd.fields.get(recordFieldName);
-                auditInformation.append(recordFieldName).append(" (").append(datatypeStrings.get(rfd.datatypeIndex))
-                        .append(":").append(rfd.recordfieldsize).append("), ");
+                auditInformation.append("  ").append(recordFieldName).append(" (").append(datatypeStrings.get(rfd.datatypeIndex))
+                        .append(":").append(rfd.recordfieldsize).append(")\n");
             }
             auditInformation.append("\n");
         }
@@ -488,7 +495,7 @@ public class TableBuilder {
                     if (column.startsWith("t:")) {
                         tname = column.substring(2);
                         rtd = storageObjectTypes.get(tname);
-                        if (rtd == null)
+                        if ((rtd == null) && !tname.substring(0, 8).equalsIgnoreCase("efaCloud"))
                             findings.append("No local table '").append(tname)
                                     .append("'\n");
                     }
@@ -496,9 +503,12 @@ public class TableBuilder {
                         cname = column.substring(2).split("=", 2)[0];
                         RecordFieldDefinition rfd = rtd.fields.get(cname);
                         if (rfd == null) {
-                            findings.append("No local column '").append(cname)
+                            if (!cname.equalsIgnoreCase("ecrid") && !cname.equalsIgnoreCase("ecrown")
+                                    && !cname.equalsIgnoreCase("ecrhis")) {
+                                findings.append("No local column '").append(cname)
                                         .append("'").append(" in table '").append(tname)
                                         .append("'\n");
+                            }
                         } else {
                             String[] cdef = (column + "|padded").split("=", 2)[1].split("\\|");
                             // type;size;nullAllowed;default;unique;autoincrement
@@ -508,12 +518,17 @@ public class TableBuilder {
                                         .append("' - server:").append(cdef[0])
                                         .append("' - local:").append(rfd.sqlDefinition.toLowerCase(Locale.ROOT))
                                         .append("'\n");
-                            if (rfd.maxLength > (Integer.parseInt(cdef[1]) + 1))
-                                findings.append("Column size differs for '").append(cname)
-                                        .append("'").append(" in table '").append(tname)
-                                        .append("' - server:").append(cdef[1])
-                                        .append("' - local:").append(rfd.maxLength)
-                                        .append("'\n");
+                            if (rfd.maxLength > (Integer.parseInt(cdef[1]) + 1)) {
+                                int serverLength = Integer.parseInt(cdef[1]);
+                                if ((serverLength > 0) && (rfd.maxLength > 0)) {
+                                    findings.append("Local column size adjusted for '").append(cname)
+                                            .append("'").append(" in table '").append(tname)
+                                            .append("' - to server size:").append(cdef[1])
+                                            .append("' - from previous local size:").append(rfd.maxLength)
+                                            .append("'\n");
+                                    rfd.maxLength = serverLength;
+                                }
+                            }
                             if (((rfd.isUnique.length() > 0) && (cdef[4].length() == 0))
                                     || ((rfd.isUnique.length() == 0) && (cdef[4].length() > 0)))
                                 findings.append("Column unique property differs for '").append(cname)
@@ -539,9 +554,9 @@ public class TableBuilder {
     /**
      * Small inner container holding a storage object type definition to provide structure
      */
-    private static class StorageObjectTypeDefinition {
+    public static class StorageObjectTypeDefinition {
         final String storageObjectType;
-        final EfaCloudStorage persistence;
+        public EfaCloudStorage persistence;
         final boolean isProjectTable;
         boolean versionized;
         int recordSize = 0;
@@ -580,8 +595,9 @@ public class TableBuilder {
          */
         void setDatatype(int datatypeIndex) {
             this.datatypeIndex = datatypeIndex;
-            maxLength = (datatypeSizes.get(datatypeIndex) == null) ? 0 : datatypeSizes.get(datatypeIndex);
-            recordfieldsize = (datatypeIndex == IDataAccess.DATA_TEXT) ? 8 : maxLength;
+            maxLength = (datatypeMaxlen.get(datatypeIndex) == null) ? 0 : datatypeMaxlen.get(datatypeIndex);
+            // the recordfieldsize approximates the space needed in the table record to be 8 chars for text and numbers
+            recordfieldsize = ((datatypeIndex == IDataAccess.DATA_TEXT) || (maxLength == 0)) ? 8 : maxLength;
             sqlDefinition = datatypeDefaults.get(datatypeIndex);
             isDate = datatypeIndex == IDataAccess.DATA_DATE;
         }
