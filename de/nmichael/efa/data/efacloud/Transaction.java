@@ -67,8 +67,10 @@ public class Transaction {
 
     static {
         TX_RESULT_CODES.put(300, "Transaction completed");
-        TX_RESULT_CODES.put(303, "Transaction completed and data key mismatch detected");
-        TX_RESULT_CODES.put(304, "Valid synchronisation check response");  // only used for containers
+        TX_RESULT_CODES.put(301, "Container parsed. User yet to be verified"); // server side internal code
+        TX_RESULT_CODES.put(302, "API version of container not supported. Maximum API level exceeded");
+        TX_RESULT_CODES.put(303, "Transaction completed with key fixed");
+        TX_RESULT_CODES.put(304, "Transaction forbidden");  // semantic data error in valid transaction
         TX_RESULT_CODES.put(400, "XHTTPrequest Error"); // (client side generated error, javascript version only)
         TX_RESULT_CODES.put(401, "Syntax error");
         TX_RESULT_CODES.put(402, "Unknown client");
