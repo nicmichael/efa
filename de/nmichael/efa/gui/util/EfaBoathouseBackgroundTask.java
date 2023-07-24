@@ -228,7 +228,7 @@ public class EfaBoathouseBackgroundTask extends Thread {
             	// so after being woken up after some changes in the data, the list contents get updated in less than a second AFTER the data has been changed.
             	// this is fast enough for the common user.
                 try {
-                    Thread.sleep(800);
+                    Thread.sleep(600);
                 } catch (Exception ee) {
                     EfaUtil.foo();
                 }
@@ -266,7 +266,7 @@ public class EfaBoathouseBackgroundTask extends Thread {
                     // wenn unterbrochen, dann versuch nochmal, kurz zu schlafen, und arbeite dann weiter!! ;-)
                     try {
                         // see comment above in this method
-                    	Thread.sleep(800);
+                    	Thread.sleep(600);
                     } catch (Exception ee) {
                         EfaUtil.foo();
                     }
