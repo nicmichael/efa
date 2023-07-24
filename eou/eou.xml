@@ -9,16 +9,18 @@
         <Changes lang="de">
             <ChangeItem>Neu: efa 2.3.3 erfordert mindestens Java Version 8</ChangeItem>
             <ChangeItem>Neu: Bootsreservierungen (sowohl einmalige als auch wöchentliche) lassen sich jetzt nach Datum filtern</ChangeItem>
+            <ChangeItem>Neu: Eingabefelder mit Vervollständigung (z.B. Bootsname) suchen nach nach Teilbegriff</ChangeItem>
             <ChangeItem>Bugfix: efaCloud Überschreiben von Fahrten in efaCloud bei Fahrtenbuchwechsel</ChangeItem>
             <ChangeItem>Bugfix: efaCloud Synchronisationsabweichungstoleranz zu eng</ChangeItem>
             <ChangeItem>Neu: efaCloud Eigenes Logging für Synchronisationsfehler</ChangeItem>
         </Changes>
         <Changes lang="en">
             <ChangeItem>New: efa 2.3.3. requires at least Java Vesion 8</ChangeItem>
-            <ChangeItem>Neu: Boat reservations (both one-time and weekly reservations) can now be filtered by date</ChangeItem>
+            <ChangeItem>New: Boat reservations (both one-time and weekly reservations) can now be filtered by date</ChangeItem>
+            <ChangeItem>New: Autocomplete fields (e.g. boat name) filter by partial word</ChangeItem>
             <ChangeItem>Bugfix: efaCloud overwriting of sessions when switching logbook</ChangeItem>
             <ChangeItem>Bugfix: efaCloud too little tolerance for data synchronization</ChangeItem>
-            <ChangeItem>Neu: efaCloud logging of synchronization errors</ChangeItem>
+            <ChangeItem>New: efaCloud logging of synchronization errors</ChangeItem>
         </Changes>
     </Version>
 
