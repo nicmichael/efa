@@ -880,7 +880,7 @@ public class KanuEfbSyncTask extends ProgressTask {
     			// sehr wohl dokumentieren wir im Verbose Mode, dass der Bootsname unbekannt war, und die Fahrt nicht synchronisiert wurde.
     			// so hat der Admin die Möglichkeit, das Boot in die Bootsliste aufzunehmen, und die Fahrt in einem späteren Synchronisationsversuch doch noch zu synchronisieren.
     			if (verboseMode) {
-					// only log about unknown boats in verbose mode as this can happen any synchronisation
+					// only log about unknown boats with unknown members in verbose mode as this can happen any synchronisation
 					logInfo(Logger.INFO, Logger.MSG_SYNC_SYNCINFO, "  Fahrt " +  r.getQualifiedName()+ " - Bootstyp nicht gesetzt/Boot unbekannt und keine Person hat EFB-ID: " + r.getBoatAsName());
     			}
     		}
