@@ -213,43 +213,33 @@ public class BoatReservationRecord extends DataRecord {
         return s;
     }
 
-    private String getDateDescription(DataTypeDate date, String weekday, DataTypeTime time, String extension) {
+    private String getDateDescription(DataTypeDate date, String weekday, DataTypeTime time) {
         if (date == null && weekday == null) {
             return "";
         }
         return (date != null ? date.toString() : Daten.efaTypes.getValueWeekday(weekday)) +
-                (time != null ? " " + time.toString() : "") + " "+ extension;
+                (time != null ? " " + time.toString() : "");
     }
 
     public String getDateTimeFromDescription() {
         String type = getType();
         if (type != null && type.equals(TYPE_ONETIME)) {
-            return getDateDescription(getDateFrom(), null, getTimeFrom(), "");
+            return getDateDescription(getDateFrom(), null, getTimeFrom());
         }
         if (type != null && type.equals(TYPE_WEEKLY)) {
-            return getDateDescription(null, getDayOfWeek(), getTimeFrom(),"");
+            return getDateDescription(null, getDayOfWeek(), getTimeFrom());
         }
-        /* used in the future 
-        if (type != null && type.equals(TYPE_WEEKLY_LIMITED)) {
-            return getDateDescription(null, getDayOfWeek(), getTimeFrom(), "("+getDateFrom()+" - "+getDateTo()+")");
-        }
-        */
         return "";
     }
 
     public String getDateTimeToDescription() {
         String type = getType();
         if (type != null && type.equals(TYPE_ONETIME)) {
-            return getDateDescription(getDateTo(), null, getTimeTo(),"");
+            return getDateDescription(getDateTo(), null, getTimeTo());
         }
         if (type != null && type.equals(TYPE_WEEKLY)) {
-            return getDateDescription(null, getDayOfWeek(), getTimeTo(),"");
+            return getDateDescription(null, getDayOfWeek(), getTimeTo());
         }
-        /* used in the future
-        if (type != null && type.equals(TYPE_WEEKLY_LIMITED)) {
-            return getDateDescription(null, getDayOfWeek(), getTimeFrom(), "("+getDateFrom()+" - "+getDateTo()+")");
-        }        
-        */
         return "";
     }
 
