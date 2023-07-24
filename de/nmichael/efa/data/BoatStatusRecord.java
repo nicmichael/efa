@@ -201,7 +201,10 @@ public class BoatStatusRecord extends DataRecord {
         return r != null && isOnTheWaterShowNotAvailable(r.getSessionType(), r.getEndDate());
     }
 
-    /* gets the destination for the current boat depending on the logbook */
+    /**
+     * Determines the BoatStautsRecord Destination, depending  on the current logbook.
+     * @return Destination and DestinationVariant name
+     */
     public String getDestination() {
         LogbookRecord r = getLogbookRecord(); 	
         if (r==null) {

@@ -1530,9 +1530,9 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
         }
     }
 
-    /*
-     * Returns a vector that contains all reservations which take place within the next 8 hours of the current day.
-     * The list is sorted, so that the next reservations are the first items in the list.
+    /**
+     * Returns a vector that contains all reservations which take place within the current day.
+     * The list is sorted by boat and valid_in_minutes, so that the next upcoming reservations are the first items in the list.
      * This usually is a much smaller list than the total list of reservations in the db.
      * 
      * If efaConfig is set that no reservation info shall be shown in the boatlists, this methods returns an empty vector.
@@ -1543,7 +1543,7 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
      *    
      * - two lists in efaBoatHouseFrame can be configured to show reservation data (of the next reservation of the boat today)
      * - if so, obtaining the reservation info for each boat can be a matter of performance, if looked up within the whole reservation DB.
-     *   AND there are a lot of boats within efa.
+     *   AND if there are a lot of boats within efa.
      * - using this list as a cache, there is less of a performance bottleneck.
 
      * 
@@ -1566,7 +1566,7 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
 	                    boolean show = (!r.getInvisible()) &&
 	                                   (!r.getDeleted());
 	                    if (show) {
-	                        if (r.getReservationValidInMinutes(now, EfaUtil.getRemainingMinutesToday()) >= 0) { // get reservations in the next 8 hours
+	                        if (r.getReservationValidInMinutes(now, EfaUtil.getRemainingMinutesToday()) >= 0) { 
 	                        	//store the reservation 
 	                        	result.add(r);
 	                        }

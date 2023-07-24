@@ -305,6 +305,7 @@ public class BoatReservationRecord extends DataRecord {
     }
 
     /**
+     * Determine if a BoatReservationRecord is valid within the next $lookAheadMinutes from offset $now
      *
      * @param now
      * @param lookAheadMinutes
@@ -457,8 +458,6 @@ public class BoatReservationRecord extends DataRecord {
                 long resEnd   = dateTo.getTimestamp(timeTo);
                 return now > resEnd;
             }
-            
-            
         } catch (Exception e) {
             Logger.logdebug(e);
         }

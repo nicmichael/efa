@@ -36,7 +36,6 @@ public abstract class ItemTypeLabelValue extends ItemType {
     protected String optionalButtonText = "+";
     protected JButton expandButton;
     protected boolean itemOnNewRow = false;
-    protected boolean itemOnSameRowAsPreviousItem = false;
     protected int xOffset = 0;
     protected int yOffset = 0;
 
@@ -95,20 +94,6 @@ public abstract class ItemTypeLabelValue extends ItemType {
         iniDisplay();
         x += xOffset;
         y += yOffset;
-        
-        if (itemOnSameRowAsPreviousItem) {
-        	x+=2; // itemlabelvalue: hat immer zwei spalten --> um zwei erhöhen.
-        	y-=1; // reduce y to the same row as the previous element
-
-        	// add a small separator panel
-        	JLabel separator = new JLabel();
-        	separator.setText("  ");
-        	Dialog.setPreferredSize(separator, 30, fieldHeight);
-        	panel.add(separator, new GridBagConstraints(x, y, 1, 1, 0.0, 0.0,
-                    fieldGridAnchor, GridBagConstraints.NONE, 
-                    new Insets((itemOnNewRow ? 0 : padYbefore), (itemOnNewRow ? padXbefore : 0), padYafter, padXafter), 0, 0));
-        	x+=1;
-        }
         
         if (label != null) {
             panel.add(label, new GridBagConstraints(x, y, labelGridWidth, fieldGridHeight, 0.0, 0.0,
@@ -286,10 +271,6 @@ public abstract class ItemTypeLabelValue extends ItemType {
         itemOnNewRow = newRow;
     }
     
-    public void setIsItemOnSameRowAsPreviousItem(boolean sameRow) {
-    	itemOnSameRowAsPreviousItem=sameRow;
-    }
-
     public void setOffsetXY(int x, int y) {
         this.xOffset = x;
         this.yOffset = y;

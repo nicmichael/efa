@@ -210,8 +210,25 @@ public class EfaBoathouseBackgroundTask extends Thread {
                 Thread.sleep(CHECK_INTERVAL * 1000);
             } catch (Exception e) {
                 // wenn unterbrochen, dann versuch nochmal, kurz zu schlafen, und arbeite dann weiter!! ;-)
+            	// Note added by Stefan Gebers:
+            	// this exception here is thrown when the thread is interrupted, meaning: woken up to Update it's data.
+            	//
+            	// the former boat lists in efaBoatHouse main screen take some 100 msec to get an update on an raspberry pi 3.
+            	// the new two column lists take some 500-800 msec to get an update, depending on number of boats, 
+            	// reservations and boats on the water.
+            	// the old code told to sleep 100 msec here. in combination with two column lists this lead to some exceptions
+            	// in the efa.log file concerning some exceptions in the java swing code (updating jLists).
+            	// Increasing this secondary sleep to more than 600 msec resolved the problem.
+            	// 
+            	// What does sleeping 700 msec at this station mean?
+            	// we are in the efaBoathouseBackgroundTask. Due to some changes in the data (like: adding reservations, adding, editing, finishing trips)
+            	// we get woken up to force the update of efaBoathouse boat lists. 
+            	// the user CAN actually work within efaBths, as this is an background task and does not affect the responsiveness of the swing gui.
+            	// 
+            	// so after being woken up after some changes in the data, the list contents get updated in less than a second AFTER the data has been changed.
+            	// this is fast enough for the common user.
                 try {
-                    Thread.sleep(600);
+                    Thread.sleep(800);
                 } catch (Exception ee) {
                     EfaUtil.foo();
                 }
@@ -248,7 +265,8 @@ public class EfaBoathouseBackgroundTask extends Thread {
                 } catch(Exception e) {
                     // wenn unterbrochen, dann versuch nochmal, kurz zu schlafen, und arbeite dann weiter!! ;-)
                     try {
-                        Thread.sleep(600);
+                        // see comment above in this method
+                    	Thread.sleep(800);
                     } catch (Exception ee) {
                         EfaUtil.foo();
                     }
