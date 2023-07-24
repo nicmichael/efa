@@ -164,13 +164,13 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
     public static final HashMap<Integer, String> QUEUE_STATE_SYMBOL = new HashMap<Integer, String>();
 
     static {
-        QUEUE_STATE_SYMBOL.put(QUEUE_IS_STOPPED, "  \u25aa");
+        QUEUE_STATE_SYMBOL.put(QUEUE_IS_STOPPED, "  ▪");
         QUEUE_STATE_SYMBOL.put(QUEUE_IS_AUTHENTICATING, "  ?");
-        QUEUE_STATE_SYMBOL.put(QUEUE_IS_PAUSED, "  \u2551");
-        QUEUE_STATE_SYMBOL.put(QUEUE_IS_DISCONNECTED, "  \u21ce!");
-        QUEUE_STATE_SYMBOL.put(QUEUE_IS_WORKING, "  \u21d4");
-        QUEUE_STATE_SYMBOL.put(QUEUE_IS_IDLE, "  \u2714");
-        QUEUE_STATE_SYMBOL.put(QUEUE_IS_SYNCHRONIZING, " \u27f3");
+        QUEUE_STATE_SYMBOL.put(QUEUE_IS_PAUSED, "  ║");
+        QUEUE_STATE_SYMBOL.put(QUEUE_IS_DISCONNECTED, "  ⇔!");
+        QUEUE_STATE_SYMBOL.put(QUEUE_IS_WORKING, "  ⇔");
+        QUEUE_STATE_SYMBOL.put(QUEUE_IS_IDLE, "  ✔");
+        QUEUE_STATE_SYMBOL.put(QUEUE_IS_SYNCHRONIZING, " ⟳");
     }
 
     private static int txID;                  // the last used transaction ID
@@ -186,6 +186,7 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
     protected String efacloudLogDir;
     private long logLastModified;
     static String logFilePath;
+    static String synchErrorFilePath;
 
     // The response queue
     private final ArrayList<TaskManager.RequestMessage> queueResponses = new ArrayList<TaskManager.RequestMessage>();
@@ -331,6 +332,7 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
         while (System.currentTimeMillis() < lastModifiedLog) {
             settleWaitCounter++;
             try {
+                //noinspection BusyWait
                 Thread.sleep(10);
             } catch (InterruptedException ignored) {
             }
@@ -428,11 +430,8 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
         if (type < 2) {
             // truncate log files,
             File f = new File(logFilePath);
-            if ((f.length() > 200000) && (f.renameTo(new File(logFilePath + ".previous"))))
-                TextResource.writeContents(logFilePath,
-                        "[Log continued]\n" + dateString + message, false);
-            else
-                TextResource.writeContents(logFilePath, dateString + message, true);
+            TextResource.writeContents(logFilePath,
+                    dateString + message, (f.length() <= 200000) || (!f.renameTo(new File(logFilePath + ".previous"))));
         }
     }
 
@@ -462,13 +461,12 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
         // initialize log paths and cleanse files.
         SimpleDateFormat formatFull = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         logFilePath = efacloudLogDir + File.separator + "efacloud.log";
+        synchErrorFilePath = efacloudLogDir + File.separator + "synchErrors.log";
         File efaCloudLogFile = new File(logFilePath);
         logLastModified = ((logLastModified == 0) && efaCloudLogFile.exists()) ? efaCloudLogFile
                     .lastModified() : logLastModified;
-        if (efaCloudLogFile.exists())
-            //noinspection ResultOfMethodCallIgnored
-            efaCloudLogFile.renameTo(new File(logFilePath + ".previous"));
-        TextResource.writeContents(logFilePath, formatFull.format(new Date()) + " INFO state, []: LOG STARTING\n", false);
+        if (!efaCloudLogFile.exists())
+            TextResource.writeContents(logFilePath, formatFull.format(new Date()) + " INFO state, []: LOG STARTING\n", false);
     }
 
     /**
@@ -559,6 +557,9 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
     public String checkCredentials() {
         String testResponse = InternetAccessManager.getText(this.efaCloudUrl,
                 "txc=" + Transaction.createSingleNopRequestContainer(this.credentials));
+        // error messages are plain text, no base 64 encoding.
+        if (testResponse.startsWith("#ERROR:"))
+            return testResponse;
         String txContainerBase64 = testResponse.replace('-', '/').replace('*', '+').replace('_', '=').trim();
         String txContainer;
         try {
