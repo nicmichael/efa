@@ -521,18 +521,18 @@ public class Logger {
         if (logfile != null) {
             try {
                 // Archive an existing, too big logfile.
-                // This is allowed only when the current main program is EFA_BOATHOUSE.
-            	// If another efa program, e.g. EFA_CLI would rotate the logfile while EFA_BOATHOUSE is running in background,
-            	// EFA_BOATHOUSE would no longer be able to log into the former or the new logfile.
+                // This is allowed only when the current main program is EFA_BOATHOUSE or EFA_BASE to avoid conflicts
+            	// in access to efa.log file and possibly missing efa log entries.
+            	//
+            	// If another efa program, e.g. EFA_CLI would rotate the logfile while EFA_BOATHOUSE / EFA_BASE is running in background,
+            	// EFA_BOATHOUSE/EFA_BASE would no longer be able to log into the former or the new logfile.
             	//
             	// So in conclusion, a rotation of the logfile only takes place during the *startup* of efaBase or efaBths.
             	// This usually takes place at 4am, or if the programs get started manually.
             	// efaBase and efaBths cannot be run at the same time on the same machine, so there is no problem that
             	// two instances are trying to rotate the log file simultaneously.
             	//
-            	// efaCLI itself does need a running efa_boathouse oder efa_base in background to fulfill its task.
-            	// So, during the startup of efaBths or efaBase, there no efaCLI program can log something 
-            	// as efaCLI cannot connect to efaBths or efaBase.
+            	// All other efa programs (CLI, emil, ...) cannot rotate the log file any more.
             	// 
             	// This fix is not final, but it pretty much solves the problem stated in 
             	// http://forum.nmichael.de/viewtopic.php?f=15&t=1214&p=4792#p4792
