@@ -1172,7 +1172,10 @@ public class EfaConfig extends StorageObject implements IItemFactory {
                     International.getMessage("Fehlende Standard-Bootstypen für {rowing_or_canoeing} neu generieren",
                     International.getString("Kanufahren"))));
             buildTypes();
-			addParameter(kanuEfb_SyncUnknownBoats = new ItemTypeBoolean("KanuEfb_SyncUnknownBoats", false, ItemType.TYPE_PUBLIC,
+            //kanuEfb_SyncUnknownBoats is placed here, as the boat types which can be used for efb sync are
+            //built in buildTypes. So this setting does not belong into the --sync-- section of efaconfig source.
+            
+            addParameter(kanuEfb_SyncUnknownBoats = new ItemTypeBoolean("KanuEfb_SyncUnknownBoats", false, ItemType.TYPE_PUBLIC,
 					BaseTabbedDialog.makeCategory(CATEGORY_SYNC, CATEGORY_KANUEFB),
 					"Fahrten mit unbekannten Booten synchronisieren"));
 
