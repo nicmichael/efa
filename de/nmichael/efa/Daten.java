@@ -41,13 +41,13 @@ import javax.swing.plaf.ColorUIResource;
 // @i18n complete
 public class Daten {
 
-    public final static String VERSION            = "2.3.0"; // Version für die Ausgabe (z.B. 2.1.0, kann aber auch Zusätze wie "alpha" o.ä. enthalten)
-    public final static String VERSIONID          = "2.3.0_dev";   // VersionsID: Format: "X.Y.Z_MM"; final-Version z.B. 1.4.0_00; beta-Version z.B. 1.4.0_#1
-    public final static String VERSIONRELEASEDATE = "01.01.2021";  // Release Date: TT.MM.JJJJ
+    public final static String VERSION            = "2.3.3"; // Version für die Ausgabe (z.B. 2.1.0, kann aber auch Zusätze wie "alpha" o.ä. enthalten)
+    public final static String VERSIONID          = "2.3.3_dev";   // VersionsID: Format: "X.Y.Z_MM"; final-Version z.B. 1.4.0_00; beta-Version z.B. 1.4.0_#1
+    public final static String VERSIONRELEASEDATE = "22.07.2023";  // Release Date: TT.MM.JJJJ
     public final static String MAJORVERSION       = "2";
-    public final static String PROGRAMMID         = "EFA.230"; // Versions-ID für Wettbewerbsmeldungen
-    public final static String PROGRAMMID_DRV     = "EFADRV.230"; // Versions-ID für Wettbewerbsmeldungen
-    public final static String COPYRIGHTYEAR      = "21";   // aktuelles Jahr (Copyright (c) 2001-COPYRIGHTYEAR)
+    public final static String PROGRAMMID         = "EFA.233"; // Versions-ID für Wettbewerbsmeldungen
+    public final static String PROGRAMMID_DRV     = "EFADRV.233"; // Versions-ID für Wettbewerbsmeldungen
+    public final static String COPYRIGHTYEAR      = "23";   // aktuelles Jahr (Copyright (c) 2001-COPYRIGHTYEAR)
     public final static int REQUIRED_JAVA_VERSION = 8;
 
     // enable/disable development functions for next version
