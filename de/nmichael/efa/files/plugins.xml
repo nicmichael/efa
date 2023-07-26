@@ -36,12 +36,12 @@
 
     <Plugin name="mail">
         <FullName>JavaMail</FullName>
-        <Version>1.5.1</Version>
+        <Version>1.6.2</Version>
         <Copyright>Copyright (c) Oracle America, licensed under the Oracle Binary Code License Agreement for Java EE Technologies</Copyright>
         <Description lang="de">email-Versand in efa</Description>
         <Description lang="en">Sending of emails from efa</Description>
         <Files baseurl="http://efa.nmichael.de/plugins/mail/">
-            <File size="545362">javax.mail.jar</File>
+            <File size="659033">javax.mail.jar</File>
             <File size="56290">activation.jar</File>
         </Files>
     </Plugin>
