@@ -1437,7 +1437,16 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
                 	
                 	String strDebugTimes="";
                 	long start = System.currentTimeMillis();
-                	Vector <BoatReservationRecord> todaysReservations =getTodaysReservations(); 
+
+                	Vector <BoatReservationRecord> todaysReservations; 
+                	//obtain reservation info only if they shall be shown in the boatLists
+                	if (Daten.efaConfig.getValueEfaBoathouseBoatListReservationInfo()) {
+                    	todaysReservations=getTodaysReservations();
+                	} else {
+                		 todaysReservations=new Vector <BoatReservationRecord>();
+                	}
+                	
+
                 	strDebugTimes=strDebugTimes+(System.currentTimeMillis()-start);
                 	
                     if (!Daten.efaConfig.getValueEfaDirekt_listAllowToggleBoatsPersons() || toggleAvailableBoatsToBoats.isSelected()) {

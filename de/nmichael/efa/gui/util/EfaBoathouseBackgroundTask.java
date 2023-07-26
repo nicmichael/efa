@@ -336,6 +336,7 @@ public class EfaBoathouseBackgroundTask extends Thread {
             try {
                 long scn = Daten.efaConfig.data().getSCN();
                 if (scn != lastEfaConfigScn) {
+                	// This includes swing updates, so we have to use invokeLater to avoid concurrency problems
                 	SwingUtilities.invokeLater(new Runnable() {
               	      public void run() {
                       	efaBoathouseFrame.updateGuiElements();
@@ -366,7 +367,8 @@ public class EfaBoathouseBackgroundTask extends Thread {
         lastReservationStatusScn = newReservationStatusScn;
         
         if (isProjectOpen && !isLocalProject) {
-	        	SwingUtilities.invokeLater(new BthsUpdateBoatLists(listChanged,false));
+        	// This includes swing updates, so we have to use invokeLater to avoid concurrency problems
+	        SwingUtilities.invokeLater(new BthsUpdateBoatLists(listChanged,false));
             if (Logger.isTraceOn(Logger.TT_BACKGROUND, 8)) {
                 Logger.log(Logger.DEBUG, Logger.MSG_DEBUG_EFABACKGROUNDTASK,
                         "EfaBoathouseBackgroundTask: checkBoatStatus() - done for remote project");
@@ -526,10 +528,14 @@ public class EfaBoathouseBackgroundTask extends Thread {
                         "EfaBoathouseBackgroundTask: checkBoatStatus() - calling updateBoatLists("+listChanged+") ...");
             }
             if (now-lastListUpdate>10*60*1000) {
-            	// if Boathouse lists shall contain information info, they need to be updated regularily.
+            	// if Boathouse lists shall contain reservation info, they need to be updated regularly.
             	// reservation info consists of when a boat has its next reservation on the current day,
             	// and this is not computed by this background task. The lists compute this info on their own.
             	// update every 10 minutes, after the last update of the boat lists.
+            	// as boat lists compute reservations for the remaining day, and are updated every time a reservation
+            	// is added, updated, deleted, the regular update of the boatlists is neccesary at 0:00 am,  
+            	// when a new day has begun. 
+            	// however, we update every 10 minutes to be sure.
             	if (Daten.efaConfig.getValueEfaBoathouseBoatListReservationInfo()) {
             		listChanged=true;
             		}
@@ -537,13 +543,9 @@ public class EfaBoathouseBackgroundTask extends Thread {
             if (listChanged) {
             	lastListUpdate=now;
                 
-            	//calling updateBoatLists from an other task is prone to swing exceptions,
-            	//as jLists get updated and may interfere with user interaction
-            	//Update of lists should be run from AWT main thread. That's the task of invokeLater();
-            	
+            	// This includes swing updates, so we have to use invokeLater to avoid concurrency problems
             	SwingUtilities.invokeLater(new BthsUpdateBoatLists(listChanged, false));
-            	
-            	//efaBoathouseFrame.updateBoatLists(listChanged,false);            	
+
             }
 
             
@@ -591,8 +593,9 @@ public class EfaBoathouseBackgroundTask extends Thread {
             }
         }
 
+        // This includes swing updates, so we have to use invokeLater to avoid concurrency problems
     	SwingUtilities.invokeLater(new BthsSetUnreadMessages(admin, boatmaintenance));
-        //efaBoathouseFrame.setUnreadMessages(admin, boatmaintenance);
+
     }
 
     private void checkForExitOrRestart() {
@@ -718,6 +721,7 @@ public class EfaBoathouseBackgroundTask extends Thread {
                 }
             }
             if (topWindow && Daten.efaConfig.getValueEfaDirekt_immerImVordergrundBringToFront()) {
+            	// This includes swing updates, so we have to use invokeLater to avoid concurrency problems
             	SwingUtilities.invokeLater(new Runnable() {
             		public void run() {
                         efaBoathouseFrame.bringFrameToFront();
@@ -735,6 +739,7 @@ public class EfaBoathouseBackgroundTask extends Thread {
         }
         if (this.efaBoathouseFrame != null && this.efaBoathouseFrame.getFocusOwner() == this.efaBoathouseFrame) {
             // das Frame selbst hat den Fokus: Das soll nicht sein! Gib einer Liste den Fokus!
+        	// This includes swing updates, so we have to use invokeLater to avoid concurrency problems
         	SwingUtilities.invokeLater(new Runnable() {
         		public void run() {
                 	efaBoathouseFrame.boatListRequestFocus(0);
