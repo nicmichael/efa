@@ -477,7 +477,7 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
    	    				try {
    	    	   	    		String boatStatusText=bli.boatStatus.getStatusDescription(boatStatus);   	    					
    	    					boatComment=boatComment.replace(boatName, "").replace(boatStatusText,"")
-   	    							.replace(boatDestination, "").replaceAll(";", ";<br>");
+   	    							.replace(boatDestination, "").replaceAll(";", ";\n");
    	    				} catch (Exception e){
    	    					Logger.log(e);
    	    				}
@@ -486,12 +486,12 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
    	    			result=result.concat("<tr><td colspan=2>")
    	    				.concat(EfaUtil.escapeHtml(boatDestination))
    	    				.concat("</td></tr><tr><td align=\"left\" colspan=2>")
-   	    				.concat(EfaUtil.escapeHtml(boatComment))
+   	    				.concat(EfaUtil.escapeHtmlWithLinefeed(boatComment))
    	    				.concat("</td></tr>");
    	    		} else {
    		    		if (boatComment!=null) {
    		    			result=result.concat("<tr><td align=\"left\" colspan=2>")
-   	   	    				.concat(EfaUtil.escapeHtml(boatComment))
+   	   	    				.concat(EfaUtil.escapeHtmlWithLinefeed(boatComment))
    	   	    				.concat("</td></tr>");
    		    		}
    	    		}

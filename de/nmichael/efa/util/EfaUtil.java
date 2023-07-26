@@ -82,6 +82,11 @@ public class EfaUtil {
         return str;
     }
 
+    public static String escapeHtmlWithLinefeed(String str) {
+        return replaceString(escapeHtml(str),"\n","<br>");
+    }
+    
+
     public static String escapeHtmlGetString(String str) {
         if (str == null) {
             return null;
