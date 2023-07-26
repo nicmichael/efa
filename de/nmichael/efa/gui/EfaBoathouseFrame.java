@@ -27,6 +27,8 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.*;
+import javax.swing.plaf.metal.MetalLookAndFeel;
+
 import java.util.*;
 import java.io.*;
 
@@ -494,14 +496,7 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
         boatsNotAvailableList.registerItemListener(this);
         
         //Highlight for Lists
-        boatsAvailableList.setColor(Daten.efaConfig.getTableSelectionForegroundColor());
-        personsAvailableList.setColor(Daten.efaConfig.getTableSelectionForegroundColor());
-        boatsOnTheWaterList.setColor(Daten.efaConfig.getTableSelectionForegroundColor());
-        boatsNotAvailableList.setColor(Daten.efaConfig.getTableSelectionForegroundColor());
-        boatsAvailableList.setBackgroundColor(Daten.efaConfig.getTableSelectionBackgroundColor());
-        personsAvailableList.setBackgroundColor(Daten.efaConfig.getTableSelectionBackgroundColor());
-        boatsOnTheWaterList.setBackgroundColor(Daten.efaConfig.getTableSelectionBackgroundColor());
-        boatsNotAvailableList.setBackgroundColor(Daten.efaConfig.getTableSelectionBackgroundColor());        
+        iniGuiHeaderColors();        
         
         iniGuiListNames();
 
@@ -525,6 +520,28 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
         eastPanel.setLayout(new BorderLayout());
         eastPanel.add(boatsNotAvailablePanel, BorderLayout.CENTER);
     }
+
+	private void iniGuiHeaderColors() {
+		if (Daten.efaConfig.getBoathouseHeaderUseHighlightColor()) {
+			boatsAvailableList.setColor(Daten.efaConfig.getBoathouseHeaderForegroundColor());
+	        personsAvailableList.setColor(Daten.efaConfig.getBoathouseHeaderForegroundColor());
+	        boatsOnTheWaterList.setColor(Daten.efaConfig.getBoathouseHeaderForegroundColor());
+	        boatsNotAvailableList.setColor(Daten.efaConfig.getBoathouseHeaderForegroundColor());
+	        boatsAvailableList.setBackgroundColor(Daten.efaConfig.getBoathouseHeaderBackgroundColor());
+	        personsAvailableList.setBackgroundColor(Daten.efaConfig.getBoathouseHeaderBackgroundColor());
+	        boatsOnTheWaterList.setBackgroundColor(Daten.efaConfig.getBoathouseHeaderBackgroundColor());
+	        boatsNotAvailableList.setBackgroundColor(Daten.efaConfig.getBoathouseHeaderBackgroundColor());
+		} else {
+			boatsAvailableList.setColor(null);
+	        personsAvailableList.setColor(null);
+	        boatsOnTheWaterList.setColor(null);
+	        boatsNotAvailableList.setColor(null);
+	        boatsAvailableList.setBackgroundColor(null);
+	        personsAvailableList.setBackgroundColor(null);
+	        boatsOnTheWaterList.setBackgroundColor(null);
+	        boatsNotAvailableList.setBackgroundColor(null);
+		}
+	}
 
     private void iniGuiListNames() {
         boolean fkey = Daten.efaConfig.getValueEfaDirekt_showButtonHotkey();
@@ -1562,6 +1579,7 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
         
         if (Daten.efaConfig.getValueEfaBoathouseBoatListReservationInfo()) {
 	    	Long now = System.currentTimeMillis();
+	    	Long remainingMinutesToday = EfaUtil.getRemainingMinutesToday();
 	      
 	        BoatReservations boatReservationDB = (Daten.project != null ? Daten.project.getBoatReservations(false) : null);
 	        //get reservations valid within 8 hours        
@@ -1575,7 +1593,7 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
 	                    boolean show = (!r.getInvisible()) &&
 	                                   (!r.getDeleted());
 	                    if (show) {
-	                        if (r.getReservationValidInMinutes(now, EfaUtil.getRemainingMinutesToday()) >= 0) { 
+	                        if (r.getReservationValidInMinutes(now, remainingMinutesToday) >= 0) { 
 	                        	//store the reservation 
 	                        	result.add(r);
 	                        }
@@ -2443,6 +2461,7 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
             }
             updateBoatLists(true, false);
             updateGuiElements();
+            iniGuiHeaderColors();
         } finally {
             Daten.applMode = Daten.APPL_MODE_NORMAL;
         }

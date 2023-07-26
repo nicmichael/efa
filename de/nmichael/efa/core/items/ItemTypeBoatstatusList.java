@@ -846,6 +846,28 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
         }
     }
 
+    //set text color of label above boathouse lists
+    public void setColor(Color c) {
+        this.color = c;
+        if (label!=null) {
+            label.setForeground(color);
+	    }
+    }
+    
+    // set background color of label above boathouse lists, 
+    // set transparent if background is set to null
+    public void setBackgroundColor(Color c) {
+        this.backgroundColor = c;
+
+        if (label != null) {
+	        if (backgroundColor != null) {
+	        	label.setBackground(backgroundColor);
+	        	label.setOpaque(true);
+	        } else {
+	        	label.setOpaque(false);
+	        }
+        }
+    }    
 
 }
 

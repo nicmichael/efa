@@ -499,6 +499,12 @@ public class BoatReservationRecord extends DataRecord {
         v.add(item = new ItemTypeLabel("GUI_BOAT_NAME",
                 IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getMessage("Reservierung für {boat}", boatName)));
         item.setPadding(0, 0, 0, 10);
+        if (Daten.efaConfig.getBoathouseHeaderUseHighlightColor()) {
+			item.setBackgroundColor(Daten.efaConfig.getBoathouseHeaderBackgroundColor());
+			item.setColor(Daten.efaConfig.getBoathouseHeaderForegroundColor());
+	        item.setFieldGrid(2,GridBagConstraints.EAST, GridBagConstraints.BOTH);
+		}        
+        
         v.add(item = new ItemTypeRadioButtons(BoatReservationRecord.TYPE, (getType() != null && getType().length() > 0 ? getType() : TYPE_ONETIME),
                 new String[] {
                     TYPE_ONETIME,

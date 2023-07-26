@@ -170,6 +170,9 @@ public class EfaConfig extends StorageObject implements IItemFactory {
     private ItemTypeBoolean efaBoathouseOnlyEnterKnownDestinations;
     private ItemTypeBoolean efaBoathouseOnlyEnterKnownWaters;
     private ItemTypeBoolean efaBoathouseStrictUnknownPersons;
+    private ItemTypeBoolean efaBoathouseHeaderUseHighlightColor;
+    private ItemTypeColor efaBoathouseHeaderBackgroundColor;
+    private ItemTypeColor efaBoathouseHeaderForegroundColor;
     private ItemTypeBoolean efaBoathouseFilterTextfieldStandardLists;
     private ItemTypeBoolean efaBoathouseFilterTextfieldBoatsNotAvailableList;
     private ItemTypeBoolean efaBoathouseTwoColumnList;
@@ -833,6 +836,16 @@ public class EfaConfig extends StorageObject implements IItemFactory {
                     International.getMessage("Fahrtziel in der Liste {list} anzeigen",
                     International.getString("Boote auf Fahrt"))));
             // ===================== BOATHOUSE: Filter text fields ============================
+            addParameter(efaBoathouseHeaderUseHighlightColor = new ItemTypeBoolean("efaBoathouseHeaderUseHighlightColor",true,
+    			IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
+    			International.getString("Überschriften hervorheben")));            
+            addParameter(efaBoathouseHeaderBackgroundColor = new ItemTypeColor("efaBoathouseHeaderBackgroundColor", EfaUtil.getColor(tableSelectionBackgroundColor), 
+            		IItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
+            		International.getString("Überschriften Hintergrundfarbe")));
+            addParameter(efaBoathouseHeaderForegroundColor = new ItemTypeColor("efaBoathouseHeaderForegroundColor", EfaUtil.getColor(tableSelectionForegroundColor), 
+            		IItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
+            		International.getString("Überschriften Textfarbe")));
+            
             addParameter(efaBoathouseFilterTextfieldStandardLists = new ItemTypeBoolean("efaBoathouseFilterTextfieldStandardLists", true, 
             		IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
             		International.getString("Filter-Feld über Standard Listen")));
@@ -2259,6 +2272,17 @@ public class EfaConfig extends StorageObject implements IItemFactory {
     
     public Color getTableSelectionForegroundColor() {
     	return tableSelectionForegroundColor;
+    }
+    
+    public Boolean getBoathouseHeaderUseHighlightColor() {
+    	return efaBoathouseHeaderUseHighlightColor.getValue();
+    }
+    public Color getBoathouseHeaderBackgroundColor() {
+    	return efaBoathouseHeaderBackgroundColor.getColor();
+    }
+    
+    public Color getBoathouseHeaderForegroundColor() {
+    	return efaBoathouseHeaderForegroundColor.getColor();
     }
     
     public Vector<IItemType> getGuiItems() {
