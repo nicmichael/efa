@@ -489,6 +489,13 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
    	    				.concat("</td></tr>");
    	    		} else {
    		    		if (boatComment!=null) {
+   		    			String boatStatusText="";
+   		    			if (bli.boatStatus!=null) {
+   		    					boatStatusText=bli.boatStatus.getStatusDescription(boatStatus);
+   		    			}
+    					boatComment=boatComment.replace(boatName, "").replace(boatStatusText,"")
+   	    							.replaceAll(";", ";\n");
+   		    			
    		    			result=result.concat("<tr><td align=\"left\" colspan=2>")
    	   	    				.concat(EfaUtil.escapeHtmlWithLinefeed(boatComment))
    	   	    				.concat("</td></tr>");
