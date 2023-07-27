@@ -447,7 +447,6 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
    	    		//concat is the fastest way to build strings
    	    		String result = "<html><body><table border=\"0\"><tr><td align=\"left\"><b>"
    	    				.concat(EfaUtil.escapeHtml(boatName))
-   	    				.concat(boatTimeEntry)
    	    				.concat("</b></td><td align=\"right\">")
    	    				.concat(EfaUtil.escapeHtml(boatTimeEntry))
    	    				.concat("</td></tr><tr><td colspan=2><hr></td></tr>");
