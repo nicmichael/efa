@@ -9,6 +9,7 @@
         <Changes lang="de">
             <ChangeItem>Neu: efa 2.3.3 erfordert mindestens Java Version 8</ChangeItem>
             <ChangeItem>Neu: Bootsreservierungen (sowohl einmalige als auch wöchentliche) lassen sich jetzt nach Datum filtern</ChangeItem>
+  			    <ChangeItem>Neu: Kanu-EFB Synchronisation überarbeitet mit mehr Konfigurationsparametern</ChangeItem>
             <ChangeItem>Neu: Bootshaus mit zweispaltiger Listendarstellung (deaktivierbar)</ChangeItem>
             <ChangeItem>Neu: Bootshaus zeigt heutige Bootsreservierungen an (deaktivierbar)</ChangeItem>
             <ChangeItem>Neu: Bootshaus mit Tooltipps für Einträge (deaktivierbar)</ChangeItem>
@@ -27,6 +28,7 @@
         <Changes lang="en">
             <ChangeItem>New: efa 2.3.3. requires at least Java Vesion 8</ChangeItem>
             <ChangeItem>New: Boat reservations (both one-time and weekly reservations) can now be filtered by date</ChangeItem>
+            <Changeitem>New: Kanu-EFB synchonisation refactored, can be configured in more detail</Changeitem>
             <ChangeItem>New: Boathouse shows two-column lists (can be disabled)</ChangeItem>
             <ChangeItem>New: Boathouse shows today's reservations for available boats(can be disabled)</ChangeItem>
             <ChangeItem>New: Boathouse shows tooltips for items (can be disabled)</ChangeItem>

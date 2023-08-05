@@ -951,7 +951,7 @@ public class EfaMenuButton {
                 insufficientRights(admin, action);
                 return false;
             }
-            KanuEfbSyncTask syncTask = new KanuEfbSyncTask(logbook, admin);
+            KanuEfbSyncTask syncTask = new KanuEfbSyncTask(logbook, admin, true);//always verbose mode when running sync in GUI
             ProgressDialog progressDialog = (parentFrame != null ?
                     new ProgressDialog(parentFrame, International.onlyFor("Mit Kanu-eFB synchronisieren", "de"), syncTask, false) :
                     new ProgressDialog(parentDialog, International.onlyFor("Mit Kanu-eFB synchronisieren", "de"), syncTask, false) );
