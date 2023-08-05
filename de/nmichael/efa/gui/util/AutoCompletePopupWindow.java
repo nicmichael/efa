@@ -114,7 +114,7 @@ public class AutoCompletePopupWindow extends JWindow {
             autoCompleteLists.put(list, data);
             autoCompleteSCN.put(list, new Long(list.getSCN()));
         }
-        this.list.setListData(data);
+        this.list.setListData(list.getData());
         return data.length;
     }
 
@@ -168,6 +168,15 @@ public class AutoCompletePopupWindow extends JWindow {
         }
     }
 
+    /*
+     * Returns the currently selected entry in the popup window.
+     * Needed for filtered autocomplete lists.
+     */
+
+    public  String getSelectedEintrag() {
+    	return (String)list.getSelectedValue();
+    }
+    
     private void listEntrySelected(MouseEvent e) {
         if (showingAt != null) {
             try {
