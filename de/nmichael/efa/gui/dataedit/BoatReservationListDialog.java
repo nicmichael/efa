@@ -15,6 +15,7 @@ import de.nmichael.efa.core.config.AdminRecord;
 import de.nmichael.efa.core.items.*;
 import de.nmichael.efa.data.*;
 import de.nmichael.efa.data.storage.*;
+import de.nmichael.efa.data.types.DataTypeDate;
 import de.nmichael.efa.gui.SimpleInputDialog;
 import de.nmichael.efa.gui.util.AutoCompleteList;
 import de.nmichael.efa.util.*;
@@ -29,6 +30,7 @@ import javax.swing.*;
 public class BoatReservationListDialog extends DataListDialog {
 
     boolean allowNewReservationsWeekly = true;
+	protected ItemTypeBoolean showTodaysReservationsOnly;
 
     public BoatReservationListDialog(Frame parent, AdminRecord admin) {
         super(parent, International.getString("Bootsreservierungen"), Daten.project.getBoatReservations(false), 0, admin);
@@ -101,6 +103,9 @@ public class BoatReservationListDialog extends DataListDialog {
             actionType = new int[] { };
         }
         this.allowNewReservationsWeekly = allowNewReservationsWeekly;
+        
+		//From and to columns should be wider than default
+		this.minColumnWidths = new int[] {150,120,120,120,12};   
     }
 
 
@@ -179,4 +184,47 @@ public class BoatReservationListDialog extends DataListDialog {
 		//show only matching items by default in BoatDamageListDialog 
 		table.setIsFilterSet(true);
 	}
+	
+    protected void iniControlPanel() {
+    	// we want to put an additional element after the control panel
+    	super.iniControlPanel();
+    	this.iniBoatReservationListFilter();
+    }
+	
+	private void iniBoatReservationListFilter() {
+		JPanel myControlPanel= new JPanel();
+    	
+		showTodaysReservationsOnly = new ItemTypeBoolean("SHOW_TODAYS_RESERVATIONS_ONLY",
+                false,
+                IItemType.TYPE_PUBLIC, "", International.getString("nur heutige Reservierungen anzeigen"));
+		showTodaysReservationsOnly.setPadding(0, 0, 0, 0);
+		showTodaysReservationsOnly.displayOnGui(this, myControlPanel, 0, 0);
+		showTodaysReservationsOnly.registerItemListener(this);
+        mainPanel.add(myControlPanel, BorderLayout.NORTH);
+	}
+	
+    public void itemListenerAction(IItemType itemType, AWTEvent event) {
+    	
+    	// handle our special filter for today's reservations, else use default item handler
+    	if (itemType.equals(showTodaysReservationsOnly)) {
+    		
+    		 if (event.getID() == ActionEvent.ACTION_PERFORMED) {
+    			 showTodaysReservationsOnly.getValueFromGui();
+    			 if (showTodaysReservationsOnly.getValue()) {
+    				 table.getSearchField().setValue(DataTypeDate.today().toString());
+    				 table.getFilterBySearch().setValue(true);
+    				 table.updateData();
+    				 table.showValue();
+    			 } else {
+    				 table.getSearchField().setValue("");
+    				 table.getFilterBySearch().setValue(true);
+    				 table.updateData();
+    				 table.showValue();
+    			 }
+    		 }
+    		
+    	} else {
+    		super.itemListenerAction(itemType, event);
+    	}
+    }	
 }

@@ -571,7 +571,7 @@ public class ItemTypeDataRecordTable extends ItemTypeTable implements IItemListe
         tablePanel.repaint();
     }
 
-    protected void updateData() {
+    public void updateData() {
         if (persistence == null) {
             return;
         }
@@ -723,5 +723,13 @@ public class ItemTypeDataRecordTable extends ItemTypeTable implements IItemListe
     	filterBySearch.setValue(value);
     	updateFilter();
     	updateData();
+    }
+    
+    public ItemTypeString getSearchField(){
+    	return searchField;
+    };
+    
+    public ItemTypeBoolean getFilterBySearch() {
+    	return filterBySearch;
     }
 }
