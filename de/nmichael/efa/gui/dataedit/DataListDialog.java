@@ -10,6 +10,7 @@
 
 package de.nmichael.efa.gui.dataedit;
 
+import de.nmichael.efa.Daten;
 import de.nmichael.efa.core.config.AdminRecord;
 import de.nmichael.efa.gui.*;
 import de.nmichael.efa.util.*;
@@ -212,6 +213,12 @@ public abstract class DataListDialog extends BaseDialog implements IItemListener
             filterName.setHorizontalAlignment(SwingConstants.CENTER);
             mainTablePanel.add(filterName, BorderLayout.NORTH);
             mainTablePanel.setBorder(new EmptyBorder(10,0,0,0));
+            
+    		if (Daten.efaConfig.getBoathouseHeaderUseHighlightColor()) {
+    			filterName.setBackground(Daten.efaConfig.getBoathouseHeaderBackgroundColor());
+    			filterName.setForeground(Daten.efaConfig.getBoathouseHeaderForegroundColor());
+    			filterName.setOpaque(true);
+    		}
         }
         
         // Instanciates the table variable with the specific type which is needed. 

@@ -87,6 +87,12 @@ public class SimpleOptionInputDialog extends SimpleInputDialog implements IItemL
             });
             buttonPanel.add(button);
             buttonActions.put(button, optionButtonAction[i]);
+            
+            // choose the last button in the list with OPTION_OK as default button 
+            if (optionButtonAction[i]==OPTION_OK) {
+            	this.getRootPane().setDefaultButton(button);
+            }
+            
             if (optionButtonIcons != null && optionButtonIcons.length > i &&
                 optionButtonIcons[i] != null) {
                 button.setIcon(getIcon(optionButtonIcons[i]));

@@ -52,7 +52,9 @@ public class SimpleInputDialog extends BaseDialog {
     }
 
     protected void iniDialog() throws Exception {
-        KEYACTION_ENTER = addKeyAction("ENTER");
+   		//better than addKeyAction("ENTER") as the default button is handled earlier
+    	//and provides better user experience
+    	this.getRootPane().setDefaultButton(closeButton);
 
         // create GUI items
         mainPanel.setLayout(new GridBagLayout());

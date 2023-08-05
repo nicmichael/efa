@@ -10,14 +10,34 @@
 
 package de.nmichael.efa.data;
 
-import de.nmichael.efa.data.storage.*;
-import de.nmichael.efa.data.types.*;
-import de.nmichael.efa.core.items.*;
-import de.nmichael.efa.core.config.*;
-import de.nmichael.efa.gui.util.*;
-import de.nmichael.efa.util.*;
-import de.nmichael.efa.*;
-import java.util.*;
+import java.awt.GridBagConstraints;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.UUID;
+import java.util.Vector;
+
+import de.nmichael.efa.Daten;
+import de.nmichael.efa.core.config.AdminRecord;
+import de.nmichael.efa.core.config.EfaTypes;
+import de.nmichael.efa.core.items.IItemType;
+import de.nmichael.efa.core.items.ItemTypeDate;
+import de.nmichael.efa.core.items.ItemTypeLabel;
+import de.nmichael.efa.core.items.ItemTypeRadioButtons;
+import de.nmichael.efa.core.items.ItemTypeString;
+import de.nmichael.efa.core.items.ItemTypeStringAutoComplete;
+import de.nmichael.efa.core.items.ItemTypeStringList;
+import de.nmichael.efa.core.items.ItemTypeTime;
+import de.nmichael.efa.data.storage.DataKey;
+import de.nmichael.efa.data.storage.DataRecord;
+import de.nmichael.efa.data.storage.IDataAccess;
+import de.nmichael.efa.data.storage.MetaData;
+import de.nmichael.efa.data.types.DataTypeDate;
+import de.nmichael.efa.data.types.DataTypeTime;
+import de.nmichael.efa.gui.util.TableItem;
+import de.nmichael.efa.gui.util.TableItemHeader;
+import de.nmichael.efa.util.EfaUtil;
+import de.nmichael.efa.util.International;
+import de.nmichael.efa.util.Logger;
 
 // @i18n complete
 
@@ -275,6 +295,7 @@ public class BoatReservationRecord extends DataRecord {
     }
 
     /**
+     * Determine if a BoatReservationRecord is valid within the next $lookAheadMinutes from offset $now
      *
      * @param now
      * @param lookAheadMinutes
@@ -360,6 +381,62 @@ public class BoatReservationRecord extends DataRecord {
         return -1;
     }
 
+    
+    /**
+    * Determines the milliseconds it takes until the reservation is valid.
+    * 0 for actual ongoing reservations; >0 for reservations which become valid in the future.
+    *
+    * @return milliseconds until this reservation has it's next occurrency.
+    */
+   public long getReservationValidInMinutes() {
+       try {
+    	   
+    	   long now = System.currentTimeMillis();
+    	   
+           DataTypeDate dateFrom = null;
+           DataTypeDate dateTo = null;
+           DataTypeTime timeFrom = null;
+           DataTypeTime timeTo = null;
+           if (this.getType().equals(TYPE_ONETIME)) {
+               dateFrom = this.getDateFrom();
+               dateTo   = this.getDateTo();
+               timeFrom = this.getTimeFrom();
+               timeTo   = this.getTimeTo();
+           }
+           if (this.getType().equals(TYPE_WEEKLY)) {
+               GregorianCalendar cal = new GregorianCalendar();
+               cal.setTimeInMillis(now);
+               int this_weekday = cal.get(Calendar.DAY_OF_WEEK);
+               int reservation_weekday = EfaUtil.getCalendarWeekDayFromEfaWeekDay(this.getDayOfWeek());
+               int daysDifference = (reservation_weekday-this_weekday);
+               if (daysDifference <0) {//reservierungstag liegt vorher
+            	   daysDifference=daysDifference+7; //einfach 7 Tage draufzählen - dann sind das die Anzahl der Tage bis zum nächsten Auftreten
+               }
+               dateFrom = new DataTypeDate(now);
+               dateFrom.addDays(daysDifference); // suche das nächste Auftreten 
+               dateTo   = new DataTypeDate(now);
+               dateTo.addDays(daysDifference);
+               timeFrom = this.getTimeFrom();
+               timeTo   = this.getTimeTo();
+           }
+           long resStart = dateFrom.getTimestamp(timeFrom);
+           long resEnd   = dateTo.getTimestamp(timeTo);
+
+           // ist die vorliegende Reservierung jetzt gültig
+           if (now >= resStart && now <= resEnd) {
+               return 0;
+           } else {
+        	   return (resStart-now)/(60 * 1000); // anzahl der Minuten, bis die Reservierung aktiv wird
+           }
+           
+       } catch (Exception e) {
+           Logger.logdebug(e);
+       }
+       return -1;
+   }
+    
+
+    
     public boolean isObsolete(long now) {
         try {
             if (this.getType().equals(TYPE_WEEKLY)) {
@@ -422,6 +499,12 @@ public class BoatReservationRecord extends DataRecord {
         v.add(item = new ItemTypeLabel("GUI_BOAT_NAME",
                 IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getMessage("Reservierung für {boat}", boatName)));
         item.setPadding(0, 0, 0, 10);
+        if (Daten.efaConfig.getBoathouseHeaderUseHighlightColor()) {
+			item.setBackgroundColor(Daten.efaConfig.getBoathouseHeaderBackgroundColor());
+			item.setColor(Daten.efaConfig.getBoathouseHeaderForegroundColor());
+	        item.setFieldGrid(2,GridBagConstraints.EAST, GridBagConstraints.BOTH);
+		}        
+        
         v.add(item = new ItemTypeRadioButtons(BoatReservationRecord.TYPE, (getType() != null && getType().length() > 0 ? getType() : TYPE_ONETIME),
                 new String[] {
                     TYPE_ONETIME,
