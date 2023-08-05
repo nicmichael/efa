@@ -94,6 +94,7 @@ public abstract class ItemTypeLabelValue extends ItemType {
         iniDisplay();
         x += xOffset;
         y += yOffset;
+        
         if (label != null) {
             panel.add(label, new GridBagConstraints(x, y, labelGridWidth, fieldGridHeight, 0.0, 0.0,
                     labelGridAnchor, labelGridFill, 
@@ -104,6 +105,7 @@ public abstract class ItemTypeLabelValue extends ItemType {
             panel.add(expandButton, new GridBagConstraints(x, y, gridWidth, fieldGridHeight, 0.0, 0.0,
                     labelGridAnchor, labelGridFill, new Insets(padYbefore, padXbefore, padYafter, 0), 0, 0));
         }
+
         if (itemOnNewRow) {
             y++;
         } else {
@@ -115,6 +117,7 @@ public abstract class ItemTypeLabelValue extends ItemType {
         if (!isEnabled) {
             setEnabled(isEnabled);
         }
+        
         return (itemOnNewRow ? 2 : 1);
     }
 
@@ -267,7 +270,7 @@ public abstract class ItemTypeLabelValue extends ItemType {
     public void setItemOnNewRow(boolean newRow) {
         itemOnNewRow = newRow;
     }
-
+    
     public void setOffsetXY(int x, int y) {
         this.xOffset = x;
         this.yOffset = y;
