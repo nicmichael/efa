@@ -10,17 +10,23 @@
             <ChangeItem>Neu: efa 2.3.3 erfordert mindestens Java Version 8</ChangeItem>
             <ChangeItem>Neu: Bootsreservierungen (sowohl einmalige als auch wöchentliche) lassen sich jetzt nach Datum filtern</ChangeItem>
             <ChangeItem>Neu: Eingabefelder mit Vervollständigung (z.B. Bootsname) suchen nach nach Teilbegriff</ChangeItem>
+            <ChangeItem>Neu: Bootsreservierungen lassen sich per Checkbox auf den heutigen Tag filtern</ChangeItem>
+            <ChangeItem>Neu: efaBths: Gelber Hintergrund für aktive/gefüllte Filter-Felder in Bootslisten, regelmäßiges Zurücksetzen der Filter</ChangeItem>
             <ChangeItem>Bugfix: efaCloud Überschreiben von Fahrten in efaCloud bei Fahrtenbuchwechsel</ChangeItem>
             <ChangeItem>Bugfix: efaCloud Synchronisationsabweichungstoleranz zu eng</ChangeItem>
             <ChangeItem>Neu: efaCloud Eigenes Logging für Synchronisationsfehler</ChangeItem>
+            <ChangeItem>Bugfix: plugin.xml verweist auf korrekte JavaMail-Version 1.6.2</ChangeItem>
         </Changes>
         <Changes lang="en">
             <ChangeItem>New: efa 2.3.3. requires at least Java Vesion 8</ChangeItem>
             <ChangeItem>New: Boat reservations (both one-time and weekly reservations) can now be filtered by date</ChangeItem>
+            <ChangeItem>New: Boat reservations can be filtered for today's reservations only (new checkbox)</ChangeItem>            
             <ChangeItem>New: Autocomplete fields (e.g. boat name) filter by partial word</ChangeItem>
+            <ChangeItem>New: efaBths: Yellow background for active/non-empty filter fields in boat lists. Filter fields get cleared in fixed intervals.</ChangeItem>
             <ChangeItem>Bugfix: efaCloud overwriting of sessions when switching logbook</ChangeItem>
             <ChangeItem>Bugfix: efaCloud too little tolerance for data synchronization</ChangeItem>
             <ChangeItem>New: efaCloud logging of synchronization errors</ChangeItem>
+            <ChangeItem>Bugfix: plugin.xml now correctly reports current version 1.6.2 of JavaMail</ChangeItem>
         </Changes>
     </Version>
 
