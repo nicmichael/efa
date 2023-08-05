@@ -15,6 +15,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.Image;
@@ -42,17 +43,20 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.ToolTipManager;
+import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.border.Border;
-import javax.swing.border.EmptyBorder;
-import de.nmichael.efa.Daten;
+
+import de.nmichael.efa.Daten;	
 import de.nmichael.efa.gui.BaseDialog;
 import de.nmichael.efa.gui.util.EfaMouseListener;
 import de.nmichael.efa.util.Dialog;
+import de.nmichael.efa.util.EfaUtil;
+import de.nmichael.efa.util.Logger;
 import de.nmichael.efa.util.Mnemonics;
 
 public class ItemTypeList extends ItemType implements ActionListener, DocumentListener, KeyListener {
@@ -71,7 +75,7 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
     int iconHeight = 0;
 
     protected static final String LIST_SECTION_STRING = "------";
-    private static final String STR_DESTINATION_DELIMITER=     	"     -> ";
+    protected static final long FILTER_RESET_INTERVAL=90000l; // 1.5 minutes
     //Spacings for pretty rendering
     private static final int SPACING_BOATNAME_SECONDPART  = 60; //60 pixels
 	  private static final int HORZ_SINGLE_BORDER=5;
@@ -798,8 +802,6 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
 
     }
 
-    
-    
     public Object getSelectedValue() {
         try {
             if (list == null || list.isSelectionEmpty()) {
@@ -936,32 +938,6 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
         } //if showFilterTextField
 
     }
-    
-    private void selectFirstMatchingElement() {
-    	int index=1; //start with item 1 as item 0 is always "<other boat>" or "<other person>"
-		DefaultListModel <ItemTypeListData> theData= (DefaultListModel)list.getModel();
-    	  // check whether we should really select this item
-
-		if (filterTextField.getText().trim().length()==0){
-			index=0;
-		} else { 
-			while (index >= 0 && index < theData.size() && (theData.get(index).separator)) {
-	            index += 1;
-	        }
-		}
-		if (index>=theData.size()) {
-        	//no element could be found which is not a separator and not "<other boat>" or "<other person>"
-        	//so we select the first element nonetheless
-        	index=0;
-        }
-
-        if (index >= 0 && index < theData.size()) {
-            list.setSelectedIndex(index);
-            Rectangle rect = list.getCellBounds(index, (index + 15 >= theData.size() ? theData.size() - 1 : index + 15));
-            list.scrollRectToVisible(rect);
-        }
-
-    }    
     
     public void keyPressed(KeyEvent e) {
        	updateLastFilterChange();   	
