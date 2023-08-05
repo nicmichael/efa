@@ -10,12 +10,81 @@
 
 package de.nmichael.efa.gui;
 
-import de.nmichael.efa.*;
+import java.awt.AWTEvent;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.WindowEvent;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.Stack;
+import java.util.UUID;
+import java.util.Vector;
+
+import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JMenuBar;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.SwingConstants;
+import javax.swing.WindowConstants;
+import javax.swing.border.EmptyBorder;
+
+import de.nmichael.efa.Daten;
 import de.nmichael.efa.core.CrontabThread;
+import de.nmichael.efa.core.config.AdminRecord;
+import de.nmichael.efa.core.config.Admins;
+import de.nmichael.efa.core.items.IItemListener;
+import de.nmichael.efa.core.items.IItemType;
+import de.nmichael.efa.core.items.ItemTypeBoatstatusList;
+import de.nmichael.efa.core.items.ItemTypeBoolean;
+import de.nmichael.efa.core.items.ItemTypeConfigButton;
+import de.nmichael.efa.core.items.ItemTypeList;
+import de.nmichael.efa.data.BoatDamageRecord;
+import de.nmichael.efa.data.BoatDamages;
+import de.nmichael.efa.data.BoatRecord;
+import de.nmichael.efa.data.BoatReservationRecord;
+import de.nmichael.efa.data.BoatReservations;
+import de.nmichael.efa.data.BoatStatus;
+import de.nmichael.efa.data.BoatStatusRecord;
+import de.nmichael.efa.data.Clubwork;
+import de.nmichael.efa.data.Logbook;
+import de.nmichael.efa.data.LogbookRecord;
+import de.nmichael.efa.data.MessageRecord;
+import de.nmichael.efa.data.Persons;
+import de.nmichael.efa.data.Project;
 import de.nmichael.efa.data.efacloud.TxRequestQueue;
-import de.nmichael.efa.gui.util.*;
-import de.nmichael.efa.gui.widgets.*;
-import de.nmichael.efa.util.*;
+import de.nmichael.efa.data.storage.DataRecord;
+import de.nmichael.efa.data.storage.IDataAccess;
+import de.nmichael.efa.data.types.DataTypeDate;
+import de.nmichael.efa.data.types.DataTypeTime;
+import de.nmichael.efa.gui.dataedit.BoatDamageEditDialog;
+import de.nmichael.efa.gui.dataedit.BoatReservationListDialog;
+import de.nmichael.efa.gui.dataedit.ClubworkListDialog;
+import de.nmichael.efa.gui.dataedit.MessageEditDialog;
+import de.nmichael.efa.gui.dataedit.StatisticsListDialog;
+import de.nmichael.efa.gui.util.EfaBoathouseBackgroundTask;
+import de.nmichael.efa.gui.util.EfaMenuButton;
+import de.nmichael.efa.gui.util.EfaMouseListener;
+import de.nmichael.efa.gui.widgets.ClockMiniWidget;
+import de.nmichael.efa.gui.widgets.IWidget;
+import de.nmichael.efa.gui.widgets.NewsMiniWidget;
+import de.nmichael.efa.gui.widgets.Widget;
 import de.nmichael.efa.util.Dialog;
 import de.nmichael.efa.core.config.*;
 import de.nmichael.efa.core.items.*;
@@ -28,9 +97,14 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.plaf.metal.MetalLookAndFeel;
-
 import java.util.*;
 import java.io.*;
+import de.nmichael.efa.util.EfaUtil;
+import de.nmichael.efa.util.Help;
+import de.nmichael.efa.util.International;
+import de.nmichael.efa.util.LogString;
+import de.nmichael.efa.util.Logger;
+import de.nmichael.efa.util.Mnemonics;
 
 public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
 
@@ -874,6 +948,9 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
     // i == 2 - boats on the water
     // i == 3 - boats not available
     public void boatListRequestFocus(int i) {
+    	
+    	clearListFilterAfterInterval();
+    	
         if (i == 0) {
             if (boatsAvailableList != null && boatsAvailableList.getSelectedIndex() >= 0) {
                 boatsAvailableList.requestFocus();
@@ -901,6 +978,18 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
             boatsNotAvailableList.requestFocus();
         }
     }
+
+    // Clears filter text of the main lists on efaBoatHouseFrame, if filter text fields
+    // are visible. The interval of 2 minutes is calculated within the lists themselves.
+    // also, the lists filter text field gets cleared if they get the focus and the last
+    // change within the filter is older than the time interval.
+    public void clearListFilterAfterInterval() {
+    	boatsAvailableList.clearFilterText();
+    	personsAvailableList.clearFilterText();
+    	boatsOnTheWaterList.clearFilterText();
+    	boatsNotAvailableList.clearFilterText();
+    }
+
 
     void alive() {
         lastUserInteraction = System.currentTimeMillis();

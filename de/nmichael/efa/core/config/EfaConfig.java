@@ -132,6 +132,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
     private ItemTypeBoolean postfixPersonsWithClubName;
     private ItemTypeBoolean allowSessionsWithoutDistance;
     private ItemTypeBoolean popupComplete;
+    private ItemTypeBoolean popupContainsMode;
     private ItemTypeStringList nameFormat;
     private ItemTypeBoolean correctMisspelledNames;
     private ItemTypeBoolean skipUhrzeit;
@@ -618,6 +619,9 @@ public class EfaConfig extends StorageObject implements IItemFactory {
             addParameter(popupComplete = new ItemTypeBoolean("AutoCompleteListShow", true,
                     IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
                     International.getString("Beim Vervollständigen Popup-Liste anzeigen")));
+            addParameter(popupContainsMode= new ItemTypeBoolean("AutoCompleteContainsMode", true,
+            		IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
+            		International.getString("Popup-Liste nach Teilbegriff durchsuchen (statt nach Wortanfang)")));               
             addParameter(fensterZentriert = new ItemTypeBoolean("WindowCentered", false,
                     IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
                     International.getString("Alle Fenster in Bildschirmmitte zentrieren")));
@@ -1478,7 +1482,11 @@ public class EfaConfig extends StorageObject implements IItemFactory {
     public boolean getValuePopupComplete() {
         return popupComplete.getValue();
     }
-
+    
+    public boolean getValuePopupContainsMode() {
+    	return popupContainsMode.getValue();
+    }
+    
     public String getValueNameFormat() {
         return nameFormat.getValue();
     }

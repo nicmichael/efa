@@ -56,6 +56,7 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
             BoatListItem item = new BoatListItem();
             item.text = other;
             vdata.add(0, new ItemTypeListData(other, null, null, item, false, -1));//tooltip can be set to null as this function is only called but updateBoatLists for <anderes boot>
+            this.other_item_text=other;
         }
         clearIncrementalSearch();
         list.setSelectedIndex(-1);
@@ -636,6 +637,7 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
         Vector<ItemTypeListData> vdata = sortMemberList(v);
         if (other != null) {
             vdata.add(0, new ItemTypeListData(other, other, null, null, false, -1));
+            this.other_item_text=other;
         }
         clearIncrementalSearch();
         list.setSelectedIndex(-1);

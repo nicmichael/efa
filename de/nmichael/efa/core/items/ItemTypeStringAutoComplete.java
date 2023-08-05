@@ -10,20 +10,66 @@
 
 package de.nmichael.efa.core.items;
 
-import de.nmichael.efa.*;
-import de.nmichael.efa.data.LogbookRecord;
-import de.nmichael.efa.data.types.DataTypeDate;
-import de.nmichael.efa.data.types.DataTypeTime;
-import de.nmichael.efa.gui.SimpleOptionInputDialog;
-import de.nmichael.efa.util.*;
-import de.nmichael.efa.util.Dialog;
-import de.nmichael.efa.gui.util.*;
-import de.nmichael.efa.gui.util.AutoCompletePopupWindow;
-import java.util.*;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
+import java.awt.Color;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.FocusEvent;
+import java.awt.event.KeyEvent;
+import java.util.Collections;
+import java.util.Vector;
 
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
+import de.nmichael.efa.Daten;
+import de.nmichael.efa.data.LogbookRecord;
+import de.nmichael.efa.gui.SimpleOptionInputDialog;
+import de.nmichael.efa.gui.util.AutoCompleteList;
+import de.nmichael.efa.gui.util.AutoCompletePopupWindow;
+import de.nmichael.efa.gui.util.AutoCompletePopupWindowCallback;
+import de.nmichael.efa.util.Dialog;
+import de.nmichael.efa.util.EfaUtil;
+import de.nmichael.efa.util.International;
+import de.nmichael.efa.util.LogString;
+import de.nmichael.efa.util.Logger;
+
+/*
+ * Input field for Strings, auto-completing using a AutocompleteList/AutoCompletePopupWindow 
+ * 
+ * Via EfaConfig user can set which style is applied in AutoComplete String items.
+ * 
+ * Old-Fashioned AutoComplete style
+ * - user enters some text. this is regarded as a prefix of the desired entry.
+ * - when an item is found which applies to this prefix (case-insensitive), the item is presented in the text field.
+ *   The selected text of the text field selects that part which is NOT the text the user entered.
+ *   So it is possible to distinguish between text entered by user and text autocompleted by the system.
+ * - User interaction
+ * 		- KEY_DOWN	select another item within the dropdownlist (next item). may or may not apply to the prefix entered by the user.
+ * 		- KEY_UP	select another item within the dropdownlist (previous item). may or may not apply to the prefix entered by the user.
+ *        user can scroll endlessly through the list with up and down keys, as KEY_DOWN selects the first element in the dropdown list,  
+ *        if the last element of the list is currently selected. KEY_UP works likewise
+ * 		- KEY_ENTER Selects the current entry and proceeds to the step where the system calculates wether the text
+ *        entered by the user matches one item in the dropdownlist exactly.
+ *      - KEY_ESC closes the dropdownlist
+ * 
+ * Filtered_List style
+ * - user enters some text. this text is regarded as a filter which is applied to all entries in the dropdown list.
+ * - dropdown list opens automatically when typing text, displaying only matching items.
+ * - user MUST use ENTER key to select the desired entry. 
+ * - there is no auto completion by the system.
+ * - User interaction
+ * 		- KEY_DOWN	Select another item within the dropdownlist (next item). Item must apply to the filter entered by the user.
+ *	   	- KEY_UP	Select another item within the dropdownlist (previous item). Item must apply to the filter entered by the user.
+ *      	user can scroll endlessly through the filtered list with up and down keys, as KEY_DOWN selects the first element 
+ *      	in the dropdown list, if the last element of the list is currently selected. KEY_UP works likewise
+ * 		- KEY_ENTER Selects the current entry of the dropdown list and proceeds to the step where the system calculates wether the text
+ *        entered by the user matches one item in the dropdown list exactly.
+ *      - KEY_ESC closes the dropdownlist.
+ *       
+ */
 public class ItemTypeStringAutoComplete extends ItemTypeString implements AutoCompletePopupWindowCallback {
 
     private enum Mode {
@@ -95,9 +141,17 @@ public class ItemTypeStringAutoComplete extends ItemTypeString implements AutoCo
             });
         }
         super.iniDisplay();
+        
         ((JTextField)field).addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(KeyEvent e) { autoComplete(e); }
         });
+
+        ((JTextField)field).addKeyListener(new java.awt.event.KeyAdapter() {
+        	//needed for dialogs where some button is the default button and reacts to ENTER.
+        	//and if the autocomplete list is defined as filtered list.
+        	public void keyPressed(KeyEvent e) { 
+            	if ((e!=null) && e.getKeyCode()==KeyEvent.VK_ENTER && Daten.efaConfig.getValuePopupContainsMode()) {autoComplete(e);}}
+        });   
     }
 
     public int displayOnGui(Window dlg, JPanel panel, int x, int y) {
@@ -242,7 +296,17 @@ public class ItemTypeStringAutoComplete extends ItemTypeString implements AutoCo
     }
 
     private void autoComplete(KeyEvent e) {
-        if (field == null) {
+
+    	//Check if contains filtering mode is wanted.
+    	//this is the most efficient place to switch to the new method
+    	if (Daten.efaConfig.getValuePopupContainsMode()) {
+    		handleFilteredList(e);
+    		return;
+    	}
+
+    	//else, use classic prefix search mode
+    	
+    	if (field == null) {
             return;
         }
         JTextField field = (JTextField)this.field;
@@ -494,6 +558,27 @@ public class ItemTypeStringAutoComplete extends ItemTypeString implements AutoCo
             int radius = (name.length() < 6 ? name.length() / 2 : 3);
             neighbours = list.getNeighbours(name, radius, (isCheckPermutations ? 6 : 0));
         }
+        
+        if (Daten.efaConfig.getValuePopupContainsMode()) {
+        	//if the autocomplete list shall support full text search, so should the spell checking
+        	//it is a quite common mistake that the user enters some characters into the field,
+        	//selects an item and presses TAB (which leads to a focusLost event, and the selected item is not activated)
+        	//so all elements *containing* the entered value should be added.
+
+        	if (list.getExact(name)==null) {
+        		//no exact match --> possibly misspelled	
+
+	        	if (neighbours==null) {
+	        		neighbours=new Vector<String>();
+	        	}
+	        	list.setFilterText(name);
+	        	neighbours.addAll(list.getDataVisibleFiltered());
+	        	neighbours.remove(name);
+	        	Collections.sort(neighbours);
+	        	list.setFilterText(null);
+        	}
+        }
+        
         if (neighbours != null && neighbours.size() > 0) {
             ItemTypeList item = new ItemTypeList("NAME", IItemType.TYPE_PUBLIC, "",
                     LogString.itemIsUnknown(name, International.getString("Name")) + "\n" +
@@ -524,6 +609,148 @@ public class ItemTypeStringAutoComplete extends ItemTypeString implements AutoCo
                     this.parseAndShowValue(suggestedName);
                 }
             }
+        }
+    }
+    
+    private void handleFilteredList(KeyEvent e) {
+
+    	if (field == null) {
+            return;
+        }
+        JTextField field = (JTextField)this.field;
+
+        AutoCompleteList list = getAutoCompleteList();
+        if (list == null) {
+            setButtonColor(null);
+            return;
+        } else {
+        	list.update();
+        	list.setFilterText(field.getText().trim());
+        }
+
+        if (e != null && e.getKeyCode() == -23) {
+            return; // dieses Key-Event wurde von AutoCompletePopupWindow generiert
+        }
+
+        if (field.getText().trim().length() == 0) {
+            setButtonColor(null);
+        }
+
+        Mode mode = Mode.none; // 0
+        if (e == null || (EfaUtil.isRealChar(e) && e.getKeyCode() != KeyEvent.VK_ENTER) || e.getKeyCode() == KeyEvent.VK_DOWN) {
+            mode = Mode.normal; // 1
+        } else if (e.getKeyCode() == KeyEvent.VK_UP) {
+            mode = Mode.up; // 2
+        } else if (e.getKeyCode() == KeyEvent.VK_DELETE || e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
+            mode = Mode.delete; // 3
+        } else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+            mode = Mode.enter; // 4
+        } else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            mode = Mode.escape; // 5
+        }
+
+        if (e == null || mode == Mode.enter || mode == Mode.escape) {
+        	field.setText(field.getText().trim());
+        }
+        boolean matching = false;
+
+        String searchFor=field.getText().toLowerCase();
+        String complete="";
+
+        if (mode == Mode.normal || ((mode == Mode.enter || mode == Mode.escape || mode == Mode.none))) {
+
+
+
+            if (e != null && e.getKeyCode() == KeyEvent.VK_DOWN) {
+                complete = list.getNext(searchFor);
+                if (complete == null) {
+                    complete = list.getFirst(searchFor);
+                }
+
+            } else if (e != null && e.getKeyCode() == KeyEvent.VK_UP){
+            	setButtonColor(Color.RED);
+                complete = list.getPrev(searchFor);
+                if (complete == null) {
+                    complete = list.getLast(searchFor);
+                }
+            } else {
+                if ((e != null) && e.getKeyCode() != KeyEvent.VK_DOWN) {
+                    complete = list.getFirst(searchFor); // Taste gedrückt --> OK, Wortanfang genügt
+                }                	
+            }
+
+            if (e != null && (mode != Mode.normal && (e.getKeyCode() == KeyEvent.VK_ENTER) && AutoCompletePopupWindow.isShowingAt(field))) { // nur bei wirklichen Eingaben
+              	complete = AutoCompletePopupWindow.getWindow().getSelectedEintrag();
+            	if (complete!=null && !complete.isEmpty()) {field.setText(complete);}
+                matching = true;
+            }
+
+            if (withPopup && popupComplete && e != null && mode != Mode.none) {
+            	AutoCompletePopupWindow.showAndSelect(field, list, (complete != null ? complete : ""), null);
+    	       }
+        }
+
+        if (mode == Mode.up) {
+            if (withPopup && popupComplete && AutoCompletePopupWindow.isShowingAt(field)) {
+                complete = list.getPrev(searchFor);
+            } else {
+                complete = list.getPrev(searchFor);
+            }
+
+            if (complete == null) {
+                complete = list.getLast(searchFor); 
+            }
+            if (withPopup && popupComplete) {
+                AutoCompletePopupWindow.showAndSelect(field, list, (complete != null ? complete : ""), null);
+            }
+        }
+
+
+       if (mode == Mode.delete) {
+            if (withPopup && popupComplete && e != null && mode != Mode.none) {
+            	complete = list.getFirst(field.getText());
+                AutoCompletePopupWindow.showAndSelect(field, list, (complete != null ? complete : field.getText()), null);
+            }
+        }
+
+       matching = (list.getExact(field.getText())!=null);
+
+
+        // in case of versionized data, make sure it also valid
+        boolean valid = true;
+        if (matching && validAtDateItem != null) {
+            long t = LogbookRecord.getValidAtTimestamp(validAtDateItem.getDate(),
+                    (validAtTimeItem != null ? validAtTimeItem.getTime() : null));
+            valid = autoCompleteList.isValidAt(field.getText(), t);
+            }
+        if (!valid) {
+           matching = false;
+        } else {
+            valid = true;
+        }
+
+        if (matching) {
+            setButtonColor( Color.green );
+        } else {
+            setButtonColor( Color.orange);
+        }
+
+        if (mode == Mode.enter) {
+            field.select(-1, -1);
+            field.setCaretPosition(field.getText().length());
+            if (withPopup && popupComplete) {
+                AutoCompletePopupWindow.hideWindow();
+            }
+        }
+
+        if (mode == Mode.escape) {
+            if (withPopup && popupComplete) {
+                AutoCompletePopupWindow.hideWindow();
+            }
+        }
+
+        if (field.getText().length() == 0) {
+            setButtonColor(null);
         }
     }
 
