@@ -171,8 +171,14 @@ public class EfaConfig extends StorageObject implements IItemFactory {
     private ItemTypeBoolean efaBoathouseOnlyEnterKnownDestinations;
     private ItemTypeBoolean efaBoathouseOnlyEnterKnownWaters;
     private ItemTypeBoolean efaBoathouseStrictUnknownPersons;
+    private ItemTypeBoolean efaBoathouseHeaderUseHighlightColor;
+    private ItemTypeColor efaBoathouseHeaderBackgroundColor;
+    private ItemTypeColor efaBoathouseHeaderForegroundColor;
     private ItemTypeBoolean efaBoathouseFilterTextfieldStandardLists;
     private ItemTypeBoolean efaBoathouseFilterTextfieldBoatsNotAvailableList;
+    private ItemTypeBoolean efaBoathouseTwoColumnList;
+    private ItemTypeBoolean efaBoathouseExtdToolTips;
+    private ItemTypeBoolean efaBoathouseBoatListWithReservationInfo;
     private ItemTypeString efaBoathouseNonAllowedUnknownPersonNames;
     private ItemTypeBoolean efaDirekt_eintragHideUnnecessaryInputFields;
     private ItemTypeInteger efaDirekt_plusMinutenAbfahrt;
@@ -314,6 +320,9 @@ public class EfaConfig extends StorageObject implements IItemFactory {
     private Vector<IWidget> widgets;
     private ItemTypeItemList crontab;
 
+    private Color tableSelectionBackgroundColor = new Color(75,134,193);
+    private Color tableSelectionForegroundColor = Color.WHITE;
+    
     // private internal data
     private HashMap<String,IItemType> configValues; // always snychronize on this object!!
     private Vector<String> configValueNames;
@@ -831,12 +840,32 @@ public class EfaConfig extends StorageObject implements IItemFactory {
                     International.getMessage("Fahrtziel in der Liste {list} anzeigen",
                     International.getString("Boote auf Fahrt"))));
             // ===================== BOATHOUSE: Filter text fields ============================
+            addParameter(efaBoathouseHeaderUseHighlightColor = new ItemTypeBoolean("efaBoathouseHeaderUseHighlightColor",true,
+    			IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
+    			International.getString("Überschriften hervorheben")));            
+            addParameter(efaBoathouseHeaderBackgroundColor = new ItemTypeColor("efaBoathouseHeaderBackgroundColor", EfaUtil.getColor(tableSelectionBackgroundColor), 
+            		IItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
+            		International.getString("Überschriften Hintergrundfarbe")));
+            addParameter(efaBoathouseHeaderForegroundColor = new ItemTypeColor("efaBoathouseHeaderForegroundColor", EfaUtil.getColor(tableSelectionForegroundColor), 
+            		IItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
+            		International.getString("Überschriften Textfarbe")));
+            
             addParameter(efaBoathouseFilterTextfieldStandardLists = new ItemTypeBoolean("efaBoathouseFilterTextfieldStandardLists", true, 
             		IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
             		International.getString("Filter-Feld über Standard Listen")));
             addParameter(efaBoathouseFilterTextfieldBoatsNotAvailableList = new ItemTypeBoolean("efaBoathouseFilterTextfieldBoatsNotAvailableList", false, 
             		IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
             		International.getString("Filter-Feld über Liste nicht verfügbarer Boote")));
+            addParameter(efaBoathouseTwoColumnList= new ItemTypeBoolean("efaBoathouseTwoColumnList", true, 
+            		IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
+            		International.getString("Bootshaus-Listen mit zwei Spalten darstellen")));
+			addParameter(efaBoathouseExtdToolTips = new ItemTypeBoolean("efaBoathouseExtdToolTips", true,
+					IItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
+					International.getString("Bootshaus-Listen mit Tooltips")));            
+			addParameter(efaBoathouseBoatListWithReservationInfo = new ItemTypeBoolean("efaBoathouseBoatListWithReservationInfo", true,
+					IItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
+					International.getString("Bootshaus-Listen mit Reservierungsdaten")));            
+			
             addParameter(efaDirekt_sortByAnzahl = new ItemTypeBoolean("BoatListSortBySeats", true,
                     IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
                     International.getString("sortiere Boote nach Anzahl der Bootsplätze")));
@@ -1862,7 +1891,19 @@ public class EfaConfig extends StorageObject implements IItemFactory {
         return efaBoathouseFilterTextfieldBoatsNotAvailableList.getValue();
     }
     
-    public boolean getValueEfaDirekt_showUhr() {
+    public boolean getValueEfaBoathouseTwoColumnList() {
+    	return efaBoathouseTwoColumnList.getValue();
+    }
+
+	public boolean getValueEfaBoathouseExtdToolTips() {
+		return efaBoathouseExtdToolTips.getValue();
+	}
+	
+	public boolean getValueEfaBoathouseBoatListReservationInfo(){
+		return efaBoathouseBoatListWithReservationInfo.getValue();
+	}
+	
+	public boolean getValueEfaDirekt_showUhr() {
         return efaDirekt_showUhr.getValue();
     }
 
@@ -2233,6 +2274,25 @@ public class EfaConfig extends StorageObject implements IItemFactory {
         }
     }
 
+    public Color getTableSelectionBackgroundColor() {
+    	return tableSelectionBackgroundColor;
+    }
+    
+    public Color getTableSelectionForegroundColor() {
+    	return tableSelectionForegroundColor;
+    }
+    
+    public Boolean getBoathouseHeaderUseHighlightColor() {
+    	return efaBoathouseHeaderUseHighlightColor.getValue();
+    }
+    public Color getBoathouseHeaderBackgroundColor() {
+    	return efaBoathouseHeaderBackgroundColor.getColor();
+    }
+    
+    public Color getBoathouseHeaderForegroundColor() {
+    	return efaBoathouseHeaderForegroundColor.getColor();
+    }
+    
     public Vector<IItemType> getGuiItems() {
         Vector<IItemType> items = new Vector<IItemType>();
         for (int i=0; i<configValueNames.size(); i++) {

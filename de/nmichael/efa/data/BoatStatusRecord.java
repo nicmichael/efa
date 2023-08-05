@@ -18,6 +18,8 @@ import de.nmichael.efa.data.types.*;
 import de.nmichael.efa.core.items.*;
 import de.nmichael.efa.gui.util.*;
 import de.nmichael.efa.util.*;
+
+import java.awt.GridBagConstraints;
 import java.util.*;
 
 // @i18n complete
@@ -201,6 +203,19 @@ public class BoatStatusRecord extends DataRecord {
         return r != null && isOnTheWaterShowNotAvailable(r.getSessionType(), r.getEndDate());
     }
 
+    /**
+     * Determines the BoatStautsRecord Destination, depending  on the current logbook.
+     * @return Destination and DestinationVariant name
+     */
+    public String getDestination() {
+        LogbookRecord r = getLogbookRecord(); 	
+        if (r==null) {
+        	return "";
+        } else {
+        	return r.getDestinationAndVariantName();
+        }
+    }    
+    
     public void setOnlyInBoathouseId(int boathouseId) {
         setString(ONLYINBOATHOUSEID, (boathouseId < 0 ? null : Integer.toString(boathouseId)));
     }
@@ -307,6 +322,12 @@ public class BoatStatusRecord extends DataRecord {
                 IItemType.TYPE_PUBLIC, CAT_STATUS, International.getMessage("Bootsstatus für {boat}", getBoatNameAsString(System.currentTimeMillis()))));
         item.setPadding(0, 0, 0, 10);
 
+        if (Daten.efaConfig.getBoathouseHeaderUseHighlightColor()) {
+			item.setBackgroundColor(Daten.efaConfig.getBoathouseHeaderBackgroundColor());
+			item.setColor(Daten.efaConfig.getBoathouseHeaderForegroundColor());
+	        item.setFieldGrid(2,GridBagConstraints.EAST, GridBagConstraints.BOTH);
+		}
+        
         v.add(item = new ItemTypeString(BoatStatusRecord.BOATTEXT, getBoatText(),
                 IItemType.TYPE_EXPERT, CAT_STATUS,
                 International.getString("Bootsname")));
