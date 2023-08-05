@@ -22,6 +22,7 @@
             <ChangeItem>Bugfix: efaCloud Synchronisationsabweichungstoleranz zu eng</ChangeItem>
             <ChangeItem>Neu: efaCloud Eigenes Logging für Synchronisationsfehler</ChangeItem>
             <ChangeItem>Bugfix: plugin.xml verweist auf korrekte JavaMail-Version 1.6.2</ChangeItem>
+            <ChangeItem>Bugfix: Französische Übersetzung hat keine Fehler mehr bei Texten mit Apostrophen</ChangeItem>
         </Changes>
         <Changes lang="en">
             <ChangeItem>New: efa 2.3.3. requires at least Java Vesion 8</ChangeItem>
@@ -39,6 +40,7 @@
             <ChangeItem>Bugfix: efaCloud too little tolerance for data synchronization</ChangeItem>
             <ChangeItem>New: efaCloud logging of synchronization errors</ChangeItem>
             <ChangeItem>Bugfix: plugin.xml now correctly reports current version 1.6.2 of JavaMail</ChangeItem>
+            <ChangeItem>Bugfix: Fixed errors in french locale concerning apostrophes.</ChangeItem>
         </Changes>
     </Version>
 
