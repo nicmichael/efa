@@ -51,6 +51,12 @@ public class BoatReservationEditDialog extends UnversionizedDataEditDialog imple
         itemListenerAction(itemType, null);
     }
 
+    /*
+     * set the visibility of several date/time fields depending of the type of the reservation
+     * ONETIME: FROM_DATE, TO_DATE, FROM_TIME, TO_TIME
+     * WEEKLY: WEEKDAY, FROM_TIME, TO_TIME
+     * WEEKLY_LIMITED: WEEKDAY, FROM_DATE, TO DATE, FROM_TIME,TO_TIME
+     */
     public void itemListenerAction(IItemType item, AWTEvent event) {
         if (item != null && item.getName().equals(BoatReservationRecord.TYPE)) {
             String type = item.getValueFromField();
@@ -59,13 +65,16 @@ public class BoatReservationEditDialog extends UnversionizedDataEditDialog imple
             }
             for (IItemType it : allGuiItems) {
                 if (it.getName().equals(BoatReservationRecord.DAYOFWEEK)) {
-                    it.setVisible(type.equals(BoatReservationRecord.TYPE_WEEKLY));
+                    it.setVisible(type.equals(BoatReservationRecord.TYPE_WEEKLY) ||
+                    		type.equals(BoatReservationRecord.TYPE_WEEKLY_LIMITED));
                 }
                 if (it.getName().equals(BoatReservationRecord.DATEFROM)) {
-                    it.setVisible(type.equals(BoatReservationRecord.TYPE_ONETIME));
+                    it.setVisible(type.equals(BoatReservationRecord.TYPE_ONETIME) ||
+                    		type.equals(BoatReservationRecord.TYPE_WEEKLY_LIMITED));
                 }
                 if (it.getName().equals(BoatReservationRecord.DATETO)) {
-                    it.setVisible(type.equals(BoatReservationRecord.TYPE_ONETIME));
+                    it.setVisible(type.equals(BoatReservationRecord.TYPE_ONETIME) ||
+                    		type.equals(BoatReservationRecord.TYPE_WEEKLY_LIMITED));
                 }
             }
         }
@@ -74,7 +83,8 @@ public class BoatReservationEditDialog extends UnversionizedDataEditDialog imple
     private void setAllowWeeklyReservation(boolean allowWeeklyReservation) throws Exception {
         if (!allowWeeklyReservation) {
             if (!newRecord && dataRecord != null &&
-                    BoatReservationRecord.TYPE_WEEKLY.equals(((BoatReservationRecord)dataRecord).getType())) {
+                    (BoatReservationRecord.TYPE_WEEKLY.equals(((BoatReservationRecord)dataRecord).getType()) ||
+                            BoatReservationRecord.TYPE_WEEKLY_LIMITED.equals(((BoatReservationRecord)dataRecord).getType()))) {
                 throw new Exception(International.getString("Diese Reservierung kann nicht bearbeitet werden."));
             }
             for (IItemType it : allGuiItems) {

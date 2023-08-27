@@ -20,6 +20,37 @@ import de.nmichael.efa.util.*;
 
 // @i18n complete
 
+/*
+ * A DataRecord represents an record of a specific type in a database.
+ * The structure of the record is defined in the respective subclasses.
+ * 
+ * Also, a DataRecord knows how its data can be displayed within a gui:
+ * 
+ * Presentation in DataListDialog (and descendants): Showing all records
+ * ---------------------
+ * - getGuiTableHeader() - returns all visible columns for this record
+ * - getGuiTableItems() - returns all records to be shown
+ * - getGuiTableAggregations() - returns an extra sum table shown below the actual records.
+ * 						this is used for clubwork, if a filter is set - the additional table shows the aggregation of hours
+ * 
+ * Presentation in DataEditDialog (and descendants): Showing and editing a single record 
+ * ---------------------
+ * - getGuiItems - get all Fields (visible and invisible) to be shown on a DataEditDialog.
+ *   This method provides all informations:
+ *   - which fields to show and in which order (first come first)
+ *   - which fields shall be shown in which category (categories are rendered into tabs, if there are more than one category for the fields)
+ *   - SWING rendering hints like GridBagLayout, field lengths, paddings between fields, field colours
+ *   - if some of the fields shall only be visible on certain conditions, this is usually done by an event handler in the corresponding DataEditDialog
+ *     (sample @see BoatReservationEditDialog)
+ *   
+ *   Also @see ItemTypeLabelValue for further information
+ *   
+ * Presentation in lookup lists (like boats, persons, ...)
+ * ---------------------
+ * - getGuiItemTypeStringAutoComplete() gets a single record in a representation for an auto complete list item
+ *  
+ */
+
 public abstract class DataRecord implements Cloneable, Comparable {
 
     public static final String ENCODING_RECORD = "Record";
@@ -953,6 +984,9 @@ public abstract class DataRecord implements Cloneable, Comparable {
         return items.toArray(new IItemType[0]);
     }
 
+    /*
+     * get the data from the GUI items and store them in the current record
+     */   
     public void saveGuiItems(Vector<IItemType> items) {
         for(IItemType item : items) {
             String name = item.getName();

@@ -51,7 +51,12 @@ public class ItemTypeRadioButtons extends ItemTypeLabelValue {
         }
         for (int i=0; displayList != null && i<displayList.length; i++) {
             JRadioButton b = new JRadioButton();
-            b.setText(displayList[i]);
+            if (Mnemonics.containsMnemonics(displayList[i])) {
+                Mnemonics.setButton(getParentDialog(), b, displayList[i]);
+            } else {
+                b.setText(displayList[i]);
+            }
+
             group.add(b);
             groupPanel.add(b, new GridBagConstraints(i, 0, 1, 1, 0.0, 0.0,
                     GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, (i>0 ? 10 : 0), 0, 0), 0, 0));
