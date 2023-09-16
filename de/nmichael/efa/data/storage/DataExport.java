@@ -17,6 +17,7 @@ import java.io.OutputStreamWriter;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.text.SimpleDateFormat;
 import java.util.Hashtable;
 import java.util.Locale;
 import java.util.Vector;
@@ -78,10 +79,27 @@ public class DataExport {
 
     	if (this.csvLocale!=null) {  //if a locale is defined, get the formatters for float and date
     		this.csvDecimalFormat= new DecimalFormat("#.##",DecimalFormatSymbols.getInstance(csvLocale));
-    		this.csvDateFormat = DateFormat.getDateInstance(DateFormat.SHORT,csvLocale);
+    		this.csvDateFormat = getFourDigitShortLocaleDateFormat();
     	}  
     }
 
+    private DateFormat getFourDigitShortLocaleDateFormat() {
+    	DateFormat result = DateFormat.getDateInstance(DateFormat.SHORT,csvLocale);
+
+    	// now force csvDateFormat to have a four-digit year, everything else messes up data import
+		// as data import interprets two digit years (01.01.80) as something within 21st century (01.01.2080)
+
+    	try {
+	    	SimpleDateFormat resultSDF = (SimpleDateFormat) result;
+	    	String adaptedLocalizedDatePattern = resultSDF.toPattern().replaceAll("y+", "yyyy");
+	    	resultSDF.applyPattern(adaptedLocalizedDatePattern);
+	    	return resultSDF;
+    	} catch (Exception e) {
+    		// if an error occurs with SimpleDateFormat conversion, return standard localized Date format
+    		return result;
+    	}
+    }
+    
     public int runExport() {
         int count = 0;
         try {
