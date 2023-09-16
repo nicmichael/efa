@@ -585,7 +585,7 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
 	            		return International.getMessage("Reserviert(r)_ab_{timestamp}", res.getTimeFrom().toString(false)).trim();
 	        		}
 	        	} else if (res.getType().equals(BoatReservationRecord.TYPE_WEEKLY) 
-	        			  /*|| res.getType().equals(BoatReservationRecord.TYPE_WEEKLY_LIMITED) used in the future  */){
+	        			  || res.getType().equals(BoatReservationRecord.TYPE_WEEKLY_LIMITED)){
 	        		if (res.getReservationValidInMinutes()<=0) {//aktuell laufende Reservierungen? //weekly ist immer am aktuellen Tag..
 	        			return International.getMessage("Reserviert(r)_bis_{timestamp}", res.getTimeTo().toString(false)).trim();
 	        		} else {
