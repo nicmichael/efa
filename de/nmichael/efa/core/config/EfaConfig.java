@@ -8,7 +8,6 @@ package de.nmichael.efa.core.config;
 import de.nmichael.efa.core.EfaSec;
 import de.nmichael.efa.Daten;
 import de.nmichael.efa.core.items.*;
-import de.nmichael.efa.data.BoatRecord;
 import de.nmichael.efa.data.MessageRecord;
 import de.nmichael.efa.data.storage.*;
 import de.nmichael.efa.data.types.*;
@@ -101,6 +100,10 @@ public class EfaConfig extends StorageObject implements IItemFactory {
         "c:\\Program Files\\Adobe\\Reader 9.0\\Reader\\AcroRd32.exe"
     };
 
+    public static final String WEEKLY_RESERVATION_CONFLICT_IGNORE="WEEKLY_RESERVATION_CONFLICT_IGNORE";
+    public static final String WEEKLY_RESERVATION_CONFLICT_STRICT="WEEKLY_RESERVATION_CONFLICT_STRICT";
+    public static final String WEEKLY_RESERVATION_CONFLICT_PRIORITIZE_WEEKLY="WEEKLY_RESERVATION_CONFLICT_PRIORITIZE_WEEKLY";
+    
     // private configuration data
     private ItemTypeString lastProjectEfaBase;
     private ItemTypeString lastProjectEfaBoathouse;
@@ -126,12 +129,14 @@ public class EfaConfig extends StorageObject implements IItemFactory {
     private ItemTypeBoolean showObmann;
     private ItemTypeBoolean autoObmann;
     private ItemTypeStringList defaultObmann;
+    private ItemTypeStringList weeklyReservationConflictBehaviour;
     private ItemTypeBoolean showDestinationInfoForInput;
     private ItemTypeBoolean additionalWatersInput;
     private ItemTypeBoolean prefixDestinationWithWaters;
     private ItemTypeBoolean postfixPersonsWithClubName;
     private ItemTypeBoolean allowSessionsWithoutDistance;
     private ItemTypeBoolean popupComplete;
+    private ItemTypeBoolean popupContainsMode;
     private ItemTypeStringList nameFormat;
     private ItemTypeBoolean correctMisspelledNames;
     private ItemTypeBoolean skipUhrzeit;
@@ -170,8 +175,14 @@ public class EfaConfig extends StorageObject implements IItemFactory {
     private ItemTypeBoolean efaBoathouseOnlyEnterKnownDestinations;
     private ItemTypeBoolean efaBoathouseOnlyEnterKnownWaters;
     private ItemTypeBoolean efaBoathouseStrictUnknownPersons;
+    private ItemTypeBoolean efaBoathouseHeaderUseHighlightColor;
+    private ItemTypeColor efaBoathouseHeaderBackgroundColor;
+    private ItemTypeColor efaBoathouseHeaderForegroundColor;
     private ItemTypeBoolean efaBoathouseFilterTextfieldStandardLists;
     private ItemTypeBoolean efaBoathouseFilterTextfieldBoatsNotAvailableList;
+    private ItemTypeBoolean efaBoathouseTwoColumnList;
+    private ItemTypeBoolean efaBoathouseExtdToolTips;
+    private ItemTypeBoolean efaBoathouseBoatListWithReservationInfo;
     private ItemTypeString efaBoathouseNonAllowedUnknownPersonNames;
     private ItemTypeBoolean efaDirekt_eintragHideUnnecessaryInputFields;
     private ItemTypeInteger efaDirekt_plusMinutenAbfahrt;
@@ -290,7 +301,11 @@ public class EfaConfig extends StorageObject implements IItemFactory {
     private ItemTypeHashtable<String> typesStatus;
     private ItemTypeString kanuEfb_urlLogin;
     private ItemTypeString kanuEfb_urlRequest;
+    private ItemTypeDate kanuEfb_SyncTripsAfterDate;
+    private ItemTypeBoolean kanuEfb_Fullsync;    
     private ItemTypeMultiSelectList<String> kanuEfb_boatTypes;
+	private ItemTypeBoolean kanuEfb_SyncUnknownBoats;
+    private ItemTypeBoolean kanuEfb_TidyXML;
     private ItemTypeBoolean dataPreModifyRecordCallbackEnabled;
     private ItemTypeBoolean dataAuditCorrectErrors;
     private ItemTypeLong dataFileSaveInterval;
@@ -313,6 +328,9 @@ public class EfaConfig extends StorageObject implements IItemFactory {
     private Vector<IWidget> widgets;
     private ItemTypeItemList crontab;
 
+    private Color tableSelectionBackgroundColor = new Color(75,134,193);
+    private Color tableSelectionForegroundColor = Color.WHITE;
+    
     // private internal data
     private HashMap<String,IItemType> configValues; // always snychronize on this object!!
     private Vector<String> configValueNames;
@@ -400,8 +418,22 @@ public class EfaConfig extends StorageObject implements IItemFactory {
     public boolean updateValue(String name, String value) {
         try {
             EfaConfigRecord r = (EfaConfigRecord)data().get(EfaConfigRecord.getKey(name));
-            r.setValue(value);
-            data().update(r);
+            
+            //There may be a setting which is not yet present in efaconfigrecord.
+            //Then we add this value, instead of updating it.
+            //needed for listbox-based config values like efa->efb sync boat types.
+
+            if ((r == null) ) {
+            	// for some reason, configuration values starting with "_" are not to be saved in efa configuration files. So we skip those entries.
+            	if (!name.startsWith("_")) {
+            		addValue(name, value);
+            	}
+            } else {
+            	r.setValue(value);
+            	data().update(r);
+            }
+
+
             return true;
         } catch(Exception e) {
             return false;
@@ -534,6 +566,13 @@ public class EfaConfig extends StorageObject implements IItemFactory {
                     makeObmannArray(STRINGLIST_VALUES), makeObmannArray(STRINGLIST_DISPLAY),
                     IItemType.TYPE_PUBLIC,BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_INPUT),
                     International.getString("Standard-Obmann für ungesteuerte Boote")));
+            addParameter(weeklyReservationConflictBehaviour = new ItemTypeStringList("weeklyReservationBehaviour", WEEKLY_RESERVATION_CONFLICT_IGNORE,
+                    new String[] { WEEKLY_RESERVATION_CONFLICT_IGNORE, WEEKLY_RESERVATION_CONFLICT_STRICT, WEEKLY_RESERVATION_CONFLICT_PRIORITIZE_WEEKLY },
+                    new String[] { International.getString("Konflikt_ignorieren"), International.getString("Konflikt_strikt_behandeln"),
+                    		International.getString("Konflikt_woechentliche_Reservierung_hat_Vorrang")},
+                IItemType.TYPE_PUBLIC,BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_INPUT),
+                International.getString("Verhalten_bei_Konflikten_einmalige_oder_woechentliche_Reservierungen")));
+            
             addParameter(showDestinationInfoForInput = new ItemTypeBoolean("DestinationInfoShowForInput", false,
                     IItemType.TYPE_PUBLIC,BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_INPUT),
                     International.getString("Zielinformationen bei Eingabe anzeigen")));
@@ -609,6 +648,9 @@ public class EfaConfig extends StorageObject implements IItemFactory {
             addParameter(popupComplete = new ItemTypeBoolean("AutoCompleteListShow", true,
                     IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
                     International.getString("Beim Vervollständigen Popup-Liste anzeigen")));
+            addParameter(popupContainsMode= new ItemTypeBoolean("AutoCompleteContainsMode", true,
+            		IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
+            		International.getString("Popup-Liste nach Teilbegriff durchsuchen (statt nach Wortanfang)")));               
             addParameter(fensterZentriert = new ItemTypeBoolean("WindowCentered", false,
                     IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
                     International.getString("Alle Fenster in Bildschirmmitte zentrieren")));
@@ -827,12 +869,32 @@ public class EfaConfig extends StorageObject implements IItemFactory {
                     International.getMessage("Fahrtziel in der Liste {list} anzeigen",
                     International.getString("Boote auf Fahrt"))));
             // ===================== BOATHOUSE: Filter text fields ============================
+            addParameter(efaBoathouseHeaderUseHighlightColor = new ItemTypeBoolean("efaBoathouseHeaderUseHighlightColor",true,
+    			IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
+    			International.getString("Überschriften hervorheben")));            
+            addParameter(efaBoathouseHeaderBackgroundColor = new ItemTypeColor("efaBoathouseHeaderBackgroundColor", EfaUtil.getColor(tableSelectionBackgroundColor), 
+            		IItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
+            		International.getString("Überschriften Hintergrundfarbe")));
+            addParameter(efaBoathouseHeaderForegroundColor = new ItemTypeColor("efaBoathouseHeaderForegroundColor", EfaUtil.getColor(tableSelectionForegroundColor), 
+            		IItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
+            		International.getString("Überschriften Textfarbe")));
+            
             addParameter(efaBoathouseFilterTextfieldStandardLists = new ItemTypeBoolean("efaBoathouseFilterTextfieldStandardLists", true, 
             		IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
             		International.getString("Filter-Feld über Standard Listen")));
             addParameter(efaBoathouseFilterTextfieldBoatsNotAvailableList = new ItemTypeBoolean("efaBoathouseFilterTextfieldBoatsNotAvailableList", false, 
             		IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
             		International.getString("Filter-Feld über Liste nicht verfügbarer Boote")));
+            addParameter(efaBoathouseTwoColumnList= new ItemTypeBoolean("efaBoathouseTwoColumnList", true, 
+            		IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
+            		International.getString("Bootshaus-Listen mit zwei Spalten darstellen")));
+			addParameter(efaBoathouseExtdToolTips = new ItemTypeBoolean("efaBoathouseExtdToolTips", true,
+					IItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
+					International.getString("Bootshaus-Listen mit Tooltips")));            
+			addParameter(efaBoathouseBoatListWithReservationInfo = new ItemTypeBoolean("efaBoathouseBoatListWithReservationInfo", true,
+					IItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
+					International.getString("Bootshaus-Listen mit Reservierungsdaten")));            
+			
             addParameter(efaDirekt_sortByAnzahl = new ItemTypeBoolean("BoatListSortBySeats", true,
                     IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
                     International.getString("sortiere Boote nach Anzahl der Bootsplätze")));
@@ -1076,6 +1138,15 @@ public class EfaConfig extends StorageObject implements IItemFactory {
             addParameter(kanuEfb_urlRequest = new ItemTypeString("KanuEfbUrlRequest", "https://efb.kanu-efb.de/services",
                     IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_SYNC, CATEGORY_KANUEFB),
                     "Request URL"));
+            addParameter(kanuEfb_Fullsync = new ItemTypeBoolean("KanuEfb_FullSync", false, 
+            		ItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_SYNC, CATEGORY_KANUEFB), 
+            		"Fahrtenbuch immer komplett übertragen (statt nur neue und geänderte Fahrten)"));
+            addParameter(kanuEfb_SyncTripsAfterDate = new ItemTypeDate("KanuEfb_SyncTripsAfterDate", new DataTypeDate(01,01,1970), 
+            		ItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_SYNC, CATEGORY_KANUEFB), 
+            		"Nur Fahrten synchronisieren mit Beginndatum >="));
+            addParameter(kanuEfb_TidyXML = new ItemTypeBoolean("KanuEfb_TidyXML", false, 
+            		ItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_SYNC, CATEGORY_KANUEFB), 
+            		"XML-Antworten von EFB-Schulungssystem von unzulässigen Daten bereinigen"));
 
             // ============================= LOCALE =============================
             addParameter(language = new ItemTypeStringList("_Language", Daten.efaBaseConfig.language,
@@ -1146,6 +1217,12 @@ public class EfaConfig extends StorageObject implements IItemFactory {
                     International.getMessage("Fehlende Standard-Bootstypen für {rowing_or_canoeing} neu generieren",
                     International.getString("Kanufahren"))));
             buildTypes();
+            //kanuEfb_SyncUnknownBoats is placed here, as the boat types which can be used for efb sync are
+            //built in buildTypes. So this setting does not belong into the --sync-- section of efaconfig source.
+            
+            addParameter(kanuEfb_SyncUnknownBoats = new ItemTypeBoolean("KanuEfb_SyncUnknownBoats", false, ItemType.TYPE_PUBLIC,
+					BaseTabbedDialog.makeCategory(CATEGORY_SYNC, CATEGORY_KANUEFB),
+					"Fahrten mit unbekannten Booten synchronisieren"));
 
             // ============================= WIDGETS =============================
             addParameter(efaDirekt_showUhr = new ItemTypeBoolean("WidgetClockEnabled", true,
@@ -1449,7 +1526,11 @@ public class EfaConfig extends StorageObject implements IItemFactory {
     public boolean getValuePopupComplete() {
         return popupComplete.getValue();
     }
-
+    
+    public boolean getValuePopupContainsMode() {
+    	return popupContainsMode.getValue();
+    }
+    
     public String getValueNameFormat() {
         return nameFormat.getValue();
     }
@@ -1854,7 +1935,19 @@ public class EfaConfig extends StorageObject implements IItemFactory {
         return efaBoathouseFilterTextfieldBoatsNotAvailableList.getValue();
     }
     
-    public boolean getValueEfaDirekt_showUhr() {
+    public boolean getValueEfaBoathouseTwoColumnList() {
+    	return efaBoathouseTwoColumnList.getValue();
+    }
+
+	public boolean getValueEfaBoathouseExtdToolTips() {
+		return efaBoathouseExtdToolTips.getValue();
+	}
+	
+	public boolean getValueEfaBoathouseBoatListReservationInfo(){
+		return efaBoathouseBoatListWithReservationInfo.getValue();
+	}
+	
+	public boolean getValueEfaDirekt_showUhr() {
         return efaDirekt_showUhr.getValue();
     }
 
@@ -2115,6 +2208,21 @@ public class EfaConfig extends StorageObject implements IItemFactory {
         return kanuEfb_urlRequest.getValue();
     }
 
+    public DataTypeDate getValueKanuEfb_SyncTripsAfterDate() {
+    	return kanuEfb_SyncTripsAfterDate.getDate();
+    }
+
+    public Boolean getValueKanuEfb_FullSync() {
+    	return kanuEfb_Fullsync.getValue();
+    }
+
+	public Boolean getValueKanuEfb_SyncUnknownBoats() { 
+		return kanuEfb_SyncUnknownBoats.getValue();
+	}
+	
+    public Boolean getValueKanuEfb_TidyXML() {
+    	return kanuEfb_TidyXML.getValue();
+    }
     public boolean getValueDataPreModifyRecordCallbackEnabled() {
         return dataPreModifyRecordCallbackEnabled.getValue();
     }
@@ -2225,6 +2333,29 @@ public class EfaConfig extends StorageObject implements IItemFactory {
         }
     }
 
+    public Color getTableSelectionBackgroundColor() {
+    	return tableSelectionBackgroundColor;
+    }
+    
+    public Color getTableSelectionForegroundColor() {
+    	return tableSelectionForegroundColor;
+    }
+    
+    public Boolean getBoathouseHeaderUseHighlightColor() {
+    	return efaBoathouseHeaderUseHighlightColor.getValue();
+    }
+    public Color getBoathouseHeaderBackgroundColor() {
+    	return efaBoathouseHeaderBackgroundColor.getColor();
+    }
+    
+    public Color getBoathouseHeaderForegroundColor() {
+    	return efaBoathouseHeaderForegroundColor.getColor();
+    }
+    
+    public String getWeeklyReservationConflictBehaviour() {
+    	return weeklyReservationConflictBehaviour.getValue();
+    }
+    
     public Vector<IItemType> getGuiItems() {
         Vector<IItemType> items = new Vector<IItemType>();
         for (int i=0; i<configValueNames.size(); i++) {
@@ -2500,15 +2631,11 @@ public class EfaConfig extends StorageObject implements IItemFactory {
                 IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_TYPES,CATEGORY_TYPES_STAT),
                 International.getString("Status")));
         
-        addParameter(kanuEfb_boatTypes = new ItemTypeMultiSelectList<String>("KanuEfbBoatTypes", getCanoeBoatTypes(),
+        addParameter(kanuEfb_boatTypes = new ItemTypeMultiSelectList<String>("KanuEfbBoatTypes", getCanoeBoatTypes(getValue("KanuEfbBoatTypes")),
                 Daten.efaTypes.makeBoatTypeArray(EfaTypes.ARRAY_STRINGLIST_VALUES), Daten.efaTypes.makeBoatTypeArray(EfaTypes.ARRAY_STRINGLIST_DISPLAY),
                 getValueUseFunctionalityCanoeingGermany() ? IItemType.TYPE_PUBLIC : IItemType.TYPE_EXPERT,
                 BaseTabbedDialog.makeCategory(CATEGORY_SYNC, CATEGORY_KANUEFB),
                 International.onlyFor("Fahrten mit folgenden Bootstypen mit Kanu-eFB synchronisieren", "de")));
-        String myValue = getValue("KanuEfbBoatTypes");
-        if (myValue != null && myValue.length() > 0) {
-            kanuEfb_boatTypes.parseValue(myValue);
-        }
         
         typesStatus.setAllowed(false, false);
         iniTypes(typesGender, EfaTypes.CATEGORY_GENDER);
@@ -2582,24 +2709,26 @@ public class EfaConfig extends StorageObject implements IItemFactory {
         return null;
     }
     
-    public DataTypeList<String> getCanoeBoatTypes() {
+    private DataTypeList<String> getCanoeBoatTypes(String myValue) {
         EfaTypes t = getMyEfaTypes();
         if (t == null) {
             return new DataTypeList<String>(new String[0]); // happens during startup
         }
-        return new DataTypeList<String>(t.getDefaultCanoeBoatTypes());
+
+        if (myValue != null && myValue.length() > 0) {
+            return new DataTypeList<String>().parseList(myValue, IDataAccess.DATA_STRING);
+        } else {
+        	return new DataTypeList<String>(t.getDefaultCanoeBoatTypes());
+        }	
+        
     }
     
-    public boolean isCanoeBoatType(BoatRecord r) {
-        Object[] types = kanuEfb_boatTypes.getValues();
-        for (int i=0; r != null && i<r.getNumberOfVariants(); i++) {
-            for (int j=0; types != null && j<types.length; j++) {
-                if (types[j] != null && types[j].toString().equals(r.getTypeType(i))) {
-                    return true;
-                }
-            }
-        }
-        return false;
+    public String getCanoeBoatTypes() {
+    	return kanuEfb_boatTypes.toString();
+    }
+
+    public Object[] getValueKanuEfb_CanoeBoatTypes() {
+    	return kanuEfb_boatTypes.getValues();
     }
 
     class ConfigValueUpdateThread extends Thread {
@@ -2636,6 +2765,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
                         while (k != null) {
                             EfaConfigRecord r = (EfaConfigRecord) data().get(k);
                             if (r.getName().startsWith("_")) {
+                                k=it.getNext(); //without this line, this loop would never stop                            	
                                 continue; // it shouldn't happen that such a value actually made it into the file, but you never know...
                             }
                             IItemType item = configValues.get(r.getName());

@@ -10,13 +10,26 @@
 
 package de.nmichael.efa.data;
 
-import de.nmichael.efa.core.config.AdminRecord;
-import de.nmichael.efa.data.storage.*;
-import de.nmichael.efa.core.items.*;
-import de.nmichael.efa.gui.util.*;
-import de.nmichael.efa.util.*;
 import java.awt.AWTEvent;
-import java.util.*;
+import java.awt.GridBagConstraints;
+import java.util.UUID;
+import java.util.Vector;
+
+import de.nmichael.efa.Daten;
+import de.nmichael.efa.core.config.AdminRecord;
+import de.nmichael.efa.core.items.IItemListener;
+import de.nmichael.efa.core.items.IItemType;
+import de.nmichael.efa.core.items.ItemTypeBoolean;
+import de.nmichael.efa.core.items.ItemTypeInteger;
+import de.nmichael.efa.core.items.ItemTypeLabel;
+import de.nmichael.efa.core.items.ItemTypeString;
+import de.nmichael.efa.data.storage.DataKey;
+import de.nmichael.efa.data.storage.DataRecord;
+import de.nmichael.efa.data.storage.IDataAccess;
+import de.nmichael.efa.data.storage.MetaData;
+import de.nmichael.efa.gui.util.TableItem;
+import de.nmichael.efa.gui.util.TableItemHeader;
+import de.nmichael.efa.util.International;
 
 // @i18n complete
 
@@ -224,6 +237,14 @@ public class StatusRecord extends DataRecord implements IItemListener {
         Vector<IItemType> v = new Vector<IItemType>();
         v.add(item = new ItemTypeLabel("LABEL", 
                 IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("Typ") + ": " + getTypeDescription()));
+
+        if (Daten.efaConfig.getBoathouseHeaderUseHighlightColor()) {
+			item.setBackgroundColor(Daten.efaConfig.getBoathouseHeaderBackgroundColor());
+			item.setColor(Daten.efaConfig.getBoathouseHeaderForegroundColor());
+			item.setPadding(0,0,0,10);
+	        item.setFieldGrid(2,GridBagConstraints.EAST, GridBagConstraints.BOTH);
+		}
+        
         v.add(item = new ItemTypeString(StatusRecord.NAME, getStatusName(),
                 IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("Status")));
         if (isTypeUser()) {

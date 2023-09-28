@@ -74,6 +74,10 @@ public class ItemTypeLabel extends ItemType {
             if (color != null) {
                 l.setForeground(color);
             }
+            if (backgroundColor != null) {
+            	l.setBackground(backgroundColor);
+            	l.setOpaque(true);
+            }            
             l.setVisible(isVisible);
             labels[i] = l;
         }

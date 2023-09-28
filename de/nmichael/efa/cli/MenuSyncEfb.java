@@ -11,34 +11,46 @@ package de.nmichael.efa.cli;
 
 import de.nmichael.efa.Daten;
 import de.nmichael.efa.data.Logbook;
+import de.nmichael.efa.data.storage.DataExport;
 import de.nmichael.efa.data.sync.KanuEfbSyncTask;
+
+import java.util.Hashtable;
 import java.util.Stack;
 import java.util.Vector;
 
 public class MenuSyncEfb extends MenuBase {
 
     public static final String CMD_RUN  = "run";
+    private static String EFBSYNC_OPTION_VERBOSE = "-verbose";
 
     public MenuSyncEfb(CLI cli) {
         super(cli);
     }
 
     public void printHelpContext() {
-        printUsage(CMD_RUN,  "[logbook]", "run synchronization with Kanu-eFB");
+        printUsage(CMD_RUN,  "[logbook -verbose]", "run synchronization with Kanu-eFB");
     }
 
     private int syncEfb(String args) {
+    	boolean bVerboseMode=false;
+    	
         if (!cli.getAdminRecord().isAllowedSyncKanuEfb()) {
             cli.logerr("You don't have permission to access this function.");
             return CLI.RC_NO_PERMISSION;
         }
+        
         Vector<String> options = super.getCommandOptions(args);
-        if (options != null && options.size() > 1) {
+        if (options != null && options.size() > 2) {
             printHelpContext();
             return CLI.RC_INVALID_COMMAND;
         }
         
-        String logbookName = (options != null && options.size() == 1 ? options.get(0) : 
+        args=removeOptionsFromArgs(args);
+        
+        Vector<String> optionLogBookName = super.getCommandOptions(args);
+    
+        //open the logbook set in the parameters
+        String logbookName = (optionLogBookName != null && optionLogBookName.size() >= 1 ? optionLogBookName.get(0) : 
                 Daten.project.getCurrentLogbookEfaBoathouse());
         if (logbookName == null) {
             cli.logerr("Failed to synchronize: No logbook specified.");
@@ -51,8 +63,13 @@ public class MenuSyncEfb extends MenuBase {
             return CLI.RC_COMMAND_FAILED;
         }
         
+        //check if verbose mode is active
+        if (options != null && options.contains(EFBSYNC_OPTION_VERBOSE) ) {
+            bVerboseMode=true;
+        }
+        
         cli.loginfo("Running synchronization for logbook '" + logbookName + "' ...");
-        KanuEfbSyncTask syncTask = new KanuEfbSyncTask(logbook, cli.getAdminRecord());
+        KanuEfbSyncTask syncTask = new KanuEfbSyncTask(logbook, cli.getAdminRecord(), bVerboseMode);
         syncTask.startSynchronization(null);
         try {
             syncTask.join();

@@ -10,14 +10,34 @@
 
 package de.nmichael.efa.data;
 
-import de.nmichael.efa.data.storage.*;
-import de.nmichael.efa.data.types.*;
-import de.nmichael.efa.core.items.*;
-import de.nmichael.efa.core.config.*;
-import de.nmichael.efa.gui.util.*;
-import de.nmichael.efa.util.*;
-import de.nmichael.efa.*;
-import java.util.*;
+import java.awt.GridBagConstraints;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.UUID;
+import java.util.Vector;
+
+import de.nmichael.efa.Daten;
+import de.nmichael.efa.core.config.AdminRecord;
+import de.nmichael.efa.core.config.EfaTypes;
+import de.nmichael.efa.core.items.IItemType;
+import de.nmichael.efa.core.items.ItemTypeDate;
+import de.nmichael.efa.core.items.ItemTypeLabel;
+import de.nmichael.efa.core.items.ItemTypeRadioButtons;
+import de.nmichael.efa.core.items.ItemTypeString;
+import de.nmichael.efa.core.items.ItemTypeStringAutoComplete;
+import de.nmichael.efa.core.items.ItemTypeStringList;
+import de.nmichael.efa.core.items.ItemTypeTime;
+import de.nmichael.efa.data.storage.DataKey;
+import de.nmichael.efa.data.storage.DataRecord;
+import de.nmichael.efa.data.storage.IDataAccess;
+import de.nmichael.efa.data.storage.MetaData;
+import de.nmichael.efa.data.types.DataTypeDate;
+import de.nmichael.efa.data.types.DataTypeTime;
+import de.nmichael.efa.gui.util.TableItem;
+import de.nmichael.efa.gui.util.TableItemHeader;
+import de.nmichael.efa.util.EfaUtil;
+import de.nmichael.efa.util.International;
+import de.nmichael.efa.util.Logger;
 
 // @i18n complete
 
@@ -28,6 +48,7 @@ public class BoatReservationRecord extends DataRecord {
     // =========================================================================
     public static final String TYPE_ONETIME        = "ONETIME";
     public static final String TYPE_WEEKLY         = "WEEKLY";
+    public static final String TYPE_WEEKLY_LIMITED = "WEEKLY_LIMITED";
 
     // =========================================================================
     // Field Names
@@ -193,12 +214,30 @@ public class BoatReservationRecord extends DataRecord {
         return s;
     }
 
+    /* if date is empty, print weekday + time if provided.
+     * else, print date or return empty string.
+     */
     private String getDateDescription(DataTypeDate date, String weekday, DataTypeTime time) {
         if (date == null && weekday == null) {
             return "";
         }
         return (date != null ? date.toString() : Daten.efaTypes.getValueWeekday(weekday)) +
                 (time != null ? " " + time.toString() : "");
+    }
+    
+    /* if date is empty, print weekday + time if provided. Extend with time period, if available.
+     * else, print date or return empty string.
+     */
+    private String getDateDescription(DataTypeDate date, String weekday, DataTypeTime time, DataTypeDate from, DataTypeDate to) {
+        if (date == null && weekday == null) {
+            return "";
+        }
+        return (date != null ? date.toString() : Daten.efaTypes.getValueWeekday(weekday)) +
+                (time != null ? " " + time.toString() : "") +
+                " ("+
+                (from != null ? from.toString() : "" ) + 
+                (to != null ? " - " + to.toString() : "") +
+                ")";
     }
 
     public String getDateTimeFromDescription() {
@@ -209,6 +248,9 @@ public class BoatReservationRecord extends DataRecord {
         if (type != null && type.equals(TYPE_WEEKLY)) {
             return getDateDescription(null, getDayOfWeek(), getTimeFrom());
         }
+        if (type != null && type.equals(TYPE_WEEKLY_LIMITED)) {
+            return getDateDescription(null, getDayOfWeek(), getTimeFrom(), getDateFrom(), getDateTo());
+        }        
         return "";
     }
 
@@ -220,8 +262,85 @@ public class BoatReservationRecord extends DataRecord {
         if (type != null && type.equals(TYPE_WEEKLY)) {
             return getDateDescription(null, getDayOfWeek(), getTimeTo());
         }
+        if (type != null && type.equals(TYPE_WEEKLY_LIMITED)) {
+            return getDateDescription(null, getDayOfWeek(), getTimeTo(), getDateFrom(), getDateTo());
+        }                
         return "";
     }
+
+    /*
+     * Within the BoatReservationList from and to fields are shown differently than stored
+     * ONETIME
+     * - If Reservation starts and ends on the same day,
+     * 		- Field "From" = Date
+     * 		- Field "To" = TimeFrom - TimeTo
+     *   else
+     *      - Field "From" and "to" contain date+time
+     *  
+     * WEEKLY / WEEKLY_LIMITED
+     * - Field "From" = Day of Week
+     * - Field "To" = TimeFrom - TimeTo 
+     * 
+     */
+    public String getGuiDateTimeFromDescription() {
+        String type = getType();
+        if (type != null && type.equals(TYPE_ONETIME)) {
+        	if (getDateFrom().equals(getDateTo())) {
+        		return getDateDescription(getDateFrom(), null, null);
+        	} else {
+        		return getDateDescription(getDateFrom(), null, getTimeFrom());
+        	}
+        } else if (type != null && (type.equals(TYPE_WEEKLY) || type.equals(TYPE_WEEKLY_LIMITED))) {
+            return getDateDescription(null, getDayOfWeek(), null); //
+        }
+
+        return "";
+    }
+    
+    /*
+     * Within the BoatReservationList, weekly reservations will be shown as
+     * ONETIME
+     * - If Reservation starts and ends on the same day,
+     * 		- Field "From" = Date
+     * 		- Field "To" = TimeFrom - TimeTo
+     *   else
+     *      - Field "From" and "to" contain date+time
+     *  WEEKLY / WEEKLY_LIMITED
+     * - Field "From" = Day of Week
+     * - Field "To" = TimeFrom - TimeTo  (extended with date period, if available)  
+     */
+    public String getGuiDateTimeToDescription() {
+        String type = getType();
+        if (type != null && type.equals(TYPE_ONETIME)) {
+        	if (getDateFrom().equals(getDateTo())) {
+        		return getTimePeriodDescription(getTimeFrom(),getTimeTo());
+        	} else {
+        		return getDateTimeToDescription();
+        	}
+        } else if (type != null && type.equals(TYPE_WEEKLY)) {
+            return getWeeklyTimeDescription(getTimeFrom(), getTimeTo(), null, null);
+        }  else if (type != null && type.equals(TYPE_WEEKLY_LIMITED)) {
+            return getWeeklyTimeDescription(getTimeFrom(), getTimeTo(), getDateFrom(), getDateTo() );
+        }
+        return "";
+    }    
+
+    private String getWeeklyTimeDescription(DataTypeTime from, DataTypeTime to, DataTypeDate fromDate, DataTypeDate toDate) {
+        String result = (from != null ? from.toString() : "") + " - " + (to != null ? to.toString() : "");
+        result = result + (fromDate!=null || toDate != null ? (
+	                " ("+
+	                		(fromDate != null ? fromDate.toString() : "" ) + 
+	                		(toDate != null ? " - " + toDate.toString() : "") +
+	                ")"
+        		) : "");
+        return result;
+    }
+
+    private String getTimePeriodDescription (DataTypeTime fromTime, DataTypeTime toTime) {
+        return (fromTime != null ? fromTime.toString() : "") + " - " + (toTime != null ? toTime.toString() : ""); 	
+    }
+
+
 
     public String getReservationTimeDescription() {
         return getDateTimeFromDescription() + " - " + getDateTimeToDescription();
@@ -275,6 +394,7 @@ public class BoatReservationRecord extends DataRecord {
     }
 
     /**
+     * Determine if a BoatReservationRecord is valid within the next $lookAheadMinutes from offset $now
      *
      * @param now
      * @param lookAheadMinutes
@@ -292,50 +412,17 @@ public class BoatReservationRecord extends DataRecord {
                 timeFrom = this.getTimeFrom();
                 timeTo   = this.getTimeTo();
             }
-            if (this.getType().equals(TYPE_WEEKLY)) {
-                GregorianCalendar cal = new GregorianCalendar();
-                cal.setTimeInMillis(now);
-                int weekday = cal.get(Calendar.DAY_OF_WEEK);
-                String dayOfWeek = getDayOfWeek();
-                // Note: lookAheadMinutes is not supported over midnight for weekly reservations
-                switch (weekday) {
-                    case Calendar.MONDAY:
-                        if (!dayOfWeek.equals(EfaTypes.TYPE_WEEKDAY_MONDAY)) {
-                            return -1;
-                        }
-                        break;
-                    case Calendar.TUESDAY:
-                        if (!dayOfWeek.equals(EfaTypes.TYPE_WEEKDAY_TUESDAY)) {
-                            return -1;
-                        }
-                        break;
-                    case Calendar.WEDNESDAY:
-                        if (!dayOfWeek.equals(EfaTypes.TYPE_WEEKDAY_WEDNESDAY)) {
-                            return -1;
-                        }
-                        break;
-                    case Calendar.THURSDAY:
-                        if (!dayOfWeek.equals(EfaTypes.TYPE_WEEKDAY_THURSDAY)) {
-                            return -1;
-                        }
-                        break;
-                    case Calendar.FRIDAY:
-                        if (!dayOfWeek.equals(EfaTypes.TYPE_WEEKDAY_FRIDAY)) {
-                            return -1;
-                        }
-                        break;
-                    case Calendar.SATURDAY:
-                        if (!dayOfWeek.equals(EfaTypes.TYPE_WEEKDAY_SATURDAY)) {
-                            return -1;
-                        }
-                        break;
-                    case Calendar.SUNDAY:
-                        if (!dayOfWeek.equals(EfaTypes.TYPE_WEEKDAY_SUNDAY)) {
-                            return -1;
-                        }
-                        break;
-                }
-                // ok, this is our weekday!
+
+        if ((this.getType().equals(TYPE_WEEKLY))||(this.getType().equals(TYPE_WEEKLY_LIMITED))) {
+        	// weekly reservation? we need to check if today applies to the reserved weekday.
+            if (!isTodayReservationDayOfWeek(now)) {
+            	return -1;
+            }
+            if ((this.getType().equals(TYPE_WEEKLY_LIMITED) && !isWeeklyLimitedReservationIntervalApplying(now))) {
+            	return -1;
+            }
+            // ok, this is our weekday!
+            // ok, this is our current weekday, and the provided interval applies...
                 dateFrom = new DataTypeDate(now);
                 dateTo   = new DataTypeDate(now);
                 timeFrom = this.getTimeFrom();
@@ -360,16 +447,264 @@ public class BoatReservationRecord extends DataRecord {
         return -1;
     }
 
+    
+    /**
+    * Determines the milliseconds it takes until the current reservation gets valid.
+    * 0 for actual ongoing reservations; >0 for reservations which become valid in the future.
+    *
+    * @return milliseconds until this reservation has it's next occurrency.
+    */
+   public long getReservationValidInMinutes() {
+       try {
+    	   
+    	   long now = System.currentTimeMillis();
+    	   
+           DataTypeDate dateFrom = null;
+           DataTypeDate dateTo = null;
+           DataTypeTime timeFrom = null;
+           DataTypeTime timeTo = null;
+           
+           //calculate the actual start date and start time of the reservation
+           //depending on the current date and time, if applicable
+           if (this.getType().equals(TYPE_ONETIME)) {
+               dateFrom = this.getDateFrom();
+               dateTo   = this.getDateTo();
+               timeFrom = this.getTimeFrom();
+               timeTo   = this.getTimeTo();             
+           }
+           
+           if (this.getType().equals(TYPE_WEEKLY)) {
+               int daysDifference = getDaysToNextOccurrence(now);
+               dateFrom = new DataTypeDate(now);
+               dateFrom.addDays(daysDifference); // suche das nächste Auftreten 
+               dateTo   = new DataTypeDate(now);
+               dateTo.addDays(daysDifference);
+               timeFrom = this.getTimeFrom();
+               timeTo   = this.getTimeTo();
+           }
+           
+           if (this.getType().equals(TYPE_WEEKLY_LIMITED)) {
+        	   //Weekly, but limited to a period.
+        	   /* Cases:
+        	      1. weekly_limited period is over (now>this.getDateTo)
+        	   		 then return -1 as reservation will not be valid in the future.
+        	   	  2. weekly_limited period has not yet started (now<this.getDateFrom)
+        	   	  	 then calculate the actual next occurrence of the reservation.
+        	   	  	 this.getDateFrom+ getDaysToNextOccurrence(getDateFrom) and
+        	   	  	 also calculate the number of minutes vom 00:00 to getTimeFrom
+        	   	  3. Weekly_limited period has started, then treat the limited reservation as	 
+        	   	     if it was a regular limited reservation)
+        	   */
+        	   
+        	   Long endTimeStamp = this.getDateTo().getTimestamp(this.getTimeTo());
+        	   Long startTimeStamp = this.getDateFrom().getTimestamp(this.getTimeFrom());
+        	   
+        	   if (now>endTimeStamp) {
+        		   // reservation is not valid any more
+        		   return -1;
+        	   } else if (now<startTimeStamp) {
+        		   // reservation is not yet active.
+        		   // the start date may be not start with the DAY of the weekly reservation
+        		   // so to determine the actual date of the first occurrence by 
+        		   // determining the gap between start date and first matching DAYOFWEEK
+        		   
+        		   int daysDifference = getDaysToNextOccurrence(startTimeStamp);
+
+        		   dateFrom=this.getDateFrom();
+        		   dateFrom.addDays(daysDifference);
+
+        		   dateTo = dateFrom; // weekly reservations each only last a single day 
+        		   
+                   timeFrom = this.getTimeFrom();
+                   timeTo   = this.getTimeTo();
+        		   
+        	   } else {
+        		   // Reservation start is due, so handle like a weekly reservation
+                   int daysDifference = getDaysToNextOccurrence(now);
+                   dateFrom = new DataTypeDate(now);
+                   dateFrom.addDays(daysDifference); 
+                   dateTo   = new DataTypeDate(now);
+                   dateTo.addDays(daysDifference);
+                   timeFrom = this.getTimeFrom();
+                   timeTo   = this.getTimeTo();        		   
+        	   }
+        	   
+           }
+           long resStart = dateFrom.getTimestamp(timeFrom);
+           long resEnd   = dateTo.getTimestamp(timeTo);
+
+           // is the reservation valid by now? then it is valid in 0 minutes
+           if (now >= resStart && now <= resEnd) {
+               return 0;
+           } else {
+        	   return (resStart-now)/(60 * 1000); // number of minutes until the reservation is valid
+           }
+           
+       } catch (Exception e) {
+           Logger.logdebug(e);
+       }
+       return -1;
+   }
+
+	
+   /**
+    * Get the number of days until the weekly reservation gets valid - starting form a reference timestamp (e.g. system.currentTimeMillis())
+    * @param starting_from_timestamp
+    * @return 0 if starting day of the current weekly reservation is the same day of week as the reference timestamp, 
+    * 		  otherwise the positive number of days until the next occurence of the weekday
+    */
+   private int getDaysToNextOccurrence(long starting_from_timestamp) {
+		GregorianCalendar cal = new GregorianCalendar();
+		   cal.setTimeInMillis(starting_from_timestamp);
+		   int this_weekday = cal.get(Calendar.DAY_OF_WEEK);
+		   int reservation_weekday = EfaUtil.getCalendarWeekDayFromEfaWeekDay(this.getDayOfWeek());
+		   int daysDifference = (reservation_weekday-this_weekday);
+		   if (daysDifference <0) {//reservierungstag liegt vorher
+			   daysDifference=daysDifference+7; //einfach 7 Tage draufzählen - dann sind das die Anzahl der Tage bis zum nächsten Auftreten
+		   }
+		return daysDifference;
+	}
+    
+   /*
+    * returns true if the current reservation is weekly limited
+    * and the dateFrom and dateTo dates of the reservation cover the actual timestamp (now)
+    * 
+	 * @parameter now   currentTimeMillis of the referenced "today"
+	 *   
+    */
+	public boolean isWeeklyLimitedReservationIntervalApplying(long now) {
+
+       DataTypeDate mydateFrom = this.getDateFrom();
+       DataTypeDate mydateTo = this.getDateTo();
+
+       if (!this.getType().equals(TYPE_WEEKLY_LIMITED)) {
+       	return false;
+       } else {
+       	//it is a weekly limited reservation
+       	// datefrom and dateto may be null.
+       	// then we set them to 01.01.1970 (from) and (31.12.3000) (to)
+       	mydateFrom= (mydateFrom == null ? new DataTypeDate(01,01,1970) : mydateFrom);
+       	mydateTo = (mydateTo == null ? new DataTypeDate(30,12,3000): mydateTo);
+
+           long resStart = mydateFrom.getTimestamp(new DataTypeTime(00,00,00));
+           long resEnd   = mydateTo.getTimestamp(new DataTypeTime(23,59,59));        	
+
+           return (now >= resStart && now <= resEnd);
+
+       }
+
+	}
+
+	public boolean isWeeklyLimitedReservationIntervalApplying(DataTypeDate nowDate) {
+		return (nowDate == null ? false : isWeeklyLimitedReservationIntervalApplying(nowDate.getTimestamp(new DataTypeTime(0,0,0))));
+	}	
+
+   /*
+    * returns true if the current reservation is weekly limited
+    * and the dateTo date of the reservation is higher than today
+    * 
+	 * @parameter now   currentTimeMillis of the referenced "today"
+	 *   
+    */
+	public boolean isWeeklyLimitedReservationValidNowOrInFuture(long now) {
+
+       DataTypeDate mydateTo = this.getDateTo();
+
+       if (!this.getType().equals(TYPE_WEEKLY_LIMITED)) {
+       	return false;
+       } else {
+       	//it is a weekly limited reservation
+       	// datefrom and dateto may be null.
+       	// then we set them to 01.01.1970 (from) and (31.12.3000) (to)
+       	mydateTo = (mydateTo == null ? new DataTypeDate(30,12,3000): mydateTo);
+
+           long resEnd   = mydateTo.getTimestamp(null);        	
+
+           return (now <= resEnd);
+
+       }
+
+
+	}	
+
+
+	/* returns true if today's day of week name equals the day of week name in current reservation record 
+	 * 
+	 * @parameter now   currentTimeMillis of the referenced "today"
+	 *  
+	 */
+	private boolean isTodayReservationDayOfWeek(long now) {
+		GregorianCalendar cal = new GregorianCalendar();
+		cal.setTimeInMillis(now);
+		int weekday = cal.get(Calendar.DAY_OF_WEEK);
+		String dayOfWeek = this.getDayOfWeek();
+		// Note: lookAheadMinutes is not supported over midnight for weekly reservations
+		switch (weekday) {
+		    case Calendar.MONDAY:
+		        if (!dayOfWeek.equals(EfaTypes.TYPE_WEEKDAY_MONDAY)) {
+		            return false;
+		        }
+		        break;
+		    case Calendar.TUESDAY:
+		        if (!dayOfWeek.equals(EfaTypes.TYPE_WEEKDAY_TUESDAY)) {
+		            return false;
+		        }
+		        break;
+		    case Calendar.WEDNESDAY:
+		        if (!dayOfWeek.equals(EfaTypes.TYPE_WEEKDAY_WEDNESDAY)) {
+		            return false;
+		        }
+		        break;
+		    case Calendar.THURSDAY:
+		        if (!dayOfWeek.equals(EfaTypes.TYPE_WEEKDAY_THURSDAY)) {
+		            return false;
+		        }
+		        break;
+		    case Calendar.FRIDAY:
+		        if (!dayOfWeek.equals(EfaTypes.TYPE_WEEKDAY_FRIDAY)) {
+		            return false;
+		        }
+		        break;
+		    case Calendar.SATURDAY:
+		        if (!dayOfWeek.equals(EfaTypes.TYPE_WEEKDAY_SATURDAY)) {
+		            return false;
+		        }
+		        break;
+		    case Calendar.SUNDAY:
+		        if (!dayOfWeek.equals(EfaTypes.TYPE_WEEKDAY_SUNDAY)) {
+		            return false;
+		        }
+		        break;
+		}
+		return true; // we only reach here if current weekday is the reserved weekday.
+	}
+    
+	// is the current reservation obsolete, meaning: is it outdated? so it can be removed
     public boolean isObsolete(long now) {
         try {
             if (this.getType().equals(TYPE_WEEKLY)) {
-                return false;
+                //Weekly reservations have no beginning oder ending date
+            	return false;
             }
             if (this.getType().equals(TYPE_ONETIME)) {
+            	// obsolete, if the dateTo/timeTo date is in the past
                 DataTypeDate dateTo = this.getDateTo();
                 DataTypeTime timeTo = this.getTimeTo();
                 long resEnd   = dateTo.getTimestamp(timeTo);
                 return now > resEnd;
+            }
+            if (this.getType().equals(TYPE_WEEKLY_LIMITED)) {
+            	//obsolete, if the dateTo/ is in the past
+            	DataTypeDate dateTo = this.getDateTo();
+                DataTypeTime timeTo = this.getTimeTo(); //yeah, we can use timeTo here although we may not be on the specified weekday.
+
+                if (dateTo==null) {
+                	return false; // no end date specified, so endless reservation
+                } else {
+	                long resEnd   = dateTo.getTimestamp(timeTo);
+	                return now > resEnd;
+                }
+
             }
         } catch (Exception e) {
             Logger.logdebug(e);
@@ -411,49 +746,99 @@ public class BoatReservationRecord extends DataRecord {
     }
 
     public Vector<IItemType> getGuiItems(AdminRecord admin) {
-        String CAT_BASEDATA     = "%01%" + International.getString("Reservierung");
+    	String CAT_BASEDATA     = "%01%" + International.getString("Reservierung");
+        int DATETIME_FIELDLENGTH=120;
+        int GRID_WIDTH=4;
+    	
         IItemType item;
         Vector<IItemType> v = new Vector<IItemType>();
         String boatName = getBoatName();
+        
 
         ItemTypeDate dateFrom;
         ItemTypeTime timeFrom;
+        
+        //Grid layout
+        /*
+         *    1         |    2      |    3        |     4      |      5      |     6     |
+         * art d. res.  | (*) einmalig   ( ) wöchentlich  ( ) ...                        |
+         * von (tag)    | VON       |  separator  | bis (tag)   |  BIS   	  |			 | 
+         * Wochentag    | DROPDOWN_WOCHENTAG                                             |
+         * von (zeit)   | VON       |  separator  |bis (zeit)   |  BIS        |          |
+         * Reserviert f.| RES FUER                                            | BUTTON   |
+         * ReservieGrun | RESGRUND                                                       |
+         * Telefonf.    | TELEFON                                                        |
+         */
+
+
 
         v.add(item = new ItemTypeLabel("GUI_BOAT_NAME",
                 IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getMessage("Reservierung für {boat}", boatName)));
-        item.setPadding(0, 0, 0, 10);
+        item.setPadding(0, 0, 0, 10);// 10 pix vertical distance from next row
+        
+        if (Daten.efaConfig.getBoathouseHeaderUseHighlightColor()) {
+			item.setBackgroundColor(Daten.efaConfig.getBoathouseHeaderBackgroundColor());
+			item.setColor(Daten.efaConfig.getBoathouseHeaderForegroundColor());
+	        item.setFieldGrid(5,GridBagConstraints.EAST, GridBagConstraints.BOTH);
+		}        
+        
         v.add(item = new ItemTypeRadioButtons(BoatReservationRecord.TYPE, (getType() != null && getType().length() > 0 ? getType() : TYPE_ONETIME),
                 new String[] {
                     TYPE_ONETIME,
-                    TYPE_WEEKLY
+                    TYPE_WEEKLY,
+                    TYPE_WEEKLY_LIMITED
                 },
                 new String[] {
-                    International.getString("einmalig"),
-                    International.getString("wöchentlich"),
+                    International.getStringWithMnemonic("einmalig"),
+                    International.getStringWithMnemonic("wöchentlich"),
+                    International.getStringWithMnemonic("wöchentlich (begrenzt)")
                 },
                 IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("Art der Reservierung")));
-        v.add(item = new ItemTypeStringList(BoatReservationRecord.DAYOFWEEK, getDayOfWeek(),
-                    EfaTypes.makeDayOfWeekArray(EfaTypes.ARRAY_STRINGLIST_VALUES), EfaTypes.makeDayOfWeekArray(EfaTypes.ARRAY_STRINGLIST_DISPLAY),
-                    IItemType.TYPE_PUBLIC, CAT_BASEDATA,
-                    International.getString("Wochentag")));
-        item.setNotNull(true);
+        
+        //Field takes 3 cells, filled horizontally
+        item.setFieldGrid(GRID_WIDTH, -1, GridBagConstraints.HORIZONTAL);
+        item.setPadding(-1, -1, -1, 15); // 15 pix distance from next gui item
+        
+        
+        // new order of elements:
+        // date from        date to
+        // Weekday
+        // time from	    time to
+        // so that the weekdray dropdownlists separates the dates from the times,
+        // but corresponding date & time are on the same column
+        
         v.add(item = new ItemTypeDate(BoatReservationRecord.DATEFROM, getDateFrom(),
                 IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("Von") + " (" +
                 International.getString("Tag") + ")"));
         item.setNotNull(true);
         dateFrom = (ItemTypeDate)item;
-        v.add(item = new ItemTypeTime(BoatReservationRecord.TIMEFROM, getTimeFrom(),
-                IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("Von") + " (" +
-                International.getString("Zeit") + ")"));
-        ((ItemTypeTime)item).enableSeconds(false);
-        item.setNotNull(true);
-        timeFrom = (ItemTypeTime)item;
+        dateFrom.setFieldSize(DATETIME_FIELDLENGTH, 0);
+        
         v.add(item = new ItemTypeDate(BoatReservationRecord.DATETO, getDateTo(),
                 IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("Bis") + " (" +
                 International.getString("Tag") + ")"));
         item.setNotNull(true);
         ((ItemTypeDate)item).setMustBeAfter(dateFrom, true);
         ItemTypeDate dateTo = (ItemTypeDate)item;
+        dateTo.setIsItemOnSameRowAsPreviousItem(true);
+        dateTo.setFieldSize(DATETIME_FIELDLENGTH, 0);
+        dateTo.setLabelGrid(-1, GridBagConstraints.EAST, -1); // right-handed label looks better.
+
+        v.add(item = new ItemTypeStringList(BoatReservationRecord.DAYOFWEEK, getDayOfWeek(),
+                EfaTypes.makeDayOfWeekArray(EfaTypes.ARRAY_STRINGLIST_VALUES), EfaTypes.makeDayOfWeekArray(EfaTypes.ARRAY_STRINGLIST_DISPLAY),
+                IItemType.TYPE_PUBLIC, CAT_BASEDATA,
+                International.getString("Wochentag")));
+        item.setNotNull(true);
+        item.setFieldGrid(GRID_WIDTH, -1, GridBagConstraints.HORIZONTAL);
+
+        v.add(item = new ItemTypeTime(BoatReservationRecord.TIMEFROM, getTimeFrom(),
+                IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("Von") + " (" +
+                International.getString("Zeit") + ")"));
+        ((ItemTypeTime)item).enableSeconds(false);
+        item.setNotNull(true);
+        timeFrom = (ItemTypeTime)item;
+        item.setFieldSize(DATETIME_FIELDLENGTH,0);
+        
         v.add(item = new ItemTypeTime(BoatReservationRecord.TIMETO, getTimeTo(),
                 IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("Bis") + " (" +
                 International.getString("Zeit") + ")"));
@@ -461,6 +846,11 @@ public class BoatReservationRecord extends DataRecord {
         ((ItemTypeTime)item).setReferenceTime(DataTypeTime.time235959());
         item.setNotNull(true);
         ((ItemTypeTime)item).setMustBeAfter(dateFrom, timeFrom, dateTo, false);
+        ((ItemTypeTime)item).setIsItemOnSameRowAsPreviousItem(true);
+        item.setFieldSize(DATETIME_FIELDLENGTH,0);
+        ((ItemTypeTime)item).setLabelGrid(-1, GridBagConstraints.EAST, -1); // right-handed label looks better.
+
+        
         v.add(item = getGuiItemTypeStringAutoComplete(BoatReservationRecord.PERSONID, null,
                     IItemType.TYPE_PUBLIC, CAT_BASEDATA,
                     getPersistence().getProject().getPersons(false), System.currentTimeMillis(), System.currentTimeMillis(),
@@ -472,11 +862,19 @@ public class BoatReservationRecord extends DataRecord {
             ((ItemTypeStringAutoComplete)item).parseAndShowValue(getPersonName());
         }
         item.setNotNull(true);
+        // Hinter dem reserviert für gibt es noch einen Auswahlbutton, daher nur zwei Grids weit
+        item.setFieldGrid(GRID_WIDTH, -1, GridBagConstraints.HORIZONTAL);
+        item.setPadding(-1, -1, 20, 2);
+        
         v.add(item = new ItemTypeString(BoatReservationRecord.REASON, getReason(),
                 IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("Reservierungsgrund")));
+        item.setFieldGrid(GRID_WIDTH, -1, GridBagConstraints.HORIZONTAL);
+        item.setFieldSize(350, -1);
+        
         v.add(item = new ItemTypeString(BoatReservationRecord.CONTACT, getContact(),
                 IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("Telefon für Rückfragen")));
-
+        item.setFieldGrid(GRID_WIDTH, -1, GridBagConstraints.HORIZONTAL);
+        
         // Virtual Fields hidden internal, only for list output and export/import
         v.add(item = new ItemTypeString(BoatReservationRecord.VBOAT, getBoatName(),
                 IItemType.TYPE_INTERNAL, "", International.getString("Boot")));
@@ -505,8 +903,8 @@ public class BoatReservationRecord extends DataRecord {
     public TableItem[] getGuiTableItems() {
         TableItem[] items = new TableItem[6];
         items[0] = new TableItem(getBoatName());
-        items[1] = new TableItem(getDateTimeFromDescription());
-        items[2] = new TableItem(getDateTimeToDescription());
+        items[1] = new TableItem(getGuiDateTimeFromDescription());
+        items[2] = new TableItem(getGuiDateTimeToDescription());
         items[3] = new TableItem(getPersonAsName());
         items[4] = new TableItem(getReason());
         items[5] = new TableItem(getContact());

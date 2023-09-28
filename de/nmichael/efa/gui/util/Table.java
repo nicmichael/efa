@@ -47,8 +47,8 @@ public class Table extends JTable {
         if (Daten.efaConfig.getValueEfaDirekt_tabelleAlternierendeZeilenFarben()) {
         	// Update for standard tables: Update for standard inverted cursor
         	// only applied when using alternating row colors - otherwise the standard of the lookandfeel is used.
-	        this.setSelectionBackground(new Color(75,134,193));
-	        this.setSelectionForeground(Color.WHITE);
+	        this.setSelectionBackground(Daten.efaConfig.getTableSelectionBackgroundColor());
+	        this.setSelectionForeground(Daten.efaConfig.getTableSelectionForegroundColor());
         }
         
         // Update for standard tables: increase row height for better readability (depending on the tables font size)

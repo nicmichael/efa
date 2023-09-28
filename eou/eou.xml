@@ -2,10 +2,407 @@
 <efaOnlineUpdate>
 
     <Version>
+        <VersionID>2.3.3_00</VersionID>
+        <ReleaseDate>TO.DO.2023</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa233.zip</DownloadUrl>
+        <DownloadSize></DownloadSize>
+        <Changes lang="de">
+            <ChangeItem>Neu: efa 2.3.3 erfordert mindestens Java Version 8</ChangeItem>
+            <ChangeItem>Neu: Bootsreservierungen (sowohl einmalige als auch wöchentliche) lassen sich jetzt nach Datum filtern</ChangeItem>
+  			    <ChangeItem>Neu: Kanu-EFB Synchronisation überarbeitet mit mehr Konfigurationsparametern</ChangeItem>
+            <ChangeItem>Neu: Bootshaus mit zweispaltiger Listendarstellung (deaktivierbar)</ChangeItem>
+            <ChangeItem>Neu: Bootshaus zeigt heutige Bootsreservierungen an (deaktivierbar)</ChangeItem>
+            <ChangeItem>Neu: Bootshaus mit Tooltipps für Einträge (deaktivierbar)</ChangeItem>
+            <ChangeItem>Neu: Bootshaus kann nach Inhalten der Tooltips filtern</ChangeItem>
+            <ChangeItem>Neu: Bootshaus mit besser sichtbaren Überschriften (konfigurierbar)</ChangeItem>
+            <ChangeItem>Neu: Bootshaus: Gelber Hintergrund für aktive/gefüllte Filter-Felder in Bootslisten, regelmäßiges Zurücksetzen der Filter</ChangeItem>
+            <ChangeItem>Neu: Eingabefelder mit Vervollständigung (z.B. Bootsname) suchen nach nach Teilbegriff</ChangeItem>
+            <ChangeItem>Neu: Bootsreservierungen lassen sich per Checkbox auf den heutigen Tag filtern</ChangeItem>
+            <ChangeItem>Neu: Bootsreservierungen mit zeitlich beschränkten wöchentlichen Reservierungen</ChangeItem>
+			<ChangeItem>Neu: Verhalten von efa bei Überschneidungen von Reservierungen unterschiedlichen Typs kann eingestellt werden</ChangeItem>
+            <ChangeItem>Bugfix: Logrotate efa.log verursacht mit efaCLI keine fehlenden Logeinträge mehr (https://github.com/nicmichael/efa/issues/22) </ChangeItem>
+            <ChangeItem>Bugfix: efaCloud Überschreiben von Fahrten in efaCloud bei Fahrtenbuchwechsel</ChangeItem>
+            <ChangeItem>Bugfix: efaCloud Synchronisationsabweichungstoleranz zu eng</ChangeItem>
+            <ChangeItem>Neu: efaCloud Eigenes Logging für Synchronisationsfehler</ChangeItem>
+            <ChangeItem>Bugfix: plugin.xml verweist auf korrekte JavaMail-Version 1.6.2</ChangeItem>
+            <ChangeItem>Bugfix: Französische Übersetzung hat keine Fehler mehr bei Texten mit Apostrophen</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>New: efa 2.3.3. requires at least Java Vesion 8</ChangeItem>
+            <ChangeItem>New: Boat reservations (both one-time and weekly reservations) can now be filtered by date</ChangeItem>
+            <Changeitem>New: Kanu-EFB synchonisation refactored, can be configured in more detail</Changeitem>
+            <ChangeItem>New: Boathouse shows two-column lists (can be disabled)</ChangeItem>
+            <ChangeItem>New: Boathouse shows today's reservations for available boats(can be disabled)</ChangeItem>
+            <ChangeItem>New: Boathouse shows tooltips for items (can be disabled)</ChangeItem>
+            <ChangeItem>New: Boathouse can filter for tooltip contents</ChangeItem>
+            <ChangeItem>New: Boathouse with more prominent headers (configureable)</ChangeItem>
+            <ChangeItem>New: Boathouse: Yellow background for active/non-empty filter fields in boat lists. Filter fields get cleared in fixed intervals.</ChangeItem>
+            <ChangeItem>New: Boat reservations can be filtered for today's reservations only (new checkbox)</ChangeItem>            
+            <ChangeItem>New: Boat reservations allow weekly reservations within a limited period</ChangeItem>
+            <ChangeItem>New: Overlapping boat reservations of diffrent types: behaviour of efa can be set</ChangeItem>
+            <ChangeItem>New: Autocomplete fields (e.g. boat name) filter by partial word</ChangeItem>
+            <ChangeItem>Bugfix: Logrotate efa.log avoids missing log entries when running efaCLI(https://github.com/nicmichael/efa/issues/22) </ChangeItem>            
+            <ChangeItem>Bugfix: efaCloud overwriting of sessions when switching logbook</ChangeItem>
+            <ChangeItem>Bugfix: efaCloud too little tolerance for data synchronization</ChangeItem>
+            <ChangeItem>New: efaCloud logging of synchronization errors</ChangeItem>
+            <ChangeItem>Bugfix: plugin.xml now correctly reports current version 1.6.2 of JavaMail</ChangeItem>
+            <ChangeItem>Bugfix: Fixed errors in french locale concerning apostrophes.</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.3.2_03</VersionID>
+        <ReleaseDate>21.01.2023</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa232.zip</DownloadUrl>
+        <DownloadSize>4379916</DownloadSize>
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Standard Lock Timeout auf 30 Sekunden erhoeht</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Increased default lock timeout to 30 sec</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.3.2_02</VersionID>
+        <ReleaseDate>21.01.2023</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa232.zip</DownloadUrl>
+        <DownloadSize>4380077</DownloadSize>
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Erweiterte Lock Timeout Diagnostics</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Additional log timeout diagnostics</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.3.2_01</VersionID>
+        <ReleaseDate>28.10.2022</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa232.zip</DownloadUrl>
+        <DownloadSize>4380228</DownloadSize>
+        <Changes lang="de">
+            <ChangeItem>Neu: JavaMail Update auf Version 1.6.2</ChangeItem>
+            <ChangeItem>Bugfix: Ungueltige Personen in Personen-Auswahlliste (https://github.com/nicmichael/efa/issues/62)</ChangeItem>
+            <ChangeItem>Bugfix: Personen-Auswwahlliste schrumpft in efaBasis (https://github.com/nicmichael/efa/issues/67)</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Neu: JavaMail Update to Version 1.6.2</ChangeItem>
+            <ChangeItem>Bugfix: Invalid persons in person selection list (https://github.com/nicmichael/efa/issues/62)</ChangeItem>
+            <ChangeItem>Bugfix: Person selection list loses entries in efaBase (https://github.com/nicmichael/efa/issues/67)</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.3.2_00</VersionID>
+        <ReleaseDate>04.06.2022</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa232.zip</DownloadUrl>
+        <DownloadSize>4269537</DownloadSize>
+        <Changes lang="de">
+            <ChangeItem>Neu: Filter fuer Liste der verfuegbaren Boote und Boote auf Fahrt</ChangeItem>
+            <ChangeItem>Neu: Verbesserte Darstellung von Tabellen</ChangeItem>
+            <ChangeItem>Neu: Anpassung der Logik zur Änderung des Vereinsarbeitsbuches an die Logik zur Veränderung des Fahrtenbuches bei der Verwendung in efaCloud</ChangeItem>
+            <ChangeItem>Bugfix: Fehlerkorrektur für efaCloud auf Windows Systemen</ChangeItem>
+            <ChangeItem>Bugfix: Verbesserung der Synchronisierung mit efaCloud</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Neu: Filter for lists with available boats and boats on the water</ChangeItem>
+            <ChangeItem>Neu: Improved display of tables</ChangeItem>
+            <ChangeItem>Neu: Improved handling of club work in efaCloud</ChangeItem>
+            <ChangeItem>Bugfix: efaCloud bugfixes on Windows</ChangeItem>
+            <ChangeItem>Bugfix: Improved efaCloud synchronization</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.3.1_04</VersionID>
+        <ReleaseDate>22.03.2022</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa231.zip</DownloadUrl>
+        <DownloadSize>4270829</DownloadSize>
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Korrektur fuer fehlendes Dezimalkomma in Darstellung von Entfernungen und anderen Dezimalwerten</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Fix for missing decimal point in display of distances and other decimal values</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.3.1_03</VersionID>
+        <ReleaseDate>06.03.2022</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa231.zip</DownloadUrl>
+        <DownloadSize>4270666</DownloadSize>
+        <Changes lang="de">
+            <ChangeItem>Neu: Verbesserte Uebersetzung nach Franzoesisch</ChangeItem>
+            <ChangeItem>Bugfix: efaCloud Synchronisationsfehler unter Windows behoben</ChangeItem>
+            <ChangeItem>Bugfix: Fehler bei Handhabung von Dezimalzahlen im Import behoben</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>New: Improved transation to French</ChangeItem>
+            <ChangeItem>Bugfix: efaCloud synchronization problem under Windows fixed</ChangeItem>
+            <ChangeItem>Bugfix: Bug for import of decimal numbers fixed</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.3.1_02</VersionID>
+        <ReleaseDate>08.02.2022</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa231.zip</DownloadUrl>
+        <DownloadSize>4256352</DownloadSize>
+        <Changes lang="de">
+            <ChangeItem>Neu: Wettbewerbsbedingungen fuer Fahrtenabzeichen 2022 angepasst</ChangeItem>
+            <ChangeItem>Bugfix: efaCloud Bugfix bei Fahrtenbuchwechsel</ChangeItem>
+            <ChangeItem>Bugfix: Fehler bei Handhabung von Dezimalzahlen im Import behoben</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Bugfix: efaCloud Bugfix for logbook change</ChangeItem>
+            <ChangeItem>Bugfix: Bug for import of decimal numbers fixed</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.3.1_01</VersionID>
+        <ReleaseDate>24.01.2022</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa231.zip</DownloadUrl>
+        <DownloadSize>4256121</DownloadSize>
+        <Changes lang="de">
+            <ChangeItem>Neu: Verbesserte Auto-Complete Listen schlagen nur Personen vor, die noch nicht fuer das Boot ausgewaehlt sind</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>New: Improved Auto-Complete lists only suggest persons which haven't yet been selected for this boat</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.3.1_00</VersionID>
+        <ReleaseDate>22.12.2021</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa231.zip</DownloadUrl>
+        <DownloadSize>4255809</DownloadSize>
+        <Changes lang="de">
+            <ChangeItem>efaCloud-Optimierungen mit zentraler Admin-Verwaltung</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>efaCloud optimizations with centralized admin management</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.3.0_14</VersionID>
+        <ReleaseDate>19.11.2021</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa230.zip</DownloadUrl>
+        <DownloadSize>4246634</DownloadSize>
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Fehlende Berechnung der Zielbereiche bei Wettbebwerbsauswertung fuer LRV Sommer-Wettbewerb 2021 behoben</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.3.0_12</VersionID>
+        <ReleaseDate>26.09.2021</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa230.zip</DownloadUrl>
+        <DownloadSize>4246168</DownloadSize>
+        <Changes lang="de">
+            <ChangeItem>Bugfix: efaCloud: Wenn die Internetverbindung beim Start des Programms noch nicht steht, wird der Retry der Autorisierung nun korrekt angestoßen.</ChangeItem>
+            <ChangeItem>Bugfix: Behebung des Referenzfehlers in der Logdatei-Prüfung beim Raspberry Systemzeitfehler-Effekt.</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Bugfix: efaCloud: Authorization retry if internet connection interrupted during program start</ChangeItem>
+            <ChangeItem>Bugfix:fixed reference count in logfile check for Raspberry</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.3.0_11</VersionID>
+        <ReleaseDate>19.06.2021</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa230.zip</DownloadUrl>
+        <DownloadSize>4246311</DownloadSize>
+        <Changes lang="de">
+            <ChangeItem>Neu: Wettbewerbsbedingungen fuer LRV-Sommer-Wettbewerb 2021 aktualisiert</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.3.0_10</VersionID>
+        <ReleaseDate>10.06.2021</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa230.zip</DownloadUrl>
+        <DownloadSize>4245993</DownloadSize>
+        <Changes lang="de">
+            <ChangeItem>Bugfix [efaCloud]: Gruppen mit mehr als 27 Mitgliedern nun möglich</ChangeItem>
+            <ChangeItem>Bugfix [efaCloud]: efaCloud und efaCLI nun kompatibel. Allerdings keine efaCloud Kommandos über efaCLI</ChangeItem>
+            <ChangeItem>Bugfix [efaCloud]: efaRemote + efaCloud getestet</ChangeItem>
+            <ChangeItem>Bugfix [efaCloud]: Toleranz der Fehlerprüfung optimiert</ChangeItem>
+            <ChangeItem>Bugfix [efaCloud]: Hinweisdialog bei fehlschlagen der Authentifizierung am Server</ChangeItem>
+            <ChangeItem>Bugfix [efaCloud]: verwaiste Konfigurationsreste in Konfigurationsmenü "Daten" durch Hinweis uf den richtigen Ort ersetzt.</ChangeItem>
+            <ChangeItem>Bugfix [efaCloud]: Bei Datensatzinkonsistenz enthält die Fehlermeldung nun den nicht aktualisierten Datensatz</ChangeItem>
+            <ChangeItem>Bugfix [efaCloud]: efa2fahrtenabzeichen wird mit bis zu 4 Abweichungen noch aktualisiert</ChangeItem>
+            <ChangeItem>Bugfix [efaCloud]: Eine Info über den Stand des Servers (server_welcome_message) wird nun im efaCloud Konfigurationsdialog mit angezeigt (braucht Serverversion 2.3.0_12)</ChangeItem>
+            <ChangeItem>Bugfix [efaCloud]: Server => client Konfigurationsinformation wird nun mit jeder Synchronisation neu übertragen, nicht nur bei Neustart. Resume nach Pausieren Fehler behoben.</ChangeItem>
+            <ChangeItem>Bugfix [efaCloud]: Verbesserte Dartsellung des Fehlers bei der initialen Verbindung zur Vereinfachung der Fehlerbehebung bei der ersten efaCloud Konfiguration</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.3.0_09</VersionID>
+        <ReleaseDate>11.04.2021</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa230.zip</DownloadUrl>
+        <DownloadSize>4244761</DownloadSize>
+        <Changes lang="de">
+            <ChangeItem>Change: Bedingungen fuer DRV-Fahrtenabzeichen 2021 angepasst</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.3.0_07</VersionID>
+        <ReleaseDate>30.03.2021</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa230.zip</DownloadUrl>
+        <DownloadSize>4250040</DownloadSize>
+        <Changes lang="de">
+            <ChangeItem>Bugfix: efaCloud Fast-Sync alle 30 Sekunden (Verringerung der Latenz der Sichtbarkeit von Aenderungen verschiedener Clients)</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Bugfix: efaCloud Fast-Sync every 30 seconds (latency reduction for changes of multiple clients becoming visible to others)</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.3.0_06</VersionID>
+        <ReleaseDate>23.03.2021</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa230.zip</DownloadUrl>
+        <DownloadSize>4249529</DownloadSize>
+        <Changes lang="de">
+            <ChangeItem>Bugfix: NullPointerException in efaCloud beim Beenden einer Fahrt mit unbekanntem Boot oder Doppeleintrag korrigiert</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Bugfix: NullPointerException fixed when finishing a session of an unknown or double-booked boat in efaCloud</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.3.0_05</VersionID>
+        <ReleaseDate>22.03.2021</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa230.zip</DownloadUrl>
+        <DownloadSize>4249632</DownloadSize>
+        <Changes lang="de">
+            <ChangeItem>Bugfix: efaCloud Upload-Fehler (manueller Upload) korrigiert</ChangeItem>
+            <ChangeItem>Bugfix: NullPointerException in efaCloud-Konfiguration korrigiert, wenn kein Projekt geoeffnet ist</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Bugfix: efaCloud Upload error (manual upload) fixed</ChangeItem>
+            <ChangeItem>Bugfix: NullPointerException in efaCloud configuration fixed when no project is opened</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.3.0_04</VersionID>
+        <ReleaseDate>20.03.2021</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa230.zip</DownloadUrl>
+        <DownloadSize>4249556</DownloadSize>
+        <Changes lang="de">
+            <ChangeItem>New: Erweiterte User Statistics bei remote Online-Update</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>New: Enhanced Statistics during remote Online Update</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.3.0_02</VersionID>
+        <ReleaseDate>20.03.2021</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa230.zip</DownloadUrl>
+        <DownloadSize>4249549</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: NullPointerException beim Beenden einer Fahrt korrigiert</ChangeItem>
+            <ChangeItem>New: User Statistics bei remote Online-Update</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Bugfix: NullPointerException fixed when finishing a session</ChangeItem>
+            <ChangeItem>New: User Statistics during remote Online Update</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.3.0_01</VersionID>
+        <ReleaseDate>18.03.2021</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa230.zip</DownloadUrl>
+        <DownloadSize>4249302</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Lizenztext aktualisiert</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.3.0_00</VersionID>
+        <ReleaseDate>16.03.2021</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa230.zip</DownloadUrl>
+        <DownloadSize>4249267</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Neu: efaCloud - efa in der Cloud (experimentell)</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>New: efaCloud - efa in the Cloud (experimental)</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.2_54</VersionID>
+        <ReleaseDate>15.12.2020</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa222.zip</DownloadUrl>
+        <DownloadSize>4099434</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Neu: Meldegend fuer DRV-Fahrtenabzeichen aktualisiert</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.2_52</VersionID>
+        <ReleaseDate>18.11.2020</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa222.zip</DownloadUrl>
+        <DownloadSize>4099451</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Neu: efa ueberprueft regelmaessig, ob Java Version 8 oder neuer verwendet wird und warnt ggf.</ChangeItem>
+            <ChangeItem>Bugfix: Ueberfluessige .java Dateien aus efa.jar entfernt</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Neu: efa checks periodically if Java version 8 or newer is being used and warns if not</ChangeItem>
+            <ChangeItem>Bugfix: Removed unnecessary .java files from efa.jar</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.2_51</VersionID>
+        <ReleaseDate>16.11.2020</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa222.zip</DownloadUrl>
+        <DownloadSize>4145485</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Fehler beim Anlegen einer Person als normaler Nutzer im Bootshaus-Modus behoben</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Exception when creating new persons as an ordinary user in boathouse mode fixed</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.2.2_50</VersionID>
+        <ReleaseDate>16.11.2020</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa222.zip</DownloadUrl>
+        <DownloadSize>4145426</DownloadSize>
+
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Fehlerhafte Uebermittlung von Zielfahrten fuer LRV-Sommer-Wettbebwerb 2020 (Covid) bei Meldung korrigiert</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
         <VersionID>2.2.2_49</VersionID>
         <ReleaseDate>14.11.2020</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa222.zip</DownloadUrl>
-        <DownloadSize>4338097</DownloadSize>
+        <DownloadSize>4145316</DownloadSize>
 
         <Changes lang="de">
             <ChangeItem>Bugfix: Ermittlung der Zielfahrten fuer geaenderte Bestimmungen (Covid) korrigiert</ChangeItem>
@@ -68,7 +465,7 @@
             <ChangeItem>Bugfix: Correct placement of dialogs in environments with multiple monitors</ChangeItem>
             <ChangeItem>Bugfix: Session cancel dialog can now be cancled with ESC</ChangeItem>
             <ChangeItem>Bugfix: Broken switching between person and boat selection lists fixed</ChangeItem>
-            <ChangeItem>New: reservation details of overlapping reservations are now shown</ChangeItem>
+            <ChangeItem>Neu: reservation details of overlapping reservations are now shown</ChangeItem>
         </Changes>
     </Version>
 
