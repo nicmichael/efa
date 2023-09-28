@@ -9,14 +9,9 @@
  */
 package de.nmichael.efa.util;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
 import javax.swing.JDialog;
 
-import org.apache.commons.net.ftp.FTPSClient;
-
+import com.enterprisedt.net.ftp.FTPException;
 import com.enterprisedt.net.ftp.FTPTransferType;
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelSftp;
@@ -35,56 +30,58 @@ import de.nmichael.efa.gui.MultiInputDialog;
 /*
  * FTPClient Class
  * 
- * Usually, this class only supports FTP file transfer using the edtFTPj/free library.
- * This supports uncrypted FTP only. The pro editions support encrypted FTPs/sFTP protocols,
- * but at a hefty price tag for open source programs.
- * 
- * In this class has been refactored to support the following protocols: (upload only)
+ * In this class has been refactored to support the following protocols: (upload and download)
  * - Standard FTP 
- *   still using edtFTPj/free library. Active and passive mode.
- *   
- * - FTPs (FTP over TLS)
- *   Using Apache Commons Net FTPSClient.
- *   This only works with servers which do not require session resume logic.
- *   - does not work with fileZilla !
- *    
- *   Session resume is a security measure to ensure that the session which sends the commands (like change directory)
- *   is the same as the one transferring data (files). This session resume logic is broken in 
- *   Apache Commons Net (see https://issues.apache.org/jira/browse/NET-408 ). The current fixes rely on reflection,
- *   which is no longer usable from jdk17 on.
+ *   still using edtFTPj/free library. Active and passive mode. 
  * 
  * - SFTP (File transfer over ssh, like winSCP)
  *   Implemented using the jsch library. I abadoned a SSHJ based solution, as SSHJ needs some log4j logging functions,
- *   which are not yet implemented in EFA, and I did not want to have two diffrent Logger methods within efa.
+ *   which are not yet implemented in EFA, and I did not want to have two different logger methods within efa.
  *   Additionally, it was a hard time fiddling around to get SSHJ up and running without log4j, and I did not succeed.
- *   So jsch library it is. 
+ *   So jsch library it is.
  *   
  * Also, the port can be defined for each of these protocols, a port number 0 targets the standard ports for
  * the respective protocols.
  * 
  * The storage of the new protocols and the new port attributes are downward compatible to the ftp strings
  * of older versions of this class. 
+ * 
+ * So what about FTPs (FTP over TLS)?
  *    
+ * - FTPs (FTP over TLS) 
+ *   This java class is PREPARED to use FTPs once the Apache Commons Net library supports FTPs correctly.
+ *   
+ *   Using Apache Commons Net FTPSClient. This is the only free library for using FTPs (TLS) transfers.
+ *   FTPs using Apache Commons Net Library does not work with FTPs Servers which require session resume logic.
+ *    
+ *   Session resume is a security measure to ensure that the session which sends the commands (like change directory)
+ *   is the same as the one transferring data (files). This session resume logic is broken in 
+ *   Apache Commons Net (see https://issues.apache.org/jira/browse/NET-408 ). The current fixes rely on reflection,
+ *   which is no longer usable from jdk17 on.
+ *   
+ *   So, FTPs is currently not supported. This may change with an Apache Commons Net library which
+ *   supports session resume logic.
+ *   
  */
 
 // @i18n complete
 public class FTPClient {
 
 	private static final String PREFIX_FTP_PASV = "ftp-pasv:";
-	private static final String PREFIX_SFTP = "sftp:";
+	private static final String PREFIX_SFTP_SSH = "sftp:";
 	private static final String PREFIX_FTP = "ftp:";
-	private static final String PREFIX_FTPS = "ftps:";
+	private static final String PREFIX_FTPS_TLS = "ftps:";
 	
 	private static final String PROTOCOL_FTP = "FTP"; 
 	private static final String PROTOCOL_FTP_PASV = "FTP-PASV";
-	private static final String PROTOCOL_FTPS = "FTPS (TLS)";
-	private static final String PROTOCOL_SFTP = "SFTP (SSH)";
+	private static final String PROTOCOL_FTPS_TLS = "FTPS (TLS)"; // remember, this protocol does not work yet, see class comment
+	private static final String PROTOCOL_SFTP_SSH = "SFTP (SSH)";
 	
 	/*  FTP String patterns EFA 2.3.2 and earlier: 
 	 *  ftp:username:password@127.0.0.1:/path/filename.suffix
 	 *  ftp-pasv:username:password@127.0.0.1:/path/filename.suffix
 	 *
-	 * Additional ftp string patterns 
+	 * Additional ftp string patterns EFA 2.3.4 and up:
 	 *  ftp:username:password@127.0.0.1|port:/path/filename.suffix
 	 *  ftp-pasv:username:password@127.0.0.1|port:/path/filename.suffix
 	 *  
@@ -103,16 +100,16 @@ public class FTPClient {
     private String remoteDirectory;
     private String remoteFile;
     private int port=0;
-    private boolean isSFTPMode = false;
-    private boolean isFTPsMode = false;
+    private boolean isSFTPSSHMode = false;
+    private boolean isFTPsTLSMode = false;
     private boolean isFTPPasvMode = false;
     private boolean validFormat = false;
     
     public static boolean isFTP(String s) {
         return s != null && (s.toLowerCase().startsWith(PREFIX_FTP) ||
-        					 s.toLowerCase().startsWith(PREFIX_SFTP) ||        		
+        					 s.toLowerCase().startsWith(PREFIX_SFTP_SSH) ||        		
                              s.toLowerCase().startsWith(PREFIX_FTP_PASV) ||
-                             s.toLowerCase().startsWith(PREFIX_FTPS));
+                             s.toLowerCase().startsWith(PREFIX_FTPS_TLS));
     }
 
     public FTPClient(String ftpString, String localFileWithPath) {
@@ -125,20 +122,20 @@ public class FTPClient {
             if (ftpString.toLowerCase().startsWith(PREFIX_FTP_PASV)) {
                 ftpString = ftpString.substring(9);
                 isFTPPasvMode = true;
-                isSFTPMode=false;
-                isFTPsMode=false;
+                isSFTPSSHMode=false;
+                isFTPsTLSMode=false;
             }
-            if (ftpString.toLowerCase().startsWith(PREFIX_SFTP)) {
+            if (ftpString.toLowerCase().startsWith(PREFIX_SFTP_SSH)) {
                 ftpString = ftpString.substring(5);
                 isFTPPasvMode = false;
-                isSFTPMode=true;
-                isFTPsMode=false;
+                isSFTPSSHMode=true;
+                isFTPsTLSMode=false;
             }
-            if (ftpString.toLowerCase().startsWith(PREFIX_FTPS)) {
+            if (ftpString.toLowerCase().startsWith(PREFIX_FTPS_TLS)) {
                 ftpString = ftpString.substring(5);
                 isFTPPasvMode = false;
-                isSFTPMode=false;
-                isFTPsMode=true;
+                isSFTPSSHMode=false;
+                isFTPsTLSMode=true;
             }
             
             int pos = ftpString.indexOf(":");
@@ -188,12 +185,12 @@ public class FTPClient {
     	}
     }
     
-    /*
+    /**
      * The server part of an ftpString contains
      * - servername
      * - optional 
      *     |portnumber
-     * this method returns only the port number, or an empty string if no port number available
+     * @return  port number, or 0 if no port number is configured in ftp string
      */
     private int getPortFromFTPString(String ftpString) {
     	int posDelimiter=ftpString.lastIndexOf("|");
@@ -252,7 +249,7 @@ public class FTPClient {
     }
 
     public String getFtpString(boolean withPassword) {
-        return (isFTPPasvMode ? PREFIX_FTP_PASV : (isSFTPMode ? PREFIX_SFTP : (isFTPsMode ? PREFIX_FTPS : PREFIX_FTP))) + 
+        return (isFTPPasvMode ? PREFIX_FTP_PASV : (isSFTPSSHMode ? PREFIX_SFTP_SSH : (isFTPsTLSMode ? PREFIX_FTPS_TLS : PREFIX_FTP))) + 
                 username + (withPassword ? ":" + password : "") +
                 "@" + server + 
                 //server may also contain port, if port is specified
@@ -287,15 +284,21 @@ public class FTPClient {
     }
     
     public String runUpload() {
-    	if (isSFTPMode) {
-    		return runUploadSFTP();
-    	} else if (isFTPsMode) {
-			return runUploadFTPS();
+    	if (isSFTPSSHMode) {
+    		return runUploadSFTPViaSSH();
+    	} else if (isFTPsTLSMode) {
+			return runUploadFTPSViaTLS();
     	} else {
     		return runUploadFTP();
     	}
     }
     
+    /**
+     * Runs an upload via plain old FTP (using an old free FTP library)
+     * Uses the credentials provided by ftpClient class.
+     * 
+     * @return null if successful, String containing error message if not successful. 
+     */    
     private String runUploadFTP() {
         try {
             com.enterprisedt.net.ftp.FTPClient ftpClient = new com.enterprisedt.net.ftp.FTPClient(server);
@@ -322,8 +325,14 @@ public class FTPClient {
         }
     }
 
-    private String runUploadSFTP() {
-    	String result="";
+    /**
+     * Runs an upload via SFTP (using ssh and the according JSch library).
+     * Uses the credentials provided by ftpClient class.
+     * 
+     * @return null if successful, String containing error message if not successful. 
+     */
+    private String runUploadSFTPViaSSH() {
+    	String result=null;
     	
     	JSch jsch = new JSch();
         Session session = null;
@@ -337,7 +346,11 @@ public class FTPClient {
            Channel channel = session.openChannel("sftp");
            channel.connect();
            ChannelSftp sftpChannel = (ChannelSftp) channel;
-           sftpChannel.put(this.remoteDirectory+"/"+this.remoteFile, this.localFileWithPath,ChannelSftp.OVERWRITE);
+           if (this.remoteDirectory.equalsIgnoreCase("") || this.remoteDirectory.equals("/") || this.remoteDirectory.equals("\\")) {
+               sftpChannel.put(this.localFileWithPath,this.remoteFile, ChannelSftp.OVERWRITE);
+           } else {
+        	   sftpChannel.put(this.localFileWithPath,this.remoteDirectory+"/"+this.remoteFile, ChannelSftp.OVERWRITE);
+           }
            sftpChannel.exit();
 
        } catch (JSchException | SftpException e) {
@@ -351,7 +364,20 @@ public class FTPClient {
   	   return result;
     }
     
-    public String runUploadFTPS() {
+
+    /**
+     * Runs an upload via FTPS (using TLS and the according Apache Net library).
+     * Uses the credentials provided by ftpClient class.
+     * 
+     * THIS FUNCTION DOES NOT WORK CORRECTLY WITH SERVERS WHICH REQUIRE SESSION REUSE.
+     * SEE CLASS COMMENT FOR MORE INFO.
+     * 
+     * @return null if successful, String containing error message if not successful. 
+     */   
+    
+    private String runUploadFTPSViaTLS() {
+    	return "Apache Commons Net FTPs support broken - so not implemented";
+    	/*
     	String result = "";
     	FTPSClient ftpClient = new FTPSClient(false);//no implicit FTPs
     	if (port>0) {
@@ -386,6 +412,7 @@ public class FTPClient {
     		result = e.getMessage();
     	}
     	return result;
+    	*/
     }
     
     public String write() {
@@ -406,10 +433,10 @@ public class FTPClient {
     }
 
     public String runDownload() {
-		if (isSFTPMode) {
-			return runDownloadSFTP();
-		} else if (isFTPsMode) {
-			return runDownloadFTPS();
+		if (isSFTPSSHMode) {
+			return runDownloadSFTPViaSSH();
+		} else if (isFTPsTLSMode) {
+			return runDownloadFTPSViaTLS();
 		} else {
 			return runDownloadFTP(); //active and passive
 		}    
@@ -441,12 +468,45 @@ public class FTPClient {
         }
     }
 
-    private String runDownloadSFTP() {
-    	return "SFTP not yet implemented.";
+    private String runDownloadSFTPViaSSH() {
+    	
+    	String result=null;
+    	
+    	JSch jsch = new JSch();
+        Session session = null;
+        try {
+           session = jsch.getSession(this.username, this.server, (port>0 ? port : 22));
+
+           session.setConfig("StrictHostKeyChecking", "no");
+           session.setPassword(this.password);
+           session.connect();
+
+           Channel channel = session.openChannel("sftp");
+           channel.connect();
+           ChannelSftp sftpChannel = (ChannelSftp) channel;
+           if (this.remoteDirectory.equalsIgnoreCase("") || this.remoteDirectory.equals("/") || this.remoteDirectory.equals("\\")) {
+               sftpChannel.get(this.remoteFile, this.localFileWithPath);
+           } else {
+        	   sftpChannel.get(this.remoteDirectory+"/"+this.remoteFile, this.localFileWithPath);
+           }
+           sftpChannel.exit();
+
+       } catch (JSchException | SftpException e) {
+    	   result = e.getMessage();
+           Logger.log(Logger.WARNING, Logger.MSG_WARN_DOWNLOADFAILED, 
+                   "Download of file '" + remoteFile + "' failed: " + e.toString());
+           Logger.logdebug(e);
+       } finally {
+           if (session != null) {
+               session.disconnect();
+           }
+       }
+    	    
+  	   return result;    	
     }
     
-    private String runDownloadFTPS() {
-    	return "FTPS not yet implemented.";
+    private String runDownloadFTPSViaTLS() {
+    	return "Apache Commons Net FTPs support broken - so not implemented";
     }    
     
     
@@ -470,15 +530,22 @@ public class FTPClient {
     private static String getProtocolFromFTPClient(FTPClient client) {
     	if (client.isFTPPasvMode) {
     		return PROTOCOL_FTP_PASV;
-    	} else if (client.isSFTPMode) {
-    		return PROTOCOL_SFTP;
-    	} else if (client.isFTPsMode) {
-    		return PROTOCOL_FTPS;
+    	} else if (client.isSFTPSSHMode) {
+    		return PROTOCOL_SFTP_SSH;
+    	} else if (client.isFTPsTLSMode) {
+    		return PROTOCOL_FTPS_TLS;
     	} else {
     		return PROTOCOL_FTP;
     	}
     }
     
+    /**
+     * Shows an MultiInputDialog on screen, providing edit fields for all elements
+     * of an ftpString.
+     * 
+     * @param s ftpString 
+     * @return new ftpString with changes from the user
+     */
     public static String getFtpStringGuiDialog(String s) {
         
     	final int ITEM_PROTOCOL =0;
@@ -493,8 +560,8 @@ public class FTPClient {
         IItemType[] items = new IItemType[6];
         
         items[ITEM_PROTOCOL] = new ItemTypeStringList("PROTOCOL",
-				getProtocolFromFTPClient(ftp), new String[] { PROTOCOL_FTP, PROTOCOL_FTP_PASV, PROTOCOL_FTPS, PROTOCOL_SFTP},
-				new String[] { PROTOCOL_FTP, PROTOCOL_FTP_PASV, PROTOCOL_FTPS, PROTOCOL_SFTP }, IItemType.TYPE_PUBLIC,
+				getProtocolFromFTPClient(ftp), new String[] { PROTOCOL_FTP, PROTOCOL_FTP_PASV, /*PROTOCOL_FTPS_TLS,*/ PROTOCOL_SFTP_SSH},
+				new String[] { PROTOCOL_FTP, PROTOCOL_FTP_PASV, /*PROTOCOL_FTPS_TLS,*/ PROTOCOL_SFTP_SSH }, IItemType.TYPE_PUBLIC,
 				"",International.getString("Protokoll"));        
         items[ITEM_SERVER] = new ItemTypeString("SERVER", (ftp.getServer() != null ? ftp.getServer() : ""),
                 IItemType.TYPE_PUBLIC, "", International.getString("FTP-Server"));
@@ -517,13 +584,13 @@ public class FTPClient {
             }
             
             boolean pasv = items[ITEM_PROTOCOL].getValueFromField().equals(PROTOCOL_FTP_PASV);
-            boolean isSFTP = items[ITEM_PROTOCOL].getValueFromField().equals(PROTOCOL_SFTP);
-            boolean isFTPs = items[ITEM_PROTOCOL].getValueFromField().equals(PROTOCOL_FTPS);
+            boolean isSFTP = items[ITEM_PROTOCOL].getValueFromField().equals(PROTOCOL_SFTP_SSH);
+            boolean isFTPs = items[ITEM_PROTOCOL].getValueFromField().equals(PROTOCOL_FTPS_TLS);
             
             int port = ((ItemTypeInteger)items[ITEM_PORT]).getValue();
             		
             ftp = new FTPClient(
-            		(pasv ? PREFIX_FTP_PASV : (isSFTP ? PREFIX_SFTP : (isFTPs ? PREFIX_FTPS : PREFIX_FTP))) + //FTP is default
+            		(pasv ? PREFIX_FTP_PASV : (isSFTP ? PREFIX_SFTP_SSH : (isFTPs ? PREFIX_FTPS_TLS : PREFIX_FTP))) + //FTP is default
             		items[ITEM_USERNAME].toString() + ":" + items[ITEM_PASSWORD].toString() +
                     "@" + items[ITEM_SERVER].toString() + 
                     //server may also contain port, if port is specified
