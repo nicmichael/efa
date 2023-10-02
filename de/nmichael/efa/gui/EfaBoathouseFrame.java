@@ -85,6 +85,7 @@ import de.nmichael.efa.gui.widgets.ClockMiniWidget;
 import de.nmichael.efa.gui.widgets.IWidget;
 import de.nmichael.efa.gui.widgets.NewsMiniWidget;
 import de.nmichael.efa.gui.widgets.Widget;
+import de.nmichael.efa.gui.ImagesAndIcons;
 import de.nmichael.efa.util.Dialog;
 import de.nmichael.efa.core.config.*;
 import de.nmichael.efa.core.items.*;
@@ -108,7 +109,7 @@ import de.nmichael.efa.util.Mnemonics;
 
 public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
 
-    public static EfaBoathouseFrame efaBoathouseFrame;
+	public static EfaBoathouseFrame efaBoathouseFrame;
 
     public static final int EFA_EXIT_REASON_USER          = 0;
     public static final int EFA_EXIT_REASON_TIME          = 1;
@@ -441,14 +442,14 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
                 menuBar.setBackground(bgColor);
                 menuBar.setForeground(Color.white);
                 JLabel efaLabel = new JLabel();
-                efaLabel.setIcon(getIcon("efa_icon_small.png"));
+                efaLabel.setIcon(getIcon(ImagesAndIcons.IMAGE_EFA_ICON_SMALL ));
                 titleLabel.setText(Daten.EFA_LONGNAME);
                 titleLabel.setForeground(Color.white);
                 titleLabel.setFont(titleLabel.getFont().deriveFont(12f));
                 titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
                 titleLabel.setHorizontalTextPosition(SwingConstants.CENTER);
                 JButton closeButton = new JButton();
-                closeButton.setIcon(getIcon("frame_close.png"));
+                closeButton.setIcon(getIcon(ImagesAndIcons.IMAGE_FRAME_CLOSE ));
                 closeButton.setBackground(bgColor);
                 closeButton.setForeground(Color.white);
                 closeButton.setFont(closeButton.getFont().deriveFont(10f));
@@ -794,18 +795,18 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
         this.specialButton.setVisible(Daten.efaConfig.getValueEfaDirekt_butSpezial().getValueShow());
         this.helpButton.setVisible(Daten.efaConfig.getValueEfaDirekt_butHelp().getValueShow());
 
-        setButtonLAF(startSessionButton, Daten.efaConfig.getValueEfaDirekt_butFahrtBeginnen(), "action_startSession.png");
-        setButtonLAF(finishSessionButton, Daten.efaConfig.getValueEfaDirekt_butFahrtBeenden(), "action_finishSession.png");
-        setButtonLAF(abortSessionButton, Daten.efaConfig.getValueEfaDirekt_butFahrtAbbrechen(), "action_abortSession.png");
-        setButtonLAF(lateEntryButton, Daten.efaConfig.getValueEfaDirekt_butNachtrag(), "action_lateEntry.png");
-        setButtonLAF(boatReservationButton, Daten.efaConfig.getValueEfaDirekt_butBootsreservierungen(), "action_boatReservations.png");
-        setButtonLAF(showLogbookButton, Daten.efaConfig.getValueEfaDirekt_butFahrtenbuchAnzeigen(), "action_logbook.png");
-        setButtonLAF(statisticsButton, Daten.efaConfig.getValueEfaDirekt_butStatistikErstellen(), "action_statistics.png");
-        setButtonLAF(clubworkButton, Daten.efaConfig.getValueEfaDirekt_butVereinsarbeit(), "action_clubwork.png");
-        setButtonLAF(messageToAdminButton, Daten.efaConfig.getValueEfaDirekt_butNachrichtAnAdmin(), "action_message.png");
-        setButtonLAF(adminButton, Daten.efaConfig.getValueEfaDirekt_butAdminModus(), "action_admin.png");
-        setButtonLAF(specialButton, Daten.efaConfig.getValueEfaDirekt_butSpezial(), "action_special.png");
-        setButtonLAF(helpButton, null, "action_help.png");
+        setButtonLAF(startSessionButton, Daten.efaConfig.getValueEfaDirekt_butFahrtBeginnen(), ImagesAndIcons.IMAGE_ACTION_START_SESSION);
+        setButtonLAF(finishSessionButton, Daten.efaConfig.getValueEfaDirekt_butFahrtBeenden(), ImagesAndIcons.IMAGE_ACTION_FINISH_SESSION);
+        setButtonLAF(abortSessionButton, Daten.efaConfig.getValueEfaDirekt_butFahrtAbbrechen(), ImagesAndIcons.IMAGE_ACTION_ABORT_SESSION);
+        setButtonLAF(lateEntryButton, Daten.efaConfig.getValueEfaDirekt_butNachtrag(), ImagesAndIcons.IMAGE_ACTION_LATE_ENTRY);
+        setButtonLAF(boatReservationButton, Daten.efaConfig.getValueEfaDirekt_butBootsreservierungen(), ImagesAndIcons.IMAGE_ACTION_BOAT_RESERVATIONS);
+        setButtonLAF(showLogbookButton, Daten.efaConfig.getValueEfaDirekt_butFahrtenbuchAnzeigen(), ImagesAndIcons.IMAGE_ACTION_LOGBOOK);
+        setButtonLAF(statisticsButton, Daten.efaConfig.getValueEfaDirekt_butStatistikErstellen(), ImagesAndIcons.IMAGE_ACTION_STATISTICS);
+        setButtonLAF(clubworkButton, Daten.efaConfig.getValueEfaDirekt_butVereinsarbeit(), ImagesAndIcons.IMAGE_ACTION_CLUBWORK);
+        setButtonLAF(messageToAdminButton, Daten.efaConfig.getValueEfaDirekt_butNachrichtAnAdmin(), ImagesAndIcons.IMAGE_ACTION_MESSAGE);
+        setButtonLAF(adminButton, Daten.efaConfig.getValueEfaDirekt_butAdminModus(), ImagesAndIcons.IMAGE_ACTION_ADMIN);
+        setButtonLAF(specialButton, Daten.efaConfig.getValueEfaDirekt_butSpezial(), ImagesAndIcons.IMAGE_ACTION_SPECIAL);
+        setButtonLAF(helpButton, null, ImagesAndIcons.IMAGE_ACTION_HELP);
 
     }
 
@@ -1706,13 +1707,11 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
     // Callbacks and Events
     // ========================================================================================================================================
     public void setUnreadMessages(boolean admin, boolean boatmaintenance) {
-        String iconName = "action_admin.png";
         if (admin && boatmaintenance) {
-            iconName = "action_admin_mailAdminBoat.png";
         } else if (admin) {
-            iconName = "action_admin_mailAdmin.png";
+            iconName = ImagesAndIcons.IMAGE_ACTION_ADMIN_MAIL_ADMIN;
         } else if (boatmaintenance) {
-            iconName = "action_admin_mailBoat.png";
+            iconName = ImagesAndIcons.IMAGE_ACTION_ADMIN_MAIL_BOAT;
         }
         adminButton.setIcon(getIcon(iconName));
     }

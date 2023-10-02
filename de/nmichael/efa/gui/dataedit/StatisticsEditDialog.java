@@ -17,6 +17,7 @@ import de.nmichael.efa.util.*;
 import de.nmichael.efa.data.*;
 import de.nmichael.efa.gui.BaseDialog;
 import de.nmichael.efa.gui.SimpleInputDialog;
+import de.nmichael.efa.gui.ImagesAndIcons;
 import de.nmichael.efa.statistics.StatisticTask;
 import de.nmichael.efa.util.Dialog;
 import java.awt.*;
@@ -27,7 +28,7 @@ import javax.swing.*;
 // @i18n complete
 public class StatisticsEditDialog extends UnversionizedDataEditDialog {
 
-    public StatisticsEditDialog(Frame parent, StatisticsRecord r, boolean newRecord, AdminRecord admin) {
+	public StatisticsEditDialog(Frame parent, StatisticsRecord r, boolean newRecord, AdminRecord admin) {
         super(parent, International.getString("Statistik"), r, newRecord, admin);
         initialize(false);
     }
@@ -61,7 +62,7 @@ public class StatisticsEditDialog extends UnversionizedDataEditDialog {
 
     protected void setSaveAsButton() {
         JButton saveAsButton = new JButton();
-        saveAsButton.setIcon(BaseDialog.getIcon("button_saveas.png"));
+        saveAsButton.setIcon(BaseDialog.getIcon(ImagesAndIcons.IMAGE_BUTTON_SAVEAS));
         saveAsButton.setMargin(new Insets(2,2,2,2));
         saveAsButton.setSize(35, 20);
         saveAsButton.setToolTipText(International.getString("Speichern als ..."));
