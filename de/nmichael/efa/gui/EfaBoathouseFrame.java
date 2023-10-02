@@ -1707,7 +1707,9 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
     // Callbacks and Events
     // ========================================================================================================================================
     public void setUnreadMessages(boolean admin, boolean boatmaintenance) {
+        String iconName = ImagesAndIcons.IMAGE_ACTION_ADMIN;
         if (admin && boatmaintenance) {
+            iconName = ImagesAndIcons.IMAGE_ACTION_ADMIN_MAIL_ADMIN_BOAT;
         } else if (admin) {
             iconName = ImagesAndIcons.IMAGE_ACTION_ADMIN_MAIL_ADMIN;
         } else if (boatmaintenance) {
