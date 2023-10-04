@@ -18,7 +18,7 @@
         <VersionID>2.3.3_00</VersionID>
         <ReleaseDate>29.09.2023</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa233.zip</DownloadUrl>
-        <DownloadSize></DownloadSize>
+        <DownloadSize>4523987</DownloadSize>
         <Changes lang="de">
             <ChangeItem>Neu: efa 2.3.3 erfordert mindestens Java Version 8</ChangeItem>
             <ChangeItem>Neu: Bootsreservierungen (sowohl einmalige als auch wöchentliche) lassen sich jetzt nach Datum filtern</ChangeItem>
