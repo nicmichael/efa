@@ -1,6 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <efaOnlineUpdate>
-
+    <Version>
+        <VersionID>2.3.3_01</VersionID>
+        <ReleaseDate>TO.DO.2023</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa233.zip</DownloadUrl>
+        <DownloadSize>4523987</DownloadSize>
+        <Changes lang="de">
+            <ChangeItem>BugFix: Teilbegriffsuche für Eingabefelder mit Vervollständigung suchen nun auf kompletter Liste</ChangeItem>
+            <ChangeItem>BugFix: Sortierung für Bootsliste, Personenliste, Vervollständigungs-Listen gehen besser mit europäischen Sonderzeichen um</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>BugFix: Autocomplete lists: Filter by partial contents now consideres complete list</ChangeItem>
+            <ChangeItem>BugFix: Sorting of boat lists, person lists, autocomplete-lists works better with european special characters like umlauts</ChangeItem>
+        </Changes>
+    </Version>
     <Version>
         <VersionID>2.3.3_00</VersionID>
         <ReleaseDate>29.09.2023</ReleaseDate>

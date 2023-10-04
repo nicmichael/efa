@@ -31,6 +31,7 @@ import de.nmichael.efa.gui.util.AutoCompleteList;
 import de.nmichael.efa.gui.util.AutoCompletePopupWindow;
 import de.nmichael.efa.gui.util.AutoCompletePopupWindowCallback;
 import de.nmichael.efa.util.Dialog;
+import de.nmichael.efa.util.EfaSortStringComparator;
 import de.nmichael.efa.util.EfaUtil;
 import de.nmichael.efa.util.International;
 import de.nmichael.efa.util.LogString;
@@ -574,7 +575,7 @@ public class ItemTypeStringAutoComplete extends ItemTypeString implements AutoCo
 	        	list.setFilterText(name);
 	        	neighbours.addAll(list.getDataVisibleFiltered());
 	        	neighbours.remove(name);
-	        	Collections.sort(neighbours);
+	        	Collections.sort(neighbours,new EfaSortStringComparator());
 	        	list.setFilterText(null);
         	}
         }
