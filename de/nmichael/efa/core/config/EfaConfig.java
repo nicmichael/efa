@@ -180,6 +180,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
     private ItemTypeColor efaBoathouseHeaderForegroundColor;
     private ItemTypeBoolean efaBoathouseFilterTextfieldStandardLists;
     private ItemTypeBoolean efaBoathouseFilterTextfieldBoatsNotAvailableList;
+    private ItemTypeInteger efaBoathouseFilterTextAutoClearInterval;
     private ItemTypeBoolean efaBoathouseTwoColumnList;
     private ItemTypeBoolean efaBoathouseExtdToolTips;
     private ItemTypeBoolean efaBoathouseBoatListWithReservationInfo;
@@ -328,8 +329,8 @@ public class EfaConfig extends StorageObject implements IItemFactory {
     private Vector<IWidget> widgets;
     private ItemTypeItemList crontab;
 
-    private Color tableSelectionBackgroundColor = new Color(75,134,193);
-    private Color tableSelectionForegroundColor = Color.WHITE;
+    private static Color tableSelectionBackgroundColor = new Color(75,134,193);
+    private static Color tableSelectionForegroundColor = Color.WHITE;
     
     // private internal data
     private HashMap<String,IItemType> configValues; // always snychronize on this object!!
@@ -714,12 +715,33 @@ public class EfaConfig extends StorageObject implements IItemFactory {
             addParameter(lastProjectEfaBoathouse = new ItemTypeString("LastProjectEfaBoathouse", "",
                     IItemType.TYPE_INTERNAL,BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_COMMON),
                     "Last project opened by efaBoathouse"));
-            addParameter(efaDirekt_listAllowToggleBoatsPersons = new ItemTypeBoolean("BoatListToggleToPersons", false,
-                    IItemType.TYPE_PUBLIC,BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_COMMON),
-                    International.getString("erlaube Auswahl in Bootslisten alternativ auch über Personennamen")));
+
             addParameter(efaDirekt_resLookAheadTime = new ItemTypeInteger("ReservationLookAheadTime", 120, 0, Integer.MAX_VALUE, false,
                     IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_COMMON),
                     International.getString("Bei Fahrtbeginn auf Reservierungen bis zu x Minuten in der Zukunft prüfen")));
+
+            addParameter(efaBoathouseShowLastFromWaterNotification = new ItemTypeBoolean("ShowLastFromWaterNotification", true,
+                    IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_COMMON),
+                    International.getString("Nach Beenden letzter Fahrt Erinnerung zum Schließen der Bootshalle anzeigen")));
+            addParameter(efaBoathouseShowLastFromWaterNotificationText = new ItemTypeString("ShowLastFromWaterNotificationText",
+                    International.getString("Alle Boote sind zurück.") + "<br>" +
+                    International.getString("Bitte schließe die Hallentore."),
+                    IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_COMMON),
+                    International.getString("Erinnerungstext zum Schließen der Bootshalle")));
+            addParameter(efaDirekt_notificationWindowTimeout = new ItemTypeInteger("NotificationWindowTimeout", 10, 0, Integer.MAX_VALUE,
+                    IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_COMMON),
+                    International.getString("Timeout für Hinweis-Fenster")));   
+
+            addParameter(efaDirekt_maxFBAnzeigenFahrten = new ItemTypeInteger("LogbookDisplayEntriesMaxNumber", 100, 1, Integer.MAX_VALUE, false,
+                    IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_COMMON),
+                    International.getString("Fahrtenbuch anzeigen") + ": " + International.getString("maximale Anzahl von Fahrten")));
+            addParameter(efaDirekt_anzFBAnzeigenFahrten = new ItemTypeInteger("LogbookDisplayEntriesDefaultNumber", 50, 1, Integer.MAX_VALUE, false,
+                    IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_COMMON),
+                    International.getString("Fahrtenbuch anzeigen") + ": " + International.getString("Anzahl von Fahrten")));
+            addParameter(efaDirekt_FBAnzeigenAuchUnvollstaendige = new ItemTypeBoolean("LogbookDisplayEntriesDefaultAlsoIncomplete", false,
+                    IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_COMMON),
+                    International.getString("Fahrtenbuch anzeigen") + ": " + International.getString("auch unvollständige Fahrten")));            
+            
             addParameter(efaDirekt_showBootsschadenButton = new ItemTypeBoolean("BoatDamageEnableReporting", true,
                     IItemType.TYPE_PUBLIC,BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_COMMON),
                     International.getString("Melden von Bootsschäden erlauben")));
@@ -858,17 +880,11 @@ public class EfaConfig extends StorageObject implements IItemFactory {
                     makeFontStyleArray(STRINGLIST_VALUES), makeFontStyleArray(STRINGLIST_DISPLAY),
                     IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
                     International.getString("Schriftstil")));
-            addParameter(efaDirekt_resBooteNichtVerfuegbar = new ItemTypeBoolean("BoatListShowReservedBoatsAsNotAvailable", false,
+
+            addParameter(efaDirekt_vereinsLogo = new ItemTypeImage("ClubLogo", "", 192, 64,
                     IItemType.TYPE_PUBLIC,BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
-                    International.getString("Reservierte Boote als 'nicht verfügbar' anzeigen")));
-            addParameter(efaDirekt_wafaRegattaBooteAufFahrtNichtVerfuegbar = new ItemTypeBoolean("BoatListShowOnMultiDayOrRegattaBoatsAsNotAvailable", true,
-                    IItemType.TYPE_PUBLIC,BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
-                    International.getString("Boote auf Regatta, Trainingslager oder Mehrtagesfahrt als 'nicht verfügbar' anzeigen")));
-            addParameter(efaDirekt_showZielnameFuerBooteUnterwegs = new ItemTypeBoolean("BoatListDisplayDestinationForBoatsOnTheWater", false,
-                    IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
-                    International.getMessage("Fahrtziel in der Liste {list} anzeigen",
-                    International.getString("Boote auf Fahrt"))));
-            // ===================== BOATHOUSE: Filter text fields ============================
+                    International.getString("Vereinslogo")));
+            
             addParameter(efaBoathouseHeaderUseHighlightColor = new ItemTypeBoolean("efaBoathouseHeaderUseHighlightColor",true,
     			IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
     			International.getString("Überschriften hervorheben")));            
@@ -877,7 +893,30 @@ public class EfaConfig extends StorageObject implements IItemFactory {
             		International.getString("Überschriften Hintergrundfarbe")));
             addParameter(efaBoathouseHeaderForegroundColor = new ItemTypeColor("efaBoathouseHeaderForegroundColor", EfaUtil.getColor(tableSelectionForegroundColor), 
             		IItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
-            		International.getString("Überschriften Textfarbe")));
+            		International.getString("Überschriften Textfarbe")));            
+            
+            
+            
+            addParameter(efaDirekt_listAllowToggleBoatsPersons = new ItemTypeBoolean("BoatListToggleToPersons", false,
+                    IItemType.TYPE_PUBLIC,BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
+                    International.getString("erlaube Auswahl in Bootslisten alternativ auch über Personennamen")));
+            addParameter(efaDirekt_boatsNotAvailableListSize = new ItemTypeInteger("BoatsNotAvailableListSize", 100, 100, 600,
+                    IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
+                    International.getString("Listengröße") + 
+                    " '" + International.getString("nicht verfügbare Boote") + "'"));
+            addParameter(efaDirekt_resBooteNichtVerfuegbar = new ItemTypeBoolean("BoatListShowReservedBoatsAsNotAvailable", false,
+                    IItemType.TYPE_PUBLIC,BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
+                    International.getString("Reservierte Boote als 'nicht verfügbar' anzeigen")));
+            addParameter(efaDirekt_wafaRegattaBooteAufFahrtNichtVerfuegbar = new ItemTypeBoolean("BoatListShowOnMultiDayOrRegattaBoatsAsNotAvailable", true,
+                    IItemType.TYPE_PUBLIC,BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
+                    International.getString("Boote auf Regatta, Trainingslager oder Mehrtagesfahrt als 'nicht verfügbar' anzeigen")));
+            
+            // ===================== BOATHOUSE: Contents and Look of Boat Lists ============================
+
+            
+            addParameter(efaDirekt_autoPopupOnBoatLists = new ItemTypeBoolean("BoatListShowPopup", true,
+                    IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
+                    International.getString("automatisches Popup-Menü für Mausclicks in den Bootslisten")));            
             
             addParameter(efaBoathouseFilterTextfieldStandardLists = new ItemTypeBoolean("efaBoathouseFilterTextfieldStandardLists", true, 
             		IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
@@ -885,6 +924,11 @@ public class EfaConfig extends StorageObject implements IItemFactory {
             addParameter(efaBoathouseFilterTextfieldBoatsNotAvailableList = new ItemTypeBoolean("efaBoathouseFilterTextfieldBoatsNotAvailableList", false, 
             		IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
             		International.getString("Filter-Feld über Liste nicht verfügbarer Boote")));
+            
+            addParameter(efaBoathouseFilterTextAutoClearInterval = new ItemTypeInteger("efaBoathouseFilterTextAutoClearInterval", 2, 0, 1440, true,
+            		IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
+            		International.getString("Filter-Felder leeren nach x Minuten (0 für nie)")));
+            
             addParameter(efaBoathouseTwoColumnList= new ItemTypeBoolean("efaBoathouseTwoColumnList", true, 
             		IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
             		International.getString("Bootshaus-Listen mit zwei Spalten darstellen")));
@@ -894,7 +938,11 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 			addParameter(efaBoathouseBoatListWithReservationInfo = new ItemTypeBoolean("efaBoathouseBoatListWithReservationInfo", true,
 					IItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
 					International.getString("Bootshaus-Listen mit Reservierungsdaten")));            
-			
+            addParameter(efaDirekt_showZielnameFuerBooteUnterwegs = new ItemTypeBoolean("BoatListDisplayDestinationForBoatsOnTheWater", false,
+                    IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
+                    International.getMessage("Fahrtziel in der Liste {list} anzeigen",
+                    International.getString("Boote auf Fahrt"))));
+            
             addParameter(efaDirekt_sortByAnzahl = new ItemTypeBoolean("BoatListSortBySeats", true,
                     IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
                     International.getString("sortiere Boote nach Anzahl der Bootsplätze")));
@@ -907,37 +955,6 @@ public class EfaConfig extends StorageObject implements IItemFactory {
             addParameter(efaDirekt_boatListIndividualOthers = new ItemTypeBoolean("BoatListIndividualOthers", false,
                     IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
                     International.getString("andere Boote in Bootslisten individuell gruppieren")));
-            addParameter(efaDirekt_autoPopupOnBoatLists = new ItemTypeBoolean("BoatListShowPopup", true,
-                    IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
-                    International.getString("automatisches Popup-Menü für Mausclicks in den Bootslisten")));
-            addParameter(efaDirekt_vereinsLogo = new ItemTypeImage("ClubLogo", "", 192, 64,
-                    IItemType.TYPE_PUBLIC,BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
-                    International.getString("Vereinslogo")));
-            addParameter(efaBoathouseShowLastFromWaterNotification = new ItemTypeBoolean("ShowLastFromWaterNotification", true,
-                    IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
-                    International.getString("Nach Beenden letzter Fahrt Erinnerung zum Schließen der Bootshalle anzeigen")));
-            addParameter(efaBoathouseShowLastFromWaterNotificationText = new ItemTypeString("ShowLastFromWaterNotificationText",
-                    International.getString("Alle Boote sind zurück.") + "<br>" +
-                    International.getString("Bitte schließe die Hallentore."),
-                    IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
-                    International.getString("Erinnerungstext zum Schließen der Bootshalle")));
-
-            addParameter(efaDirekt_maxFBAnzeigenFahrten = new ItemTypeInteger("LogbookDisplayEntriesMaxNumber", 100, 1, Integer.MAX_VALUE, false,
-                    IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
-                    International.getString("Fahrtenbuch anzeigen") + ": " + International.getString("maximale Anzahl von Fahrten")));
-            addParameter(efaDirekt_anzFBAnzeigenFahrten = new ItemTypeInteger("LogbookDisplayEntriesDefaultNumber", 50, 1, Integer.MAX_VALUE, false,
-                    IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
-                    International.getString("Fahrtenbuch anzeigen") + ": " + International.getString("Anzahl von Fahrten")));
-            addParameter(efaDirekt_FBAnzeigenAuchUnvollstaendige = new ItemTypeBoolean("LogbookDisplayEntriesDefaultAlsoIncomplete", false,
-                    IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
-                    International.getString("Fahrtenbuch anzeigen") + ": " + International.getString("auch unvollständige Fahrten")));
-            addParameter(efaDirekt_notificationWindowTimeout = new ItemTypeInteger("NotificationWindowTimeout", 10, 0, Integer.MAX_VALUE,
-                    IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
-                    International.getString("Timeout für Hinweis-Fenster")));
-            addParameter(efaDirekt_boatsNotAvailableListSize = new ItemTypeInteger("BoatsNotAvailableListSize", 100, 100, 600,
-                    IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
-                    International.getString("Listengröße") + 
-                    " '" + International.getString("nicht verfügbare Boote") + "'"));
 
             // ============================= BOATHOUSE:GUIBUTTONS =============================
             addParameter(efaDirekt_butFahrtBeginnen = new ItemTypeConfigButton("ButtonStartSession",
@@ -1935,6 +1952,10 @@ public class EfaConfig extends StorageObject implements IItemFactory {
         return efaBoathouseFilterTextfieldBoatsNotAvailableList.getValue();
     }
     
+    public int getValueEfaBoathouseFilterTextAutoClearInterval() {
+    	return efaBoathouseFilterTextAutoClearInterval.getValue();
+    }
+    
     public boolean getValueEfaBoathouseTwoColumnList() {
     	return efaBoathouseTwoColumnList.getValue();
     }
@@ -2390,7 +2411,9 @@ public class EfaConfig extends StorageObject implements IItemFactory {
                         item == developerFunctions ||
                         item == experimentalFunctions ||
                         item == this.dataRemoteEfaServerEnabled ||
-                        item == this.dataRemoteEfaServerPort) {
+                        item == this.dataRemoteEfaServerPort||
+                        item == this.popupContainsMode
+                        ) {
                         changedSettings.put(item.getDescription(), "foo");
                     }
                 }

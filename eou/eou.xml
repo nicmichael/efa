@@ -1,6 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <efaOnlineUpdate>
-
+    <Version>
+        <VersionID>2.3.3_01</VersionID>
+        <ReleaseDate>TO.DO.2023</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa233.zip</DownloadUrl>
+        <DownloadSize></DownloadSize>
+        <Changes lang="de">
+            <ChangeItem>Neu: Konfigurationsseiten für efaBootshaus (Allgemein, Erscheinungsbild) reorganisiert für bessere Auffindbarkeit von Eigenschaften</ChangeItem>
+            <ChangeItem>Neu: Konfigurierbares Zeitintervall für automatisches Leeren von Filterfeldern in Bootshaus</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>New: Reorganisation of efaBoathouse configuration items (common, appearance) so the items can be found more easily</ChangeItem>
+            <ChangeItem>New: Interval for clearing efaBoathouse filter fields can be configured by admin</ChangeItem>
+        </Changes>
+    </Version>
     <Version>
         <VersionID>2.3.3_00</VersionID>
         <ReleaseDate>TO.DO.2023</ReleaseDate>
