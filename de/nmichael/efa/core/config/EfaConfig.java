@@ -183,6 +183,8 @@ public class EfaConfig extends StorageObject implements IItemFactory {
     private ItemTypeInteger efaBoathouseFilterTextAutoClearInterval;
     private ItemTypeBoolean efaBoathouseTwoColumnList;
     private ItemTypeBoolean efaBoathouseExtdToolTips;
+    private ItemTypeInteger efaBoathouseExtdToolTipInitialDelayMsec;
+    private ItemTypeInteger efaBoathouseExtdToolTipDismissDelayMsec;
     private ItemTypeBoolean efaBoathouseBoatListWithReservationInfo;
     private ItemTypeString efaBoathouseNonAllowedUnknownPersonNames;
     private ItemTypeBoolean efaDirekt_eintragHideUnnecessaryInputFields;
@@ -932,9 +934,6 @@ public class EfaConfig extends StorageObject implements IItemFactory {
             addParameter(efaBoathouseTwoColumnList= new ItemTypeBoolean("efaBoathouseTwoColumnList", true, 
             		IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
             		International.getString("Bootshaus-Listen mit zwei Spalten darstellen")));
-			addParameter(efaBoathouseExtdToolTips = new ItemTypeBoolean("efaBoathouseExtdToolTips", true,
-					IItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
-					International.getString("Bootshaus-Listen mit Tooltips")));            
 			addParameter(efaBoathouseBoatListWithReservationInfo = new ItemTypeBoolean("efaBoathouseBoatListWithReservationInfo", true,
 					IItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
 					International.getString("Bootshaus-Listen mit Reservierungsdaten")));            
@@ -942,7 +941,16 @@ public class EfaConfig extends StorageObject implements IItemFactory {
                     IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
                     International.getMessage("Fahrtziel in der Liste {list} anzeigen",
                     International.getString("Boote auf Fahrt"))));
-            
+			addParameter(efaBoathouseExtdToolTips = new ItemTypeBoolean("efaBoathouseExtdToolTips", true,
+					IItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
+					International.getString("Bootshaus-Listen mit Tooltips")));  
+			addParameter(efaBoathouseExtdToolTipInitialDelayMsec = new ItemTypeInteger("efaBoathouseExtdToolTipInitialDelayMsec",1250,0,60000,false,
+					IItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
+					International.getString("Verzögerung, bis Tooltip erscheint (msec)")));
+			addParameter(efaBoathouseExtdToolTipDismissDelayMsec = new ItemTypeInteger("efaBoathouseExtdToolTipDismissDelayMsec",3000,0,60000,false,
+					IItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
+					International.getString("Verzögerung, bis Tooltip ausgeblendet wird (msec)")));			
+			
             addParameter(efaDirekt_sortByAnzahl = new ItemTypeBoolean("BoatListSortBySeats", true,
                     IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
                     International.getString("sortiere Boote nach Anzahl der Bootsplätze")));
@@ -1964,6 +1972,14 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 		return efaBoathouseExtdToolTips.getValue();
 	}
 	
+	public int getValueEfaBoathouseExtdToolTipInitialDelayMsec() {
+		return efaBoathouseExtdToolTipInitialDelayMsec.getValue();
+	}
+	
+	public int getValueEfaBoathouseExtdToolTipDismissDelayMsec(){
+		return efaBoathouseExtdToolTipDismissDelayMsec.getValue();
+	}
+
 	public boolean getValueEfaBoathouseBoatListReservationInfo(){
 		return efaBoathouseBoatListWithReservationInfo.getValue();
 	}

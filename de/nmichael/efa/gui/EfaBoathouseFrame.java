@@ -285,6 +285,8 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
         iniGuiMain();
         iniApplication();
         iniGuiRemaining();
+        iniGuiHeaderColors();
+        iniGuiTooltipDelays();
         prepareEfaBaseFrame();
     }
 
@@ -616,7 +618,18 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
 	        boatsNotAvailableList.setBackgroundColor(null);
 		}
 	}
-
+	
+	private void iniGuiTooltipDelays() {        
+		int initialDelay=Daten.efaConfig.getValueEfaBoathouseExtdToolTipInitialDelayMsec();
+	    int dismissDelay=Daten.efaConfig.getValueEfaBoathouseExtdToolTipDismissDelayMsec();
+	    if (initialDelay>0) {
+	    	javax.swing.ToolTipManager.sharedInstance().setInitialDelay(initialDelay);
+	    	javax.swing.ToolTipManager.sharedInstance().setReshowDelay(initialDelay);
+	    }
+	    if (dismissDelay>0) {
+	    	javax.swing.ToolTipManager.sharedInstance().setDismissDelay(dismissDelay);
+	    }
+	}
     private void iniGuiListNames() {
         boolean fkey = Daten.efaConfig.getValueEfaDirekt_showButtonHotkey();
         if (!Daten.efaConfig.getValueEfaDirekt_listAllowToggleBoatsPersons() || toggleAvailableBoatsToBoats.isSelected()) {
@@ -2551,6 +2564,7 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
             updateBoatLists(true, false);
             updateGuiElements();
             iniGuiHeaderColors();
+            iniGuiTooltipDelays();
         } finally {
             Daten.applMode = Daten.APPL_MODE_NORMAL;
         }
