@@ -2390,7 +2390,8 @@ public class EfaConfig extends StorageObject implements IItemFactory {
                         item == developerFunctions ||
                         item == experimentalFunctions ||
                         item == this.dataRemoteEfaServerEnabled ||
-                        item == this.dataRemoteEfaServerPort) {
+                        item == this.dataRemoteEfaServerPort ||
+                        item == this.popupContainsMode) {
                         changedSettings.put(item.getDescription(), "foo");
                     }
                 }
