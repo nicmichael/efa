@@ -150,7 +150,8 @@ public class AutoCompleteList {
     	if (filterText!=null) {
     		dataVisibleFiltered=new Vector<String>();
 
-    		for (int i=0; i<dataVisible.size()-1; i++) {
+    		for (int i=0; i<dataVisible.size(); i++) {
+
     			if (dataVisible.get(i).toLowerCase().contains(filterText))
     			{
     				dataVisibleFiltered.add(dataVisible.get(i));
@@ -167,7 +168,7 @@ public class AutoCompleteList {
     		dataVisibleFiltered = dataVisible; 
     	}
 
-    	Collections.sort(dataVisibleFiltered);
+    	sortFilteredList();
     }    
     
     /**
@@ -340,25 +341,25 @@ public class AutoCompleteList {
         scn++;
     }
 
-    class MyStringComparator implements Comparator {
-
-        public int compare(Object o1, Object o2) {
-            String s1 = ((String)o1);
-            String s2 = ((String)o2);
-            s1 = EfaUtil.replaceListByList(s1, "ÄÖÜäöüßé", "AOUaouse");
-            s2 = EfaUtil.replaceListByList(s2, "ÄÖÜäöüßé", "AOUaouse");
-            return s1.compareToIgnoreCase(s2);
-        }
-
-    }
-
     public synchronized void sort() {
-        String[] a = dataVisible.toArray(new String[0]);
-        Arrays.sort(a, new MyStringComparator());
+    	Collections.sort(dataVisible, new EfaSortStringComparator());
+        /*String[] a = dataVisible.toArray(new String[0]);
+        Arrays.sort(a, new EfaSortStringComperator());
         dataVisible = new Vector(a.length);
         for (int i=0; i<a.length; i++) {
             dataVisible.add(a[i]);
-        }
+        }*/
+    }
+    
+    public synchronized void sortFilteredList() {
+    	Collections.sort(dataVisibleFiltered, new EfaSortStringComparator());
+        
+    	/*String[] a = dataVisibleFiltered.toArray(new String[0]);
+        Arrays.sort(a, new EfaSortStringComperator());
+        dataVisibleFiltered = new Vector(a.length);
+        for (int i=0; i<a.length; i++) {
+        	dataVisibleFiltered.add(a[i]);
+        }	*/
     }
 
     public synchronized String getExact(String s) {

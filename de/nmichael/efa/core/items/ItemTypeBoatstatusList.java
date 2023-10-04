@@ -268,7 +268,7 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
         for (int i=0; i<a.length; i++) {
             a[i] = bsv.get(i);
         }
-        Arrays.sort(a);
+        Arrays.sort(a); // a is a BoatString which has its own comparator which handles umlauts etc.
 
         Vector<ItemTypeListData> vv = new Vector<ItemTypeListData>();
         int anz = -1;
@@ -742,102 +742,18 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
         public String type;
         public String rigger;
 
+        /**
+         * Turns a string to lowercase and replaces all western european special characters with simple latin characters (like à -> a).
+         * Needed for better sorting of lists.
+         * @param s
+         * @return
+         */
         private String normalizeString(String s) {
-            if (s == null) {
+        	if (s == null) {
                 return "";
             }
-            s = s.toLowerCase();
-            if (s.indexOf("ä") >= 0) {
-                s = EfaUtil.replace(s, "ä", "a", true);
-            }
-            if (s.indexOf("Ä") >= 0) {
-                s = EfaUtil.replace(s, "Ä", "a", true);
-            }
-            if (s.indexOf("à") >= 0) {
-                s = EfaUtil.replace(s, "à", "a", true);
-            }
-            if (s.indexOf("á") >= 0) {
-                s = EfaUtil.replace(s, "á", "a", true);
-            }
-            if (s.indexOf("â") >= 0) {
-                s = EfaUtil.replace(s, "â", "a", true);
-            }
-            if (s.indexOf("ã") >= 0) {
-                s = EfaUtil.replace(s, "ã", "a", true);
-            }
-            if (s.indexOf("æ") >= 0) {
-                s = EfaUtil.replace(s, "æ", "ae", true);
-            }
-            if (s.indexOf("ç") >= 0) {
-                s = EfaUtil.replace(s, "ç", "c", true);
-            }
-            if (s.indexOf("è") >= 0) {
-                s = EfaUtil.replace(s, "è", "e", true);
-            }
-            if (s.indexOf("é") >= 0) {
-                s = EfaUtil.replace(s, "é", "e", true);
-            }
-            if (s.indexOf("è") >= 0) {
-                s = EfaUtil.replace(s, "è", "e", true);
-            }
-            if (s.indexOf("é") >= 0) {
-                s = EfaUtil.replace(s, "é", "e", true);
-            }
-            if (s.indexOf("ê") >= 0) {
-                s = EfaUtil.replace(s, "ê", "e", true);
-            }
-            if (s.indexOf("ì") >= 0) {
-                s = EfaUtil.replace(s, "ì", "i", true);
-            }
-            if (s.indexOf("í") >= 0) {
-                s = EfaUtil.replace(s, "í", "i", true);
-            }
-            if (s.indexOf("î") >= 0) {
-                s = EfaUtil.replace(s, "î", "i", true);
-            }
-            if (s.indexOf("ñ") >= 0) {
-                s = EfaUtil.replace(s, "ñ", "n", true);
-            }
-            if (s.indexOf("ö") >= 0) {
-                s = EfaUtil.replace(s, "ö", "o", true);
-            }
-            if (s.indexOf("Ö") >= 0) {
-                s = EfaUtil.replace(s, "Ö", "o", true);
-            }
-            if (s.indexOf("ò") >= 0) {
-                s = EfaUtil.replace(s, "ò", "o", true);
-            }
-            if (s.indexOf("ó") >= 0) {
-                s = EfaUtil.replace(s, "ó", "o", true);
-            }
-            if (s.indexOf("ô") >= 0) {
-                s = EfaUtil.replace(s, "ô", "o", true);
-            }
-            if (s.indexOf("õ") >= 0) {
-                s = EfaUtil.replace(s, "õ", "o", true);
-            }
-            if (s.indexOf("ø") >= 0) {
-                s = EfaUtil.replace(s, "ø", "o", true);
-            }
-            if (s.indexOf("ü") >= 0) {
-                s = EfaUtil.replace(s, "ü", "u", true);
-            }
-            if (s.indexOf("Ü") >= 0) {
-                s = EfaUtil.replace(s, "Ü", "u", true);
-            }
-            if (s.indexOf("ù") >= 0) {
-                s = EfaUtil.replace(s, "ù", "u", true);
-            }
-            if (s.indexOf("ú") >= 0) {
-                s = EfaUtil.replace(s, "ú", "u", true);
-            }
-            if (s.indexOf("û") >= 0) {
-                s = EfaUtil.replace(s, "û", "u", true);
-            }
-            if (s.indexOf("ß") >= 0) {
-                s = EfaUtil.replace(s, "ß", "ss", true);
-            }
-            return s;
+            return EfaUtil.replaceAllUmlautsLowerCaseFast(s);
+  
         }
 
         public int compareTo(Object o) {
