@@ -924,8 +924,11 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
     		boolean ignoreSpecialCharacters = Daten.efaConfig.getValueEfaBoathouseFilterTextfieldIgnoreSpecialCharacters();
     		
     		DefaultListModel<ItemTypeListData> theModel = new DefaultListModel<ItemTypeList.ItemTypeListData>();
-			String s = filterTextField.getText().trim().toLowerCase();
-	        if (!s.isEmpty()) {
+			String searchString = null;
+			
+			searchString = (ignoreSpecialCharacters ? EfaUtil.replaceAllUmlautsLowerCaseFast(filterTextField.getText().trim()) : filterTextField.getText().trim().toLowerCase());
+			
+	        if (!searchString.isEmpty()) {
 	        	
 	        	for (int i=0; i< data.getSize();i++) {
 	        		ItemTypeListData item = data.getElementAt(i);
@@ -936,9 +939,9 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
 	        			// this is the slow part
 	        			boolean hit=false;
 	        			if (ignoreSpecialCharacters) {
-	        				hit = EfaUtil.replaceAllUmlautsLowerCaseFast(item.getFilterableText()).contains(s);
+	        				hit = EfaUtil.replaceAllUmlautsLowerCaseFast(item.getFilterableText()).contains(searchString);
 	        			} else {
-	        				hit = item.getFilterableText().toLowerCase().contains(s);
+	        				hit = item.getFilterableText().toLowerCase().contains(searchString);
 	        			}
 
 	        			if (hit) {
