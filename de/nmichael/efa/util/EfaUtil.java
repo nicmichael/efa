@@ -64,9 +64,9 @@ public class EfaUtil {
     private static final int ZIP_BUFFER = 2048;
     private static java.awt.Container java_awt_Container = new java.awt.Container();
 
-	private static String UMLAUTS 		= "åàáâăäćçčèéêęëěìíîďńňñòóôőõöøřůùúûűüýšśşťţżžź";
-	private static String REPLACEMENT 	= "aaaaaaccceeeeeeiiidnnnoooooooruuuuuuysssttzzz"; 
-    
+	private static String UMLAUTS 		= "åàáâăäāąćçčèéêęëėěēìíîįīïďđģķĺļłńňñņòóôőõöōøřŕůùúûűüųūýÿšśşťţżžź";
+	private static String REPLACEMENT 	= "aaaaaaaaccceeeeeeeeiiiiiiddgklllnnnnoooooooorruuuuuuuuyysssttzzz"; 
+
     public static String escapeXml(String str) {
         str = replaceString(str, "&", "&amp;");
         str = replaceString(str, "<", "&lt;");
@@ -212,6 +212,12 @@ public class EfaUtil {
 	    if (s1.indexOf("æ") >= 0) {
 	        s1 = EfaUtil.replace(s1, "æ", "ae", true);
 	    }
+
+	    if (s1.indexOf("œ") >= 0) {
+	        s1 = EfaUtil.replace(s1, "œ", "oe", true);
+	    }
+	    
+	    
 	    return s1;
     }    
     

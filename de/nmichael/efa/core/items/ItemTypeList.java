@@ -662,7 +662,7 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
     }
     
     /* clear filtertextfield, if it has been unchanged more than two minutes */
-    public void clearFilterText() {
+    public void clearFilterTextByInterval() {
     	
     	// get the reset filter interval in minutes from efaConfig.
     	long filterResetInterval= (Daten.efaConfig.getValueEfaBoathouseFilterTextAutoClearInterval()*60*1000); 
@@ -674,19 +674,25 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
     		//so if we have exactly an minute interval, and the boathousetask also calls this every minute,
     		//chances are high that we miss the first call. So... we handle this by reducing the configured interval by 5 seconds.
     		filterResetInterval = filterResetInterval-(5*1000);
-	    	if (this.showFilterField && (System.currentTimeMillis()>(lastFilterChange+filterResetInterval))) {
-	    		if (this.filterTextField != null) {
-	    			this.filterTextField.setText("");
-	            	updateLastFilterChange();
-	        		if (!this.filterTextField.hasFocus()) {
-	        			this.filterTextField.setBackground(Color.WHITE);
-	        		}
-	        		filter();    
-	    		}
+	    	if ((System.currentTimeMillis()>(lastFilterChange+filterResetInterval))) {
+	    		clearFilterText();
 	    	}
     	}
     }
 
+    /* clear filter text field intentionally, if it is displayed */
+    public void clearFilterText() {
+
+    	if (this.showFilterField && (this.filterTextField != null)) {
+			this.filterTextField.setText("");
+        	updateLastFilterChange();
+    		if (!this.filterTextField.hasFocus()) {
+    			this.filterTextField.setBackground(Color.WHITE);
+    		}
+    		filter();    
+    	}
+    }
+    
     // scrolle in der Liste list (deren Inhalt der Vector entries ist), zu dem Eintrag
     // mit dem Namen such und selektiere ihn. Zeige unterhalb des Boote bis zu plus weitere Einträge.
     private void scrollToEntry(String search, int plus, int direction) {
@@ -914,18 +920,33 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
     private void filter() {
         
     	if (this.showFilterField) {
-	    
+
+    		boolean ignoreSpecialCharacters = Daten.efaConfig.getValueEfaBoathouseFilterTextfieldIgnoreSpecialCharacters();
+    		
     		DefaultListModel<ItemTypeListData> theModel = new DefaultListModel<ItemTypeList.ItemTypeListData>();
-			String s = filterTextField.getText().trim();
+			String s = filterTextField.getText().trim().toLowerCase();
 	        if (!s.isEmpty()) {
 	        	
 	        	for (int i=0; i< data.getSize();i++) {
 	        		ItemTypeListData item = data.getElementAt(i);
 
-              if (item.separator || item.getFilterableText().toLowerCase().contains(s.toLowerCase())
-              		|| item.text.equals(other_item_text)){ //also allow <other boat> or <other person> to be visible when filter is active
-		                theModel.addElement(item);
-		            }
+	        		if (item.separator || item.text.equals(other_item_text)) {
+		                theModel.addElement(item);	        			
+	        		} else {
+	        			// this is the slow part
+	        			boolean hit=false;
+	        			if (ignoreSpecialCharacters) {
+	        				hit = EfaUtil.replaceAllUmlautsLowerCaseFast(item.getFilterableText()).contains(s);
+	        			} else {
+	        				hit = item.getFilterableText().toLowerCase().contains(s);
+	        			}
+
+	        			if (hit) {
+	        				theModel.addElement(item);
+	        			}
+	        		  
+	        	  }
+
 	        	}
 	        	
 	        	// we have a problem if there are section strings at the end of the list
