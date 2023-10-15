@@ -10,16 +10,20 @@
             <ChangeItem>BugFix: Sortierung für Bootsliste, Personenliste, Vervollständigungs-Listen gehen besser mit europäischen Sonderzeichen um</ChangeItem>
             <ChangeItem>Neu: Konfigurationsseiten für efaBootshaus (Allgemein, Erscheinungsbild) reorganisiert für bessere Auffindbarkeit von Eigenschaften</ChangeItem>
             <ChangeItem>Neu: Konfigurierbares Zeitintervall für automatisches Leeren von Filterfeldern in Bootshaus</ChangeItem>
-            <ChangeItem>Neu: Konfigurierbares automatisches Leeren von Filterfeldern nach bestimmten Boots-Aktionen</ChangeItem>            
-            <ChangeItem>Neu: Ignorieren von Umlauten bei Suche in Tabellen, Bootslisten, und Eingabefeldern mit Vervollständigung (konfigurierbar)</ChangeItem>      
+            <ChangeItem>Neu: Konfigurierbares automatisches Leeren von Filterfeldern nach den meisten Bootshaus-Aktionen</ChangeItem>            
+            <ChangeItem>Neu: Einfacheres Finden von Einträgen mit Umlauten/Sonderzeichen in Tabellen, Bootslisten, und Eingabefeldern mit Vervollständigung (konfigurierbar)</ChangeItem>
+            <ChangeItem>BugFix: Mehr Konfigurationselemente, die einen Neustart von EFA benötigen, melden dieses beim Speichern der Konfigurationsdaten.</ChangeItem>
+            <ChangeItem>BugFix: Der Dialog für die Auswahl unklar eingegebener Werte zeigt keine doppelten Einträge mehr an.</ChangeItem>      
         </Changes>
         <Changes lang="en">
             <ChangeItem>BugFix: Autocomplete lists: Filter by partial contents now consideres complete list</ChangeItem>
             <ChangeItem>BugFix: Sorting of boat lists, person lists, autocomplete-lists works better with european special characters like umlauts</ChangeItem>
             <ChangeItem>New: Reorganisation of efaBoathouse configuration items (common, appearance) so the items can be found more easily</ChangeItem>
             <ChangeItem>New: Automatic clearing of boathouse filter fields: configurable interval</ChangeItem>
-            <ChangeItem>New: Automatic clearing of boathouse filter fields: after actions on boats (configurable)</ChangeItem>
-            <ChangeItem>New: ignore special characters when searching in tables, boat lists and autocomplete lists (configurable)</ChangeItem>      
+            <ChangeItem>New: Automatic clearing of boathouse filter fields: after most actions in efaBths (configurable)</ChangeItem>
+            <ChangeItem>New: Items with umlauts/special characters are easier to find when searching in tables, boat lists and autocomplete lists (configurable)</ChangeItem>
+            <ChangeItem>BugFix: Some more configuration elements requiring a restart of efaBths to activate produce a corresponding message when saving configuration changes.</ChangeItem>
+            <ChangeItem>BugFix: No more duplicates in the spellchecking dialogue (which comes up when a item with a lookup list has not fully been set by the user).</ChangeItem>      
         </Changes>
     </Version>
     <Version>
