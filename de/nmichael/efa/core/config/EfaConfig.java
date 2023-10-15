@@ -137,7 +137,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
     private ItemTypeBoolean allowSessionsWithoutDistance;
     private ItemTypeBoolean popupComplete;
     private ItemTypeBoolean popupContainsMode;
-    private ItemTypeBoolean popupContainsModeIgnoreSpecialCharacters;
+    private ItemTypeBoolean popupContainsModeEasyFindEntriesWithSpecialCharacters;
     private ItemTypeStringList nameFormat;
     private ItemTypeBoolean correctMisspelledNames;
     private ItemTypeBoolean skipUhrzeit;
@@ -181,7 +181,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
     private ItemTypeColor efaBoathouseHeaderForegroundColor;
     private ItemTypeBoolean efaBoathouseFilterTextfieldStandardLists;
     private ItemTypeBoolean efaBoathouseFilterTextfieldBoatsNotAvailableList;
-    private ItemTypeBoolean efaBoathouseFilterTextfieldIgnoreSpecialCharacters;
+    private ItemTypeBoolean efaBoathouseFilterTextfieldEasyFindEntriesWithSpecialCharacters;
     private ItemTypeInteger efaBoathouseFilterTextAutoClearInterval;
     private ItemTypeBoolean efaBoathouseFilterTextAutoClearAfterAction;
     private ItemTypeBoolean efaBoathouseTwoColumnList;
@@ -255,7 +255,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
     private ItemTypeBoolean efaDirekt_immerImVordergrundBringToFront;
     private ItemTypeBoolean efaDirekt_tabelleShowTooltip;
     private ItemTypeBoolean efaDirekt_tabelleAlternierendeZeilenfarben;
-    private ItemTypeBoolean efaDirekt_tabelleIgnoreSpecialCharacters;
+    private ItemTypeBoolean efaDirekt_tabelleEasyFindEntriesWithSpecialCharacters;
     private ItemTypeStringList efaDirekt_bnrMsgToAdminDefaultRecipient;
     private ItemTypeBoolean efaDirekt_bnrError_admin;
     private ItemTypeBoolean efaDirekt_bnrError_bootswart;
@@ -658,9 +658,9 @@ public class EfaConfig extends StorageObject implements IItemFactory {
             addParameter(popupContainsMode= new ItemTypeBoolean("AutoCompleteContainsMode", true,
             		IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
             		International.getString("Popup-Liste nach Teilbegriff durchsuchen (statt nach Wortanfang)")));        
-            addParameter(popupContainsModeIgnoreSpecialCharacters= new ItemTypeBoolean("AutoCompleteContainsModeIgnoreSpecialCharacters", false,
+            addParameter(popupContainsModeEasyFindEntriesWithSpecialCharacters= new ItemTypeBoolean("AutoCompleteContainsModeEasyFindEntriesWithSpecialCharacters", true,
             		IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
-            		International.getString("In Popup-Liste bei Suche nach Teilbegriff Sonderzeichen ignorieren")));        
+            		International.getString("In Popup-Liste bei Suche nach Teilbegriff Einträge mit Sonderzeichen einfacher finden")));        
             
             addParameter(fensterZentriert = new ItemTypeBoolean("WindowCentered", false,
                     IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
@@ -884,9 +884,9 @@ public class EfaConfig extends StorageObject implements IItemFactory {
             		IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
             		International.getString("Tabellen mit alternierenden Zeilenfarben")));
 
-            addParameter(efaDirekt_tabelleIgnoreSpecialCharacters = new ItemTypeBoolean("EfaBoathouseTablesIgnoreSpecialCharacters", false, 
+            addParameter(efaDirekt_tabelleEasyFindEntriesWithSpecialCharacters = new ItemTypeBoolean("EfaBoathouseTablesEasyFindEntriesWithSpecialCharacters", false, 
             		IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
-            		International.getString("Tabellen sollen bei Filterung Sonderzeichen ignorieren")));
+            		International.getString("Tabellen sollen bei Filterung Einträge mit Sonderzeichen einfacher finden")));
 
             addParameter(efaDirekt_fontSize = new ItemTypeInteger("EfaBoathouseFontSize", 16, 6, 32, false,
                     IItemType.TYPE_PUBLIC,BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
@@ -940,9 +940,9 @@ public class EfaConfig extends StorageObject implements IItemFactory {
             		IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
             		International.getString("Filter-Feld über Liste nicht verfügbarer Boote")));
 
-            addParameter(efaBoathouseFilterTextfieldIgnoreSpecialCharacters = new ItemTypeBoolean("efaBoathouseFilterTextfieldIgnoreSpecialCharacters", false, 
+            addParameter(efaBoathouseFilterTextfieldEasyFindEntriesWithSpecialCharacters = new ItemTypeBoolean("efaBoathouseFilterTextfieldEasyFindEntriesWithSpecialCharacters", true, 
             		IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
-            		International.getString("Filter-Feld soll Sonderzeichen ignorieren")));
+            		International.getString("Filter-Feld soll Einträge mit Sonderzeichen einfacher finden")));
             
             
             addParameter(efaBoathouseFilterTextAutoClearInterval = new ItemTypeInteger("efaBoathouseFilterTextAutoClearInterval", 2, 0, 1440, true,
@@ -1579,8 +1579,8 @@ public class EfaConfig extends StorageObject implements IItemFactory {
     	return popupContainsMode.getValue();
     }
     
-    public boolean getValuePopupContainsModeIgnoreSpecialCharacters() {
-    	return popupContainsModeIgnoreSpecialCharacters.getValue();
+    public boolean getValuePopupContainsModeEasyFindEntriesWithSpecialCharacters() {
+    	return popupContainsModeEasyFindEntriesWithSpecialCharacters.getValue();
     }
     
     public String getValueNameFormat() {
@@ -1987,8 +1987,8 @@ public class EfaConfig extends StorageObject implements IItemFactory {
         return efaBoathouseFilterTextfieldBoatsNotAvailableList.getValue();
     }
     
-    public boolean getValueEfaBoathouseFilterTextfieldIgnoreSpecialCharacters() {
-    	return efaBoathouseFilterTextfieldIgnoreSpecialCharacters.getValue();
+    public boolean getValueEfaBoathouseFilterTextfieldEasyFindEntriesWithSpecialCharacters() {
+    	return efaBoathouseFilterTextfieldEasyFindEntriesWithSpecialCharacters.getValue();
     }
     
     public int getValueEfaBoathouseFilterTextAutoClearInterval() {
@@ -2059,8 +2059,8 @@ public class EfaConfig extends StorageObject implements IItemFactory {
     	return efaDirekt_tabelleAlternierendeZeilenfarben.getValue();
     }
 
-    public boolean getValueEfaDirekt_tabelleIgnoreSpecialCharacters(){
-    	return efaDirekt_tabelleIgnoreSpecialCharacters.getValue();
+    public boolean getValueEfaDirekt_tabelleEasyfindEntriesWithSpecialCharacters(){
+    	return efaDirekt_tabelleEasyFindEntriesWithSpecialCharacters.getValue();
     }
     
     public String getValueEfaDirekt_bnrMsgToAdminDefaultRecipient() {
@@ -2469,7 +2469,8 @@ public class EfaConfig extends StorageObject implements IItemFactory {
                         item == this.dataRemoteEfaServerPort||
                         item == this.popupContainsMode ||
                         item == efaBoathouseFilterTextfieldStandardLists ||
-                        item == efaBoathouseFilterTextfieldBoatsNotAvailableList
+                        item == efaBoathouseFilterTextfieldBoatsNotAvailableList ||
+                        item == efaDirekt_boatsNotAvailableListSize
                         ) {
                         changedSettings.put(item.getDescription(), "foo");
                     }

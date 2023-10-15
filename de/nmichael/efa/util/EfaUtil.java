@@ -221,6 +221,10 @@ public class EfaUtil {
 	    return s1;
     }    
     
+    public static boolean containsUmlaut(String data) {
+    	return data.toLowerCase().matches(".*["+UMLAUTS+"]+.*");
+    }
+    
     public static String getString(String s, int length) {
         while (s.length() < length) {
             s = s + " ";

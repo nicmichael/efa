@@ -921,12 +921,11 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
         
     	if (this.showFilterField) {
 
-    		boolean ignoreSpecialCharacters = Daten.efaConfig.getValueEfaBoathouseFilterTextfieldIgnoreSpecialCharacters();
+    		boolean ignoreSpecialCharacters = Daten.efaConfig.getValueEfaBoathouseFilterTextfieldEasyFindEntriesWithSpecialCharacters();
     		
     		DefaultListModel<ItemTypeListData> theModel = new DefaultListModel<ItemTypeList.ItemTypeListData>();
-			String searchString = null;
-			
-			searchString = (ignoreSpecialCharacters ? EfaUtil.replaceAllUmlautsLowerCaseFast(filterTextField.getText().trim()) : filterTextField.getText().trim().toLowerCase());
+			String searchString = filterTextField.getText().trim().toLowerCase();
+			Boolean searchStringWithUmlaut = EfaUtil.containsUmlaut(searchString);
 			
 	        if (!searchString.isEmpty()) {
 	        	
@@ -939,7 +938,15 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
 	        			// this is the slow part
 	        			boolean hit=false;
 	        			if (ignoreSpecialCharacters) {
-	        				hit = EfaUtil.replaceAllUmlautsLowerCaseFast(item.getFilterableText()).contains(searchString);
+	        				if (searchStringWithUmlaut) {
+	        					//search string contains a special character. this indicates user is definitely looking
+	        					//for an entry that contains this character. So we switch to standard contains mode.
+	        					hit = item.getFilterableText().toLowerCase().contains(searchString);
+	        				} else {
+	        					//search string has no umlaut --> we also want to find entries which contain special characters
+		        				hit = EfaUtil.replaceAllUmlautsLowerCaseFast(item.getFilterableText()).contains(searchString);	        					
+	        				}
+
 	        			} else {
 	        				hit = item.getFilterableText().toLowerCase().contains(searchString);
 	        			}

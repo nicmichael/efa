@@ -18,6 +18,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -573,7 +574,8 @@ public class ItemTypeStringAutoComplete extends ItemTypeString implements AutoCo
 	        		neighbours=new Vector<String>();
 	        	}
 	        	list.setFilterText(name);
-	        	neighbours.addAll(list.getDataVisibleFiltered());
+	        	addButAvoidDuplicates(neighbours, list.getDataVisibleFiltered());
+	        	//neighbours.addAll(list.getDataVisibleFiltered());
 	        	neighbours.remove(name);
 	        	Collections.sort(neighbours,new EfaSortStringComparator());
 	        	list.setFilterText(null);
@@ -613,6 +615,21 @@ public class ItemTypeStringAutoComplete extends ItemTypeString implements AutoCo
         }
     }
     
+    private void addButAvoidDuplicates (Vector <String> target, Vector <String> source) {
+    	String value;
+    	for (int i=0; i<source.size(); i++) {
+    		value = source.get(i);
+    		if (!target.contains(value)) {
+    			target.add(value);
+    		}
+    	}
+    }
+    
+    /**
+     * Handles keyboard events for AutoCompleteLists when search for partial matches is active.
+     * The meaning of arrow up/down events is very different to the one in the historic prefix mode list.
+     * @param e KeyEvent
+     */
     private void handleFilteredList(KeyEvent e) {
 
     	if (field == null) {

@@ -149,20 +149,34 @@ public class AutoCompleteList {
     private synchronized void updateVisibleFilteredList() {
     	if (filterText!=null) {
     		dataVisibleFiltered=new Vector<String>();
-    		boolean ignoreSpecialCharacters = Daten.efaConfig.getValuePopupContainsModeIgnoreSpecialCharacters();
+    		boolean easyFindEntriesWithSpecialCharacters = Daten.efaConfig.getValuePopupContainsModeEasyFindEntriesWithSpecialCharacters();
     		
-    		String filterTextNoSpecialCharacters=EfaUtil.replaceAllUmlautsLowerCaseFast(filterText);
+    		String lowerFilterText = filterText.toLowerCase();
+    		boolean bFilterTexthasSpecialCharacters = EfaUtil.containsUmlaut(lowerFilterText);
+    		
+    		String filterTextNoSpecialCharacters=EfaUtil.replaceAllUmlautsLowerCaseFast(lowerFilterText);
     		
     		for (int i=0; i<dataVisible.size(); i++) {
 
-    			if (ignoreSpecialCharacters) {
-    				if (EfaUtil.replaceAllUmlautsLowerCaseFast(dataVisible.get(i)).contains(filterTextNoSpecialCharacters)){
-    					dataVisibleFiltered.add(dataVisible.get(i));
-    				}
-    			} else if (dataVisible.get(i).toLowerCase().contains(filterText))
-	    			{
+    			if (easyFindEntriesWithSpecialCharacters) {
+    				if (bFilterTexthasSpecialCharacters) {
+    					if (dataVisible.get(i).toLowerCase().contains(lowerFilterText)) {
+    						dataVisibleFiltered.add(dataVisible.get(i));
+    					}
+					} else if (!bFilterTexthasSpecialCharacters){
+						// no special characters in filter text -> user enters "a" but also wants 
+						// matches for texts which contain "equivalents" like ä oder á
+	    				if (EfaUtil.replaceAllUmlautsLowerCaseFast(dataVisible.get(i)).contains(filterTextNoSpecialCharacters)){
+	    					dataVisibleFiltered.add(dataVisible.get(i));
+	    				}    						
+					}
+    			
+    			} else {
+    				// no special handling for special characters needed
+    				if (dataVisible.get(i).toLowerCase().contains(lowerFilterText)){
 	    				dataVisibleFiltered.add(dataVisible.get(i));
 	    			}
+    			}
     		
     		}
     		//for entries with aliases, check wether the alias points to an entry that is not yet in the filtered list
@@ -351,23 +365,10 @@ public class AutoCompleteList {
 
     public synchronized void sort() {
     	Collections.sort(dataVisible, new EfaSortStringComparator());
-        /*String[] a = dataVisible.toArray(new String[0]);
-        Arrays.sort(a, new EfaSortStringComperator());
-        dataVisible = new Vector(a.length);
-        for (int i=0; i<a.length; i++) {
-            dataVisible.add(a[i]);
-        }*/
     }
     
     public synchronized void sortFilteredList() {
     	Collections.sort(dataVisibleFiltered, new EfaSortStringComparator());
-        
-    	/*String[] a = dataVisibleFiltered.toArray(new String[0]);
-        Arrays.sort(a, new EfaSortStringComperator());
-        dataVisibleFiltered = new Vector(a.length);
-        for (int i=0; i<a.length; i++) {
-        	dataVisibleFiltered.add(a[i]);
-        }	*/
     }
 
     public synchronized String getExact(String s) {

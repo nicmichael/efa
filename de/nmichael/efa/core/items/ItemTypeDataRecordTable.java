@@ -454,14 +454,10 @@ public class ItemTypeDataRecordTable extends ItemTypeTable implements IItemListe
         String sSearchValue = searchField.getValueFromField();
         if (sSearchValue != null && sSearchValue.length() > 0 && keys != null && items != null) {
         	
-        	boolean ignoreSpecialCharacters = Daten.efaConfig.getValueEfaDirekt_tabelleIgnoreSpecialCharacters();
+        	boolean easyFindEntriesWithSpecialCharacters = Daten.efaConfig.getValueEfaDirekt_tabelleEasyfindEntriesWithSpecialCharacters();
         	
-        
-        	if (ignoreSpecialCharacters) {
-        		sSearchValue = EfaUtil.replaceAllUmlautsLowerCaseFast(sSearchValue);
-        	} else {
-        		sSearchValue = sSearchValue.toLowerCase();
-        	}
+        	sSearchValue = sSearchValue.trim().toLowerCase();
+        	boolean searchValueWithSpecialCharacters = EfaUtil.containsUmlaut(sSearchValue);
 
         	//split the modified searchstring into an array if it contains spaces.
         	Vector<String> sSplittedSearchValues = null;
@@ -485,8 +481,16 @@ public class ItemTypeDataRecordTable extends ItemTypeTable implements IItemListe
                 for (int iCurrentCol = 0; row != null && rowFound < 0 && iCurrentCol < row.length; iCurrentCol++) {
                     // search in row i, column j
                     String t = (row[iCurrentCol] != null ? row[iCurrentCol].toString() : null);
-                    if (ignoreSpecialCharacters) {
-                    	t = (t != null ? EfaUtil.replaceAllUmlautsLowerCaseFast(t) : null);
+                    if (easyFindEntriesWithSpecialCharacters) {
+                    	if (searchValueWithSpecialCharacters) {
+                    		//Searchstring contains special characters - so we use contains mode only
+                    		//as we are searching for entries that DO contain these special characters.
+                        	t = (t != null ? t.toLowerCase() : null);                    		
+                    	} else {
+                    		//searchstring does not contain special characters - user enters "a" but also
+                    		// wants results containing ä, á or other equivalents of "a"
+                    		t = (t != null ? EfaUtil.replaceAllUmlautsLowerCaseFast(t) : null);
+                    	}
                     } else {
                     	t = (t != null ? t.toLowerCase() : null);
                     }
@@ -593,19 +597,20 @@ public class ItemTypeDataRecordTable extends ItemTypeTable implements IItemListe
             return;
         }
         try {
-            boolean ignoreSpecialCharacters = Daten.efaConfig.getValueEfaDirekt_tabelleIgnoreSpecialCharacters();
+            boolean easyFindEntriesWithSpecialCharacters = Daten.efaConfig.getValueEfaDirekt_tabelleEasyfindEntriesWithSpecialCharacters();
             
         	String filterByAnyText = null;
+        	Boolean isFilterTextWithUmlauts=false;
             if (filterBySearch != null && searchField != null) {
                 filterBySearch.getValueFromField();
                 searchField.getValueFromGui();
                 if (filterBySearch.getValue() && searchField.getValue() != null && searchField.getValue().length() > 0) {
-                    if (ignoreSpecialCharacters) {
-                    	filterByAnyText = EfaUtil.replaceAllUmlautsLowerCaseFast(searchField.getValue().trim());
-                    } else {
                     	filterByAnyText = searchField.getValue().trim().toLowerCase();
-                    }
                 }
+            }
+
+            if (filterByAnyText!=null) {
+            	isFilterTextWithUmlauts=EfaUtil.containsUmlaut(filterByAnyText);
             }
             
             myValidAt = (validAt >= 0 ? validAt : System.currentTimeMillis());
@@ -651,11 +656,22 @@ public class ItemTypeDataRecordTable extends ItemTypeTable implements IItemListe
 	                    if (filterFieldName == null || filterFieldValue == null
 	                            || filterFieldValue.equals(r.getAsString(filterFieldName))) {
 	                    	// Check if field content matches to the searchtext. Also, check if the entry matches for a certain date.
-	                    	if (ignoreSpecialCharacters) {
-		                    	if (filterByAnyText == null || EfaUtil.replaceAllUmlautsLowerCaseFast(r.getAllFieldsAsSeparatedText()).indexOf(filterByAnyText) >= 0 || filterFromToAppliesToDate(r, filterByAnyText)) {
-		                            data.add(r);
-		                        }
-	                    	} else {
+	                    	if (easyFindEntriesWithSpecialCharacters) {
+	                    		if (isFilterTextWithUmlauts) {
+	                    			//filterText has umlauts --> so we are explicitly searching for entries containing these umlauts
+			                    	if (filterByAnyText == null || r.getAllFieldsAsSeparatedText().toLowerCase().indexOf(filterByAnyText) >= 0 || filterFromToAppliesToDate(r, filterByAnyText)) {
+			                            data.add(r);
+			                        }	
+	                    		} else {
+	                    			//filter text has no umlauts, we also want results containing umlauts
+	                    			// e.g. "arger" as search string shall find entries "ärger" or "argér"
+	                    			//so we remove all umlauts from the record
+			                    	if (filterByAnyText == null || EfaUtil.replaceAllUmlautsLowerCaseFast(r.getAllFieldsAsSeparatedText()).indexOf(filterByAnyText) >= 0 || filterFromToAppliesToDate(r, filterByAnyText)) {
+			                            data.add(r);
+			                        }	                    			
+	                    		}
+
+	                    	} else {// no easyFindEntriesWithSpecialCharacters
 		                    	if (filterByAnyText == null || r.getAllFieldsAsSeparatedText().toLowerCase().indexOf(filterByAnyText) >= 0 || filterFromToAppliesToDate(r, filterByAnyText)) {
 		                            data.add(r);
 		                        }	                    		
