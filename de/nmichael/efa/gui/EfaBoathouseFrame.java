@@ -2461,7 +2461,12 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
                 Daten.efaConfig.getValueEfaDirekt_mitgliederDuerfenReservierenZyklisch(),
                 Daten.efaConfig.getValueEfaDirekt_mitgliederDuerfenReservierungenEditieren());
         dlg.showDialog();
-    	boatListRequestFocus(0);//automatically detect the boatlist to get the focus    
+    	
+        // we do not clear the filter fields by calling clearFilterFieldsIfConfigured()
+        // because the assumption is that the user reserves more than one boat, if he has filtered for a boat.
+        // (as in Efa 2.3.3_01, a user can filter by boat type if tooltips are active in the available boat list)
+        
+        boatListRequestFocus(0);//automatically detect the boatlist to get the focus    
         efaBoathouseBackgroundTask.interrupt();
 
     }
@@ -2477,7 +2482,7 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
         }
         ClubworkListDialog dlg = new ClubworkListDialog(this, null);
         dlg.showDialog();
-    	boatListRequestFocus(0);//automatically detect the boatlist to get the focus    
+        clearFilterFieldsIfConfigured();
         
     }
 
@@ -2511,7 +2516,7 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
         }
         ShowLogbookDialog dlg = new ShowLogbookDialog(this, logbook);
         dlg.showDialog();
-    	boatListRequestFocus(0);//automatically detect the boatlist to get the focus    
+        clearFilterFieldsIfConfigured();
 
     }
 
@@ -2526,7 +2531,7 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
         }
         StatisticsListDialog dlg = new StatisticsListDialog(this, null);
         dlg.showDialog();
-    	boatListRequestFocus(0);//automatically detect the boatlist to get the focus                
+        clearFilterFieldsIfConfigured();           
     }
 
     void actionMessageToAdmin() {
@@ -2551,8 +2556,7 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
             dlg.showDialog();
             efaBoathouseBackgroundTask.interrupt();
         }
-    	boatListRequestFocus(0);//automatically detect the boatlist to get the focus    
-        
+        clearFilterFieldsIfConfigured();
     }
 
     void actionAdminMode() {
@@ -2598,7 +2602,7 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
         } finally {
             Daten.applMode = Daten.APPL_MODE_NORMAL;
         }
-    	boatListRequestFocus(0);//automatically detect the boatlist to get the focus                
+        clearFilterFieldsIfConfigured();               
     }
 
     void actionSpecial() {
@@ -2720,6 +2724,8 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
             Logger.logdebug(e);
             Dialog.error(e.getMessage());
         }
+        //No clearing of filter as user may want to proceed with an other action on the selected/filtered boat(s)
+        boatListRequestFocus(0);
     }
 
     void actionLastBoatUsage() {
@@ -2743,6 +2749,8 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
         } else {
             Dialog.infoDialog(International.getString("Keinen Eintrag gefunden!"));
         }
+        
+        //No clearing of filter as user may want to proceed with an other action on the selected/filtered boat(s)
     	boatListRequestFocus(0);//automatically detect the boatlist to get the focus    
         
     }
