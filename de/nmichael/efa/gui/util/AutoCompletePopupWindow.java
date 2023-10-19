@@ -19,6 +19,31 @@ import java.awt.event.*;
 import java.util.*;
 
 // @i18n complete
+/*
+ * Documentation of AutoCompletePopupWindow
+ * 
+ * AutocompletePopupWindow extends a standard JWindow. It is stay on top and is an overlay to an existing windows.
+ * It hides 10 seconds after it popped up, was updated or 10 seconds after the last mouse action of the user within the window.
+ * 
+ * AutoCompletePopupWindow is a singleton. So there is only one single Instance of AutoCompletePopupWindow
+ * which remembers all AutoCompleteLists it handled, and also the timestamp of the last change (SCN) of the data behind the list.
+ * 
+ * AutoCompletePopupWindow does not get the focus. The focus stays within the ItemTypeStringAutocomplete field, 
+ * which handles keyboard user interaction like arrow keys, pageup/pagedown, and filtering by typing. 
+ * 
+ * The 
+ * 
+ * Structure
+ * JWindow
+ * 	  ScrollPane   Standard 200x100pix height			(catches mouseclicks for handling show timeout)
+ *       JList	   List Containing (filtered) items
+ *       
+ * 
+ * 	
+ * 
+ */
+
+
 public class AutoCompletePopupWindow extends JWindow {
 
     private static AutoCompletePopupWindow window = null;
@@ -37,7 +62,7 @@ public class AutoCompletePopupWindow extends JWindow {
         this.setModalExclusionType(ModalExclusionType.APPLICATION_EXCLUDE);
         try {
             jbInit();
-            setListSize(200, 100);
+            setListSize(200, 100); //Preferred size: 200px width 100px height. Gets extended if TouchScreenSupport is active in efaConfig.
             if (Daten.efaConfig != null && Daten.efaConfig.getValueTouchScreenSupport()) {
                 scrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(25, 1));
             }
@@ -97,14 +122,29 @@ public class AutoCompletePopupWindow extends JWindow {
         });
     }
 
-    public void setListSize(int x, int y) {
+    /**
+     * Sets width and height of the AutoCompletePopupWindow
+     * @param width Width of the window.
+     * @param height Height of the window. If touchscreensupport is on, the actual height is double the value of the given value.
+     */
+    public void setListSize(int width, int height) {
         if (Daten.efaConfig != null && Daten.efaConfig.getValueTouchScreenSupport()) {
-            y *= 2;
+            height *= 2;
         }
-        this.scrollPane.setPreferredSize(new Dimension(x, y));
+        this.scrollPane.setPreferredSize(new Dimension(width, height));
         this.pack();
     }
 
+    /**
+     * Sets a certain AutoCompleteList for displaying it's data.
+     * The list gets updated, and if the list has a newer lastModified (SCN) timestamp, or has not yet been displayed,
+     * the list is put into the Hashtable of known AutoCompleteLists.
+     * 
+     * However, the AutoCompleteList passed as parameter is shown anyway.
+     * 
+     * @param list AutoCompleteList to display
+     * @return number of elements in the AutoCompleteList after update.
+     */
     private int setListData(AutoCompleteList list) {
         list.update();
         String[] data = autoCompleteLists.get(list);
@@ -118,6 +158,11 @@ public class AutoCompletePopupWindow extends JWindow {
         return data.length;
     }
 
+    /**
+     * Shows the single instance of AutoCompletePopupWindow at the position of a certain field.
+     * 
+     * @param field Textfield where the AutoCompletePopupWindow shall be displayed
+     */
     private void showAtTextField(JTextField field) {
         if (showingAt == field) {
             // Unter Windows bewirkt toFront(), daß der ursprüngliche Frame den Fokus verliert, daher muß unter Windows darauf verzichtet werden
@@ -151,6 +196,11 @@ public class AutoCompletePopupWindow extends JWindow {
         }
     }
 
+    /**
+     * Hides the singleton AutoCompletePopupWindow instance.
+     * Also, the field to which the AutoCompletePopupWindow is shown gets nulled.
+     * 
+     */
     public void doHide() {
         if (showingAt != null) {
             this.setVisible(false);
@@ -160,23 +210,37 @@ public class AutoCompletePopupWindow extends JWindow {
         showingAt = null;
     }
 
-    private void selectEintrag(String eintrag) {
-        list.setSelectedValue(eintrag, true);
+    /**
+     * Ensures that the AutoCompleteListItem representing the value entry is shown and is also scrolled into the visible part of the field.
+     * @param entry
+     */
+    private void selectEintrag(String entry) {
+        list.setSelectedValue(entry, true);
         try {
             list.scrollRectToVisible(list.getCellBounds(list.getSelectedIndex() - 1, list.getSelectedIndex() + 1));
         } catch (Exception e) {
         }
     }
 
-    /*
+
+    /**
      * Returns the currently selected entry in the popup window.
      * Needed for filtered autocomplete lists.
+     * 
+     * @return Value of the currently selected entry of the AutoCompleteList.
      */
-
     public  String getSelectedEintrag() {
     	return (String)list.getSelectedValue();
     }
     
+    /**
+     * MouseEvent handler which is fired when the user selects an entry within the list.
+     * The value of the selected item is used as the new value of the corresponding JTextField.
+     * 
+     * Also, the AutoCompletePopupWindow gets hidden.
+     * 
+     * @param e
+     */
     private void listEntrySelected(MouseEvent e) {
         if (showingAt != null) {
             try {
@@ -207,7 +271,16 @@ public class AutoCompletePopupWindow extends JWindow {
         }
     }
 
-    public static void showAndSelect(JTextField field, AutoCompleteList list, String eintrag, AutoCompletePopupWindowCallback callback) {
+    /**
+     * Shows the singleton AutoCompletePopupWindow at the given field, using the given autocomplete list and
+     * automatically selects the entry in the list.
+     * 
+     * @param field		JTextField to show the AutoCompletePopupWindow at.
+     * @param list		AutoCompleteList containing contents to show
+     * @param selectedEntry  Value within the AutoCompleteList which shall be selected automatically   
+     * @param callback Method which is called when the AutoCompletePopupWindow is hidden (this should induce that the callee takes over a given value as current value).
+     */
+    public static void showAndSelect(JTextField field, AutoCompleteList list, String selectedEntry, AutoCompletePopupWindowCallback callback) {
         try {
             if (window == null) {
                 window = new AutoCompletePopupWindow(Dialog.frameCurrent());
@@ -217,11 +290,17 @@ public class AutoCompletePopupWindow extends JWindow {
                 return;
             }
             window.showAtTextField(field);
-            window.selectEintrag(eintrag);
+            window.selectEintrag(selectedEntry);
         } catch (Exception e) {
         }
     }
 
+    /**
+     * Hides the singleton AutCopmletePopupWindow.
+     * Also, it ensures that the corresponding textfield contents get trimmed and an event gets fired
+     * so that the trimmed value is used as present valie of the textfield.
+     * 
+     */
     public static void hideWindow() {
         try {
             if (window != null) {
@@ -248,6 +327,11 @@ public class AutoCompletePopupWindow extends JWindow {
         }
     }
 
+    /**
+     * Determines if the singleton AutoCompletePopupWindow is currently shown at a textfield.
+     * @param field
+     * @return true if it is currently shown, false if not, or no window is currently shown.
+     */
     public static boolean isShowingAt(JTextField field) {
         try {
             if (window != null) {
@@ -275,8 +359,16 @@ class HideWindowThread extends Thread {
 
     public void run() {
         try {
-            Thread.sleep(10);
-            window.doHide();
+            Thread.sleep(10); //sleep 10 milliseconds
+            //then hide the window.
+            //as window hiding is in the main swing thread, we have to use invokeLater method to do so.
+            //otherwise, some exceptions may occur ad other occasions within the main swing thread.
+        	SwingUtilities.invokeLater(new Runnable() {
+        		public void run() {
+        			window.doHide();
+        		}
+        	})
+            ;
         } catch (Exception e) {
         }
     }
