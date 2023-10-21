@@ -1,6 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <efaOnlineUpdate>
     <Version>
+        <VersionID>2.3.3_02</VersionID>
+        <ReleaseDate>TO.DO.2023</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa233.zip</DownloadUrl>
+        <DownloadSize></DownloadSize>
+        <Changes lang="de">
+            <ChangeItem>Neu: EfaConfig: Neustrukturierung der Konfiguration mit Überschriften und Hinweisen zu einzelnen Konfigurationselementen.</ChangeItem>
+            <ChangeItem>BugFix: EfaConfig: Tastenbelegung für Bemerkungsfeld - Textfeld zur Eingabe freigeschaltet.</ChangeItem>
+            <ChangeItem>BugFix: EfaConfig: MeteoAstro-Plugin weist auf nicht mehr funktionierende Wetterabfrage hin.</ChangeItem>
+            <ChangeItem>BugFix: MetoAstro-Plugin in Hauptbildschirm von efaBths zeigt eine Hand als Mauscursor an</ChangeItem>
+            <ChangeItem>BugFix: EfaConfig: Scrollbar im Config-Fenster ist INNERHALB der Registerkarten - somit besser scrollbar</ChangeItem>
+            <ChangeItem>BugFix: EfaConfig: mehr Elemente weisen darauf hin, dass sie einen Neustart von efa benötigen.</ChangeItem>
+            <ChangeItem>BugFix: Bootsreservierung: Bei Auswahl des Bootes wird der Knopf für die Auswahlliste angezeigt.</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+        </Changes>
+    </Version>
+    <Version>
         <VersionID>2.3.3_01</VersionID>
         <ReleaseDate>TO.DO.2023</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa233.zip</DownloadUrl>

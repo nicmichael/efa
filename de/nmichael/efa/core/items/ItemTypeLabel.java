@@ -32,7 +32,14 @@ public class ItemTypeLabel extends ItemType {
     }
 
     public IItemType copyOf() {
-        return new ItemTypeLabel(name, type, category, description);
+    	
+        ItemTypeLabel thisCopy=new ItemTypeLabel(name, type, category, description);
+        thisCopy.setBackgroundColor(this.backgroundColor);
+        thisCopy.setColor(this.color);
+        thisCopy.setPadding(padXbefore, padXafter, padYbefore, padYafter);
+        thisCopy.setFieldGrid(fieldGridWidth, fieldGridHeight, fieldGridAnchor, fieldGridFill);
+        return thisCopy;
+
     }
 
     public void parseValue(String value) {

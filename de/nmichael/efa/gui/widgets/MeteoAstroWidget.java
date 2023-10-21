@@ -17,6 +17,8 @@ import de.nmichael.efa.util.*;
 import de.nmichael.efa.core.items.*;
 import de.nmichael.efa.data.LogbookRecord;
 import java.awt.image.*;
+import java.awt.Cursor;
+import java.awt.Font;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.text.html.*;
@@ -104,6 +106,7 @@ public class MeteoAstroWidget extends Widget {
                 IItemType.TYPE_PUBLIC, "",
                 International.getString("Layout")));
 
+        addHeader("WidgetMeteoSunrise",IItemType.TYPE_PUBLIC, "", International.getString("Sonnenaufgang/Sonnenuntergang"), 3);        
         addParameterInternal(new ItemTypeBoolean(PARAM_SHOWSUNRISE, true,
                 IItemType.TYPE_PUBLIC, "",
                 International.getString("Sonnenaufgangs- und -untergangszeit anzeigen")));
@@ -115,79 +118,8 @@ public class MeteoAstroWidget extends Widget {
                 ItemTypeLongLat.ORIENTATION_EAST,13,10,15,
                 IItemType.TYPE_PUBLIC, "",
                 International.getString("geographische Länge")));
-
-        addParameterInternal(new ItemTypeBoolean(PARAM_SHOWWEATHER, true,
-                IItemType.TYPE_PUBLIC, "",
-                International.getString("Wetterdaten anzeigen") +
-                " (" + International.getString("Internetverbindung erforderlich") + ")"));
-        addParameterInternal(new ItemTypeString(PARAM_WEATHERLOCATION,
-                "638242", // "14109-Germany",
-                IItemType.TYPE_PUBLIC, "",
-                International.getString("Ort für Wetterdaten")));
-        addParameterInternal(new ItemTypeStringList(PARAM_TEMPERATURESCALE, TEMP_CELSIUS,
-                new String[] { TEMP_CELSIUS, TEMP_FAHRENHEIT },
-                new String[] { International.getString("Celsius"),
-                               International.getString("Fahrenheit")
-                },
-                IItemType.TYPE_PUBLIC, "",
-                International.getString("Temperaturskala")));
-        addParameterInternal(new ItemTypeBoolean(PARAM_SHOWWEATHERLOCATION, false,
-                IItemType.TYPE_PUBLIC, "",
-                International.getMessage("{item} anzeigen",
-                International.getString("Ort"))));
-        addParameterInternal(new ItemTypeBoolean(PARAM_SHOWWEATHERCURTEXT, false,
-                IItemType.TYPE_PUBLIC, "",
-                International.getMessage("{item} anzeigen",
-                International.getString("aktuelles Wetter") +
-                " (" + International.getString("Text") + ")")));
-        addParameterInternal(new ItemTypeBoolean(PARAM_SHOWWEATHERCURIMG, false,
-                IItemType.TYPE_PUBLIC, "",
-                International.getMessage("{item} anzeigen",
-                International.getString("aktuelles Wetter") +
-                " (" + International.getString("Bild") + ")")));
-        addParameterInternal(new ItemTypeBoolean(PARAM_SHOWWEATHERCURTEMP, true,
-                IItemType.TYPE_PUBLIC, "",
-                International.getMessage("{item} anzeigen",
-                International.getString("aktuelle Temperatur"))));
-        addParameterInternal(new ItemTypeBoolean(PARAM_SHOWWEATHERCURWIND, true,
-                IItemType.TYPE_PUBLIC, "",
-                International.getMessage("{item} anzeigen",
-                International.getString("Wind"))));
-        addParameterInternal(new ItemTypeBoolean(PARAM_SHOWWEATHERFCTEXT, false,
-                IItemType.TYPE_PUBLIC, "",
-                International.getMessage("{item} anzeigen",
-                International.getString("Wettervorhersage") +
-                " (" + International.getString("Text") + ")")));
-        addParameterInternal(new ItemTypeBoolean(PARAM_SHOWWEATHERFCIMG, true,
-                IItemType.TYPE_PUBLIC, "",
-                International.getMessage("{item} anzeigen",
-                International.getString("Wettervorhersage") +
-                " (" + International.getString("Bild") + ")")));
-        addParameterInternal(new ItemTypeBoolean(PARAM_SHOWWEATHERFCTEMP, true,
-                IItemType.TYPE_PUBLIC, "",
-                International.getMessage("{item} anzeigen",
-                International.getString("Höchst- und Tiefst-Temperatur"))));
-
-        addParameterInternal(new ItemTypeFile(PARAM_HTMLPOPUPURL, "",
-                International.getString("HTML-Seite"),
-                International.getString("HTML-Seite"),
-                null,ItemTypeFile.MODE_OPEN,ItemTypeFile.TYPE_FILE,
-                IItemType.TYPE_PUBLIC, "",
-                International.getString("HTML-Popup") + ": " +
-                International.getString("HTML-Seite")));
-        addParameterInternal(new ItemTypeInteger(PARAM_HTMLPOPWIDTH, 400, 1, Integer.MAX_VALUE, false,
-                IItemType.TYPE_PUBLIC, "",
-                International.getString("HTML-Popup") + ": " +
-                International.getString("Breite")));
-        addParameterInternal(new ItemTypeInteger(PARAM_HTMLPOPHEIGHT, 200, 1, Integer.MAX_VALUE, false,
-                IItemType.TYPE_PUBLIC, "",
-                International.getString("HTML-Popup") + ": " +
-                International.getString("Höhe")));
-        addParameterInternal(new ItemTypeString(PARAM_POPUPEXECCOMMAND, "",
-                IItemType.TYPE_PUBLIC, "",
-                International.getMessage("Auszuführendes Kommando vor {event}",
-                International.getString("Popup"))));
-
+        
+        addHeader("WidgetMeteoAstroWarning",IItemType.TYPE_PUBLIC, "", International.getString("Warnhinweise bei Dunkelheit"), 3);          
         addParameterInternal(new ItemTypeBoolean(PARAM_WARNDARKNESS, true,
                 IItemType.TYPE_PUBLIC, "",
                 International.getString("Bei Fahrtbeginn vor Dunkelheit warnen")));
@@ -215,7 +147,86 @@ public class MeteoAstroWidget extends Widget {
                 International.getString("HTML-Text einbinden")));
         addParameterInternal(new ItemTypeString(PARAM_INCLUDEHTMLPAGE, "",
                 IItemType.TYPE_PUBLIC, "",
-                International.getString("HTML-Seite einbinden")));
+                International.getString("HTML-Seite einbinden")));        
+
+        addHeader("WidgetMeteoWeather",IItemType.TYPE_PUBLIC, "", International.getString("Wetter anzeigen"), 3);  
+        addDescription("WidgetMeteoWeatherDisabled",IItemType.TYPE_PUBLIC, "", International.getString("Die Wetteranzeige ist nicht verfügbar - WetterAPI von Yahoo wurde eingestellt."), 3,3,3);
+        addParameterInternal(new ItemTypeBoolean(PARAM_SHOWWEATHER, true,
+                IItemType.TYPE_EXPERT, "",
+                International.getString("Wetterdaten anzeigen") +
+                " (" + International.getString("Internetverbindung erforderlich") + ")"));
+        addParameterInternal(new ItemTypeString(PARAM_WEATHERLOCATION,
+                "638242", // "14109-Germany",
+                IItemType.TYPE_EXPERT, "",
+                International.getString("Ort für Wetterdaten")));
+        addParameterInternal(new ItemTypeStringList(PARAM_TEMPERATURESCALE, TEMP_CELSIUS,
+                new String[] { TEMP_CELSIUS, TEMP_FAHRENHEIT },
+                new String[] { International.getString("Celsius"),
+                               International.getString("Fahrenheit")
+                },
+                IItemType.TYPE_EXPERT, "",
+                International.getString("Temperaturskala")));
+        addParameterInternal(new ItemTypeBoolean(PARAM_SHOWWEATHERLOCATION, false,
+                IItemType.TYPE_EXPERT, "",
+                International.getMessage("{item} anzeigen",
+                International.getString("Ort"))));
+        addParameterInternal(new ItemTypeBoolean(PARAM_SHOWWEATHERCURTEXT, false,
+                IItemType.TYPE_EXPERT, "",
+                International.getMessage("{item} anzeigen",
+                International.getString("aktuelles Wetter") +
+                " (" + International.getString("Text") + ")")));
+        addParameterInternal(new ItemTypeBoolean(PARAM_SHOWWEATHERCURIMG, false,
+                IItemType.TYPE_EXPERT, "",
+                International.getMessage("{item} anzeigen",
+                International.getString("aktuelles Wetter") +
+                " (" + International.getString("Bild") + ")")));
+        addParameterInternal(new ItemTypeBoolean(PARAM_SHOWWEATHERCURTEMP, true,
+                IItemType.TYPE_EXPERT, "",
+                International.getMessage("{item} anzeigen",
+                International.getString("aktuelle Temperatur"))));
+        addParameterInternal(new ItemTypeBoolean(PARAM_SHOWWEATHERCURWIND, true,
+                IItemType.TYPE_EXPERT, "",
+                International.getMessage("{item} anzeigen",
+                International.getString("Wind"))));
+        addParameterInternal(new ItemTypeBoolean(PARAM_SHOWWEATHERFCTEXT, false,
+                IItemType.TYPE_EXPERT, "",
+                International.getMessage("{item} anzeigen",
+                International.getString("Wettervorhersage") +
+                " (" + International.getString("Text") + ")")));
+        addParameterInternal(new ItemTypeBoolean(PARAM_SHOWWEATHERFCIMG, true,
+                IItemType.TYPE_EXPERT, "",
+                International.getMessage("{item} anzeigen",
+                International.getString("Wettervorhersage") +
+                " (" + International.getString("Bild") + ")")));
+        addParameterInternal(new ItemTypeBoolean(PARAM_SHOWWEATHERFCTEMP, true,
+                IItemType.TYPE_EXPERT, "",
+                International.getMessage("{item} anzeigen",
+                International.getString("Höchst- und Tiefst-Temperatur"))));
+
+        addHeader("WidgetMeteoHTML",IItemType.TYPE_PUBLIC, "", International.getString("HTML-Seite anzeigen"), 3);  
+        addDescription("WidgetMeteoHTMLPOPUP",IItemType.TYPE_PUBLIC, "", International.getString("Bei Mausklick auf das Astro/Meteo-Widget kann eine HMTL-Seite angezeigt werden."), 3,3,3);
+        
+        addParameterInternal(new ItemTypeFile(PARAM_HTMLPOPUPURL, "",
+                International.getString("HTML-Seite"),
+                International.getString("HTML-Seite"),
+                null,ItemTypeFile.MODE_OPEN,ItemTypeFile.TYPE_FILE,
+                IItemType.TYPE_PUBLIC, "",
+                International.getString("HTML-Popup") + ": " +
+                International.getString("HTML-Seite")));
+        addParameterInternal(new ItemTypeInteger(PARAM_HTMLPOPWIDTH, 400, 1, Integer.MAX_VALUE, false,
+                IItemType.TYPE_PUBLIC, "",
+                International.getString("HTML-Popup") + ": " +
+                International.getString("Breite")));
+        addParameterInternal(new ItemTypeInteger(PARAM_HTMLPOPHEIGHT, 200, 1, Integer.MAX_VALUE, false,
+                IItemType.TYPE_PUBLIC, "",
+                International.getString("HTML-Popup") + ": " +
+                International.getString("Höhe")));
+        addParameterInternal(new ItemTypeString(PARAM_POPUPEXECCOMMAND, "",
+                IItemType.TYPE_PUBLIC, "",
+                International.getMessage("Auszuführendes Kommando vor {event}",
+                International.getString("Popup"))));
+
+
 
         super.setEnabled(true);
         super.setPosition(IWidget.POSITION_CENTER);
@@ -325,9 +336,16 @@ public class MeteoAstroWidget extends Widget {
     
 
     void construct() {
-        htmlPane.setContentType("text/html");
+    	
+
+    	Font font = myPanel.getFont();
+    	String fontHeader="style=\\\"font-family: \"" + font.getFamily() + " "; // + font.getFamily() + "'>";
+    	String fontFooter="</font>";    	
+    	htmlPane.setContentType("text/html");
         htmlPane.setEditable(false);
         htmlPane.setBorder(null);
+        htmlPane.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
 
         // following hyperlinks is automatically "disabled" (if no HyperlinkListener is taking care of it)
         // But we also need to disable submiting of form data:
@@ -346,7 +364,7 @@ public class MeteoAstroWidget extends Widget {
         });
 
         try {
-            htmlUpdater = new HTMLUpdater(getUpdateInterval());
+            htmlUpdater = new HTMLUpdater(getUpdateInterval(), fontHeader, fontFooter);
             htmlUpdater.start();
         } catch(NoClassDefFoundError e) {
             Logger.log(Logger.WARNING, Logger.MSG_WARN_WEATHERUPDATEFAILED, 
@@ -407,9 +425,13 @@ public class MeteoAstroWidget extends Widget {
         private boolean weatherError = false;
         private int weatherSlowDownUpdateFactor = 1;
         private int updateIntervalInSeconds = 24*3600;
+        private String fontHeader="";
+        private String fontFooter="";
 
-        public HTMLUpdater(int updateIntervalInSeconds) {
+        public HTMLUpdater(int updateIntervalInSeconds, String htmlFontHeader, String htmlFontFooter) {
             this.updateIntervalInSeconds = updateIntervalInSeconds;
+            this.fontHeader=htmlFontHeader;
+            this.fontFooter=htmlFontFooter;
         }
 
         public void run() {
@@ -670,7 +692,8 @@ public class MeteoAstroWidget extends Widget {
                     }
 
                     StringBuffer htmlDoc = new StringBuffer();
-                    htmlDoc.append("<html>\n<body bgcolor=\"#" + bgcolor + "\">\n");
+                    
+                    htmlDoc.append("<html>\n<body bgcolor=\"#" + bgcolor + "\" "+ fontHeader+ ">\n");
                     htmlDoc.append("<table align=\"center\" cellspacing=\"" + (getLayout().equals(LAYOUT_COMPACT) ? 0 : 8) + "\">\n");
 
                     row = 0;

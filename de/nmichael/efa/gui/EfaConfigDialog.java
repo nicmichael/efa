@@ -12,6 +12,8 @@ package de.nmichael.efa.gui;
 
 import de.nmichael.efa.core.items.*;
 import de.nmichael.efa.util.*;
+import de.nmichael.efa.util.Dialog;
+import de.nmichael.efa.Daten;
 import de.nmichael.efa.core.config.*;
 import de.nmichael.efa.data.storage.IDataAccess;
 import java.awt.*;
@@ -108,4 +110,99 @@ public class EfaConfigDialog extends BaseTabbedDialog {
         return (ItemTypeHashtable<String>)getItem(myEfaConfig.getValueTypesStatus().getName());
     }
 
+    private Dimension getTabPanelPreferredSize(int numCats) {
+    	
+    	
+		Dimension s = Toolkit.getDefaultToolkit().getScreenSize();
+		
+    	int maxDlgW=Daten.efaConfig.getValueMaxDialogWidth();
+    	int maxDlgH=Daten.efaConfig.getValueMaxDialogHeight();
+    	if (maxDlgW<=0) {
+    		maxDlgW=Daten.efaConfig.getValueScreenWidth();
+    	}
+    	if (maxDlgH<=0) {
+    		maxDlgH=Daten.efaConfig.getValueScreenHeight();
+    	}
+    	if (maxDlgW<=0) {
+    		maxDlgW=s.width-80;
+    	}
+    	if (maxDlgH<=0) {
+    		maxDlgH=s.height-80;
+    	}
+
+    	
+    		return new Dimension(
+    				(int) Math.round(maxDlgW*.90), 
+    				(int) Math.round(maxDlgH*.70));
+    }
+    
+    private int getSubCatCount(String strCategory) {
+    	String[] subCats=strCategory.split(":");
+    	return subCats.length;
+    }
+    
+    // Efa Config Dialogue needs its own recursiveBuildGui...
+	protected int recursiveBuildGui(Hashtable<String, Hashtable> categories, Hashtable<String, Vector<IItemType>> items,
+			String catKey, JComponent currentPane, String selectedPanel) {
+		int itmcnt = 0;
+		int pos = (selectedPanel != null && selectedPanel.length() > 0 ? selectedPanel.indexOf(CATEGORY_SEPARATOR)
+				: -1);
+		String selectThisCat = (pos < 0 ? selectedPanel : selectedPanel.substring(0, pos));
+		String selectNextCat = (pos < 0 ? null : selectedPanel.substring(pos + 1));
+
+		Object[] cats = categories.keySet().toArray();
+		Arrays.sort(cats);
+		for (int i = 0; i < cats.length; i++) {
+			String key = (String) cats[i];
+			String thisCatKey = (catKey.length() == 0 ? key : makeCategory(catKey, key));
+			String catName = getCatName(thisCatKey);
+			Hashtable<String, Hashtable> subCat = categories.get(key);
+			if (subCat.size() != 0) {
+				JTabbedPane subTabbedPane = new JTabbedPane();
+				if (recursiveBuildGui(subCat, items, thisCatKey, subTabbedPane, selectNextCat) > 0) {
+					if (currentPane instanceof JTabbedPane) {
+						currentPane.add(subTabbedPane, catName);
+					} else {
+						currentPane.add(subTabbedPane, BorderLayout.CENTER);
+					}
+					if (key.equals(selectThisCat) && currentPane instanceof JTabbedPane) {
+						((JTabbedPane) currentPane).setSelectedComponent(subTabbedPane);
+					}
+				}
+			} else {
+				JPanel panel = new JPanel();
+				panels.put(panel, thisCatKey);
+				JPanel innerPanel = new JPanel();
+
+				JScrollPane scrollPane = new JScrollPane(innerPanel);
+				scrollPane.setPreferredSize(getTabPanelPreferredSize(getSubCatCount(thisCatKey)));
+				innerPanel.setLayout(new GridBagLayout());
+				panel.setLayout(new BorderLayout());
+				panel.add(scrollPane,BorderLayout.CENTER);
+				Vector<IItemType> v = items.get(thisCatKey);
+				int y = 0;
+				for (int j = 0; v != null && j < v.size(); j++) {
+					IItemType itm = v.get(j);
+					if (itm.getType() == IItemType.TYPE_PUBLIC
+							|| (itm.getType() == IItemType.TYPE_EXPERT && expertModeEnabled)) {
+						y += itm.displayOnGui(this, innerPanel, y);
+						displayedGuiItems.add(itm);
+						itmcnt++;
+					}
+				}
+				if (y > 0) {
+					if (currentPane instanceof JTabbedPane) {
+						currentPane.add(panel, catName);
+					} else {
+						currentPane.add(panel, BorderLayout.CENTER);
+					}
+					if (key.equals(selectThisCat) && currentPane instanceof JTabbedPane) {
+						((JTabbedPane) currentPane).setSelectedComponent(panel);
+					}
+				}
+			}
+		}
+		return itmcnt;
+	}  
+    
 }

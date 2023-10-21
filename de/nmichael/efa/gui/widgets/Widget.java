@@ -10,6 +10,7 @@
 
 package de.nmichael.efa.gui.widgets;
 
+import de.nmichael.efa.Daten;
 import de.nmichael.efa.core.items.*;
 import de.nmichael.efa.util.*;
 import java.util.*;
@@ -24,7 +25,8 @@ public abstract class Widget implements IWidget {
     public static final String PARAM_ENABLED        = "Enabled";
     public static final String PARAM_POSITION       = "Position";
     public static final String PARAM_UPDATEINTERVAL = "UpdateInterval";
-
+    public static final String NOT_STORED_ITEM_PREFIX ="_";
+    
     String name;
     String description;
     boolean ongui;
@@ -36,6 +38,8 @@ public abstract class Widget implements IWidget {
         this.description = description;
         this.ongui = ongui;
 
+        
+        addHeader("WidgetCommon_"+name,IItemType.TYPE_PUBLIC, "", International.getString("Widget Allgemein"), 3);
         addParameterInternal(new ItemTypeBoolean(PARAM_ENABLED, false,
                 IItemType.TYPE_PUBLIC, "",
                 (ongui ?
@@ -68,6 +72,47 @@ public abstract class Widget implements IWidget {
     void addParameterInternal(IItemType p) {
         p.setName(getParameterName(p.getName()));
         parameters.add(p);
+    }
+    
+    /**
+     * Adds a header item in an efa widget config. This header value is not safed within efaConfig.
+     * There is no word-wrap for the caption.
+     * 
+     * The header automatically gets a blue background and white text color; this cannot be configured
+     * as efaConfig cannot refer to its own settings when calling the constructor.
+     * 
+     * @param uniqueName Unique name of the element (as for all of efaConfig elements need unique names)
+     * @param type TYPE_PUBLIC, TYPE_EXPERT, TYPE_INTERNAL
+     * @param category Category in which the header is placed
+     * @param caption Caption
+     * @param gridWidth How many GridBagLayout cells shall this header be placed in?
+     */
+    protected void addHeader(String uniqueName, int type, String category, String caption, int gridWidth) {
+    	IItemType item = new ItemTypeLabel(NOT_STORED_ITEM_PREFIX+uniqueName, type, category, " "+caption);
+        item.setPadding(0, 0, 10, 10);
+		item.setBackgroundColor(new Color(75,134,193));
+		item.setColor(Color.WHITE);
+        item.setFieldGrid(3,GridBagConstraints.EAST, GridBagConstraints.BOTH);
+        addParameterInternal(item);
+    }
+
+    /**
+     * Adds a description item in an efa widget config. This description value is not safed within efaConfig.
+     * There is no word-wrap for the caption.
+     * 
+     * This is similar to @see addHeader(), but the element does not get a highlighted background.
+     * 
+     * @param uniqueName Unique name of the element (as for all of efaConfig elements need unique names)
+     * @param type TYPE_PUBLIC, TYPE_EXPERT, TYPE_INTERNAL
+     * @param category Category in which the description is placed
+     * @param caption Caption
+     * @param gridWidth How many GridBagLayout cells shall this description be placed in?
+     */      
+    protected void addDescription(String uniqueName, int type, String category, String caption, int gridWidth, int padBefore, int padAfter) {
+    	IItemType item = new ItemTypeLabel(NOT_STORED_ITEM_PREFIX+uniqueName, type, category, caption);
+        item.setPadding(0, 0, padBefore, padAfter);
+        item.setFieldGrid(3,GridBagConstraints.EAST, GridBagConstraints.BOTH);
+        addParameterInternal(item);
     }
 
     IItemType getParameterInternal(String internalName) {

@@ -254,7 +254,7 @@ public abstract class BaseTabbedDialog extends BaseDialog {
 
     }
 
-    private int recursiveBuildGui(Hashtable<String,Hashtable> categories,
+    protected int recursiveBuildGui(Hashtable<String,Hashtable> categories,
                                    Hashtable<String,Vector<IItemType>> items,
                                    String catKey,
                                    JComponent currentPane,
