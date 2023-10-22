@@ -10,15 +10,16 @@
 
 package de.nmichael.efa.gui.widgets;
 
-import de.nmichael.efa.*;
-import de.nmichael.efa.gui.util.*;
-import de.nmichael.efa.util.*;
-import de.nmichael.efa.util.Dialog;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-import javax.swing.border.*;
-import java.util.*;
+import java.awt.Label;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.SwingUtilities;
+
+import de.nmichael.efa.util.EfaUtil;
 
 public class ClockMiniWidget {
 
@@ -43,11 +44,34 @@ public class ClockMiniWidget {
 
         volatile boolean keepRunning = true;
 
+        /*
+         * Gets the remaining seconds until the next full minute
+         */
+        private long getMilliSecondsToFullMinute() {
+            LocalDateTime start = LocalDateTime.now();
+            // Hour + 1, set Minute and Second to 00
+            LocalDateTime end = start.plusMinutes(1).truncatedTo(ChronoUnit.MINUTES);
+
+            // Get Duration
+            Duration duration = Duration.between(start, end);
+            long millis = duration.toMillis();
+            return 1000;
+        };
+        
         public void run() {
             while (keepRunning) {
                 try {
-                    label.setText(EfaUtil.getCurrentTimeStampHHMM());
-                    Thread.sleep(60000);
+                	// simply setting label text is not thread safe with swing.
+                	//label.setText(EfaUtil.getCurrentTimeStampHHMM());
+                	
+                	//Use invokelater as swing threadsafe ways
+                	SwingUtilities.invokeLater(new MainGuiUpdater(label, EfaUtil.getCurrentTimeStampHHMM().toString()));
+                	
+                	//wait until next full minute plus one sec. this is more accurate than just waiting 60.000 msec
+                	//from a random offset.
+                	long waitTime=getMilliSecondsToFullMinute()+1000;
+                    Thread.sleep(waitTime);
+                    
                 } catch (Exception e) {
                     EfaUtil.foo();
                 }
@@ -59,5 +83,23 @@ public class ClockMiniWidget {
         }
 
     }
+    
+    /**
+     * Update clock label on efaBths main GUI. Called via SwingUtilities.invokeLater()
+     */
+    class MainGuiUpdater implements Runnable {
+        
+    	private String text = null;
+    	private JLabel mylabel=null;
+    	
+    	public MainGuiUpdater(JLabel theLabel, String theData) {
+    		text = theData;
+    		mylabel = theLabel;
+    	}
+    	
+    	public void run() {
+    		mylabel.setText(text);
+	      }
+	}
 
 }

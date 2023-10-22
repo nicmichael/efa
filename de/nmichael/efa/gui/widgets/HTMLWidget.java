@@ -125,12 +125,35 @@ public class HTMLWidget extends Widget {
                             url = EfaUtil.correctUrl(url);
                             Document doc = new HTMLDocument();
                             doc.putProperty("javax.swing.JEditorPane.postdata", "foobar"); // property must match JEditorPane.PostDataProperty
-                            htmlPane.setDocument(doc);
-                            htmlPane.setPage(url);
+                            
+                            // not thread safe
+                            // htmlPane.setDocument(doc);
+                            // htmlPane.setPage(url);
+                            
+                            // this is thread safe
+                        	SwingUtilities.invokeLater(new Runnable() {
+                        	      public void run() {
+                                      try {
+                                          htmlPane.setDocument(doc);                                    	  
+                                    	  htmlPane.setPage(url);
+                                      } catch (IOException ee) {
+                                          htmlPane.setText(International.getString("FEHLER") + ": "
+                                                  + International.getMessage("Kann Adresse '{url}' nicht öffnen: {message}", url, ee.toString()));
+                                      }
+                        	      }
+                          	});
+                            
                         }
-                    } catch (IOException ee) {
-                        htmlPane.setText(International.getString("FEHLER") + ": "
-                                + International.getMessage("Kann Adresse '{url}' nicht öffnen: {message}", url, ee.toString()));
+                    } catch (Exception ee) {
+                        //htmlPane.setText(International.getString("FEHLER") + ": "
+                        //        + International.getMessage("Kann Adresse '{url}' nicht öffnen: {message}", url, ee.toString()));
+                    	
+                    	SwingUtilities.invokeLater(new Runnable() {
+                  	      public void run() {
+                              htmlPane.setText(International.getString("FEHLER") + ": "
+                                      + International.getMessage("Kann Adresse '{url}' nicht öffnen: {message}", url, ee.toString()));   
+                  	      }
+                    	});                    	
                     }
                     Thread.sleep(updateIntervalInSeconds*1000);
                 } catch (Exception e) {

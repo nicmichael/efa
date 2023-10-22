@@ -712,13 +712,17 @@ public class MeteoAstroWidget extends Widget {
                         f.close();
                     }
                     // System.out.println(htmlDoc.toString());
-                    htmlPane.setText(htmlDoc.toString());
+                    // the simple way is not thread safe and can lead to sporadic exceptions in Swing main thread
+                    //htmlPane.setText(htmlDoc.toString());
+
+                    // Use Swing thread-safe update method instead
+                    SwingUtilities.invokeLater(new UpdateHtmlPaneRunner(htmlPane,htmlDoc.toString()));
                 } catch(Exception e) {
                     Logger.logdebug(e);
                 }
 
                 try {
-                    Thread.sleep(Math.max(updateIntervalInSeconds, 3600) * 1000);
+                    Thread.sleep(Math.max(updateIntervalInSeconds, 1) * 1000);
                 } catch(Exception e) {
                     Logger.logdebug(e);
                 }
@@ -958,5 +962,19 @@ public class MeteoAstroWidget extends Widget {
 
     }
 
+    class UpdateHtmlPaneRunner implements Runnable {
+        
+    	private JEditorPane htmlPane=null;
+    	private String value = null;
+    	
+    	public UpdateHtmlPaneRunner(JEditorPane theHtmlPane, String data) {
+    		htmlPane = theHtmlPane;
+    		value = data;
+    	}
+    	
+    	public void run() {
+	        	htmlPane.setText(value);
+	      }
+	}
 
 }
