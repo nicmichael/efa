@@ -776,9 +776,9 @@ public class BoatReservationRecord extends DataRecord {
                 IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getMessage("Reservierung für {boat}", boatName)));
         item.setPadding(0, 0, 0, 10);// 10 pix vertical distance from next row
         
-        if (Daten.efaConfig.getBoathouseHeaderUseHighlightColor()) {
-			item.setBackgroundColor(Daten.efaConfig.getBoathouseHeaderBackgroundColor());
-			item.setColor(Daten.efaConfig.getBoathouseHeaderForegroundColor());
+        if (Daten.efaConfig.getHeaderUseHighlightColor()) {
+			item.setBackgroundColor(Daten.efaConfig.getHeaderBackgroundColor());
+			item.setColor(Daten.efaConfig.getHeaderForegroundColor());
 	        item.setFieldGrid(5,GridBagConstraints.EAST, GridBagConstraints.BOTH);
 		}        
         

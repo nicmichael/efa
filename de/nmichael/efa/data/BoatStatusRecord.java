@@ -322,9 +322,9 @@ public class BoatStatusRecord extends DataRecord {
                 IItemType.TYPE_PUBLIC, CAT_STATUS, International.getMessage("Bootsstatus für {boat}", getBoatNameAsString(System.currentTimeMillis()))));
         item.setPadding(0, 0, 0, 10);
 
-        if (Daten.efaConfig.getBoathouseHeaderUseHighlightColor()) {
-			item.setBackgroundColor(Daten.efaConfig.getBoathouseHeaderBackgroundColor());
-			item.setColor(Daten.efaConfig.getBoathouseHeaderForegroundColor());
+        if (Daten.efaConfig.getHeaderUseHighlightColor()) {
+			item.setBackgroundColor(Daten.efaConfig.getHeaderBackgroundColor());
+			item.setColor(Daten.efaConfig.getHeaderForegroundColor());
 	        item.setFieldGrid(2,GridBagConstraints.EAST, GridBagConstraints.BOTH);
 		}
         

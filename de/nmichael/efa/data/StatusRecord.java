@@ -238,9 +238,9 @@ public class StatusRecord extends DataRecord implements IItemListener {
         v.add(item = new ItemTypeLabel("LABEL", 
                 IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("Typ") + ": " + getTypeDescription()));
 
-        if (Daten.efaConfig.getBoathouseHeaderUseHighlightColor()) {
-			item.setBackgroundColor(Daten.efaConfig.getBoathouseHeaderBackgroundColor());
-			item.setColor(Daten.efaConfig.getBoathouseHeaderForegroundColor());
+        if (Daten.efaConfig.getHeaderUseHighlightColor()) {
+			item.setBackgroundColor(Daten.efaConfig.getHeaderBackgroundColor());
+			item.setColor(Daten.efaConfig.getHeaderForegroundColor());
 			item.setPadding(0,0,0,10);
 	        item.setFieldGrid(2,GridBagConstraints.EAST, GridBagConstraints.BOTH);
 		}

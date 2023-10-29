@@ -88,10 +88,8 @@ public abstract class Widget implements IWidget {
      * @param gridWidth How many GridBagLayout cells shall this header be placed in?
      */
     protected void addHeader(String uniqueName, int type, String category, String caption, int gridWidth) {
-    	IItemType item = new ItemTypeLabel(NOT_STORED_ITEM_PREFIX+uniqueName, type, category, " "+caption);
+    	IItemType item = new ItemTypeLabelHeader(NOT_STORED_ITEM_PREFIX+uniqueName, type, category, " "+caption);
         item.setPadding(0, 0, 10, 10);
-		item.setBackgroundColor(new Color(75,134,193));
-		item.setColor(Color.WHITE);
         item.setFieldGrid(3,GridBagConstraints.EAST, GridBagConstraints.BOTH);
         addParameterInternal(item);
     }

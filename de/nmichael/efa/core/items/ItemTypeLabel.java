@@ -78,11 +78,11 @@ public class ItemTypeLabel extends ItemType {
                 l.setHorizontalAlignment(hAlignment);
                 l.setHorizontalTextPosition(hAlignment);
             }
-            if (color != null) {
-                l.setForeground(color);
+            if (this.getColor() != null) {
+                l.setForeground(this.getColor());
             }
-            if (backgroundColor != null) {
-            	l.setBackground(backgroundColor);
+            if (this.getBackgroundColor() != null) {
+            	l.setBackground(this.getBackgroundColor());
             	l.setOpaque(true);
             }            
             l.setVisible(isVisible);

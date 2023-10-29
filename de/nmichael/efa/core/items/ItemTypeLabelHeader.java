@@ -1,0 +1,51 @@
+package de.nmichael.efa.core.items;
+
+import java.awt.Color;
+import java.awt.Window;
+import java.util.Vector;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+
+import de.nmichael.efa.Daten;
+import de.nmichael.efa.util.EfaUtil;
+
+/*
+ * This is an ItemTypeLabel whose background and foreground color is set to the BoathouseHeaderBackgroudColor and BoathouseHeaderForegroundColor.
+ * The ItemTypeLabelHeader class is neccessary, as it is used for efaConfig dialog.
+ * 
+ * When it is used for BUILDING (not showing) the efaConfig dialogue, efaConfig has not been completely initialized, 
+ * so efaConfig.getBoathouseHeaderBackgroundColor() returns null. This is some unwanted behaviour.
+ * 
+ * As we want the header to use the configured Background/Foreground colors in efaConfig,
+ * we have to determine the colors when the field is actually shown on GUI. At that time,
+ * efaconfig has been initialized fully and the properties can be get.
+ * 
+ */
+public class ItemTypeLabelHeader extends ItemTypeLabel {
+
+	public ItemTypeLabelHeader (String name, int type, String category, String description) {
+		super(name,type,category,description);
+    }	
+
+    public IItemType copyOf() {
+    	
+        ItemTypeLabel thisCopy=new ItemTypeLabelHeader(name, type, category, description);
+        thisCopy.setBackgroundColor(this.backgroundColor);
+        thisCopy.setColor(this.color);
+        thisCopy.setPadding(padXbefore, padXafter, padYbefore, padYafter);
+        thisCopy.setFieldGrid(fieldGridWidth, fieldGridHeight, fieldGridAnchor, fieldGridFill);
+        return thisCopy;
+
+    }	
+	
+    public Color getBackgroundColor() {
+    	return Daten.efaConfig.getHeaderBackgroundColor();
+    }
+    
+    public Color getColor() {
+    	return Daten.efaConfig.getHeaderForegroundColor();
+    }
+    
+}

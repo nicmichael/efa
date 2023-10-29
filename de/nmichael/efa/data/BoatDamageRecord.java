@@ -405,9 +405,9 @@ public class BoatDamageRecord extends DataRecord {
         v.add(item = new ItemTypeLabel("GUI_BOAT_NAME",
                 IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getMessage("Bootsschaden für {boat}", getBoatAsName())));
         item.setPadding(0, 0, 0, 10);
-        if (Daten.efaConfig.getBoathouseHeaderUseHighlightColor()) {
-			item.setBackgroundColor(Daten.efaConfig.getBoathouseHeaderBackgroundColor());
-			item.setColor(Daten.efaConfig.getBoathouseHeaderForegroundColor());
+        if (Daten.efaConfig.getHeaderUseHighlightColor()) {
+			item.setBackgroundColor(Daten.efaConfig.getHeaderBackgroundColor());
+			item.setColor(Daten.efaConfig.getHeaderForegroundColor());
 	        item.setFieldGrid(2,GridBagConstraints.EAST, GridBagConstraints.BOTH);
 		}                
         v.add(item = new ItemTypeString(BoatDamageRecord.DESCRIPTION, getDescription(),

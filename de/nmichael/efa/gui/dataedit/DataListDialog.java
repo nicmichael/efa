@@ -214,9 +214,9 @@ public abstract class DataListDialog extends BaseDialog implements IItemListener
             mainTablePanel.add(filterName, BorderLayout.NORTH);
             mainTablePanel.setBorder(new EmptyBorder(10,0,0,0));
             
-    		if (Daten.efaConfig.getBoathouseHeaderUseHighlightColor()) {
-    			filterName.setBackground(Daten.efaConfig.getBoathouseHeaderBackgroundColor());
-    			filterName.setForeground(Daten.efaConfig.getBoathouseHeaderForegroundColor());
+    		if (Daten.efaConfig.getHeaderUseHighlightColor()) {
+    			filterName.setBackground(Daten.efaConfig.getHeaderBackgroundColor());
+    			filterName.setForeground(Daten.efaConfig.getHeaderForegroundColor());
     			filterName.setOpaque(true);
     		}
         }

@@ -10,6 +10,7 @@
 
 package de.nmichael.efa.core.items;
 
+import de.nmichael.efa.Daten;
 import de.nmichael.efa.gui.BaseDialog;
 import de.nmichael.efa.util.*;
 import de.nmichael.efa.util.Dialog;
@@ -19,24 +20,44 @@ import javax.swing.*;
 
 // @i18n complete
 
+/*
+ * Label   [Button for choosing color] [button for color reset]
+ * 
+ * Label: Description of the item
+ * Button for choosing color: Static text "Choose color"
+ *    invokes a JColorChooser
+ *    button color is the color that the user chose in JColorChooser
+ * Button for color reset
+ *    resets the button color to empty.
+ *    
+ * canBeNull
+ *    Can the color be null? if yes, button for color reset sets the button color to null.
+ *    Otherwise, the button color is set to defaultColor.
+ * 	  
+ * 
+ */
 public class ItemTypeColor extends ItemTypeLabelValue {
 
     private Color origButtonColor;
     private JButton butdel;
     
     private String color;
+    private String defaultColor;
+    private Boolean canBeNull;
 
-    public ItemTypeColor(String name, String color,
-            int type, String category, String description) {
+    public ItemTypeColor(String name, String color, String defaultColor,
+            int type, String category, String description, Boolean canBeNull) {
         this.name = name;
         this.color = color;
+        this.defaultColor = defaultColor;
         this.type = type;
         this.category = category;
         this.description = description;
+        this.canBeNull = canBeNull;
     }
 
     public IItemType copyOf() {
-        return new ItemTypeColor(name, color, type, category, description);
+        return new ItemTypeColor(name, color, defaultColor, type, category, description, canBeNull);
     }
 
     public void parseValue(String value) {
@@ -112,8 +133,13 @@ public class ItemTypeColor extends ItemTypeLabelValue {
     }
 
     private void buttonDel(ActionEvent e) {
-        this.color = null;
-        field.setBackground(origButtonColor);
+        if (canBeNull) {
+        	this.color = null;
+        	field.setBackground(origButtonColor);
+        } else {
+        	this.color = defaultColor;
+        	field.setBackground(EfaUtil.getColor(defaultColor));
+        }
     }
 
     public boolean isValidInput() {

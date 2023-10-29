@@ -186,9 +186,9 @@ public class EfaConfig extends StorageObject implements IItemFactory {
     private ItemTypeBoolean efaBoathouseOnlyEnterKnownDestinations;
     private ItemTypeBoolean efaBoathouseOnlyEnterKnownWaters;
     private ItemTypeBoolean efaBoathouseStrictUnknownPersons;
-    private ItemTypeBoolean efaBoathouseHeaderUseHighlightColor;
-    private ItemTypeColor efaBoathouseHeaderBackgroundColor;
-    private ItemTypeColor efaBoathouseHeaderForegroundColor;
+    private ItemTypeBoolean efaHeaderUseHighlightColor;
+    private ItemTypeColor efaHeaderBackgroundColor;
+    private ItemTypeColor efaHeaderForegroundColor;
     private ItemTypeBoolean efaBoathouseFilterTextfieldStandardLists;
     private ItemTypeBoolean efaBoathouseFilterTextfieldBoatsNotAvailableList;
     private ItemTypeBoolean efaBoathouseFilterTextfieldEasyFindEntriesWithSpecialCharacters;
@@ -698,9 +698,23 @@ public class EfaConfig extends StorageObject implements IItemFactory {
                     makeLookAndFeelArray(STRINGLIST_VALUES), makeLookAndFeelArray(STRINGLIST_DISPLAY),
                     IItemType.TYPE_PUBLIC,BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
                     International.getString("Look & Feel")));
-            addParameter(lafButtonFocusColor = new ItemTypeColor("LookAndFeel_ButtonFocusColor", "",
+            addParameter(lafButtonFocusColor = new ItemTypeColor("LookAndFeel_ButtonFocusColor", "","",
                     IItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
-                    "Look & Feel ButtonFocusColor"));
+                    "Look & Feel ButtonFocusColor",true));
+
+            addHeader("efaGuiHeaders",IItemType.TYPE_PUBLIC, 
+            		BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),International.getString("Überschriften-Darstellung"), 3);
+
+            
+            addParameter(efaHeaderUseHighlightColor = new ItemTypeBoolean("efaBoathouseHeaderUseHighlightColor",true,
+    			IItemType.TYPE_PUBLIC,BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
+    			International.getString("Überschriften hervorheben")));            
+            addParameter(efaHeaderBackgroundColor = new ItemTypeColor("efaBoathouseHeaderBackgroundColor", EfaUtil.getColor(tableSelectionBackgroundColor), EfaUtil.getColor(tableSelectionBackgroundColor),
+            		IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
+            		International.getString("Überschriften Hintergrundfarbe"),false));
+            addParameter(efaHeaderForegroundColor = new ItemTypeColor("efaBoathouseHeaderForegroundColor", EfaUtil.getColor(tableSelectionForegroundColor), EfaUtil.getColor(tableSelectionForegroundColor), 
+            		IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
+            		International.getString("Überschriften Textfarbe"),false));                 
             
             addHeader("efaGuiMainWindowSize",IItemType.TYPE_EXPERT, 
             		BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),International.getString("Hauptfenster Position und Größe"), 3); 
@@ -1007,19 +1021,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
                     IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI, CATEGORY_GUI_WINDOW),
                     International.getString("Schriftstil")));
 
-            addHeader("efaGuiBoathouseHeader",IItemType.TYPE_EXPERT, 
-            		BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI, CATEGORY_GUI_WINDOW),International.getString("Überschriften-Darstellung"), 3);
-
-            
-            addParameter(efaBoathouseHeaderUseHighlightColor = new ItemTypeBoolean("efaBoathouseHeaderUseHighlightColor",true,
-    			IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI, CATEGORY_GUI_WINDOW),
-    			International.getString("Überschriften hervorheben")));            
-            addParameter(efaBoathouseHeaderBackgroundColor = new ItemTypeColor("efaBoathouseHeaderBackgroundColor", EfaUtil.getColor(tableSelectionBackgroundColor), 
-            		IItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI, CATEGORY_GUI_WINDOW),
-            		International.getString("Überschriften Hintergrundfarbe")));
-            addParameter(efaBoathouseHeaderForegroundColor = new ItemTypeColor("efaBoathouseHeaderForegroundColor", EfaUtil.getColor(tableSelectionForegroundColor), 
-            		IItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI, CATEGORY_GUI_WINDOW),
-            		International.getString("Überschriften Textfarbe")));            
+       
             
             addHeader("efaGuiBoathouseOther",IItemType.TYPE_PUBLIC, 
             		BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI, CATEGORY_GUI_WINDOW),International.getString("Sonstiges"), 3);
@@ -1549,10 +1551,8 @@ public class EfaConfig extends StorageObject implements IItemFactory {
      */
     private void addHeader(String uniqueName, int type, String category, String caption, int gridWidth) {
     	//ensure that the header value does not get saved in efaConfig file by adding a special prefix
-    	IItemType item = new ItemTypeLabel(NOT_STORED_ITEM_PREFIX+uniqueName, type, category, " "+caption);
+    	IItemType item = new ItemTypeLabelHeader(NOT_STORED_ITEM_PREFIX+uniqueName, type, category, " "+caption);
         item.setPadding(0, 0, 10, 10);
-		item.setBackgroundColor(tableSelectionBackgroundColor);
-		item.setColor(tableSelectionForegroundColor);
         item.setFieldGrid(3,GridBagConstraints.EAST, GridBagConstraints.BOTH);
         addParameter(item);
     }
@@ -2599,15 +2599,26 @@ public class EfaConfig extends StorageObject implements IItemFactory {
     	return tableSelectionForegroundColor;
     }
     
-    public Boolean getBoathouseHeaderUseHighlightColor() {
-    	return efaBoathouseHeaderUseHighlightColor.getValue();
-    }
-    public Color getBoathouseHeaderBackgroundColor() {
-    	return efaBoathouseHeaderBackgroundColor.getColor();
+    public Boolean getHeaderUseHighlightColor() {
+    	return efaHeaderUseHighlightColor.getValue();
     }
     
-    public Color getBoathouseHeaderForegroundColor() {
-    	return efaBoathouseHeaderForegroundColor.getColor();
+    public Color getHeaderBackgroundColor() {
+    	Color myColor = efaHeaderBackgroundColor.getColor();
+    	if (myColor!=null) {
+    		return myColor;
+    	} else {
+    		return tableSelectionBackgroundColor;
+    	}
+    }
+    
+    public Color getHeaderForegroundColor() {
+    	Color myColor = efaHeaderForegroundColor.getColor();
+    	if (myColor!=null) {
+    		return myColor;
+    	} else {
+    		return tableSelectionForegroundColor;
+    	}
     }
     
     public String getWeeklyReservationConflictBehaviour() {
@@ -2656,10 +2667,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
                         item == windowXOffset ||
                         item == windowYOffset ||
                         item == screenWidth ||
-                        item == screenHeight ||
-                        item == maxDialogWidth ||
-                        item == maxDialogHeight ||
-                        item == fensterZentriert 
+                        item == screenHeight
                         ) {
                         changedSettings.put(item.getDescription(), "foo");
                     }

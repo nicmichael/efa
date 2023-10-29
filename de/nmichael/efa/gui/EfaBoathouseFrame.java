@@ -598,15 +598,15 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
     }
 
 	private void iniGuiHeaderColors() {
-		if (Daten.efaConfig.getBoathouseHeaderUseHighlightColor()) {
-			boatsAvailableList.setColor(Daten.efaConfig.getBoathouseHeaderForegroundColor());
-	        personsAvailableList.setColor(Daten.efaConfig.getBoathouseHeaderForegroundColor());
-	        boatsOnTheWaterList.setColor(Daten.efaConfig.getBoathouseHeaderForegroundColor());
-	        boatsNotAvailableList.setColor(Daten.efaConfig.getBoathouseHeaderForegroundColor());
-	        boatsAvailableList.setBackgroundColor(Daten.efaConfig.getBoathouseHeaderBackgroundColor());
-	        personsAvailableList.setBackgroundColor(Daten.efaConfig.getBoathouseHeaderBackgroundColor());
-	        boatsOnTheWaterList.setBackgroundColor(Daten.efaConfig.getBoathouseHeaderBackgroundColor());
-	        boatsNotAvailableList.setBackgroundColor(Daten.efaConfig.getBoathouseHeaderBackgroundColor());
+		if (Daten.efaConfig.getHeaderUseHighlightColor()) {
+			boatsAvailableList.setColor(Daten.efaConfig.getHeaderForegroundColor());
+	        personsAvailableList.setColor(Daten.efaConfig.getHeaderForegroundColor());
+	        boatsOnTheWaterList.setColor(Daten.efaConfig.getHeaderForegroundColor());
+	        boatsNotAvailableList.setColor(Daten.efaConfig.getHeaderForegroundColor());
+	        boatsAvailableList.setBackgroundColor(Daten.efaConfig.getHeaderBackgroundColor());
+	        personsAvailableList.setBackgroundColor(Daten.efaConfig.getHeaderBackgroundColor());
+	        boatsOnTheWaterList.setBackgroundColor(Daten.efaConfig.getHeaderBackgroundColor());
+	        boatsNotAvailableList.setBackgroundColor(Daten.efaConfig.getHeaderBackgroundColor());
 		} else {
 			boatsAvailableList.setColor(null);
 	        personsAvailableList.setColor(null);

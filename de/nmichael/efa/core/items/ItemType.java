@@ -113,6 +113,14 @@ public abstract class ItemType implements IItemType {
         }
     }
 
+    public Color getBackgroundColor() {
+    	return this.backgroundColor;
+    }
+    
+    public Color getColor() {
+    	return this.color;
+    }
+    
     public void saveBackgroundColor(boolean force) {
         if (field != null && (savedBkgColor == null || force)) {
             savedBkgColor = field.getBackground();
