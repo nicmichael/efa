@@ -149,12 +149,35 @@ public class AutoCompleteList {
     private synchronized void updateVisibleFilteredList() {
     	if (filterText!=null) {
     		dataVisibleFiltered=new Vector<String>();
+    		boolean easyFindEntriesWithSpecialCharacters = Daten.efaConfig.getValuePopupContainsModeEasyFindEntriesWithSpecialCharacters();
+    		
+    		String lowerFilterText = filterText.toLowerCase();
+    		boolean bFilterTexthasSpecialCharacters = EfaUtil.containsUmlaut(lowerFilterText);
+    		
+    		String filterTextNoSpecialCharacters=EfaUtil.replaceAllUmlautsLowerCaseFast(lowerFilterText);
+    		
+    		for (int i=0; i<dataVisible.size(); i++) {
 
-    		for (int i=0; i<dataVisible.size()-1; i++) {
-    			if (dataVisible.get(i).toLowerCase().contains(filterText))
-    			{
-    				dataVisibleFiltered.add(dataVisible.get(i));
+    			if (easyFindEntriesWithSpecialCharacters) {
+    				if (bFilterTexthasSpecialCharacters) {
+    					if (dataVisible.get(i).toLowerCase().contains(lowerFilterText)) {
+    						dataVisibleFiltered.add(dataVisible.get(i));
+    					}
+					} else if (!bFilterTexthasSpecialCharacters){
+						// no special characters in filter text -> user enters "a" but also wants 
+						// matches for texts which contain "equivalents" like ä oder á
+	    				if (EfaUtil.replaceAllUmlautsLowerCaseFast(dataVisible.get(i)).contains(filterTextNoSpecialCharacters)){
+	    					dataVisibleFiltered.add(dataVisible.get(i));
+	    				}    						
+					}
+    			
+    			} else {
+    				// no special handling for special characters needed
+    				if (dataVisible.get(i).toLowerCase().contains(lowerFilterText)){
+	    				dataVisibleFiltered.add(dataVisible.get(i));
+	    			}
     			}
+    		
     		}
     		//for entries with aliases, check wether the alias points to an entry that is not yet in the filtered list
     		if (aliases2realVisible.containsKey(filterText.toLowerCase())) {
@@ -167,7 +190,7 @@ public class AutoCompleteList {
     		dataVisibleFiltered = dataVisible; 
     	}
 
-    	Collections.sort(dataVisibleFiltered);
+    	sortFilteredList();
     }    
     
     /**
@@ -340,25 +363,12 @@ public class AutoCompleteList {
         scn++;
     }
 
-    class MyStringComparator implements Comparator {
-
-        public int compare(Object o1, Object o2) {
-            String s1 = ((String)o1);
-            String s2 = ((String)o2);
-            s1 = EfaUtil.replaceListByList(s1, "ÄÖÜäöüßé", "AOUaouse");
-            s2 = EfaUtil.replaceListByList(s2, "ÄÖÜäöüßé", "AOUaouse");
-            return s1.compareToIgnoreCase(s2);
-        }
-
-    }
-
     public synchronized void sort() {
-        String[] a = dataVisible.toArray(new String[0]);
-        Arrays.sort(a, new MyStringComparator());
-        dataVisible = new Vector(a.length);
-        for (int i=0; i<a.length; i++) {
-            dataVisible.add(a[i]);
-        }
+    	Collections.sort(dataVisible, new EfaSortStringComparator());
+    }
+    
+    public synchronized void sortFilteredList() {
+    	Collections.sort(dataVisibleFiltered, new EfaSortStringComparator());
     }
 
     public synchronized String getExact(String s) {
