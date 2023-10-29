@@ -421,9 +421,10 @@ public class BoatReservationListDialog extends DataListDialog {
         	strNewBoatCaption = International.getString("Neues Boot");
         } else {
         	strCaption = International.getMessage("Boot für Reservierung ändern ({aktuell} von {anzahl})",iCurrentRecord, iCountRecords);
-        	strNewBoatCaption = International.getMessage("Ändere \"{alterbootname}\" auf", oldBoatName);       	
+        	strNewBoatCaption = International.getString("Ändere Boot auf");
+        	//strNewBoatCaption = International.getMessage("Ändere \"{alterbootname}\" auf", oldBoatName);       	
         }
-        IItemType[] dialogElements = new IItemType[3];
+
         
         //Caption
         ItemTypeLabel caption = new ItemTypeLabel("_GUIITEM_GENERIC_CAPTION", IItemType.TYPE_PUBLIC, null, strCaption);
@@ -433,27 +434,62 @@ public class BoatReservationListDialog extends DataListDialog {
         	caption.setColor(Daten.efaConfig.getBoathouseHeaderForegroundColor());
         	caption.setFieldGrid(3,GridBagConstraints.EAST, GridBagConstraints.BOTH);
 		}                   
-        dialogElements[0]=caption;
 
         //Show reservation data
-        ItemTypeLabel lblResData = new ItemTypeLabel("_GUIITEM_BASE_RESERVATION", IItemType.TYPE_PUBLIC, null,
+        /*ItemTypeLabel lblResData = new ItemTypeLabel("_GUIITEM_BASE_RESERVATION", IItemType.TYPE_PUBLIC, null,
                 "<html><body><p>"+originalRecord.getBoatName()+"</p>"
                 +"<p>"+originalRecord.getGuiDateTimeFromDescription()+" - "+originalRecord.getGuiDateTimeToDescription()+"</p>"
                 +"<p>"+ originalRecord.getPersonAsName()+"</p>"
                 +"<p>("+originalRecord.getReason()+" / "+originalRecord.getContact()+")</p>"+
-                "</body></html>");
+                "</body></html>");*/
+        /*
+        ItemTypeTextArea lblResData = new ItemTypeTextArea("_GUIITEM_BASE_RESERVATION", 
+                "<html><body><p>"+originalRecord.getBoatName()+"</p>"
+                +"<p>"+originalRecord.getGuiDateTimeFromDescription()+" - "+originalRecord.getGuiDateTimeToDescription()+"</p>"
+                +"<p>"+ originalRecord.getPersonAsName()+"</p>"
+                +"<p>("+originalRecord.getReason()+" / "+originalRecord.getContact()+")</p>"+
+                "</body></html>",IItemType.TYPE_PUBLIC, null,"Bestehende Reservierungsdaten");
         lblResData.setPadding(0, 0, 0, 10);
-        dialogElements[1]=lblResData;
+        lblResData.setWrap(true);
+        lblResData.setEditable(false);
+        lblResData.setEnabled(false);
+        lblResData.setFieldSize(400, 150);*/
+        
+        ItemTypeString dataBoatName = new ItemTypeString("_GUIITEM_BASE_RESERVATION_BOATNAME", originalRecord.getBoatName(), IItemType.TYPE_PUBLIC,null, International.getString("Boot"));
+        dataBoatName.setEditable(false);
+
+        ItemTypeString dataResTime = new ItemTypeString("_GUIITEM_BASE_RESERVATION_RESTIME", originalRecord.getGuiDateTimeFromDescription()+" - "+originalRecord.getGuiDateTimeToDescription(), 
+        		IItemType.TYPE_PUBLIC,null, International.getString("Zeitraum"));
+        dataResTime.setEditable(false);
+
+        ItemTypeString dataResPerson = new ItemTypeString("_GUIITEM_BASE_RESERVATION_RESPERSON", originalRecord.getPersonAsName(), 
+        		IItemType.TYPE_PUBLIC,null, International.getString("Reserviert für"));
+        dataResPerson.setEditable(false);
+
+        ItemTypeString dataResReason= new ItemTypeString("_GUIITEM_BASE_RESERVATION_RESREASON", originalRecord.getReason()+" / "+originalRecord.getContact(), 
+        		IItemType.TYPE_PUBLIC,null, International.getString("Reservierungsgrund"));
+        dataResReason.setEditable(false);
+        dataResReason.setPadding(0, 0, 0, 20);
+        
         
         // show the boat selection list
-        ItemTypeStringAutoComplete boat = new ItemTypeStringAutoComplete("BOAT", "", IItemType.TYPE_PUBLIC,
+        ItemTypeStringAutoComplete newBoat = new ItemTypeStringAutoComplete("BOAT", "", IItemType.TYPE_PUBLIC,
                 "", strNewBoatCaption, true);
-        boat.setAutoCompleteData(new AutoCompleteList(Daten.project.getBoats(false).data(), now, now));
-        dialogElements[2]=boat;
+        newBoat.setAutoCompleteData(new AutoCompleteList(Daten.project.getBoats(false).data(), now, now));
+
+        IItemType[] dialogElements = new IItemType[6];        
+        dialogElements[0]=caption;
+        dialogElements[1]=dataBoatName;
+        dialogElements[2]=dataResTime;
+        dialogElements[3]=dataResPerson;
+        dialogElements[4]=dataResReason;
+        
+        dialogElements[5]=newBoat;
+        
         
         
         if (SimpleInputDialog.showInputDialog(this, strCaption, dialogElements)) {
-            String s = boat.toString();
+            String s = newBoat.toString();
             try {
                 if (s != null && s.length() > 0) {
                     Boats boats = Daten.project.getBoats(false);
