@@ -150,7 +150,8 @@ public class MeteoAstroWidget extends Widget {
                 International.getString("HTML-Seite einbinden")));        
 
         addHeader("WidgetMeteoWeather",IItemType.TYPE_PUBLIC, "", International.getString("Wetter anzeigen"), 3);  
-        addDescription("WidgetMeteoWeatherDisabled",IItemType.TYPE_PUBLIC, "", International.getString("Die Wetteranzeige ist nicht verfügbar - WetterAPI von Yahoo wurde eingestellt."), 3,3,3);
+        addHint("WidgetMeteoWeatherDisabled",IItemType.TYPE_PUBLIC, "", International.getString("Die Wetteranzeige ist nicht verfügbar - WetterAPI von Yahoo wurde eingestellt."), 3,6,6);
+        
         addParameterInternal(new ItemTypeBoolean(PARAM_SHOWWEATHER, true,
                 IItemType.TYPE_EXPERT, "",
                 International.getString("Wetterdaten anzeigen") +
@@ -344,7 +345,11 @@ public class MeteoAstroWidget extends Widget {
     	htmlPane.setContentType("text/html");
         htmlPane.setEditable(false);
         htmlPane.setBorder(null);
-        htmlPane.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        // show a hand cursor on sunrise/sunset/weather widget only if an html popup is set up.
+        if (getHtmlPopupUrl() != null && getHtmlPopupUrl().length() > 0) {
+        	htmlPane.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        }
 
 
         // following hyperlinks is automatically "disabled" (if no HyperlinkListener is taking care of it)

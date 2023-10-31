@@ -22,6 +22,7 @@ public class TableCellRenderer extends DefaultTableCellRenderer {
 
     private boolean markedBold = true;
     private Color markedBkgColor = new Color(0xff,0xff,0xaa);
+    private Color alternateColor = new Color(219,234,249);
     private Color markedFgColor = null;
     private Color disabledBkgColor = null;
     private Color disabledFgColor = Color.gray;
@@ -50,8 +51,6 @@ public class TableCellRenderer extends DefaultTableCellRenderer {
             Color fgColor = Color.black;
             
             if (Daten.efaConfig.getValueEfaDirekt_tabelleAlternierendeZeilenFarben()) {
-	            //Update for standard tables: alternating row color
-	            Color alternateColor = new Color(219,234,249);
 	            bkgColor = (row % 2 == 0 ? alternateColor : Color.white);
             }
 	            

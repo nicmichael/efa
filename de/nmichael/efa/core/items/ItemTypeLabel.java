@@ -38,6 +38,8 @@ public class ItemTypeLabel extends ItemType {
         thisCopy.setColor(this.color);
         thisCopy.setPadding(padXbefore, padXafter, padYbefore, padYafter);
         thisCopy.setFieldGrid(fieldGridWidth, fieldGridHeight, fieldGridAnchor, fieldGridFill);
+        thisCopy.setImage(icon);
+        thisCopy.setHorizontalAlignment(hAlignment);
         return thisCopy;
 
     }

@@ -34,15 +34,6 @@ import java.util.Stack;
 import java.util.UUID;
 import java.util.Vector;
 
-import javax.swing.ButtonGroup;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JMenuBar;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.SwingConstants;
-import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 
 import de.nmichael.efa.Daten;
@@ -672,6 +663,20 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
         centerPanel.add(helpButton, new GridBagConstraints(1, 13, 1, 1, 0.0, 0.0, GridBagConstraints.SOUTH, GridBagConstraints.NONE, new Insets(10, 0, 0, 0), 0, 0));
         centerPanel.add(efaButton, new GridBagConstraints(1, 14, 1, 1, 0.0, 0.0, GridBagConstraints.SOUTH, GridBagConstraints.NONE, new Insets(10, 0, 0, 0), 0, 0));
         centerPanel.add(clock.getGuiComponent(), new GridBagConstraints(1, 15, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(10, 10, 10, 10), 0, 0));
+        
+        EfaUtil.handleButtonOpaqueForLookAndFeels(startSessionButton);
+        EfaUtil.handleButtonOpaqueForLookAndFeels(finishSessionButton);
+        EfaUtil.handleButtonOpaqueForLookAndFeels(abortSessionButton);
+        EfaUtil.handleButtonOpaqueForLookAndFeels(lateEntryButton);
+        EfaUtil.handleButtonOpaqueForLookAndFeels(clubworkButton);
+        EfaUtil.handleButtonOpaqueForLookAndFeels(boatReservationButton);
+        EfaUtil.handleButtonOpaqueForLookAndFeels(showLogbookButton);
+        EfaUtil.handleButtonOpaqueForLookAndFeels(statisticsButton);
+        EfaUtil.handleButtonOpaqueForLookAndFeels(messageToAdminButton);
+        EfaUtil.handleButtonOpaqueForLookAndFeels(adminButton);
+        EfaUtil.handleButtonOpaqueForLookAndFeels(specialButton);
+        EfaUtil.handleButtonOpaqueForLookAndFeels(helpButton);
+        EfaUtil.handleButtonOpaqueForLookAndFeels(efaButton);
     }
 
     private void updateGuiLogo() {

@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.Vector;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -784,9 +785,7 @@ public class ItemTypeStringAutoComplete extends ItemTypeString implements AutoCo
         valueIsKnown = (color == Color.green || color == Color.yellow);
         if (button != null) {
             if (color != null) {
-                if (!Daten.lookAndFeel.endsWith("MetalLookAndFeel")) {
-                    button.setContentAreaFilled(true);
-                }
+            	EfaUtil.handleButtonOpaqueForLookAndFeels(button);
                 button.setBackground(color);
             } else {
                 button.setBackground(originalButtonColor);

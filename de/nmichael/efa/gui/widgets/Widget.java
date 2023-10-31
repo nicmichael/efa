@@ -12,6 +12,7 @@ package de.nmichael.efa.gui.widgets;
 
 import de.nmichael.efa.Daten;
 import de.nmichael.efa.core.items.*;
+import de.nmichael.efa.gui.BaseDialog;
 import de.nmichael.efa.util.*;
 import java.util.*;
 import java.awt.*;
@@ -26,6 +27,7 @@ public abstract class Widget implements IWidget {
     public static final String PARAM_POSITION       = "Position";
     public static final String PARAM_UPDATEINTERVAL = "UpdateInterval";
     public static final String NOT_STORED_ITEM_PREFIX ="_";
+    private static Color hintBackgroundColor= new Color(171,206,241);
     
     String name;
     String description;
@@ -87,11 +89,12 @@ public abstract class Widget implements IWidget {
      * @param caption Caption
      * @param gridWidth How many GridBagLayout cells shall this header be placed in?
      */
-    protected void addHeader(String uniqueName, int type, String category, String caption, int gridWidth) {
+    protected IItemType addHeader(String uniqueName, int type, String category, String caption, int gridWidth) {
     	IItemType item = new ItemTypeLabelHeader(NOT_STORED_ITEM_PREFIX+uniqueName, type, category, " "+caption);
         item.setPadding(0, 0, 10, 10);
         item.setFieldGrid(3,GridBagConstraints.EAST, GridBagConstraints.BOTH);
         addParameterInternal(item);
+        return item;
     }
 
     /**
@@ -106,11 +109,20 @@ public abstract class Widget implements IWidget {
      * @param caption Caption
      * @param gridWidth How many GridBagLayout cells shall this description be placed in?
      */      
-    protected void addDescription(String uniqueName, int type, String category, String caption, int gridWidth, int padBefore, int padAfter) {
+    protected IItemType addDescription(String uniqueName, int type, String category, String caption, int gridWidth, int padBefore, int padAfter) {
     	IItemType item = new ItemTypeLabel(NOT_STORED_ITEM_PREFIX+uniqueName, type, category, caption);
         item.setPadding(0, 0, padBefore, padAfter);
         item.setFieldGrid(3,GridBagConstraints.EAST, GridBagConstraints.BOTH);
         addParameterInternal(item);
+        return item;
+    }
+    
+    protected IItemType addHint(String uniqueName, int type, String category, String caption, int gridWidth, int padBefore, int padAfter) {
+    	ItemTypeLabel item = (ItemTypeLabel) addDescription(uniqueName, type, category, " "+caption, gridWidth, padBefore,padAfter);
+    	item.setImage(BaseDialog.getIcon("menu_about.png"));
+    	item.setBackgroundColor(hintBackgroundColor);
+    	item.setHorizontalAlignment(SwingConstants.LEFT);
+    	return item;
     }
 
     IItemType getParameterInternal(String internalName) {

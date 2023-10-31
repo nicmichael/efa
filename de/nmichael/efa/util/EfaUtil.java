@@ -46,6 +46,8 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 import javax.mail.internet.InternetAddress;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 
 import org.xml.sax.XMLReader;
@@ -2189,6 +2191,26 @@ public class EfaUtil {
     	
     	return value;
     	
+    }    
+    
+    /**
+     * Efa uses buttons which are filled with a color. 
+     * Not all LookAndFeels support this natively. This method ensures that color-filled buttons 
+     * are shown correctly in each standard LookAndFeel.
+     * @param button
+     */
+    public static void handleButtonOpaqueForLookAndFeels(JButton button) {
+        if (!Daten.lookAndFeel.endsWith("MetalLookAndFeel") &&
+        		!Daten.lookAndFeel.endsWith("WindowsClassicLookAndFeel") ) {
+        	button.setContentAreaFilled(true);       
+        }
+    	
+    	if (Daten.lookAndFeel.endsWith("WindowsLookAndFeel")) {
+        	button.setBorderPainted(true);// leads to full display of the color on the button canvas
+        	button.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
+        	button.setContentAreaFilled(false);   
+        	button.setOpaque(true);
+        }                	
     }    
     
     public static void main(String args[]) {

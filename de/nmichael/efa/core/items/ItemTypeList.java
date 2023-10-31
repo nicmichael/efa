@@ -919,7 +919,12 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
     //if filtertextfield is empty, set list Data to the alldata.
     private void filter() {
         
-    	if (this.showFilterField) {
+		// this.filterTextField actually CAN be null also if this.showFilterField is true
+		// this is the fact for personsAvailableList which is only shown after first user interaction - 
+		// before the user interaction of showing the personsAvailableList, the filterTextfield is null.
+		// so let's avoid a nullpointerexception here. 
+
+    	if (this.showFilterField && this.filterTextField!=null) {
 
     		boolean ignoreSpecialCharacters = Daten.efaConfig.getValueEfaBoathouseFilterTextfieldEasyFindEntriesWithSpecialCharacters();
     		

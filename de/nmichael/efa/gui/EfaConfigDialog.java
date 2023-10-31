@@ -110,29 +110,62 @@ public class EfaConfigDialog extends BaseTabbedDialog {
         return (ItemTypeHashtable<String>)getItem(myEfaConfig.getValueTypesStatus().getName());
     }
 
+    private Frame getParentFrameRecursive(BaseDialog base) {
+    	if (base.getParentFrame()!=null) {
+    		return base.getParentFrame();
+    	} else if (base.getParentJDialog()!=null) {
+    		if (base.getParentJDialog() instanceof BaseDialog) {
+    			return getParentFrameRecursive((BaseDialog) base.getParentJDialog());
+    		} else {
+    			return null;
+    		}
+    	} else { 
+    		return null;
+    	}
+    		
+    }
+    
     private Dimension getTabPanelPreferredSize(int numCats) {
     	
     	
 		Dimension s = Toolkit.getDefaultToolkit().getScreenSize();
 		
+		Dimension efaBthsSize = null;
+		Frame myParentFrame=getParentFrameRecursive(this);
+		if (myParentFrame!=null) {
+			efaBthsSize=myParentFrame.getSize();
+		}
+		
     	int maxDlgW=Daten.efaConfig.getValueMaxDialogWidth();
     	int maxDlgH=Daten.efaConfig.getValueMaxDialogHeight();
+    	
+    	//no max size for dialogs set? have a look at configured maximum screen width/height
     	if (maxDlgW<=0) {
     		maxDlgW=Daten.efaConfig.getValueScreenWidth();
     	}
     	if (maxDlgH<=0) {
     		maxDlgH=Daten.efaConfig.getValueScreenHeight();
     	}
+    	
+    	if (maxDlgW<=0 && efaBthsSize!=null) {
+    		maxDlgW = efaBthsSize.width-4;
+    	}
+    	if (maxDlgH<=0 && efaBthsSize!=null) {
+    		maxDlgH = efaBthsSize.height-90;
+    	}
+    	
+    	
+    	// No size configured for dialogs or even efaBths window? 
+    	// then use screen height/width as base
     	if (maxDlgW<=0) {
-    		maxDlgW=s.width-80;
+    		maxDlgW=Math.min(s.width-80,1400);
     	}
     	if (maxDlgH<=0) {
-    		maxDlgH=s.height-80;
+    		maxDlgH=Math.min(s.height-((numCats+1)*25), 900);
     	}
-
     	
     		return new Dimension(
-    				(int) Math.round(maxDlgW*.90), 
+    				(int) Math.round(maxDlgW*.85), 
     				(int) Math.round(maxDlgH*.70));
     }
     
@@ -174,8 +207,12 @@ public class EfaConfigDialog extends BaseTabbedDialog {
 				panels.put(panel, thisCatKey);
 				JPanel innerPanel = new JPanel();
 
+				//This puts the scrollbar INSIDE the tabbedPane, so that config panes can have more elements
+				//than the current screen size allows.
 				JScrollPane scrollPane = new JScrollPane(innerPanel);
 				scrollPane.setPreferredSize(getTabPanelPreferredSize(getSubCatCount(thisCatKey)));
+				int ia = scrollPane.getVerticalScrollBar().getUnitIncrement();
+				scrollPane.getVerticalScrollBar().setUnitIncrement(12);
 				innerPanel.setLayout(new GridBagLayout());
 				panel.setLayout(new BorderLayout());
 				panel.add(scrollPane,BorderLayout.CENTER);

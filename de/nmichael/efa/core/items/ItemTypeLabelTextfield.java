@@ -80,7 +80,7 @@ public abstract class ItemTypeLabelTextfield extends ItemTypeLabelValue {
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
         try {
-            if (field != null && Daten.lookAndFeel.equals("Metal")) {
+            if (field != null && Daten.lookAndFeel.endsWith("MetalLookAndFeel")) {
                 ((JTextField) field).setDisabledTextColor(Color.darkGray);
                 ((JTextField) field).setBackground((enabled ? (new JTextField()).getBackground() : new Color(234, 234, 234)));
             }

@@ -70,6 +70,9 @@ public class ItemTypeColor extends ItemTypeLabelValue {
 
     protected JComponent initializeField() {
         JButton f = new JButton();
+
+        EfaUtil.handleButtonOpaqueForLookAndFeels(f);
+
         return f;
     }
     protected void iniDisplay() {
