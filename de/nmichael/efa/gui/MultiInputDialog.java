@@ -27,7 +27,7 @@ import javax.swing.event.ChangeEvent;
 // @i18n complete
 public class MultiInputDialog extends BaseDialog {
 
-    private String KEYACTION_ENTER;
+	private String KEYACTION_ENTER;
     protected IItemType[] items;
 
     public MultiInputDialog(Frame parent, String title, IItemType[] items) {
@@ -65,7 +65,7 @@ public class MultiInputDialog extends BaseDialog {
         items[0].requestFocus();
 
         if (closeButton != null) {
-            closeButton.setIcon(getIcon("button_accept.png"));
+            closeButton.setIcon(getIcon(IMAGE_ACCEPT));
         }
     }
 

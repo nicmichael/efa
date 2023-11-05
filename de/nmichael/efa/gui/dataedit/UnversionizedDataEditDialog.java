@@ -18,6 +18,7 @@ import de.nmichael.efa.data.storage.*;
 import de.nmichael.efa.ex.*;
 import de.nmichael.efa.gui.BaseDialog;
 import de.nmichael.efa.gui.DataPrintRecordDialog;
+import de.nmichael.efa.gui.ImagesAndIcons;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Date;
@@ -27,7 +28,7 @@ import javax.swing.*;
 // @i18n complete
 public class UnversionizedDataEditDialog extends DataEditDialog {
 
-    protected DataRecord dataRecord;
+	protected DataRecord dataRecord;
     protected boolean newRecord;
     protected AdminRecord admin;
     protected boolean _dontSaveRecord = false;
@@ -81,7 +82,7 @@ public class UnversionizedDataEditDialog extends DataEditDialog {
 
     protected void setPrintButton() {
         printButton = new JButton();
-        printButton.setIcon(BaseDialog.getIcon("button_print.png"));
+        printButton.setIcon(BaseDialog.getIcon(ImagesAndIcons.IMAGE_BUTTON_PRINT));
         printButton.setMargin(new Insets(2,2,2,2));
         printButton.setSize(35, 20);
         printButton.setToolTipText(International.getString("Drucken"));

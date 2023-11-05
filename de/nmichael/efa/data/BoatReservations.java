@@ -163,35 +163,12 @@ public class BoatReservations extends StorageObject {
             assertFieldNotEmpty(record, BoatReservationRecord.RESERVATION);
             assertFieldNotEmpty(record, BoatReservationRecord.TYPE);
 
-            BoatReservationRecord r = ((BoatReservationRecord)record);
-            BoatReservationRecord[] br = this.getBoatReservations(r.getBoatId());
-            for (int i=0; br != null && i<br.length; i++) {
-                // are reservations identical records? then ignore.
-            	if (br[i].getReservation() == r.getReservation()) {
-                    continue;
-                }
-            	
-            	
-            	// check if reservations have different type and overlap
-                if (!r.getType().equals(br[i].getType())) {
-                    checkMixedTypeReservations(r, br[i]); //throws an EfaModifyException, if overlapping
-                    continue; // if no exception is thrown, we're done here and proceed to the next item on the list.
-                }
-                
-                // check if both reservations are weekly reservations and overlap. if true, throw exception
-                checkWeeklyReservationsOverlap(r, br[i]);
-                
-                // check if both reservations are weekly reservations with a limiting period. if true, throw exception
-                checkWeeklyLimitedReservationsOverlap(r, br[i]);
-                
-                
-                // check if two one-time reservations overlap. if true, throw exception
-                checkOnetimeReservationsOverlap(r, br[i]);
-                
-            }
+            checkOverlappingReservationsFor(record);
             
             // no overlapping reservations, clean up some unused attributes for one-time and weekly reservation
-            
+     	   
+            BoatReservationRecord r = ((BoatReservationRecord)record);
+       
             //one time reservations shall not have a weekday set
             if (r.getType().equals(BoatReservationRecord.TYPE_ONETIME) &&
                 r.getDayOfWeek() != null) {
@@ -211,6 +188,44 @@ public class BoatReservations extends StorageObject {
     }
 
 
+
+    /**
+     *  Checks for overlapping reservations for the current reservation and all other reservations for the same boat
+     *  Throws an efaModifyException if an overlapping is detected.
+     *    
+     * @param record BoatReservationRecord
+     * 
+     */
+    public void checkOverlappingReservationsFor(DataRecord record) throws EfaModifyException {
+    	
+    	   BoatReservationRecord r = ((BoatReservationRecord)record);
+           BoatReservationRecord[] br = this.getBoatReservations(r.getBoatId());
+           for (int i=0; br != null && i<br.length; i++) {
+               // are reservations identical records? then ignore.
+           	if (br[i].getReservation() == r.getReservation()) {
+                   continue;
+               }
+           	
+           	
+           	// check if reservations have different type and overlap
+               if (!r.getType().equals(br[i].getType())) {
+                   checkMixedTypeReservations(r, br[i]); //throws an EfaModifyException, if overlapping
+                   continue; // if no exception is thrown, we're done here and proceed to the next item on the list.
+               }
+               
+               // check if both reservations are weekly reservations and overlap. if true, throw exception
+               checkWeeklyReservationsOverlap(r, br[i]);
+               
+               // check if both reservations are weekly reservations with a limiting period. if true, throw exception
+               checkWeeklyLimitedReservationsOverlap(r, br[i]);
+               
+               
+               // check if two one-time reservations overlap. if true, throw exception
+               checkOnetimeReservationsOverlap(r, br[i]);
+               
+           }
+    }
+    
     /**
      * Throws an exception, if there is an overlap between two WEEKLY reservations
      * @param r new reservation

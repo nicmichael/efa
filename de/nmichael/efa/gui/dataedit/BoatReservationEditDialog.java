@@ -35,6 +35,12 @@ public class BoatReservationEditDialog extends UnversionizedDataEditDialog imple
         initListener();
         setAllowWeeklyReservation(allowWeeklyReservation);
     }
+    public BoatReservationEditDialog(JDialog parent, BoatReservationRecord r, 
+            boolean newRecord, boolean allowWeeklyReservation, AdminRecord admin, String title) throws Exception {
+        super(parent, title, r, newRecord, admin);
+        initListener();
+        setAllowWeeklyReservation(allowWeeklyReservation);
+    }    
 
     public void keyAction(ActionEvent evt) {
         _keyAction(evt);
