@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <efaOnlineUpdate>
     <Version>
-        <VersionID>2.3.3_01</VersionID>
+        <VersionID>2.3.4</VersionID>
         <ReleaseDate>TO.DO.2023</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa233.zip</DownloadUrl>
         <DownloadSize></DownloadSize>
@@ -19,13 +19,13 @@
             <ChangeItem>BugFix: EfaConfig: Tastenbelegung für Bemerkungsfeld - Textfeld zur Eingabe freigeschaltet.</ChangeItem>
             <ChangeItem>BugFix: EfaConfig: MeteoAstro-Plugin weist in Konfiguration auf nicht mehr funktionierende Wetterabfrage hin.</ChangeItem>
             <ChangeItem>BugFix: EfaConfig: mehr Elemente weisen darauf hin, dass sie einen Neustart von efa benötigen.</ChangeItem>
-            <ChangeItem>BugFix: MetoAstro-Plugin in Hauptbildschirm von efaBths zeigt eine Hand als Mauscursor an, wenn ein HTML-Popup konfiguriert wurde.</ChangeItem>
             <ChangeItem>BugFix: Bootsreservierung: Bei Auswahl des Bootes wird der Knopf für die Auswahlliste angezeigt.</ChangeItem>
             <ChangeItem>BugFix: WindowsLookAndFeel: Ist besser nutzbar geworden. Wie bei den anderen LookAndFeels werden Buttons mit Farbe gefüllt angezeigt, anstatt nur einen farbigen Rahmen zu haben.</ChangeItem>
+            <ChangeItem>BugFix: MetoAstro-Plugin in Hauptbildschirm von efaBths zeigt eine Hand als Mauscursor an, wenn ein HTML-Popup konfiguriert wurde.</ChangeItem>
             <ChangeItem>BugFix: Keine (versteckte) Exception mehr bei der Aktualisierung der Inhalte des HTML-Widgets.</ChangeItem>
             <ChangeItem>BugFix: Keine (versteckte) Exception mehr bei Initialisierung von efaBths wenn der Spezialbutton angezeigt wird. Spezialbutton zeigt nun das zugehörige Icon.</ChangeItem>              
             <ChangeItem>BugFix: Der Dialog für die Auswahl unklar eingegebener Werte zeigt keine doppelten Einträge mehr an.</ChangeItem>      
-            <ChangeItem>BugFix: efaCloud: </ChangeItem>
+            <ChangeItem>BugFix: efaCloud: Synchronisation in efaBase erlaubt Übernahme von Datensätzen mit vielen Änderungen.</ChangeItem>
         </Changes>
         <Changes lang="en">
             <ChangeItem>BugFix: Widgets are safe for multithreading: Less exceptions for rendering in efa.log</ChangeItem>
@@ -40,13 +40,14 @@
             <ChangeItem>BugFix: Boat reservation: When selecting the boat, the selection list button is displayed.</ChangeItem>
             <ChangeItem>BugFix: EfaConfig: Key assignment for comment field - text field for values set to enabled.</ChangeItem>
             <ChangeItem>BugFix: EfaConfig: MeteoAstro plugin indicates in efaconfig that weather can no longer be displayed.</ChangeItem>
-            <ChangeItem>BugFix: MetoAstro plugin in efaBths main screen shows a hand as a mouse cursor if an HTML popup has been configured.</ChangeItem>
             <ChangeItem>BugFix: EfaConfig: Scrollable in the config window is INSIDE the tabs - making it easier to scroll</ChangeItem>
             <ChangeItem>BugFix: EfaConfig: More items indicate that they need a restart of efa.</ChangeItem>
+            <ChangeItem>BugFix: MetoAstro plugin in efaBths main screen shows a hand as a mouse cursor if an HTML popup has been configured.</ChangeItem>
             <ChangeItem>BugFix: WindowsLookAndFeel: Is more usable for efa. As in all other LookAndFeels, the buttons get displayed filled with color, instead of just having a colored border.</ChangeItem>
             <ChangeItem>BugFix: No (hidden) exception in debug mode in HTMLWidget updating process</ChangeItem>
             <ChangeItem>BugFix: No (hidden) exception during initialisation of efaBths if the special button is displayed. Special button now has the according icon.</ChangeItem>              
             <ChangeItem>BugFix: No more duplicates in the spellchecking dialogue (which comes up when a item with a lookup list has not fully been set by the user).</ChangeItem>
+			<ChangeItem>BugFix: efaCloud: Synchronisation in efaBase allows download of records with many changes.</ChangeItem>
         </Changes>
     </Version>
     <Version>
