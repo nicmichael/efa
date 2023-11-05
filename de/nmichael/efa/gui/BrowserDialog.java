@@ -114,7 +114,12 @@ public class BrowserDialog extends BaseDialog {
             }
             if (Dialog.frameCurrent() == frame) {
                 running = false;
-                frame.cancel();
+            	SwingUtilities.invokeLater(new Runnable() {
+            	      public void run() {
+                          frame.cancel();
+            	      }
+              	});
+                //frame.cancel();
             }
         }
 
@@ -402,7 +407,10 @@ public class BrowserDialog extends BaseDialog {
             Daten.efaConfig.setValueEfaDirekt_locked(false);
             Daten.efaConfig.setValueEfaDirekt_lockEfaUntilDatum(new DataTypeDate());
             Daten.efaConfig.setValueEfaDirekt_lockEfaUntilZeit(new DataTypeTime());
-            this.efaBoathouseFrame.setUnlocked();
+
+            //this.efaBoathouseFrame.setUnlocked();
+        	SwingUtilities.invokeLater(new BthsSetUnlocked(efaBoathouseFrame));
+
             Logger.log(Logger.INFO,
                     Logger.MSG_EVT_UNLOCKED,
                     International.getString("efa ist wieder entsperrt und für die Benutzung freigegeben."));
@@ -815,5 +823,19 @@ public class BrowserDialog extends BaseDialog {
             openInternalBrowser(parent, url);
         }
     }
+    
+	class BthsSetUnlocked implements Runnable {
+		
+		private EfaBoathouseFrame myFrame = null;
+		
+    	public BthsSetUnlocked(EfaBoathouseFrame theFrame) {
+    		myFrame=theFrame;
+    	}
+		
+		public void run() {
+            myFrame.setUnlocked();
+		}
+		
+	}
 
 }
