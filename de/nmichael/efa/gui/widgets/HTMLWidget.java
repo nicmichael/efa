@@ -134,7 +134,7 @@ public class HTMLWidget extends Widget {
                     }
                     Thread.sleep(updateIntervalInSeconds*1000);
                 } catch (InterruptedException e) {
-                	EfaUtil.foo();
+                	EfaUtil.foo();            
                 } catch (Exception e) {
                 	Throwable t = e.getCause();
                 	if (t.getClass().getName().equalsIgnoreCase("java.lang.InterruptedException")) {
