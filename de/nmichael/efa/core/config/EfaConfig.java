@@ -192,6 +192,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
     private ItemTypeBoolean efaHeaderUseHighlightColor;
     private ItemTypeColor efaHeaderBackgroundColor;
     private ItemTypeColor efaHeaderForegroundColor;
+    private ItemTypeBoolean efaHeaderUseForTabbedPanes;
     private ItemTypeBoolean efaBoathouseFilterTextfieldStandardLists;
     private ItemTypeBoolean efaBoathouseFilterTextfieldBoatsNotAvailableList;
     private ItemTypeBoolean efaBoathouseFilterTextfieldEasyFindEntriesWithSpecialCharacters;
@@ -724,6 +725,11 @@ public class EfaConfig extends StorageObject implements IItemFactory {
             addParameter(efaHeaderForegroundColor = new ItemTypeColor("efaBoathouseHeaderForegroundColor", EfaUtil.getColor(tableSelectionForegroundColor), EfaUtil.getColor(tableSelectionForegroundColor), 
             		IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
             		International.getString("Überschriften Textfarbe"),false));                 
+            addParameter(efaHeaderUseForTabbedPanes = new ItemTypeBoolean("efaBoathouseHeaderUseForTabbedPanes",true,
+            		IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
+            		International.getString("Überschriften von Registerkarten hervorheben (Metal+WindowsClassic LookAndFeel))")));                 
+            
+            
             
             addHeader("efaGuiMainWindowSize",IItemType.TYPE_EXPERT, 
             		BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),International.getString("Hauptfenster Position und Größe"), 3); 
@@ -2649,6 +2655,10 @@ public class EfaConfig extends StorageObject implements IItemFactory {
     	}
     }
     
+    public Boolean getHeaderUseForTabbedPanes() {
+    	return efaHeaderUseForTabbedPanes.getValue();
+    }
+    
     public String getWeeklyReservationConflictBehaviour() {
     	return weeklyReservationConflictBehaviour.getValue();
     }
@@ -2695,7 +2705,9 @@ public class EfaConfig extends StorageObject implements IItemFactory {
                         item == windowXOffset ||
                         item == windowYOffset ||
                         item == screenWidth ||
-                        item == screenHeight
+                        item == screenHeight ||
+                        item == efaHeaderUseForTabbedPanes ||
+                        item == lookAndFeel
                         ) {
                         changedSettings.put(item.getDescription(), "foo");
                     }

@@ -599,6 +599,8 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
 	        personsAvailableList.setBackgroundColor(Daten.efaConfig.getHeaderBackgroundColor());
 	        boatsOnTheWaterList.setBackgroundColor(Daten.efaConfig.getHeaderBackgroundColor());
 	        boatsNotAvailableList.setBackgroundColor(Daten.efaConfig.getHeaderBackgroundColor());
+	        
+	        EfaUtil.handleTabbedPaneBackgroundColorForLookAndFeels();
 		} else {
 			boatsAvailableList.setColor(null);
 	        personsAvailableList.setColor(null);

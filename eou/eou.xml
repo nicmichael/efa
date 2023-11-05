@@ -7,6 +7,7 @@
         <DownloadSize></DownloadSize>
         <Changes lang="de">
             <ChangeItem>Neu: EfaConfig: Neustrukturierung der Konfiguration mit Überschriften und Hinweisen zu einzelnen Konfigurationselementen.</ChangeItem>
+            <ChangeItem>Neu: EfaConfig: Überschriftenfarbe kann auch für Registerkarten genutzt werden (Metal and WindowsClassic LookAndFeel).</ChangeItem>
             <ChangeItem>BugFix: EfaConfig: Scrollbar im Config-Fenster ist INNERHALB der Registerkarten - somit besser scrollbar</ChangeItem>
             <ChangeItem>BugFix: EfaConfig: Tastenbelegung für Bemerkungsfeld - Textfeld zur Eingabe freigeschaltet.</ChangeItem>
             <ChangeItem>BugFix: EfaConfig: MeteoAstro-Plugin weist in Konfiguration auf nicht mehr funktionierende Wetterabfrage hin.</ChangeItem>
@@ -19,6 +20,7 @@
         </Changes>
         <Changes lang="en">
             <ChangeItem>New: EfaConfig: Restructuring of the configuration with headings and notes on individual configuration elements.</ChangeItem>
+            <ChangeItem>New: EfaConfig: Heading colors can be used for highlighting tab headers (Metal and WindowsClassic LookAndFeel).</ChangeItem>
             <ChangeItem>BugFix: EfaConfig: Key assignment for comment field - text field for values set to enabled.</ChangeItem>
             <ChangeItem>BugFix: EfaConfig: MeteoAstro plugin indicates in efaconfig that weather can no longer be displayed.</ChangeItem>
             <ChangeItem>BugFix: MetoAstro plugin in efaBths main screen shows a hand as a mouse cursor if an HTML popup has been configured.</ChangeItem>

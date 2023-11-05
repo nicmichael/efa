@@ -808,7 +808,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
                 }
             });
         }
-
+        EfaUtil.handleTabbedPaneBackgroundColorForLookAndFeels();
     }
 
     void iniApplication() {

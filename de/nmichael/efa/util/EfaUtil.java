@@ -49,6 +49,7 @@ import javax.mail.internet.InternetAddress;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.UIManager;
 
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
@@ -2213,6 +2214,15 @@ public class EfaUtil {
         }                	
     }    
     
+    public static void handleTabbedPaneBackgroundColorForLookAndFeels() {
+	    if ( Daten.efaConfig.getHeaderUseForTabbedPanes()==true &&		    
+	    		(Daten.lookAndFeel.endsWith("MetalLookAndFeel")||
+	    		 Daten.lookAndFeel.endsWith("WindowsClassicLookAndFeel")) ){
+			UIManager.put("TabbedPane.selectedForeground", Daten.efaConfig.getHeaderForegroundColor());
+		    UIManager.put("TabbedPane.selectedBackground", Daten.efaConfig.getHeaderBackgroundColor());
+		    UIManager.put("TabbedPane.selected", Daten.efaConfig.getHeaderBackgroundColor());
+	    }     
+    }
     public static void main(String args[]) {
         String text = "abc & def";
         System.out.println(text + " -> EfaUtil.escapeXml() = " + EfaUtil.escapeXml(text));
