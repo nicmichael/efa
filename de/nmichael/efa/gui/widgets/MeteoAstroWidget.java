@@ -722,7 +722,7 @@ public class MeteoAstroWidget extends Widget {
                 }
 
                 try {
-                    Thread.sleep(Math.max(updateIntervalInSeconds, 1) * 1000);
+                    Thread.sleep(Math.max(updateIntervalInSeconds, 3600) * 1000);
                 } catch(Exception e) {
                     Logger.logdebug(e);
                 }
