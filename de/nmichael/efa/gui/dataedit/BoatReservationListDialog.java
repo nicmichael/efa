@@ -436,24 +436,6 @@ public class BoatReservationListDialog extends DataListDialog {
 		}                   
 
         //Show reservation data
-        /*ItemTypeLabel lblResData = new ItemTypeLabel("_GUIITEM_BASE_RESERVATION", IItemType.TYPE_PUBLIC, null,
-                "<html><body><p>"+originalRecord.getBoatName()+"</p>"
-                +"<p>"+originalRecord.getGuiDateTimeFromDescription()+" - "+originalRecord.getGuiDateTimeToDescription()+"</p>"
-                +"<p>"+ originalRecord.getPersonAsName()+"</p>"
-                +"<p>("+originalRecord.getReason()+" / "+originalRecord.getContact()+")</p>"+
-                "</body></html>");*/
-        /*
-        ItemTypeTextArea lblResData = new ItemTypeTextArea("_GUIITEM_BASE_RESERVATION", 
-                "<html><body><p>"+originalRecord.getBoatName()+"</p>"
-                +"<p>"+originalRecord.getGuiDateTimeFromDescription()+" - "+originalRecord.getGuiDateTimeToDescription()+"</p>"
-                +"<p>"+ originalRecord.getPersonAsName()+"</p>"
-                +"<p>("+originalRecord.getReason()+" / "+originalRecord.getContact()+")</p>"+
-                "</body></html>",IItemType.TYPE_PUBLIC, null,"Bestehende Reservierungsdaten");
-        lblResData.setPadding(0, 0, 0, 10);
-        lblResData.setWrap(true);
-        lblResData.setEditable(false);
-        lblResData.setEnabled(false);
-        lblResData.setFieldSize(400, 150);*/
         
         ItemTypeString dataBoatName = new ItemTypeString("_GUIITEM_BASE_RESERVATION_BOATNAME", originalRecord.getBoatName(), IItemType.TYPE_PUBLIC,null, International.getString("Boot"));
         dataBoatName.setEditable(false);
