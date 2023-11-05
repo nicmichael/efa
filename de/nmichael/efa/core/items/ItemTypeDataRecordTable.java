@@ -18,6 +18,7 @@ import de.nmichael.efa.gui.util.*;
 import de.nmichael.efa.data.storage.*;
 import de.nmichael.efa.ex.*;
 import de.nmichael.efa.gui.BaseDialog;
+import de.nmichael.efa.gui.ImagesAndIcons;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -29,7 +30,18 @@ import java.util.*;
 // @i18n complete
 public class ItemTypeDataRecordTable extends ItemTypeTable implements IItemListener {
 
-    public static final int ACTION_NEW = 0;
+	/* Documentation on action numbers: (see @iniDisplayActionTable)
+	 * <0  				Do not show this action in the popup menu for an element in the table.
+	 * >=0 		<1000	Show as standard buttons with caption and icon
+	 * >=1000	<2000	Show as buttons WITHOUT caption, just icons
+	 * >=2000		    Do not show as a button
+	 */    
+	public static final int ACTIONTYPE_SHOW_AS_POPUPMENU_ELEMENT_ONLY=-1;
+	public static final int ACTIONTYPE_SHOW_AS_STANDARD_BUTTONS=0;
+	public static final int ACTIONTYPE_SHOW_AS_SMALL_BUTTONS=1000;
+	public static final int ACTIONTYPE_DO_NOT_SHOW_AS_BUTTONS=2000;
+	
+	public static final int ACTION_NEW = 0;
     public static final int ACTION_EDIT = 1;
     public static final int ACTION_DELETE = 2;
     public static final int ACTION_OTHER = -1;
@@ -112,7 +124,7 @@ public class ItemTypeDataRecordTable extends ItemTypeTable implements IItemListe
             this.actionText = DEFAULT_ACTIONS;
             this.actionTypes = new int[]{ACTION_NEW, ACTION_EDIT, ACTION_DELETE};
             this.actionIcons = new String[]{
-                "button_add.png", "button_edit.png", "button_delete.png"
+            		ImagesAndIcons.IMAGE_BUTTON_ADD, ImagesAndIcons.IMAGE_BUTTON_EDIT, ImagesAndIcons.IMAGE_BUTTON_DELETE
             };
         } else {
             int popupActionCnt = 0;
@@ -176,14 +188,14 @@ public class ItemTypeDataRecordTable extends ItemTypeTable implements IItemListe
 
         JPanel smallButtonPanel = null;
         for (int i = 0; actionText != null && i < actionText.length; i++) {
-            if (actionTypes[i] >= 2000) {
+            if (actionTypes[i] >= ACTIONTYPE_DO_NOT_SHOW_AS_BUTTONS) {
                 continue; // actions >= 2000 not shown as buttons
             }
             String action = ACTION_BUTTON + "_" + actionTypes[i];
             ItemTypeButton button = new ItemTypeButton(action, IItemType.TYPE_PUBLIC, "BUTTON_CAT",
-                    (actionTypes[i] < 1000 ? actionText[i] : null)); // >= 2000 just as small buttons without text
+                    (actionTypes[i] < ACTIONTYPE_SHOW_AS_SMALL_BUTTONS ? actionText[i] : null)); // >= 2000 just as small buttons without text
             button.registerItemListener(this);
-            if (actionTypes[i] < 1000) {
+            if (actionTypes[i] < ACTIONTYPE_SHOW_AS_SMALL_BUTTONS) {
                 button.setPadding(20, 20, (i > 0 && actionTypes[i] < 0 && actionTypes[i - 1] >= 0 ? 20 : 0), 5);
                 button.setFieldSize(200, -1);
             } else {
@@ -207,7 +219,7 @@ public class ItemTypeDataRecordTable extends ItemTypeTable implements IItemListe
                     button.setIcon(BaseDialog.getIcon(iconName));
                 }
             }
-            if (actionTypes[i] < 1000) {
+            if (actionTypes[i] < ACTIONTYPE_SHOW_AS_SMALL_BUTTONS) {
                 button.displayOnGui(dlg, buttonPanel, 0, i);
             } else {
                 button.displayOnGui(dlg, smallButtonPanel, i, 0);

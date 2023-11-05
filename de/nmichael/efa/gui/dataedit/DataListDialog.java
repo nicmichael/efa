@@ -29,6 +29,13 @@ import java.util.*;
 
 public abstract class DataListDialog extends BaseDialog implements IItemListener, IItemListenerDataRecordTable {
 
+	/* Documentation on action numbers: (see @ItemTypeDataRecordTable.iniDisplayActionTable)
+	 * <0  				Do not show this action in the popup menu for an element in the table.
+	 * >0 		<1000	Show as standard buttons with caption and icon
+	 * >1000	<2000	Show as buttons WITHOUT caption, just icons
+	 * >2000		    Do not show as a button
+	 */
+	
     public static final int ACTION_HIDE      =  100;
     public static final int ACTION_MERGE     =  200;
     public static final int ACTION_IMPORT    = -100; // negative actions will not be shown as popup actions
@@ -147,7 +154,13 @@ public abstract class DataListDialog extends BaseDialog implements IItemListener
             }
         }
     }
-
+/**
+ * Adds an Action into the DataListDialog Button list. Action is added at the end of the list.
+ * 
+ * @param text Displaytext for the button
+ * @param type Action Type (see DataListDialog.ACTION_* or ItemTypeDataRecordTable.ACTION_*)
+ * @param image Image Name (see BaseDialog.IMAGE_*)
+ */
     protected void addAction(String text, int type, String image) {
         if (actionText == null) {
             actionText = new String[0];
@@ -174,7 +187,68 @@ public abstract class DataListDialog extends BaseDialog implements IItemListener
         actionType[actionType.length - 1] = type;
         actionImage[actionImage.length - 1] = image;
     }
+   
+    /**
+     * Adds an Action into the DataListDialog Button list. Action is added right after the position of insertAfterType.
+     * If insertAfterType Action is not found, Action is positioned at the end.
+     * 
+     * @param text Displaytext for the button
+     * @param type Action Type (see DataListDialog.ACTION_* or ItemTypeDataRecordTable.ACTION_*)
+     * @param image Image Name (see BaseDialog.IMAGE_*)
+     * @param insertAfterType Existing Action Type in the list after which the new action shall be put. 
+     */    
+    protected void insertAction(String text, int type, String image, int insertAfterType){
+        if (actionText == null) {
+            actionText = new String[0];
+        }
+        if (actionType == null) {
+            actionType = new int[0];
+        }
+        if (actionImage == null) {
+            actionImage = new String[0];
+        }
+        String[] _actionText = actionText;
+        int[] _actionType = actionType;
+        String[] _actionImage = actionImage;
+        
+        // Extend the new array of actions by one item
+        actionText = new String[_actionText.length + 1];
+        actionType = new int[_actionType.length + 1];
+        actionImage = new String[_actionImage.length + 1];
+        
+        int insertPosition=0;
+        boolean insertAfterTypeIsFound=false;
+        // arrays must all be the same length!
+        // copy old elements to the new array. 
+        // check if the current position is the "insertAfterType" element and then
+        // add the new element
+        for (int i=0; i<actionType.length - 1; i++) {
+            actionText[insertPosition] = _actionText[i];
+            actionType[insertPosition] = _actionType[i];
+            actionImage[insertPosition] = _actionImage[i];
+            insertPosition++; // done with the current element
+            
+            if (_actionType[i]==insertAfterType) {
+            	//we need to add the new action after the current one
+            	actionText[insertPosition] = text;
+            	actionType[insertPosition] = type;
+            	actionImage[insertPosition] = image;
+            	insertPosition++; // and increment the position
+            	insertAfterTypeIsFound=true;
+            }
+        }
+        if (!insertAfterTypeIsFound) {
+        	// we did not find the action type specified, so we add the action at the end of the buttons.
+        	actionText[actionText.length - 1] = text;
+            actionType[actionType.length - 1] = type;
+            actionImage[actionImage.length - 1] = image;    	
+        }
+    }
 
+    /**
+     * Removes an action from the button list of the data list dialog.
+     * @param type type of the action to be removed
+     */
     protected void removeAction(int type) {
         for (int i=0; actionType != null && i<actionType.length; i++) {
             if (actionType[i] == type) {
