@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <efaOnlineUpdate>
     <Version>
-        <VersionID>2.3.3_02</VersionID>
+        <VersionID>2.3.3_01</VersionID>
         <ReleaseDate>TO.DO.2023</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa233.zip</DownloadUrl>
         <DownloadSize></DownloadSize>
         <Changes lang="de">
+            <ChangeItem>BugFix: Teilbegriffsuche für Eingabefelder mit Vervollständigung suchen nun auf kompletter Liste</ChangeItem>
+            <ChangeItem>BugFix: Sortierung für Bootsliste, Personenliste, Vervollständigungs-Listen gehen besser mit europäischen Sonderzeichen um</ChangeItem>
+            <ChangeItem>Neu: Konfigurierbares Zeitintervall für automatisches Leeren von Filterfeldern in Bootshaus</ChangeItem>
+            <ChangeItem>Neu: Konfigurierbares automatisches Leeren von Filterfeldern nach den meisten Bootshaus-Aktionen</ChangeItem>            
+            <ChangeItem>Neu: Einfacheres Finden von Einträgen mit Umlauten/Sonderzeichen in Tabellen, Bootslisten, und Eingabefeldern mit Vervollständigung (konfigurierbar)</ChangeItem>
+            <ChangeItem>Neu: Bootsreservierungen: Ändern von Bootsnamen und Erstellen von Reservierungs-Kopien</ChangeItem>
             <ChangeItem>Neu: EfaConfig: Neustrukturierung der Konfiguration mit Überschriften und Hinweisen zu einzelnen Konfigurationselementen.</ChangeItem>
             <ChangeItem>Neu: EfaConfig: Überschriftenfarbe kann auch für Registerkarten genutzt werden (Metal and WindowsClassic LookAndFeel).</ChangeItem>
             <ChangeItem>BugFix: EfaConfig: Scrollbar im Config-Fenster ist INNERHALB der Registerkarten - somit besser scrollbar</ChangeItem>
@@ -17,47 +23,28 @@
             <ChangeItem>BugFix: WindowsLookAndFeel: Ist besser nutzbar geworden. Wie bei den anderen LookAndFeels werden Buttons mit Farbe gefüllt angezeigt, anstatt nur einen farbigen Rahmen zu haben.</ChangeItem>
             <ChangeItem>BugFix: Keine (versteckte) Exception mehr bei der Aktualisierung der Inhalte des HTML-Widgets.</ChangeItem>
             <ChangeItem>BugFix: Keine (versteckte) Exception mehr bei Initialisierung von efaBths wenn der Spezialbutton angezeigt wird. Spezialbutton zeigt nun das zugehörige Icon.</ChangeItem>              
+            <ChangeItem>BugFix: Der Dialog für die Auswahl unklar eingegebener Werte zeigt keine doppelten Einträge mehr an.</ChangeItem>      
+            <ChangeItem>BugFix: efaCloud: </ChangeItem>
         </Changes>
         <Changes lang="en">
+            <ChangeItem>BugFix: Autocomplete lists: Filter by partial contents now consideres complete list</ChangeItem>
+            <ChangeItem>BugFix: Sorting of boat lists, person lists, autocomplete-lists works better with european special characters like umlauts</ChangeItem>
+            <ChangeItem>New: Automatic clearing of boathouse filter fields: configurable interval</ChangeItem>
+            <ChangeItem>New: Automatic clearing of boathouse filter fields: after most actions in efaBths (configurable)</ChangeItem>
+            <ChangeItem>New: Items with umlauts/special characters are easier to find when searching in tables, boat lists and autocomplete lists (configurable)</ChangeItem>
             <ChangeItem>New: EfaConfig: Restructuring of the configuration with headings and notes on individual configuration elements.</ChangeItem>
             <ChangeItem>New: EfaConfig: Heading colors can be used for highlighting tab headers (Metal and WindowsClassic LookAndFeel).</ChangeItem>
+            <ChangeItem>New: Boat reservations: Boat can be changed after saving, and also copies of boat reservations can be created.</ChangeItem>      
+            <ChangeItem>BugFix: Boat reservation: When selecting the boat, the selection list button is displayed.</ChangeItem>
             <ChangeItem>BugFix: EfaConfig: Key assignment for comment field - text field for values set to enabled.</ChangeItem>
             <ChangeItem>BugFix: EfaConfig: MeteoAstro plugin indicates in efaconfig that weather can no longer be displayed.</ChangeItem>
             <ChangeItem>BugFix: MetoAstro plugin in efaBths main screen shows a hand as a mouse cursor if an HTML popup has been configured.</ChangeItem>
             <ChangeItem>BugFix: EfaConfig: Scrollable in the config window is INSIDE the tabs - making it easier to scroll</ChangeItem>
             <ChangeItem>BugFix: EfaConfig: More items indicate that they need a restart of efa.</ChangeItem>
-            <ChangeItem>BugFix: Boat reservation: When selecting the boat, the selection list button is displayed.</ChangeItem>
             <ChangeItem>BugFix: WindowsLookAndFeel: Is more usable for efa. As in all other LookAndFeels, the buttons get displayed filled with color, instead of just having a colored border.</ChangeItem>
             <ChangeItem>BugFix: No (hidden) exception in debug mode in HTMLWidget updating process</ChangeItem>
             <ChangeItem>BugFix: No (hidden) exception during initialisation of efaBths if the special button is displayed. Special button now has the according icon.</ChangeItem>              
-        </Changes>
-    </Version>
-    <Version>
-        <VersionID>2.3.3_01</VersionID>
-        <ReleaseDate>TO.DO.2023</ReleaseDate>
-        <DownloadUrl>http://efa.nmichael.de/download/efa233.zip</DownloadUrl>
-        <DownloadSize></DownloadSize>
-        <Changes lang="de">
-            <ChangeItem>BugFix: Teilbegriffsuche für Eingabefelder mit Vervollständigung suchen nun auf kompletter Liste</ChangeItem>
-            <ChangeItem>BugFix: Sortierung für Bootsliste, Personenliste, Vervollständigungs-Listen gehen besser mit europäischen Sonderzeichen um</ChangeItem>
-            <ChangeItem>Neu: Konfigurationsseiten für efaBootshaus (Allgemein, Erscheinungsbild) reorganisiert für bessere Auffindbarkeit von Eigenschaften</ChangeItem>
-            <ChangeItem>Neu: Konfigurierbares Zeitintervall für automatisches Leeren von Filterfeldern in Bootshaus</ChangeItem>
-            <ChangeItem>Neu: Konfigurierbares automatisches Leeren von Filterfeldern nach den meisten Bootshaus-Aktionen</ChangeItem>            
-            <ChangeItem>Neu: Einfacheres Finden von Einträgen mit Umlauten/Sonderzeichen in Tabellen, Bootslisten, und Eingabefeldern mit Vervollständigung (konfigurierbar)</ChangeItem>
-            <ChangeItem>BugFix: Mehr Konfigurationselemente, die einen Neustart von EFA benötigen, melden dieses beim Speichern der Konfigurationsdaten.</ChangeItem>
-            <ChangeItem>BugFix: Der Dialog für die Auswahl unklar eingegebener Werte zeigt keine doppelten Einträge mehr an.</ChangeItem>      
-            <ChangeItem>Neu: Bootsreservierungen: Ändern von Bootsnamen und Erstellen von Reservierungs-Kopien</ChangeItem>
-        </Changes>
-        <Changes lang="en">
-            <ChangeItem>BugFix: Autocomplete lists: Filter by partial contents now consideres complete list</ChangeItem>
-            <ChangeItem>BugFix: Sorting of boat lists, person lists, autocomplete-lists works better with european special characters like umlauts</ChangeItem>
-            <ChangeItem>New: Reorganisation of efaBoathouse configuration items (common, appearance) so the items can be found more easily</ChangeItem>
-            <ChangeItem>New: Automatic clearing of boathouse filter fields: configurable interval</ChangeItem>
-            <ChangeItem>New: Automatic clearing of boathouse filter fields: after most actions in efaBths (configurable)</ChangeItem>
-            <ChangeItem>New: Items with umlauts/special characters are easier to find when searching in tables, boat lists and autocomplete lists (configurable)</ChangeItem>
-            <ChangeItem>BugFix: Some more configuration elements requiring a restart of efaBths to activate produce a corresponding message when saving configuration changes.</ChangeItem>
             <ChangeItem>BugFix: No more duplicates in the spellchecking dialogue (which comes up when a item with a lookup list has not fully been set by the user).</ChangeItem>
-            <ChangeItem>New: Boat reservations: Boat can be changed after saving, and also copies of boat reservations can be created.</ChangeItem>      
         </Changes>
     </Version>
     <Version>

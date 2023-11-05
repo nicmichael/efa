@@ -14,6 +14,7 @@ import de.nmichael.efa.data.types.*;
 import de.nmichael.efa.ex.EfaException;
 import de.nmichael.efa.gui.BaseDialog;
 import de.nmichael.efa.gui.BaseTabbedDialog;
+import de.nmichael.efa.gui.ImagesAndIcons;
 import de.nmichael.efa.gui.widgets.IWidget;
 import de.nmichael.efa.gui.widgets.AlertWidget;
 import de.nmichael.efa.gui.widgets.Widget;
@@ -1497,11 +1498,12 @@ public class EfaConfig extends StorageObject implements IItemFactory {
                     IItemType.TYPE_PUBLIC,BaseTabbedDialog.makeCategory(CATEGORY_DATAACCESS, CATEGORY_DATAXML),
                     International.getString("Spiegelverzeichnis für Datenkopie")));
 
+            addHint("dataRemoteEfaServerEnabledDescription",IItemType.TYPE_PUBLIC, 
+            		BaseTabbedDialog.makeCategory(CATEGORY_DATAACCESS, CATEGORY_DATAREMOTE), International.getString("Hinweis: Remote-Zugriff muss aktiv sein, um efaCLI zu benutzen."), 3,6,12);     
+            
             addParameter(dataRemoteEfaServerEnabled = new ItemTypeBoolean("DataRemoteEfaServerEnabled", false,
                     IItemType.TYPE_PUBLIC,BaseTabbedDialog.makeCategory(CATEGORY_DATAACCESS, CATEGORY_DATAREMOTE),
                     International.getString("Remote-Zugriff erlauben")));
-            addDescription("dataRemoteEfaServerEnabledDescription",IItemType.TYPE_PUBLIC, 
-            		BaseTabbedDialog.makeCategory(CATEGORY_DATAACCESS, CATEGORY_DATAREMOTE), International.getString("Hinweis: Remote-Zugriff muss aktiv sein, um efaCLI zu benutzen."), 3,6,3);     
 
             
             addParameter(dataRemoteEfaServerPort = new ItemTypeInteger("DataRemoteEfaServerPort", 0xEFA, 1, 65535,
@@ -1520,16 +1522,21 @@ public class EfaConfig extends StorageObject implements IItemFactory {
                     IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_DATAACCESS, CATEGORY_DATAREMOTE),
                     "Client Receive Timeout (sec)"));
 
+            addHint("dataRemoteEfaOnlineEnabledDescription1",IItemType.TYPE_EXPERT, 
+            		BaseTabbedDialog.makeCategory(CATEGORY_DATAACCESS, CATEGORY_DATAREMOTE), International.getString("efaOnline ist ein dynamischer Namensdienst zum vereinfachten Remote-Zugriff."), 3,12,0);     
+            addHint("dataRemoteEfaOnlineEnabledDescription2",IItemType.TYPE_EXPERT, 
+            		BaseTabbedDialog.makeCategory(CATEGORY_DATAACCESS, CATEGORY_DATAREMOTE), International.getString("Siehe http://efa.nmichael.de/efaonline.html.de"), 3,0,3);     
+                        
             addParameter(dataRemoteEfaOnlineEnabled = new ItemTypeBoolean("DataRemoteEfaOnlineEnabled", false,
-                    IItemType.TYPE_PUBLIC,BaseTabbedDialog.makeCategory(CATEGORY_DATAACCESS, CATEGORY_DATAREMOTE),
+                    IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_DATAACCESS, CATEGORY_DATAREMOTE),
                     International.getString("efaOnline aktivieren")));
             addParameter(dataRemoteEfaOnlineUsername = new ItemTypeString("DataRemoteEfaOnlineUsername", "",
-                    IItemType.TYPE_PUBLIC,BaseTabbedDialog.makeCategory(CATEGORY_DATAACCESS, CATEGORY_DATAREMOTE),
+                    IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_DATAACCESS, CATEGORY_DATAREMOTE),
                     Daten.EFA_ONLINE + " - " +
                     International.getString("Benutzername") +
                     " (" + International.getString("Server") + ")"));
             addParameter(dataRemoteEfaOnlinePassword = new ItemTypePassword("DataRemoteEfaOnlinePassword", "", true,
-                    IItemType.TYPE_PUBLIC,BaseTabbedDialog.makeCategory(CATEGORY_DATAACCESS, CATEGORY_DATAREMOTE),
+                    IItemType.TYPE_EXPERT,BaseTabbedDialog.makeCategory(CATEGORY_DATAACCESS, CATEGORY_DATAREMOTE),
                     Daten.EFA_ONLINE + " - " +
                     International.getString("Paßwort") +
                     " (" + International.getString("Server") + ")"));
@@ -1606,7 +1613,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
     
     private IItemType addHint(String uniqueName, int type, String category, String caption, int gridWidth, int padBefore, int padAfter) {
     	ItemTypeLabel item = (ItemTypeLabel) addDescription(uniqueName, type, category, " "+caption, gridWidth, padBefore,padAfter);
-    	item.setImage(BaseDialog.getIcon("menu_about.png"));
+    	//item.setImage(BaseDialog.getIcon(ImagesAndIcons.IMAGE_MENU_ABOUT));
     	item.setBackgroundColor(hintBackgroundColor);
     	item.setHorizontalAlignment(SwingConstants.LEFT);
     	return item;

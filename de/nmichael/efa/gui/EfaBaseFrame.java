@@ -221,7 +221,10 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
     }
 
     public void _keyAction(ActionEvent evt) {
-        if (evt.getActionCommand().equals(KEYACTION_F3)) {
+    	//F3 is the key to search (again) in the logbook.
+    	//this makes sens for efaBase where the main screen is the edit screen for logbook items.
+    	//it does not make sense for all other efa GUI Applications to call SearchLogbookDialog.search().
+        if (evt.getActionCommand().equals(KEYACTION_F3)  && Daten.isApplEfaBase()) {
             SearchLogbookDialog.search();
         }
         if (evt.getActionCommand().equals(KEYACTION_F4)) {
