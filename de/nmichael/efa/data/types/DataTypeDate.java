@@ -328,12 +328,12 @@ public class DataTypeDate implements Cloneable, Comparable<DataTypeDate> {
         long r1To   = r1ToDate.getTimestamp(r1ToTime);
         long r2From = r2FromDate.getTimestamp(r2FromTime);
         long r2To   = r2ToDate.getTimestamp(r2ToTime);
-        return (r2From < r1From && r2To > r1From) ||
-                (r2From < r1To && r2To > r1To) ||
-                (r2From > r1From && r2To < r1To) ||
-                (r1From < r2From && r1To > r2From) ||
-                (r1From < r2To && r1To > r2To) ||
-                (r1From > r2From && r1To < r2To);
+        return (r2From <= r1From && r2To >= r1From) ||
+                (r2From <= r1To && r2To >= r1To) ||
+                (r2From >= r1From && r2To <= r1To) ||
+                (r1From <= r2From && r1To >= r2From) ||
+                (r1From <= r2To && r1To >= r2To) ||
+                (r1From >= r2From && r1To <= r2To);
     }
 
     public static DataTypeDate[] getRangeOverlap(DataTypeDate r1From, DataTypeDate r1To, DataTypeDate r2From, DataTypeDate r2To) throws Exception {
