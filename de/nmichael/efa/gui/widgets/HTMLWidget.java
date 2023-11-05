@@ -10,15 +10,28 @@
 
 package de.nmichael.efa.gui.widgets;
 
-import de.nmichael.efa.util.*;
-import de.nmichael.efa.core.items.*;
-import de.nmichael.efa.data.LogbookRecord;
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
-import javax.swing.*;
-import javax.swing.text.html.*;
-import java.io.*;
+import java.io.IOException;
+
+import javax.swing.JComponent;
+import javax.swing.JEditorPane;
+import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 import javax.swing.text.Document;
+import javax.swing.text.html.HTMLDocument;
+import javax.swing.text.html.HTMLEditorKit;
+
+import de.nmichael.efa.core.items.IItemType;
+import de.nmichael.efa.core.items.ItemTypeDouble;
+import de.nmichael.efa.core.items.ItemTypeFile;
+import de.nmichael.efa.core.items.ItemTypeInteger;
+import de.nmichael.efa.data.LogbookRecord;
+import de.nmichael.efa.util.EfaUtil;
+import de.nmichael.efa.util.International;
+import de.nmichael.efa.util.Logger;
 
 public class HTMLWidget extends Widget {
 
@@ -125,14 +138,39 @@ public class HTMLWidget extends Widget {
                             url = EfaUtil.correctUrl(url);
                             Document doc = new HTMLDocument();
                             doc.putProperty("javax.swing.JEditorPane.postdata", "foobar"); // property must match JEditorPane.PostDataProperty
-                            htmlPane.setDocument(doc);
-                            htmlPane.setPage(url);
+                            
+                            // not thread safe
+                            // htmlPane.setDocument(doc);
+                            // htmlPane.setPage(url);
+                            
+                            // this is thread safe
+                        	SwingUtilities.invokeLater(new Runnable() {
+                        	      public void run() {
+                                      try {
+                                          htmlPane.setDocument(doc);                                    	  
+                                    	  htmlPane.setPage(url);
+                                      } catch (IOException ee) {
+                                          htmlPane.setText(International.getString("FEHLER") + ": "
+                                                  + International.getMessage("Kann Adresse '{url}' nicht öffnen: {message}", url, ee.toString()));
+                                      }
+                        	      }
+                          	});
+                            
                         }
-                    } catch (IOException ee) {
-                        htmlPane.setText(International.getString("FEHLER") + ": "
-                                + International.getMessage("Kann Adresse '{url}' nicht öffnen: {message}", url, ee.toString()));
+                    } catch (Exception ee) {
+                        //htmlPane.setText(International.getString("FEHLER") + ": "
+                        //        + International.getMessage("Kann Adresse '{url}' nicht öffnen: {message}", url, ee.toString()));
+                    	
+                    	SwingUtilities.invokeLater(new Runnable() {
+                  	      public void run() {
+                              htmlPane.setText(International.getString("FEHLER") + ": "
+                                      + International.getMessage("Kann Adresse '{url}' nicht öffnen: {message}", url, ee.toString()));   
+                  	      }
+                    	});                    	
                     }
                     Thread.sleep(updateIntervalInSeconds*1000);
+                } catch (InterruptedException e) {
+                	EfaUtil.foo();            
                 } catch (Exception e) {
                     Logger.logdebug(e);
                 }

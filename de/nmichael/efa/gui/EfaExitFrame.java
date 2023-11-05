@@ -172,7 +172,12 @@ public class EfaExitFrame extends BaseFrame {
                     return;
                 }
             }
-            frame.cancel(true);
+        	SwingUtilities.invokeLater(new Runnable() {
+        	      public void run() {
+        	            frame.cancel(true);
+        	      }
+          	});
+
         }
     }
 }

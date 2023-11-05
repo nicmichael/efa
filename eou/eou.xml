@@ -6,6 +6,7 @@
         <DownloadUrl>http://efa.nmichael.de/download/efa233.zip</DownloadUrl>
         <DownloadSize></DownloadSize>
         <Changes lang="de">
+            <ChangeItem>BugFix: Widgets multithreading-sicher: weniger Rendering-Exceptions im efa.log</ChangeItem>
             <ChangeItem>BugFix: Teilbegriffsuche für Eingabefelder mit Vervollständigung suchen nun auf kompletter Liste</ChangeItem>
             <ChangeItem>BugFix: Sortierung für Bootsliste, Personenliste, Vervollständigungs-Listen gehen besser mit europäischen Sonderzeichen um</ChangeItem>
             <ChangeItem>Neu: Konfigurationsseiten für efaBootshaus (Allgemein, Erscheinungsbild) reorganisiert für bessere Auffindbarkeit von Eigenschaften</ChangeItem>
@@ -17,6 +18,7 @@
             <ChangeItem>Neu: Bootsreservierungen: Ändern von Bootsnamen und Erstellen von Reservierungs-Kopien</ChangeItem>
         </Changes>
         <Changes lang="en">
+            <ChangeItem>BugFix: Widgets are safe for multithreading: Less exceptions for rendering in efa.log</ChangeItem>
             <ChangeItem>BugFix: Autocomplete lists: Filter by partial contents now consideres complete list</ChangeItem>
             <ChangeItem>BugFix: Sorting of boat lists, person lists, autocomplete-lists works better with european special characters like umlauts</ChangeItem>
             <ChangeItem>New: Reorganisation of efaBoathouse configuration items (common, appearance) so the items can be found more easily</ChangeItem>

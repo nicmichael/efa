@@ -204,7 +204,11 @@ public class EfaBoathouseBackgroundTask extends Thread {
     } // end: run
 
     private void checkFilterTextFields() {
-    	efaBoathouseFrame.clearListFilterAfterInterval();
+    	SwingUtilities.invokeLater(new Runnable() {
+    	      public void run() {
+    	    	  efaBoathouseFrame.clearListFilterAfterInterval();
+    	      }
+      	});
     }
     
     private void updateProjectInfo() {
@@ -664,7 +668,11 @@ public class EfaBoathouseBackgroundTask extends Thread {
         }
         if (Daten.efaConfig != null) {
             if (Daten.efaConfig.getValueEfaDirekt_locked()) {
-                efaBoathouseFrame.lockEfa();
+            	SwingUtilities.invokeLater(new Runnable() {
+            		public void run() {
+                    	efaBoathouseFrame.lockEfa();
+            		}
+            	});
                 return;
             }
             setEfaLockBegin(Daten.efaConfig.getValueEfaDirekt_lockEfaFromDatum(),
@@ -675,7 +683,11 @@ public class EfaBoathouseBackgroundTask extends Thread {
             date.setTime(System.currentTimeMillis());
             cal.setTime(date);
             if (cal.after(lockEfa) && efaBoathouseFrame != null) {
-                efaBoathouseFrame.lockEfa();
+            	SwingUtilities.invokeLater(new Runnable() {
+            		public void run() {
+                    	efaBoathouseFrame.lockEfa();
+            		}
+            	});
                 lockEfa = null;
             }
         }
@@ -977,7 +989,11 @@ public class EfaBoathouseBackgroundTask extends Thread {
                     + "auf dem Wasser. Diese Fahrten wurden ABGEBROCHEN. Die abgebrochenen "
                     + "Fahrten sind in der Logdatei verzeichnet.") : ""));
             EfaUtil.sleep(500);
-            efaBoathouseFrame.updateBoatLists(true,false);
+        	SwingUtilities.invokeLater(new Runnable() {
+        		public void run() {
+                	efaBoathouseFrame.updateBoatLists(true,false);
+        		}
+        	});
             EfaUtil.sleep(500);
             interrupt();
         } catch (Exception e) {
