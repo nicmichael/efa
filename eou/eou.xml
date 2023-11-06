@@ -2,9 +2,9 @@
 <efaOnlineUpdate>
     <Version>
         <VersionID>2.3.3_01</VersionID>
-        <ReleaseDate>TO.DO.2023</ReleaseDate>
+        <ReleaseDate>05.11.2023</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa233.zip</DownloadUrl>
-        <DownloadSize></DownloadSize>
+        <DownloadSize>4545206</DownloadSize>
         <Changes lang="de">
             <ChangeItem>BugFix: Widgets multithreading-sicher: weniger Rendering-Exceptions im efa.log</ChangeItem>
             <ChangeItem>BugFix: Teilbegriffsuche für Eingabefelder mit Vervollständigung suchen nun auf kompletter Liste</ChangeItem>
