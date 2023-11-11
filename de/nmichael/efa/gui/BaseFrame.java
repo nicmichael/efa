@@ -181,6 +181,7 @@ public abstract class BaseFrame extends JFrame implements ActionListener {
         mainScrollPane.setPreferredSize(Dialog.getMaxSize(dim));
 
         mainScrollPane.getViewport().add(mainPanel, null);
+        mainScrollPane.setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
     }
 
     //protected abstract void iniDialog() throws Exception;

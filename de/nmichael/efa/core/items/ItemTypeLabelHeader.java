@@ -47,5 +47,9 @@ public class ItemTypeLabelHeader extends ItemTypeLabel {
     public Color getColor() {
     	return Daten.efaConfig.getHeaderForegroundColor();
     }
+ 
+    protected boolean isBoldFont() {
+    	return true;
+    }
     
 }

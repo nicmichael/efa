@@ -87,6 +87,11 @@ public class ItemTypeLabel extends ItemType {
             	l.setBackground(this.getBackgroundColor());
             	l.setOpaque(true);
             }            
+
+            if (this.isBoldFont()) {
+                l.setFont(l.getFont().deriveFont(Font.BOLD));
+            }
+
             l.setVisible(isVisible);
             labels[i] = l;
         }
@@ -143,6 +148,10 @@ public class ItemTypeLabel extends ItemType {
 
     public boolean isEditable() {
         return false;
+    }
+    
+    protected boolean isBoldFont() {
+    	return false;
     }
 
     public void setImage(ImageIcon icon) {
