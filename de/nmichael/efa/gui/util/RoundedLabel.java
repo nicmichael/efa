@@ -6,7 +6,8 @@ import javax.swing.JLabel;
 
 public class RoundedLabel extends JLabel {
 	private static int ARC = 10;
-    protected void paintComponent(Graphics g) {
+
+  protected void paintComponent(Graphics g) {
         if (ui != null) {
             Graphics scratchGraphics = (g == null) ? null : g.create();
             try {

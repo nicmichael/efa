@@ -9,34 +9,62 @@
  */
 package de.nmichael.efa;
 
-import de.nmichael.efa.data.efacloud.TableBuilder;
-import de.nmichael.efa.data.efawett.WettDefs;
-import de.nmichael.efa.core.config.*;
-import de.nmichael.efa.core.items.*;
-import de.nmichael.efa.core.*;
 import static de.nmichael.efa.core.config.EfaTypes.CATEGORY_SESSION;
 import static de.nmichael.efa.core.config.EfaTypes.TYPE_SESSION_INSTRUCTION;
 import static de.nmichael.efa.core.config.EfaTypes.TYPE_SESSION_JUMREGATTA;
-import static de.nmichael.efa.core.config.EfaTypes.TYPE_SESSION_NORMAL;
-import static de.nmichael.efa.core.config.EfaTypes.TYPE_SESSION_REGATTA;
 import static de.nmichael.efa.core.config.EfaTypes.TYPE_SESSION_TOUR;
 import static de.nmichael.efa.core.config.EfaTypes.TYPE_SESSION_TRAINING;
-import de.nmichael.efa.data.*;
+
+import java.awt.Color;
+import java.awt.Frame;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.lang.management.ManagementFactory;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.util.Enumeration;
+import java.util.Vector;
+import java.util.jar.JarFile;
+
+import javax.swing.UIManager;
+import javax.swing.plaf.ColorUIResource;
+
+import com.formdev.flatlaf.FlatIntelliJLaf;
+import com.formdev.flatlaf.FlatLaf;
+import com.formdev.flatlaf.FlatLightLaf;
+
+import de.nmichael.efa.core.CrontabThread;
+import de.nmichael.efa.core.EfaKeyStore;
+import de.nmichael.efa.core.EfaRunning;
+import de.nmichael.efa.core.EfaSec;
+import de.nmichael.efa.core.EmailSenderThread;
+import de.nmichael.efa.core.Plugins;
+import de.nmichael.efa.core.config.AdminRecord;
+import de.nmichael.efa.core.config.Admins;
+import de.nmichael.efa.core.config.CustSettings;
+import de.nmichael.efa.core.config.EfaBaseConfig;
+import de.nmichael.efa.core.config.EfaConfig;
+import de.nmichael.efa.core.config.EfaTypes;
+import de.nmichael.efa.core.items.IItemType;
+import de.nmichael.efa.core.items.ItemTypeFile;
+import de.nmichael.efa.data.Project;
+import de.nmichael.efa.data.efacloud.TableBuilder;
+import de.nmichael.efa.data.efawett.WettDefs;
 import de.nmichael.efa.data.storage.DataFile;
 import de.nmichael.efa.data.storage.RemoteEfaServer;
 import de.nmichael.efa.data.types.DataTypeDate;
-import de.nmichael.efa.util.*;
+import de.nmichael.efa.gui.BrowserDialog;
+import de.nmichael.efa.gui.EfaFirstSetupDialog;
+import de.nmichael.efa.gui.SimpleInputDialog;
+import de.nmichael.efa.gui.util.EfaOceanTheme;
 import de.nmichael.efa.util.Dialog;
-import de.nmichael.efa.gui.*;
-import java.io.*;
-import java.util.jar.*;
-import java.util.*;
-import java.awt.*;
-import javax.swing.UIManager;
-import java.lang.management.*;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import javax.swing.plaf.ColorUIResource;
+import de.nmichael.efa.util.EfaUtil;
+import de.nmichael.efa.util.HtmlFactory;
+import de.nmichael.efa.util.International;
+import de.nmichael.efa.util.LogString;
+import de.nmichael.efa.util.Logger;
+import sun.awt.AppContext;
 
 // @i18n complete
 public class Daten {
@@ -1001,10 +1029,17 @@ public class Daten {
         // Look&Feel
         if (Daten.efaConfig != null) { // is null for applDRV
             try {
+            	FlatLaf.registerCustomDefaultsSource( "de.nmichael.efa.themes" );
+            	System.setProperty( "flatlaf.useNativeLibrary", "false" );
+            	System.setProperty( "flatlaf.animation", "false" );
+            	System.setProperty( "flatlaf.useWindowDecorations" , "false" );
+            	System.setProperty( "flatlaf.menuBarEmbedded", "false" );
+                //AppContext.getAppContext().put( "currentMetalTheme", new EfaOceanTheme());
+                
                 if (Daten.efaConfig.getValueLookAndFeel().length() == 0) {
                     UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
                 } else {
-                    UIManager.setLookAndFeel(Daten.efaConfig.getValueLookAndFeel());
+                	UIManager.setLookAndFeel(Daten.efaConfig.getValueLookAndFeel());
                 }
             } catch (Exception e) {
                 Logger.log(Logger.WARNING, Logger.MSG_WARN_CANTSETLOOKANDFEEL,
@@ -1179,6 +1214,8 @@ public class Daten {
         // efa-Infos
         if (efaInfos) {
             infos.add("efa.version=" + Daten.VERSIONID);
+            infos.add("efa.version.extended=" + Daten.VERSION);
+            infos.add("efa.releaseDate="+Daten.VERSIONRELEASEDATE);
             if (EFALIVE_VERSION != null && EFALIVE_VERSION.length() > 0) {
                 infos.add("efalive.version=" + Daten.EFALIVE_VERSION);
             }

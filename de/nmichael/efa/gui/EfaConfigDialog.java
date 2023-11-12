@@ -210,6 +210,7 @@ public class EfaConfigDialog extends BaseTabbedDialog {
 				//This puts the scrollbar INSIDE the tabbedPane, so that config panes can have more elements
 				//than the current screen size allows.
 				JScrollPane scrollPane = new JScrollPane(innerPanel);
+		        scrollPane.setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
 				scrollPane.setPreferredSize(getTabPanelPreferredSize(getSubCatCount(thisCatKey)));
 				int ia = scrollPane.getVerticalScrollBar().getUnitIncrement();
 				scrollPane.getVerticalScrollBar().setUnitIncrement(12);

@@ -526,7 +526,6 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
             
             Dialog.setPreferredSize(label, fieldWidth, 20);
             
-
         }
 
         list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);

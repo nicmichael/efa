@@ -10,6 +10,8 @@
 
 package de.nmichael.efa;
 
+import javax.swing.UIManager;
+
 import de.nmichael.efa.core.config.AdminRecord;
 import de.nmichael.efa.util.EfaUtil;
 import de.nmichael.efa.util.Logger;
@@ -23,6 +25,10 @@ public class Program {
 
     public Program(int applId, String[] args) {
         Daten.program = this;
+        UIManager.installLookAndFeel("efaFlatLaf", "de.nmichael.efa.themes.EfaFlatLightLookAndFeel");
+        UIManager.installLookAndFeel("FlatLafLightMac", "com.formdev.flatlaf.themes.FlatMacLightLaf");
+        UIManager.installLookAndFeel("FlatLafDarkMac", "com.formdev.flatlaf.themes.FlatMacDarkLaf");
+        
         Daten.iniBase(applId);
         checkArgs(args);
         newlyCreatedAdminRecord = Daten.initialize();

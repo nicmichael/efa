@@ -775,6 +775,7 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
         this.color = c;
         if (label!=null) {
             label.setForeground(color);
+            label.repaint();
 	    }
     }
     
@@ -790,6 +791,7 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
 	        } else {
 	        	label.setOpaque(false);
 	        }
+	        label.repaint();
         }
     }    
 
