@@ -25,6 +25,7 @@ public class ItemTypeLabelHeader extends ItemTypeLabel {
 
 	public ItemTypeLabelHeader (String name, int type, String category, String description) {
 		super(name,type,category,description);
+		this.setRoundShape(true); // Headers always have round shape
     }	
 
     public IItemType copyOf() {
@@ -34,6 +35,7 @@ public class ItemTypeLabelHeader extends ItemTypeLabel {
         thisCopy.setColor(this.color);
         thisCopy.setPadding(padXbefore, padXafter, padYbefore, padYafter);
         thisCopy.setFieldGrid(fieldGridWidth, fieldGridHeight, fieldGridAnchor, fieldGridFill);
+        thisCopy.setRoundShape(true);
         return thisCopy;
 
     }	

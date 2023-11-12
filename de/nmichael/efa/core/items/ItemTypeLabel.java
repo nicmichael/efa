@@ -25,6 +25,7 @@ import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
 
+import de.nmichael.efa.gui.util.RoundedLabel;
 import de.nmichael.efa.util.EfaUtil;
 
 public class ItemTypeLabel extends ItemType {
@@ -32,7 +33,8 @@ public class ItemTypeLabel extends ItemType {
     private JLabel[] labels;
     private ImageIcon icon;
     private boolean mouseClickListener = false;
-    
+    private boolean roundShape=false;
+    		
     public ItemTypeLabel(String name, int type,
             String category, String description) {
         this.name = name;
@@ -51,6 +53,8 @@ public class ItemTypeLabel extends ItemType {
         thisCopy.setFieldGrid(fieldGridWidth, fieldGridHeight, fieldGridAnchor, fieldGridFill);
         thisCopy.setImage(icon);
         thisCopy.setHorizontalAlignment(hAlignment);
+        thisCopy.setRoundShape(roundShape);
+        thisCopy.setBorder(border);
         return thisCopy;
 
     }
@@ -114,7 +118,11 @@ public class ItemTypeLabel extends ItemType {
     }
 
     protected JLabel createLabel() {
-    	return new JLabel();
+    	if (roundShape) {
+    		return new RoundedLabel();
+    	} else {
+    		return new JLabel();
+    	}
     }
     
     public int displayOnGui(Window dlg, JPanel panel, int x, int y) {
@@ -172,9 +180,17 @@ public class ItemTypeLabel extends ItemType {
     }
     
     protected Border getBorder() {
-    	return null;
+    	return border;
     }
-
+    
+    public Boolean getRoundShape() {
+    	return roundShape;
+    }
+    
+    public void setRoundShape(Boolean value) {
+    	roundShape=value;
+    }
+    
     public void setImage(ImageIcon icon) {
         this.icon = icon;
         if (labels != null && labels.length > 0 && labels[0] != null) {

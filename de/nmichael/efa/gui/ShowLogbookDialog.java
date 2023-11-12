@@ -362,10 +362,12 @@ public class ShowLogbookDialog extends BaseDialog implements IItemListener {
             text.setCaretPosition(Integer.MAX_VALUE);
             text.setLabelGrid(2, -1, -1);
             text.setNotNull(true);
+            text.setFieldGrid(3, GridBagConstraints.EAST, GridBagConstraints.NONE);
             long now = System.currentTimeMillis();
             ItemTypeStringAutoComplete from = new ItemTypeStringAutoComplete("FROM", "",
                     IItemType.TYPE_PUBLIC, "",
-                    International.getString("Dein Name"), false);
+                    International.getString("Dein Name"), true);
+
             from.setAutoCompleteData(new AutoCompleteList(Daten.project.getPersons(false).data(), now, now));
             from.setAlwaysReturnPlainText(true);
             from.setNotNull(true);

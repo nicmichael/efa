@@ -497,7 +497,13 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
         mypanel.setLayout(new BorderLayout());
 
         if (getDescription() != null) {
-            label = new RoundedLabel();
+            if (Daten.efaConfig.getHeaderUseHighlightColor()) {
+            	label = new RoundedLabel();            
+                label.setBorder(new RoundedBorder(this.color));
+            }else {
+            	label = new JLabel();
+            	label.setBorder(new EmptyBorder(4,0,4,0));//4 pixel space before and after the label
+            }
             Mnemonics.setLabel(dlg, label, getDescription() + ": ");
             label.setHorizontalAlignment(SwingConstants.CENTER);
             if (type == IItemType.TYPE_EXPERT) {
@@ -520,8 +526,6 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
             
             Dialog.setPreferredSize(label, fieldWidth, 20);
             
-            //label.setBorder(new EmptyBorder(4,0,4,0));//4 pixel space before and after the label
-            label.setBorder(new RoundedBorder(this.color));
         }
 
         list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);

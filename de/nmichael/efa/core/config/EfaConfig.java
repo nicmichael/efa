@@ -15,6 +15,7 @@ import de.nmichael.efa.ex.EfaException;
 import de.nmichael.efa.gui.BaseDialog;
 import de.nmichael.efa.gui.BaseTabbedDialog;
 import de.nmichael.efa.gui.ImagesAndIcons;
+import de.nmichael.efa.gui.util.RoundedBorder;
 import de.nmichael.efa.gui.widgets.IWidget;
 import de.nmichael.efa.gui.widgets.AlertWidget;
 import de.nmichael.efa.gui.widgets.Widget;
@@ -1616,6 +1617,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
     	//item.setImage(BaseDialog.getIcon(ImagesAndIcons.IMAGE_MENU_ABOUT));
     	item.setBackgroundColor(hintBackgroundColor);
     	item.setHorizontalAlignment(SwingConstants.LEFT);
+    	item.setRoundShape(false);
     	return item;
     }
     

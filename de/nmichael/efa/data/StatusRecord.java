@@ -21,7 +21,7 @@ import de.nmichael.efa.core.items.IItemListener;
 import de.nmichael.efa.core.items.IItemType;
 import de.nmichael.efa.core.items.ItemTypeBoolean;
 import de.nmichael.efa.core.items.ItemTypeInteger;
-import de.nmichael.efa.core.items.ItemTypeLabel;
+import de.nmichael.efa.core.items.ItemTypeLabelHeader;
 import de.nmichael.efa.core.items.ItemTypeString;
 import de.nmichael.efa.data.storage.DataKey;
 import de.nmichael.efa.data.storage.DataRecord;
@@ -235,15 +235,10 @@ public class StatusRecord extends DataRecord implements IItemListener {
         String CAT_BASEDATA     = "%01%" + International.getString("Status");
         IItemType item;
         Vector<IItemType> v = new Vector<IItemType>();
-        v.add(item = new ItemTypeLabel("LABEL", 
-                IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("Typ") + ": " + getTypeDescription()));
+        v.add(item = new ItemTypeLabelHeader("LABEL", 
+                IItemType.TYPE_PUBLIC, CAT_BASEDATA, " "+International.getString("Typ") + ": " + getTypeDescription()));
+        item.setFieldGrid(2,GridBagConstraints.EAST, GridBagConstraints.BOTH);
 
-        if (Daten.efaConfig.getHeaderUseHighlightColor()) {
-			item.setBackgroundColor(Daten.efaConfig.getHeaderBackgroundColor());
-			item.setColor(Daten.efaConfig.getHeaderForegroundColor());
-			item.setPadding(0,0,0,10);
-	        item.setFieldGrid(2,GridBagConstraints.EAST, GridBagConstraints.BOTH);
-		}
         
         v.add(item = new ItemTypeString(StatusRecord.NAME, getStatusName(),
                 IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("Status")));
