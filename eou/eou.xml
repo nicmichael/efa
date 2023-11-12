@@ -6,9 +6,12 @@
         <DownloadUrl>http://efa.nmichael.de/download/efa233.zip</DownloadUrl>
         <DownloadSize>TODO</DownloadSize>
         <Changes lang="de">
+			<ChangeItem>Neu: EfaFlatLight LookAndFeel hinzugefügt für eine klare, modernere Darstellung.</ChangeItem>
+			<ChangeItem>Neu: efaBths: Tabellen nutzen eine größere Schrift.</ChangeItem>
             <ChangeItem>Neu: EfaConfig: Neustrukturierung der Konfiguration mit Überschriften und Hinweisen zu einzelnen Konfigurationselementen.</ChangeItem>
             <ChangeItem>Neu: EfaConfig: Überschriftenfarbe kann auch für Registerkarten genutzt werden (Metal and WindowsClassic LookAndFeel).</ChangeItem>
             <ChangeItem>Neu: Vereinsarbeit-Dialog hat angepasste Tabellen-Spaltenbreiten, damit die Daten einfacher zu lesen sind.</ChangeItem>
+            <ChangeItem>Neu: About-Dialog: Anzeige der genutzten Bibliotheken und ihrer Lizenz.</ChangeItem>
             <ChangeItem>BugFix: EfaConfig: Scrollbar im Config-Fenster ist INNERHALB der Registerkarten - somit besser scrollbar</ChangeItem>
             <ChangeItem>BugFix: EfaConfig: Tastenbelegung für Bemerkungsfeld - Textfeld zur Eingabe freigeschaltet.</ChangeItem>
             <ChangeItem>BugFix: EfaConfig: MeteoAstro-Plugin weist in Konfiguration auf nicht mehr funktionierende Wetterabfrage hin.</ChangeItem>
@@ -24,8 +27,11 @@
             <ChangeItem>BugFix: efaCloud: Synchronisation in efaBase erlaubt Übernahme von Datensätzen mit vielen Änderungen.</ChangeItem>
         </Changes>
         <Changes lang="en">
+			<ChangeItem>New: EfaFlatLight LookAndFeel provides a clear, modern look of efa.</ChangeItem>
+			<ChangeItem>New: efaBths: Tables use a bigger font.</ChangeItem>
             <ChangeItem>New: EfaConfig: Restructuring of the configuration with headings and notes on individual configuration elements.</ChangeItem>
             <ChangeItem>New: EfaConfig: Heading colors can be used for highlighting tab headers (Metal and WindowsClassic LookAndFeel).</ChangeItem>
+            <ChangeItem>New: About dialog: list of used libraries and their licensing.</ChangeItem>
             <ChangeItem>New: Clubwork list dialog: applied custom column widths so that the data is easier to read.</ChangeItem>
             <ChangeItem>BugFix: EfaConfig: Key assignment for comment field - text field for values set to enabled.</ChangeItem>
             <ChangeItem>BugFix: EfaConfig: MeteoAstro plugin indicates in efaconfig that weather can no longer be displayed.</ChangeItem>
