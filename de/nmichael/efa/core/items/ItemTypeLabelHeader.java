@@ -1,15 +1,13 @@
 package de.nmichael.efa.core.items;
 
 import java.awt.Color;
-import java.awt.Window;
-import java.util.Vector;
 
 import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
+import javax.swing.border.Border;
 
 import de.nmichael.efa.Daten;
-import de.nmichael.efa.util.EfaUtil;
+import de.nmichael.efa.gui.util.RoundedBorder;
+import de.nmichael.efa.gui.util.RoundedLabel;
 
 /*
  * This is an ItemTypeLabel whose background and foreground color is set to the BoathouseHeaderBackgroudColor and BoathouseHeaderForegroundColor.
@@ -27,6 +25,7 @@ public class ItemTypeLabelHeader extends ItemTypeLabel {
 
 	public ItemTypeLabelHeader (String name, int type, String category, String description) {
 		super(name,type,category,description);
+		this.setRoundShape(true); // Headers always have round shape
     }	
 
     public IItemType copyOf() {
@@ -36,6 +35,7 @@ public class ItemTypeLabelHeader extends ItemTypeLabel {
         thisCopy.setColor(this.color);
         thisCopy.setPadding(padXbefore, padXafter, padYbefore, padYafter);
         thisCopy.setFieldGrid(fieldGridWidth, fieldGridHeight, fieldGridAnchor, fieldGridFill);
+        thisCopy.setRoundShape(true);
         return thisCopy;
 
     }	
@@ -47,5 +47,17 @@ public class ItemTypeLabelHeader extends ItemTypeLabel {
     public Color getColor() {
     	return Daten.efaConfig.getHeaderForegroundColor();
     }
+ 
+    protected boolean isBoldFont() {
+    	return true;
+    }
     
+    protected Border getBorder() {
+    	return new RoundedBorder(getColor());
+    }
+    
+    protected JLabel createLabel() {
+    	return new RoundedLabel();
+    }
+      
 }

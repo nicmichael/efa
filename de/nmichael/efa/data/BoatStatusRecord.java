@@ -318,15 +318,11 @@ public class BoatStatusRecord extends DataRecord {
         IItemType item;
         Vector<IItemType> v = new Vector<IItemType>();
 
-        v.add(item = new ItemTypeLabel("GUI_BOAT_NAME",
-                IItemType.TYPE_PUBLIC, CAT_STATUS, International.getMessage("Bootsstatus für {boat}", getBoatNameAsString(System.currentTimeMillis()))));
+        v.add(item = new ItemTypeLabelHeader("GUI_BOAT_NAME",
+                IItemType.TYPE_PUBLIC, CAT_STATUS, " "+International.getMessage("Bootsstatus für {boat}", getBoatNameAsString(System.currentTimeMillis()))));
         item.setPadding(0, 0, 0, 10);
 
-        if (Daten.efaConfig.getHeaderUseHighlightColor()) {
-			item.setBackgroundColor(Daten.efaConfig.getHeaderBackgroundColor());
-			item.setColor(Daten.efaConfig.getHeaderForegroundColor());
-	        item.setFieldGrid(2,GridBagConstraints.EAST, GridBagConstraints.BOTH);
-		}
+        item.setFieldGrid(2,GridBagConstraints.EAST, GridBagConstraints.BOTH);
         
         v.add(item = new ItemTypeString(BoatStatusRecord.BOATTEXT, getBoatText(),
                 IItemType.TYPE_EXPERT, CAT_STATUS,

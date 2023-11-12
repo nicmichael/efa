@@ -1,5 +1,10 @@
 package de.nmichael.efa.gui;
 
+import javax.swing.ImageIcon;
+
+import de.nmichael.efa.Daten;
+import de.nmichael.efa.util.Logger;
+
 public class ImagesAndIcons {
 	public static final String BIGIMAGE_CLOSEDOORS = "notification_closedoors.png";
 	public static final String BIGIMAGE_DARKNESS = "notification_darkness.png";
@@ -112,6 +117,22 @@ public class ImagesAndIcons {
 	public static final String IMAGE_MENU_UPDATE = "menu_update.png";
 	public static final String IMAGE_MENU_WATERS = "menu_waters.png";
 
-	
+    public static ImageIcon getIcon(String name) {
+        try {
+            if (name.indexOf("/") < 0) {
+                name = Daten.IMAGEPATH + name;
+            }
+            if (Logger.isTraceOn(Logger.TT_GUI, 9)) {
+                Logger.log(Logger.DEBUG, Logger.MSG_DEBUG_GUI_ICONS, "getIcon("+name+")");
+            }
+            return new ImageIcon(BaseDialog.class.getResource(name));
+        } catch(Exception e) {
+            if (Logger.isTraceOn(Logger.TT_GUI, 9)) {
+                Logger.log(Logger.DEBUG, Logger.MSG_DEBUG_GUI_ICONS, "getIcon("+name+"): no icon found!");
+            }
+            Logger.logdebug(e);
+            return null;
+        }
+    }
 
 }

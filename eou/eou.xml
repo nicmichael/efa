@@ -1,53 +1,77 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <efaOnlineUpdate>
-    <Version>
-        <VersionID>2.3.4</VersionID>
-        <ReleaseDate>TO.DO.2023</ReleaseDate>
+	<Version>
+        <VersionID>2.3.4_00</VersionID>
+        <ReleaseDate>TODO</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa233.zip</DownloadUrl>
-        <DownloadSize></DownloadSize>
+        <DownloadSize>TODO</DownloadSize>
         <Changes lang="de">
-            <ChangeItem>BugFix: Widgets multithreading-sicher: weniger Rendering-Exceptions im efa.log</ChangeItem>
-            <ChangeItem>BugFix: Teilbegriffsuche für Eingabefelder mit Vervollständigung suchen nun auf kompletter Liste</ChangeItem>
-            <ChangeItem>BugFix: Sortierung für Bootsliste, Personenliste, Vervollständigungs-Listen gehen besser mit europäischen Sonderzeichen um</ChangeItem>
-            <ChangeItem>Neu: Konfigurierbares Zeitintervall für automatisches Leeren von Filterfeldern in Bootshaus</ChangeItem>
-            <ChangeItem>Neu: Konfigurierbares automatisches Leeren von Filterfeldern nach den meisten Bootshaus-Aktionen</ChangeItem>            
-            <ChangeItem>Neu: Einfacheres Finden von Einträgen mit Umlauten/Sonderzeichen in Tabellen, Bootslisten, und Eingabefeldern mit Vervollständigung (konfigurierbar)</ChangeItem>
-            <ChangeItem>Neu: Bootsreservierungen: Ändern von Bootsnamen und Erstellen von Reservierungs-Kopien</ChangeItem>
             <ChangeItem>Neu: EfaConfig: Neustrukturierung der Konfiguration mit Überschriften und Hinweisen zu einzelnen Konfigurationselementen.</ChangeItem>
             <ChangeItem>Neu: EfaConfig: Überschriftenfarbe kann auch für Registerkarten genutzt werden (Metal and WindowsClassic LookAndFeel).</ChangeItem>
+            <ChangeItem>Neu: Vereinsarbeit-Dialog hat angepasste Tabellen-Spaltenbreiten, damit die Daten einfacher zu lesen sind.</ChangeItem>
             <ChangeItem>BugFix: EfaConfig: Scrollbar im Config-Fenster ist INNERHALB der Registerkarten - somit besser scrollbar</ChangeItem>
             <ChangeItem>BugFix: EfaConfig: Tastenbelegung für Bemerkungsfeld - Textfeld zur Eingabe freigeschaltet.</ChangeItem>
             <ChangeItem>BugFix: EfaConfig: MeteoAstro-Plugin weist in Konfiguration auf nicht mehr funktionierende Wetterabfrage hin.</ChangeItem>
             <ChangeItem>BugFix: EfaConfig: mehr Elemente weisen darauf hin, dass sie einen Neustart von efa benötigen.</ChangeItem>
             <ChangeItem>BugFix: Bootsreservierung: Bei Auswahl des Bootes wird der Knopf für die Auswahlliste angezeigt.</ChangeItem>
+            <ChangeItem>BugFix: Lesen von Nachrichten: im Textfeld kann nun Text mit der Maus markiert und mit STRG+C in die Zwischenablage übernommen werden.</ChangeItem>
             <ChangeItem>BugFix: WindowsLookAndFeel: Ist besser nutzbar geworden. Wie bei den anderen LookAndFeels werden Buttons mit Farbe gefüllt angezeigt, anstatt nur einen farbigen Rahmen zu haben.</ChangeItem>
+            <ChangeItem>BugFix: Überflüssige grafische Rahmen entfernt in efaBths und allen Dialogen.</ChangeItem>
             <ChangeItem>BugFix: MetoAstro-Plugin in Hauptbildschirm von efaBths zeigt eine Hand als Mauscursor an, wenn ein HTML-Popup konfiguriert wurde.</ChangeItem>
+            <ChangeItem>BugFix: Mehr Autovervollständigen-Felder in den Dialogen zeigen die Schaltfläche zum Aufruf des Auswahldialogs an.</ChangeItem>
             <ChangeItem>BugFix: Keine (versteckte) Exception mehr bei der Aktualisierung der Inhalte des HTML-Widgets.</ChangeItem>
             <ChangeItem>BugFix: Keine (versteckte) Exception mehr bei Initialisierung von efaBths wenn der Spezialbutton angezeigt wird. Spezialbutton zeigt nun das zugehörige Icon.</ChangeItem>              
-            <ChangeItem>BugFix: Der Dialog für die Auswahl unklar eingegebener Werte zeigt keine doppelten Einträge mehr an.</ChangeItem>      
             <ChangeItem>BugFix: efaCloud: Synchronisation in efaBase erlaubt Übernahme von Datensätzen mit vielen Änderungen.</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>New: EfaConfig: Restructuring of the configuration with headings and notes on individual configuration elements.</ChangeItem>
+            <ChangeItem>New: EfaConfig: Heading colors can be used for highlighting tab headers (Metal and WindowsClassic LookAndFeel).</ChangeItem>
+            <ChangeItem>New: Clubwork list dialog: applied custom column widths so that the data is easier to read.</ChangeItem>
+            <ChangeItem>BugFix: EfaConfig: Key assignment for comment field - text field for values set to enabled.</ChangeItem>
+            <ChangeItem>BugFix: EfaConfig: MeteoAstro plugin indicates in efaconfig that weather can no longer be displayed.</ChangeItem>
+            <ChangeItem>BugFix: EfaConfig: Scrollable in the config window is INSIDE the tabs - making it easier to scroll</ChangeItem>
+            <ChangeItem>BugFix: EfaConfig: More items indicate that they need a restart of efa.</ChangeItem>
+            <ChangeItem>BugFix: Boat reservation: When selecting the boat, the selection list button is displayed.</ChangeItem>
+			<ChangeItem>BugFix: Displaying messages for admin: User can now select text in textarea and copy it to clipboard (CTRL+C).</ChangeItem>
+            <ChangeItem>BugFix: WindowsLookAndFeel: Is more usable for efa. As in all other LookAndFeels, the buttons get displayed filled with color, instead of just having a colored border.</ChangeItem>
+            <ChangeItem>BugFix: Removed unneccesary borders in efaBths and all dialogs.</ChangeItem>
+            <ChangeItem>BugFix: Some more autocomplete-fields show the button to display the autocomplete list.</ChangeItem>
+            <ChangeItem>BugFix: MetoAstro plugin in efaBths main screen shows a hand as a mouse cursor if an HTML popup has been configured.</ChangeItem>
+            <ChangeItem>BugFix: No (hidden) exception in debug mode in HTMLWidget updating process</ChangeItem>
+            <ChangeItem>BugFix: No (hidden) exception during initialisation of efaBths if the special button is displayed. Special button now has the according icon.</ChangeItem>              
+            <ChangeItem>BugFix: No more duplicates in the spellchecking dialogue (which comes up when a item with a lookup list has not fully been set by the user).</ChangeItem>
+        </Changes>
+	</Version>
+    <Version>
+        <VersionID>2.3.3_01</VersionID>
+        <ReleaseDate>05.11.2023</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa233.zip</DownloadUrl>
+        <DownloadSize>4545206</DownloadSize>
+        <Changes lang="de">
+            <ChangeItem>BugFix: Widgets multithreading-sicher: weniger Rendering-Exceptions im efa.log</ChangeItem>
+            <ChangeItem>BugFix: Teilbegriffsuche für Eingabefelder mit Vervollständigung suchen nun auf kompletter Liste</ChangeItem>
+            <ChangeItem>BugFix: Sortierung für Bootsliste, Personenliste, Vervollständigungs-Listen gehen besser mit europäischen Sonderzeichen um</ChangeItem>
+            <ChangeItem>Neu: Konfigurationsseiten für efaBootshaus (Allgemein, Erscheinungsbild) reorganisiert für bessere Auffindbarkeit von Eigenschaften</ChangeItem>
+            <ChangeItem>Neu: Konfigurierbares Zeitintervall für automatisches Leeren von Filterfeldern in Bootshaus</ChangeItem>
+            <ChangeItem>Neu: Konfigurierbares automatisches Leeren von Filterfeldern nach den meisten Bootshaus-Aktionen</ChangeItem>            
+            <ChangeItem>Neu: Einfacheres Finden von Einträgen mit Umlauten/Sonderzeichen in Tabellen, Bootslisten, und Eingabefeldern mit Vervollständigung (konfigurierbar)</ChangeItem>
+            <ChangeItem>BugFix: Mehr Konfigurationselemente, die einen Neustart von EFA benötigen, melden dieses beim Speichern der Konfigurationsdaten.</ChangeItem>
+            <ChangeItem>BugFix: Der Dialog für die Auswahl unklar eingegebener Werte zeigt keine doppelten Einträge mehr an.</ChangeItem>      
+            <ChangeItem>Neu: Bootsreservierungen: Ändern von Bootsnamen und Erstellen von Reservierungs-Kopien</ChangeItem>
+			<ChangeItem>BugFix: efaCloud: Synchronisation in efaBase erlaubt Übernahme von Datensätzen mit vielen Änderungen.</ChangeItem>
         </Changes>
         <Changes lang="en">
             <ChangeItem>BugFix: Widgets are safe for multithreading: Less exceptions for rendering in efa.log</ChangeItem>
             <ChangeItem>BugFix: Autocomplete lists: Filter by partial contents now consideres complete list</ChangeItem>
             <ChangeItem>BugFix: Sorting of boat lists, person lists, autocomplete-lists works better with european special characters like umlauts</ChangeItem>
+            <ChangeItem>New: Reorganisation of efaBoathouse configuration items (common, appearance) so the items can be found more easily</ChangeItem>
             <ChangeItem>New: Automatic clearing of boathouse filter fields: configurable interval</ChangeItem>
             <ChangeItem>New: Automatic clearing of boathouse filter fields: after most actions in efaBths (configurable)</ChangeItem>
             <ChangeItem>New: Items with umlauts/special characters are easier to find when searching in tables, boat lists and autocomplete lists (configurable)</ChangeItem>
-            <ChangeItem>New: EfaConfig: Restructuring of the configuration with headings and notes on individual configuration elements.</ChangeItem>
-            <ChangeItem>New: EfaConfig: Heading colors can be used for highlighting tab headers (Metal and WindowsClassic LookAndFeel).</ChangeItem>
-            <ChangeItem>New: Boat reservations: Boat can be changed after saving, and also copies of boat reservations can be created.</ChangeItem>      
-            <ChangeItem>BugFix: Boat reservation: When selecting the boat, the selection list button is displayed.</ChangeItem>
-            <ChangeItem>BugFix: EfaConfig: Key assignment for comment field - text field for values set to enabled.</ChangeItem>
-            <ChangeItem>BugFix: EfaConfig: MeteoAstro plugin indicates in efaconfig that weather can no longer be displayed.</ChangeItem>
-            <ChangeItem>BugFix: EfaConfig: Scrollable in the config window is INSIDE the tabs - making it easier to scroll</ChangeItem>
-            <ChangeItem>BugFix: EfaConfig: More items indicate that they need a restart of efa.</ChangeItem>
-            <ChangeItem>BugFix: MetoAstro plugin in efaBths main screen shows a hand as a mouse cursor if an HTML popup has been configured.</ChangeItem>
-            <ChangeItem>BugFix: WindowsLookAndFeel: Is more usable for efa. As in all other LookAndFeels, the buttons get displayed filled with color, instead of just having a colored border.</ChangeItem>
-            <ChangeItem>BugFix: No (hidden) exception in debug mode in HTMLWidget updating process</ChangeItem>
-            <ChangeItem>BugFix: No (hidden) exception during initialisation of efaBths if the special button is displayed. Special button now has the according icon.</ChangeItem>              
+            <ChangeItem>BugFix: Some more configuration elements requiring a restart of efaBths to activate produce a corresponding message when saving configuration changes.</ChangeItem>
             <ChangeItem>BugFix: No more duplicates in the spellchecking dialogue (which comes up when a item with a lookup list has not fully been set by the user).</ChangeItem>
-			<ChangeItem>BugFix: efaCloud: Synchronisation in efaBase allows download of records with many changes.</ChangeItem>
+            <ChangeItem>New: Boat reservations: Boat can be changed after saving, and also copies of boat reservations can be created.</ChangeItem>
+  			<ChangeItem>BugFix: efaCloud: Synchronisation in efaBase allows download of records with many changes.</ChangeItem>
         </Changes>
     </Version>
     <Version>
@@ -58,7 +82,7 @@
         <Changes lang="de">
             <ChangeItem>Neu: efa 2.3.3 erfordert mindestens Java Version 8</ChangeItem>
             <ChangeItem>Neu: Bootsreservierungen (sowohl einmalige als auch wöchentliche) lassen sich jetzt nach Datum filtern</ChangeItem>
-  			    <ChangeItem>Neu: Kanu-EFB Synchronisation überarbeitet mit mehr Konfigurationsparametern</ChangeItem>
+		    <ChangeItem>Neu: Kanu-EFB Synchronisation überarbeitet mit mehr Konfigurationsparametern</ChangeItem>
             <ChangeItem>Neu: Bootshaus mit zweispaltiger Listendarstellung (deaktivierbar)</ChangeItem>
             <ChangeItem>Neu: Bootshaus zeigt heutige Bootsreservierungen an (deaktivierbar)</ChangeItem>
             <ChangeItem>Neu: Bootshaus mit Tooltipps für Einträge (deaktivierbar)</ChangeItem>

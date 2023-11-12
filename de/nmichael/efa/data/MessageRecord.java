@@ -17,7 +17,11 @@ import de.nmichael.efa.data.storage.*;
 import de.nmichael.efa.data.types.*;
 import de.nmichael.efa.gui.util.*;
 import de.nmichael.efa.util.*;
+
+import java.awt.GridBagConstraints;
 import java.util.*;
+
+import javax.swing.SwingConstants;
 
 // @i18n complete
 
@@ -179,6 +183,8 @@ public class MessageRecord extends DataRecord {
         v.add(item = new ItemTypeDateTime(DATE+TIME, getDate(), getTime(),
                 IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("Datum")));
         item.setEditable(false);
+        item.setEnabled(false);
+
 
         v.add(item = new ItemTypeStringList(TO, getTo(),
                 new String[] { TO_ADMIN, TO_BOATMAINTENANCE },
@@ -192,10 +198,11 @@ public class MessageRecord extends DataRecord {
 
         v.add(item = new ItemTypeStringAutoComplete(FROM, getFrom(),
                 IItemType.TYPE_PUBLIC, CAT_BASEDATA,
-                International.getString("Von"), false));
+                International.getString("Von"), true));
         ((ItemTypeStringAutoComplete)item).setAutoCompleteData(new AutoCompleteList(Daten.project.getPersons(false).data(), now, now));
         ((ItemTypeStringAutoComplete)item).setAlwaysReturnPlainText(true);
         item.setEditable(newMsg);
+        item.setEnabled(newMsg);
         item.setNotNull(true);
 
         if (!newMsg && getReplyTo() != null && getReplyTo().length() > 0) {
@@ -203,12 +210,14 @@ public class MessageRecord extends DataRecord {
                     IItemType.TYPE_PUBLIC, CAT_BASEDATA,
                     International.getString("Antwort an")));
             item.setEditable(false);
+            item.setEnabled(newMsg);
         }
 
         v.add(item = new ItemTypeString(SUBJECT, getSubject(),
                 IItemType.TYPE_PUBLIC, CAT_BASEDATA,
                 International.getString("Betreff")));
         item.setEditable(newMsg);
+        item.setEnabled(newMsg);
         item.setNotNull(true);
 
         if (!newMsg && forceNewMsg) {
@@ -220,9 +229,11 @@ public class MessageRecord extends DataRecord {
         v.add(item = new ItemTypeTextArea(TEXT, getText(),
                 IItemType.TYPE_PUBLIC, CAT_BASEDATA,
                 International.getString("Nachricht")));
+        item.setEnabled(true);// intentionally. if we set this to enabled=false, we could not select/copy data from the textarea.
         item.setEditable(newMsg);
         ((ItemTypeTextArea)item).setWrap(true);
         item.setNotNull(newMsg && true);
+        item.setFieldGrid(3, GridBagConstraints.EAST, GridBagConstraints.NONE);
 
         return v;
     }

@@ -72,7 +72,7 @@ public class ItemTypeTextArea extends ItemType {
             ((JTextArea) field).setWrapStyleWord(true);
             ((JTextArea) field).setLineWrap(true);
         }
-        field.setEnabled(isEnabled && isEditable);
+        field.setEnabled(isEnabled /*&& isEditable*/);
         scrollPane.getViewport().add(field, null);        
         if (backgroundColor != null) {
             field.setBackground(backgroundColor);

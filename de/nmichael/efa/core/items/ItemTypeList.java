@@ -33,6 +33,7 @@ import java.util.Vector;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -51,13 +52,16 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import de.nmichael.efa.Daten;	
+import de.nmichael.efa.Daten;
 import de.nmichael.efa.gui.BaseDialog;
 import de.nmichael.efa.gui.util.EfaMouseListener;
+import de.nmichael.efa.gui.util.RoundedBorder;
+import de.nmichael.efa.gui.util.RoundedLabel;
 import de.nmichael.efa.util.Dialog;
 import de.nmichael.efa.util.EfaUtil;
 import de.nmichael.efa.util.Logger;
 import de.nmichael.efa.util.Mnemonics;
+import de.nmichael.efa.gui.ImagesAndIcons;
 
 public class ItemTypeList extends ItemType implements ActionListener, DocumentListener, KeyListener {
 
@@ -493,7 +497,13 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
         mypanel.setLayout(new BorderLayout());
 
         if (getDescription() != null) {
-            label = new JLabel();
+            if (Daten.efaConfig.getHeaderUseHighlightColor()) {
+            	label = new RoundedLabel();            
+                label.setBorder(new RoundedBorder(this.color));
+            }else {
+            	label = new JLabel();
+            	label.setBorder(new EmptyBorder(4,0,4,0));//4 pixel space before and after the label
+            }
             Mnemonics.setLabel(dlg, label, getDescription() + ": ");
             label.setHorizontalAlignment(SwingConstants.CENTER);
             if (type == IItemType.TYPE_EXPERT) {
@@ -516,7 +526,7 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
             
             Dialog.setPreferredSize(label, fieldWidth, 20);
             
-            label.setBorder(new EmptyBorder(4,0,4,0));//4 pixel space before and after the label
+
         }
 
         list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -526,6 +536,7 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
             menuItem.setActionCommand(EfaMouseListener.EVENT_POPUP_CLICKED + "_" + actions[i].substring(0, 1));
             menuItem.addActionListener(this);
             popup.add(menuItem);
+            menuItem.setIcon(getIconFromActionID(actions[i].substring(0, 1)));
         }
         // KeyListeners entfernen, damit unter Java 1.4.x nicht automatisch gescrollt wird, sondern durch den eigenen Algorithmus
         try {
@@ -611,6 +622,16 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
         return mypanel;
     }
 
+    private Icon getIconFromActionID(String actionID) {
+    	if (actionID.equals("1")) return ImagesAndIcons.getIcon(ImagesAndIcons.IMAGE_ACTION_START_SESSION);
+    	if (actionID.equals("2")) return ImagesAndIcons.getIcon(ImagesAndIcons.IMAGE_ACTION_FINISH_SESSION);	
+    	if (actionID.equals("3")) return ImagesAndIcons.getIcon(ImagesAndIcons.IMAGE_ACTION_LATE_ENTRY);
+    	if (actionID.equals("5")) return ImagesAndIcons.getIcon(ImagesAndIcons.IMAGE_ACTION_ABORT_SESSION);
+    	if (actionID.equals("6")) return ImagesAndIcons.getIcon(ImagesAndIcons.IMAGE_ACTION_BOAT_RESERVATIONS);
+    	
+    	return null;
+    }
+    
     public void actionPerformed(ActionEvent e) {
         if (listener != null) {
             listener.itemListenerAction(this, e);

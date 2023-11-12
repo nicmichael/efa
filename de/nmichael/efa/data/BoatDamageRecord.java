@@ -20,7 +20,7 @@ import de.nmichael.efa.core.items.IItemType;
 import de.nmichael.efa.core.items.ItemTypeBoolean;
 import de.nmichael.efa.core.items.ItemTypeDateTime;
 import de.nmichael.efa.core.items.ItemTypeDecimal;
-import de.nmichael.efa.core.items.ItemTypeLabel;
+import de.nmichael.efa.core.items.ItemTypeLabelHeader;
 import de.nmichael.efa.core.items.ItemTypeString;
 import de.nmichael.efa.core.items.ItemTypeStringAutoComplete;
 import de.nmichael.efa.core.items.ItemTypeStringList;
@@ -402,17 +402,15 @@ public class BoatDamageRecord extends DataRecord {
         String CAT_DETAILS      = "%02%" + International.getString("Details");
         IItemType item;
         Vector<IItemType> v = new Vector<IItemType>();
-        v.add(item = new ItemTypeLabel("GUI_BOAT_NAME",
-                IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getMessage("Bootsschaden für {boat}", getBoatAsName())));
+        v.add(item = new ItemTypeLabelHeader("GUI_BOAT_NAME",
+                IItemType.TYPE_PUBLIC, CAT_BASEDATA, " "+International.getMessage("Bootsschaden für {boat}", getBoatAsName())));
         item.setPadding(0, 0, 0, 10);
-        if (Daten.efaConfig.getHeaderUseHighlightColor()) {
-			item.setBackgroundColor(Daten.efaConfig.getHeaderBackgroundColor());
-			item.setColor(Daten.efaConfig.getHeaderForegroundColor());
-	        item.setFieldGrid(2,GridBagConstraints.EAST, GridBagConstraints.BOTH);
-		}                
+        item.setFieldGrid(4,GridBagConstraints.EAST, GridBagConstraints.BOTH);
+
         v.add(item = new ItemTypeString(BoatDamageRecord.DESCRIPTION, getDescription(),
                 IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("Beschreibung")));
         item.setNotNull(true);
+        item.setFieldGrid(3,GridBagConstraints.EAST, GridBagConstraints.BOTH);
         v.add(item = new ItemTypeStringList(SEVERITY, getSeverity(),
                 new String[] { "", SEVERITY_NOTUSEABLE, SEVERITY_LIMITEDUSEABLE, SEVERITY_FULLYUSEABLE },
                 new String[] { "--- " + International.getString("bitte wählen") + " ---",
@@ -423,8 +421,10 @@ public class BoatDamageRecord extends DataRecord {
                 IItemType.TYPE_PUBLIC, CAT_BASEDATA,
                 International.getString("Schwere des Schadens")));
         item.setNotNull(true);
+        item.setFieldGrid(3,GridBagConstraints.EAST, GridBagConstraints.BOTH);
         v.add(item = new ItemTypeDateTime(GUIITEM_REPORTDATETIME, getReportDate(), getReportTime(),
                 IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("gemeldet am")));
+        item.setFieldGrid(3,GridBagConstraints.EAST, GridBagConstraints.BOTH);
         if (showOnlyAddDamageFields) {
             item.setEnabled(false);
         }
@@ -432,6 +432,7 @@ public class BoatDamageRecord extends DataRecord {
                     IItemType.TYPE_PUBLIC, CAT_BASEDATA,
                     getPersistence().getProject().getPersons(false), System.currentTimeMillis(), System.currentTimeMillis(),
                     International.getString("gemeldet von")));
+
         if (getReportedByPersonId() != null) {
             ((ItemTypeStringAutoComplete)item).setId(getReportedByPersonId());
         } else {
