@@ -51,9 +51,11 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import de.nmichael.efa.Daten;	
+import de.nmichael.efa.Daten;
 import de.nmichael.efa.gui.BaseDialog;
 import de.nmichael.efa.gui.util.EfaMouseListener;
+import de.nmichael.efa.gui.util.RoundedBorder;
+import de.nmichael.efa.gui.util.RoundedLabel;
 import de.nmichael.efa.util.Dialog;
 import de.nmichael.efa.util.EfaUtil;
 import de.nmichael.efa.util.Logger;
@@ -493,7 +495,7 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
         mypanel.setLayout(new BorderLayout());
 
         if (getDescription() != null) {
-            label = new JLabel();
+            label = new RoundedLabel();
             Mnemonics.setLabel(dlg, label, getDescription() + ": ");
             label.setHorizontalAlignment(SwingConstants.CENTER);
             if (type == IItemType.TYPE_EXPERT) {
@@ -516,7 +518,8 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
             
             Dialog.setPreferredSize(label, fieldWidth, 20);
             
-            label.setBorder(new EmptyBorder(4,0,4,0));//4 pixel space before and after the label
+            //label.setBorder(new EmptyBorder(4,0,4,0));//4 pixel space before and after the label
+            label.setBorder(new RoundedBorder(this.color));
         }
 
         list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);

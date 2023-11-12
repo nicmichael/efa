@@ -181,7 +181,11 @@ public abstract class BaseFrame extends JFrame implements ActionListener {
         mainScrollPane.setPreferredSize(Dialog.getMaxSize(dim));
 
         mainScrollPane.getViewport().add(mainPanel, null);
-        mainScrollPane.setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
+        int borderSize=4;
+        if (Daten.efaConfig.getValueEfaDirekt_startMaximized()) {
+        	borderSize=0;
+        }
+        mainScrollPane.setBorder(BorderFactory.createEmptyBorder(borderSize,borderSize,borderSize,borderSize));
     }
 
     //protected abstract void iniDialog() throws Exception;

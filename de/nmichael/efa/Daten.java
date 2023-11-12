@@ -57,12 +57,14 @@ import de.nmichael.efa.data.types.DataTypeDate;
 import de.nmichael.efa.gui.BrowserDialog;
 import de.nmichael.efa.gui.EfaFirstSetupDialog;
 import de.nmichael.efa.gui.SimpleInputDialog;
+import de.nmichael.efa.gui.util.EfaOceanTheme;
 import de.nmichael.efa.util.Dialog;
 import de.nmichael.efa.util.EfaUtil;
 import de.nmichael.efa.util.HtmlFactory;
 import de.nmichael.efa.util.International;
 import de.nmichael.efa.util.LogString;
 import de.nmichael.efa.util.Logger;
+import sun.awt.AppContext;
 
 // @i18n complete
 public class Daten {
@@ -1027,14 +1029,16 @@ public class Daten {
         // Look&Feel
         if (Daten.efaConfig != null) { // is null for applDRV
             try {
+            	FlatLaf.registerCustomDefaultsSource( "de.nmichael.efa.themes" );
+            	System.setProperty( "flatlaf.useNativeLibrary", "false" );
+            	System.setProperty( "flatlaf.animation", "false" );
+            	System.setProperty( "flatlaf.useWindowDecorations" , "false" );
+            	System.setProperty( "flatlaf.menuBarEmbedded", "false" );
+                AppContext.getAppContext().put( "currentMetalTheme", new EfaOceanTheme());
+                
                 if (Daten.efaConfig.getValueLookAndFeel().length() == 0) {
                     UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
                 } else {
-                	FlatLaf.registerCustomDefaultsSource( "de.nmichael.efa.themes" );
-                	System.setProperty( "flatlaf.useNativeLibrary", "false" );
-                	System.setProperty( "flatlaf.animation", "false" );
-                	System.setProperty( "flatlaf.useWindowDecorations" , "false" );
-                	System.setProperty( "flatlaf.menuBarEmbedded", "false" );
                 	UIManager.setLookAndFeel(Daten.efaConfig.getValueLookAndFeel());
                 }
             } catch (Exception e) {

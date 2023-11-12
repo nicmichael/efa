@@ -10,11 +10,22 @@
 
 package de.nmichael.efa.core.items;
 
-import de.nmichael.efa.util.*;
-import java.util.Vector;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
+import java.awt.Window;
 import java.awt.event.MouseEvent;
-import javax.swing.*;
+import java.util.Vector;
+
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+import javax.swing.UIManager;
+import javax.swing.border.Border;
+
+import de.nmichael.efa.util.EfaUtil;
 
 public class ItemTypeLabel extends ItemType {
 
@@ -69,7 +80,8 @@ public class ItemTypeLabel extends ItemType {
         }
         labels = new JLabel[v.size()];
         for (int i=0; i<v.size(); i++) {
-            JLabel l = new JLabel();
+            JLabel l = createLabel();
+            
             l.setText((String)v.get(i));
             if (i == 0 && icon != null) {
                 l.setHorizontalAlignment(SwingConstants.CENTER);
@@ -93,6 +105,7 @@ public class ItemTypeLabel extends ItemType {
             }
 
             l.setVisible(isVisible);
+            l.setBorder(this.getBorder());
             labels[i] = l;
         }
         if (mouseClickListener) {
@@ -100,6 +113,10 @@ public class ItemTypeLabel extends ItemType {
         }
     }
 
+    protected JLabel createLabel() {
+    	return new JLabel();
+    }
+    
     public int displayOnGui(Window dlg, JPanel panel, int x, int y) {
         this.dlg = dlg;
         iniDisplay();
@@ -153,6 +170,10 @@ public class ItemTypeLabel extends ItemType {
     protected boolean isBoldFont() {
     	return false;
     }
+    
+    protected Border getBorder() {
+    	return null;
+    }
 
     public void setImage(ImageIcon icon) {
         this.icon = icon;
@@ -204,5 +225,7 @@ public class ItemTypeLabel extends ItemType {
         } catch (Exception eignore) {
         }
     }
+   
+
 
 }
