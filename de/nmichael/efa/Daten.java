@@ -1214,6 +1214,8 @@ public class Daten {
         // efa-Infos
         if (efaInfos) {
             infos.add("efa.version=" + Daten.VERSIONID);
+            infos.add("efa.version.extended=" + Daten.VERSION);
+            infos.add("efa.releaseDate="+Daten.VERSIONRELEASEDATE);
             if (EFALIVE_VERSION != null && EFALIVE_VERSION.length() > 0) {
                 infos.add("efalive.version=" + Daten.EFALIVE_VERSION);
             }

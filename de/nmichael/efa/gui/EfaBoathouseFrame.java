@@ -804,6 +804,8 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
             button.setIconTextGap(10);
             button.setHorizontalAlignment(SwingConstants.LEFT);
         }
+        //Always use bold font for Buttons.
+        button.setFont(button.getFont().deriveFont(Font.BOLD));
     }
 
     private void updateGuiButtonLAF() {

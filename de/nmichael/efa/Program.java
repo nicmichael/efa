@@ -25,7 +25,7 @@ public class Program {
 
     public Program(int applId, String[] args) {
         Daten.program = this;
-        UIManager.installLookAndFeel("FlatLafLightIntelliJ", "com.formdev.flatlaf.FlatIntelliJLaf");
+        UIManager.installLookAndFeel("efaFlatLaf", "de.nmichael.efa.themes.EfaFlatLightLookAndFeel");
         UIManager.installLookAndFeel("FlatLafLightMac", "com.formdev.flatlaf.themes.FlatMacLightLaf");
         UIManager.installLookAndFeel("FlatLafDarkMac", "com.formdev.flatlaf.themes.FlatMacDarkLaf");
         
