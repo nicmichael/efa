@@ -1034,7 +1034,7 @@ public class Daten {
             	System.setProperty( "flatlaf.animation", "false" );
             	System.setProperty( "flatlaf.useWindowDecorations" , "false" );
             	System.setProperty( "flatlaf.menuBarEmbedded", "false" );
-                AppContext.getAppContext().put( "currentMetalTheme", new EfaOceanTheme());
+                //AppContext.getAppContext().put( "currentMetalTheme", new EfaOceanTheme());
                 
                 if (Daten.efaConfig.getValueLookAndFeel().length() == 0) {
                     UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
