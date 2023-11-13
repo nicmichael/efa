@@ -41,6 +41,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
     public static final int MODE_ADMIN = 7;
     public static final int MODE_ADMIN_SESSIONS = 8;
     private int mode;
+    private static final int VERTICAL_PADDING_GROUPS=30;
 
     // =========================================================================
     // GUI Elements
@@ -583,8 +584,10 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         cox.setAutoCompleteData(autoCompleteListPersons, true);
         cox.setChecks(true, true);
         cox.setBackgroundColorWhenFocused(Daten.efaConfig.getValueEfaDirekt_colorizeInputField() ? Color.yellow : null);
+        cox.setPadding(0, 0, VERTICAL_PADDING_GROUPS, 0);
         cox.displayOnGui(this, mainInputPanel, 0, 4);
         cox.registerItemListener(this);
+
 
         // Crew
         crew = new ItemTypeStringAutoComplete[LogbookRecord.CREW_MAX];
@@ -614,6 +617,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         boatcaptain.setLabelGrid(1, GridBagConstraints.EAST, GridBagConstraints.NONE);
         boatcaptain.setFieldGrid(2, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL);
         boatcaptain.setBackgroundColorWhenFocused(Daten.efaConfig.getValueEfaDirekt_colorizeInputField() ? Color.yellow : null);
+        boatcaptain.setPadding(0, 0, VERTICAL_PADDING_GROUPS, 0);        
         boatcaptain.displayOnGui(this, mainInputPanel, 5, 4);
         boatcaptain.registerItemListener(this);
         if (isModeBoathouse()) {
@@ -627,8 +631,10 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         starttime.setFieldGrid(2, GridBagConstraints.WEST, GridBagConstraints.NONE);
         starttime.enableSeconds(false);
         starttime.setBackgroundColorWhenFocused(Daten.efaConfig.getValueEfaDirekt_colorizeInputField() ? Color.yellow : null);
+        starttime.setPadding(0, 0, VERTICAL_PADDING_GROUPS, 0);
         starttime.displayOnGui(this, mainInputPanel, 0, 9);
         starttime.registerItemListener(this);
+
 
         // EndTime
         endtime = new ItemTypeTime(LogbookRecord.ENDTIME, new DataTypeTime(), IItemType.TYPE_PUBLIC, null, International.getStringWithMnemonic("Ankunft"));
@@ -703,6 +709,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         comments.setLabelGrid(1, GridBagConstraints.EAST, GridBagConstraints.NONE);
         comments.setFieldGrid(7, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL);
         comments.setBackgroundColorWhenFocused(Daten.efaConfig.getValueEfaDirekt_colorizeInputField() ? Color.yellow : null);
+        comments.setPadding(0, 0, VERTICAL_PADDING_GROUPS, 0);
         comments.displayOnGui(this, mainInputPanel, 0, 15);
         comments.registerItemListener(this);
 
