@@ -1,10 +1,13 @@
 package de.nmichael.efa.gui.util;
 
+
 import java.awt.Component;
 import java.awt.Font;
 
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
+
+import de.nmichael.efa.Daten;
 
 public class TableHeaderCellRendererBold  extends DefaultTableCellRenderer{
 
@@ -17,8 +20,10 @@ public class TableHeaderCellRendererBold  extends DefaultTableCellRenderer{
 	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
 			int row, int column) {
 		Component comp = original.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+
 		comp.setFont(comp.getFont().deriveFont(Font.BOLD));
-		comp.setBackground(new java.awt.Color(181, 206, 226));
+		comp.setBackground(this.getBackground());
+		comp.setForeground(this.getForeground());
 		return comp;
 	}
 

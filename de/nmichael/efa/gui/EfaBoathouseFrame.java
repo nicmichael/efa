@@ -88,7 +88,6 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.*;
-import javax.swing.plaf.metal.MetalLookAndFeel;
 import java.util.*;
 import java.io.*;
 import de.nmichael.efa.util.EfaUtil;
@@ -430,16 +429,10 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
                 mainPanel.setBackground(bgColor);
                 mainPanel.setBorder(b);
 
-            /*    UIManager.put("MenuBar.background","#0000AA");
-                UIManager.put("MenuBar.foreground","#FFFFFF");
-              */  
                 JMenuBar menuBar = new JMenuBar();
                 menuBar.setLayout(new BorderLayout());
                 menuBar.setBackground(bgColor);
                 menuBar.setForeground(Color.white);
-                
-                //hack for efaFlatLaf
-                
                 
                 JLabel efaLabel = new JLabel();
                 efaLabel.setIcon(getIcon(ImagesAndIcons.IMAGE_EFA_ICON_SMALL ));
@@ -621,6 +614,10 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
 	        boatsOnTheWaterList.setBackgroundColor(null);
 	        boatsNotAvailableList.setBackgroundColor(null);
 		}
+		boatsAvailableList.updateSeparatorColorFromEfaConfig();
+		personsAvailableList.updateSeparatorColorFromEfaConfig();
+		boatsNotAvailableList.updateSeparatorColorFromEfaConfig();
+		boatsOnTheWaterList.updateSeparatorColorFromEfaConfig();
 	}
 	
 	private void iniGuiTooltipDelays() {        

@@ -80,7 +80,8 @@ public abstract class ItemTypeLabelTextfield extends ItemTypeLabelValue {
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
         try {
-            if (field != null && Daten.lookAndFeel.endsWith("MetalLookAndFeel")) {
+            if (field != null && Daten.lookAndFeel.endsWith(Daten.LAF_METAL)) {
+            	//Disabled text fields should be better distinguishable in METAL LAF
                 ((JTextField) field).setDisabledTextColor(Color.darkGray);
                 ((JTextField) field).setBackground((enabled ? (new JTextField()).getBackground() : new Color(234, 234, 234)));
             }

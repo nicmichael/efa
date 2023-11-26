@@ -581,7 +581,7 @@ public class Dialog {
     public static UIDefaults getUiDefaults() {
         try {
             String laf = UIManager.getLookAndFeel().getClass().getCanonicalName();
-            if (laf.endsWith("NimbusLookAndFeel")) {
+            if (laf.endsWith(Daten.LAF_NIMBUS)) {
                 return UIManager.getLookAndFeelDefaults();
             } else {
                 return UIManager.getDefaults();
@@ -642,16 +642,17 @@ public class Dialog {
 
 		} else {
 			Object s = UIManager.get("defaultFont");
-			
 			UIManager.put("defaultFont", new FontUIResource("Dialog",style,size));
 			s = UIManager.get("defaultFont");
-			
 		}
-		UIManager.put("Table.font", new FontUIResource("Dialog",Font.PLAIN,Math.max(12, size-3)));
-		UIManager.put("TableHeader.font", new FontUIResource("Dialog",Font.BOLD,Math.max(12, size-3)));
 	    
 		initializeMaxDialogSizes();
 
+    }
+    
+    public static void setGlobalTableFontSize(int size) {
+		UIManager.put("Table.font", new FontUIResource("Dialog",Font.PLAIN,Math.max(8, Math.min(18, size))));
+		UIManager.put("TableHeader.font", new FontUIResource("Dialog",Font.BOLD,Math.max(8, Math.min(18, size))));
     }
 
     public static void setGlobalFontSize(int size, String style) {

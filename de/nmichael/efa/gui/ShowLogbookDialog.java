@@ -235,7 +235,12 @@ public class ShowLogbookDialog extends BaseDialog implements IItemListener {
         
         // Update for standard tables: Replace default header renderer with bold+dark background renderer 
         javax.swing.table.TableCellRenderer l_originalRenderer = table.getTableHeader().getDefaultRenderer();
-        table.getTableHeader().setDefaultRenderer(new TableHeaderCellRendererBold(l_originalRenderer));
+
+
+        TableHeaderCellRendererBold r = new TableHeaderCellRendererBold(l_originalRenderer);
+        r.setBackground(Daten.efaConfig.getTableHeaderBackgroundColor());
+        r.setForeground(Daten.efaConfig.getTableHeaderHeaderColor());
+        table.getTableHeader().setDefaultRenderer(r);
         
         updateNestedTableHeight();
         sorter.addMouseListenerToHeaderInTable(table);

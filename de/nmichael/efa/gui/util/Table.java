@@ -58,13 +58,18 @@ public class Table extends JTable {
 
         if (renderer == null) {
             renderer = new TableCellRenderer();
+            renderer.setAlternatingRowColor(Daten.efaConfig.getTableAlternatingRowColor());
         }
         setDefaultRenderer(Object.class, renderer);
         
         // Update for standard tables: Replace default header renderer with bold+dark background renderer 
         javax.swing.table.TableCellRenderer l_originalRenderer = this.getTableHeader().getDefaultRenderer();
-        this.getTableHeader().setDefaultRenderer(new TableHeaderCellRendererBold(l_originalRenderer));
-        
+
+        TableHeaderCellRendererBold r = new TableHeaderCellRendererBold(l_originalRenderer);
+        r.setBackground(Daten.efaConfig.getTableHeaderBackgroundColor());
+        r.setForeground(Daten.efaConfig.getTableHeaderHeaderColor());
+        this.getTableHeader().setDefaultRenderer(r);
+
         this.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         if (allowSorting) {
             sorter.addMouseListenerToHeaderInTable(this);

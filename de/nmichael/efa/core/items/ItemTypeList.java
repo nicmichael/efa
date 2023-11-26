@@ -81,9 +81,9 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
     protected static final String LIST_SECTION_STRING = "------";
     //Spacings for pretty rendering
     private static final int SPACING_BOATNAME_SECONDPART  = 60; //60 pixels
-	  private static final int HORZ_SINGLE_BORDER=5;
-	  private static Border _emptyBorder = new EmptyBorder(2, HORZ_SINGLE_BORDER, 2, HORZ_SINGLE_BORDER);
-	  private static Color _separatorBackground = new Color(240,240,240);
+	private static final int HORZ_SINGLE_BORDER=5;
+	private static Border _emptyBorder = new EmptyBorder(2, HORZ_SINGLE_BORDER, 2, HORZ_SINGLE_BORDER);
+	private Color _separatorBackground = new Color(240,240,240);
     private boolean showFilterField = false;
   	private boolean showTwoColumnList=false;
     protected String other_item_text=""; //item text of the element for <other boat> or <other person>
@@ -105,7 +105,7 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
             	this.setBorder(_emptyBorder);
             	
             	if (showTwoColumnList) {
-            		/* Pretty lists
+            		/* Two Column Lists
             		 * Data is put together in ItemTypeBoatStatuslist.sortBootsList and sortMemberList
             		 * 
             		 * - Center separator texts, with grey background
@@ -135,10 +135,11 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
 		            	if (item.separator) {
 			                if (!isSelected) { setBackground(_separatorBackground); }
 		                    this.setHorizontalAlignment(JLabel.CENTER);
+		                    this.setFont(this.getFont().deriveFont(Font.BOLD)); 
 			            } else { // not a separator
 			            	if (item.secondaryElement!=null) {
 			            		//only build the p
-			            		this.setText(getHTMLTableFor(item.text, item.secondaryElement));
+			            		this.setText(getHTMLTableFor(item.text, item.secondaryElement, isSelected));
 			            	} 
 		            		setHorizontalAlignment(JLabel.LEFT);
 		            
@@ -224,7 +225,7 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
      * - right row gets remaining space and is truncated on the right side, if contents do not fit.
      *   also, right row contents are rendered in grey text color.
      */
-    private String getHTMLTableFor(String firstPart, String secondPart) {
+    private String getHTMLTableFor(String firstPart, String secondPart, boolean isSelected) {
     	
     	// der Aufbau der HTML-Tabelle ist wegen dem Kürzen des secondPart performancelastig,
     	// wenn es eine volle Bootstabelle gibt. Bei ~200 Booten und einem Raspi3
@@ -269,11 +270,14 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
         if (cutText &&secondPart.length()>0) {secondPart+="\u2026";} //append an ellipsis
         Integer tableWidth =new Integer((int)listWidth-Math.max(iconWidth,0)-4);
         
+        String fontColorTag="color=#888888>";
+        if (isSelected) {fontColorTag=">";}
+        
         return  "<html><table border=0 cellpadding=0 cellspacing=0 width='"
         		.concat(tableWidth.toString())
         		.concat("'><tr><td align=left>")
         		.concat(EfaUtil.escapeHtml(firstPart))
-        		.concat("</td><td align=right><font color=#888888>")
+        		.concat("</td><td align=right><font ").concat(fontColorTag)
         		.concat(EfaUtil.escapeHtml(secondPart))
         		.concat("</font></td></tr></table></html>");
 		
@@ -341,6 +345,10 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
         this.showFilterField = showFilterField;
         this.showTwoColumnList= showTwoColumnList;
         data = new DefaultListModel<ItemTypeListData>();
+        //overwrite standard separator color with efaFlatBackgroundColor if efaFlat is the current look
+        if (Daten.lookAndFeel.endsWith(Daten.LAF_EFAFLAT)) {
+        	this._separatorBackground=Daten.efaConfig.getEfaGuiflatLaf_Background();
+       }
     }
     
     public ItemTypeList(String name,
@@ -1063,5 +1071,11 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
     
     public void setShowTwoColumnList(boolean twoColumns) {
     	showTwoColumnList=twoColumns;
+    }
+    
+    public void updateSeparatorColorFromEfaConfig() {
+        if (Daten.lookAndFeel.endsWith(Daten.LAF_EFAFLAT)) {
+        	this._separatorBackground=Daten.efaConfig.getEfaGuiflatLaf_Background();
+       }
     }
 }

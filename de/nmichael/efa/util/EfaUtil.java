@@ -37,6 +37,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Vector;
 import java.util.regex.Matcher;
@@ -60,6 +61,7 @@ import de.nmichael.efa.core.config.EfaTypes;
 import de.nmichael.efa.data.types.DataTypeTime;
 import de.nmichael.efa.efa1.DatenFelder;
 import de.nmichael.efa.efa1.Synonyme;
+import de.nmichael.efa.themes.EfaFlatLightLookAndFeel;
 
 // @i18n complete
 public class EfaUtil {
@@ -2201,12 +2203,13 @@ public class EfaUtil {
      * @param button
      */
     public static void handleButtonOpaqueForLookAndFeels(JButton button) {
-        if (!Daten.lookAndFeel.endsWith("MetalLookAndFeel") &&
-        		!Daten.lookAndFeel.endsWith("WindowsClassicLookAndFeel") ) {
+        if (!Daten.lookAndFeel.endsWith(Daten.LAF_METAL) &&
+        		!Daten.lookAndFeel.endsWith(Daten.LAF_WINDOWS_CLASSIC) && 
+        		!Daten.lookAndFeel.endsWith(Daten.LAF_EFAFLAT)) {
         	button.setContentAreaFilled(true);       
         }
     	
-    	if (Daten.lookAndFeel.endsWith("WindowsLookAndFeel")) {
+    	if (Daten.lookAndFeel.endsWith(Daten.LAF_WINDOWS)) {
         	button.setBorderPainted(true);// leads to full display of the color on the button canvas
         	button.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
         	button.setContentAreaFilled(false);   
@@ -2216,13 +2219,43 @@ public class EfaUtil {
     
     public static void handleTabbedPaneBackgroundColorForLookAndFeels() {
 	    if ( Daten.efaConfig.getHeaderUseForTabbedPanes()==true &&		    
-	    		(Daten.lookAndFeel.endsWith("MetalLookAndFeel")||
-	    		 Daten.lookAndFeel.endsWith("WindowsClassicLookAndFeel")) ){
+	    		(Daten.lookAndFeel.endsWith(Daten.LAF_METAL)||
+	    		 Daten.lookAndFeel.endsWith(Daten.LAF_WINDOWS_CLASSIC)) ){
 			UIManager.put("TabbedPane.selectedForeground", Daten.efaConfig.getHeaderForegroundColor());
 		    UIManager.put("TabbedPane.selectedBackground", Daten.efaConfig.getHeaderBackgroundColor());
 		    UIManager.put("TabbedPane.selected", Daten.efaConfig.getHeaderBackgroundColor());
 	    }     
     }
+    
+    public static void handleEfaFlatLafDefaults() {
+        if (Daten.lookAndFeel.endsWith(Daten.LAF_EFAFLAT)) {
+        	
+        	EfaFlatLightLookAndFeel myLaf = (EfaFlatLightLookAndFeel) UIManager.getLookAndFeel();
+        	
+        	HashMap<String, String> myCustomSettings = new HashMap<String, String>();
+        	myCustomSettings.put("@background", "#"+EfaUtil.getColor(Daten.efaConfig.getEfaGuiflatLaf_Background()));
+        	myCustomSettings.put("@accentBaseColor", "#"+EfaUtil.getColor(Daten.efaConfig.getEfaGuiflatLaf_AccentColor()));
+        	myCustomSettings.put("@buttonBackground", "lighten(@background,"+Daten.efaConfig.getEfaGuiflatLaf_BackgroundFieldsLightenPercentage()+"%)");
+        	myCustomSettings.put("@componentBackground", "lighten(@background,"+Daten.efaConfig.getEfaGuiflatLaf_BackgroundFieldsLightenPercentage()+"%)");
+        	myCustomSettings.put("@menuBackground", "lighten(@background,"+Daten.efaConfig.getEfaGuiflatLaf_BackgroundFieldsLightenPercentage()+"%)");
+        	myCustomSettings.put("@efaTableHeaderBackground", "#"+EfaUtil.getColor(Daten.efaConfig.getTableHeaderBackgroundColor()));
+        	myCustomSettings.put("@efaTableHeaderForeground", "#"+EfaUtil.getColor(Daten.efaConfig.getTableHeaderHeaderColor()));
+        	myCustomSettings.put("@efaFocusColor", "#"+EfaUtil.getColor(Daten.efaConfig.getEfaGuiflatLaf_FocusColor()));
+/*
+        	if (Daten.isApplEfaBoathouse()) {
+        		myCustomSettings.put("MenuBar.background","#0000AA");
+        		myCustomSettings.put("Menu.background","#0000AA");    
+        		myCustomSettings.put("MenuItem.background","#0000AA");        
+        	}
+  */      	
+        	myLaf.setExtraDefaults(myCustomSettings); 
+        	EfaFlatLightLookAndFeel.setup(myLaf);
+        	EfaFlatLightLookAndFeel.updateUILater();
+        	
+        }
+    	
+    }
+        
     public static void main(String args[]) {
         String text = "abc & def";
         System.out.println(text + " -> EfaUtil.escapeXml() = " + EfaUtil.escapeXml(text));

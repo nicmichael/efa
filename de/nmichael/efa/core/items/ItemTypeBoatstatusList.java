@@ -115,7 +115,7 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
                     }
                 }
             }
-            this.iconWidth = (groupColors.size() > 0 ? Daten.efaConfig.getValueEfaDirekt_fontSize() : 0);
+            this.iconWidth = (groupColors.size() > 0 ? Daten.efaConfig.getValueEfaDirekt_BthsFontSize() : 0);
             this.iconHeight = this.iconWidth;
         } catch(Exception e) {
             Logger.logdebug(e);

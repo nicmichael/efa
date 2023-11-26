@@ -47,18 +47,19 @@ public class TableCellRenderer extends DefaultTableCellRenderer {
             if (isMarked && markedBold) {
                 c.setFont(c.getFont().deriveFont(Font.BOLD));
             }
+
             Color bkgColor = Color.white;
             Color fgColor = Color.black;
-            
+
             if (Daten.efaConfig.getValueEfaDirekt_tabelleAlternierendeZeilenFarben()) {
 	            bkgColor = (row % 2 == 0 ? alternateColor : Color.white);
-            }
-	            
+            }  
             
             if (isSelected) {
                 bkgColor = table.getSelectionBackground();
                 // Update for standard tables: when selected, we should always use the selection foreground.
                 fgColor= table.getSelectionForeground();
+                c.setFont(c.getFont().deriveFont(Font.BOLD));
             } else {
                 if (isDisabled && disabledBkgColor != null) {
                     bkgColor = disabledBkgColor;
@@ -123,6 +124,9 @@ public class TableCellRenderer extends DefaultTableCellRenderer {
         this.disabledBkgColor = c;
     }
 
+    public void setAlternatingRowColor(Color c) {
+    	this.alternateColor = c;
+    }
     public void setFontSize(int size) {
         this.fontSize = size;
     }

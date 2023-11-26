@@ -24,15 +24,14 @@ import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Vector;
 import java.util.jar.JarFile;
 
 import javax.swing.UIManager;
 import javax.swing.plaf.ColorUIResource;
 
-import com.formdev.flatlaf.FlatIntelliJLaf;
 import com.formdev.flatlaf.FlatLaf;
-import com.formdev.flatlaf.FlatLightLaf;
 
 import de.nmichael.efa.core.CrontabThread;
 import de.nmichael.efa.core.EfaKeyStore;
@@ -57,14 +56,13 @@ import de.nmichael.efa.data.types.DataTypeDate;
 import de.nmichael.efa.gui.BrowserDialog;
 import de.nmichael.efa.gui.EfaFirstSetupDialog;
 import de.nmichael.efa.gui.SimpleInputDialog;
-import de.nmichael.efa.gui.util.EfaOceanTheme;
+import de.nmichael.efa.themes.EfaFlatLightLookAndFeel;
 import de.nmichael.efa.util.Dialog;
 import de.nmichael.efa.util.EfaUtil;
 import de.nmichael.efa.util.HtmlFactory;
 import de.nmichael.efa.util.International;
 import de.nmichael.efa.util.LogString;
 import de.nmichael.efa.util.Logger;
-import sun.awt.AppContext;
 
 // @i18n complete
 public class Daten {
@@ -176,6 +174,12 @@ public class Daten {
     public static String osVersion = "";
     public static String lookAndFeel = "";
 
+    public static String LAF_METAL="MetalLookAndFeel";
+    public static String LAF_EFAFLAT="EfaFlatLightLookAndFeel";
+    public static String LAF_NIMBUS="NimbusLookAndFeel";
+    public static String LAF_WINDOWS="WindowsLookAndFeel";
+    public static String LAF_WINDOWS_CLASSIC="WindowsClassicLookAndFeel";
+    
     public final static String PLUGIN_INFO_FILE = "plugins.xml";
     public static String pluginWebpage = "http://efa.nmichael.de/plugins.html"; // wird automatisch auf das in der o.g. Datei stehende gesetzt
 
@@ -1034,13 +1038,13 @@ public class Daten {
             	System.setProperty( "flatlaf.animation", "false" );
             	System.setProperty( "flatlaf.useWindowDecorations" , "false" );
             	System.setProperty( "flatlaf.menuBarEmbedded", "false" );
-                //AppContext.getAppContext().put( "currentMetalTheme", new EfaOceanTheme());
                 
                 if (Daten.efaConfig.getValueLookAndFeel().length() == 0) {
                     UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
                 } else {
                 	UIManager.setLookAndFeel(Daten.efaConfig.getValueLookAndFeel());
                 }
+                
             } catch (Exception e) {
                 Logger.log(Logger.WARNING, Logger.MSG_WARN_CANTSETLOOKANDFEEL,
                         International.getString("Konnte Look&Feel nicht setzen") + ": " + e.toString());
@@ -1050,7 +1054,10 @@ public class Daten {
         // Look&Feel specific Work-Arounds
         try {
             lookAndFeel = UIManager.getLookAndFeel().getClass().toString();
-            if (!lookAndFeel.endsWith("MetalLookAndFeel")) {
+
+            EfaUtil.handleEfaFlatLafDefaults();
+            
+            if (!lookAndFeel.endsWith(Daten.LAF_METAL)) {
                 // to make PopupMenu's work properly and not swallow the next MousePressed Event, see: http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6753637
                 Dialog.getUiDefaults().put("PopupMenu.consumeEventOnClose", false);
             }
@@ -1067,6 +1074,9 @@ public class Daten {
                         "SPACE", "pressed",
                         "released SPACE", "released"
                     }));
+            
+            
+            
         } catch (Exception e) {
             Logger.log(Logger.WARNING, Logger.MSG_WARN_CANTSETLOOKANDFEEL,
                     "Failed to apply LookAndFeel Workarounds: " + e.toString());
@@ -1075,7 +1085,8 @@ public class Daten {
         // Font Size
         if (applID == APPL_EFABH) {
             try {
-                Dialog.setGlobalFontSize(Daten.efaConfig.getValueEfaDirekt_fontSize(), Daten.efaConfig.getValueEfaDirekt_fontStyle());
+                Dialog.setGlobalFontSize(Daten.efaConfig.getValueEfaDirekt_BthsFontSize(), Daten.efaConfig.getValueEfaDirekt_BthsFontStyle());
+                Dialog.setGlobalTableFontSize(Daten.efaConfig.getValueEfaDirekt_BthsTableFontSize());
             } catch (Exception e) {
                 Logger.log(Logger.WARNING, Logger.MSG_WARN_CANTSETFONTSIZE,
                         International.getString("Schriftgröße konnte nicht geändert werden") + ": " + e.toString());
