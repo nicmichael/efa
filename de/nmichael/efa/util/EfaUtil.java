@@ -57,6 +57,7 @@ import de.nmichael.efa.core.config.EfaTypes;
 import de.nmichael.efa.data.types.DataTypeTime;
 import de.nmichael.efa.efa1.DatenFelder;
 import de.nmichael.efa.efa1.Synonyme;
+import javax.swing.SwingUtilities;
 
 // @i18n complete
 public class EfaUtil {
@@ -2191,6 +2192,29 @@ public class EfaUtil {
     	
     }    
     
+    /**
+     * Helper class to display a notification message.
+     * If this is a GUI application, we asynchronously display a dialog through
+     * SwingUtilities.invokeLater in a separate thread. If this is not a GUI application,
+     * we will synchronously in the calling thread invoke the logging method.
+     */
+    public static abstract class UserMessage {
+
+        public abstract void run();
+
+        public static void show(UserMessage m) {
+            if (Daten.isGuiAppl()) {
+                SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        m.run();
+                    }
+                });
+            } else {
+                m.run();
+            }
+        }
+    }
+
     public static void main(String args[]) {
         String text = "abc & def";
         System.out.println(text + " -> EfaUtil.escapeXml() = " + EfaUtil.escapeXml(text));

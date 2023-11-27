@@ -1,6 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <efaOnlineUpdate>
     <Version>
+        <VersionID>2.3.3_02</VersionID>
+        <ReleaseDate>26.11.2023</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa233.zip</DownloadUrl>
+        <DownloadSize>4546237</DownloadSize>
+        <Changes lang="de">
+            <ChangeItem>BugFix: Unerwuenschtes Dialogfenster bei Automatischen Ablauefen angezeigt</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>BugFix: Unwanted Dialog window shown during cron job executions</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
         <VersionID>2.3.3_01</VersionID>
         <ReleaseDate>05.11.2023</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa233.zip</DownloadUrl>
@@ -30,6 +43,7 @@
             <ChangeItem>New: Boat reservations: Boat can be changed after saving, and also copies of boat reservations can be created.</ChangeItem>      
         </Changes>
     </Version>
+
     <Version>
         <VersionID>2.3.3_00</VersionID>
         <ReleaseDate>29.09.2023</ReleaseDate>
