@@ -1092,6 +1092,16 @@ public class Daten {
                         International.getString("Schriftgröße konnte nicht geändert werden") + ": " + e.toString());
             }
         }
+        
+        if (applID == APPL_EFABASE) {
+            try {
+                Dialog.setGlobalFontSize(Daten.efaConfig.getValueEfaDirekt_OtherFontSize(), Daten.efaConfig.getValueEfaDirekt_OtherFontStyle());
+                Dialog.setGlobalTableFontSize(Daten.efaConfig.getValueEfaDirekt_OtherTableFontSize());
+            } catch (Exception e) {
+                Logger.log(Logger.WARNING, Logger.MSG_WARN_CANTSETFONTSIZE,
+                        International.getString("Schriftgröße konnte nicht geändert werden") + ": " + e.toString());
+            }        	
+        }
     }
 
     public static void iniChecks() {

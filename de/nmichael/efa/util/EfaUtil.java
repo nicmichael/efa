@@ -50,6 +50,7 @@ import javax.mail.internet.InternetAddress;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import org.xml.sax.XMLReader;
@@ -2197,6 +2198,30 @@ public class EfaUtil {
     }    
     
     /**
+     * Helper class to display a notification message.
+     * If this is a GUI application, we asynchronously display a dialog through
+     * SwingUtilities.invokeLater in a separate thread. If this is not a GUI application,
+     * we will synchronously in the calling thread invoke the logging method.
+     */
+    public static abstract class UserMessage {
+
+        public abstract void run();
+
+        public static void show(UserMessage m) {
+            if (Daten.isGuiAppl()) {
+                SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        m.run();
+                    }
+                });
+            } else {
+                m.run();
+            }
+        }
+    }
+
+
+    /**
      * Efa uses buttons which are filled with a color. 
      * Not all LookAndFeels support this natively. This method ensures that color-filled buttons 
      * are shown correctly in each standard LookAndFeel.
@@ -2241,13 +2266,13 @@ public class EfaUtil {
         	myCustomSettings.put("@efaTableHeaderBackground", "#"+EfaUtil.getColor(Daten.efaConfig.getTableHeaderBackgroundColor()));
         	myCustomSettings.put("@efaTableHeaderForeground", "#"+EfaUtil.getColor(Daten.efaConfig.getTableHeaderHeaderColor()));
         	myCustomSettings.put("@efaFocusColor", "#"+EfaUtil.getColor(Daten.efaConfig.getEfaGuiflatLaf_FocusColor()));
-/*
+
         	if (Daten.isApplEfaBoathouse()) {
         		myCustomSettings.put("MenuBar.background","#0000AA");
         		myCustomSettings.put("Menu.background","#0000AA");    
         		myCustomSettings.put("MenuItem.background","#0000AA");        
         	}
-  */      	
+     	
         	myLaf.setExtraDefaults(myCustomSettings); 
         	EfaFlatLightLookAndFeel.setup(myLaf);
         	EfaFlatLightLookAndFeel.updateUILater();

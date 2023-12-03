@@ -10,15 +10,34 @@
 
 package de.nmichael.efa.core.items;
 
-import java.util.*;
-import java.util.regex.*;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-import de.nmichael.efa.util.*;
-import de.nmichael.efa.util.Dialog;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.util.Hashtable;
+import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+
+import de.nmichael.efa.Daten;
 import de.nmichael.efa.gui.BaseDialog;
 import de.nmichael.efa.gui.BaseFrame;
+import de.nmichael.efa.gui.util.RoundedBorder;
+import de.nmichael.efa.gui.util.RoundedLabel;
+import de.nmichael.efa.util.Dialog;
+import de.nmichael.efa.util.EfaUtil;
+import de.nmichael.efa.util.International;
+import de.nmichael.efa.util.Mnemonics;
 
 public class ItemTypeItemList extends ItemType {
 
@@ -195,10 +214,20 @@ public class ItemTypeItemList extends ItemType {
         }
         
         int myY = 0;
-        titlelabel = new JLabel();
+        if (Daten.efaConfig.getHeaderUseHighlightColor()) {
+	        titlelabel = new RoundedLabel();
+	        titlelabel.setBackground(Daten.efaConfig.getHeaderBackgroundColor());
+	        titlelabel.setForeground(Daten.efaConfig.getHeaderForegroundColor());
+	        titlelabel.setOpaque(true);
+	        titlelabel.setFont(titlelabel.getFont().deriveFont(Font.BOLD));
+	        titlelabel.setBorder(new RoundedBorder(titlelabel.getForeground()));
+        } else {titlelabel=new JLabel();}
+        
         Mnemonics.setLabel(dlg, titlelabel, getDescription() + ": ");
         if (type == IItemType.TYPE_EXPERT) {
-            titlelabel.setForeground(Color.red);
+            if (!Daten.efaConfig.getHeaderUseHighlightColor()) {
+            	titlelabel.setForeground(Color.red);
+            }
         }
         if (color != null) {
             titlelabel.setForeground(color);
@@ -212,7 +241,7 @@ public class ItemTypeItemList extends ItemType {
         });
 
         panel.add(titlelabel, new GridBagConstraints(x, y, 2, 1, 0.0, 0.0,
-                  GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(padYbefore, padXbefore, (items.size() == 0 ? padYafter : 0), 0), 0, 0));
+                  GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(padYbefore, padXbefore, (items.size() == 0 ? padYafter : 0), 0), 0, 0));
         panel.add(addButton, new GridBagConstraints(x+xForAddDelButtons, y, 2, 1, 0.0, 0.0,
                   GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(padYbefore, 2, (items.size() == 0 ? padYafter : 0), padXafter), 0, 0));
         myY++;

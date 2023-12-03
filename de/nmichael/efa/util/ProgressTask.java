@@ -10,10 +10,10 @@
 
 package de.nmichael.efa.util;
 
+import de.nmichael.efa.Daten;
 import de.nmichael.efa.gui.ProgressDialog;
+import de.nmichael.efa.util.EfaUtil.UserMessage;
 import java.io.*;
-
-import javax.swing.SwingUtilities;
 
 public abstract class ProgressTask extends Thread {
 
@@ -51,26 +51,26 @@ public abstract class ProgressTask extends Thread {
         setCurrentWorkDone(getAbsoluteWork());
         if (resultSuccess) {
             if (getSuccessfullyDoneMessage() != null) {
-            	SwingUtilities.invokeLater(new Runnable() {
-          	      public void run() {
-                      Dialog.infoDialog(getSuccessfullyDoneMessage());
-          	      }
-            	});
+                UserMessage.show(new UserMessage() {
+                    public void run() {
+                        Dialog.infoDialog(getSuccessfullyDoneMessage());
+                    }
+                });
             } 
         } else {
             if (getErrorDoneMessage() != null) {
-            	SwingUtilities.invokeLater(new Runnable() {
-            	      public void run() {
-                          Dialog.error(getErrorDoneMessage());
-            	      }
-              	});
+                UserMessage.show(new UserMessage() {
+                    public void run() {
+                        Dialog.error(getErrorDoneMessage());
+                    }
+                });
 
             } else {
-            	SwingUtilities.invokeLater(new Runnable() {
-          	      public void run() {
-                      Dialog.error(International.getString("Vorgang mit Fehlern abgeschlossen."));
-          	      }
-            	});            	
+                UserMessage.show(new UserMessage() {
+                    public void run() {
+                        Dialog.error(International.getString("Vorgang mit Fehlern abgeschlossen."));
+                    }
+                });
             }
         }
         if (f != null) {
@@ -80,11 +80,11 @@ public abstract class ProgressTask extends Thread {
             }
         }
         if (autoCloseDialogWhenDone && progressDialog != null) {
-        	SwingUtilities.invokeLater(new Runnable() {
-        	      public void run() {
-        	    	  progressDialog.cancel();
-        	      }
-          	});              
+            UserMessage.show(new UserMessage() {
+                public void run() {
+                    progressDialog.cancel();
+                }
+            });
         }
     }
 
@@ -104,11 +104,11 @@ public abstract class ProgressTask extends Thread {
 
     public void logInfo(String s, boolean toScreen, boolean toFile) {
         if (toScreen && progressDialog != null) {
-        	SwingUtilities.invokeLater(new Runnable() {
-      	      public void run() {
-                  progressDialog.logInfo(s);
-      	      }
-        	});    
+            UserMessage.show(new UserMessage() {
+                public void run() {
+                    progressDialog.logInfo(s);
+                }
+            });
         }
         if (toFile && f != null) {
             try {
@@ -121,11 +121,11 @@ public abstract class ProgressTask extends Thread {
     public void setCurrentWorkDone(int i) {
         this.currentWorkDone = i;
         if (progressDialog != null) {
-        	SwingUtilities.invokeLater(new Runnable() {
-      	      public void run() {
-                  progressDialog.setCurrentWorkDone(i);
-      	      }
-        	});            	
+            UserMessage.show(new UserMessage() {
+                public void run() {
+                    progressDialog.setCurrentWorkDone(i);
+                }
+            });
         }
     }
 

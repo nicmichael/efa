@@ -10,16 +10,31 @@
 
 package de.nmichael.efa.core.items;
 
-import java.util.*;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-import de.nmichael.efa.*;
-import de.nmichael.efa.util.*;
-import de.nmichael.efa.util.Base64;
-import de.nmichael.efa.util.Dialog;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.util.Arrays;
+import java.util.Hashtable;
+import java.util.StringTokenizer;
+
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
+import de.nmichael.efa.Daten;
 import de.nmichael.efa.gui.BaseDialog;
 import de.nmichael.efa.gui.BaseFrame;
+import de.nmichael.efa.gui.util.RoundedBorder;
+import de.nmichael.efa.gui.util.RoundedLabel;
+import de.nmichael.efa.util.Base64;
+import de.nmichael.efa.util.Dialog;
+import de.nmichael.efa.util.International;
+import de.nmichael.efa.util.Logger;
+import de.nmichael.efa.util.Mnemonics;
 
 public class ItemTypeHashtable<E> extends ItemType {
 
@@ -181,10 +196,21 @@ public class ItemTypeHashtable<E> extends ItemType {
     public int displayOnGui(Window dlg, JPanel panel, int x, int y) {
         this.dlg = dlg;
 
-        titlelabel = new JLabel();
+        if (Daten.efaConfig.getHeaderUseHighlightColor()) {
+	        titlelabel = new RoundedLabel();
+	        titlelabel.setBackground(Daten.efaConfig.getHeaderBackgroundColor());
+	        titlelabel.setForeground(Daten.efaConfig.getHeaderForegroundColor());
+	        titlelabel.setOpaque(true);
+	        titlelabel.setFont(titlelabel.getFont().deriveFont(Font.BOLD));
+	        titlelabel.setBorder(new RoundedBorder(titlelabel.getForeground()));
+        } else {
+        	titlelabel=new JLabel();
+        }
         Mnemonics.setLabel(dlg, titlelabel, getDescription() + ": ");
         if (type == IItemType.TYPE_EXPERT) {
-            titlelabel.setForeground(Color.red);
+            if (!Daten.efaConfig.getHeaderUseHighlightColor()) {
+            	titlelabel.setForeground(Color.red);
+            }
         }
         if (color != null) {
             titlelabel.setForeground(color);
@@ -193,7 +219,7 @@ public class ItemTypeHashtable<E> extends ItemType {
         String[] keys = getKeysArray();
 
         panel.add(titlelabel, new GridBagConstraints(x, y, 2, 1, 0.0, 0.0,
-                  GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(padYbefore, padXbefore, (keys.length == 0 ? padYafter : 0), 0), 0, 0));
+                  GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(padYbefore, padXbefore, (keys.length == 0 ? padYafter : 0), 0), 0, 0));
         if (allowedAdd) {
             addButton = new JButton();
             addButton.setIcon(BaseFrame.getIcon("menu_plus.gif"));

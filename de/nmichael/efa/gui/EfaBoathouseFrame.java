@@ -431,9 +431,12 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
 
                 JMenuBar menuBar = new JMenuBar();
                 menuBar.setLayout(new BorderLayout());
-                menuBar.setBackground(bgColor);
-                menuBar.setForeground(Color.white);
-                
+                if (!Daten.lookAndFeel.endsWith(Daten.LAF_EFAFLAT)) {
+                	//flatLaf has some issues with setting menubar colors manually.
+                	//so we do this manual menu background color only if we don't have EFAFLATLAF
+                	menuBar.setBackground(bgColor);
+                	menuBar.setForeground(Color.white);
+                }
                 JLabel efaLabel = new JLabel();
                 efaLabel.setIcon(getIcon(ImagesAndIcons.IMAGE_EFA_ICON_SMALL ));
                 titleLabel.setText(Daten.EFA_LONGNAME);
@@ -459,7 +462,11 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
                 menuBar.setBorder(new EmptyBorder(2,5,2,5));
                 menuBar.validate();
                 this.setJMenuBar(menuBar);
-                menuBar.setBackground(bgColor);
+                if (!Daten.lookAndFeel.endsWith(Daten.LAF_EFAFLAT)) {
+                	//flatLaf has some issues with setting menubar colors manually.
+                	//so we do this manual menu background color only if we don't have EFAFLATLAF
+                	menuBar.setBackground(bgColor);
+                }
             } catch (NoSuchMethodError e) {
                 Logger.log(Logger.WARNING, Logger.MSG_WARN_JAVA_VERSION,
                         "Only supported as of Java 1.4: " +e.toString());
