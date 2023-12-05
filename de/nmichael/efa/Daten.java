@@ -1033,7 +1033,9 @@ public class Daten {
         // Look&Feel
         if (Daten.efaConfig != null) { // is null for applDRV
             try {
+            	// Make sure that settings in FlatIntelliJLaf.properties are read on startup
             	FlatLaf.registerCustomDefaultsSource( "de.nmichael.efa.themes" );
+            	// We just want plain java functions, for maximum compatibility.
             	System.setProperty( "flatlaf.useNativeLibrary", "false" );
             	System.setProperty( "flatlaf.animation", "false" );
             	System.setProperty( "flatlaf.useWindowDecorations" , "false" );

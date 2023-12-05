@@ -2917,7 +2917,8 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 							|| item == efaBoathouseFilterTextfieldBoatsNotAvailableList
 							|| item == efaDirekt_boatsNotAvailableListSize || item == windowXOffset
 							|| item == windowYOffset || item == screenWidth || item == screenHeight
-							|| item == efaHeaderUseForTabbedPanes || item == lookAndFeel) {
+							|| item == efaHeaderUseForTabbedPanes || item == lookAndFeel
+							|| item == efaDirekt_otherFontSize || item == efaDirekt_otherFontStyle || item == efaDirekt_otherTableFontSize) {
 						changedSettings.put(item.getDescription(), "foo");
 					}
 				}

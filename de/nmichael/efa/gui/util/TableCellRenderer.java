@@ -52,7 +52,7 @@ public class TableCellRenderer extends DefaultTableCellRenderer {
             Color fgColor = Color.black;
 
             if (Daten.efaConfig.getValueEfaDirekt_tabelleAlternierendeZeilenFarben()) {
-	            bkgColor = (row % 2 == 0 ? alternateColor : Color.white);
+	            bkgColor = (row % 2 == 0 ? alternateColor : null);
             }  
             
             if (isSelected) {
