@@ -48,7 +48,7 @@ public class TableCellRenderer extends DefaultTableCellRenderer {
                 c.setFont(c.getFont().deriveFont(Font.BOLD));
             }
 
-            Color bkgColor = Color.white;
+            Color bkgColor = null;
             Color fgColor = Color.black;
 
             if (Daten.efaConfig.getValueEfaDirekt_tabelleAlternierendeZeilenFarben()) {

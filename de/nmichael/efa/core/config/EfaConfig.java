@@ -820,7 +820,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 					BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
 					International.getString("Tabellen selektierte Zeile Textfarbe"), false));
 
-			addHeader("efaGuiTables", IItemType.TYPE_EXPERT,
+			addHeader("efaGuiTables", IItemType.TYPE_PUBLIC,
 					BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
 					International.getString("Tabellendarstellung"), 3);
 
@@ -828,7 +828,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 					IItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
 					International.getString("Tabellen mit Tooltipps für zu lange Texte")));
 			addParameter(efaDirekt_tabelleAlternierendeZeilenfarben = new ItemTypeBoolean(
-					"EfaBoathouseTablesAlternatingRowColor", true, IItemType.TYPE_EXPERT,
+					"EfaBoathouseTablesAlternatingRowColor", true, IItemType.TYPE_PUBLIC,
 					BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
 					International.getString("Tabellen mit alternierenden Zeilenfarben")));
 
