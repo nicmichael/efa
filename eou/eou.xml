@@ -1,11 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <efaOnlineUpdate>
     <Version>
-        <VersionID>2.3.3_01</VersionID>
-        <ReleaseDate>TO.DO.2023</ReleaseDate>
+        <VersionID>2.3.3_02</VersionID>
+        <ReleaseDate>26.11.2023</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa233.zip</DownloadUrl>
-        <DownloadSize></DownloadSize>
+        <DownloadSize>4546237</DownloadSize>
         <Changes lang="de">
+            <ChangeItem>BugFix: Unerwuenschtes Dialogfenster bei Automatischen Ablauefen angezeigt</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>BugFix: Unwanted Dialog window shown during cron job executions</ChangeItem>
+        </Changes>
+    </Version>
+
+    <Version>
+        <VersionID>2.3.3_01</VersionID>
+        <ReleaseDate>05.11.2023</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa233.zip</DownloadUrl>
+        <DownloadSize>4545206</DownloadSize>
+        <Changes lang="de">
+            <ChangeItem>BugFix: Widgets multithreading-sicher: weniger Rendering-Exceptions im efa.log</ChangeItem>
             <ChangeItem>BugFix: Teilbegriffsuche für Eingabefelder mit Vervollständigung suchen nun auf kompletter Liste</ChangeItem>
             <ChangeItem>BugFix: Sortierung für Bootsliste, Personenliste, Vervollständigungs-Listen gehen besser mit europäischen Sonderzeichen um</ChangeItem>
             <ChangeItem>Neu: Konfigurationsseiten für efaBootshaus (Allgemein, Erscheinungsbild) reorganisiert für bessere Auffindbarkeit von Eigenschaften</ChangeItem>
@@ -14,8 +28,10 @@
             <ChangeItem>Neu: Einfacheres Finden von Einträgen mit Umlauten/Sonderzeichen in Tabellen, Bootslisten, und Eingabefeldern mit Vervollständigung (konfigurierbar)</ChangeItem>
             <ChangeItem>BugFix: Mehr Konfigurationselemente, die einen Neustart von EFA benötigen, melden dieses beim Speichern der Konfigurationsdaten.</ChangeItem>
             <ChangeItem>BugFix: Der Dialog für die Auswahl unklar eingegebener Werte zeigt keine doppelten Einträge mehr an.</ChangeItem>      
+            <ChangeItem>Neu: Bootsreservierungen: Ändern von Bootsnamen und Erstellen von Reservierungs-Kopien</ChangeItem>
         </Changes>
         <Changes lang="en">
+            <ChangeItem>BugFix: Widgets are safe for multithreading: Less exceptions for rendering in efa.log</ChangeItem>
             <ChangeItem>BugFix: Autocomplete lists: Filter by partial contents now consideres complete list</ChangeItem>
             <ChangeItem>BugFix: Sorting of boat lists, person lists, autocomplete-lists works better with european special characters like umlauts</ChangeItem>
             <ChangeItem>New: Reorganisation of efaBoathouse configuration items (common, appearance) so the items can be found more easily</ChangeItem>
@@ -23,9 +39,11 @@
             <ChangeItem>New: Automatic clearing of boathouse filter fields: after most actions in efaBths (configurable)</ChangeItem>
             <ChangeItem>New: Items with umlauts/special characters are easier to find when searching in tables, boat lists and autocomplete lists (configurable)</ChangeItem>
             <ChangeItem>BugFix: Some more configuration elements requiring a restart of efaBths to activate produce a corresponding message when saving configuration changes.</ChangeItem>
-            <ChangeItem>BugFix: No more duplicates in the spellchecking dialogue (which comes up when a item with a lookup list has not fully been set by the user).</ChangeItem>      
+            <ChangeItem>BugFix: No more duplicates in the spellchecking dialogue (which comes up when a item with a lookup list has not fully been set by the user).</ChangeItem>
+            <ChangeItem>New: Boat reservations: Boat can be changed after saving, and also copies of boat reservations can be created.</ChangeItem>      
         </Changes>
     </Version>
+
     <Version>
         <VersionID>2.3.3_00</VersionID>
         <ReleaseDate>29.09.2023</ReleaseDate>

@@ -12,6 +12,7 @@ package de.nmichael.efa.gui.widgets;
 
 import de.nmichael.efa.*;
 import de.nmichael.efa.gui.util.*;
+import de.nmichael.efa.gui.widgets.ClockMiniWidget.MainGuiUpdater;
 import de.nmichael.efa.util.*;
 import de.nmichael.efa.util.Dialog;
 import java.awt.*;
@@ -72,7 +73,13 @@ public class NewsMiniWidget {
                 getMaxChar();
                 try {
                     do {
-                        label.setText(getText(text, showing, maxChar));
+                        //not threadsafe for swing
+                    	//label.setText(getText(text, showing, maxChar));
+                    	
+                    	//Use invokelater as swing threadsafe ways
+                    	SwingUtilities.invokeLater(new MainGuiUpdater(label, getText(text, showing, maxChar)));
+
+                    	
                     } while (label.getPreferredSize().getWidth() > maxWidth && maxChar-- > 10);
                     showing = (showing + 1) % (length + 3);
                     if (length <= maxChar) {
@@ -132,4 +139,22 @@ public class NewsMiniWidget {
 
     }
 
+    /**
+     * Update clock label on efaBths main GUI. Called via SwingUtilities.invokeLater()
+     */
+    class MainGuiUpdater implements Runnable {
+        
+    	private String text = null;
+    	private JLabel mylabel=null;
+    	
+    	public MainGuiUpdater(JLabel theLabel, String theData) {
+    		text = theData;
+    		mylabel = theLabel;
+    	}
+    	
+    	public void run() {
+    		mylabel.setText(text);
+	      }
+	}
+    
 }

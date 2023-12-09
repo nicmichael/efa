@@ -25,7 +25,7 @@ import javax.swing.*;
 
 public class DataPrintRecordDialog extends BaseDialog {
 
-    private JScrollPane selectedFieldsScrollPane;
+	private JScrollPane selectedFieldsScrollPane;
     private JList selectedFields;
     private JCheckBox printEmptyFields;
 
@@ -102,7 +102,7 @@ public class DataPrintRecordDialog extends BaseDialog {
                 International.getStringWithMnemonic("auch leere Felder ausgeben"));
         mainPanel.add(printEmptyFields, BorderLayout.SOUTH);
 
-        closeButton.setIcon(BaseDialog.getIcon("button_list.png"));
+        closeButton.setIcon(BaseDialog.getIcon(IMAGE_LIST));
     }
 
     public void keyAction(ActionEvent evt) {

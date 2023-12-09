@@ -26,6 +26,7 @@ import de.nmichael.efa.data.storage.DataKeyIterator;
 import de.nmichael.efa.gui.BaseDialog;
 import de.nmichael.efa.gui.ProgressDialog;
 import de.nmichael.efa.gui.util.AutoCompleteList;
+import de.nmichael.efa.gui.ImagesAndIcons;
 import de.nmichael.efa.util.*;
 import java.awt.AWTEvent;
 import java.awt.BorderLayout;
@@ -45,7 +46,7 @@ import javax.swing.border.EmptyBorder;
 
 public class FixLogbookDialog extends BaseDialog implements IItemListener {
 
-    private Logbook logbook;
+	private Logbook logbook;
     private AdminRecord admin;
     private Hashtable<String,ChangeItem> changes;
     private String infotitle = "";
@@ -82,13 +83,13 @@ public class FixLogbookDialog extends BaseDialog implements IItemListener {
         skipButton = new ItemTypeButton("BUTTON_SKIP",
                 IItemType.TYPE_PUBLIC, "", International.getString("Überspringen"));
         skipButton.registerItemListener(this);
-        skipButton.setIcon(BaseDialog.getIcon("button_skip.png"));
+        skipButton.setIcon(BaseDialog.getIcon(ImagesAndIcons.IMAGE_BUTTON_SKIP));
         skipButton.setPadding(10, 10, 10, 10);
         skipButton.displayOnGui(this, buttonPanel, 0, 0);
         fixButton = new ItemTypeButton("BUTTON_FIX",
                 IItemType.TYPE_PUBLIC, "", International.getString("Korrigieren"));
         fixButton.registerItemListener(this);
-        fixButton.setIcon(BaseDialog.getIcon("button_correction.png"));
+        fixButton.setIcon(BaseDialog.getIcon(ImagesAndIcons.IMAGE_BUTTON_CORRECTION));
         skipButton.setPadding(10, 10, 10, 10);
         fixButton.displayOnGui(this, buttonPanel, 1, 0);
 
