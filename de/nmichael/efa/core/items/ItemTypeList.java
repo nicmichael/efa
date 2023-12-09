@@ -78,12 +78,13 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
     int iconWidth = 0;
     int iconHeight = 0;
 
-    protected static final String LIST_SECTION_STRING = "------";
+    protected static final String LIST_SECTION_STRING = "-----";
     //Spacings for pretty rendering
     private static final int SPACING_BOATNAME_SECONDPART  = 60; //60 pixels
 	private static final int HORZ_SINGLE_BORDER=5;
 	private static Border _emptyBorder = new EmptyBorder(2, HORZ_SINGLE_BORDER, 2, HORZ_SINGLE_BORDER);
 	private Color _separatorBackground = new Color(240,240,240);
+	private Color _filterTextfieldDefaultBackground = Color.WHITE;
     private boolean showFilterField = false;
   	private boolean showTwoColumnList=false;
     protected String other_item_text=""; //item text of the element for <other boat> or <other person>
@@ -346,7 +347,7 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
         this.showTwoColumnList= showTwoColumnList;
         data = new DefaultListModel<ItemTypeListData>();
         //overwrite standard separator color with efaFlatBackgroundColor if efaFlat is the current look
-        if (Daten.lookAndFeel.endsWith(Daten.LAF_EFAFLAT)) {
+        if (Daten.isEfaFlatLafActive()) {
         	this._separatorBackground=Daten.efaConfig.getEfaGuiflatLaf_Background();
        }
     }
@@ -605,7 +606,8 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
 	        filterPanel.add(filterTextField, BorderLayout.CENTER);
 	        panelDescriptionAndFilter.add(filterPanel, BorderLayout.SOUTH);
 	        this.field=filterTextField; // by this, when the boat status list receives focus, and the filter text field is visible, the filter text field gets the focus.
-
+	        _filterTextfieldDefaultBackground = filterTextField.getBackground();
+	        
 	        filterTextField.addFocusListener(new java.awt.event.FocusAdapter() {
 	            public void focusGained(FocusEvent e) {
 	                filterTextField.setBackground(Color.YELLOW);
@@ -614,10 +616,11 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
 	        filterTextField.addFocusListener(new java.awt.event.FocusAdapter() {
 	            public void focusLost(FocusEvent e) {
 	            	if (!filterTextField.getText().isEmpty()) {
-	            		filterTextField.setBackground(new Color(255,255,204));
+	            		filterTextField.setBackground(new Color(255,255,204)); //some white yellow so it is clear that some stuff is in this field.
 
 	            	} else {	
-	            		filterTextField.setBackground(Color.WHITE);
+	            		// use standard background color. for flatlaf, this is not white as it is for the other lafs.
+	            		filterTextField.setBackground(_filterTextfieldDefaultBackground); 
 	            	}
 	            }
 	        });
@@ -715,7 +718,7 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
 			this.filterTextField.setText("");
         	updateLastFilterChange();
     		if (!this.filterTextField.hasFocus()) {
-    			this.filterTextField.setBackground(Color.WHITE);
+    			this.filterTextField.setBackground(_filterTextfieldDefaultBackground);
     		}
     		filter();    
     	}
@@ -1074,7 +1077,7 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
     }
     
     public void updateSeparatorColorFromEfaConfig() {
-        if (Daten.lookAndFeel.endsWith(Daten.LAF_EFAFLAT)) {
+        if (Daten.isEfaFlatLafActive()) {
         	this._separatorBackground=Daten.efaConfig.getEfaGuiflatLaf_Background();
        }
     }

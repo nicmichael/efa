@@ -621,7 +621,7 @@ public class Dialog {
         FONT_SIZE = size;
         FONT_STYLE = style;
 
-		if (!Daten.lookAndFeel.matches(".*Flat.*")){
+		if (!Daten.lookAndFeel.matches(".*EfaFlat.*")){
         
 	        UIDefaults uid = getUiDefaults();
 	

@@ -32,6 +32,7 @@ import java.util.Vector;
 
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
+import javax.swing.plaf.ColorUIResource;
 
 public class EfaConfig extends StorageObject implements IItemFactory {
 
@@ -281,6 +282,13 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 	private ItemTypeColor efaGuiTableSelectionBackground;
 	private ItemTypeColor efaGuiTableSelectionForeground;
 	private ItemTypeBoolean efaDirekt_tabelleEasyFindEntriesWithSpecialCharacters;
+	
+	private ItemTypeBoolean efaGuiToolTipSpecialColors;
+	private ItemTypeColor efaGuiToolTipBackground; 
+	private ItemTypeColor efaGuiToolTipForeground;
+	private ItemTypeColor efaGuiToolTipHeaderBackground; 
+	private ItemTypeColor efaGuiToolTipHeaderForeground;
+	
 	private ItemTypeStringList efaDirekt_bnrMsgToAdminDefaultRecipient;
 	private ItemTypeBoolean efaDirekt_bnrError_admin;
 	private ItemTypeBoolean efaDirekt_bnrError_bootswart;
@@ -371,6 +379,13 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 	private static Color standardFlatLafFocusColor = new Color(255, 153, 0); // #ff9900 Orange
 	private static Color hintBackgroundColor = new Color(171, 206, 241);
 
+	private static Color standardToolTipBackgroundColor = new Color(224,237,249);
+	private static Color standardToolTipForegroundColor = new Color(21,65,106);
+
+	private static Color standardToolTipHeaderBackgroundColor = new Color(250,252,254);
+	private static Color standardToolTipHeaderForegroundColor = standardToolTipForegroundColor;	
+	
+	
 	// private internal data
 	private HashMap<String, IItemType> configValues; // always snychronize on this object!!
 	private Vector<String> configValueNames;
@@ -725,6 +740,68 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 					International.getString("Tastenbelegungen für Bemerkungs-Feld")));
 
 			// ============================= COMMON:GUI =============================
+			
+			addHeader("efaGuiMainWindowSize", IItemType.TYPE_EXPERT,
+					BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
+					International.getString("Hauptfenster Position und Größe"), 3);
+
+			addParameter(windowXOffset = new ItemTypeInteger("WindowOffsetX", 0, Integer.MIN_VALUE, Integer.MAX_VALUE,
+					false, IItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
+					International.getString("Fenster-Offset") + " X" + " (" + International.getString("Pixel") + ")"));
+			addParameter(windowYOffset = new ItemTypeInteger("WindowOffsetY", 0, Integer.MIN_VALUE, Integer.MAX_VALUE,
+					false, IItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
+					International.getString("Fenster-Offset") + " Y" + " (" + International.getString("Pixel") + ")"));
+			addParameter(screenWidth = new ItemTypeInteger("WindowScreenWidth", 0, 0, Integer.MAX_VALUE, false,
+					IItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
+					International.getString("Bildschirmbreite") + " (" + International.getString("Pixel") + ")"));
+			addParameter(screenHeight = new ItemTypeInteger("WindowScreenHeight", 0, 0, Integer.MAX_VALUE, false,
+					IItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
+					International.getString("Bildschirmhöhe") + " (" + International.getString("Pixel") + ")"));
+
+			addHeader("efaGuiDialogWindowSize", IItemType.TYPE_EXPERT,
+					BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
+					International.getString("Dialogfenster-Größe"), 3);
+
+			addParameter(maxDialogWidth = new ItemTypeInteger("WindowDialogMaxWidth", 0, 0, Integer.MAX_VALUE, false,
+					IItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
+					International.getString("maximale Dialog-Breite") + " (" + International.getString("Pixel") + ")"));
+			addParameter(maxDialogHeight = new ItemTypeInteger("WindowDialogMaxHeight", 0, 0, Integer.MAX_VALUE, false,
+					IItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
+					International.getString("maximale Dialog-Höhe") + " (" + International.getString("Pixel") + ")"));
+
+			addHeader("efaGuiWindowPosition", IItemType.TYPE_EXPERT,
+					BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
+					International.getString("Fensterpositionierung"), 3);
+
+			addParameter(fensterZentriert = new ItemTypeBoolean("WindowCentered", false, IItemType.TYPE_EXPERT,
+					BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
+					International.getString("Alle Fenster in Bildschirmmitte zentrieren")));
+
+			addHeader("efaGuiOtherFont", IItemType.TYPE_PUBLIC,
+					BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
+					International.getString("Schriftart für efaBase"), 3);
+			
+			addHint("efaGuiOtherFontHint", IItemType.TYPE_PUBLIC, 
+					BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
+					International.getString("Die Schrift von efaBootshaus wird in efaBootshaus->Erscheinungsbild eingestellt."),
+					3,3,3);
+
+			addParameter(efaDirekt_otherFontSize = new ItemTypeInteger("EfaOtherFontSize", 12, 6, 32, false,
+					IItemType.TYPE_PUBLIC,
+					BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
+					International.getString("Schriftgröße in Punkten (6 bis 32, Standard: 12)")));
+			addParameter(efaDirekt_otherFontStyle = new ItemTypeStringList("EfaOtherFontStyle", "",
+					makeFontStyleArray(STRINGLIST_VALUES), makeFontStyleArray(STRINGLIST_DISPLAY),
+					IItemType.TYPE_EXPERT,
+					BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
+					International.getString("Schriftstil")));
+
+			addParameter(efaDirekt_otherTableFontSize = new ItemTypeInteger("EfaOtherTableFontSize", 12, 6, 18,
+					false, IItemType.TYPE_PUBLIC,
+					BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
+					International.getString("Tabellen-Schriftgröße in Punkten (6 bis 20, Standard: 12)")));					
+			
+			
 			addHeader("efaGuiWindowLook", IItemType.TYPE_PUBLIC,
 					BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
 					International.getString("LookAndFeel"), 3);
@@ -837,65 +914,37 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 					BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI), International
 							.getString("Tabellen sollen bei Filterung Einträge mit Sonderzeichen einfacher finden")));
 
-			addHeader("efaGuiMainWindowSize", IItemType.TYPE_EXPERT,
+			addHeader("efaGuiToolTips", IItemType.TYPE_PUBLIC,
 					BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
-					International.getString("Hauptfenster Position und Größe"), 3);
-
-			addParameter(windowXOffset = new ItemTypeInteger("WindowOffsetX", 0, Integer.MIN_VALUE, Integer.MAX_VALUE,
-					false, IItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
-					International.getString("Fenster-Offset") + " X" + " (" + International.getString("Pixel") + ")"));
-			addParameter(windowYOffset = new ItemTypeInteger("WindowOffsetY", 0, Integer.MIN_VALUE, Integer.MAX_VALUE,
-					false, IItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
-					International.getString("Fenster-Offset") + " Y" + " (" + International.getString("Pixel") + ")"));
-			addParameter(screenWidth = new ItemTypeInteger("WindowScreenWidth", 0, 0, Integer.MAX_VALUE, false,
-					IItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
-					International.getString("Bildschirmbreite") + " (" + International.getString("Pixel") + ")"));
-			addParameter(screenHeight = new ItemTypeInteger("WindowScreenHeight", 0, 0, Integer.MAX_VALUE, false,
-					IItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
-					International.getString("Bildschirmhöhe") + " (" + International.getString("Pixel") + ")"));
-
-			addHeader("efaGuiDialogWindowSize", IItemType.TYPE_EXPERT,
-					BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
-					International.getString("Dialogfenster-Größe"), 3);
-
-			addParameter(maxDialogWidth = new ItemTypeInteger("WindowDialogMaxWidth", 0, 0, Integer.MAX_VALUE, false,
-					IItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
-					International.getString("maximale Dialog-Breite") + " (" + International.getString("Pixel") + ")"));
-			addParameter(maxDialogHeight = new ItemTypeInteger("WindowDialogMaxHeight", 0, 0, Integer.MAX_VALUE, false,
-					IItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
-					International.getString("maximale Dialog-Höhe") + " (" + International.getString("Pixel") + ")"));
-
-			addHeader("efaGuiWindowPosition", IItemType.TYPE_EXPERT,
-					BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
-					International.getString("Fensterpositionierung"), 3);
-
-			addParameter(fensterZentriert = new ItemTypeBoolean("WindowCentered", false, IItemType.TYPE_EXPERT,
-					BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
-					International.getString("Alle Fenster in Bildschirmmitte zentrieren")));
-
-			addHeader("efaGuiOtherFont", IItemType.TYPE_PUBLIC,
-					BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
-					International.getString("Schriftart für efaBase"), 3);
+					International.getString("Tooltips"), 3);
 			
-			addHint("efaGuiOtherFontHint", IItemType.TYPE_PUBLIC, 
+			addParameter(efaGuiToolTipSpecialColors = new ItemTypeBoolean("EfaGuiToolTipSpecialColors", true,
+					IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
+					International.getString("Tooltipps mit eigener Farbgebung")));
+			
+			addParameter(efaGuiToolTipBackground = new ItemTypeColor("efaGuiToolTipBackground",
+					EfaUtil.getColor(standardToolTipBackgroundColor),
+					EfaUtil.getColor(standardToolTipBackgroundColor), IItemType.TYPE_PUBLIC,
 					BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
-					International.getString("Die Schrift von efaBootshaus wird in efaBootshaus->Erscheinungsbild eingestellt."),
-					3,3,3);
+					International.getString("Tooltipp Hintergrundfarbe"), false));
+			addParameter(efaGuiToolTipForeground = new ItemTypeColor("efaGuiToolTipForeground",
+					EfaUtil.getColor(standardToolTipForegroundColor),
+					EfaUtil.getColor(standardToolTipForegroundColor), IItemType.TYPE_PUBLIC,
+					BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
+					International.getString("Tooltipp Textfarbe"), false));		
 
-			addParameter(efaDirekt_otherFontSize = new ItemTypeInteger("EfaOtherFontSize", 12, 6, 32, false,
-					IItemType.TYPE_PUBLIC,
+			addParameter(efaGuiToolTipHeaderBackground = new ItemTypeColor("efaGuiToolTipHeaderBackground",
+					EfaUtil.getColor(standardToolTipHeaderBackgroundColor),
+					EfaUtil.getColor(standardToolTipHeaderBackgroundColor), IItemType.TYPE_PUBLIC,
 					BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
-					International.getString("Schriftgröße in Punkten (6 bis 32, Standard: 12)")));
-			addParameter(efaDirekt_otherFontStyle = new ItemTypeStringList("EfaOtherFontStyle", "",
-					makeFontStyleArray(STRINGLIST_VALUES), makeFontStyleArray(STRINGLIST_DISPLAY),
-					IItemType.TYPE_EXPERT,
+					International.getString("Tooltipp-Überschriften Hintergrundfarbe"), false));
+			addParameter(efaGuiToolTipHeaderForeground = new ItemTypeColor("efaGuiToolTipHeaderForeground",
+					EfaUtil.getColor(standardToolTipHeaderForegroundColor),
+					EfaUtil.getColor(standardToolTipHeaderForegroundColor), IItemType.TYPE_PUBLIC,
 					BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
-					International.getString("Schriftstil")));
-
-			addParameter(efaDirekt_otherTableFontSize = new ItemTypeInteger("EfaOtherTableFontSize", 12, 6, 18,
-					false, IItemType.TYPE_PUBLIC,
-					BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
-					International.getString("Tabellen-Schriftgröße in Punkten (6 bis 20, Standard: 12)")));			
+					International.getString("Tooltipp-Überschriften Textfarbe"), false));					
+			
+	
 			
 			// ============================= COMMON:EXTTOOLS =============================
 			addParameter(browser = new ItemTypeFile("ProgramWebbrowser", searchForProgram(DEFAULT_BROWSER),
@@ -2861,6 +2910,30 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 		return (myColor != null ? myColor : standardTableAlternatingRowColor);
 	}
 
+	public Boolean getToolTipSpecialColors() {
+		return efaGuiToolTipSpecialColors.getValue();
+	}	
+	
+	public Color getToolTipBackgroundColor() {
+		Color myColor = efaGuiToolTipBackground.getColor();
+		return (myColor != null ? myColor : standardToolTipBackgroundColor);
+	}
+
+	public Color getToolTipForegroundColor() {
+		Color myColor = efaGuiToolTipForeground.getColor();
+		return (myColor != null ? myColor : standardToolTipForegroundColor);
+	}
+
+	public Color getToolTipHeaderBackgroundColor() {
+		Color myColor = efaGuiToolTipHeaderBackground.getColor();
+		return (myColor != null ? myColor : standardToolTipHeaderBackgroundColor);
+	}
+
+	public Color getToolTipHeaderForegroundColor() {
+		Color myColor = efaGuiToolTipHeaderForeground.getColor();
+		return (myColor != null ? myColor : standardToolTipHeaderForegroundColor);
+	}
+	
 	public Boolean getHeaderUseHighlightColor() {
 		return efaHeaderUseHighlightColor.getValue();
 	}
@@ -2918,7 +2991,8 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 							|| item == efaDirekt_boatsNotAvailableListSize || item == windowXOffset
 							|| item == windowYOffset || item == screenWidth || item == screenHeight
 							|| item == efaHeaderUseForTabbedPanes || item == lookAndFeel
-							|| item == efaDirekt_otherFontSize || item == efaDirekt_otherFontStyle || item == efaDirekt_otherTableFontSize) {
+							|| item == efaDirekt_otherFontSize || item == efaDirekt_otherFontStyle || item == efaDirekt_otherTableFontSize
+							|| item == efaGuiToolTipSpecialColors) {
 						changedSettings.put(item.getDescription(), "foo");
 					}
 				}
@@ -2935,6 +3009,11 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 		}
 
 		EfaUtil.handleEfaFlatLafDefaults();
+        
+		if (this.getToolTipSpecialColors()) {
+        	Dialog.getUiDefaults().put("ToolTip.background", new ColorUIResource(this.getToolTipBackgroundColor()));
+        	Dialog.getUiDefaults().put("ToolTip.foreground", new ColorUIResource(this.getToolTipForegroundColor()));
+        }		
 
 	}
 
@@ -3105,7 +3184,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 		String[] laf = makeLookAndFeelArray(STRINGLIST_VALUES);
 		if (true || Daten.isOsLinux()) { // let's do this for all OS'es
 			for (int i = 0; i < laf.length; i++) {
-				if (laf[i].endsWith(Daten.LAF_EFAFLAT)) {
+				if (laf[i].endsWith(Daten.LAF_EFAFLAT_LIGHT)) {
 					return laf[i];
 				}
 			}

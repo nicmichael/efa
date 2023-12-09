@@ -62,7 +62,9 @@ import de.nmichael.efa.core.config.EfaTypes;
 import de.nmichael.efa.data.types.DataTypeTime;
 import de.nmichael.efa.efa1.DatenFelder;
 import de.nmichael.efa.efa1.Synonyme;
+import de.nmichael.efa.themes.EfaFlatDarkLookAndFeel;
 import de.nmichael.efa.themes.EfaFlatLightLookAndFeel;
+import de.nmichael.efa.themes.EfaFlatLookAndFeel;
 
 // @i18n complete
 public class EfaUtil {
@@ -2230,7 +2232,7 @@ public class EfaUtil {
     public static void handleButtonOpaqueForLookAndFeels(JButton button) {
         if (!Daten.lookAndFeel.endsWith(Daten.LAF_METAL) &&
         		!Daten.lookAndFeel.endsWith(Daten.LAF_WINDOWS_CLASSIC) && 
-        		!Daten.lookAndFeel.endsWith(Daten.LAF_EFAFLAT)) {
+        		!Daten.isEfaFlatLafActive()) {
         	button.setContentAreaFilled(true);       
         }
     	
@@ -2253,9 +2255,9 @@ public class EfaUtil {
     }
     
     public static void handleEfaFlatLafDefaults() {
-        if (Daten.lookAndFeel.endsWith(Daten.LAF_EFAFLAT)) {
+        if (Daten.isEfaFlatLafActive()) {
         	
-        	EfaFlatLightLookAndFeel myLaf = (EfaFlatLightLookAndFeel) UIManager.getLookAndFeel();
+        	EfaFlatLookAndFeel myLaf = (EfaFlatLookAndFeel) UIManager.getLookAndFeel();
         	
         	HashMap<String, String> myCustomSettings = new HashMap<String, String>();
         	myCustomSettings.put("@background", "#"+EfaUtil.getColor(Daten.efaConfig.getEfaGuiflatLaf_Background()));
@@ -2266,7 +2268,11 @@ public class EfaUtil {
         	myCustomSettings.put("@efaTableHeaderBackground", "#"+EfaUtil.getColor(Daten.efaConfig.getTableHeaderBackgroundColor()));
         	myCustomSettings.put("@efaTableHeaderForeground", "#"+EfaUtil.getColor(Daten.efaConfig.getTableHeaderHeaderColor()));
         	myCustomSettings.put("@efaFocusColor", "#"+EfaUtil.getColor(Daten.efaConfig.getEfaGuiflatLaf_FocusColor()));
-
+        	myCustomSettings.put("@efaTableAlternateRowColor", "#"+EfaUtil.getColor(Daten.efaConfig.getTableAlternatingRowColor()));
+        	
+        	if (Daten.efaConfig.getToolTipSpecialColors()) {
+        		myCustomSettings.put("@efaToolTipBorderColor", "#"+EfaUtil.getColor(Daten.efaConfig.getToolTipForegroundColor()));
+        	}
         	if (Daten.isApplEfaBoathouse()) {
         		myCustomSettings.put("MenuBar.background","#0000AA");
         		myCustomSettings.put("Menu.background","#0000AA");    
@@ -2274,9 +2280,14 @@ public class EfaUtil {
         	}
      	
         	myLaf.setExtraDefaults(myCustomSettings); 
-        	EfaFlatLightLookAndFeel.setup(myLaf);
-        	EfaFlatLightLookAndFeel.updateUILater();
         	
+        	if (Daten.lookAndFeel.endsWith(Daten.LAF_EFAFLAT_LIGHT)) {
+	        	EfaFlatLightLookAndFeel.setup(myLaf);
+	        	EfaFlatLightLookAndFeel.updateUILater();
+        	} else {
+	        	EfaFlatDarkLookAndFeel.setup(myLaf);
+	        	EfaFlatDarkLookAndFeel.updateUILater();
+        	}
         }
     	
     }

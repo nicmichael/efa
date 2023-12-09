@@ -67,9 +67,9 @@ import de.nmichael.efa.util.Logger;
 // @i18n complete
 public class Daten {
 
-    public final static String VERSION            = "2.3.4_00_EFA_057_LAF"; // Version für die Ausgabe (z.B. 2.1.0, kann aber auch Zusätze wie "alpha" o.ä. enthalten)
+    public final static String VERSION            = "2.3.4_00_EFA_057_LAF_3"; // Version für die Ausgabe (z.B. 2.1.0, kann aber auch Zusätze wie "alpha" o.ä. enthalten)
     public final static String VERSIONID          = "2.3.4_00";   // VersionsID: Format: "X.Y.Z_MM"; final-Version z.B. 1.4.0_00; beta-Version z.B. 1.4.0_#1
-    public final static String VERSIONRELEASEDATE = "12.11.2023";  // Release Date: TT.MM.JJJJ
+    public final static String VERSIONRELEASEDATE = "09.12.2023";  // Release Date: TT.MM.JJJJ
     public final static String MAJORVERSION       = "2";
     public final static String PROGRAMMID         = "EFA.233"; // Versions-ID für Wettbewerbsmeldungen
     public final static String PROGRAMMID_DRV     = "EFADRV.233"; // Versions-ID für Wettbewerbsmeldungen
@@ -175,7 +175,8 @@ public class Daten {
     public static String lookAndFeel = "";
 
     public static String LAF_METAL="MetalLookAndFeel";
-    public static String LAF_EFAFLAT="EfaFlatLightLookAndFeel";
+    public static String LAF_EFAFLAT_LIGHT="EfaFlatLightLookAndFeel";
+    public static String LAF_EFAFLAT_DARK = "EfaFlatLightLookAndFeel";
     public static String LAF_NIMBUS="NimbusLookAndFeel";
     public static String LAF_WINDOWS="WindowsLookAndFeel";
     public static String LAF_WINDOWS_CLASSIC="WindowsClassicLookAndFeel";
@@ -1057,14 +1058,20 @@ public class Daten {
         try {
             lookAndFeel = UIManager.getLookAndFeel().getClass().toString();
 
+            if (efaConfig.getToolTipSpecialColors()) {
+            	Dialog.getUiDefaults().put("ToolTip.background", new ColorUIResource(efaConfig.getToolTipBackgroundColor()));
+            	Dialog.getUiDefaults().put("ToolTip.foreground", new ColorUIResource(efaConfig.getToolTipForegroundColor()));
+            }
+            
             EfaUtil.handleEfaFlatLafDefaults();
+            
+
             
             if (!lookAndFeel.endsWith(Daten.LAF_METAL)) {
                 // to make PopupMenu's work properly and not swallow the next MousePressed Event, see: http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6753637
                 Dialog.getUiDefaults().put("PopupMenu.consumeEventOnClose", false);
             }
-            Color buttonFocusColor = (Daten.efaConfig != null ?
-                Daten.efaConfig.getLafButtonFocusColor() : null);
+            Color buttonFocusColor = (Daten.efaConfig != null ? Daten.efaConfig.getLafButtonFocusColor() : null);
             if (buttonFocusColor != null) {
                 // colored square around text of selected button
                 Dialog.getUiDefaults().put("Button.focus", new ColorUIResource(buttonFocusColor));
@@ -1511,6 +1518,10 @@ public class Daten {
         if (Daten.efaDocDirectory == null) {
             return;
         }
+    }
+    
+    public static Boolean isEfaFlatLafActive() {
+    	return (lookAndFeel.endsWith(Daten.LAF_EFAFLAT_LIGHT) || lookAndFeel.endsWith(Daten.LAF_EFAFLAT_DARK));
     }
     
 }

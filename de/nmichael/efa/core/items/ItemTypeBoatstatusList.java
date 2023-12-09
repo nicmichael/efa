@@ -36,6 +36,12 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
     private String STR_RESERVIERT_FUER=International.getString("Reserviert für").toLowerCase();
     private String STR_BOOTSSCHADEN=International.getString("Bootsschaden");
     
+    //Cache for special tooltip colors, set up when sorting boatslist items and determining tooltip texts
+    private String cacheToolTipBgColorText="";
+    private String cacheToolTipFontColorOpeningTag = "";
+    private String cacheToolTipFontColorClosingTag = "";
+
+    
     public ItemTypeBoatstatusList(String name,
             int type, String category, String description,
             EfaBoathouseFrame efaBoathouseFrame) {
@@ -90,6 +96,11 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
 
         long now = System.currentTimeMillis();
         Boats boats = Daten.project.getBoats(false);
+        
+        // Performance for creating tooltips: cache the current config of tooltip colors
+   		this.cacheToolTipBgColorText=(Daten.efaConfig.getToolTipSpecialColors() ? "bgcolor=\"#"+EfaUtil.getColor(Daten.efaConfig.getToolTipHeaderBackgroundColor())+"\"": "");
+   		this.cacheToolTipFontColorOpeningTag = (Daten.efaConfig.getToolTipSpecialColors() ? "<font color=\"#"+EfaUtil.getColor(Daten.efaConfig.getToolTipHeaderForegroundColor())+"\">": "");
+   		this.cacheToolTipFontColorClosingTag = (Daten.efaConfig.getToolTipSpecialColors()? "</font>": "");
 
         Groups groups = Daten.project.getGroups(false);
         boolean buildToolTips = Daten.efaConfig.getValueEfaBoathouseExtdToolTips();
@@ -446,11 +457,17 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
    	    		}
 
    	    		//concat is the fastest way to build strings
-   	    		String result = "<html><body><table border=\"0\"><tr><td align=\"left\"><b>"
+   	    		String result = "<html><body><table border=\"0\"><tr "+this.cacheToolTipBgColorText+"><td align=\"left\"><b>"
+   	    				.concat(this.cacheToolTipFontColorOpeningTag)
    	    				.concat(EfaUtil.escapeHtml(boatName))
+   	    				.concat(this.cacheToolTipFontColorClosingTag)
    	    				.concat("</b></td><td align=\"right\">")
+   	    				.concat(this.cacheToolTipFontColorOpeningTag)
    	    				.concat(EfaUtil.escapeHtml(boatTimeEntry))
-   	    				.concat("</td></tr><tr><td colspan=2><hr></td></tr>");
+   	    				.concat(this.cacheToolTipFontColorClosingTag)
+   	    				.concat("</td></tr>"); 
+//   				.concat("</td></tr><tr><td colspan=2><hr></td></tr>");
+
    	    		if (!boatReservation.isEmpty()) {
    	    			result=result.concat("<tr><td align=\"left\" colspan=2>")
    	    				.concat(EfaUtil.escapeHtml(boatReservation))

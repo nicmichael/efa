@@ -431,7 +431,7 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
 
                 JMenuBar menuBar = new JMenuBar();
                 menuBar.setLayout(new BorderLayout());
-                if (!Daten.lookAndFeel.endsWith(Daten.LAF_EFAFLAT)) {
+                if (!Daten.isEfaFlatLafActive()) {
                 	//flatLaf has some issues with setting menubar colors manually.
                 	//so we do this manual menu background color only if we don't have EFAFLATLAF
                 	menuBar.setBackground(bgColor);
@@ -462,7 +462,7 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
                 menuBar.setBorder(new EmptyBorder(2,5,2,5));
                 menuBar.validate();
                 this.setJMenuBar(menuBar);
-                if (!Daten.lookAndFeel.endsWith(Daten.LAF_EFAFLAT)) {
+                if (!Daten.isEfaFlatLafActive()) {
                 	//flatLaf has some issues with setting menubar colors manually.
                 	//so we do this manual menu background color only if we don't have EFAFLATLAF
                 	menuBar.setBackground(bgColor);
