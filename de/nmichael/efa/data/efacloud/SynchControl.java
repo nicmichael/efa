@@ -537,12 +537,18 @@ class SynchControl {
         // special and most common case of an efa logbook record: If multiple names are replaced by UUIDs, it is still
         // the same record, although many fields did change. Identity therefore is checked on EntryId, BoatId, Date,
         // StartTime and EndTime
-        if (tablename.equalsIgnoreCase("efa2logbook")) {
-            if ((!dr1.getAsString(ENTRYID).equalsIgnoreCase(dr2.getAsString(ENTRYID)))
-                    && (!dr1.getAsString(DATE).equalsIgnoreCase(dr2.getAsString(DATE)))
-                    && (!dr1.getAsString(BOATID).equalsIgnoreCase(dr2.getAsString(BOATID)))
-                    && (!dr1.getAsString(STARTTIME).equalsIgnoreCase(dr2.getAsString(STARTTIME)))
-                    && (!dr1.getAsString(ENDTIME).equalsIgnoreCase(dr2.getAsString(ENDTIME))))
+        if (tablename.equalsIgnoreCase("efa2logbook") && (diff >= allowedMismatches)) {
+            String dr1Str = (dr1.getAsString(ENTRYID) == null) ? "null" : dr1.getAsString(ENTRYID) + ",";
+            dr1Str += (dr1.getAsString(DATE) == null) ? "null" : dr1.getAsString(DATE) + ",";
+            dr1Str += (dr1.getAsString(BOATID) == null) ? "null" : dr1.getAsString(BOATID) + ",";
+            dr1Str += (dr1.getAsString(STARTTIME) == null) ? "null" : dr1.getAsString(STARTTIME) + ",";
+            dr1Str += (dr1.getAsString(ENDTIME) == null) ? "null" : dr1.getAsString(ENDTIME);
+            String dr2Str = (dr2.getAsString(ENTRYID) == null) ? "null" : dr2.getAsString(ENTRYID) + ",";
+            dr2Str += (dr2.getAsString(DATE) == null) ? "null" : dr2.getAsString(DATE) + ",";
+            dr2Str += (dr2.getAsString(BOATID) == null) ? "null" : dr2.getAsString(BOATID) + ",";
+            dr2Str += (dr2.getAsString(STARTTIME) == null) ? "null" : dr2.getAsString(STARTTIME) + ",";
+            dr2Str += (dr2.getAsString(ENDTIME) == null) ? "null" : dr2.getAsString(ENDTIME);
+            if (dr1Str.equalsIgnoreCase(dr2Str))
                 return "";
             else
                 return fieldList.toString();
