@@ -1861,6 +1861,7 @@ public class EfaUtil {
             size.setSize(size.getWidth() + 2, size.getHeight() + 2);
             frame.setSize(Dialog.getMaxSize(size));
         } catch (Exception e) {
+        	Logger.logdebug(e);
         }
     }
 
@@ -2236,7 +2237,7 @@ public class EfaUtil {
         	button.setContentAreaFilled(true);       
         }
     	
-    	if (Daten.lookAndFeel.endsWith(Daten.LAF_WINDOWS)) {
+    	if (Daten.lookAndFeel.endsWith(Daten.LAF_WINDOWS)||Daten.lookAndFeel.endsWith(Daten.LAF_LINUX_GTK)) {
         	button.setBorderPainted(true);// leads to full display of the color on the button canvas
         	button.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
         	button.setContentAreaFilled(false);   
@@ -2247,7 +2248,7 @@ public class EfaUtil {
     public static void handleTabbedPaneBackgroundColorForLookAndFeels() {
 	    if ( Daten.efaConfig.getHeaderUseForTabbedPanes()==true &&		    
 	    		(Daten.lookAndFeel.endsWith(Daten.LAF_METAL)||
-	    		 Daten.lookAndFeel.endsWith(Daten.LAF_WINDOWS_CLASSIC)) ){
+	    		 Daten.lookAndFeel.endsWith(Daten.LAF_WINDOWS_CLASSIC))){
 			UIManager.put("TabbedPane.selectedForeground", Daten.efaConfig.getHeaderForegroundColor());
 		    UIManager.put("TabbedPane.selectedBackground", Daten.efaConfig.getHeaderBackgroundColor());
 		    UIManager.put("TabbedPane.selected", Daten.efaConfig.getHeaderBackgroundColor());

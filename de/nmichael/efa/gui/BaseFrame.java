@@ -53,13 +53,29 @@ public abstract class BaseFrame extends JFrame implements ActionListener {
             iniDialogCommon(_title);
             iniDialog();
             iniDialogCommonFinish();
+            // On Raspberry PI 3b with bullseye (debian 11, 12/2023) and java 17
+            // efa hangs here sometimes and does not start up.
+            // maybe there is a connection to the audit task running in background,
+            // or the java17 version has a bug here.
+            // anyway, waiting for 2 seconds fixes startup problems.
+            Logger.log(Logger.DEBUG, "prepareDialog.beforepack");   
+
+            try{
+            	Thread.sleep(2000);
+            } catch (Exception e) {
+            	EfaUtil.foo();
+            }            
             EfaUtil.pack(this);
             _prepared = true;
+            Logger.log(Logger.DEBUG, "prepareDialog.stop (true)");     
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
+            Logger.log(Logger.DEBUG, "prepareDialog.stop (false)");     
+        	Logger.log(e);
             return false;
         }
+   
     }
 
     public void showMe() {
@@ -68,7 +84,8 @@ public abstract class BaseFrame extends JFrame implements ActionListener {
     
     public void showFrame() {
         if (!_prepared && !prepareDialog()) {
-            return;
+            Logger.log(Logger.ERROR, "FRAME NOT PREPARED");
+        	return;
         }
         Daten.iniSplashScreen(false);
         Dialog.setDlgLocation(this);
@@ -156,36 +173,41 @@ public abstract class BaseFrame extends JFrame implements ActionListener {
     }
 
     protected void iniDialogCommonFinish() {
-        getContentPane().add(basePanel, null);
-        basePanel.add(mainScrollPane, BorderLayout.CENTER);
+        try {
+	    	getContentPane().add(basePanel, null);
+	        basePanel.add(mainScrollPane, BorderLayout.CENTER);
+	
+	        // intelligent sizing of this Dialog:
+	        // make it as big as necessary for display without scrollbars (plus some margin),
+	        // as long as it does not exceed the configured screen size.
+	        Dimension dim = mainPanel.getPreferredSize();
+	        Dimension minDim = mainPanel.getMinimumSize();
+	        if (minDim.width > dim.width) {
+	            dim.width = minDim.width;
+	        }
+	        if (minDim.height > dim.height) {
+	            dim.height = minDim.height;
+	        }
+	        if (dim.width < 100) {
+	            dim.width = 100;
+	        }
+	        if (dim.height < 50) {
+	            dim.height = 50;
+	        }
+	        dim.width  += mainScrollPane.getVerticalScrollBar().getPreferredSize().getWidth() + 40;
+	        dim.height += mainScrollPane.getHorizontalScrollBar().getPreferredSize().getHeight() + 20;
+	        mainScrollPane.setPreferredSize(Dialog.getMaxSize(dim));
+	
+	        mainScrollPane.getViewport().add(mainPanel, null);
+	        int borderSize=4;
+	        if (Daten.efaConfig.getValueEfaDirekt_startMaximized()) {
+	        	borderSize=0;
+	        }
+	        mainScrollPane.setBorder(BorderFactory.createEmptyBorder(borderSize,borderSize,borderSize,borderSize));
+        } catch (Exception e) {
+        	Logger.logdebug(e);
+        }
 
-        // intelligent sizing of this Dialog:
-        // make it as big as necessary for display without scrollbars (plus some margin),
-        // as long as it does not exceed the configured screen size.
-        Dimension dim = mainPanel.getPreferredSize();
-        Dimension minDim = mainPanel.getMinimumSize();
-        if (minDim.width > dim.width) {
-            dim.width = minDim.width;
-        }
-        if (minDim.height > dim.height) {
-            dim.height = minDim.height;
-        }
-        if (dim.width < 100) {
-            dim.width = 100;
-        }
-        if (dim.height < 50) {
-            dim.height = 50;
-        }
-        dim.width  += mainScrollPane.getVerticalScrollBar().getPreferredSize().getWidth() + 40;
-        dim.height += mainScrollPane.getHorizontalScrollBar().getPreferredSize().getHeight() + 20;
-        mainScrollPane.setPreferredSize(Dialog.getMaxSize(dim));
-
-        mainScrollPane.getViewport().add(mainPanel, null);
-        int borderSize=4;
-        if (Daten.efaConfig.getValueEfaDirekt_startMaximized()) {
-        	borderSize=0;
-        }
-        mainScrollPane.setBorder(BorderFactory.createEmptyBorder(borderSize,borderSize,borderSize,borderSize));
     }
 
     //protected abstract void iniDialog() throws Exception;
