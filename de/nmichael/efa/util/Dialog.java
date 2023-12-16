@@ -621,14 +621,14 @@ public class Dialog {
         FONT_SIZE = size;
         FONT_STYLE = style;
 
-		if (!Daten.lookAndFeel.matches(".*EfaFlat.*")){
+		if (!Daten.isEfaFlatLafActive()){
         
 	        UIDefaults uid = getUiDefaults();
 	
 	        java.util.Enumeration keys = uid.keys();
 	        while (keys.hasMoreElements()) {
 	            Object key = keys.nextElement();
-	            Object value = uid.get(key);
+	            //Object value = uid.get(key);
 	            String font = (key == null ? null : key.toString());
 	            if (font != null
 	                    && (font.endsWith(".font")
@@ -641,11 +641,9 @@ public class Dialog {
 	        }
 
 		} else {
-			Object s = UIManager.get("defaultFont");
 			UIManager.put("defaultFont", new FontUIResource("Dialog",style,size));
-			s = UIManager.get("defaultFont");
 		}
-	    
+
 		initializeMaxDialogSizes();
 
     }

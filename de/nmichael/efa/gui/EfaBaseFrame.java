@@ -41,8 +41,9 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
     public static final int MODE_ADMIN = 7;
     public static final int MODE_ADMIN_SESSIONS = 8;
     private int mode;
-    private static final int VERTICAL_PADDING_GROUPS=30;
+    private static final int VERTICAL_WHITESPACE_PADDING_GROUPS=26;
 
+    private static final int FIELD_HEIGHT=21;
     // =========================================================================
     // GUI Elements
     // =========================================================================
@@ -499,7 +500,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         entryno.setAllowedRegex("[0-9]+[A-Z]?");
         entryno.setToUpperCase(true);
         entryno.setNotNull(true);
-        entryno.setFieldSize(200, 19);
+        entryno.setFieldSize(200, FIELD_HEIGHT);
         entryno.setLabelGrid(1, GridBagConstraints.EAST, GridBagConstraints.NONE);
         entryno.setFieldGrid(2, GridBagConstraints.WEST, GridBagConstraints.NONE);
         entryno.setBackgroundColorWhenFocused(Daten.efaConfig.getValueEfaDirekt_colorizeInputField() ? Color.yellow : null);
@@ -517,7 +518,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
                 International.getStringWithMnemonic("Fahrt offen") + " - " +
                 International.getStringWithMnemonic("jetzt beenden"));
         closesessionButton.setColor(Color.red);
-        closesessionButton.setFieldSize(50, 17);
+        closesessionButton.setFieldSize(50, FIELD_HEIGHT);
         closesessionButton.setFieldGrid(4, 1, -1, -1);
         closesessionButton.displayOnGui(this, mainInputPanel, 5, 0);
         closesessionButton.registerItemListener(this);
@@ -526,7 +527,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         // Date
         date = new ItemTypeDate(LogbookRecord.DATE, new DataTypeDate(), IItemType.TYPE_PUBLIC, null, International.getStringWithMnemonic("Datum"));
         date.showWeekday(true);
-        date.setFieldSize(100, 19);
+        date.setFieldSize(100, FIELD_HEIGHT);
         date.setLabelGrid(1, GridBagConstraints.EAST, GridBagConstraints.NONE);
         date.setFieldGrid(1, GridBagConstraints.WEST, GridBagConstraints.NONE);
         date.setWeekdayGrid(2, GridBagConstraints.WEST, GridBagConstraints.NONE);
@@ -538,7 +539,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         enddate = new ItemTypeDate(LogbookRecord.ENDDATE, new DataTypeDate(), IItemType.TYPE_PUBLIC, null, International.getStringWithMnemonic("bis"));
         enddate.setMustBeAfter(date, false);
         enddate.showWeekday(true);
-        enddate.setFieldSize(100, 19);
+        enddate.setFieldSize(100, FIELD_HEIGHT);
         enddate.setLabelGrid(1, GridBagConstraints.EAST, GridBagConstraints.NONE);
         enddate.setFieldGrid(2, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL);
         enddate.setWeekdayGrid(1, GridBagConstraints.WEST, GridBagConstraints.NONE);
@@ -555,9 +556,9 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
 
         // Boat
         boat = new ItemTypeStringAutoComplete(LogbookRecord.BOATNAME, "", IItemType.TYPE_PUBLIC, null, International.getStringWithMnemonic("Boot"), true);
-        boat.setFieldSize(200, 19);
+        boat.setFieldSize(200, FIELD_HEIGHT);
         boat.setLabelGrid(1, GridBagConstraints.EAST, GridBagConstraints.NONE);
-        boat.setFieldGrid(2, GridBagConstraints.WEST, GridBagConstraints.NONE);
+        boat.setFieldGrid(2, GridBagConstraints.WEST, GridBagConstraints.BOTH);
         boat.setAutoCompleteData(autoCompleteListBoats);
         boat.setChecks(true, true);
         boat.setBackgroundColorWhenFocused(Daten.efaConfig.getValueEfaDirekt_colorizeInputField() ? Color.yellow : null);
@@ -568,7 +569,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         boatvariant = new ItemTypeStringList(LogbookRecord.BOATVARIANT, "",
                 null, null,
                 IItemType.TYPE_PUBLIC, null, International.getString("Variante"));
-        boatvariant.setFieldSize(80, 17);
+        boatvariant.setFieldSize(80, FIELD_HEIGHT);
         boatvariant.setLabelGrid(1, GridBagConstraints.EAST, GridBagConstraints.NONE);
         boatvariant.setFieldGrid(2, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL);
         boatvariant.setBackgroundColorWhenFocused(Daten.efaConfig.getValueEfaDirekt_colorizeInputField() ? Color.yellow : null);
@@ -578,13 +579,13 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
 
         // Cox
         cox = new ItemTypeStringAutoComplete(LogbookRecord.COXNAME, "", IItemType.TYPE_PUBLIC, null, International.getStringWithMnemonic("Steuermann"), true);
-        cox.setFieldSize(200, 19);
+        cox.setFieldSize(200, FIELD_HEIGHT);
         cox.setLabelGrid(1, GridBagConstraints.EAST, GridBagConstraints.NONE);
         cox.setFieldGrid(2, GridBagConstraints.WEST, GridBagConstraints.NONE);
         cox.setAutoCompleteData(autoCompleteListPersons, true);
         cox.setChecks(true, true);
         cox.setBackgroundColorWhenFocused(Daten.efaConfig.getValueEfaDirekt_colorizeInputField() ? Color.yellow : null);
-        cox.setPadding(0, 0, VERTICAL_PADDING_GROUPS, 0);
+        cox.setPadding(0, 0, VERTICAL_WHITESPACE_PADDING_GROUPS, 0);
         cox.displayOnGui(this, mainInputPanel, 0, 4);
         cox.registerItemListener(this);
 
@@ -597,7 +598,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
             crew[j] = new ItemTypeStringAutoComplete(LogbookRecord.getCrewFieldNameName(i), "", IItemType.TYPE_PUBLIC, null,
                     (i == 1 ? International.getString("Mannschaft") + " " : (i < 10 ? "  " :"")) + Integer.toString(i), true);
             crew[j].setPadding( (left ? 0 : 10), 0, 0, 0);
-            crew[j].setFieldSize(200, 19);
+            crew[j].setFieldSize(200, FIELD_HEIGHT);
             crew[j].setLabelGrid(1, GridBagConstraints.EAST, GridBagConstraints.NONE);
             crew[j].setFieldGrid((left ? 2 : 3), GridBagConstraints.WEST, GridBagConstraints.NONE);
             crew[j].setAutoCompleteData(autoCompleteListPersons, true);
@@ -613,11 +614,11 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         boatcaptain = new ItemTypeStringList(LogbookRecord.BOATCAPTAIN, "",
                 LogbookRecord.getBoatCaptainValues(), LogbookRecord.getBoatCaptainDisplay(),
                 IItemType.TYPE_PUBLIC, null, International.getString("Obmann"));
-        boatcaptain.setFieldSize(80, 17);
+        boatcaptain.setFieldSize(80, FIELD_HEIGHT);
         boatcaptain.setLabelGrid(1, GridBagConstraints.EAST, GridBagConstraints.NONE);
         boatcaptain.setFieldGrid(2, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL);
         boatcaptain.setBackgroundColorWhenFocused(Daten.efaConfig.getValueEfaDirekt_colorizeInputField() ? Color.yellow : null);
-        boatcaptain.setPadding(0, 0, VERTICAL_PADDING_GROUPS, 0);        
+        boatcaptain.setPadding(0, 0, VERTICAL_WHITESPACE_PADDING_GROUPS, 0);        
         boatcaptain.displayOnGui(this, mainInputPanel, 5, 4);
         boatcaptain.registerItemListener(this);
         if (isModeBoathouse()) {
@@ -626,19 +627,19 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
 
         // StartTime
         starttime = new ItemTypeTime(LogbookRecord.STARTTIME, new DataTypeTime(), IItemType.TYPE_PUBLIC, null, International.getStringWithMnemonic("Abfahrt"));
-        starttime.setFieldSize(200, 19);
+        starttime.setFieldSize(200, FIELD_HEIGHT);
         starttime.setLabelGrid(1, GridBagConstraints.EAST, GridBagConstraints.NONE);
         starttime.setFieldGrid(2, GridBagConstraints.WEST, GridBagConstraints.NONE);
         starttime.enableSeconds(false);
         starttime.setBackgroundColorWhenFocused(Daten.efaConfig.getValueEfaDirekt_colorizeInputField() ? Color.yellow : null);
-        starttime.setPadding(0, 0, VERTICAL_PADDING_GROUPS, 0);
+        starttime.setPadding(0, 0, VERTICAL_WHITESPACE_PADDING_GROUPS, 0);
         starttime.displayOnGui(this, mainInputPanel, 0, 9);
         starttime.registerItemListener(this);
 
 
         // EndTime
         endtime = new ItemTypeTime(LogbookRecord.ENDTIME, new DataTypeTime(), IItemType.TYPE_PUBLIC, null, International.getStringWithMnemonic("Ankunft"));
-        endtime.setFieldSize(200, 19);
+        endtime.setFieldSize(200, FIELD_HEIGHT);
         endtime.setLabelGrid(1, GridBagConstraints.EAST, GridBagConstraints.NONE);
         endtime.setFieldGrid(2, GridBagConstraints.WEST, GridBagConstraints.NONE);
         endtime.enableSeconds(false);
@@ -661,7 +662,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         destination = new ItemTypeStringAutoComplete(LogbookRecord.DESTINATIONNAME, "", IItemType.TYPE_PUBLIC, null, 
                 International.getStringWithMnemonic("Ziel") + " / " +
                 International.getStringWithMnemonic("Strecke"), true);
-        destination.setFieldSize(400, 19);
+        destination.setFieldSize(400, FIELD_HEIGHT);
         destination.setLabelGrid(1, GridBagConstraints.EAST, GridBagConstraints.NONE);
         destination.setFieldGrid(7, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL);
         destination.setAutoCompleteData(autoCompleteListDestinations);
@@ -672,7 +673,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         destination.registerItemListener(this);
         destinationInfo = new ItemTypeString("GUIITEM_DESTINATIONINFO", "",
                 IItemType.TYPE_PUBLIC, null, International.getString("Gewässer"));
-        destinationInfo.setFieldSize(400, 19);
+        destinationInfo.setFieldSize(400, FIELD_HEIGHT);
         destinationInfo.setLabelGrid(1, GridBagConstraints.EAST, GridBagConstraints.NONE);
         destinationInfo.setFieldGrid(7, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL);
         destinationInfo.displayOnGui(this, mainInputPanel, 0, 12);
@@ -682,7 +683,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         // Waters
         waters = new ItemTypeStringAutoComplete(GUIITEM_ADDITIONALWATERS, "", IItemType.TYPE_PUBLIC, null,
                 International.getStringWithMnemonic("Gewässer"), true);
-        waters.setFieldSize(400, 19);
+        waters.setFieldSize(400, FIELD_HEIGHT);
         waters.setLabelGrid(1, GridBagConstraints.EAST, GridBagConstraints.NONE);
         waters.setFieldGrid(7, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL);
         waters.setAutoCompleteData(autoCompleteListWaters);
@@ -696,7 +697,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         // Distance
         distance = new ItemTypeDistance(LogbookRecord.DISTANCE, null, IItemType.TYPE_PUBLIC, null,
                 DataTypeDistance.getDefaultUnitName());
-        distance.setFieldSize(200, 19);
+        distance.setFieldSize(200, FIELD_HEIGHT);
         distance.setLabelGrid(1, GridBagConstraints.EAST, GridBagConstraints.NONE);
         distance.setFieldGrid(2, GridBagConstraints.WEST, GridBagConstraints.NONE);
         distance.setBackgroundColorWhenFocused(Daten.efaConfig.getValueEfaDirekt_colorizeInputField() ? Color.yellow : null);
@@ -705,11 +706,11 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
 
         // Comments
         comments = new ItemTypeString(LogbookRecord.COMMENTS, null, IItemType.TYPE_PUBLIC, null, International.getStringWithMnemonic("Bemerkungen"));
-        comments.setFieldSize(400, 19);
+        comments.setFieldSize(400, FIELD_HEIGHT);
         comments.setLabelGrid(1, GridBagConstraints.EAST, GridBagConstraints.NONE);
         comments.setFieldGrid(7, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL);
         comments.setBackgroundColorWhenFocused(Daten.efaConfig.getValueEfaDirekt_colorizeInputField() ? Color.yellow : null);
-        comments.setPadding(0, 0, VERTICAL_PADDING_GROUPS, 0);
+        comments.setPadding(0, 0, VERTICAL_WHITESPACE_PADDING_GROUPS, 0);
         comments.displayOnGui(this, mainInputPanel, 0, 15);
         comments.registerItemListener(this);
 
@@ -717,7 +718,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         sessiontype = new ItemTypeStringList(LogbookRecord.SESSIONTYPE, EfaTypes.TYPE_SESSION_NORMAL,
                 EfaTypes.makeSessionTypeArray(EfaTypes.ARRAY_STRINGLIST_VALUES), EfaTypes.makeSessionTypeArray(EfaTypes.ARRAY_STRINGLIST_DISPLAY),
                 IItemType.TYPE_PUBLIC, null, International.getString("Fahrtart"));
-        sessiontype.setFieldSize(200, 19);
+        sessiontype.setFieldSize(200, FIELD_HEIGHT);
         sessiontype.setLabelGrid(1, GridBagConstraints.EAST, GridBagConstraints.NONE);
         sessiontype.setFieldGrid(2, GridBagConstraints.WEST, GridBagConstraints.NONE);
         sessiontype.setBackgroundColorWhenFocused(Daten.efaConfig.getValueEfaDirekt_colorizeInputField() ? Color.yellow : null);
@@ -736,11 +737,11 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         sessiongroup = new ItemTypeStringAutoComplete(LogbookRecord.SESSIONGROUPID,
                 "", IItemType.TYPE_PUBLIC, null,
                 International.getStringWithMnemonic("Fahrtgruppe"), true);
-        sessiongroup.setFieldSize(200, 19);
+        sessiongroup.setFieldSize(200, FIELD_HEIGHT);
         sessiongroup.setLabelGrid(1, GridBagConstraints.EAST, GridBagConstraints.NONE);
         sessiongroup.setFieldGrid(2, GridBagConstraints.WEST, GridBagConstraints.NONE);
         sessiongroup.setEditable(false);
-        sessiongroup.displayOnGui(this, mainInputPanel, 0, 17);
+        sessiongroup.displayOnGui(this, mainInputPanel, 0, FIELD_HEIGHT);
         sessiongroup.registerItemListener(this);
         sessiongroup.setVisible(isModeFull());
 
@@ -771,7 +772,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
 
         // Boat Damage Button
         boatDamageButton = new ItemTypeButton("BOATDAMAGE", IItemType.TYPE_PUBLIC, null, International.getString("Bootsschaden melden"));
-        boatDamageButton.setFieldSize(200, 19);
+        boatDamageButton.setFieldSize(200, FIELD_HEIGHT);
         boatDamageButton.setFieldGrid(4, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL);
         boatDamageButton.setBackgroundColorWhenFocused(Daten.efaConfig.getValueEfaDirekt_colorizeInputField() ? Color.yellow : null);
         boatDamageButton.setIcon(getIcon(BaseDialog.IMAGE_DAMAGE));
@@ -781,7 +782,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         
         // Boat Not Cleaned Button
         boatNotCleanedButton = new ItemTypeButton("BOATNOTCLEANED", IItemType.TYPE_PUBLIC, null, International.getString("Boot war nicht geputzt"));
-        boatNotCleanedButton.setFieldSize(200, 19);
+        boatNotCleanedButton.setFieldSize(200, FIELD_HEIGHT);
         boatNotCleanedButton.setFieldGrid(4, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL);
         boatNotCleanedButton.setBackgroundColorWhenFocused(Daten.efaConfig.getValueEfaDirekt_colorizeInputField() ? Color.yellow : null);
         boatNotCleanedButton.setIcon(getIcon(BaseDialog.IMAGE_SOAP));

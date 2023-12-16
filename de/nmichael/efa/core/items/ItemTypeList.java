@@ -513,7 +513,7 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
             	label = new JLabel();
             	label.setBorder(new EmptyBorder(4,0,4,0));//4 pixel space before and after the label
             }
-            Mnemonics.setLabel(dlg, label, getDescription() + ": ");
+            Mnemonics.setLabel(dlg, label, " " + getDescription() + ": ");
             label.setHorizontalAlignment(SwingConstants.CENTER);
             if (type == IItemType.TYPE_EXPERT) {
                 label.setForeground(Color.red);

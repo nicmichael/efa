@@ -206,7 +206,7 @@ public class ItemTypeHashtable<E> extends ItemType {
         } else {
         	titlelabel=new JLabel();
         }
-        Mnemonics.setLabel(dlg, titlelabel, getDescription() + ": ");
+        Mnemonics.setLabel(dlg, titlelabel, " " + getDescription() + ": ");
         if (type == IItemType.TYPE_EXPERT) {
             if (!Daten.efaConfig.getHeaderUseHighlightColor()) {
             	titlelabel.setForeground(Color.red);

@@ -223,7 +223,7 @@ public class ItemTypeItemList extends ItemType {
 	        titlelabel.setBorder(new RoundedBorder(titlelabel.getForeground()));
         } else {titlelabel=new JLabel();}
         
-        Mnemonics.setLabel(dlg, titlelabel, getDescription() + ": ");
+        Mnemonics.setLabel(dlg, titlelabel, " " + getDescription() + ": ");
         if (type == IItemType.TYPE_EXPERT) {
             if (!Daten.efaConfig.getHeaderUseHighlightColor()) {
             	titlelabel.setForeground(Color.red);

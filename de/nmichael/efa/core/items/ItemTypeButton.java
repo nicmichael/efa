@@ -41,7 +41,9 @@ public class ItemTypeButton extends ItemType {
     protected void iniDisplay() {
         button = new JButton();
         Dialog.setPreferredSize(button, fieldWidth, fieldHeight);
-        button.setMargin(new Insets(1, 1, 1, 1));
+        // an inset of 1,1,1,1 leads to a very harsh look of the button as the icon+text are very close to the button border.
+        // so better stick with the default margins.
+        //button.setMargin(new Insets(1, 1, 1, 1)); 
         if (border != null) {
             button.setBorder(border);
         }

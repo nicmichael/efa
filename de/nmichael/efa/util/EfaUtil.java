@@ -2274,12 +2274,15 @@ public class EfaUtil {
         	if (Daten.efaConfig.getToolTipSpecialColors()) {
         		myCustomSettings.put("@efaToolTipBorderColor", "#"+EfaUtil.getColor(Daten.efaConfig.getToolTipForegroundColor()));
         	}
+        	// efaBths uses menu bars as title bar when "window not movable" is used.
+        	// in efaBths this needs to be blue so everything looks fine.
+        	// all other apps need standard settings
         	if (Daten.isApplEfaBoathouse()) {
         		myCustomSettings.put("MenuBar.background","#0000AA");
         		myCustomSettings.put("Menu.background","#0000AA");    
-        		myCustomSettings.put("MenuItem.background","#0000AA");        
+        		myCustomSettings.put("MenuItem.background","#0000AA");
         	}
-     	
+        	
         	myLaf.setExtraDefaults(myCustomSettings); 
         	
         	if (Daten.lookAndFeel.endsWith(Daten.LAF_EFAFLAT_LIGHT)) {
