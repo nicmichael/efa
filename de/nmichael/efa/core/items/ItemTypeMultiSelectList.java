@@ -46,6 +46,9 @@ public class ItemTypeMultiSelectList<T> extends ItemType implements ActionListen
 
     public ItemTypeMultiSelectList copyOf() {
         ItemTypeMultiSelectList mylist = new ItemTypeMultiSelectList(name, new DataTypeList<T>(value), keyData.clone(), displayData.clone(), type, category, description);
+        mylist.setFieldGrid(this.fieldGridWidth, this.fieldGridAnchor, this.fieldGridFill);
+        mylist.setFieldSize(this.fieldWidth, this.fieldHeight);
+        mylist.setPadding(this.padXbefore, this.padXafter, this.padYbefore, this.padYafter);
         return mylist;
     }
 

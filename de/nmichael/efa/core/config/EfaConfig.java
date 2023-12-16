@@ -804,7 +804,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 					International.getString("Hintergrundfarbe"), false));
 
 			addParameter(efaGuiflatLaf_BackgroundFieldsLightenPercentage = new ItemTypeInteger(
-					"efaGuiflatLaf_BackgroundFieldsLightenPercentage", 8, 1, 100, false, IItemType.TYPE_PUBLIC,
+					"efaGuiflatLaf_BackgroundFieldsLightenPercentage", 10, 1, 100, false, IItemType.TYPE_PUBLIC,
 					BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
 					International.getString("Hintergrund für Eingabefelder aufhellen (%)")));
 
@@ -3259,6 +3259,10 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 				BaseTabbedDialog.makeCategory(CATEGORY_SYNC, CATEGORY_KANUEFB),
 				International.onlyFor("Fahrten mit folgenden Bootstypen mit Kanu-eFB synchronisieren", "de")));
 
+		kanuEfb_boatTypes.setFieldGrid(3, 1, GridBagConstraints.EAST, GridBagConstraints.BOTH);
+		kanuEfb_boatTypes.setFieldSize(400, 400);
+		kanuEfb_boatTypes.setPadding(0, 0, 20, 0);
+		
 		typesStatus.setAllowed(false, false);
 		iniTypes(typesGender, EfaTypes.CATEGORY_GENDER);
 		iniTypes(typesBoat, EfaTypes.CATEGORY_BOAT);

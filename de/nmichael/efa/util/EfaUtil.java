@@ -2269,7 +2269,12 @@ public class EfaUtil {
         	myCustomSettings.put("@efaTableHeaderBackground", "#"+EfaUtil.getColor(Daten.efaConfig.getTableHeaderBackgroundColor()));
         	myCustomSettings.put("@efaTableHeaderForeground", "#"+EfaUtil.getColor(Daten.efaConfig.getTableHeaderHeaderColor()));
         	myCustomSettings.put("@efaFocusColor", "#"+EfaUtil.getColor(Daten.efaConfig.getEfaGuiflatLaf_FocusColor()));
-        	myCustomSettings.put("@efaTableAlternateRowColor", "#"+EfaUtil.getColor(Daten.efaConfig.getTableAlternatingRowColor()));
+        	//setting flatLaf efaTableAlternateRowColor will ENABLE alternate row color styling in flatlaf.
+        	//efa itself has a special tableCellRenderer which supports alternate row coloring, and this cell renderer is NOT active
+        	//for displaying the big logbook dialogue available in efaBths. 
+        	//enabling this setting will lead to alternate row coloring also in the logbook dialogue, which does not look nice due to nested tables.
+        	//so we could enable it, but we won't.
+        	//myCustomSettings.put("@efaTableAlternateRowColor", "#"+EfaUtil.getColor(Daten.efaConfig.getTableAlternatingRowColor()));
         	
         	if (Daten.efaConfig.getToolTipSpecialColors()) {
         		myCustomSettings.put("@efaToolTipBorderColor", "#"+EfaUtil.getColor(Daten.efaConfig.getToolTipForegroundColor()));

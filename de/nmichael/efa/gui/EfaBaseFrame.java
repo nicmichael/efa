@@ -725,13 +725,6 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         sessiontype.displayOnGui(this, mainInputPanel, 0, 16);
         sessiontype.registerItemListener(this);
         sessiontype.setReplaceValues(Daten.efaTypes.getSessionTypeReplaceValues());
-        
-        // Session Type Info
-        sessionTypeInfo = new ItemTypeLabel("SESSIONTYPE_LABEL", IItemType.TYPE_PUBLIC, null, "");
-        sessionTypeInfo.setFieldGrid(5, GridBagConstraints.WEST, GridBagConstraints.NONE);
-        sessionTypeInfo.registerItemListener(this);
-        sessionTypeInfo.activateMouseClickListener();
-        sessionTypeInfo.displayOnGui(this, mainInputPanel, 5, 16);
 
         // Session Group
         sessiongroup = new ItemTypeStringAutoComplete(LogbookRecord.SESSIONGROUPID,
@@ -741,9 +734,18 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         sessiongroup.setLabelGrid(1, GridBagConstraints.EAST, GridBagConstraints.NONE);
         sessiongroup.setFieldGrid(2, GridBagConstraints.WEST, GridBagConstraints.NONE);
         sessiongroup.setEditable(false);
-        sessiongroup.displayOnGui(this, mainInputPanel, 0, FIELD_HEIGHT);
+        sessiongroup.displayOnGui(this, mainInputPanel, 0, 17);
         sessiongroup.registerItemListener(this);
         sessiongroup.setVisible(isModeFull());
+        
+        // Session Type Info
+        sessionTypeInfo = new ItemTypeLabel("SESSIONTYPE_LABEL", IItemType.TYPE_PUBLIC, null, "");
+        sessionTypeInfo.setFieldGrid(5, GridBagConstraints.WEST, GridBagConstraints.NONE);
+        sessionTypeInfo.registerItemListener(this);
+        sessionTypeInfo.activateMouseClickListener();
+        sessionTypeInfo.displayOnGui(this, mainInputPanel, 5, 18);
+
+
 
         // Further Fields which are not part of Data Input
 
@@ -751,12 +753,14 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         remainingCrewUpButton = new ItemTypeButton("REMAININGCREWUP", IItemType.TYPE_PUBLIC, null, "\u2191");
         remainingCrewUpButton.setFieldSize(18, 30);
         remainingCrewUpButton.setPadding(5, 0, 3, 3);
+        remainingCrewUpButton.setMargin(1, 1, 1, 1); //otherwise the caption is too wide for button width in metal
         remainingCrewUpButton.setFieldGrid(1, 2, GridBagConstraints.WEST, GridBagConstraints.VERTICAL);
         remainingCrewUpButton.displayOnGui(this, mainInputPanel, 9, 5);
         remainingCrewUpButton.registerItemListener(this);
         remainingCrewDownButton = new ItemTypeButton("REMAININGCREWDOWN", IItemType.TYPE_PUBLIC, null, "\u2193");
         remainingCrewDownButton.setFieldSize(18, 30);
         remainingCrewDownButton.setPadding(5, 0, 3, 3);
+        remainingCrewDownButton.setMargin(1, 1, 1, 1); //otherwise the caption is too wide for button width in metal
         remainingCrewDownButton.setFieldGrid(1, 2, GridBagConstraints.WEST, GridBagConstraints.VERTICAL);
         remainingCrewDownButton.displayOnGui(this, mainInputPanel, 9, 7);
         remainingCrewDownButton.registerItemListener(this);

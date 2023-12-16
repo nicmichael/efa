@@ -201,6 +201,7 @@ public class MessageRecord extends DataRecord {
                 International.getString("Von"), true));
         ((ItemTypeStringAutoComplete)item).setAutoCompleteData(new AutoCompleteList(Daten.project.getPersons(false).data(), now, now));
         ((ItemTypeStringAutoComplete)item).setAlwaysReturnPlainText(true);
+        //((ItemTypeStringAutoComplete)item).setChecks(true, true); enable this for spell checking in create message dialgo
         item.setEditable(newMsg);
         item.setEnabled(newMsg);
         item.setNotNull(true);
