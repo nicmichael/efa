@@ -17,6 +17,8 @@ import javax.swing.border.*;
 import javax.swing.table.*;
 import java.util.Vector;
 import de.nmichael.efa.Daten;
+import de.nmichael.efa.gui.ImagesAndIcons;
+import de.nmichael.efa.util.International;
 
 public class TableCellRenderer extends DefaultTableCellRenderer {
 
@@ -27,6 +29,7 @@ public class TableCellRenderer extends DefaultTableCellRenderer {
     private Color disabledBkgColor = null;
     private Color disabledFgColor = Color.gray;
     private int fontSize = -1;
+    private Icon hiddenIcon = ImagesAndIcons.getIcon(ImagesAndIcons.IMAGE_BUTTON_HIDE);
 
     public Component getTableCellRendererComponent(JTable table, Object value,
             boolean isSelected, boolean hasFocus, int row, int column) {
@@ -37,6 +40,8 @@ public class TableCellRenderer extends DefaultTableCellRenderer {
             Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
             boolean isMarked = value instanceof TableItem && ((TableItem)value).isMarked();
             boolean isDisabled = value instanceof TableItem && ((TableItem)value).isDisabled();
+            boolean isInvisible = value instanceof TableItem && ((TableItem)value).isInvisible();
+            
             String txt = value.toString();
             
             //Update for standard tables: indent cell content for better readability
@@ -68,6 +73,16 @@ public class TableCellRenderer extends DefaultTableCellRenderer {
                     bkgColor = markedBkgColor;
                 }
             }
+            
+        	// Set Icon for first column only if item is hidden.
+            // So users get an idea why this entry is displayed in disabled color.
+            // The tooltip is set in TableItem.java and shown in Table.java
+            if (column==0 && isInvisible) {
+            	this.setIcon(hiddenIcon);
+            } else {
+            	this.setIcon(null);
+            }
+
             if (isDisabled && disabledFgColor != null) {
             	// disabled fgColor only to be used when col is not selected
             	// if disabled AND selection applies, use italic font to display the disabled state.
@@ -76,8 +91,9 @@ public class TableCellRenderer extends DefaultTableCellRenderer {
                 } else {
             		c.setFont(c.getFont().deriveFont(Font.ITALIC));
                 }
-                	
             }
+
+            
             
             if (isMarked && markedFgColor != null) {
             	if (isSelected) {

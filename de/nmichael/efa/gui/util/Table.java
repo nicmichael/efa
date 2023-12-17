@@ -268,7 +268,7 @@ public class Table extends JTable {
 
     public String getToolTipText(MouseEvent event) {
         try {
-            if (toolTipsEnabled) {
+        	if (toolTipsEnabled) {
                 int row = rowAtPoint(event.getPoint());
                 int col = columnAtPoint(event.getPoint());
 				
@@ -278,12 +278,18 @@ public class Table extends JTable {
                 	javax.swing.table.TableCellRenderer l_renderer = getCellRenderer(row, col);
 					Component l_component = prepareRenderer (l_renderer, row, col);
 					Rectangle l_cellRect=getCellRect(row, col, false);
-	
-					if (l_cellRect.width >= l_component.getPreferredSize().width) {
-						// do not show any tooltip if the column has enough space for the value
-						return null;
+
+					//Obtain tooltip only in the first column.
+					String toolTip = (col==0) ? ((TableItem) getValueAt(row,col)).getToolTipText() : null;
+					if (toolTip == null) {
+						if (l_cellRect.width >= l_component.getPreferredSize().width) {
+							// do not show any tooltip if the column has enough space for the value
+							return null;
+						} else {
+							return getValueAt(row, col).toString();
+						}
 					} else {
-						return getValueAt(row, col).toString();
+						return toolTip;
 					}
 				}
              }            

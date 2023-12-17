@@ -281,6 +281,7 @@ public class ItemTypeDataRecordTable extends ItemTypeTable implements IItemListe
             if (isVersionized && (!r.isValidAt(myValidAt) || r.getInvisible())) {
                 for (TableItem it : content) {
                     it.setDisabled(true);
+                    if (r.getInvisible()) {it.setInvisible(true);}
                 }
             }
 
