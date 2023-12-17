@@ -374,7 +374,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 																						// //ABCEF1
 	private static Color standardTableHeaderForegroundColor = Color.BLACK;
 	private static Color standardTableAlternatingRowColor = new Color(219, 234, 249);
-	private static Color standardFlatLafBackgroundColor = new Color(236, 234, 229);// #EBE9E5 //some yellowish gray
+	private static Color standardFlatLafBackgroundColor = new Color(239, 237, 232);// #EFEDE8 //some yellowish gray
 	private static Color standardFlatLafAccentColor = new Color(38, 117, 191); // #2675bf Blue
 	private static Color standardFlatLafFocusColor = new Color(255, 153, 0); // #ff9900 Orange
 	private static Color hintBackgroundColor = new Color(171, 206, 241);
@@ -1667,7 +1667,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 			addParameter(crontab = new ItemTypeItemList("CronTab", new Vector<IItemType[]>(), this,
 					IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_CRONTAB),
 					International.getString("Automatische Abläufe")));
-			crontab.setScrollPane(1000, 400);
+			//crontab.setScrollPane(1000, 400);
 			crontab.setRepeatTitle(false);
 
 			// ============================= DATA ACCESS =============================

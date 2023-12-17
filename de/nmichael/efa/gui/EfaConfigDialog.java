@@ -137,7 +137,7 @@ public class EfaConfigDialog extends BaseTabbedDialog {
 		}
 		
     	int maxDlgW=Daten.efaConfig.getValueMaxDialogWidth();
-    	int maxDlgH=Daten.efaConfig.getValueMaxDialogHeight();
+    	int maxDlgH=Daten.efaConfig.getValueMaxDialogHeight()-20;
     	
     	//no max size for dialogs set? have a look at configured maximum screen width/height
     	if (maxDlgW<=0) {
