@@ -10,25 +10,55 @@
 
 package de.nmichael.efa.gui.widgets;
 
-import de.nmichael.efa.*;
-import de.nmichael.efa.core.Plugins;
-import de.nmichael.efa.gui.*;
-import de.nmichael.efa.util.*;
-import de.nmichael.efa.core.items.*;
-import de.nmichael.efa.data.LogbookRecord;
-import java.awt.image.*;
 import java.awt.Cursor;
 import java.awt.Font;
-import java.awt.event.*;
-import javax.swing.*;
-import javax.swing.text.html.*;
-import java.util.*;
-import java.io.*;
-import java.net.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.Stack;
+import java.util.Vector;
+
 import javax.net.ssl.HttpsURLConnection;
-import org.xml.sax.*;
-import org.xml.sax.helpers.*;
-import oauth.signpost.OAuthConsumer;  
+import javax.swing.JComponent;
+import javax.swing.JEditorPane;
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
+import javax.swing.text.html.HTMLEditorKit;
+
+import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.DefaultHandler;
+
+import de.nmichael.efa.Daten;
+import de.nmichael.efa.core.Plugins;
+import de.nmichael.efa.core.items.IItemType;
+import de.nmichael.efa.core.items.ItemTypeBoolean;
+import de.nmichael.efa.core.items.ItemTypeFile;
+import de.nmichael.efa.core.items.ItemTypeInteger;
+import de.nmichael.efa.core.items.ItemTypeLongLat;
+import de.nmichael.efa.core.items.ItemTypeString;
+import de.nmichael.efa.core.items.ItemTypeStringList;
+import de.nmichael.efa.data.LogbookRecord;
+import de.nmichael.efa.gui.BaseDialog;
+import de.nmichael.efa.gui.EfaBaseFrame;
+import de.nmichael.efa.gui.NotificationDialog;
+import de.nmichael.efa.util.EfaUtil;
+import de.nmichael.efa.util.International;
+import de.nmichael.efa.util.Logger;
+import de.nmichael.efa.util.SunRiseSet;
+import de.nmichael.efa.util.TMJ;
+import oauth.signpost.OAuthConsumer;
 import oauth.signpost.basic.DefaultOAuthConsumer;  
 
 public class MeteoAstroWidget extends Widget {
@@ -338,11 +368,11 @@ public class MeteoAstroWidget extends Widget {
 
     void construct() {
     	
-
-    	Font font = myPanel.getFont();
-    	String fontHeader="style=\\\"font-family: \"" + font.getFamily() + " "; // + font.getFamily() + "'>";
-    	String fontFooter="</font>";    	
     	htmlPane.setContentType("text/html");
+        if (Daten.isEfaFlatLafActive()) {
+            htmlPane.putClientProperty("html.disable", Boolean.TRUE); 
+        	htmlPane.setFont(htmlPane.getFont().deriveFont(Font.PLAIN,14));
+        }
         htmlPane.setEditable(false);
         htmlPane.setBorder(null);
 
@@ -369,7 +399,7 @@ public class MeteoAstroWidget extends Widget {
         });
 
         try {
-            htmlUpdater = new HTMLUpdater(getUpdateInterval(), fontHeader, fontFooter);
+            htmlUpdater = new HTMLUpdater(getUpdateInterval());
             htmlUpdater.start();
         } catch(NoClassDefFoundError e) {
             Logger.log(Logger.WARNING, Logger.MSG_WARN_WEATHERUPDATEFAILED, 
@@ -430,13 +460,9 @@ public class MeteoAstroWidget extends Widget {
         private boolean weatherError = false;
         private int weatherSlowDownUpdateFactor = 1;
         private int updateIntervalInSeconds = 24*3600;
-        private String fontHeader="";
-        private String fontFooter="";
 
-        public HTMLUpdater(int updateIntervalInSeconds, String htmlFontHeader, String htmlFontFooter) {
+        public HTMLUpdater(int updateIntervalInSeconds) {
             this.updateIntervalInSeconds = updateIntervalInSeconds;
-            this.fontHeader=htmlFontHeader;
-            this.fontFooter=htmlFontFooter;
         }
 
         public void run() {
@@ -698,7 +724,7 @@ public class MeteoAstroWidget extends Widget {
 
                     StringBuffer htmlDoc = new StringBuffer();
                     
-                    htmlDoc.append("<html>\n<body bgcolor=\"#" + bgcolor + "\" "+ fontHeader+ ">\n");
+                    htmlDoc.append("<html>\n<body bgcolor=\"#" + bgcolor + "\">\n");
                     htmlDoc.append("<table align=\"center\" cellspacing=\"" + (getLayout().equals(LAYOUT_COMPACT) ? 0 : 8) + "\">\n");
 
                     row = 0;

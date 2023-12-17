@@ -24,12 +24,16 @@ import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Vector;
 import java.util.jar.JarFile;
 
+import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 import javax.swing.plaf.ColorUIResource;
+import javax.swing.text.Style;
+import javax.swing.text.html.HTMLDocument;
+import javax.swing.text.html.HTMLEditorKit;
+import javax.swing.text.html.StyleSheet;
 
 import com.formdev.flatlaf.FlatLaf;
 
@@ -56,8 +60,8 @@ import de.nmichael.efa.data.types.DataTypeDate;
 import de.nmichael.efa.gui.BrowserDialog;
 import de.nmichael.efa.gui.EfaFirstSetupDialog;
 import de.nmichael.efa.gui.SimpleInputDialog;
-import de.nmichael.efa.themes.EfaFlatLightLookAndFeel;
 import de.nmichael.efa.util.Dialog;
+import de.nmichael.efa.util.EfaSortStringComparator;
 import de.nmichael.efa.util.EfaUtil;
 import de.nmichael.efa.util.HtmlFactory;
 import de.nmichael.efa.util.International;
@@ -1092,6 +1096,15 @@ public class Daten {
                     "Failed to apply LookAndFeel Workarounds: " + e.toString());
         }
 
+        // HTML Editor Kit Font Base and Style
+        // this is used for ItemTypeHTMLList as well as the widgets which display HTML.
+        new HTMLEditorKit().getStyleSheet().addRule("body  {font-size: 14pt;\r\n"
+				+ "       font-family: Dialog;\r\n" // this is different from the standard CSS Style sheet, where serif is the standard font.
+				+ "       font-weight: normal;\r\n"
+				+ "       margin-left: 0;\r\n"
+				+ "       margin-right: 0;\r\n"
+				+ "       color: black}");
+        
         // Font Size
         if (applID == APPL_EFABH) {
             try {
@@ -1105,7 +1118,7 @@ public class Daten {
         
         if (applID == APPL_EFABASE) {
             try {
-                Dialog.setGlobalFontSize(Daten.efaConfig.getValueEfaDirekt_OtherFontSize(), Daten.efaConfig.getValueEfaDirekt_OtherFontStyle());
+            	Dialog.setGlobalFontSize(Daten.efaConfig.getValueEfaDirekt_OtherFontSize(), Daten.efaConfig.getValueEfaDirekt_OtherFontStyle());
                 Dialog.setGlobalTableFontSize(Daten.efaConfig.getValueEfaDirekt_OtherTableFontSize());
             } catch (Exception e) {
                 Logger.log(Logger.WARNING, Logger.MSG_WARN_CANTSETFONTSIZE,
@@ -1229,6 +1242,42 @@ public class Daten {
             return true;
         }
         return false;
+    }
+
+    public static Vector getUIProperties() {
+    	
+        Vector infos = new Vector();
+ 	   	UIDefaults uid = Dialog.getUiDefaults();
+		
+        java.util.Enumeration keys = uid.keys();
+        while (keys.hasMoreElements()) {
+            Object key = keys.nextElement();
+            Object value = uid.get(key);
+
+            if (value!=null) {
+            	infos.add(key+" = "+value.toString().replaceAll("\n", " "));
+            } else {
+            	infos.add(key+" = <null>");
+            }
+        }
+        
+        infos.sort(new EfaSortStringComparator());
+        return infos;
+    }
+
+    public static Vector getCSSInfo() {
+    	
+        Vector infos = new Vector();
+    	HTMLEditorKit kit = new HTMLEditorKit();
+    	StyleSheet styles = kit.getStyleSheet();
+    	Enumeration rules = styles.getStyleNames();
+    	while (rules.hasMoreElements()) {
+	    	String name = (String) rules.nextElement();
+	    	Style rule = styles.getStyle(name);
+	    	infos.add(rule.toString());
+    	}
+        infos.sort(new EfaSortStringComparator());
+        return infos;
     }
 
     public static Vector getEfaInfos() {

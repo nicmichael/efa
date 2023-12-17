@@ -12,6 +12,7 @@ package de.nmichael.efa.core.items;
 
 import de.nmichael.efa.util.*;
 import de.nmichael.efa.util.Dialog;
+import de.nmichael.efa.Daten;
 import de.nmichael.efa.gui.util.*;
 import java.util.*;
 import java.awt.*;
@@ -180,7 +181,20 @@ public class ItemTypeHtmlList extends ItemType implements ActionListener {
                 boolean cellHasFocus) // does the cell have focus
         {
             String s = value.toString();
+            
+            //this enables HTML Editor Kit to be active. This also sets a default CSS Style sheet.
+            //The default swing CSS Sheet is overwritten in Daten.iniGUI so that DIALOG is the base font for
+            //HTML texts. However, flatlaf installs an own FONT SIZER which must be disabled, as the 
+            //HTML Renderings may get too big.
             setContentType("text/html");
+            if (Daten.isEfaFlatLafActive()) {
+                this.putClientProperty("html.disable", Boolean.TRUE); 
+            	this.setFont(this.getFont().deriveFont(Font.PLAIN,14));
+            }
+
+
+
+
             setText(s);
             if (Logger.isTraceOn(Logger.TT_GUI, 6)) {
                 Logger.log(Logger.DEBUG, Logger.MSG_DEBUG_GUI_ELEMENTS,

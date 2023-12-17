@@ -16,6 +16,8 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.*;
+import javax.swing.text.html.HTMLEditorKit;
+
 import java.util.*;
 import java.text.*;
 
@@ -175,6 +177,23 @@ public class EfaAboutDialog extends BaseDialog {
         }
         if (infos == null) {
             efaInfosText.append(International.getString("Keine Systeminformationen verfügbar."));
+        }
+        
+        //Add GUI Debug info, if debug info is activated in efaConfig or by Commandline
+        if (Logger.isDebugLogging()||Logger.isDebugLoggingActivatedByCommandLine()) {
+	        // Get UI Defaults Properties
+        	efaInfosText.append("\n\n\nUIManager.getDefaults()\n-------------\n");
+	        Vector lafProperties = Daten.getUIProperties();
+	        for (int i = 0; lafProperties != null && i < lafProperties.size(); i++) {
+	            efaInfosText.append((String) lafProperties.get(i) + "\n");
+	        }
+	        
+	        // Get HTML CSS Stylesheet Default Rules
+	        efaInfosText.append("\n\n\nHTMLEditorKit().getStyleSheet() rules\n-------------\n");
+	        Vector htmlCSSRules = Daten.getCSSInfo();
+	        for (int i = 0; htmlCSSRules != null && i < htmlCSSRules.size(); i++) {
+	            efaInfosText.append((String) htmlCSSRules.get(i) + "\n");
+	        }
         }
         jScrollPane1.getViewport().add(efaInfosText, null);
         efaInfosText.setCaretPosition(0);

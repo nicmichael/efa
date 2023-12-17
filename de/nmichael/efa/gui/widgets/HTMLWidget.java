@@ -11,6 +11,7 @@
 package de.nmichael.efa.gui.widgets;
 
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
@@ -24,6 +25,7 @@ import javax.swing.text.Document;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
 
+import de.nmichael.efa.Daten;
 import de.nmichael.efa.core.items.IItemType;
 import de.nmichael.efa.core.items.ItemTypeDouble;
 import de.nmichael.efa.core.items.ItemTypeFile;
@@ -79,7 +81,12 @@ public class HTMLWidget extends Widget {
                 g2d.setTransform(old);
             }
         };
+
         htmlPane.setContentType("text/html");
+        if (Daten.isEfaFlatLafActive()) {
+            htmlPane.putClientProperty("html.disable", Boolean.TRUE); 
+        	htmlPane.setFont(htmlPane.getFont().deriveFont(Font.PLAIN,14));
+        }
         htmlPane.setEditable(false);
         // following hyperlinks is automatically "disabled" (if no HyperlinkListener is taking care of it)
         // But we also need to disable submiting of form data:

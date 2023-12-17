@@ -52,6 +52,10 @@ public class NotificationDialog extends BaseDialog {
 
         JTextPane t = new JTextPane();
         t.setContentType("text/html");
+        if (Daten.isEfaFlatLafActive()) {
+            t.putClientProperty("html.disable", Boolean.TRUE); 
+        	t.setFont(t.getFont().deriveFont(Font.PLAIN,14));
+        }
         t.setEditable(false);
         t.setText("<html><body bgcolor=\"#" + bkcolor + "\">" +
                 "<table cellpadding=\"20\" align=\"center\"><tr>" +

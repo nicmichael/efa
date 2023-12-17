@@ -10,6 +10,7 @@
 
 package de.nmichael.efa.gui.widgets;
 
+import java.awt.Font;
 import java.awt.Label;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -28,6 +29,8 @@ public class ClockMiniWidget {
 
     public ClockMiniWidget() {
         label.setText("12:34");
+        //always show clock in bold font. 
+        label.setFont(label.getFont().deriveFont(Font.BOLD));
         clockUpdater = new ClockUpdater();
         clockUpdater.start();
     }

@@ -9,6 +9,7 @@
  */
 package de.nmichael.efa.gui.widgets;
 
+import de.nmichael.efa.Daten;
 import de.nmichael.efa.gui.BaseDialog;
 import de.nmichael.efa.util.EfaUtil;
 import de.nmichael.efa.util.International;
@@ -16,6 +17,7 @@ import de.nmichael.efa.util.LogString;
 import de.nmichael.efa.util.Logger;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
 import javax.swing.JDialog;
@@ -78,6 +80,11 @@ public class HtmlPopupDialog extends BaseDialog {
         JEditorPane htmlPane = new JEditorPane();
         mainPanel.setLayout(new BorderLayout());
         htmlPane.setContentType("text/html");
+        if (Daten.isEfaFlatLafActive()) {
+            htmlPane.putClientProperty("html.disable", Boolean.TRUE); 
+        	htmlPane.setFont(htmlPane.getFont().deriveFont(Font.PLAIN,14));
+        }
+
         htmlPane.setEditable(false);
         // following hyperlinks is automatically "disabled" (if no HyperlinkListener is taking care of it)
         // But we also need to disable submiting of form data:

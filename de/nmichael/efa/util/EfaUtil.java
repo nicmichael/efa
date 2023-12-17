@@ -50,6 +50,7 @@ import javax.mail.internet.InternetAddress;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
@@ -2252,7 +2253,7 @@ public class EfaUtil {
 			UIManager.put("TabbedPane.selectedForeground", Daten.efaConfig.getHeaderForegroundColor());
 		    UIManager.put("TabbedPane.selectedBackground", Daten.efaConfig.getHeaderBackgroundColor());
 		    UIManager.put("TabbedPane.selected", Daten.efaConfig.getHeaderBackgroundColor());
-	    }     
+	    }
     }
     
     public static void handleEfaFlatLafDefaults() {
@@ -2288,6 +2289,8 @@ public class EfaUtil {
         		myCustomSettings.put("MenuItem.background","#0000AA");
         	}
         	
+        	
+        	//inform Flatlaf about custom settings
         	myLaf.setExtraDefaults(myCustomSettings); 
         	
         	if (Daten.lookAndFeel.endsWith(Daten.LAF_EFAFLAT_LIGHT)) {
@@ -2300,7 +2303,7 @@ public class EfaUtil {
         }
     	
     }
-        
+    
     public static void main(String args[]) {
         String text = "abc & def";
         System.out.println(text + " -> EfaUtil.escapeXml() = " + EfaUtil.escapeXml(text));
