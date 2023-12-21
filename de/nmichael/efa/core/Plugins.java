@@ -34,6 +34,7 @@ public class Plugins {
     public static final String PLUGIN_MAIL = "mail";
     public static final String PLUGIN_PDF = "pdf";
     public static final String PLUGIN_WEATHER = "weather";
+    public static final String PLUGIN_FLATLAF = "flatlaf";
 
     private Hashtable<String,PluginInfo> pluginInfos;
 
@@ -110,6 +111,15 @@ public class Plugins {
                 return false;
             }
         }
+        
+        if (pluginName.equals(PLUGIN_FLATLAF)) {
+            try {
+            	// there is no way to proofe Flatlaf works, as flatlaf is essential for efa to start up
+            	return true;
+            } catch (NoClassDefFoundError e) {
+                return false;
+            }
+        }        
 
         return false;
     }

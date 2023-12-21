@@ -74,4 +74,15 @@
         </Files>
     </Plugin>
 
+    <Plugin name="flatlaf">
+        <FullName>FlatLaf - Flat Look and Feel</FullName>
+        <Version>3.2.5</Version>
+        <Copyright>FlatLaf is open source licensed under the Apache 2.0 License.</Copyright>
+        <Description lang="de">FlatLaf Look and Feel</Description>
+        <Description lang="en">FlatLaf Look and Feel</Description>
+        <Files baseurl="http://efa.nmichael.de/plugins/flatlaf">
+            <File size="818435">flatlaf-3.2.5.jar</File>
+        </Files>
+    </Plugin>
+
 </Plugins>
