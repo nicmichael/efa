@@ -12,6 +12,8 @@ package de.nmichael.efa.gui.util;
 
 import java.awt.*;
 
+import javax.swing.SwingUtilities;
+
 public class BringToFrontThread extends Thread {
 
     private Frame frame;
@@ -29,7 +31,15 @@ public class BringToFrontThread extends Thread {
                 frame.setState(Frame.NORMAL);
                 Thread.sleep(afterMs);
             }
-            frame.toFront();
+            // not thread safe
+            //frame.toFront();
+            
+        	SwingUtilities.invokeLater(new Runnable() {
+        	      public void run() {
+        	            frame.toFront();
+        	      }
+          	});            
+
         } catch (Exception e) {
         }
     }

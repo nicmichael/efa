@@ -93,15 +93,29 @@ public class NotificationDialog extends BaseDialog {
     class CloseTimeoutThread extends Thread {
         public void run() {
             for (int i=0; i<closeTimeout;i++) {
-                closeInfoLabel.setText(
-                        International.getMessage("Dieses Fenster schließt automatisch in {sec} Sekunden ...",
-                        Math.max(closeTimeout-i, 0)));
+    	    	String value= International.getMessage("Dieses Fenster schließt automatisch in {sec} Sekunden ...",
+                          Math.max(closeTimeout-i, 0));
+    	    	
+            	SwingUtilities.invokeLater(new Runnable() {
+          	      public void run() {
+                      closeInfoLabel.setText(value);
+          	      }
+            	});
+
                 try {
                     Thread.sleep(1000);
                 } catch(InterruptedException e) {
                 }
             }
-            cancel();
+            
+            //not threadsafe
+            //cancel();
+        	SwingUtilities.invokeLater(new Runnable() {
+        	      public void run() {
+        	            cancel();
+        	      }
+          	});
+
         }
     }
 

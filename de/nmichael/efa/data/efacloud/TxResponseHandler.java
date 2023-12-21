@@ -243,9 +243,11 @@ public class TxResponseHandler {
                     for (String param : cfg) {
                         if (param.contains("=")) {
                             String name = param.split("=", 2)[0];
-                            if (name.equalsIgnoreCase("server_welcome_message"))
+                            if (name.equalsIgnoreCase("server_welcome_message")) {
                                 txq.serverWelcomeMessage = param.split("=", 2)[1].replace("//", "\n");
-                            else if (name.equalsIgnoreCase("db_layout"))
+                                txq.synchControl.efaCloudRolleBths = txq.serverWelcomeMessage.contains("Rolle: bths");
+                                txq.synchControl.isBoathouseApp = (Daten.applID == Daten.APPL_EFABH);
+                            } else if (name.equalsIgnoreCase("db_layout"))
                                 Daten.tableBuilder.mapServerDBLayout(param.split("=", 2)[1]);
                             else {
                                 int val = -1;

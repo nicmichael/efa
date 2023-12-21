@@ -57,12 +57,16 @@ import de.nmichael.efa.core.config.EfaTypes;
 import de.nmichael.efa.data.types.DataTypeTime;
 import de.nmichael.efa.efa1.DatenFelder;
 import de.nmichael.efa.efa1.Synonyme;
+import javax.swing.SwingUtilities;
 
 // @i18n complete
 public class EfaUtil {
 
     private static final int ZIP_BUFFER = 2048;
     private static java.awt.Container java_awt_Container = new java.awt.Container();
+
+	private static String UMLAUTS 		= "åàáâăäāąćçčèéêęëėěēìíîįīïďđģķĺļłńňñņòóôőõöōøřŕůùúûűüųūýÿšśşťţżžź";
+	private static String REPLACEMENT 	= "aaaaaaaaccceeeeeeeeiiiiiiddgklllnnnnoooooooorruuuuuuuuyysssttzzz"; 
 
     public static String escapeXml(String str) {
         str = replaceString(str, "&", "&amp;");
@@ -140,6 +144,7 @@ public class EfaUtil {
         return buffer.toString();
     }
     
+    @Deprecated
     public static String replaceListByList(String string, String searchList, String replaceList) {
         if (searchList.length() != replaceList.length()) {
             return string;
@@ -156,6 +161,71 @@ public class EfaUtil {
         return string;
     }
 
+    /**
+     * Replaces special characters in a string by a replacement.
+     * Replacing is done character-by-character, so it is not possible to replace a single character "ä" by a multi-character string "ae". 
+	 *
+	 * searchList and replaceList MUST be of equal length.
+	 *
+     * The method is declarated as "fast" as it uses standard java replace function instead of old self-written code.
+     * This method is like 15 times faster than the former replaceListByList function, and more suitable for sorting algorithms.
+     * 
+     * @param strData	String containing characters to be replaced
+     * @param searchList  String containing all characters that shall be replaced one-by-one
+     * @param replaceList String containing all replacement characters
+     * @return String containing all replacements.
+     */
+    public static String replaceListByListFast(String strData, String searchList, String replaceList) {
+        if (searchList.length() != replaceList.length()) {
+            return strData;
+        }
+        for (int i=0; i<searchList.length(); i++) {
+        	strData = strData.replace(searchList.charAt(i),replaceList.charAt(i));
+        }
+        return strData;
+    }
+    
+    /**
+     * Replaces all umlauts of western character set (German, French, Spanish, Danish) to a simple latin character, e.g. "ä"->"a".
+     * This method can be used for sorting lists in efa or for String comparison.
+	 *
+	 * The former replaceAllUmlauts was used only for sorting Boatlist/Personlist in efaBths (myStringComperator used this code);
+	 * other sort algorithms hat other umlaut handling (Autocompletelist) or even none (Tablesorter)
+	 *
+     * Today it is used for sorting in the following lists: BoatList/Personlist, AutoCompleteList, spellcheck for autocomplete, tablesorter.
+     * 
+     * Addendum: 
+     * Sorting lists in efa is sort of old-fashioned. It does not yet use collator and locales, but
+     * it replaces common umlauts to get some better sorting of boats, persons which have umlauts in their names.
+     * This is subject to further refactoring.
+	 *
+     * @param data
+     * @return
+     */
+    public static String replaceAllUmlautsLowerCaseFast(String data) {
+	    String s1 = data.toLowerCase();
+	    s1 = EfaUtil.replaceListByListFast(s1, UMLAUTS, REPLACEMENT);
+	
+	    if (s1.indexOf("ß") >= 0) {
+	        s1 = EfaUtil.replace(s1, "ß", "ss", true);
+	    }
+	    
+	    if (s1.indexOf("æ") >= 0) {
+	        s1 = EfaUtil.replace(s1, "æ", "ae", true);
+	    }
+
+	    if (s1.indexOf("œ") >= 0) {
+	        s1 = EfaUtil.replace(s1, "œ", "oe", true);
+	    }
+	    
+	    
+	    return s1;
+    }    
+    
+    public static boolean containsUmlaut(String data) {
+    	return data.toLowerCase().matches(".*["+UMLAUTS+"]+.*");
+    }
+    
     public static String getString(String s, int length) {
         while (s.length() < length) {
             s = s + " ";
@@ -2122,6 +2192,29 @@ public class EfaUtil {
     	
     }    
     
+    /**
+     * Helper class to display a notification message.
+     * If this is a GUI application, we asynchronously display a dialog through
+     * SwingUtilities.invokeLater in a separate thread. If this is not a GUI application,
+     * we will synchronously in the calling thread invoke the logging method.
+     */
+    public static abstract class UserMessage {
+
+        public abstract void run();
+
+        public static void show(UserMessage m) {
+            if (Daten.isGuiAppl()) {
+                SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        m.run();
+                    }
+                });
+            } else {
+                m.run();
+            }
+        }
+    }
+
     public static void main(String args[]) {
         String text = "abc & def";
         System.out.println(text + " -> EfaUtil.escapeXml() = " + EfaUtil.escapeXml(text));
