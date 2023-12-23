@@ -27,6 +27,7 @@ import java.util.Enumeration;
 import java.util.Vector;
 import java.util.jar.JarFile;
 
+import javax.swing.SwingUtilities;
 import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 import javax.swing.plaf.ColorUIResource;
@@ -71,9 +72,9 @@ import de.nmichael.efa.util.Logger;
 // @i18n complete
 public class Daten {
 
-    public final static String VERSION            = "2.3.4_00_EFA_057_LAF_6_1423"; // Version für die Ausgabe (z.B. 2.1.0, kann aber auch Zusätze wie "alpha" o.ä. enthalten)
+    public final static String VERSION            = "2.3.4_00_EFA_057_LAF_6_1228"; // Version für die Ausgabe (z.B. 2.1.0, kann aber auch Zusätze wie "alpha" o.ä. enthalten)
     public final static String VERSIONID          = "2.3.4_00";   // VersionsID: Format: "X.Y.Z_MM"; final-Version z.B. 1.4.0_00; beta-Version z.B. 1.4.0_#1
-    public final static String VERSIONRELEASEDATE = "17.12.2023";  // Release Date: TT.MM.JJJJ
+    public final static String VERSIONRELEASEDATE = "23.12.2023";  // Release Date: TT.MM.JJJJ
     public final static String MAJORVERSION       = "2";
     public final static String PROGRAMMID         = "EFA.233"; // Versions-ID für Wettbewerbsmeldungen
     public final static String PROGRAMMID_DRV     = "EFADRV.233"; // Versions-ID für Wettbewerbsmeldungen
@@ -713,15 +714,30 @@ public class Daten {
         }
         if (show) {
             splashScreen = new StartLogo(IMAGEPATH + "efaIntro.png");
-            splashScreen.show();
+
+            // also showing the splash screen needs to be run thread-safe for swing.
+            // this function "iniSplashScreen" is called from outside the AWT main thread.
+            SwingUtilities.invokeLater(new Runnable() {
+      	      public void run() {
+      	    	  splashScreen.show();
+      	      }
+        	});
             try {
                 Thread.sleep(1000); // Damit nach automatischem Restart genügend Zeit vergeht
             } catch (InterruptedException e) {
             }
         } else {
             if (splashScreen != null) {
-                splashScreen.remove();
-                splashScreen = null;
+                SwingUtilities.invokeLater(new Runnable() {
+            	      public void run() {
+            	    	  // splashScreen can be set to null by another thread, so check at 
+            	    	  // actual execution time.
+            	    	  if (splashScreen!=null) {
+	                          splashScreen.remove();
+	                          splashScreen = null;
+            	    	  }
+            	      }
+              	});            	
             }
         }
     }

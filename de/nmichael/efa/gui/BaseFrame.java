@@ -53,27 +53,11 @@ public abstract class BaseFrame extends JFrame implements ActionListener {
             iniDialogCommon(_title);
             iniDialog();
             iniDialogCommonFinish();
-            // On Raspberry PI 3b with bullseye (debian 11, 12/2023) and java 17
-            // efa hangs here sometimes and does not start up.
-            // maybe there is a connection to the audit task running in background,
-            // or the java17 version has a bug here.
-            // anyway, waiting for 2 seconds fixes startup problems.
-            Logger.log(Logger.DEBUG, "prepareDialog.beforesleep");   
-
-            try{
-            	Thread.sleep(2000);
-            } catch (Exception e) {
-            	EfaUtil.foo();
-            }            
-            Logger.log(Logger.DEBUG, "prepareDialog.beforepack");   
-
             EfaUtil.pack(this);
             _prepared = true;
-            Logger.log(Logger.DEBUG, "prepareDialog.stop (true)");     
             return true;
         } catch (Exception e) {
             //e.printStackTrace();
-            Logger.log(Logger.DEBUG, "prepareDialog.stop (false)");     
         	Logger.log(e);
             return false;
         }
@@ -96,6 +80,7 @@ public abstract class BaseFrame extends JFrame implements ActionListener {
             focusItem.requestFocus();
         }
         this.setVisible(true);
+        Logger.log(Logger.INFO, Logger.MSG_EVT_EFAREADY, International.getString("BEREIT"));        
     }
 
     public void setRequestFocus(IItemType item) {

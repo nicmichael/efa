@@ -10,11 +10,15 @@
 
 package de.nmichael.efa.base;
 
-import de.nmichael.efa.gui.*;
-import de.nmichael.efa.*;
+import javax.swing.SwingUtilities;
+
+import de.nmichael.efa.Daten;
+import de.nmichael.efa.Program;
 import de.nmichael.efa.core.config.AdminRecord;
-import de.nmichael.efa.util.*;
-import de.nmichael.efa.data.*;
+import de.nmichael.efa.data.Project;
+import de.nmichael.efa.gui.EfaBaseFrame;
+import de.nmichael.efa.util.International;
+import de.nmichael.efa.util.Logger;
 
 // @i18n complete
 public class Main extends Program {
@@ -22,7 +26,11 @@ public class Main extends Program {
     private String project = null;
 
     public Main(String[] args) {
+    	
+    	// An unprepossessing call, but most of the initializations, including creation of a super admin
+    	// during first run is done here.     	
         super(Daten.APPL_EFABASE, args);
+        
         AdminRecord admin = getNewlyCreatedAdminRecord();
 
         if (project != null) {
@@ -33,7 +41,18 @@ public class Main extends Program {
         if (admin != null) {
             frame.setAdmin(admin);
         }
-        frame.showMe();
+
+        // In efaBoathouse, a lot of threads are installed which interact with the gui.
+        // In efaBase, this is not yet a problem. However, we
+        try {
+        	SwingUtilities.invokeAndWait(new Runnable() {
+      	      public void run() {
+      	        frame.showMe();
+      	      }
+        	});            
+        } catch (Exception e) {
+        	Logger.logdebug(e);
+        }       
         Daten.iniSplashScreen(false);
     }
 

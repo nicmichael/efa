@@ -107,6 +107,7 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
     public static final int EFA_EXIT_REASON_OOME          = 3;
     public static final int EFA_EXIT_REASON_AUTORESTART   = 4;
     public static final int EFA_EXIT_REASON_ONLINEUPDATE  = 5;
+    public static final int EFA_EXIT_REASON_SYSTEM	      = 6;
 
     public static final int ACTIONID_STARTSESSION        = 1;
     public static final int ACTIONID_FINISHSESSION       = 2;
@@ -414,7 +415,7 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
         crontabThread.start();
 
         alive();
-        Logger.log(Logger.INFO, Logger.MSG_EVT_EFAREADY, International.getString("BEREIT"));
+        Logger.log(Logger.INFO, Logger.MSG_EVT_EFAREADY, International.getString("PROJEKT_GELADEN"));
     }
 
     private void iniGuiRemaining() {
@@ -1139,6 +1140,9 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
             case EFA_EXIT_REASON_ONLINEUPDATE:
                 who = International.getString("Online-Update");
                 break;
+            case EFA_EXIT_REASON_SYSTEM:
+            	who = "System Signal";
+            	break;
         }
         if (restart) {
             exitCode = Daten.program.restart();
