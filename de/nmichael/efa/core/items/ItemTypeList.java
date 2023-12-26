@@ -226,13 +226,11 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
      * - right row gets remaining space and is truncated on the right side, if contents do not fit.
      *   also, right row contents are rendered in grey text color.
      */
-    private String getHTMLTableFor(String firstPart, String secondPart, boolean isSelected) {
+private String getHTMLTableFor(String firstPart, String secondPart, boolean isSelected) {
     	
-    	// der Aufbau der HTML-Tabelle ist wegen dem Kürzen des secondPart performancelastig,
-    	// wenn es eine volle Bootstabelle gibt. Bei ~200 Booten und einem Raspi3
-    	// braucht das Aufbauen der Liste der verfügbaren Boote 400-800 Millisekunden mit HTML-Tabelle,
-    	// statt 20-40 Millisekunden ohne. Das merkt man schon sehr.
-    	// Daher wird eine HTML-Tabelle nur dann aufgebaut, wenn es einen secondPart gibt.
+		// we only build an HTML table, if there is a secondPart to be displayed.
+	    // building html tables takes a lot of time on a raspberry pi 3b with a boat list
+		// of around 200 Boats. So skipping html tables saves a lot of performance.
     	
     	if (secondPart== null) {
     		return firstPart;
@@ -241,21 +239,29 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
     	}
 
     	//es gibt einen Secondpart, jetzt lohnt sich eine HTML-Tabelle
-    	boolean cutText = false;
     	
 		long listWidth=Math.max(80,list.getParent().getWidth()-2*HORZ_SINGLE_BORDER-2);
 		FontMetrics myFontMetrics = label.getFontMetrics(label.getFont());
 		
 		long firstPartLength= myFontMetrics.stringWidth(firstPart);
-		long maxStringWidth = listWidth-SPACING_BOATNAME_SECONDPART-firstPartLength-4;
-		long characterWidth = myFontMetrics.stringWidth("X");
-		
-		if (iconWidth >0 ) {
-			maxStringWidth= listWidth-SPACING_BOATNAME_SECONDPART-(iconWidth)-firstPartLength-4;
-		}
-		
-        int stringWidth = myFontMetrics.stringWidth(secondPart);
+		long maxStringWidth = listWidth-SPACING_BOATNAME_SECONDPART-(iconWidth)-firstPartLength-4;
+
+		// determine the maximum string length of the secondPart to be displayed...
+        int stringWidth = 0;
+        char[] readText = secondPart.toCharArray();
+        int stringLength= secondPart.length();
+    	boolean cutText = false;
         
+        for (int i=0; i< stringLength; i++) {
+        	stringWidth += myFontMetrics.charWidth(readText[i]);
+        	if (stringWidth > maxStringWidth) {
+        		cutText=true;
+        		secondPart=secondPart.substring(0,i);
+        		break;
+        	}
+        }
+        
+       /* old code
         //listWidth can be zero directly after start of efaBoatHouse, so we stop under this condition.
         while (listWidth>0 &&(stringWidth>maxStringWidth) && (secondPart.length()>0)) {
         	// Performance: Strings which are very much longer than maxStringWitdh must be reduced faster than just
@@ -267,10 +273,12 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
         	stringWidth = myFontMetrics.stringWidth(secondPart);
         	cutText=true;
         }
-
+        
+*/
         if (cutText &&secondPart.length()>0) {secondPart+="\u2026";} //append an ellipsis
         Integer tableWidth =new Integer((int)listWidth-Math.max(iconWidth,0)-4);
-        
+       
+        // font color only shall apply if the item is not selected.
         String fontColorTag="color=#888888>";
         if (isSelected) {fontColorTag=">";}
         

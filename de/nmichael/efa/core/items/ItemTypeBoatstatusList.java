@@ -687,8 +687,9 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
         for (int i = 0; i < a.length; i++) {
             String name = a[i].name;
             if (name.length() > 0) {
-                if (name.toUpperCase().charAt(0) != lastChar) {
-                    lastChar = name.toUpperCase().charAt(0);
+                if (EfaUtil.replaceAllUmlautsLowerCaseFast(name).toUpperCase().charAt(0) != lastChar) {
+                    //name.toUpperCase().charAt(0) 
+                	lastChar = EfaUtil.replaceAllUmlautsLowerCaseFast(name).toUpperCase().charAt(0);
                     vv.add(new ItemTypeListData("---------- " + lastChar + " ----------", null, null, null, true, SEATS_OTHER));
                 }
                 vv.add(new ItemTypeListData(name, 

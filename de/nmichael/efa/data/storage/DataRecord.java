@@ -963,7 +963,7 @@ public abstract class DataRecord implements Cloneable, Comparable {
         list.setDataAccess(persistence.data(), validFrom, validUntil);
         String svalue = (value != null ? list.getValueForId(value.toString()) : "");
         ItemTypeStringAutoComplete item = new ItemTypeStringAutoComplete(name, svalue, type, category, description, true);
-        item.setFieldSize(200, 19);
+        item.setFieldSize(200, 21); // 21 pixels high for new flatlaf, otherwise chars y and p get cut off 
         item.setAutoCompleteData(list);
         item.setChecks(true, true);
         return item;
