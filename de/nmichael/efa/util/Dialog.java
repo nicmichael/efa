@@ -591,11 +591,11 @@ public class Dialog {
         }
     }
 
-    public static void setFontSize(UIDefaults uid, String font, int size, int style) {
-        Font orgFont = uid.getFont(font);
+    public static void setFontSize(UIDefaults uid, String fontProperty, String fontName, int size, int style) {
+        Font orgFont = uid.getFont(fontProperty);
         if (orgFont == null) {
             Logger.log(Logger.WARNING, Logger.MSG_WARN_FONTDOESNOTEXIST,
-                    International.getMessage("Schriftart {font} exisitert nicht; ihre Größe kann nicht geändert werden!", font));
+                    International.getMessage("Schriftart {font} exisitert nicht; ihre Größe kann nicht geändert werden!", fontProperty));
             return;
         }
         if (!FONT_SIZE_CHANGED) {
@@ -606,54 +606,68 @@ public class Dialog {
             }
         }
         Font newFont;
-        if (style == -1) {
-            newFont = orgFont.deriveFont((float) size);
-        } else if (size <= 0) {
-            newFont = orgFont.deriveFont(style);
+        if (fontName == null) {
+	        if (style == -1) {
+	            newFont = orgFont.deriveFont((float) size);
+	        } else if (size <= 0) {
+	            newFont = orgFont.deriveFont(style);
+	        } else {
+	            newFont = orgFont.deriveFont(style, (float) size);
+	        }
         } else {
-            newFont = orgFont.deriveFont(style, (float) size);
+	        if (style == -1) {
+	            newFont = new Font(fontName, style, size);
+	        } else if (size <= 0) {
+	            newFont = new Font(fontName, style, 12);
+	        } else {
+	            newFont = new Font(fontName, style, size);
+	        }        	
         }
-        uid.put(font, newFont);
+        uid.put(fontProperty, newFont);
         FONT_SIZE_CHANGED = true;
     }
 
-    public static void setGlobalFontSize(int size, int style) {
+    public static void setGlobalFontSize(String fontName, int size, int style) {
         FONT_SIZE = size;
         FONT_STYLE = style;
-
 		if (!Daten.isEfaFlatLafActive()){
         
 	        UIDefaults uid = getUiDefaults();
-	
+
 	        java.util.Enumeration keys = uid.keys();
 	        while (keys.hasMoreElements()) {
 	            Object key = keys.nextElement();
 	            //Object value = uid.get(key);
-	            String font = (key == null ? null : key.toString());
-	            if (font != null
-	                    && (font.endsWith(".font")
-	                    || (font.startsWith("OptionPane") && font.endsWith("Font")))) {
+	            String fontProperty = (key == null ? null : key.toString());
+	            if (fontProperty != null
+	                    && (fontProperty.endsWith(".font")
+	                    || (fontProperty.startsWith("OptionPane") && fontProperty.endsWith("Font")))) {
 	             
-	            	if (!font.equals("TableHeader.font") && !font.equals("Table.font")) {
-	                    setFontSize(uid, font, size, style);
+	            	if (!fontProperty.equals("TableHeader.font") && !fontProperty.equals("Table.font")) {
+	            		setFontSize(uid, fontProperty, 
+	            				(fontName.equalsIgnoreCase(Daten.efaConfig.FONT_NAME_LAF_DEFAULT_FONT)==true ? null : fontName), size, style);
 	                }
 	            }
 	        }
 
 		} else {
-			UIManager.put("defaultFont", new FontUIResource("Dialog",style,size));
+			if (fontName.equalsIgnoreCase(Daten.efaConfig.FONT_NAME_LAF_DEFAULT_FONT)) {
+				UIManager.put("defaultFont", new FontUIResource("Dialog",style,size));
+			} else {
+				UIManager.put("defaultFont", new FontUIResource(fontName,style,size));				
+			}
 		}
 
 		initializeMaxDialogSizes();
 
     }
     
-    public static void setGlobalTableFontSize(int size) {
-		UIManager.put("Table.font", new FontUIResource("Dialog",Font.PLAIN,Math.max(8, Math.min(18, size))));
-		UIManager.put("TableHeader.font", new FontUIResource("Dialog",Font.BOLD,Math.max(8, Math.min(18, size))));
+    public static void setGlobalTableFontSize(String fontName, int size) {
+		UIManager.put("Table.font", new FontUIResource(fontName,Font.PLAIN,Math.max(8, Math.min(18, size))));
+		UIManager.put("TableHeader.font", new FontUIResource(fontName,Font.BOLD,Math.max(8, Math.min(18, size))));
     }
 
-    public static void setGlobalFontSize(int size, String style) {
+    public static void setGlobalFontSize(String fontName, int size, String style) {
         int _style = -1;
         if (style.equals(EfaConfig.FONT_PLAIN)) {
             _style = Font.PLAIN;
@@ -661,7 +675,7 @@ public class Dialog {
         if (style.equals(EfaConfig.FONT_BOLD)) {
             _style = Font.BOLD;
         }
-        setGlobalFontSize(size, _style);
+        setGlobalFontSize(fontName, size, _style);
     }
 
     public static void setPreferredSize(JComponent comp, int width, int height) {

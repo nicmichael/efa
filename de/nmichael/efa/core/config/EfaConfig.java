@@ -5,24 +5,8 @@
 
 package de.nmichael.efa.core.config;
 
-import de.nmichael.efa.core.EfaSec;
-import de.nmichael.efa.Daten;
-import de.nmichael.efa.core.items.*;
-import de.nmichael.efa.data.MessageRecord;
-import de.nmichael.efa.data.storage.*;
-import de.nmichael.efa.data.types.*;
-import de.nmichael.efa.ex.EfaException;
-import de.nmichael.efa.gui.BaseDialog;
-import de.nmichael.efa.gui.BaseTabbedDialog;
-import de.nmichael.efa.gui.ImagesAndIcons;
-import de.nmichael.efa.gui.util.RoundedBorder;
-import de.nmichael.efa.gui.widgets.IWidget;
-import de.nmichael.efa.gui.widgets.AlertWidget;
-import de.nmichael.efa.gui.widgets.Widget;
-import de.nmichael.efa.themes.EfaFlatLightLookAndFeel;
-import de.nmichael.efa.util.*;
-import java.awt.GridBagConstraints;
 import java.awt.Color;
+import java.awt.GridBagConstraints;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -33,6 +17,55 @@ import java.util.Vector;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.plaf.ColorUIResource;
+
+import de.nmichael.efa.Daten;
+import de.nmichael.efa.core.EfaSec;
+import de.nmichael.efa.core.items.IItemFactory;
+import de.nmichael.efa.core.items.IItemType;
+import de.nmichael.efa.core.items.ItemType;
+import de.nmichael.efa.core.items.ItemTypeAction;
+import de.nmichael.efa.core.items.ItemTypeBoolean;
+import de.nmichael.efa.core.items.ItemTypeColor;
+import de.nmichael.efa.core.items.ItemTypeConfigButton;
+import de.nmichael.efa.core.items.ItemTypeCronEntry;
+import de.nmichael.efa.core.items.ItemTypeDate;
+import de.nmichael.efa.core.items.ItemTypeFile;
+import de.nmichael.efa.core.items.ItemTypeFontName;
+import de.nmichael.efa.core.items.ItemTypeHashtable;
+import de.nmichael.efa.core.items.ItemTypeImage;
+import de.nmichael.efa.core.items.ItemTypeInteger;
+import de.nmichael.efa.core.items.ItemTypeItemList;
+import de.nmichael.efa.core.items.ItemTypeLabel;
+import de.nmichael.efa.core.items.ItemTypeLabelHeader;
+import de.nmichael.efa.core.items.ItemTypeLong;
+import de.nmichael.efa.core.items.ItemTypeMultiSelectList;
+import de.nmichael.efa.core.items.ItemTypePassword;
+import de.nmichael.efa.core.items.ItemTypeRadioButtons;
+import de.nmichael.efa.core.items.ItemTypeString;
+import de.nmichael.efa.core.items.ItemTypeStringList;
+import de.nmichael.efa.core.items.ItemTypeTime;
+import de.nmichael.efa.data.MessageRecord;
+import de.nmichael.efa.data.storage.DataKey;
+import de.nmichael.efa.data.storage.DataKeyIterator;
+import de.nmichael.efa.data.storage.DataLocks;
+import de.nmichael.efa.data.storage.DataRecord;
+import de.nmichael.efa.data.storage.IDataAccess;
+import de.nmichael.efa.data.storage.MetaData;
+import de.nmichael.efa.data.storage.StorageObject;
+import de.nmichael.efa.data.types.DataTypeDate;
+import de.nmichael.efa.data.types.DataTypeDistance;
+import de.nmichael.efa.data.types.DataTypeList;
+import de.nmichael.efa.data.types.DataTypeTime;
+import de.nmichael.efa.ex.EfaException;
+import de.nmichael.efa.gui.BaseTabbedDialog;
+import de.nmichael.efa.gui.widgets.AlertWidget;
+import de.nmichael.efa.gui.widgets.IWidget;
+import de.nmichael.efa.gui.widgets.Widget;
+import de.nmichael.efa.util.Dialog;
+import de.nmichael.efa.util.EfaUtil;
+import de.nmichael.efa.util.International;
+import de.nmichael.efa.util.LogString;
+import de.nmichael.efa.util.Logger;
 
 public class EfaConfig extends StorageObject implements IItemFactory {
 
@@ -115,6 +148,8 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 	public static final String WEEKLY_RESERVATION_CONFLICT_STRICT = "WEEKLY_RESERVATION_CONFLICT_STRICT";
 	public static final String WEEKLY_RESERVATION_CONFLICT_PRIORITIZE_WEEKLY = "WEEKLY_RESERVATION_CONFLICT_PRIORITIZE_WEEKLY";
 
+	public static final String FONT_NAME_LAF_DEFAULT_FONT = "--Standard--";
+	
 	// private configuration data
 	private ItemTypeString lastProjectEfaBase;
 	private ItemTypeString lastProjectEfaBoathouse;
@@ -254,8 +289,10 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 	private ItemTypeInteger efaDirekt_notificationWindowTimeout;
 	private ItemTypeInteger efaDirekt_boatsNotAvailableListSize;
 	private ItemTypeInteger efaDirekt_BthsFontSize;
+	private ItemTypeFontName efaDirekt_BthsFontNameButton;
 	private ItemTypeInteger efaDirekt_BthsTableFontSize;
 	private ItemTypeStringList efaDirekt_BthsFontStyle;
+	private ItemTypeFontName efaDirekt_OtherFontNameButton;
 	private ItemTypeInteger efaDirekt_otherFontSize;
 	private ItemTypeInteger efaDirekt_otherTableFontSize;
 	private ItemTypeStringList efaDirekt_otherFontStyle;	
@@ -377,7 +414,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 	private static Color standardFlatLafBackgroundColor = new Color(239, 237, 232);// #EFEDE8 //some yellowish gray
 	private static Color standardFlatLafAccentColor = new Color(38, 117, 191); // #2675bf Blue
 	private static Color standardFlatLafFocusColor = new Color(255, 153, 0); // #ff9900 Orange
-	private static Color hintBackgroundColor = new Color(171, 206, 241);
+	public static Color hintBackgroundColor = new Color(171, 206, 241);
 
 	private static Color standardToolTipBackgroundColor = new Color(224,237,249);
 	private static Color standardToolTipForegroundColor = new Color(21,65,106);
@@ -928,13 +965,18 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 					International.getString("Die Schrift von efaBootshaus wird in efaBootshaus->Erscheinungsbild eingestellt."),
 					3,3,3);
 
+			addParameter(efaDirekt_OtherFontNameButton = new ItemTypeFontName("EfaOtherFontNameButton",
+					FONT_NAME_LAF_DEFAULT_FONT,FONT_NAME_LAF_DEFAULT_FONT,
+					IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
+					International.getString("Schriftart"),false));			
+			
 			addParameter(efaDirekt_otherFontSize = new ItemTypeInteger("EfaOtherFontSize", 12, 6, 32, false,
 					IItemType.TYPE_PUBLIC,
 					BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
 					International.getString("Schriftgröße in Punkten (6 bis 32, Standard: 12)")));
 			addParameter(efaDirekt_otherFontStyle = new ItemTypeStringList("EfaOtherFontStyle", "",
 					makeFontStyleArray(STRINGLIST_VALUES), makeFontStyleArray(STRINGLIST_DISPLAY),
-					IItemType.TYPE_EXPERT,
+					IItemType.TYPE_PUBLIC,
 					BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
 					International.getString("Schriftstil")));
 
@@ -1220,13 +1262,19 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
 					International.getString("Schriftart"), 3);
 
+			addParameter(efaDirekt_BthsFontNameButton = new ItemTypeFontName("EfaBoathouseFontNameButton",
+					FONT_NAME_LAF_DEFAULT_FONT,FONT_NAME_LAF_DEFAULT_FONT,
+					IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
+					International.getString("Schriftart"),false));
+			
 			addParameter(efaDirekt_BthsFontSize = new ItemTypeInteger("EfaBoathouseFontSize", 16, 6, 32, false,
 					IItemType.TYPE_PUBLIC,
 					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
 					International.getString("Schriftgröße in Punkten (6 bis 32, Standard: 12)")));
+			
 			addParameter(efaDirekt_BthsFontStyle = new ItemTypeStringList("EfaBoathouseFontStyle", "",
 					makeFontStyleArray(STRINGLIST_VALUES), makeFontStyleArray(STRINGLIST_DISPLAY),
-					IItemType.TYPE_EXPERT,
+					IItemType.TYPE_PUBLIC,
 					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
 					International.getString("Schriftstil")));
 
@@ -2384,16 +2432,24 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 	public String getValueEfaDirekt_BthsFontStyle() {
 		return efaDirekt_BthsFontStyle.getValue();
 	}
+	
+	public String getValueEfaDirekt_BthsFontName() {
+		return efaDirekt_BthsFontNameButton.getValueFromField();
+	}
 
-	public int getValueEfaDirekt_OtherFontSize() {
+	public String getValue_OtherFontName() {
+		return efaDirekt_OtherFontNameButton.getValueFromField();
+	}
+	
+	public int getValue_OtherFontSize() {
 		return efaDirekt_otherFontSize.getValue();
 	}
 
-	public int getValueEfaDirekt_OtherTableFontSize() {
+	public int getValue_OtherTableFontSize() {
 		return efaDirekt_otherTableFontSize.getValue();
 	}
 
-	public String getValueEfaDirekt_OtherFontStyle() {
+	public String getValue_OtherFontStyle() {
 		return efaDirekt_otherFontStyle.getValue();
 	}
 
@@ -2976,7 +3032,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 			for (int i = 0; i < configValueNames.size(); i++) {
 				IItemType item = configValues.get(configValueNames.get(i));
 				if (item != null && item.isChanged()) {
-					if (item == efaDirekt_BthsFontSize || item == efaDirekt_BthsTableFontSize
+					if (item == efaDirekt_BthsFontSize || item == efaDirekt_BthsTableFontSize || item == efaDirekt_BthsFontNameButton 
 							|| item == efaDirekt_BthsFontStyle || item == efaDirekt_listAllowToggleBoatsPersons
 							|| item == efaDirekt_autoPopupOnBoatLists || item == efaDirekt_fensterNichtVerschiebbar
 							|| item == useFunctionalityRowing || item == useFunctionalityRowingGermany
@@ -3217,7 +3273,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 		styles[2] = (type == STRINGLIST_VALUES ? FONT_BOLD : International.getString("fett"));
 		return styles;
 	}
-
+	
 	private String[] makeObmannArray(int type) {
 		String[] obmann = new String[2];
 		obmann[0] = (type == STRINGLIST_VALUES ? OBMANN_BOW : International.getString("Bugmann"));
@@ -3415,4 +3471,5 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 			keepRunning = false;
 		}
 	}
+
 }

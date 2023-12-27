@@ -72,9 +72,9 @@ import de.nmichael.efa.util.Logger;
 // @i18n complete
 public class Daten {
 
-    public final static String VERSION            = "2.3.4_00_EFA_057_LAF_6_1228"; // Version für die Ausgabe (z.B. 2.1.0, kann aber auch Zusätze wie "alpha" o.ä. enthalten)
+    public final static String VERSION            = "2.3.4_00_EFA_057_LAF_7"; // Version für die Ausgabe (z.B. 2.1.0, kann aber auch Zusätze wie "alpha" o.ä. enthalten)
     public final static String VERSIONID          = "2.3.4_00";   // VersionsID: Format: "X.Y.Z_MM"; final-Version z.B. 1.4.0_00; beta-Version z.B. 1.4.0_#1
-    public final static String VERSIONRELEASEDATE = "23.12.2023";  // Release Date: TT.MM.JJJJ
+    public final static String VERSIONRELEASEDATE = "27.12.2023";  // Release Date: TT.MM.JJJJ
     public final static String MAJORVERSION       = "2";
     public final static String PROGRAMMID         = "EFA.233"; // Versions-ID für Wettbewerbsmeldungen
     public final static String PROGRAMMID_DRV     = "EFADRV.233"; // Versions-ID für Wettbewerbsmeldungen
@@ -1084,10 +1084,6 @@ public class Daten {
             	Dialog.getUiDefaults().put("ToolTip.foreground", new ColorUIResource(efaConfig.getToolTipForegroundColor()));
             }
             
-            EfaUtil.handleEfaFlatLafDefaults();
-            
-
-            
             if (!lookAndFeel.endsWith(Daten.LAF_METAL)) {
                 // to make PopupMenu's work properly and not swallow the next MousePressed Event, see: http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6753637
                 Dialog.getUiDefaults().put("PopupMenu.consumeEventOnClose", false);
@@ -1124,8 +1120,8 @@ public class Daten {
         // Font Size
         if (applID == APPL_EFABH) {
             try {
-                Dialog.setGlobalFontSize(Daten.efaConfig.getValueEfaDirekt_BthsFontSize(), Daten.efaConfig.getValueEfaDirekt_BthsFontStyle());
-                Dialog.setGlobalTableFontSize(Daten.efaConfig.getValueEfaDirekt_BthsTableFontSize());
+                Dialog.setGlobalFontSize(Daten.efaConfig.getValueEfaDirekt_BthsFontName(), Daten.efaConfig.getValueEfaDirekt_BthsFontSize(), Daten.efaConfig.getValueEfaDirekt_BthsFontStyle());
+                Dialog.setGlobalTableFontSize(Daten.efaConfig.getValueEfaDirekt_BthsFontName(), Daten.efaConfig.getValueEfaDirekt_BthsTableFontSize());
             } catch (Exception e) {
                 Logger.log(Logger.WARNING, Logger.MSG_WARN_CANTSETFONTSIZE,
                         International.getString("Schriftgröße konnte nicht geändert werden") + ": " + e.toString());
@@ -1134,13 +1130,17 @@ public class Daten {
         
         if (applID == APPL_EFABASE) {
             try {
-            	Dialog.setGlobalFontSize(Daten.efaConfig.getValueEfaDirekt_OtherFontSize(), Daten.efaConfig.getValueEfaDirekt_OtherFontStyle());
-                Dialog.setGlobalTableFontSize(Daten.efaConfig.getValueEfaDirekt_OtherTableFontSize());
+            	Dialog.setGlobalFontSize(Daten.efaConfig.getValue_OtherFontName(), Daten.efaConfig.getValue_OtherFontSize(), Daten.efaConfig.getValue_OtherFontStyle());
+                Dialog.setGlobalTableFontSize(Daten.efaConfig.getValue_OtherFontName(), Daten.efaConfig.getValue_OtherTableFontSize());
             } catch (Exception e) {
                 Logger.log(Logger.WARNING, Logger.MSG_WARN_CANTSETFONTSIZE,
                         International.getString("Schriftgröße konnte nicht geändert werden") + ": " + e.toString());
             }        	
         }
+        
+        // Needs to be placed here for adequate font scalings
+        EfaUtil.handleEfaFlatLafDefaults();
+        
     }
 
     public static void iniChecks() {

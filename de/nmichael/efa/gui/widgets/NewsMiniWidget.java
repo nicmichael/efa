@@ -58,45 +58,58 @@ public class NewsMiniWidget {
 
         volatile boolean keepRunning = true;
         private String text;
-        private int showing;
+        private int startPosition;
         private int length;
         private int scrollSpeed;
-        private int maxChar = 50;
+        private int maxCharsToShow = 50;
         private int maxWidth = 600;
-
+        private int maxCharWidth = 0;
         public void run() {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
             }
             while (keepRunning) {
-                getMaxChar();
+                
                 try {
-                    do {
-                        //not threadsafe for swing
-                    	//label.setText(getText(text, showing, maxChar));
-                    	
-                    	//Use invokelater as swing threadsafe ways
-                    	SwingUtilities.invokeLater(new MainGuiUpdater(label, getText(text, showing, maxChar)));
+                	//gets maxWidth depending on labels's width 
+                	//and gets maxChar, depending on the "X" character's length in the current font
+                 	getMaxCharsToShow();
 
-                    	
-                    } while (label.getPreferredSize().getWidth() > maxWidth && maxChar-- > 10);
-                    showing = (showing + 1) % (length + 3);
-                    if (length <= maxChar) {
+                	//Use invokelater as swing threadsafe ways
+                    SwingUtilities.invokeLater(new MainGuiUpdater(label, getText(text, startPosition, maxCharsToShow)));
+
+                    startPosition = (startPosition + 1) % (length + 3);
+                    if (length <= maxCharsToShow) {
                         Thread.sleep(60000);
                     } else {
                         Thread.sleep(scrollSpeed);
                     }
                 } catch (Exception e) {
                     EfaUtil.foo();
+                    Logger.logdebug(e);
                 }
             }
         }
 
-        private void getMaxChar() {
-            Dimension dim = label.getSize();
-            if (dim.width > 0 && dim.height > 0) {
-                maxChar = (dim.width / dim.height) * 2;
+        private void getMaxCharsToShow() {
+
+        	int charWidth=0;
+    		Dimension dim = label.getSize();
+
+        	if (maxCharWidth==0) {
+	            FontMetrics myFontMetrics = label.getFontMetrics(label.getFont());
+	            charWidth=dim.height; //default value: Character is as wide as the font's size
+	            if (myFontMetrics!=null) {
+	            	maxCharWidth=myFontMetrics.charWidth('X');
+	            	charWidth=maxCharWidth;
+	            }
+        	} else {
+        		charWidth=maxCharWidth;
+        	}
+        	//width may be zero, if label is not showing yet
+            if (dim.width > 0) {
+                maxCharsToShow = (dim.width / charWidth);
             }
             maxWidth = Math.max(dim.width, 600);
         }
@@ -125,8 +138,8 @@ public class NewsMiniWidget {
         public void setText(String text) {
             this.text = text;
             this.length = text.length();
-            this.showing = 0;
-            getMaxChar();
+            this.startPosition = 0;
+            getMaxCharsToShow();
         }
 
         public void setScrollSpeed(int scrollSpeed) {
