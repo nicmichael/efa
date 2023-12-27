@@ -23,6 +23,7 @@ import java.io.IOException;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 import javax.swing.text.html.HTMLEditorKit;
 
 public class HtmlPopupDialog extends BaseDialog {
@@ -108,9 +109,15 @@ public class HtmlPopupDialog extends BaseDialog {
 
             public void run() {
                 try {
+                	this.setName("HtmlPopupDialog.Inidialog.CancelThread");
                     Thread.sleep(closeTimeoutSeconds * 1000);
 
-                    cancel();
+                    SwingUtilities.invokeLater(new Runnable() {
+                	      public void run() {
+                              cancel();
+                	      }
+                  	});
+
                 } catch (Exception e) {
                 }
             }

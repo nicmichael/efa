@@ -374,6 +374,7 @@ public class Persons extends StorageObject {
 
         public void run() {
             setRunning(true);
+            this.setName("MergePersonsProgressTask");
             logInfo(International.getString("Datensätze zusammenfügen") + " ...\n" +
                     (errorCount > 0 || warningCount > 0 ?
                         "\n[" + errorCount + " ERRORS, " + warningCount + " WARNINGS]" : ""));

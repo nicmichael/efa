@@ -131,13 +131,14 @@ public class HTMLWidget extends Widget {
         // nothing to do
     }
 
-    class HTMLUpdater extends Thread {
+    private class HTMLUpdater extends Thread {
 
         volatile boolean keepRunning = true;
         private String url = null;
         private volatile int updateIntervalInSeconds = 24*3600;
 
         public void run() {
+        	this.setName("HTMLWidget.HtmlUpdater");
             while (keepRunning) {
                 try {
                     try {

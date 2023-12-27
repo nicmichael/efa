@@ -96,6 +96,7 @@ public class NotificationDialog extends BaseDialog {
 
     class CloseTimeoutThread extends Thread {
         public void run() {
+        	this.setName("CloseTimeoutThread");
             for (int i=0; i<closeTimeout;i++) {
     	    	String value= International.getMessage("Dieses Fenster schließt automatisch in {sec} Sekunden ...",
                           Math.max(closeTimeout-i, 0));

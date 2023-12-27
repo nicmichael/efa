@@ -162,6 +162,7 @@ public class EfaExitFrame extends BaseFrame {
         }
 
         public void run() {
+        	this.setName("CountDownThread");
             for (int i = 0; i < 10; i++) {
                 frame.sekundenLabel.setText(secLeft[i]);
                 try {

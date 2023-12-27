@@ -25,6 +25,7 @@ public class BringToFrontThread extends Thread {
     }
 
     public void run() {
+    	this.setName("BringToFrontThread");
         try {
             Thread.sleep(afterMs);
             if (frame.getState() == Frame.ICONIFIED) {

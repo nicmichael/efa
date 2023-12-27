@@ -242,7 +242,7 @@ public class ItemTypeFontName extends ItemTypeLabelValue implements IItemListene
 	private String[] makeFontFamilyArray(Boolean showAllFonts) {
         GraphicsEnvironment graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment();
         Font[] allFonts = graphicsEnvironment.getAllFonts();
-        String guiFontRegexp=".*arial.*|.*calibri.*|.*dialog|.*roboto.*|.*tahoma.*|.*verdana.*|.*inter.*|.*sansserif|.*segoe.ui.*|.*verdana.*|.*cantarell.*|.*dejavu.*|.*liberation.*|.*piboto.*|.*quicksand.*|.*helvetic.*";        
+        String guiFontRegexp=".*arial.*|.*calibri.*|.*dialog|.*roboto.*|.*tahoma.*|.*trebuchet.*|.*nirmala.*|.*verdana.*|.*inter.*|.*sansserif|.*segoe.ui.*|.*verdana.*|.*cantarell.*|.*dejavu.*|.*liberation.*|.*piboto.*|.*quicksand.*|.*helvetic.*";        
         Vector <String>fontFamilies = new Vector<String>();
         
         for (Font font : allFonts) {

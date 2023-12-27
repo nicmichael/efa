@@ -163,7 +163,7 @@ public class Project extends StorageObject {
 	            // Audit checks for p._inOpeningProject=false. So to be sure, 
 	            // Audit can only be started after p._inOpeningProject is set to false.
             	auditTask.start(); // AuditTask is a thread that runs in background.
-            	//auditTask.join(); // this would wait for audit task to complete, before we can proceed.
+            	auditTask.join(); // this would wait for audit task to complete, before we can proceed.
             }
         } catch (Exception ee) {
             if (!silent) {

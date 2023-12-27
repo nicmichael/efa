@@ -3423,6 +3423,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 		}
 
 		public void run() {
+			this.setName("ConfigValueUpdateThread");
 			while (keepRunning) {
 				// sleep first, then update
 				try {

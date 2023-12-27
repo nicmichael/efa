@@ -38,6 +38,7 @@ public class ImportTask extends ProgressTask {
     }
 
     public void run() {
+    	this.setName("ImportTask");
         setRunning(true);
         int i = 0;
         int errorCnt = 0;

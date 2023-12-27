@@ -21,6 +21,7 @@ import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 
 import de.nmichael.efa.util.EfaUtil;
+import de.nmichael.efa.util.Logger;
 
 public class ClockMiniWidget {
 
@@ -58,17 +59,18 @@ public class ClockMiniWidget {
             // Get Duration
             Duration duration = Duration.between(start, end);
             long millis = duration.toMillis();
-            return 1000;
+            return millis;
         };
         
         public void run() {
+        	this.setName("ClockUpdater");
             while (keepRunning) {
                 try {
                 	// simply setting label text is not thread safe with swing.
                 	//label.setText(EfaUtil.getCurrentTimeStampHHMM());
                 	
                 	//Use invokelater as swing threadsafe ways
-                	SwingUtilities.invokeLater(new MainGuiUpdater(label, EfaUtil.getCurrentTimeStampHHMM().toString()));
+                	SwingUtilities.invokeLater(new MainGuiClockUpdater(label, EfaUtil.getCurrentTimeStampHHMM().toString()));
                 	
                 	//wait until next full minute plus one sec. this is more accurate than just waiting 60.000 msec
                 	//from a random offset.
@@ -76,7 +78,7 @@ public class ClockMiniWidget {
                     Thread.sleep(waitTime);
                     
                 } catch (Exception e) {
-                    EfaUtil.foo();
+                    Logger.logdebug(e);
                 }
             }
         }
@@ -90,12 +92,12 @@ public class ClockMiniWidget {
     /**
      * Update clock label on efaBths main GUI. Called via SwingUtilities.invokeLater()
      */
-    class MainGuiUpdater implements Runnable {
+    private class MainGuiClockUpdater implements Runnable {
         
     	private String text = null;
     	private JLabel mylabel=null;
     	
-    	public MainGuiUpdater(JLabel theLabel, String theData) {
+    	public MainGuiClockUpdater(JLabel theLabel, String theData) {
     		text = theData;
     		mylabel = theLabel;
     	}

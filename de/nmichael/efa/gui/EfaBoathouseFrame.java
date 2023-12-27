@@ -1164,7 +1164,8 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
         final boolean _restart = restart;
         new Thread() {
             public void run() {
-                try {
+                this.setName("EfaBoathouseFrame.cancelRunInThreadWithDelay");
+            	try {
                     Thread.sleep(1000);
                 } catch (Exception e) {
                 }
@@ -2812,6 +2813,7 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
             new Thread() {
 
                 public void run() {
+                	this.setName("EfaBoathouseFrame.lockEfaThread");
                     try {
                         Thread.sleep(1000);
                     } catch (Exception e) {

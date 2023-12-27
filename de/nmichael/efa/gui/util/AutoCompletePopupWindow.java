@@ -358,6 +358,7 @@ class HideWindowThread extends Thread {
     }
 
     public void run() {
+    	this.setName("AutoCompletePopupWindow.HideWindowThread");
         try {
             Thread.sleep(10); //sleep 10 milliseconds
             //then hide the window.

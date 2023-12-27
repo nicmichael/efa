@@ -59,6 +59,7 @@ public class AdminTask extends Thread {
 
     public void run() {
         try {
+        	this.setName("AdminTask");
             boolean ready = false;
             for (int tries = 0; tries < 11; tries++) {
                 // always start task with 1000 ms delay

@@ -750,14 +750,18 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         // Further Fields which are not part of Data Input
 
         // Remaining Crew Button
-        remainingCrewUpButton = new ItemTypeButton("REMAININGCREWUP", IItemType.TYPE_PUBLIC, null, "\u2191");
+        // changed the unicode caracters for arrows into images, as not all fonts provide arrows.
+        // this is neccessary as the user can now select the fonts used in efa.
+        remainingCrewUpButton = new ItemTypeButton("REMAININGCREWUP", IItemType.TYPE_PUBLIC, null, "");
+        remainingCrewUpButton.setIcon(ImagesAndIcons.getIcon(ImagesAndIcons.ARROW_UP));
         remainingCrewUpButton.setFieldSize(18, 30);
         remainingCrewUpButton.setPadding(5, 0, 3, 3);
         remainingCrewUpButton.setMargin(1, 1, 1, 1); //otherwise the caption is too wide for button width in metal
         remainingCrewUpButton.setFieldGrid(1, 2, GridBagConstraints.WEST, GridBagConstraints.VERTICAL);
         remainingCrewUpButton.displayOnGui(this, mainInputPanel, 9, 5);
         remainingCrewUpButton.registerItemListener(this);
-        remainingCrewDownButton = new ItemTypeButton("REMAININGCREWDOWN", IItemType.TYPE_PUBLIC, null, "\u2193");
+        remainingCrewDownButton = new ItemTypeButton("REMAININGCREWDOWN", IItemType.TYPE_PUBLIC, null, "");
+        remainingCrewDownButton.setIcon(ImagesAndIcons.getIcon(ImagesAndIcons.ARROW_DOWN));
         remainingCrewDownButton.setFieldSize(18, 30);
         remainingCrewDownButton.setPadding(5, 0, 3, 3);
         remainingCrewDownButton.setMargin(1, 1, 1, 1); //otherwise the caption is too wide for button width in metal

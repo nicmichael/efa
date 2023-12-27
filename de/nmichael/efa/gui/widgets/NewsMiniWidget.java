@@ -10,16 +10,16 @@
 
 package de.nmichael.efa.gui.widgets;
 
-import de.nmichael.efa.*;
-import de.nmichael.efa.gui.util.*;
-import de.nmichael.efa.gui.widgets.ClockMiniWidget.MainGuiUpdater;
-import de.nmichael.efa.util.*;
-import de.nmichael.efa.util.Dialog;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-import javax.swing.border.*;
-import java.util.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FontMetrics;
+
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+
+import de.nmichael.efa.util.Logger;
 
 public class NewsMiniWidget {
 
@@ -69,6 +69,7 @@ public class NewsMiniWidget {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
             }
+            this.setName("NewsUpdater");
             while (keepRunning) {
                 
                 try {
@@ -77,7 +78,7 @@ public class NewsMiniWidget {
                  	getMaxCharsToShow();
 
                 	//Use invokelater as swing threadsafe ways
-                    SwingUtilities.invokeLater(new MainGuiUpdater(label, getText(text, startPosition, maxCharsToShow)));
+                    SwingUtilities.invokeLater(new MainGuiNewsUpdater(label, getText(text, startPosition, maxCharsToShow)));
 
                     startPosition = (startPosition + 1) % (length + 3);
                     if (length <= maxCharsToShow) {
@@ -86,7 +87,6 @@ public class NewsMiniWidget {
                         Thread.sleep(scrollSpeed);
                     }
                 } catch (Exception e) {
-                    EfaUtil.foo();
                     Logger.logdebug(e);
                 }
             }
@@ -101,7 +101,7 @@ public class NewsMiniWidget {
 	            FontMetrics myFontMetrics = label.getFontMetrics(label.getFont());
 	            charWidth=dim.height; //default value: Character is as wide as the font's size
 	            if (myFontMetrics!=null) {
-	            	maxCharWidth=myFontMetrics.charWidth('X');
+	            	maxCharWidth=Math.max(8,myFontMetrics.charWidth('X')-1);
 	            	charWidth=maxCharWidth;
 	            }
         	} else {
@@ -155,12 +155,12 @@ public class NewsMiniWidget {
     /**
      * Update clock label on efaBths main GUI. Called via SwingUtilities.invokeLater()
      */
-    class MainGuiUpdater implements Runnable {
+    private class MainGuiNewsUpdater implements Runnable {
         
     	private String text = null;
     	private JLabel mylabel=null;
     	
-    	public MainGuiUpdater(JLabel theLabel, String theData) {
+    	public MainGuiNewsUpdater(JLabel theLabel, String theData) {
     		text = theData;
     		mylabel = theLabel;
     	}
