@@ -12,6 +12,8 @@ package de.nmichael.efa.gui.util;
 
 import de.nmichael.efa.*;
 import de.nmichael.efa.util.Dialog;
+import de.nmichael.efa.util.Logger;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.Dialog.ModalExclusionType;
@@ -324,6 +326,7 @@ public class AutoCompletePopupWindow extends JWindow {
                 window.hideWindowThread.start();
             }
         } catch (Exception e) {
+        	Logger.logdebug(e);
         }
     }
 

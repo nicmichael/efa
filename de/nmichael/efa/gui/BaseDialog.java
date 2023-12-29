@@ -17,6 +17,8 @@ import de.nmichael.efa.util.*;
 import de.nmichael.efa.util.Dialog;
 import de.nmichael.efa.core.items.*;
 import de.nmichael.efa.gui.ImagesAndIcons;
+import de.nmichael.efa.gui.util.AutoCompletePopupWindow;
+
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -210,7 +212,15 @@ public abstract class BaseDialog extends JDialog implements ActionListener {
         }
 
         if (evt.getActionCommand().equals(KEYACTION_ESCAPE)) {
-            cancel();
+        	Component focusedComp=this.getFocusOwner();
+        	if (focusedComp instanceof JTextField) {
+        		if (AutoCompletePopupWindow.isShowingAt((JTextField) focusedComp)) {
+        			// do not hide window if autocomplete window is currently showing
+        			return;
+        		}
+        	}
+    		// otherwise, hide basewindow.
+        	cancel();
         }
 
         if (evt.getActionCommand().equals(KEYACTION_F1)) {

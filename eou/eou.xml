@@ -20,6 +20,9 @@
             <ChangeItem>Neu: Versteckte Elemente zeigen ein Icon und einen Tooltip zu ihrem Status.</ChangeItem>
             <ChangeItem>Neu: About-Dialog: Anzeige der genutzten Bibliotheken und ihrer Lizenz. Im Debug-Modus werden Infos zum LAF und CSS angezeigt.</ChangeItem>
             <ChangeItem>BugFix: Mehr Autovervollständigen-Felder in den Dialogen zeigen die Schaltfläche zum Aufruf des Auswahldialogs an.</ChangeItem>
+            <ChangeItem>BugFix: Autovervollständigen-Felder zeigten sich manchmal nicht an. Zusätzlich: STRG+F öffnet das Autovervollständigen-Feld.</ChangeItem>
+            <ChangeItem>BugFix: Autovervollständigen-Felder: werden diese mit TAB verlassen, wird der gewählte Eintrag übernommen.</ChangeItem>
+            <ChangeItem>BugFix: Fahrt Beginnen Dialog: Taste ESC in Autovervollständigen-Feldern schließt nur die Auswahlbox, nicht den gesamten Dialog.</ChangeItem>
             <ChangeItem>BugFix: Lesen von Nachrichten: im Textfeld kann nun Text mit der Maus markiert und mit STRG+C in die Zwischenablage übernommen werden.</ChangeItem>
             <ChangeItem>BugFix: EfaConfig: Scrollbar im Config-Fenster ist INNERHALB der Registerkarten - somit besser scrollbar</ChangeItem>
             <ChangeItem>BugFix: EfaConfig: Tastenbelegung für Bemerkungsfeld - Textfeld zur Eingabe freigeschaltet.</ChangeItem>
@@ -53,7 +56,7 @@
             <ChangeItem>New: Labels for input fields are right-aligned for better usability.</ChangeItem>            
             <ChangeItem>New: Clubwork list dialog: applied custom column widths so that the data is easier to read.</ChangeItem>
 			<ChangeItem>New: Headers for lists get highlighted (e.g. in persons editor when assigning groups).</ChangeItem>
-            <ChangeItem>New: Versteckte Elemente zeigen ein Icon und einen Tooltip zu ihrem Status.</ChangeItem>
+            <ChangeItem>New: Hidden elements for boats and persons show an icon and a tooltip indicating their status.</ChangeItem>
             <ChangeItem>New: About dialog: list of used libraries and their licensing. In debug mode, system Infos show LAF and CSS settings.</ChangeItem>
             <ChangeItem>BugFix: EfaConfig: Key assignment for comment field - text field for values set to enabled.</ChangeItem>
             <ChangeItem>BugFix: EfaConfig: MeteoAstro plugin indicates in efaconfig that weather can no longer be displayed.</ChangeItem>
@@ -61,6 +64,9 @@
             <ChangeItem>BugFix: EfaConfig: More items indicate that they need a restart of efa.</ChangeItem>
             <ChangeItem>BugFix: EfaConfig: Cron job tab is refactored.</ChangeItem>
 			<ChangeItem>BugFix: Startup: efaBths sometimes did not start up correctly with new LAF using Raspi3b/java17.</ChangeItem>
+			<ChangeItem>BugFix: Autocomplete fields sometimes did now show the popup window. Also, STRG+F opens the popup window.</ChangeItem>
+            <ChangeItem>BugFix: Autocomplete fields: if user leaves a popup selection with tab, the selected entry is used for the field.</ChangeItem>
+            <ChangeItem>BugFix: Start session dialog: Hitting ESC while an autocomplete window is open, only the autocomplete window is closed instead of the start session dialog.</ChangeItem>
 			<ChangeItem>BugFix: Boathouse lists with two columns: calculate widths for second columns optimized.</ChangeItem>
             <ChangeItem>BugFix: Boat reservation: When selecting the boat, the selection list button is displayed.</ChangeItem>
 			<ChangeItem>BugFix: Displaying messages for admin: User can now select text in textarea and copy it to clipboard (CTRL+C).</ChangeItem>
