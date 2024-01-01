@@ -2201,30 +2201,6 @@ public class EfaUtil {
     	return value;
     	
     }    
-    
-    /**
-     * Helper class to display a notification message.
-     * If this is a GUI application, we asynchronously display a dialog through
-     * SwingUtilities.invokeLater in a separate thread. If this is not a GUI application,
-     * we will synchronously in the calling thread invoke the logging method.
-     */
-    public static abstract class UserMessage {
-
-        public abstract void run();
-
-        public static void show(UserMessage m) {
-            if (Daten.isGuiAppl()) {
-                SwingUtilities.invokeLater(new Runnable() {
-                    public void run() {
-                        m.run();
-                    }
-                });
-            } else {
-                m.run();
-            }
-        }
-    }
-
 
     /**
      * Efa uses buttons which are filled with a color. 
@@ -2313,6 +2289,29 @@ public class EfaUtil {
     	return fontFamilies;
 	}
     
+    /**
+     * Helper class to display a notification message.
+     * If this is a GUI application, we asynchronously display a dialog through
+     * SwingUtilities.invokeLater in a separate thread. If this is not a GUI application,
+     * we will synchronously in the calling thread invoke the logging method.
+     */
+    public static abstract class UserMessage {
+
+        public abstract void run();
+
+        public static void show(UserMessage m) {
+            if (Daten.isGuiAppl()) {
+                SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        m.run();
+                    }
+                });
+            } else {
+                m.run();
+            }
+        }
+    }	
+	
     public static void main(String args[]) {
         String text = "abc & def";
         System.out.println(text + " -> EfaUtil.escapeXml() = " + EfaUtil.escapeXml(text));
