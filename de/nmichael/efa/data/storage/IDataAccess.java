@@ -46,6 +46,7 @@ public interface IDataAccess {
     public static final int DATA_LIST_INTEGER = 101; // Integer-based list
     public static final int DATA_LIST_UUID = 108;    // UUID-based list
     public static final int DATA_VIRTUAL = 999;      // Virtual String, will not be stored in file
+    public static final int DATA_UNKNOWN = -1;		 // Unknown field type, for instance if the field does not exist in Metadata
 
     public static final int  UNDEFINED_INT  = Integer.MIN_VALUE + 1;
     public static final long UNDEFINED_LONG = Long.MIN_VALUE + 1;
