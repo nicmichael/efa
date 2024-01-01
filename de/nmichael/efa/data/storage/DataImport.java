@@ -389,6 +389,8 @@ public class DataImport extends ProgressTask {
                             if (value != null && value.length() > 0) {
                                 try {
                                     // special locale handling of imported decimals
+                                	// Bugfix: if fieldName in (header[i]) does not exist, getFieldType returns IDataAccess.DATA_UNKNOWN.
+                                	// This does not hurt here, as we are only looking for EXISTING field's type
                                     if (dummyRecord.getFieldType(header[i]) == IDataAccess.DATA_DECIMAL) {
                                         value = EfaUtil.replace(value, Character.toString(International.getThousandsSeparator()), "");
                                         value = EfaUtil.replace(value, Character.toString(International.getDecimalSeparator()), ".");

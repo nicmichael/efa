@@ -192,6 +192,13 @@ public abstract class DataRecord implements Cloneable, Comparable {
         return metaData.getFieldType(i);
     }
 
+    /**
+     * Returns the iDataAccess field type of a given field.
+     * If fieldName does not exists, it returns iDataAccess.DATA_UNKOWN.
+     * 
+     * @param fieldName
+     * @return iDataAccess field type value (int). If fieldName does not exist, it returns IDataAccess.DATA_UNKOWN.
+     */
     public int getFieldType(String fieldName) {
         return metaData.getFieldType(fieldName);
     }

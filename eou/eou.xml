@@ -96,6 +96,18 @@
         </Changes>
     </Version>
     <Version>
+        <VersionID>2.3.3_03</VersionID>
+        <ReleaseDate>01.01.2024</ReleaseDate>
+        <DownloadUrl>http://efa.nmichael.de/download/efa233.zip</DownloadUrl>
+        <DownloadSize>TODO</DownloadSize>
+        <Changes lang="de">
+            <ChangeItem>BugFix: Datenimport von Fahrtenbucheinträgen funktioniert nicht, wegen ArrayIndexOutOfBounds Exception</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>BugFix: Data import of logbook items did not work due to ArrayIndexOutOfBounds exception</ChangeItem>
+        </Changes>
+    </Version>
+    <Version>
         <VersionID>2.3.3_02</VersionID>
         <ReleaseDate>26.11.2023</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa233.zip</DownloadUrl>
@@ -107,7 +119,6 @@
             <ChangeItem>BugFix: Unwanted Dialog window shown during cron job executions</ChangeItem>
         </Changes>
     </Version>
-
     <Version>
         <VersionID>2.3.3_01</VersionID>
         <ReleaseDate>05.11.2023</ReleaseDate>
