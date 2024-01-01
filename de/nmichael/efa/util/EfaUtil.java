@@ -66,7 +66,6 @@ import de.nmichael.efa.efa1.DatenFelder;
 import de.nmichael.efa.efa1.Synonyme;
 import javax.swing.SwingUtilities;
 
-
 // @i18n complete
 public class EfaUtil {
 
@@ -2310,8 +2309,9 @@ public class EfaUtil {
                 m.run();
             }
         }
+
     }	
-	
+    
     public static void main(String args[]) {
         String text = "abc & def";
         System.out.println(text + " -> EfaUtil.escapeXml() = " + EfaUtil.escapeXml(text));
