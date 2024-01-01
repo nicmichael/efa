@@ -41,6 +41,7 @@
             <ChangeItem>BugFix: MetoAstro-Plugin in Hauptbildschirm von efaBths zeigt eine Hand als Mauscursor an, wenn ein HTML-Popup konfiguriert wurde.</ChangeItem>
             <ChangeItem>BugFix: Keine (versteckte) Exception mehr bei der Aktualisierung der Inhalte des HTML-Widgets.</ChangeItem>
             <ChangeItem>BugFix: Keine (versteckte) Exception mehr bei Initialisierung von efaBths wenn der Spezialbutton angezeigt wird. Spezialbutton zeigt nun das zugehörige Icon.</ChangeItem>
+            <ChangeItem>BugFix: Key F3 im "Fahrt beginnen" Dialog öffnet nicht mehr den Suchdialog für das Fahrtenbuch.</ChangeItem>
         </Changes>
         <Changes lang="en">
 			<ChangeItem>New: EfaFlatLight LookAndFeel provides a clear, modern look of efa. Customizable in wide ranges.</ChangeItem>
@@ -79,6 +80,7 @@
             <ChangeItem>BugFix: No (hidden) exception in debug mode in HTMLWidget updating process</ChangeItem>
             <ChangeItem>BugFix: No (hidden) exception during initialisation of efaBths if the special button is displayed. Special button now has the according icon.</ChangeItem>              
             <ChangeItem>BugFix: No more duplicates in the spellchecking dialogue (which comes up when a item with a lookup list has not fully been set by the user).</ChangeItem>
+            <ChangeItem>BugFix: Key F3 in start session dialog does no longer invoke searching in logbook dialog.</ChangeItem>
         </Changes>
 	</Version>	
 	<Version>
