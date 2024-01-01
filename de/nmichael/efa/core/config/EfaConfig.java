@@ -61,6 +61,7 @@ import de.nmichael.efa.gui.BaseTabbedDialog;
 import de.nmichael.efa.gui.widgets.AlertWidget;
 import de.nmichael.efa.gui.widgets.IWidget;
 import de.nmichael.efa.gui.widgets.Widget;
+import de.nmichael.efa.themes.EfaFlatLafHelper;
 import de.nmichael.efa.util.Dialog;
 import de.nmichael.efa.util.EfaUtil;
 import de.nmichael.efa.util.International;
@@ -818,7 +819,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 					BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
 					International.getString("LookAndFeel"), 3);
 
-			addParameter(lookAndFeel = new ItemTypeStringList("LookAndFeel", getDefaultLookAndFeel(),
+			addParameter(lookAndFeel = new ItemTypeStringList("LookAndFeelNewSetting", getDefaultLookAndFeel(),
 					makeLookAndFeelArray(STRINGLIST_VALUES), makeLookAndFeelArray(STRINGLIST_DISPLAY),
 					IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
 					International.getString("Look & Feel")));
@@ -965,8 +966,9 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 					International.getString("Die Schrift von efaBootshaus wird in efaBootshaus->Erscheinungsbild eingestellt."),
 					3,3,3);
 
+			String defaultFont=getDefaultFont();
 			addParameter(efaDirekt_OtherFontNameButton = new ItemTypeFontName("EfaOtherFontNameButton",
-					FONT_NAME_LAF_DEFAULT_FONT,FONT_NAME_LAF_DEFAULT_FONT,
+					defaultFont, defaultFont,
 					IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
 					International.getString("Schriftart"),false));			
 			
@@ -1021,10 +1023,17 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 					IItemType.TYPE_INTERNAL, BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_COMMON),
 					"Last project opened by efaBoathouse"));
 
-			addHeader("efaBthsCommonFahrtbeginn", IItemType.TYPE_EXPERT,
+			addHeader("efaBthsCommonFahrtbeginn", IItemType.TYPE_PUBLIC,
 					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_COMMON),
 					International.getString("Fahrtbeginn"), 3);
 
+			addParameter(efaDirekt_showBootsschadenButton = new ItemTypeBoolean("BoatDamageEnableReporting", true,
+					IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_COMMON),
+					International.getString("Melden von Bootsschäden erlauben")));
+			addParameter(boatNotCleanedButton = new ItemTypeBoolean("ShowBoatNotCleanedButton", false,
+					IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_COMMON), 
+					International.getString("Melden von ungeputzten Booten erlauben")));
+			
 			addDescription("efaCommonInputCommonResLookAheadTime", IItemType.TYPE_EXPERT,
 					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_COMMON), International.getString(
 							"Bei Fahrtbeginn kann auf zeitnah anstehende Reservierungen geprüft werden."),
@@ -1038,16 +1047,6 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 			addHeader("efaBthsCommonFahrtEnde", IItemType.TYPE_PUBLIC,
 					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_COMMON),
 					International.getString("Fahrtende"), 3);
-
-			addParameter(efaDirekt_showBootsschadenButton = new ItemTypeBoolean("BoatDamageEnableReporting", true,
-					IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_COMMON),
-					International.getString("Melden von Bootsschäden erlauben")));
-			addParameter(boatNotCleanedButton = new ItemTypeBoolean("ShowBoatNotCleanedButton", false,
-					IItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_COMMON), // @todo
-																												// -
-																												// make
-																												// PUBLIC?
-					International.getString("Melden von ungeputzten Booten erlauben")));
 
 			addParameter(efaBoathouseShowLastFromWaterNotification = new ItemTypeBoolean(
 					"ShowLastFromWaterNotification", true, IItemType.TYPE_PUBLIC,
@@ -1263,7 +1262,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 					International.getString("Schriftart"), 3);
 
 			addParameter(efaDirekt_BthsFontNameButton = new ItemTypeFontName("EfaBoathouseFontNameButton",
-					FONT_NAME_LAF_DEFAULT_FONT,FONT_NAME_LAF_DEFAULT_FONT,
+					defaultFont,defaultFont,
 					IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
 					International.getString("Schriftart"),false));
 			
@@ -3062,7 +3061,9 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 					LogString.onlyEffectiveAfterRestart(International.getString("Geänderte Einstellungen")) + "\n" + s);
 		}
 
-		EfaUtil.handleEfaFlatLafDefaults();
+		if (Daten.isEfaFlatLafActive()) {
+			EfaFlatLafHelper.setupEfaFlatLafDefaults();
+		}
         
 		if (this.getToolTipSpecialColors()) {
         	Dialog.getUiDefaults().put("ToolTip.background", new ColorUIResource(this.getToolTipBackgroundColor()));
@@ -3253,6 +3254,34 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 		}
 
 		return ""; // default
+	}
+	
+/**
+ * Gets the default font for the current system, depending on _installed_ fonts. 
+ * There are just a few fonts which are really good with efaBoathouse, and this method
+ * checks for them in an ordered way. If no special installed font is available, we stick with "Dialog"
+ * so that java itself handles which font to use.
+ * 
+ * @return Font name of the desired default font for this system.
+ */
+	private String getDefaultFont() {
+		// get only installed ui-capable fonts.
+		Vector uiFonts = EfaUtil.makeFontFamilyVector(true, null);
+		
+		String uiFontsString=uiFonts.toString().toLowerCase();
+		
+		if (uiFontsString.matches(".*arial.*")) {
+			return "Arial";
+		} else if (uiFontsString.matches(".*segoe.ui.*")){
+			return "Segoe UI";
+		} else if (uiFontsString.matches(".*piboto.*")) {
+			return "Piboto";
+		} else if (uiFontsString.matches(".*liberation.*")) {
+			return "Liberation San";
+		} else if (uiFontsString.matches(".*roboto.*")) {
+			return "Roboto";
+		}
+		return "Dialog";
 	}
 
 	private String[] makeLanguageArray(int type) {

@@ -4,13 +4,10 @@ import java.awt.AWTEvent;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
-import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
-import java.util.Collections;
-import java.util.Vector;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
@@ -21,11 +18,9 @@ import javax.swing.SwingConstants;
 import javax.swing.plaf.FontUIResource;
 
 import de.nmichael.efa.Daten;
-import de.nmichael.efa.data.BoatReservationRecord;
 import de.nmichael.efa.gui.BaseDialog;
 import de.nmichael.efa.gui.SimpleInputDialog;
 import de.nmichael.efa.util.Dialog;
-import de.nmichael.efa.util.EfaSortStringComparator;
 import de.nmichael.efa.util.EfaUtil;
 import de.nmichael.efa.util.International;
 import de.nmichael.efa.util.Logger;
@@ -161,11 +156,11 @@ public class ItemTypeFontName extends ItemTypeLabelValue implements IItemListene
 
 	private String showFontDialog(String useFontName) {
 
-		String[] allFonts= makeFontFamilyArray(true);
-		String[] guiFonts = makeFontFamilyArray(false);
+		String[] allFonts= EfaUtil.makeFontFamilyArray(true, Daten.efaConfig.FONT_NAME_LAF_DEFAULT_FONT);
+		String[] guiFonts = EfaUtil.makeFontFamilyArray(false, Daten.efaConfig.FONT_NAME_LAF_DEFAULT_FONT);
 		
 		ItemTypeLabel hint = new ItemTypeLabel("_GUIITEM_GENERIC_HINT", IItemType.TYPE_PUBLIC, null,  " " 
-				+ (Daten.isOsLinux() ? International.getString("LINUX_FONT_HINT") : International.getString("WINDOWS_FONT_HINT"))); 
+				+ (Daten.isOsLinux() ? International.getString("Probieren Sie die Schriftart 'Piboto' oder 'Liberation Sans'") : International.getString("Probieren Sie die Schriftart 'Arial' oder 'Segoe UI'"))); 
 	
         hint.setPadding(0, 0, 12, 12);
     	hint.setFieldGrid(3,GridBagConstraints.EAST, GridBagConstraints.BOTH);
@@ -238,34 +233,8 @@ public class ItemTypeFontName extends ItemTypeLabelValue implements IItemListene
             comboFontNameALL.setVisible(!onlyGUI.equalsIgnoreCase("true"));
         }
     }
-	
-	private String[] makeFontFamilyArray(Boolean showAllFonts) {
-        GraphicsEnvironment graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        Font[] allFonts = graphicsEnvironment.getAllFonts();
-        String guiFontRegexp=".*arial.*|.*calibri.*|.*dialog|.*roboto.*|.*tahoma.*|.*trebuchet.*|.*nirmala.*|.*verdana.*|.*inter.*|.*sansserif|.*segoe.ui.*|.*verdana.*|.*cantarell.*|.*dejavu.*|.*liberation.*|.*piboto.*|.*quicksand.*|.*helvetic.*";        
-        Vector <String>fontFamilies = new Vector<String>();
-        
-        for (Font font : allFonts) {
-            if (!fontFamilies.contains(font.getFamily())) {
-            	if (showAllFonts==true) {
-            		fontFamilies.add(font.getFamily());
-            	} else {
-            		String curFamily=font.getFamily();
-            		if (curFamily.toLowerCase().matches(guiFontRegexp)) {
-            			fontFamilies.add(curFamily);
-            		}
-            	}
-            }
-        }
-        fontFamilies.add(Daten.efaConfig.FONT_NAME_LAF_DEFAULT_FONT);
-    	Collections.sort(fontFamilies,new EfaSortStringComparator());
-    	
-    	String[] fontFamiliesArray =new String[fontFamilies.size()];
-        fontFamilies.toArray(fontFamiliesArray);
-        return fontFamiliesArray;
-        
-	}
-	
+
+    
     class FontListCellRenderer extends DefaultListCellRenderer {
         public Component getListCellRendererComponent(JList list, Object value,
                 int index, boolean isSelected, boolean chf) {

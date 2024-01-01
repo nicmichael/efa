@@ -10,17 +10,13 @@
 
 package de.nmichael.efa.gui.widgets;
 
-import de.nmichael.efa.Daten;
 import de.nmichael.efa.core.items.*;
-import de.nmichael.efa.gui.BaseDialog;
-import de.nmichael.efa.gui.ImagesAndIcons;
 import de.nmichael.efa.util.*;
 import java.util.*;
 import java.awt.*;
-import java.awt.event.*;
+
 import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.border.*;
+
 
 public abstract class Widget implements IWidget {
 

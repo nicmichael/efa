@@ -458,7 +458,7 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
    		    			String groups = bli.boat.getAllowedGroupsAsNameString(System.currentTimeMillis());
    		                if (groups.length() > 0) {
    		                	boatRuderErlaubnis = (boatRuderErlaubnis.length() > 0 ? boatRuderErlaubnis + ", "
-   		                            : "; " + International.getMessage("nur für {something}", groups));
+   		                            : International.getMessage("nur für {something}", groups));
    		                }
    	    			}
    	    		}

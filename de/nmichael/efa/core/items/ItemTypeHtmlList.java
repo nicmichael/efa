@@ -11,7 +11,6 @@
 package de.nmichael.efa.core.items;
 
 import de.nmichael.efa.util.*;
-import de.nmichael.efa.util.Dialog;
 import de.nmichael.efa.Daten;
 import de.nmichael.efa.gui.util.*;
 import java.util.*;
@@ -25,7 +24,7 @@ public class ItemTypeHtmlList extends ItemType implements ActionListener {
 
     protected String value;
 
-    protected JList list;
+    protected JList <String>list;
     protected JScrollPane scrollPane;
     protected EfaMouseListener mouseListener;
     protected JPopupMenu popup;
@@ -48,6 +47,7 @@ public class ItemTypeHtmlList extends ItemType implements ActionListener {
         fieldGridFill = GridBagConstraints.NONE;
     }
 
+    @SuppressWarnings({"unchecked"})
     public IItemType copyOf() {
         return new ItemTypeHtmlList(name, keys.clone(), (Hashtable<String,String>)items.clone(), value, type, category, description);
     }
@@ -68,7 +68,7 @@ public class ItemTypeHtmlList extends ItemType implements ActionListener {
             }
                 list.setListData(elements);
             } else {
-                list.setListData(new Object[0]);
+                list.setListData(new String[0]);
             }
             for (int i=0; keys != null && value != null && i<keys.length; i++) {
                 if (value.equals(keys[i])) {
@@ -86,7 +86,7 @@ public class ItemTypeHtmlList extends ItemType implements ActionListener {
                     getClass().getName() + ".iniDisplay() fieldWidth=" + fieldWidth +
                     ", fieldHeight=" + fieldHeight);
         }
-        list = new JList();
+        list = new JList <String>() ;
         list.setCellRenderer(new MyCellRenderer());
         scrollPane = new JScrollPane();
         scrollPane.setPreferredSize(new Dimension(fieldWidth, fieldHeight));
@@ -171,11 +171,13 @@ public class ItemTypeHtmlList extends ItemType implements ActionListener {
         this.popupActions = actions;
     }
 
-    class MyCellRenderer extends JEditorPane implements ListCellRenderer {
+    private class MyCellRenderer extends JEditorPane implements ListCellRenderer <String>{
 
-        public Component getListCellRendererComponent(
+    	private static final long serialVersionUID = 2527248630527152451L;
+
+		public Component getListCellRendererComponent(
                 JList list, // the list
-                Object value, // value to display
+                String value, // value to display
                 int index, // cell index
                 boolean isSelected, // is the cell selected
                 boolean cellHasFocus) // does the cell have focus

@@ -1,7 +1,6 @@
 package de.nmichael.efa.themes;
 
-import com.formdev.flatlaf.FlatIntelliJLaf;
-/*
+/**
  * This is just a wrapper for the FlatIntelliJLaf,
  * originating from https://www.formdev.com/flatlaf/ 
  * 
@@ -11,9 +10,15 @@ import com.formdev.flatlaf.FlatIntelliJLaf;
  * The customizing of this laf can be found in EfaFlatDarkLookAndFeel.properties.
  * (FlatLafs look for their customization depending on their name)
  * 
+ * This class is still a stub, because the work on a dark efa2 look has not yet been finished.
+ * Because of this, the efaFlatDarkLookAndFeel is not an user selectable option. 
+ * 
  */
 public class EfaFlatDarkLookAndFeel extends EfaFlatLookAndFeel {
-    public static boolean setup() {
+
+	private static final long serialVersionUID = 7695849269840279570L;
+
+	public static boolean setup() {
         return setup( new EfaFlatDarkLookAndFeel() );
     }
 

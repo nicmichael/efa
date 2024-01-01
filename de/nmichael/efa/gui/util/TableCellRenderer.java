@@ -10,19 +10,16 @@
 package de.nmichael.efa.gui.util;
 
 import java.awt.*;
-import java.awt.event.*;
-import javax.swing.event.*;
 import javax.swing.*;
-import javax.swing.border.*;
 import javax.swing.table.*;
-import java.util.Vector;
 import de.nmichael.efa.Daten;
 import de.nmichael.efa.gui.ImagesAndIcons;
-import de.nmichael.efa.util.International;
 
 public class TableCellRenderer extends DefaultTableCellRenderer {
 
-    private boolean markedBold = true;
+	private static final long serialVersionUID = 4970624188985566921L;
+
+	private boolean markedBold = true;
     private Color markedBkgColor = new Color(0xff,0xff,0xaa);
     private Color alternateColor = new Color(219,234,249);
     private Color markedFgColor = null;

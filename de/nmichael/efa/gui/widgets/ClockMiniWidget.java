@@ -11,7 +11,6 @@
 package de.nmichael.efa.gui.widgets;
 
 import java.awt.Font;
-import java.awt.Label;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;

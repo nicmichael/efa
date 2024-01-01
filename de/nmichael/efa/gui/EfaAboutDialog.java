@@ -15,15 +15,13 @@ import de.nmichael.efa.util.Dialog;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import javax.swing.border.*;
-import javax.swing.text.html.HTMLEditorKit;
-
 import java.util.*;
-import java.text.*;
+
 
 public class EfaAboutDialog extends BaseDialog {
 
-    JPanel aboutEfaPanel = new JPanel();
+	private static final long serialVersionUID = -4809082876158920190L;
+	JPanel aboutEfaPanel = new JPanel();
     JLabel nameLabel = new JLabel();
     JLabel versionLabel = new JLabel();
     JLabel languageLabel = new JLabel();

@@ -32,11 +32,8 @@ import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 import javax.swing.plaf.ColorUIResource;
 import javax.swing.text.Style;
-import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
-
-import com.formdev.flatlaf.FlatLaf;
 
 import de.nmichael.efa.core.CrontabThread;
 import de.nmichael.efa.core.EfaKeyStore;
@@ -61,6 +58,7 @@ import de.nmichael.efa.data.types.DataTypeDate;
 import de.nmichael.efa.gui.BrowserDialog;
 import de.nmichael.efa.gui.EfaFirstSetupDialog;
 import de.nmichael.efa.gui.SimpleInputDialog;
+import de.nmichael.efa.themes.EfaFlatLafHelper;
 import de.nmichael.efa.util.Dialog;
 import de.nmichael.efa.util.EfaSortStringComparator;
 import de.nmichael.efa.util.EfaUtil;
@@ -72,13 +70,13 @@ import de.nmichael.efa.util.Logger;
 // @i18n complete
 public class Daten {
 
-    public final static String VERSION            = "2.3.4_00_EFA_057_LAF_8"; // Version für die Ausgabe (z.B. 2.1.0, kann aber auch Zusätze wie "alpha" o.ä. enthalten)
+    public final static String VERSION            = "2.3.4_00_EFA_057_LAF_11"; // Version für die Ausgabe (z.B. 2.1.0, kann aber auch Zusätze wie "alpha" o.ä. enthalten)
     public final static String VERSIONID          = "2.3.4_00";   // VersionsID: Format: "X.Y.Z_MM"; final-Version z.B. 1.4.0_00; beta-Version z.B. 1.4.0_#1
-    public final static String VERSIONRELEASEDATE = "29.12.2023";  // Release Date: TT.MM.JJJJ
+    public final static String VERSIONRELEASEDATE = "01.01.2024";  // Release Date: TT.MM.JJJJ
     public final static String MAJORVERSION       = "2";
     public final static String PROGRAMMID         = "EFA.233"; // Versions-ID für Wettbewerbsmeldungen
     public final static String PROGRAMMID_DRV     = "EFADRV.233"; // Versions-ID für Wettbewerbsmeldungen
-    public final static String COPYRIGHTYEAR      = "23";   // aktuelles Jahr (Copyright (c) 2001-COPYRIGHTYEAR)
+    public final static String COPYRIGHTYEAR      = "24";   // aktuelles Jahr (Copyright (c) 2001-COPYRIGHTYEAR)
     public final static int REQUIRED_JAVA_VERSION = 8;
 
     // enable/disable development functions for next version
@@ -179,6 +177,7 @@ public class Daten {
     public static String osVersion = "";
     public static String lookAndFeel = "";
 
+    //Class names of LookAndFeels provided with efa
     public static String LAF_METAL="MetalLookAndFeel";
     public static String LAF_EFAFLAT_LIGHT="EfaFlatLightLookAndFeel";
     public static String LAF_EFAFLAT_DARK = "EfaFlatLightLookAndFeel";
@@ -263,6 +262,10 @@ public class Daten {
     public static final int APPL_MODE_ADMIN = 2;
     public static int applMode = APPL_MODE_NORMAL;
 
+    // This boolean is set during startup and tells if Flatlaf could be initialized at all.
+    // if not, flatLaf-3.2.5.jar may be missing in classpath.
+	public static Boolean flatLafInitializationOK=false;
+    
     // Applikations- PID
     public static String applPID = "XXXXX"; // will be set in iniBase(...)
 
@@ -271,7 +274,8 @@ public class Daten {
             Logger.log(Logger.DEBUG, Logger.MSG_CORE_STARTUPINITIALIZATION, "initialize()");
             printEfaInfos(false, false, true, false, false);
         }
-        AdminRecord newlyCreatedAdminRecord = null;
+        @SuppressWarnings("unused")
+		AdminRecord newlyCreatedAdminRecord = null;
         iniScreenSize();
         iniMainDirectory();
         iniEfaBaseConfig();
@@ -1055,18 +1059,48 @@ public class Daten {
         // Look&Feel
         if (Daten.efaConfig != null) { // is null for applDRV
             try {
-            	// Make sure that settings in FlatIntelliJLaf.properties are read on startup
-            	FlatLaf.registerCustomDefaultsSource( "de.nmichael.efa.themes" );
-            	// We just want plain java functions, for maximum compatibility.
-            	System.setProperty( "flatlaf.useNativeLibrary", "false" );
-            	System.setProperty( "flatlaf.animation", "false" );
-            	System.setProperty( "flatlaf.useWindowDecorations" , "false" );
-            	System.setProperty( "flatlaf.menuBarEmbedded", "false" );
-                
-                if (Daten.efaConfig.getValueLookAndFeel().length() == 0) {
+            	flatLafInitializationOK=false;//init 
+            	try {
+            		// Check and log for debugging purposes
+            		checkFlatLafIsInClassPath();
+
+            		// turn off os specific features
+	            	EfaFlatLafHelper.setupFlatLafSystemSettings();
+	            	
+	            	// Make sure that settings in FlatIntelliJLaf.properties are read on startup
+	            	EfaFlatLafHelper.installCustomDefaultSource();
+	            		            	
+	            	flatLafInitializationOK=true; // now it is safe to say flatlaf is available
+	            	
+            	} catch (NoClassDefFoundError e) {
+            		flatLafInitializationOK=false;
+            		Logger.log(Logger.ERROR, Logger.MSG_WARN_CANTSETLOOKANDFEEL, International.getString("Konnte Flatlaf nicht initialisieren:")+" "+e.getMessage());
+            		
+            	} catch (Exception e) {
+            		flatLafInitializationOK=false;
+            		Logger.log(Logger.ERROR, Logger.MSG_WARN_CANTSETLOOKANDFEEL, International.getString("Konnte Flatlaf nicht initialisieren:")+" "+e.getMessage());
+            		Logger.logdebug(e);
+            	} 
+            	
+            	if (Daten.efaConfig.getValueLookAndFeel().length() == 0) {
                     UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
                 } else {
-                	UIManager.setLookAndFeel(Daten.efaConfig.getValueLookAndFeel());
+                	if (Daten.efaConfig.getValueLookAndFeel().endsWith(Daten.LAF_EFAFLAT_LIGHT) && flatLafInitializationOK) {
+               			try {
+               				UIManager.setLookAndFeel(Daten.efaConfig.getValueLookAndFeel());
+                		} catch (Exception e) {
+                			flatLafInitializationOK=false;
+                    		Logger.log(Logger.ERROR, Logger.MSG_WARN_CANTSETLOOKANDFEEL, International.getString("Konnte Flatlaf nicht initialisieren")+" "+e.getMessage());
+                    		Logger.logdebug(e);
+                		}
+                	} else if (Daten.efaConfig.getValueLookAndFeel().endsWith(Daten.LAF_EFAFLAT_LIGHT) && flatLafInitializationOK==false){
+                			//Flatlaf should be active, but could not be installed. 
+                			//So we use Metal instead. Metal is available on all systems
+                			UIManager.setLookAndFeel(Daten.getMetalLookAndFeel());
+                	} else {
+                		//Just some other look and feel shall be used
+                		UIManager.setLookAndFeel(Daten.efaConfig.getValueLookAndFeel());
+                	}
                 }
                 
             } catch (Exception e) {
@@ -1138,11 +1172,36 @@ public class Daten {
             }        	
         }
         
-        // Needs to be placed here for adequate font scalings
-        EfaUtil.handleEfaFlatLafDefaults();
+        // Needs to be placed here for adequate font scalings. If it is installed earlier in the code, some scalings are not right in flatlaf.
+        if (Daten.isEfaFlatLafActive()) {
+        	EfaFlatLafHelper.setupEfaFlatLafDefaults();
+        }
         
     }
 
+	private static String getMetalLookAndFeel() {
+		String[] laf = makeLookAndFeelArray();
+		// no flatlaf installed? Try MetalLookAndFeel instead.
+		for (int i = 0; i < laf.length; i++) {
+			if (laf[i].endsWith(Daten.LAF_METAL)) {
+				return laf[i];
+			}
+		}
+
+		return UIManager.getSystemLookAndFeelClassName();
+	}    
+    
+	private static String[] makeLookAndFeelArray() {
+		UIManager.LookAndFeelInfo[] info = UIManager.getInstalledLookAndFeels();
+		String[] lookAndFeelArray = new String[info.length + 1];
+		lookAndFeelArray[0] = "";
+		for (int i = 0; i < info.length; i++) {
+			String s = info[i].getClassName();
+			lookAndFeelArray[i + 1] = s;
+		}
+		return lookAndFeelArray;
+	}
+    
     public static void iniChecks() {
         if (Logger.isTraceOn(Logger.TT_CORE, 9) || Logger.isDebugLoggingActivatedByCommandLine()) {
             Logger.log(Logger.DEBUG, Logger.MSG_CORE_STARTUPINITIALIZATION, "iniChecks()");
@@ -1262,7 +1321,7 @@ public class Daten {
 
     public static Vector getUIProperties() {
     	
-        Vector infos = new Vector();
+        Vector <String>infos = new Vector<String>();
  	   	UIDefaults uid = Dialog.getUiDefaults();
 		
         java.util.Enumeration keys = uid.keys();
@@ -1283,7 +1342,7 @@ public class Daten {
 
     public static Vector getCSSInfo() {
     	
-        Vector infos = new Vector();
+        Vector <String>infos = new Vector<String>();
     	HTMLEditorKit kit = new HTMLEditorKit();
     	StyleSheet styles = kit.getStyleSheet();
     	Enumeration rules = styles.getStyleNames();
@@ -1305,7 +1364,7 @@ public class Daten {
             boolean javaInfos, 
             boolean hostInfos,
             boolean jarInfos) {
-        Vector infos = new Vector();
+        Vector <String>infos = new Vector <String>()  ;
 
         // efa-Infos
         if (efaInfos) {
@@ -1363,7 +1422,7 @@ public class Daten {
                 String[] names = plugins.getAllPluginNames();
                 for (String name : names) {
                     infos.add("efa.plugin." + name + "=" +
-                            (plugins.isPluginInstalled(name) ? "installed" : "not installed"));
+                            (Plugins.isPluginInstalled(name) ? "installed" : "not installed"));
                 }
             } catch (Exception e) {
                 Logger.log(Logger.ERROR, Logger.MSG_CORE_INFOFAILED, International.getString("Programminformationen konnten nicht ermittelt werden") + ": " + e.toString());
@@ -1420,14 +1479,13 @@ public class Daten {
                         cp = null;
                     }
                     if (jarfile != null && jarfile.length() > 0 && new File(jarfile).isFile()) {
-                        try {
-                            infos.add("java.jar.filename=" + jarfile);
-                            JarFile jar = new JarFile(jarfile);
-                            Enumeration _enum = jar.entries();
-                            Object o;
-                            while (_enum.hasMoreElements() && (o = _enum.nextElement()) != null) {
-                                infos.add("java.jar.content=" + o + ":" + (jar.getEntry(o.toString()) == null ? "null" : Long.toString(jar.getEntry(o.toString()).getSize())));
-                            }
+                        infos.add("java.jar.filename=" + jarfile);
+                        try (JarFile jar = new JarFile(jarfile)) {
+							Enumeration _enum = jar.entries();
+							Object o;
+							while (_enum.hasMoreElements() && (o = _enum.nextElement()) != null) {
+							    infos.add("java.jar.content=" + o + ":" + (jar.getEntry(o.toString()) == null ? "null" : Long.toString(jar.getEntry(o.toString()).getSize())));
+							}
                         } catch (Exception e) {
                             Logger.log(Logger.ERROR, Logger.MSG_CORE_INFOFAILED, e.toString());
                             return null;
@@ -1454,7 +1512,6 @@ public class Daten {
     }
 
     public static String getEfaImage(int size) {
-        int birthday = EfaUtil.getEfaBirthday();
         switch (size) {
             case 1:
                 return IMAGEPATH + "efa_small.png";
@@ -1579,15 +1636,22 @@ public class Daten {
             return 0;
         }
     }
-
-    private static void showJavaDownloadHints() {
-        if (Daten.efaDocDirectory == null) {
-            return;
-        }
-    }
     
     public static Boolean isEfaFlatLafActive() {
     	return (lookAndFeel.endsWith(Daten.LAF_EFAFLAT_LIGHT) || lookAndFeel.endsWith(Daten.LAF_EFAFLAT_DARK));
     }
-    
+
+    /**
+     * Checks whether there is a flatlaf mention in ClassPath.
+     * This method needs to be in daten.java and not in efaFlatLafHelper:
+     * An initialization of efaFlatLafHelper will lead java to load FlatLab library, which may not be available.
+     * To be able to put a warning in the log, we need to check the ClassPath outside of efaFlatLafHelper.
+     */
+    public static void checkFlatLafIsInClassPath() {
+		String cp=System.getProperty("java.class.path");
+	
+		if (!cp.toLowerCase().matches(".*flatlaf.*")) {
+			Logger.log(Logger.WARNING, Logger.MSG_WARN_CANTSETLOOKANDFEEL, International.getString("Flatlaf nicht im ClassPath gefunden.")+" "+cp);
+		}
+    }    
 }

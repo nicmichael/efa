@@ -13,6 +13,8 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GraphicsEnvironment;
 import java.awt.Window;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
@@ -34,10 +36,10 @@ import java.text.SimpleDateFormat;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Vector;
 import java.util.regex.Matcher;
@@ -50,7 +52,6 @@ import javax.mail.internet.InternetAddress;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
@@ -63,9 +64,7 @@ import de.nmichael.efa.core.config.EfaTypes;
 import de.nmichael.efa.data.types.DataTypeTime;
 import de.nmichael.efa.efa1.DatenFelder;
 import de.nmichael.efa.efa1.Synonyme;
-import de.nmichael.efa.themes.EfaFlatDarkLookAndFeel;
-import de.nmichael.efa.themes.EfaFlatLightLookAndFeel;
-import de.nmichael.efa.themes.EfaFlatLookAndFeel;
+
 
 // @i18n complete
 public class EfaUtil {
@@ -576,7 +575,7 @@ public class EfaUtil {
         if (s == null) {
             return null;
         }
-        Vector v = new Vector<String>();
+        Vector <String>v = new Vector<String>();
         while (s.length() != 0) {
             int pos = s.indexOf(sep);
             if (pos >= 0) {
@@ -660,7 +659,7 @@ public class EfaUtil {
                 || !Daten.efaTypes.isConfigured(EfaTypes.CATEGORY_STATUS, EfaTypes.TYPE_STATUS_OTHER)) {
             return stati;
         }
-        Vector stati2 = new Vector();
+        Vector <String>stati2 = new Vector<String>();
         for (int i = 0; i < stati.length; i++) {
             if (!stati[i].toLowerCase().equals(Daten.efaTypes.getValue(EfaTypes.CATEGORY_STATUS, EfaTypes.TYPE_STATUS_GUEST).toLowerCase())
                     && !stati[i].toLowerCase().equals(Daten.efaTypes.getValue(EfaTypes.CATEGORY_STATUS, EfaTypes.TYPE_STATUS_OTHER).toLowerCase())) {
@@ -1147,7 +1146,7 @@ public class EfaUtil {
         if (l == null || s == null) {
             return null;
         }
-        Vector v = new Vector();
+        Vector <String>v = new Vector<String>();
         for (DatenFelder d = l.getCompleteFirst(); d != null; d = l.getCompleteNext()) {
             if (d.get(Synonyme.ORIGINAL).equals(s)) {
                 v.add(d.get(Synonyme.SYNONYM));
@@ -1248,7 +1247,8 @@ public class EfaUtil {
         }
         FileInputStream f1;
         byte[] buf = new byte[length];
-        int n;
+        @SuppressWarnings("unused")
+		int n;
         try {
             f1 = new FileInputStream(f);
             n = f1.read(buf, 0, length);
@@ -1653,7 +1653,7 @@ public class EfaUtil {
             BufferedInputStream origin = null;
             FileOutputStream dest = new FileOutputStream(zipFile);
             ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(dest));
-            Hashtable processedDirectories = new Hashtable();
+            Hashtable <String,String>processedDirectories = new Hashtable<String,String>();
             byte data[] = new byte[ZIP_BUFFER];
             for (int j = 0; j < sourceDirs.size(); j++) {
                 // get a list of files from current directory
@@ -2256,53 +2256,61 @@ public class EfaUtil {
 	    }
     }
     
-    public static void handleEfaFlatLafDefaults() {
-        if (Daten.isEfaFlatLafActive()) {
-        	
-        	EfaFlatLookAndFeel myLaf = (EfaFlatLookAndFeel) UIManager.getLookAndFeel();
-        	
-        	HashMap<String, String> myCustomSettings = new HashMap<String, String>();
-        	myCustomSettings.put("@background", "#"+EfaUtil.getColor(Daten.efaConfig.getEfaGuiflatLaf_Background()));
-        	myCustomSettings.put("@accentBaseColor", "#"+EfaUtil.getColor(Daten.efaConfig.getEfaGuiflatLaf_AccentColor()));
-        	myCustomSettings.put("@buttonBackground", "lighten(@background,"+Daten.efaConfig.getEfaGuiflatLaf_BackgroundFieldsLightenPercentage()+"%)");
-        	myCustomSettings.put("@componentBackground", "lighten(@background,"+Daten.efaConfig.getEfaGuiflatLaf_BackgroundFieldsLightenPercentage()+"%)");
-        	myCustomSettings.put("@menuBackground", "lighten(@background,"+Daten.efaConfig.getEfaGuiflatLaf_BackgroundFieldsLightenPercentage()+"%)");
-        	myCustomSettings.put("@efaTableHeaderBackground", "#"+EfaUtil.getColor(Daten.efaConfig.getTableHeaderBackgroundColor()));
-        	myCustomSettings.put("@efaTableHeaderForeground", "#"+EfaUtil.getColor(Daten.efaConfig.getTableHeaderHeaderColor()));
-        	myCustomSettings.put("@efaFocusColor", "#"+EfaUtil.getColor(Daten.efaConfig.getEfaGuiflatLaf_FocusColor()));
-        	//setting flatLaf efaTableAlternateRowColor will ENABLE alternate row color styling in flatlaf.
-        	//efa itself has a special tableCellRenderer which supports alternate row coloring, and this cell renderer is NOT active
-        	//for displaying the big logbook dialogue available in efaBths. 
-        	//enabling this setting will lead to alternate row coloring also in the logbook dialogue, which does not look nice due to nested tables.
-        	//so we could enable it, but we won't.
-        	//myCustomSettings.put("@efaTableAlternateRowColor", "#"+EfaUtil.getColor(Daten.efaConfig.getTableAlternatingRowColor()));
-        	
-        	if (Daten.efaConfig.getToolTipSpecialColors()) {
-        		myCustomSettings.put("@efaToolTipBorderColor", "#"+EfaUtil.getColor(Daten.efaConfig.getToolTipForegroundColor()));
-        	}
-        	// efaBths uses menu bars as title bar when "window not movable" is used.
-        	// in efaBths this needs to be blue so everything looks fine.
-        	// all other apps need standard settings
-        	if (Daten.isApplEfaBoathouse()) {
-        		myCustomSettings.put("MenuBar.background","#0000AA");
-        		myCustomSettings.put("Menu.background","#0000AA");    
-        		myCustomSettings.put("MenuItem.background","#0000AA");
-        	}
-        	
-        	
-        	//inform Flatlaf about custom settings
-        	myLaf.setExtraDefaults(myCustomSettings); 
-        	
-        	if (Daten.lookAndFeel.endsWith(Daten.LAF_EFAFLAT_LIGHT)) {
-	        	EfaFlatLightLookAndFeel.setup(myLaf);
-	        	EfaFlatLightLookAndFeel.updateUILater();
-        	} else {
-	        	EfaFlatDarkLookAndFeel.setup(myLaf);
-	        	EfaFlatDarkLookAndFeel.updateUILater();
-        	}
+
+
+	/**
+	 * Creates a string array containing all font family names _installed_ on the current system
+	 * 
+	 * @param showAllFonts determines whether all fonts shall be returned (true), or just a list of  
+	 * well-known UI-suitable font names. 
+	 * 
+	 * @param DEFAULT_FONT_NAME if != null, it is added to the font families list.
+	 * 
+	 * @return String array with all installed font family names on the current system.
+	 */
+	public static String[] makeFontFamilyArray(Boolean showAllFonts, String DEFAULT_FONT_NAME) {
+    	Vector <String>fontFamilies = makeFontFamilyVector(showAllFonts, DEFAULT_FONT_NAME);
+    	String[] fontFamiliesArray =new String[fontFamilies.size()];
+
+    	fontFamilies.toArray(fontFamiliesArray);
+        return fontFamiliesArray;
+	}    
+
+	/**
+	 * Creates a String vector containing all font family names _installed_ on the current system
+	 * 
+	 * @param showAllFonts determines whether all fonts shall be returned (true), or just a list of  
+	 * well-known UI-suitable font names. 
+	 * 
+	 * @param DEFAULT_FONT_NAME if != null, it is added to the font families list.
+	 * 
+	 * @return Vector with all installed font family names on the current system.
+	 */	
+	public static Vector <String>makeFontFamilyVector (Boolean showAllFonts, String DEFAULT_FONT_NAME) {
+        GraphicsEnvironment graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        Font[] allFonts = graphicsEnvironment.getAllFonts();
+        String guiFontRegexp=".*arial.*|.*dialog|.*roboto.*|.*tahoma.*|.*trebuchet.*|.*verdana.*|.*inter.*|.*sansserif|.*segoe.ui.*|.*verdana.*|.*cantarell.*|.*dejavu.*|.*liberation.*|.*piboto.*|.*quicksand.*|.*helvetic.*";        
+        Vector <String>fontFamilies = new Vector<String>();
+        
+        for (Font font : allFonts) {
+            //avoid duplicates, as allFonts contains all permutations of installed font families and their style.
+        	if (!fontFamilies.contains(font.getFamily())) {
+            	if (showAllFonts==true) {
+            		fontFamilies.add(font.getFamily());
+            	} else {
+            		String curFamily=font.getFamily();
+            		if (curFamily.toLowerCase().matches(guiFontRegexp)) {
+            			fontFamilies.add(curFamily);
+            		}
+            	}
+            }
         }
-    	
-    }
+        if (DEFAULT_FONT_NAME!=null) {
+        	fontFamilies.add(DEFAULT_FONT_NAME);
+        }
+    	Collections.sort(fontFamilies,new EfaSortStringComparator());
+    	return fontFamilies;
+	}
     
     public static void main(String args[]) {
         String text = "abc & def";

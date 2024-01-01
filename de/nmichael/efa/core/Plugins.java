@@ -64,6 +64,10 @@ public class Plugins {
                 return true;
             } catch (NoClassDefFoundError e) {
                 return false;
+            } catch (Exception e) {
+            	// we just catch the exception instead of logging it.
+            	// there can be no successful upload with the ftp client with the parameters given.
+            	EfaUtil.foo();
             }
         }
 
@@ -113,12 +117,9 @@ public class Plugins {
         }
         
         if (pluginName.equals(PLUGIN_FLATLAF)) {
-            try {
-            	// there is no way to proofe Flatlaf works, as flatlaf is essential for efa to start up
-            	return true;
-            } catch (NoClassDefFoundError e) {
-                return false;
-            }
+        	// During initialization of efa programs it is determined if flatlaf library is actually present.
+        	// a failure mostly comes from a missing flatlaf-3.2.5.jar in the classpath.
+        	return Daten.flatLafInitializationOK;
         }        
 
         return false;
@@ -177,7 +178,6 @@ class PluginInfoFileParser extends XmlHandler {
     private PluginInfo plugin;
     private Hashtable<String,PluginInfo> plugins = new Hashtable<String,PluginInfo>();
     private String descrlang;
-    private String baseurl;
     private int filesize;
 
     public PluginInfoFileParser() {

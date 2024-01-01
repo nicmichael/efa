@@ -2,9 +2,9 @@ package de.nmichael.efa.util;
 
 import java.util.Comparator;
 
-public class EfaSortStringComparator implements Comparator {
+public class EfaSortStringComparator implements Comparator<String> {
 
-	public int compare(Object o1, Object o2) {
+	public int compare(String o1, String o2) {
         String s1 = EfaUtil.replaceAllUmlautsLowerCaseFast((String)o1);
         String s2 = EfaUtil.replaceAllUmlautsLowerCaseFast((String)o2);
         
