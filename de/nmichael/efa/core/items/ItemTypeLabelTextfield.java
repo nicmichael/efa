@@ -12,8 +12,6 @@ package de.nmichael.efa.core.items;
 
 import de.nmichael.efa.*;
 import de.nmichael.efa.util.*;
-import de.nmichael.efa.util.Dialog;
-import de.nmichael.efa.gui.BaseDialog;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -80,7 +78,8 @@ public abstract class ItemTypeLabelTextfield extends ItemTypeLabelValue {
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
         try {
-            if (field != null && Daten.lookAndFeel.equals("Metal")) {
+            if (field != null && Daten.lookAndFeel.endsWith(Daten.LAF_METAL)) {
+            	//Disabled text fields should be better distinguishable in METAL LAF
                 ((JTextField) field).setDisabledTextColor(Color.darkGray);
                 ((JTextField) field).setBackground((enabled ? (new JTextField()).getBackground() : new Color(234, 234, 234)));
             }

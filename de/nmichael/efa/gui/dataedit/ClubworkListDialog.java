@@ -53,6 +53,9 @@ public class ClubworkListDialog extends DataListDialog {
             super.filterFieldName = "Flag";
             super.filterFieldValue = ""+ClubworkRecord.Flags.Normal.ordinal();
         }
+        
+		//From and to columns should be wider than default
+		this.minColumnWidths = new int[] {150,120,150,120,80,80};           
     }
 
     public void keyAction(ActionEvent evt) {

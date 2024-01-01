@@ -44,10 +44,10 @@ public abstract class ItemType implements IItemType {
     protected int padXbefore = 0;
     protected int padXafter = 0;
     protected int padYbefore = 0;
-    protected int padYafter = 1; //one pixel of space after every item on the gui. better readability.
+    protected int padYafter = 2; //one pixel of space after every item on the gui. better readability.
     protected boolean notNull = false;
     protected int fieldWidth = 300;
-    protected int fieldHeight = 19;
+    protected int fieldHeight = 21;
     protected int fieldGridWidth = 1;
     protected int fieldGridHeight = 1;
     protected int fieldGridAnchor = GridBagConstraints.WEST;
@@ -113,6 +113,14 @@ public abstract class ItemType implements IItemType {
         }
     }
 
+    public Color getBackgroundColor() {
+    	return this.backgroundColor;
+    }
+    
+    public Color getColor() {
+    	return this.color;
+    }
+    
     public void saveBackgroundColor(boolean force) {
         if (field != null && (savedBkgColor == null || force)) {
             savedBkgColor = field.getBackground();

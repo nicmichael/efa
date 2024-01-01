@@ -136,6 +136,7 @@ public class RemoteEfaServer {
     class SessionTimeoutThread extends Thread {
 
         public void run() {
+        	this.setName("RemoteEfaServer.SessionTimeoutThread");
             while(true) {
                 try {
                     Thread.sleep(60 * 1000);

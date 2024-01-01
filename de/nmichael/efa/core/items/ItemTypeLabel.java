@@ -10,18 +10,30 @@
 
 package de.nmichael.efa.core.items;
 
-import de.nmichael.efa.util.*;
-import java.util.Vector;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
+import java.awt.Window;
 import java.awt.event.MouseEvent;
-import javax.swing.*;
+import java.util.Vector;
+
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+import javax.swing.border.Border;
+
+import de.nmichael.efa.gui.util.RoundedLabel;
+import de.nmichael.efa.util.EfaUtil;
 
 public class ItemTypeLabel extends ItemType {
 
     private JLabel[] labels;
     private ImageIcon icon;
     private boolean mouseClickListener = false;
-    
+    private boolean roundShape=false;
+    		
     public ItemTypeLabel(String name, int type,
             String category, String description) {
         this.name = name;
@@ -32,7 +44,18 @@ public class ItemTypeLabel extends ItemType {
     }
 
     public IItemType copyOf() {
-        return new ItemTypeLabel(name, type, category, description);
+    	
+        ItemTypeLabel thisCopy=new ItemTypeLabel(name, type, category, description);
+        thisCopy.setBackgroundColor(this.backgroundColor);
+        thisCopy.setColor(this.color);
+        thisCopy.setPadding(padXbefore, padXafter, padYbefore, padYafter);
+        thisCopy.setFieldGrid(fieldGridWidth, fieldGridHeight, fieldGridAnchor, fieldGridFill);
+        thisCopy.setImage(icon);
+        thisCopy.setHorizontalAlignment(hAlignment);
+        thisCopy.setRoundShape(roundShape);
+        thisCopy.setBorder(border);
+        return thisCopy;
+
     }
 
     public void parseValue(String value) {
@@ -60,7 +83,8 @@ public class ItemTypeLabel extends ItemType {
         }
         labels = new JLabel[v.size()];
         for (int i=0; i<v.size(); i++) {
-            JLabel l = new JLabel();
+            JLabel l = createLabel();
+            
             l.setText((String)v.get(i));
             if (i == 0 && icon != null) {
                 l.setHorizontalAlignment(SwingConstants.CENTER);
@@ -71,14 +95,20 @@ public class ItemTypeLabel extends ItemType {
                 l.setHorizontalAlignment(hAlignment);
                 l.setHorizontalTextPosition(hAlignment);
             }
-            if (color != null) {
-                l.setForeground(color);
+            if (this.getColor() != null) {
+                l.setForeground(this.getColor());
             }
-            if (backgroundColor != null) {
-            	l.setBackground(backgroundColor);
+            if (this.getBackgroundColor() != null) {
+            	l.setBackground(this.getBackgroundColor());
             	l.setOpaque(true);
             }            
+
+            if (this.isBoldFont()) {
+                l.setFont(l.getFont().deriveFont(Font.BOLD));
+            }
+
             l.setVisible(isVisible);
+            l.setBorder(this.getBorder());
             labels[i] = l;
         }
         if (mouseClickListener) {
@@ -86,6 +116,14 @@ public class ItemTypeLabel extends ItemType {
         }
     }
 
+    protected JLabel createLabel() {
+    	if (roundShape) {
+    		return new RoundedLabel();
+    	} else {
+    		return new JLabel();
+    	}
+    }
+    
     public int displayOnGui(Window dlg, JPanel panel, int x, int y) {
         this.dlg = dlg;
         iniDisplay();
@@ -135,7 +173,23 @@ public class ItemTypeLabel extends ItemType {
     public boolean isEditable() {
         return false;
     }
-
+    
+    protected boolean isBoldFont() {
+    	return false;
+    }
+    
+    protected Border getBorder() {
+    	return border;
+    }
+    
+    public Boolean getRoundShape() {
+    	return roundShape;
+    }
+    
+    public void setRoundShape(Boolean value) {
+    	roundShape=value;
+    }
+    
     public void setImage(ImageIcon icon) {
         this.icon = icon;
         if (labels != null && labels.length > 0 && labels[0] != null) {
@@ -186,5 +240,7 @@ public class ItemTypeLabel extends ItemType {
         } catch (Exception eignore) {
         }
     }
+   
+
 
 }

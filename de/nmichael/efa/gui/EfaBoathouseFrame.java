@@ -14,6 +14,7 @@ import java.awt.AWTEvent;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -29,6 +30,7 @@ import java.awt.event.WindowEvent;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.Stack;
 import java.util.UUID;
@@ -69,6 +71,8 @@ import de.nmichael.efa.data.MessageRecord;
 import de.nmichael.efa.data.Persons;
 import de.nmichael.efa.data.Project;
 import de.nmichael.efa.data.efacloud.TxRequestQueue;
+import de.nmichael.efa.data.storage.DataKey;
+import de.nmichael.efa.data.storage.DataKeyIterator;
 import de.nmichael.efa.data.storage.DataRecord;
 import de.nmichael.efa.data.storage.IDataAccess;
 import de.nmichael.efa.data.types.DataTypeDate;
@@ -85,21 +89,7 @@ import de.nmichael.efa.gui.widgets.ClockMiniWidget;
 import de.nmichael.efa.gui.widgets.IWidget;
 import de.nmichael.efa.gui.widgets.NewsMiniWidget;
 import de.nmichael.efa.gui.widgets.Widget;
-import de.nmichael.efa.gui.ImagesAndIcons;
 import de.nmichael.efa.util.Dialog;
-import de.nmichael.efa.core.config.*;
-import de.nmichael.efa.core.items.*;
-import de.nmichael.efa.data.*;
-import de.nmichael.efa.data.types.*;
-import de.nmichael.efa.data.storage.*;
-import de.nmichael.efa.gui.dataedit.*;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-import javax.swing.border.*;
-import javax.swing.plaf.metal.MetalLookAndFeel;
-import java.util.*;
-import java.io.*;
 import de.nmichael.efa.util.EfaUtil;
 import de.nmichael.efa.util.Help;
 import de.nmichael.efa.util.International;
@@ -117,6 +107,7 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
     public static final int EFA_EXIT_REASON_OOME          = 3;
     public static final int EFA_EXIT_REASON_AUTORESTART   = 4;
     public static final int EFA_EXIT_REASON_ONLINEUPDATE  = 5;
+    public static final int EFA_EXIT_REASON_SYSTEM	      = 6;
 
     public static final int ACTIONID_STARTSESSION        = 1;
     public static final int ACTIONID_FINISHSESSION       = 2;
@@ -424,7 +415,7 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
         crontabThread.start();
 
         alive();
-        Logger.log(Logger.INFO, Logger.MSG_EVT_EFAREADY, International.getString("BEREIT"));
+        Logger.log(Logger.INFO, Logger.MSG_EVT_EFAREADY, International.getString("PROJEKT_GELADEN"));
     }
 
     private void iniGuiRemaining() {
@@ -441,8 +432,12 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
 
                 JMenuBar menuBar = new JMenuBar();
                 menuBar.setLayout(new BorderLayout());
-                menuBar.setBackground(bgColor);
-                menuBar.setForeground(Color.white);
+                if (!Daten.isEfaFlatLafActive()) {
+                	//flatLaf has some issues with setting menubar colors manually.
+                	//so we do this manual menu background color only if we don't have EFAFLATLAF
+                	menuBar.setBackground(bgColor);
+                	menuBar.setForeground(Color.white);
+                }
                 JLabel efaLabel = new JLabel();
                 efaLabel.setIcon(getIcon(ImagesAndIcons.IMAGE_EFA_ICON_SMALL ));
                 titleLabel.setText(Daten.EFA_LONGNAME);
@@ -450,6 +445,7 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
                 titleLabel.setFont(titleLabel.getFont().deriveFont(12f));
                 titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
                 titleLabel.setHorizontalTextPosition(SwingConstants.CENTER);
+                titleLabel.setBackground(bgColor);
                 JButton closeButton = new JButton();
                 closeButton.setIcon(getIcon(ImagesAndIcons.IMAGE_FRAME_CLOSE ));
                 closeButton.setBackground(bgColor);
@@ -467,6 +463,11 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
                 menuBar.setBorder(new EmptyBorder(2,5,2,5));
                 menuBar.validate();
                 this.setJMenuBar(menuBar);
+                if (!Daten.isEfaFlatLafActive()) {
+                	//flatLaf has some issues with setting menubar colors manually.
+                	//so we do this manual menu background color only if we don't have EFAFLATLAF
+                	menuBar.setBackground(bgColor);
+                }
             } catch (NoSuchMethodError e) {
                 Logger.log(Logger.WARNING, Logger.MSG_WARN_JAVA_VERSION,
                         "Only supported as of Java 1.4: " +e.toString());
@@ -559,7 +560,8 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
         boatsAvailableList = new ItemTypeBoatstatusList("BOATSAVAILABLELIST", IItemType.TYPE_PUBLIC, "", International.getStringWithMnemonic("verfügbare Boote"), this, Daten.efaConfig.getValueEfaBoathouseFilterTextfieldStandardLists(), Daten.efaConfig.getValueEfaBoathouseTwoColumnList());
         personsAvailableList = new ItemTypeBoatstatusList("PERSONSAVAILABLELIST", IItemType.TYPE_PUBLIC, "", International.getStringWithMnemonic("Personen"), this,Daten.efaConfig.getValueEfaBoathouseFilterTextfieldStandardLists(), Daten.efaConfig.getValueEfaBoathouseTwoColumnList());
         boatsOnTheWaterList = new ItemTypeBoatstatusList("BOATSONTHEWATERLIST", IItemType.TYPE_PUBLIC, "", International.getStringWithMnemonic("Boote auf Fahrt"), this,Daten.efaConfig.getValueEfaBoathouseFilterTextfieldStandardLists(), Daten.efaConfig.getValueEfaBoathouseTwoColumnList());
-        boatsNotAvailableList = new ItemTypeBoatstatusList("BOATSNOTAVAILABLELIST", IItemType.TYPE_PUBLIC, "", International.getStringWithMnemonic("nicht verfügbare Boote"), this,Daten.efaConfig.getValueEfaBoathouseFilterTextfieldBoatsNotAvailableList(), Daten.efaConfig.getValueEfaBoathouseTwoColumnList());        boatsAvailableList.setFieldSize(200, 400);
+        boatsNotAvailableList = new ItemTypeBoatstatusList("BOATSNOTAVAILABLELIST", IItemType.TYPE_PUBLIC, "", International.getStringWithMnemonic("nicht verfügbare Boote"), this,Daten.efaConfig.getValueEfaBoathouseFilterTextfieldBoatsNotAvailableList(), Daten.efaConfig.getValueEfaBoathouseTwoColumnList());        
+        boatsAvailableList.setFieldSize(200, 400);
         personsAvailableList.setFieldSize(200, 400);
         boatsOnTheWaterList.setFieldSize(200, 300);
         boatsNotAvailableList.setFieldSize(200, 100);
@@ -599,15 +601,17 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
     }
 
 	private void iniGuiHeaderColors() {
-		if (Daten.efaConfig.getBoathouseHeaderUseHighlightColor()) {
-			boatsAvailableList.setColor(Daten.efaConfig.getBoathouseHeaderForegroundColor());
-	        personsAvailableList.setColor(Daten.efaConfig.getBoathouseHeaderForegroundColor());
-	        boatsOnTheWaterList.setColor(Daten.efaConfig.getBoathouseHeaderForegroundColor());
-	        boatsNotAvailableList.setColor(Daten.efaConfig.getBoathouseHeaderForegroundColor());
-	        boatsAvailableList.setBackgroundColor(Daten.efaConfig.getBoathouseHeaderBackgroundColor());
-	        personsAvailableList.setBackgroundColor(Daten.efaConfig.getBoathouseHeaderBackgroundColor());
-	        boatsOnTheWaterList.setBackgroundColor(Daten.efaConfig.getBoathouseHeaderBackgroundColor());
-	        boatsNotAvailableList.setBackgroundColor(Daten.efaConfig.getBoathouseHeaderBackgroundColor());
+		if (Daten.efaConfig.getHeaderUseHighlightColor()) {
+			boatsAvailableList.setColor(Daten.efaConfig.getHeaderForegroundColor());
+	        personsAvailableList.setColor(Daten.efaConfig.getHeaderForegroundColor());
+	        boatsOnTheWaterList.setColor(Daten.efaConfig.getHeaderForegroundColor());
+	        boatsNotAvailableList.setColor(Daten.efaConfig.getHeaderForegroundColor());
+	        boatsAvailableList.setBackgroundColor(Daten.efaConfig.getHeaderBackgroundColor());
+	        personsAvailableList.setBackgroundColor(Daten.efaConfig.getHeaderBackgroundColor());
+	        boatsOnTheWaterList.setBackgroundColor(Daten.efaConfig.getHeaderBackgroundColor());
+	        boatsNotAvailableList.setBackgroundColor(Daten.efaConfig.getHeaderBackgroundColor());
+	        
+	        EfaUtil.handleTabbedPaneBackgroundColorForLookAndFeels();
 		} else {
 			boatsAvailableList.setColor(null);
 	        personsAvailableList.setColor(null);
@@ -618,6 +622,10 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
 	        boatsOnTheWaterList.setBackgroundColor(null);
 	        boatsNotAvailableList.setBackgroundColor(null);
 		}
+		boatsAvailableList.updateSeparatorColorFromEfaConfig();
+		personsAvailableList.updateSeparatorColorFromEfaConfig();
+		boatsNotAvailableList.updateSeparatorColorFromEfaConfig();
+		boatsOnTheWaterList.updateSeparatorColorFromEfaConfig();
 	}
 	
 	private void iniGuiTooltipDelays() {        
@@ -672,6 +680,20 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
         centerPanel.add(helpButton, new GridBagConstraints(1, 13, 1, 1, 0.0, 0.0, GridBagConstraints.SOUTH, GridBagConstraints.NONE, new Insets(10, 0, 0, 0), 0, 0));
         centerPanel.add(efaButton, new GridBagConstraints(1, 14, 1, 1, 0.0, 0.0, GridBagConstraints.SOUTH, GridBagConstraints.NONE, new Insets(10, 0, 0, 0), 0, 0));
         centerPanel.add(clock.getGuiComponent(), new GridBagConstraints(1, 15, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(10, 10, 10, 10), 0, 0));
+        
+        EfaUtil.handleButtonOpaqueForLookAndFeels(startSessionButton);
+        EfaUtil.handleButtonOpaqueForLookAndFeels(finishSessionButton);
+        EfaUtil.handleButtonOpaqueForLookAndFeels(abortSessionButton);
+        EfaUtil.handleButtonOpaqueForLookAndFeels(lateEntryButton);
+        EfaUtil.handleButtonOpaqueForLookAndFeels(clubworkButton);
+        EfaUtil.handleButtonOpaqueForLookAndFeels(boatReservationButton);
+        EfaUtil.handleButtonOpaqueForLookAndFeels(showLogbookButton);
+        EfaUtil.handleButtonOpaqueForLookAndFeels(statisticsButton);
+        EfaUtil.handleButtonOpaqueForLookAndFeels(messageToAdminButton);
+        EfaUtil.handleButtonOpaqueForLookAndFeels(adminButton);
+        EfaUtil.handleButtonOpaqueForLookAndFeels(specialButton);
+        EfaUtil.handleButtonOpaqueForLookAndFeels(helpButton);
+        EfaUtil.handleButtonOpaqueForLookAndFeels(efaButton);
     }
 
     private void updateGuiLogo() {
@@ -796,6 +818,8 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
             button.setIconTextGap(10);
             button.setHorizontalAlignment(SwingConstants.LEFT);
         }
+        //Always use bold font for Buttons.
+        button.setFont(button.getFont().deriveFont(Font.BOLD));
     }
 
     private void updateGuiButtonLAF() {
@@ -1116,6 +1140,9 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
             case EFA_EXIT_REASON_ONLINEUPDATE:
                 who = International.getString("Online-Update");
                 break;
+            case EFA_EXIT_REASON_SYSTEM:
+            	who = "System Signal";
+            	break;
         }
         if (restart) {
             exitCode = Daten.program.restart();
@@ -1137,7 +1164,8 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
         final boolean _restart = restart;
         new Thread() {
             public void run() {
-                try {
+                this.setName("EfaBoathouseFrame.cancelRunInThreadWithDelay");
+            	try {
                     Thread.sleep(1000);
                 } catch (Exception e) {
                 }
@@ -2785,6 +2813,7 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
             new Thread() {
 
                 public void run() {
+                	this.setName("EfaBoathouseFrame.lockEfaThread");
                     try {
                         Thread.sleep(1000);
                     } catch (Exception e) {

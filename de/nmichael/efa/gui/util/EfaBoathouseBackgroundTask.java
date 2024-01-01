@@ -1017,7 +1017,7 @@ public class EfaBoathouseBackgroundTask extends Thread {
 
     }
     
-    class BthsUpdateBoatLists implements Runnable {
+    private class BthsUpdateBoatLists implements Runnable {
         
     	private Boolean bListChanged=false;
     	private Boolean bOnlyAvailablePersons=false;
@@ -1032,7 +1032,7 @@ public class EfaBoathouseBackgroundTask extends Thread {
 	      }
 	}
 	
-	class BthsSetUnreadMessages implements Runnable {
+	private class BthsSetUnreadMessages implements Runnable {
 		
 		private Boolean bAdmin=false;
 		private Boolean bBoatMaintenance=false;

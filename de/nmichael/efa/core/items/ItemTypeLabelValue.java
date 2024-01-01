@@ -50,7 +50,7 @@ public abstract class ItemTypeLabelValue extends ItemType {
 
     protected JLabel label;
     protected int labelGridWidth = 1; // Swing: how many columns shall the label use?
-    protected int labelGridAnchor = GridBagConstraints.WEST; // alignment on right looks better than on the left (usability), but we still leave it on the left side
+    protected int labelGridAnchor = GridBagConstraints.EAST; // alignment on right looks better than on the left (usability), but we still leave it on the left side
     protected int labelGridFill = GridBagConstraints.NONE; // no extension of the label to column width
     protected Font labelFont;
     protected Font fieldFont;

@@ -235,7 +235,12 @@ public class ShowLogbookDialog extends BaseDialog implements IItemListener {
         
         // Update for standard tables: Replace default header renderer with bold+dark background renderer 
         javax.swing.table.TableCellRenderer l_originalRenderer = table.getTableHeader().getDefaultRenderer();
-        table.getTableHeader().setDefaultRenderer(new TableHeaderCellRendererBold(l_originalRenderer));
+
+
+        TableHeaderCellRendererBold r = new TableHeaderCellRendererBold(l_originalRenderer);
+        r.setBackground(Daten.efaConfig.getTableHeaderBackgroundColor());
+        r.setForeground(Daten.efaConfig.getTableHeaderHeaderColor());
+        table.getTableHeader().setDefaultRenderer(r);
         
         updateNestedTableHeight();
         sorter.addMouseListenerToHeaderInTable(table);
@@ -265,14 +270,14 @@ public class ShowLogbookDialog extends BaseDialog implements IItemListener {
             switch (i) {
                 case 0:
                     widths[i] = 5 * width / 100; // LfdNr
-                    if (widths[i] > 40) {
-                        widths[i] = 40;
+                    if (widths[i] > 50) {
+                        widths[i] = 50;
                     }
                     break;
                 case 1:
-                    widths[i] = 8 * width / 100; // Datum
-                    if (widths[i] > 80) {
-                        widths[i] = 80;
+                    widths[i] = 9 * width / 100; // Datum
+                    if (widths[i] > 90) {
+                        widths[i] = 90;
                     }
                     break;
                 case 5:
@@ -362,10 +367,12 @@ public class ShowLogbookDialog extends BaseDialog implements IItemListener {
             text.setCaretPosition(Integer.MAX_VALUE);
             text.setLabelGrid(2, -1, -1);
             text.setNotNull(true);
+            text.setFieldGrid(3, GridBagConstraints.EAST, GridBagConstraints.NONE);
             long now = System.currentTimeMillis();
             ItemTypeStringAutoComplete from = new ItemTypeStringAutoComplete("FROM", "",
                     IItemType.TYPE_PUBLIC, "",
-                    International.getString("Dein Name"), false);
+                    International.getString("Dein Name"), true);
+
             from.setAutoCompleteData(new AutoCompleteList(Daten.project.getPersons(false).data(), now, now));
             from.setAlwaysReturnPlainText(true);
             from.setNotNull(true);

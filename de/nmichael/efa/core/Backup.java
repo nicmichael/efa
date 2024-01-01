@@ -609,6 +609,7 @@ class BackupTask extends ProgressTask {
     }
 
     public void run() {
+    	this.setName("BackupTask");
         setRunning(true);
         success = false;
         switch(backup.getMode()) {

@@ -199,6 +199,7 @@ public class EfaRunning {
         }
 
         public void run() {
+        	this.setName("EfaRunningThread");
             while (true) {
                 try {
                     // Auf Verbindung warten
@@ -289,6 +290,7 @@ public class EfaRunning {
         }
 
         public void run() {
+        	this.setName("EfaDataLockThread");
             String lockFile = Daten.efaDataDirectory + "lock";
             String myID = Daten.applName + "/" + Daten.applPID;
 

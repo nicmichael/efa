@@ -15,6 +15,9 @@ import javax.swing.event.*;
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.table.*;
+
+import de.nmichael.efa.util.International;
+
 import java.util.Vector;
 
 public class TableItem {
@@ -22,6 +25,7 @@ public class TableItem {
     private String txt;
     private boolean marked = false;
     private boolean disabled = false;
+    private boolean invisible = false;
 
     public TableItem(String txt) {
         this.txt = (txt != null ? txt : "");
@@ -37,11 +41,23 @@ public class TableItem {
     }
 
     public String toString() {
-        return txt;
+    	return this.txt;
+    }
+    
+    public String getToolTipText() {
+    	if (!this.invisible) {
+    		return null;
+    	} else {
+    		return International.getString("Verstecken")+": "+this.txt;
+    	}
     }
     
     public boolean isMarked() {
         return marked;
+    }
+    
+    public boolean isInvisible() {
+    	return invisible;
     }
 
     public void setText(String text) {
@@ -59,4 +75,9 @@ public class TableItem {
     public void setDisabled(boolean disabled) {
         this.disabled = disabled;
     }
+    
+    public void setInvisible(boolean invisible) {
+    	this.invisible = invisible;
+    }
+
 }

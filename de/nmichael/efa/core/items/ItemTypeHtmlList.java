@@ -11,7 +11,7 @@
 package de.nmichael.efa.core.items;
 
 import de.nmichael.efa.util.*;
-import de.nmichael.efa.util.Dialog;
+import de.nmichael.efa.Daten;
 import de.nmichael.efa.gui.util.*;
 import java.util.*;
 import java.awt.*;
@@ -24,7 +24,7 @@ public class ItemTypeHtmlList extends ItemType implements ActionListener {
 
     protected String value;
 
-    protected JList list;
+    protected JList <String>list;
     protected JScrollPane scrollPane;
     protected EfaMouseListener mouseListener;
     protected JPopupMenu popup;
@@ -47,6 +47,7 @@ public class ItemTypeHtmlList extends ItemType implements ActionListener {
         fieldGridFill = GridBagConstraints.NONE;
     }
 
+    @SuppressWarnings({"unchecked"})
     public IItemType copyOf() {
         return new ItemTypeHtmlList(name, keys.clone(), (Hashtable<String,String>)items.clone(), value, type, category, description);
     }
@@ -67,7 +68,7 @@ public class ItemTypeHtmlList extends ItemType implements ActionListener {
             }
                 list.setListData(elements);
             } else {
-                list.setListData(new Object[0]);
+                list.setListData(new String[0]);
             }
             for (int i=0; keys != null && value != null && i<keys.length; i++) {
                 if (value.equals(keys[i])) {
@@ -85,7 +86,7 @@ public class ItemTypeHtmlList extends ItemType implements ActionListener {
                     getClass().getName() + ".iniDisplay() fieldWidth=" + fieldWidth +
                     ", fieldHeight=" + fieldHeight);
         }
-        list = new JList();
+        list = new JList <String>() ;
         list.setCellRenderer(new MyCellRenderer());
         scrollPane = new JScrollPane();
         scrollPane.setPreferredSize(new Dimension(fieldWidth, fieldHeight));
@@ -170,17 +171,32 @@ public class ItemTypeHtmlList extends ItemType implements ActionListener {
         this.popupActions = actions;
     }
 
-    class MyCellRenderer extends JEditorPane implements ListCellRenderer {
+    private class MyCellRenderer extends JEditorPane implements ListCellRenderer <String>{
 
-        public Component getListCellRendererComponent(
+    	private static final long serialVersionUID = 2527248630527152451L;
+
+		public Component getListCellRendererComponent(
                 JList list, // the list
-                Object value, // value to display
+                String value, // value to display
                 int index, // cell index
                 boolean isSelected, // is the cell selected
                 boolean cellHasFocus) // does the cell have focus
         {
             String s = value.toString();
+            
+            //this enables HTML Editor Kit to be active. This also sets a default CSS Style sheet.
+            //The default swing CSS Sheet is overwritten in Daten.iniGUI so that DIALOG is the base font for
+            //HTML texts. However, flatlaf installs an own FONT SIZER which must be disabled, as the 
+            //HTML Renderings may get too big.
             setContentType("text/html");
+            if (Daten.isEfaFlatLafActive()) {
+                this.putClientProperty("html.disable", Boolean.TRUE); 
+            	this.setFont(this.getFont().deriveFont(Font.PLAIN,14));
+            }
+
+
+
+
             setText(s);
             if (Logger.isTraceOn(Logger.TT_GUI, 6)) {
                 Logger.log(Logger.DEBUG, Logger.MSG_DEBUG_GUI_ELEMENTS,

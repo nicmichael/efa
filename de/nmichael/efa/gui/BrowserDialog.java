@@ -77,6 +77,7 @@ public class BrowserDialog extends BaseDialog {
         }
 
         public void run() {
+        	this.setName("BrowserDialog.TimeoutThread");
             try {
                 if (!locked) {
                     Thread.sleep(timeout * 1000);

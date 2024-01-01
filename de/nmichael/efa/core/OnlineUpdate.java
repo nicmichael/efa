@@ -11,7 +11,6 @@
 package de.nmichael.efa.core;
 
 import de.nmichael.efa.Daten;
-import de.nmichael.efa.core.Backup;
 import de.nmichael.efa.data.storage.IDataAccess;
 import de.nmichael.efa.gui.OnlineUpdateDialog;
 import de.nmichael.efa.util.Dialog;
@@ -239,7 +238,8 @@ public class OnlineUpdate {
             out.close();
             InputStream in = new BufferedInputStream(connection.getInputStream());
             BufferedReader buf = new BufferedReader(new InputStreamReader(in));
-            String s;
+            @SuppressWarnings("unused")
+			String s;
             while ((s = buf.readLine()) != null) {
                 // nothing
             }

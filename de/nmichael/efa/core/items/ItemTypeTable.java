@@ -264,6 +264,7 @@ public class ItemTypeTable extends ItemType implements ActionListener, ITableEdi
     public int displayOnGui(Window dlg, JPanel panel, int x, int y) {
         this.dlg = dlg;
         iniDisplay();
+        //the two 1.0 values make the panel grow with the window.
         panel.add(scrollPane, new GridBagConstraints(x, y, fieldGridWidth, fieldGridHeight, 1.0, 1.0,
                 fieldGridAnchor, fieldGridFill, new Insets(padYbefore, padXbefore+10, padYafter, padXafter+10), 0, 0));
         return 1;

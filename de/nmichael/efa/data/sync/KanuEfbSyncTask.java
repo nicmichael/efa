@@ -929,6 +929,7 @@ public class KanuEfbSyncTask extends ProgressTask {
 
     public void run() {
         setRunning(true);
+        this.setName("KanuEfbSyncTask");
         try {
             Thread.sleep(1000);
         } catch(Exception e) {

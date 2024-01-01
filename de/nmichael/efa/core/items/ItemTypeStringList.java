@@ -24,6 +24,7 @@ public class ItemTypeStringList extends ItemTypeLabelValue {
     private String[] displayList;
     private volatile boolean ignoreItemStateChanges = false;
     private Hashtable<String,String> replaceValues;
+    private DefaultListCellRenderer cellRenderer = null;
 
     public ItemTypeStringList(String name, String value,
             String[] valueList, String[] displayList,
@@ -39,7 +40,11 @@ public class ItemTypeStringList extends ItemTypeLabelValue {
     }
 
     public IItemType copyOf() {
-        return new ItemTypeStringList(name, value, (valueList != null ? valueList.clone() : null), (displayList != null ? displayList.clone() : null), type, category, description);
+    	ItemTypeStringList retValue = new ItemTypeStringList(name, value, (valueList != null ? valueList.clone() : null), (displayList != null ? displayList.clone() : null), type, category, description);
+    	if (this.cellRenderer!=null) {
+    		((ItemTypeStringList) retValue).setCellRenderer(this.cellRenderer);
+    	}
+    	return retValue;
     }
 
     protected JComponent initializeField() {
@@ -52,6 +57,9 @@ public class ItemTypeStringList extends ItemTypeLabelValue {
         });
         f.setVisible(isVisible);
         f.setEnabled(isEnabled);
+        if (cellRenderer!=null) {
+        	f.setRenderer(cellRenderer);
+        }
         showValue();
         return f;
     }
@@ -153,4 +161,10 @@ public class ItemTypeStringList extends ItemTypeLabelValue {
         this.replaceValues = replaceValues;
     }
 
+    public void setCellRenderer(DefaultListCellRenderer theRenderer) {
+    	this.cellRenderer= theRenderer;
+    	if (field != null && theRenderer!=null ) {
+    		((JComboBox)field).setRenderer(theRenderer);
+    	}
+    }
 }

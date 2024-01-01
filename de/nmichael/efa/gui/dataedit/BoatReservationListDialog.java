@@ -427,13 +427,9 @@ public class BoatReservationListDialog extends DataListDialog {
 
         
         //Caption
-        ItemTypeLabel caption = new ItemTypeLabel("_GUIITEM_GENERIC_CAPTION", IItemType.TYPE_PUBLIC, null, strCaption);
+        ItemTypeLabel caption = new ItemTypeLabelHeader("_GUIITEM_GENERIC_CAPTION", IItemType.TYPE_PUBLIC, null, strCaption);
         caption.setPadding(0, 0, 0, 10);
-        if (Daten.efaConfig.getBoathouseHeaderUseHighlightColor()) {
-        	caption.setBackgroundColor(Daten.efaConfig.getBoathouseHeaderBackgroundColor());
-        	caption.setColor(Daten.efaConfig.getBoathouseHeaderForegroundColor());
-        	caption.setFieldGrid(3,GridBagConstraints.EAST, GridBagConstraints.BOTH);
-		}                   
+    	caption.setFieldGrid(3,GridBagConstraints.EAST, GridBagConstraints.BOTH);
 
         //Show reservation data
         

@@ -285,6 +285,7 @@ public class AutoCompleteList {
                 dataVisibleBackup = new Vector<String>(dataVisible);
             }
         } catch (Exception e) {
+        	Logger.logdebug(e);
         }
         updateVisibleFilteredList();
     }

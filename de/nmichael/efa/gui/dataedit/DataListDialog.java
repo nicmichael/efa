@@ -10,22 +10,52 @@
 
 package de.nmichael.efa.gui.dataedit;
 
+import java.awt.AWTEvent;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Frame;
+import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.FocusEvent;
+import java.awt.event.KeyEvent;
+import java.util.Hashtable;
+import java.util.Vector;
+
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
+
 import de.nmichael.efa.Daten;
 import de.nmichael.efa.core.config.AdminRecord;
-import de.nmichael.efa.gui.*;
-import de.nmichael.efa.util.*;
-import de.nmichael.efa.util.Dialog;
-import de.nmichael.efa.core.items.*;
-import de.nmichael.efa.data.storage.*;
-import de.nmichael.efa.data.types.*;
+import de.nmichael.efa.core.items.IItemListener;
+import de.nmichael.efa.core.items.IItemListenerDataRecordTable;
+import de.nmichael.efa.core.items.IItemType;
+import de.nmichael.efa.core.items.ItemTypeBoolean;
+import de.nmichael.efa.core.items.ItemTypeButton;
+import de.nmichael.efa.core.items.ItemTypeDataRecordTable;
+import de.nmichael.efa.core.items.ItemTypeDateTime;
+import de.nmichael.efa.core.items.ItemTypeHtmlList;
+import de.nmichael.efa.data.storage.DataKey;
+import de.nmichael.efa.data.storage.DataRecord;
+import de.nmichael.efa.data.storage.StorageObject;
+import de.nmichael.efa.data.types.DataTypeDate;
+import de.nmichael.efa.data.types.DataTypeTime;
+import de.nmichael.efa.ex.EfaModifyException;
 import de.nmichael.efa.gui.BaseDialog;
-import de.nmichael.efa.ex.*;
+import de.nmichael.efa.gui.DataExportDialog;
+import de.nmichael.efa.gui.DataImportDialog;
+import de.nmichael.efa.gui.DataPrintListDialog;
+import de.nmichael.efa.gui.ProgressDialog;
+import de.nmichael.efa.gui.SimpleInputDialog;
 import de.nmichael.efa.gui.util.EfaMenuButton;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-import javax.swing.border.*;
-import java.util.*;
+import de.nmichael.efa.gui.util.RoundedBorder;
+import de.nmichael.efa.gui.util.RoundedLabel;
+import de.nmichael.efa.util.Dialog;
+import de.nmichael.efa.util.International;
+import de.nmichael.efa.util.Logger;
+import de.nmichael.efa.util.ProgressTask;
 
 public abstract class DataListDialog extends BaseDialog implements IItemListener, IItemListenerDataRecordTable {
 
@@ -282,17 +312,15 @@ public abstract class DataListDialog extends BaseDialog implements IItemListener
         mainTablePanel.setLayout(new BorderLayout());
 
         if (filterFieldDescription != null) {
-            JLabel filterName = new JLabel();
+            JLabel filterName = new RoundedLabel();
+            filterName.setBorder(new RoundedBorder(Daten.efaConfig.getHeaderForegroundColor()));
+            filterName.setBackground(Daten.efaConfig.getHeaderBackgroundColor());
+            filterName.setOpaque(true);
+            filterName.setForeground(Daten.efaConfig.getHeaderForegroundColor());
             filterName.setText(filterFieldDescription);
             filterName.setHorizontalAlignment(SwingConstants.CENTER);
             mainTablePanel.add(filterName, BorderLayout.NORTH);
             mainTablePanel.setBorder(new EmptyBorder(10,0,0,0));
-            
-    		if (Daten.efaConfig.getBoathouseHeaderUseHighlightColor()) {
-    			filterName.setBackground(Daten.efaConfig.getBoathouseHeaderBackgroundColor());
-    			filterName.setForeground(Daten.efaConfig.getBoathouseHeaderForegroundColor());
-    			filterName.setOpaque(true);
-    		}
         }
         
         // Instanciates the table variable with the specific type which is needed. 

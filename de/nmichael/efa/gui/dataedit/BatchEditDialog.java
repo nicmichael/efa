@@ -593,6 +593,7 @@ public class BatchEditDialog extends BaseTabbedDialog implements IItemFactory, I
         }
 
         public void run() {
+        	this.setName("ChangeTask");
             setRunning(true);
             success = false;
             try {

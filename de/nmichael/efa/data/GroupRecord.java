@@ -222,8 +222,8 @@ public class GroupRecord extends DataRecord implements IItemFactory {
         v.add(item = new ItemTypeString(GroupRecord.NAME, getName(),
                 IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("Gruppenname")));
 
-        v.add(item = new ItemTypeColor(GroupRecord.COLOR, getColor(),
-                IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("Farbe")));
+        v.add(item = new ItemTypeColor(GroupRecord.COLOR, getColor(), "",
+                IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("Farbe"),true));
 
         DataTypeList<UUID> members = getMemberIdList();
         itemList = new Vector<IItemType[]>();

@@ -120,6 +120,12 @@ public class SimpleInputDialog extends BaseDialog {
         return dlg.resultSuccess;
     }
 
+    public static boolean showInputDialog(JFrame parent, String title, IItemType[] items) {
+        SimpleInputDialog dlg = new SimpleInputDialog(parent, title, items);
+        dlg.showDialog();
+        return dlg.resultSuccess;
+    }    
+
     public static boolean showInputDialog(Window parent, String title, IItemType item) {
         if (parent instanceof JDialog) {
             return showInputDialog((JDialog)parent, title, item);
