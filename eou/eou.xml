@@ -23,7 +23,7 @@
             <ChangeItem>BugFix: Icons zum Hinzufügen von Elementen sind dunkler und besser wahrnehmbar.</ChangeItem>              
             <ChangeItem>BugFix: Tabellen mit alternierenden Zeilen nutzen die LookAndFeel-Farben als Standardfarbe anstatt fest weisse Hintergrundfarbe zu nutzen.</ChangeItem>
             <ChangeItem>BugFix: Überflüssige grafische Rahmen entfernt in efaBths und allen Dialogen.</ChangeItem>
-            <ChangeItem>BugFix: Autovervollständigen-Felder zeigten sich manchmal nicht an. Zusätzlich: STRG+F öffnet das Autovervollständigen-Feld.</ChangeItem>
+            <ChangeItem>BugFix: Autovervollständigen-Felder zeigten sich unter Windows nicht mehr an, wenn man zwischenzeitlich in einem anderen Programm war. Zusätzlich: STRG+F öffnet das Autovervollständigen-Feld.</ChangeItem>
             <ChangeItem>BugFix: Autovervollständigen-Felder: werden diese mit TAB verlassen, wird der gewählte Eintrag übernommen.</ChangeItem>
             <ChangeItem>BugFix: Fahrt Beginnen Dialog: Taste ESC in Autovervollständigen-Feldern schließt nur die Auswahlbox, nicht den gesamten Dialog.</ChangeItem>
             <ChangeItem>BugFix: Lesen von Nachrichten: im Textfeld kann nun Text mit der Maus markiert und mit STRG+C in die Zwischenablage übernommen werden.</ChangeItem>
@@ -61,7 +61,7 @@
             <ChangeItem>BugFix: Tables with alternating row colors use the lookandfeel specific colors instead of plain white background color.</ChangeItem>
             <ChangeItem>BugFix: Removed unneccesary borders in efaBths and all dialogs.</ChangeItem>
             <ChangeItem>BugFix: Icons for adding new items use a darker green and are better recognizable.</ChangeItem>              
-			<ChangeItem>BugFix: Autocomplete fields sometimes did now show the popup window. Also, STRG+F now opens the popup window.</ChangeItem>
+			<ChangeItem>BugFix: Autocomplete fields did not show their popup window on Windows machines, when user changed to another program and returned to efa. Also, STRG+F now opens the popup window.</ChangeItem>
             <ChangeItem>BugFix: Autocomplete fields: if user leaves a popup selection with tab, the selected entry is used for the field.</ChangeItem>
             <ChangeItem>BugFix: Start session dialog: Hitting ESC while an autocomplete window is open, only the autocomplete window is closed instead of the start session dialog.</ChangeItem>
             <ChangeItem>BugFix: EfaConfig: Scrollable in the config window is INSIDE the tabs - making it easier to scroll</ChangeItem>

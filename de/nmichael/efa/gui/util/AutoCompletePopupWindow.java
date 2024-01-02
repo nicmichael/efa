@@ -48,7 +48,11 @@ import java.util.*;
 
 public class AutoCompletePopupWindow extends JWindow {
 
-    private static AutoCompletePopupWindow window = null;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -2544348417400727743L;
+	private static AutoCompletePopupWindow window = null;
     private Hashtable<AutoCompleteList,String[]> autoCompleteLists = new Hashtable<AutoCompleteList,String[]>();
     private Hashtable<AutoCompleteList,Long> autoCompleteSCN = new Hashtable<AutoCompleteList,Long>();
     private JTextField showingAt;
@@ -170,6 +174,9 @@ public class AutoCompletePopupWindow extends JWindow {
             // Unter Windows bewirkt toFront(), daß der ursprüngliche Frame den Fokus verliert, daher muß unter Windows darauf verzichtet werden
             if (!Daten.osName.startsWith("Windows")) {
                 this.toFront();
+            } else { 
+            	//unter windows reicht aber, das fenster wieder sichtbar zu machen, damit es ganz oben angezeigt wird.
+            	this.setVisible(true);
             }
             return;
         }
@@ -195,6 +202,7 @@ public class AutoCompletePopupWindow extends JWindow {
             showingAt = field;
             lastShowingAt = showingAt;
         } catch (Exception ee) { // nur zur Sicherheit: Es gibt seltene Exceptions in efa, die keiner Stelle im Code zugeordnet werden können und hierher kommen könnten
+        	Logger.logdebug(ee);
         }
     }
 

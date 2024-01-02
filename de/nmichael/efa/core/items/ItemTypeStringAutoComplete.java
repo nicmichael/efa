@@ -638,22 +638,30 @@ public class ItemTypeStringAutoComplete extends ItemTypeString implements AutoCo
     	if (field == null) {
             return;
         }
-        JTextField field = (JTextField)this.field;	
-
+        JTextField textField = (JTextField)this.field;	
+        
         AutoCompleteList list = getAutoCompleteList();
+
+        if (Logger.isTraceOn(Logger.TT_GUI, 5)) {
+            Logger.log(Logger.DEBUG, Logger.MSG_GUI_DEBUGGUI, this.getName());
+        	Logger.log(Logger.DEBUG, Logger.MSG_GUI_DEBUGGUI, "KeyEvent :"+(e==null? "null": e.toString()));
+            Logger.log(Logger.DEBUG, Logger.MSG_GUI_DEBUGGUI, "AutoCompleteList.size() = "+(list==null?"null":list.getSizes()));
+        }
+        
+        
         if (list == null) {
             setButtonColor(null);
             return;
         } else {
         	list.update(); 
-        	list.setFilterText(field.getText().trim());
+        	list.setFilterText(textField.getText().trim());
         }
 
         if (e != null && e.getKeyCode() == -23) {
             return; // dieses Key-Event wurde von AutoCompletePopupWindow generiert
         }
 
-        if (field.getText().trim().length() == 0) {
+        if (textField.getText().trim().length() == 0) {
             setButtonColor(null);
         }
 
@@ -673,16 +681,23 @@ public class ItemTypeStringAutoComplete extends ItemTypeString implements AutoCo
             mode = Mode.escape; // 5
         } 
 
+        if (Logger.isTraceOn(Logger.TT_GUI, 5)) {
+            Logger.log(Logger.DEBUG, Logger.MSG_GUI_DEBUGGUI, "mode "+mode);
+        }
+        
         if (e == null || mode == Mode.enter || mode == Mode.escape) {
-        	field.setText(field.getText().trim());
+        	textField.setText(textField.getText().trim());
         }
         boolean matching = false;
 
-        String searchFor=field.getText().toLowerCase();
+        String searchFor=textField.getText().trim().toLowerCase();
         String complete="";
 
         if (mode == Mode.normal || ((mode == Mode.enter || mode == Mode.escape || mode == Mode.none))) {
 
+            if (Logger.isTraceOn(Logger.TT_GUI, 5)) {
+                Logger.log(Logger.DEBUG, Logger.MSG_GUI_DEBUGGUI, "Looking for next element...");
+            }
 
         	// Down Arrow or STRG+F opens the poup list.
             if (e != null && ((e.getKeyCode() == KeyEvent.VK_DOWN)
@@ -704,20 +719,37 @@ public class ItemTypeStringAutoComplete extends ItemTypeString implements AutoCo
                 }                	
             }
 
-            if (e != null && (mode != Mode.normal && ((e.getKeyCode() == KeyEvent.VK_ENTER) || (e.getKeyCode() == KeyEvent.VK_TAB)) && AutoCompletePopupWindow.isShowingAt(field))) { // nur bei wirklichen Eingaben
-              	complete = AutoCompletePopupWindow.getWindow().getSelectedEintrag();
-            	if (complete!=null && !complete.isEmpty()) {field.setText(complete);}
+            if (Logger.isTraceOn(Logger.TT_GUI, 5)) {
+                Logger.log(Logger.DEBUG, Logger.MSG_GUI_DEBUGGUI, "Searchfor="+searchFor+" - element (complete)="+complete);
+                Logger.log(Logger.DEBUG, Logger.MSG_GUI_DEBUGGUI, "AutoCompleteWindow showing at "+this.getName()+"="+AutoCompletePopupWindow.isShowingAt(textField));
+            }
+            
+            if (e != null && (mode != Mode.normal && (
+				            							(e.getKeyCode() == KeyEvent.VK_ENTER) || 
+				            							((e.getKeyCode() == KeyEvent.VK_TAB) && !searchFor.isEmpty())
+            										  ) && 
+            		AutoCompletePopupWindow.isShowingAt(textField))) { 
+
+            	// A key has been pressed, and we are in normal mode.
+            	// if the user pressed ENTER, there is no need for text in the actual textfield.
+            	// if the user pressed TAB (which is a focuschanged event to another component), the user MUST have entered some search criteria
+            	// to use the selected item of the popup list as value. 
+            	// This is because the lookup lists do NOT contain an empty value, and always
+            	// have selected the first matching value - if the user is just tabbing through the fields, this would be inconvinient if we always
+            	// took the first value of the popup field.
+            	complete = AutoCompletePopupWindow.getWindow().getSelectedEintrag();
+            	if (complete!=null && !complete.isEmpty()) {textField.setText(complete);}
                 matching = true;
             }
 
             // we do not want to do another showandselect if we are just getting and loosing focus...
             if (withPopup && useAutocompleteList && e != null && mode != Mode.none && e.getKeyCode() != KeyEvent.VK_TAB) {
-            	AutoCompletePopupWindow.showAndSelect(field, list, (complete != null ? complete : ""), null);
+            	AutoCompletePopupWindow.showAndSelect(textField, list, (complete != null ? complete : ""), null);
     	       }
         }
 
         if (mode == Mode.up) {
-            if (withPopup && useAutocompleteList && AutoCompletePopupWindow.isShowingAt(field)) {
+            if (withPopup && useAutocompleteList && AutoCompletePopupWindow.isShowingAt(textField)) {
                 complete = list.getPrev(searchFor);
             } else {
                 complete = list.getPrev(searchFor);
@@ -727,19 +759,19 @@ public class ItemTypeStringAutoComplete extends ItemTypeString implements AutoCo
                 complete = list.getLast(searchFor); 
             }
             if (withPopup && useAutocompleteList) {
-                AutoCompletePopupWindow.showAndSelect(field, list, (complete != null ? complete : ""), null);
+                AutoCompletePopupWindow.showAndSelect(textField, list, (complete != null ? complete : ""), null);
             }
         }
 
 
        if (mode == Mode.delete) {
             if (withPopup && useAutocompleteList && e != null && mode != Mode.none) {
-            	complete = list.getFirst(field.getText());
-                AutoCompletePopupWindow.showAndSelect(field, list, (complete != null ? complete : field.getText()), null);
+            	complete = list.getFirst(textField.getText());
+                AutoCompletePopupWindow.showAndSelect(textField, list, (complete != null ? complete : textField.getText()), null);
             }
         }
 
-       matching = (list.getExact(field.getText())!=null);
+       matching = (list.getExact(textField.getText())!=null);
 
 
         // in case of versionized data, make sure it also valid
@@ -747,7 +779,7 @@ public class ItemTypeStringAutoComplete extends ItemTypeString implements AutoCo
         if (matching && validAtDateItem != null) {
             long t = LogbookRecord.getValidAtTimestamp(validAtDateItem.getDate(),
                     (validAtTimeItem != null ? validAtTimeItem.getTime() : null));
-            valid = autoCompleteList.isValidAt(field.getText(), t);
+            valid = autoCompleteList.isValidAt(textField.getText(), t);
             }
         if (!valid) {
            matching = false;
@@ -762,8 +794,8 @@ public class ItemTypeStringAutoComplete extends ItemTypeString implements AutoCo
         }
 
         if (mode == Mode.enter) {
-            field.select(-1, -1);
-            field.setCaretPosition(field.getText().length());
+        	textField.select(-1, -1);
+        	textField.setCaretPosition(textField.getText().length());
             if (withPopup && useAutocompleteList) {
                 AutoCompletePopupWindow.hideWindow();
             }
@@ -775,7 +807,7 @@ public class ItemTypeStringAutoComplete extends ItemTypeString implements AutoCo
             }
         }
 
-        if (field.getText().length() == 0) {
+        if (textField.getText().length() == 0) {
             setButtonColor(null);
         }
     }
