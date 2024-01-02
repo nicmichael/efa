@@ -68,6 +68,7 @@ public class AdminDialog extends BaseDialog implements IItemListener {
         String lastMenuName = null;
         int y = 0;
         int space = 0;
+        String spaceForMenuName="";
         for (EfaMenuButton menuButton : menuButtons) {
             if (!menuButton.getMenuName().equals(lastMenuName)) {
                 // New Menu
@@ -93,9 +94,15 @@ public class AdminDialog extends BaseDialog implements IItemListener {
                 if (panel == null) {
                     continue;
                 }
-                JLabel label = new JLabel();
+                JLabel label = new RoundedLabel();
                 Mnemonics.setLabel(this, label, menuButton.getMenuText());
                 label.setHorizontalAlignment(SwingConstants.CENTER);
+                label.setBackground(Daten.efaConfig.getHeaderBackgroundColor());
+                label.setForeground(Daten.efaConfig.getHeaderForegroundColor());
+                label.setOpaque(true);
+                label.setFont(label.getFont().deriveFont(Font.BOLD));
+                label.setBorder(new RoundedBorder(label.getForeground()));
+                
                 y = 0;
                 panel.add(label,
                         new GridBagConstraints(0, y++, 1, 1, 0.0, 0.0,
@@ -108,6 +115,10 @@ public class AdminDialog extends BaseDialog implements IItemListener {
             }
             if (menuButton.getButtonName().equals(EfaMenuButton.SEPARATOR)) {
                 space = 10;
+                //memorize for which menu the spacer is intended.
+                //because the whole menu is within a list, and it could be that 
+                //a menu ends with a spacer (due to lacking competences of the current admin).
+                spaceForMenuName=menuButton.getMenuName();
             } else {
                 ItemTypeButton button = new ItemTypeButton(menuButton.getButtonName(),
                         IItemType.TYPE_PUBLIC, menuButton.getMenuName(), menuButton.getButtonText());
@@ -120,10 +131,13 @@ public class AdminDialog extends BaseDialog implements IItemListener {
                 button.setFieldSize(200, 20);
                 button.setHorizontalAlignment(SwingConstants.LEFT);
                 button.registerItemListener(this);
-                if (space > 0) {
-                    button.setPadding(0, 0, space, 0);
+                button.setBold(true);
+            	//put some space above a button only if the spacer belongs
+            	//to the same menu group as the current button.
+                if ((space > 0) && (menuButton.getMenuName().equalsIgnoreCase(spaceForMenuName))){
+                	button.setPadding(0, 0, space, 0);
                 }
-                button.displayOnGui(this, panel, 0, y++);
+	            button.displayOnGui(this, panel, 0, y++);
                 space = 0;
             }
         }
@@ -131,7 +145,7 @@ public class AdminDialog extends BaseDialog implements IItemListener {
         // left side
         centerPanel.add(menuFile,
                 new GridBagConstraints(0, 0, 1, 2, 0.0, 0.0,
-                        GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
+                        GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
                         new Insets(10, 10, 10, 10), 0, 0));
         if (Daten.efaConfig.getDeveloperFunctionsActivated()) {
             centerPanel.add(menuDeveloper,
@@ -141,15 +155,19 @@ public class AdminDialog extends BaseDialog implements IItemListener {
         }
 
         // middle
+        // menuAdministration has a lot of elements, it takes a full column.
+        // if we stick to "CENTER" here, this will also lead to a VERTIAL centation
+        // of the panel. But no, we want all topmost panels to be at the same height
+        // for optical beauty.
         centerPanel.add(menuAdministration,
                 new GridBagConstraints(1, 0, 1, 3, 0.0, 0.0,
-                        GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
+                        GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
                         new Insets(10, 10, 10, 10), 0, 0));
 
         // right
         centerPanel.add(menuConfiguration,
                 new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0,
-                        GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
+                        GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
                         new Insets(10, 10, 10, 10), 0, 0));
         centerPanel.add(menuOutput,
                 new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0,
@@ -174,17 +192,20 @@ public class AdminDialog extends BaseDialog implements IItemListener {
                 new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
                         GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
                         new Insets(10, 10, 10, 10), 0, 0));
+        projectName.setFont(projectName.getFont().deriveFont(Font.BOLD));
         logbookName = new JLabel();
         northPanel.add(logbookName,
                 new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0,
                         GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
                         new Insets(10, 10, 10, 10), 0, 0));
+        logbookName.setFont(logbookName.getFont().deriveFont(Font.BOLD));
 
         clubworkName = new JLabel();
         northPanel.add(clubworkName,
                 new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0,
                         GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
                         new Insets(10, 10, 10, 10), 0, 0));
+        clubworkName.setFont(clubworkName.getFont().deriveFont(Font.BOLD));
 
         updateInfos();
         mainPanel.add(northPanel, BorderLayout.NORTH);
