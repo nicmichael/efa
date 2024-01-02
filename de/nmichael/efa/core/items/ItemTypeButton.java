@@ -24,7 +24,8 @@ public class ItemTypeButton extends ItemType {
     protected JButton button;
     protected ImageIcon icon;
     protected Insets margin;
-
+    protected boolean boldfont;
+    
     public ItemTypeButton(String name, 
             int type, String category, String description) {
         this.name = name;
@@ -40,6 +41,7 @@ public class ItemTypeButton extends ItemType {
     	if (margin!=null) {
     		newItem.setMargin(margin.top,margin.left, margin.bottom, margin.right);
 	    }
+    	newItem.setBold(this.boldfont);
     	return newItem;
     }
 
@@ -76,6 +78,9 @@ public class ItemTypeButton extends ItemType {
             public void focusGained(FocusEvent e) { field_focusGained(e); }
             public void focusLost(FocusEvent e) { field_focusLost(e); }
         });
+        if(boldfont) {
+        	button.setFont(button.getFont().deriveFont(Font.BOLD));
+        }
         button.setVisible(isVisible);
         this.field = button;
         saveBackgroundColor(true);
@@ -152,4 +157,9 @@ public class ItemTypeButton extends ItemType {
     		button.setMargin(this.margin);     
     	}
     }
+    
+    public void setBold(Boolean value) {
+    	this.boldfont=value;
+    }
 }
+
