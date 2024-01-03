@@ -668,7 +668,7 @@ public class EfaBoathouseBackgroundTask extends Thread {
                 } else {
                 	SwingUtilities.invokeLater(new Runnable() {
                 	      public void run() {
-                              EfaExitFrame.exitEfa("Automatischer Neustart von efa", true, EfaBoathouseFrame.EFA_EXIT_REASON_AUTORESTART);
+                              EfaExitFrame.exitEfa(International.getString("Automatischer Neustart von efa"), true, EfaBoathouseFrame.EFA_EXIT_REASON_AUTORESTART);
                 	      }
                   	});                     	
 

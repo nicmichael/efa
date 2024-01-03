@@ -965,7 +965,7 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
     }
 
     private void statusLabelSetText(String s) {
-        statusLabel.setText(s);
+        statusLabel.setText(" "+ s);
         // wenn Text zu lang, dann PreferredSize verringern, damit bei pack() die zu große Label-Breite nicht
         // zum Vergrößern des Fensters führt!
         if (statusLabel.getPreferredSize().getWidth() > this.getSize().getWidth()) {
@@ -1916,7 +1916,7 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
     }
 
     void boatListDoubleClick(int listnr, ItemTypeBoatstatusList list) {
-        if (list == null || list.getSelectedIndex() < 0) {
+    	if (list == null || list.getSelectedIndex() < 0) {
             return;
         }
         clearAllPopups();
@@ -2073,6 +2073,7 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
         if (!Daten.efaConfig.getValueEfaDirekt_listAllowToggleBoatsPersons()) {
             return;
         }
+        alive(); // set last user interaction time
         iniGuiListNames();
         if (Logger.isTraceOn(Logger.TT_GUI, 8)) {
             Logger.log(Logger.DEBUG, Logger.MSG_GUI_DEBUGGUI, "toggleAvailableBoats_actionPerformed()");
@@ -2806,6 +2807,7 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
     }
 
     void hilfeButton_actionPerformed(ActionEvent e) {
+    	alive();
         clearAllPopups();
         Help.showHelp(getHelpTopics());
     }
