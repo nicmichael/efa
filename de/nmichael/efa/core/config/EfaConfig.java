@@ -1459,6 +1459,9 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 
 			// ============================= BOATHOUSE:STARTSTOP
 			// =============================
+			addHint("EfaExitRestartTimeHint", 
+					IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_STARTSTOP),
+					International.getMessage("Zum Zeitpunkt des Neustarts oder Beendens muss efa mindestens {n} Minuten gelaufen sein.", Daten.AUTO_EXIT_MIN_RUNTIME),3, 6, 6);
 			addParameter(efaDirekt_restartTime = new ItemTypeTime("EfaExitRestartTime", new DataTypeTime(4, 0, 0),
 					IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_STARTSTOP),
 					International.getString("Uhrzeit zum automatischen Neustart von efa")));
@@ -1470,6 +1473,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_STARTSTOP),
 					International.getString("efa automatisch nach Inaktivität beenden") + " ["
 							+ International.getString("Minuten") + "]"));
+			efaDirekt_exitIdleTime.setPadding(0, 0, 20, 20); // some whitespace before and after
 			addParameter(efaDirekt_execOnEfaAutoExit = new ItemTypeString("EfaExitExecOnAutoExit", "",
 					IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_STARTSTOP),
 					International.getString("Folgendes Kommando beim automatischen Beenden von efa ausführen")));

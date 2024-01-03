@@ -54,6 +54,7 @@ public class Main extends Program {
         	Logger.logdebug(e);
         }       
         Daten.iniSplashScreen(false);
+        Logger.log(Logger.INFO, Logger.MSG_EVT_EFAREADY, International.getString("BEREIT"));   
     }
 
     public void printUsage(String wrongArgument) {

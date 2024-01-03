@@ -15,6 +15,7 @@ import javax.swing.SwingUtilities;
 import de.nmichael.efa.Daten;
 import de.nmichael.efa.Program;
 import de.nmichael.efa.gui.EfaBoathouseFrame;
+import de.nmichael.efa.util.International;
 import de.nmichael.efa.util.Logger;
 
 // @i18n complete
@@ -65,7 +66,7 @@ public class Main extends Program {
         } catch (Exception e) {
         	Logger.logdebug(e);
         }    
-        
+        Logger.log(Logger.INFO, Logger.MSG_EVT_EFAREADY, International.getString("BEREIT"));         
         Daten.iniSplashScreen(false);
     }
 

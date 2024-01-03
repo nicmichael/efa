@@ -175,7 +175,7 @@ public class AdminDialog extends BaseDialog implements IItemListener {
                         new Insets(10, 10, 10, 10), 0, 0));
         centerPanel.add(menuInfo,
                 new GridBagConstraints(2, 2, 1, 1, 0.0, 0.0,
-                        GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
+                        GridBagConstraints.SOUTH, GridBagConstraints.HORIZONTAL,
                         new Insets(10, 10, 10, 10), 0, 0));
 
         mainPanel.add(centerPanel, BorderLayout.CENTER);
