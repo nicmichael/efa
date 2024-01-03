@@ -79,8 +79,7 @@ public abstract class BaseFrame extends JFrame implements ActionListener {
         if (focusItem != null) {
             focusItem.requestFocus();
         }
-        this.setVisible(true);
-        Logger.log(Logger.INFO, Logger.MSG_EVT_EFAREADY, International.getString("BEREIT"));        
+        this.setVisible(true);       
     }
 
     public void setRequestFocus(IItemType item) {

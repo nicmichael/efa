@@ -24,6 +24,8 @@ import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import javax.swing.SwingUtilities;
+
 /**
  * <p>The efaCloud transaction request queue manager.</p>
  *
@@ -716,9 +718,17 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
      */
     public void showStatusAtGUI() {
         if (efaGUIroot instanceof EfaBaseFrame)
-            ((EfaBaseFrame) efaGUIroot).setTitle();
+        	SwingUtilities.invokeLater(new Runnable() {
+        		public void run() {
+                	((EfaBaseFrame) efaGUIroot).setTitle();
+        		}
+        	});              	
         else if (efaGUIroot instanceof EfaBoathouseFrame)
-            ((EfaBoathouseFrame) efaGUIroot).updateProjectLogbookInfo();
+        	SwingUtilities.invokeLater(new Runnable() {
+        		public void run() {
+                    ((EfaBoathouseFrame) efaGUIroot).updateProjectLogbookInfo();
+        		}
+        	});              	
     }
 
     /**

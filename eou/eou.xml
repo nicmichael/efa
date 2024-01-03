@@ -41,7 +41,9 @@
             <ChangeItem>BugFix: MetoAstro-Plugin in Hauptbildschirm von efaBths zeigt eine Hand als Mauscursor an, wenn ein HTML-Popup konfiguriert wurde.</ChangeItem>
             <ChangeItem>BugFix: Keine (versteckte) Exception mehr bei der Aktualisierung der Inhalte des HTML-Widgets.</ChangeItem>
             <ChangeItem>BugFix: Keine (versteckte) Exception mehr bei Initialisierung von efaBths wenn der Spezialbutton angezeigt wird. Spezialbutton zeigt nun das zugehörige Icon.</ChangeItem>
-            <ChangeItem>BugFix: Key F3 im "Fahrt beginnen" Dialog öffnet nicht mehr den Suchdialog für das Fahrtenbuch.</ChangeItem>
+            <ChangeItem>BugFix: Key F3 im 'Fahrt beginnen' Dialog öffnet nicht mehr den Suchdialog für das Fahrtenbuch.</ChangeItem>
+            <ChangeItem>BugFix: BEREIT wird nur noch nach der GUI-Initialisierung von efaBths und efaBase in das Log geschrieben, statt beim Anzeigen von BaseFrame.</ChangeItem>
+            <ChangeItem>BugFix: Swing Multithreading Problemm gelöst bei automatischem Logbuchwechsel, periorischem oder geplanten efaBths Neustart und Aktualisierung des efaCloud status im Fenstertitel.</ChangeItem>
         </Changes>
         <Changes lang="en">
 			<ChangeItem>New: EfaFlatLight LookAndFeel provides a clear, modern look of efa. Customizable in wide ranges.</ChangeItem>
@@ -81,6 +83,8 @@
             <ChangeItem>BugFix: No (hidden) exception during initialisation of efaBths if the special button is displayed. Special button now has the according icon.</ChangeItem>              
             <ChangeItem>BugFix: No more duplicates in the spellchecking dialogue (which comes up when a item with a lookup list has not fully been set by the user).</ChangeItem>
             <ChangeItem>BugFix: Key F3 in start session dialog does no longer invoke searching in logbook dialog.</ChangeItem>
+            <ChangeItem>BugFix: READY will only be written in efa.log after the GUI initialization of efaBths and efaBase, and no longer after showing of BaseFrame.</ChangeItem>
+            <ChangeItem>BugFix: Fixed swing multithreading problem when performing automatic logbook change, exiting efa due to periodic or planned restart, and updating efaCloud status in the title bar.</ChangeItem>
         </Changes>
 	</Version>	
 	<Version>

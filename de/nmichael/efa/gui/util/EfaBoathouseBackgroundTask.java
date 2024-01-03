@@ -58,7 +58,6 @@ public class EfaBoathouseBackgroundTask extends Thread {
     private Date date;
     private Calendar cal;
     private Calendar lockEfa;
-    private boolean framePacked;
     private long lastEfaConfigScn = -1;
     private long lastBoatStatusScn = -1;
     private long newBoatStatusScn = -1;
@@ -73,7 +72,6 @@ public class EfaBoathouseBackgroundTask extends Thread {
         this.cal = new GregorianCalendar();
         this.lockEfa = null;
         this.date = new Date();
-        this.framePacked = false;
     }
 
     public void setEfaLockBegin(DataTypeDate datum, DataTypeTime zeit) {
@@ -96,7 +94,7 @@ public class EfaBoathouseBackgroundTask extends Thread {
         try {
             BufferedReader f = new BufferedReader(new FileReader(Daten.efaLogfile));
             String s;
-            Vector warnings = new Vector();
+            Vector <String>warnings = new Vector<String>();
             while ((s = f.readLine()) != null) {
                 if (Logger.isWarningLine(s) && Logger.getLineTimestamp(s) > Daten.efaConfig.getValueEfaDirekt_bnrWarning_lasttime()) {
                     warnings.add(s);
@@ -617,20 +615,27 @@ public class EfaBoathouseBackgroundTask extends Thread {
         // automatisches, zeitgesteuertes Beenden von efa ?
         if (Daten.efaConfig.getValueEfaDirekt_exitTime().isSet()
                 && System.currentTimeMillis() > Daten.efaStartTime + (Daten.AUTO_EXIT_MIN_RUNTIME + 1) * 60 * 1000) {
+        	
             date.setTime(System.currentTimeMillis());
             cal.setTime(date);
             int now = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE);
             int exitTime = Daten.efaConfig.getValueEfaDirekt_exitTime().getHour() * 60 + Daten.efaConfig.getValueEfaDirekt_exitTime().getMinute();
+            
             if ((now >= exitTime && now < exitTime + Daten.AUTO_EXIT_MIN_RUNTIME) || 
                 (now + (24 * 60) >= exitTime && now + (24 * 60) < exitTime + Daten.AUTO_EXIT_MIN_RUNTIME)) {
-                Logger.log(Logger.INFO, Logger.MSG_EVT_TIMEBASEDEXIT,
+            
+            	Logger.log(Logger.INFO, Logger.MSG_EVT_TIMEBASEDEXIT,
                         International.getString("Eingestellte Uhrzeit zum Beenden von efa erreicht!"));
                 if (System.currentTimeMillis() - efaBoathouseFrame.getLastUserInteraction() < Daten.AUTO_EXIT_MIN_LAST_USED * 60 * 1000) {
                     Logger.log(Logger.INFO, Logger.MSG_EVT_TIMEBASEDEXITDELAY,
                             International.getMessage("Beenden von efa wird verzögert, da efa innerhalb der letzten {n} Minuten noch benutzt wurde ...",
                             Daten.AUTO_EXIT_MIN_LAST_USED));
                 } else {
-                    EfaExitFrame.exitEfa(International.getString("Zeitgesteuertes Beenden von efa"), false, EfaBoathouseFrame.EFA_EXIT_REASON_TIME);
+                	SwingUtilities.invokeLater(new Runnable() {
+                	      public void run() {
+                              EfaExitFrame.exitEfa(International.getString("Zeitgesteuertes Beenden von efa"), false, EfaBoathouseFrame.EFA_EXIT_REASON_TIME);
+                	      }
+                  	});                	
                 }
             }
         }
@@ -640,7 +645,13 @@ public class EfaBoathouseBackgroundTask extends Thread {
                 && System.currentTimeMillis() - efaBoathouseFrame.getLastUserInteraction() > Daten.efaConfig.getValueEfaDirekt_exitIdleTime() * 60 * 1000) {
             Logger.log(Logger.INFO, Logger.MSG_EVT_INACTIVITYBASEDEXIT,
                     International.getString("Eingestellte Inaktivitätsdauer zum Beenden von efa erreicht!"));
-            EfaExitFrame.exitEfa(International.getString("Zeitgesteuertes Beenden von efa"), false, EfaBoathouseFrame.EFA_EXIT_REASON_IDLE);
+            
+        	SwingUtilities.invokeLater(new Runnable() {
+      	      public void run() {
+                  EfaExitFrame.exitEfa(International.getString("Zeitgesteuertes Beenden von efa"), false, EfaBoathouseFrame.EFA_EXIT_REASON_IDLE);
+      	      }
+        	});                
+
         }
 
         // automatischer, zeitgesteuerter Neustart von efa ?
@@ -655,7 +666,12 @@ public class EfaBoathouseBackgroundTask extends Thread {
                 if (System.currentTimeMillis() - efaBoathouseFrame.getLastUserInteraction() < Daten.AUTO_EXIT_MIN_LAST_USED * 60 * 1000) {
                     Logger.log(Logger.INFO, Logger.MSG_EVT_TIMEBASEDRESTARTDELAY, "Neustart von efa wird verzögert, da efa innerhalb der letzten " + Daten.AUTO_EXIT_MIN_LAST_USED + " Minuten noch benutzt wurde ...");
                 } else {
-                    EfaExitFrame.exitEfa("Automatischer Neustart von efa", true, EfaBoathouseFrame.EFA_EXIT_REASON_AUTORESTART);
+                	SwingUtilities.invokeLater(new Runnable() {
+                	      public void run() {
+                              EfaExitFrame.exitEfa("Automatischer Neustart von efa", true, EfaBoathouseFrame.EFA_EXIT_REASON_AUTORESTART);
+                	      }
+                  	});                     	
+
                 }
             }
         }
@@ -970,6 +986,12 @@ public class EfaBoathouseBackgroundTask extends Thread {
             }
 
             // Step 3: Activate the new Logbook
+            // Well. WE SHOULD call openLogBook swing-thread-safe via invokeAndWait() here.
+            // Because openLogbook does refresh the gui, and swing is not thread-safe.
+            // invokeLater() as an asynchronouse call won't help for this issue, 
+            // because we need to ensure that the logbook is open directly after this call.
+            // But I am not sure wether an invokeAndWait() in this place may lead to a dead-lock.
+            // So instead, openLogBook() handles update of the GUI itself by calling invokeLater() for the updates.
             if (efaBoathouseFrame.openLogbook(newLogbook.getName())) {
                 Logger.log(Logger.INFO, Logger.MSG_EVT_AUTOSTARTNEWLBDONE,
                         LogString.operationSuccessfullyCompleted(International.getString("Fahrtenbuchwechsel")));

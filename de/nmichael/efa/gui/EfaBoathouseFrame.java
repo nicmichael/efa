@@ -44,6 +44,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 
@@ -1332,7 +1333,11 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
             }
             return Daten.project;
         } finally {
-            updateProjectLogbookInfo();
+        	SwingUtilities.invokeLater(new Runnable() {
+        		public void run() {
+                    updateProjectLogbookInfo();
+        		}
+        	});             	
         }
     }
     
@@ -1400,7 +1405,11 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
             }
             return logbook;
         } finally {
-            updateProjectLogbookInfo();
+        	SwingUtilities.invokeLater(new Runnable() {
+        		public void run() {
+                    updateProjectLogbookInfo();
+        		}
+        	});             	
         }
     }
 
@@ -1493,7 +1502,12 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
             }
             return false;
         } finally {
-            updateProjectLogbookInfo();
+        	//openLogBook can also be called from efaBoatHouseBackgroundTask, so it is secure to call this swing-thread-safe.
+        	SwingUtilities.invokeLater(new Runnable() {
+        		public void run() {
+                    updateProjectLogbookInfo();
+        		}
+        	});        	
         }
     }
 
