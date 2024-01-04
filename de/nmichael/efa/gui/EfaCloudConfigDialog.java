@@ -303,6 +303,16 @@ public class EfaCloudConfigDialog extends BaseTabbedDialog implements IItemListe
                         return;
                     }
                 }
+                else if (itemType.getName().equalsIgnoreCase(BUTTON_EFACLOUD_ACTIVATE))
+                    if (efaCloudURL.length() <= 7)
+                        de.nmichael.efa.util.Dialog.infoDialog(International.getString("URL zu kurz"),
+                            International.getString("efaCloud wurde nicht aktiviert. Bitte versuche es neu."));
+                    else if (storageUsername.length() <= 1)
+                        de.nmichael.efa.util.Dialog.infoDialog(International.getString("Benutzername zu kurz"),
+                                International.getString("efaCloud wurde nicht aktiviert. Bitte versuche es neu."));
+                    else if (storagePassword.length() <= 7)
+                        de.nmichael.efa.util.Dialog.infoDialog(International.getString("Paßwort zu kurz"),
+                                International.getString("efaCloud wurde nicht aktiviert. Bitte versuche es neu."));
             }
 
             // other efaCloud actions

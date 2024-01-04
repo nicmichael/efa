@@ -26,7 +26,6 @@ import static de.nmichael.efa.data.efacloud.TxRequestQueue.TX_BUSY_QUEUE_INDEX;
 public class TxResponseHandler {
 
     private final TxRequestQueue txq;
-    private int internetabortionCount = 0;
 
     TxResponseHandler(TxRequestQueue txq) {
         this.txq = txq;
@@ -317,12 +316,6 @@ public class TxResponseHandler {
             // the transaction container sending was aborted.
             TxResponseContainer txrc = new TxResponseContainer(null);
             handleTxcError(txrc, text + ";;" + txcResp.title);
-            internetabortionCount++;
-            // Abortion of a container request shall be very rare. And efa shall restart every day anyways, so this
-            // condition typically is hit when facing the raspberry system time adjustment. Restart efa to handle the
-            // situation.
-            if (internetabortionCount > 100)
-                txq.restartEfa();
 
             // } else if (type == InternetAccessManager.TYPE_PROGRESS_INFO) { // not relevant
             // } else if (type == InternetAccessManager.TYPE_FILE_SIZE_INFO) { // not relevant
