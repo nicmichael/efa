@@ -1,19 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <efaOnlineUpdate>
-<Version>
-        <VersionID>2.3.4_00</VersionID>
-        <ReleaseDate>TODO</ReleaseDate>
-        <DownloadUrl>http://efa.nmichael.de/download/efa234.zip</DownloadUrl>
-        <DownloadSize>TODO</DownloadSize>
-        <Changes lang="de">
-			<ChangeItem>Neu: SFTP (SSH) Support zum Hochladen von Statistiken.</ChangeItem>
-			<ChangeItem>Neu: FTP Port kann vom Anwender angegeben werden.</ChangeItem>
-        </Changes>
-        <Changes lang="en">
-			<ChangeItem>New: SFTP (SSH) support for uploading statistics.</ChangeItem>
-			<ChangeItem>New: FTP port can be specified by the user.</ChangeItem>
-        </Changes>
-	</Version>		
     <Version>
         <VersionID>2.3.3_02</VersionID>
         <ReleaseDate>26.11.2023</ReleaseDate>
