@@ -156,7 +156,6 @@ public class FTPClient {
             ftpClient.quit();
             return null; // korrektes Ende!
         } catch (Exception e) {
-            Logger.logdebug(e);
             return e.toString();
         }
     }

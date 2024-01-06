@@ -93,8 +93,8 @@ public class AutoCompleteList {
 
     //for debug purposes
     public synchronized String getSizes() {
-    	return (dataVisible==null ? "visible: null " : "visible: "+dataVisible.size()) +  
-    			(dataVisibleFiltered==null ? " dataVisibleFiltered: null " : "dataVisibleFiltered: "+dataVisibleFiltered.size());
+    	return (dataVisible==null ? "visible: null " : " visible: "+dataVisible.size()) +  
+    			(dataVisibleFiltered==null ? " dataVisibleFiltered: null " : " dataVisibleFiltered: "+dataVisibleFiltered.size());
     }
     
     public AutoCompleteList(IDataAccess dataAccess) {

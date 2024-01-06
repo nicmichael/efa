@@ -13,6 +13,7 @@
             <ChangeItem>Neu: EfaConfig: Tooltip-Farben sind konfigurierbar.</ChangeItem>
             <ChangeItem>Neu: EfaConfig: Neustrukturierung der Konfiguration mit Überschriften und Hinweisen zu einzelnen Konfigurationselementen.</ChangeItem>
             <ChangeItem>Neu: EfaConfig: Überschriftenfarbe kann auch für Registerkarten genutzt werden (Metal and WindowsClassic LookAndFeel).</ChangeItem>
+			<ChangeItem>Neu: EfaConfig: Beim Maximieren von Fenstern kann efa den Platzberdarf der Taskbars berücksichtigen</ChangeItem>
             <ChangeItem>Neu: efaBths: Uhrzeit-Widget und Buttons immer mit fetter Schrift auch wenn keine fette Schrift vorgesehen ist.</ChangeItem>
             <ChangeItem>Neu: Vereinsarbeit-Dialog hat angepasste Tabellen-Spaltenbreiten, damit die Daten einfacher zu lesen sind.</ChangeItem>
             <ChangeItem>Neu: Beschriftungen zu Eingabefeldern werden rechtsbündig angezeigt (besserere Usability).</ChangeItem>
@@ -24,6 +25,8 @@
             <ChangeItem>BugFix: Tabellen mit alternierenden Zeilen nutzen die LookAndFeel-Farben als Standardfarbe anstatt fest weisse Hintergrundfarbe zu nutzen.</ChangeItem>
             <ChangeItem>BugFix: Überflüssige grafische Rahmen entfernt in efaBths und allen Dialogen.</ChangeItem>
             <ChangeItem>BugFix: Autovervollständigen-Felder zeigten sich unter Windows nicht mehr an, wenn man zwischenzeitlich in einem anderen Programm war. Zusätzlich: STRG+F öffnet das Autovervollständigen-Feld.</ChangeItem>
+            <ChangeItem>BugFix: Autovervollständigen-Felder: Zeigten sich unter Linux/Unbuntu mit "efa immer im Vordergrund" nicht an (versteckten sich hinter dem Hauptfenster)</ChangeItem>
+            <ChangeItem>BugFix: Autovervollständigen-Felder: Zeigen sich nun auch an, wenn mit der Eingabe im Textfeld kein Treffer gefunden wird.</ChangeItem>
             <ChangeItem>BugFix: Autovervollständigen-Felder: werden diese mit TAB verlassen, wird der gewählte Eintrag übernommen.</ChangeItem>
             <ChangeItem>BugFix: Fahrt Beginnen Dialog: Taste ESC in Autovervollständigen-Feldern schließt nur die Auswahlbox, nicht den gesamten Dialog.</ChangeItem>
             <ChangeItem>BugFix: Lesen von Nachrichten: im Textfeld kann nun Text mit der Maus markiert und mit STRG+C in die Zwischenablage übernommen werden.</ChangeItem>
@@ -35,6 +38,8 @@
 			<ChangeItem>BugFix: EfaConfig: KanuEFBSync Registerkarte wird besser dargestellt.</ChangeItem>
 			<ChangeItem>BugFix: Startup: Start-Probleme von efaBths auf langsameren Maschinen behoben (Raspberry PI). Audit Task läuft beim Öffnen von Projekten nicht mehr im Hintergrund, was den Start von efaBths um eine paar Sekunden verlängern kann.</ChangeItem>
 			<ChangeItem>BugFix: Boothaus-Listen mit zwei Spalten berechnen Breite für zweites Element besser. Performanceoptimierung für Darstellung der bunten Icons vor den Bootsnamen.</ChangeItem>
+            <ChangeItem>BugFix: Boothaus-Listen mit Filtern: Es wurden keine Einträge gefunden, wenn die Eingabe ein Sonderzeichen ß, æ oder œ beinhaltete.</ChangeItem>
+            <ChangeItem>BugFix: Boothaus-Listen mit zwei Spalten zeigen bei einfach 'nicht verfügbaren' Booten den Kommentar des Bootsstatus an.</ChangeItem>
             <ChangeItem>BugFix: Bootsreservierung: Bei Auswahl des Bootes wird der Knopf für die Auswahlliste angezeigt.</ChangeItem>
             <ChangeItem>BugFix: HTML Widgets zeigen ihren Inhalt in serifenloser Schrift mit 14 Pixel höhe an - wie unter Metal.</ChangeItem>
             <ChangeItem>BugFix: NewsTicker Widget hat kein Problem mehr mit unüblichen Schriften.</ChangeItem>
@@ -54,6 +59,7 @@
             <ChangeItem>New: EfaConfig: Tooltip colores customizable.</ChangeItem>
             <ChangeItem>New: EfaConfig: Restructuring of the configuration with headings and notes on individual configuration elements.</ChangeItem>
             <ChangeItem>New: EfaConfig: Heading colors can be used for highlighting tab headers (Metal and WindowsClassic LookAndFeel).</ChangeItem>
+			<ChangeItem>Neu: EfaConfig: When maximizing windows, efa can respect taskbar size and location</ChangeItem>
             <ChangeItem>New: efaBths: Clock widget and buttons use bold font, even if not setup in efaConfig.</ChangeItem>
             <ChangeItem>New: Labels for input fields are right-aligned for better usability.</ChangeItem>            
             <ChangeItem>New: Clubwork list dialog: applied custom column widths so that the data is easier to read.</ChangeItem>
@@ -66,6 +72,7 @@
             <ChangeItem>BugFix: Icons for adding new items use a darker green and are better recognizable.</ChangeItem>              
 			<ChangeItem>BugFix: Autocomplete fields did not show their popup window on Windows machines, when user changed to another program and returned to efa. Also, STRG+F now opens the popup window.</ChangeItem>
             <ChangeItem>BugFix: Autocomplete fields: if user leaves a popup selection with tab, the selected entry is used for the field.</ChangeItem>
+            <ChangeItem>BugFix: Autocomplete fields: if set to partial text mode, the color of the button was orange instead of red if the item was not valid.</ChangeItem>
             <ChangeItem>BugFix: Start session dialog: Hitting ESC while an autocomplete window is open, only the autocomplete window is closed instead of the start session dialog.</ChangeItem>
             <ChangeItem>BugFix: EfaConfig: Scrollable in the config window is INSIDE the tabs - making it easier to scroll</ChangeItem>
             <ChangeItem>BugFix: EfaConfig: Key assignment for comment field - text field for values set to enabled.</ChangeItem>
@@ -75,11 +82,14 @@
 			<ChangeItem>BugFix: Startup: fixed startup problems of efaBths on slower machines (Raspberry PI). When opening projects, Audit task no longer runs in background. This can increase startup time for efaBths by a few seconds.</ChangeItem>
 			<ChangeItem>BugFix: When reading messages to admin, the text of the message can be selected and copied to clipboard via CTRL+C.</ChangeItem>
 			<ChangeItem>BugFix: Boathouse lists with two columns: calculate widths for second columns optimized, performance optimization when a boat name has an icon prefix.</ChangeItem>
+            <ChangeItem>BugFix: Boathouse lists with two columns: show the comment of the boat if the boat has been manually set to 'not available'</ChangeItem>
+            <ChangeItem>BugFix: Boathouse lists filter: did not find any boats when filter string contained only one of the special characters: ß, æ or œ.</ChangeItem>
             <ChangeItem>BugFix: Boat reservation: When selecting the boat, the selection list button is displayed.</ChangeItem>
 			<ChangeItem>BugFix: Displaying messages for admin: User can now select text in textarea and copy it to clipboard (CTRL+C).</ChangeItem>
             <ChangeItem>BugFix: HTML Widgets use Dialog font as default, in 14 pix size in all LookAndFeels.</ChangeItem>
             <ChangeItem>BugFix: NewsTicker Widget without problems with unusual font sizes.</ChangeItem>
-            <ChangeItem>BugFix: MetoAstro plugin in efaBths main screen shows a hand as a mouse cursor if an HTML popup has been configured.</ChangeItem>
+            <ChangeItem>BugFix: MeteoAstro plugin in efaBths main screen shows a hand as a mouse cursor if an HTML popup has been configured.</ChangeItem>
+            <ChangeItem>BugFix: MeteoAstro plugin default value for 'download weather' is false for new installation. Avoids unneccessary exceptions in log after installation.</ChangeItem>
             <ChangeItem>BugFix: No (hidden) exception in debug mode in HTMLWidget updating process</ChangeItem>
             <ChangeItem>BugFix: No (hidden) exception during initialisation of efaBths if the special button is displayed. Special button now has the according icon.</ChangeItem>              
             <ChangeItem>BugFix: No more duplicates in the spellchecking dialogue (which comes up when a item with a lookup list has not fully been set by the user).</ChangeItem>

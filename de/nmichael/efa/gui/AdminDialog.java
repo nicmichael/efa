@@ -95,7 +95,7 @@ public class AdminDialog extends BaseDialog implements IItemListener {
                     continue;
                 }
                 JLabel label = new RoundedLabel();
-                Mnemonics.setLabel(this, label, menuButton.getMenuText());
+                label.setText(Mnemonics.stripMnemonics(menuButton.getMenuText()));
                 label.setHorizontalAlignment(SwingConstants.CENTER);
                 label.setBackground(Daten.efaConfig.getHeaderBackgroundColor());
                 label.setForeground(Daten.efaConfig.getHeaderForegroundColor());

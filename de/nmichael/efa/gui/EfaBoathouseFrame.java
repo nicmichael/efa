@@ -287,6 +287,10 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
         setIconImage(Toolkit.getDefaultToolkit().createImage(EfaBaseFrame.class.getResource("/de/nmichael/efa/img/efa_icon.png")));
         mainPanel.setLayout(new BorderLayout());
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+        //setting resizable to true would enable resizing the boathouse window.
+        //but as the boatlists on the left and the right are on east and west, 
+        //they do not scale horizontally with screen width.
+        //so setResizable(true) would be useless.
         setResizable(false);
         this.addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(WindowEvent e) {

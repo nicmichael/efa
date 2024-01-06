@@ -642,14 +642,17 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
     		} else if (showReservation && isCommentBoardReservation(bs.getComment())) {
     				return getBoatReservationString(bs.getBoatId(), rTodayCache, 0, false);
     		} else {
-    			
-    			if (showDestination) { 
-	    			//Boat is not available, but neither damage nor reservation.
-	    			//so maybe it's a boat on a multi-day tour, regatta or whatsoever.
-	    			//if the current BoatStatus has a destination set, show the destination.
-	        		 return bs.getDestination();
-    			} else { 
-    				return null;
+    			if (bs.getLogbookRecord()==null) {
+    				// A not available boat, which has no logbook record - has been put manually to the not available list.
+    				// let's see if there is a comment we can show
+    				return bs.getComment(); // may as well be null
+    			} else {
+	    			if (showDestination) { 
+		    			//Boat is not available, but neither damage nor reservation.
+		    			//so maybe it's a boat on a multi-day tour, regatta or whatsoever.
+		    			//if the current BoatStatus has a destination set, show the destination.
+		        		 return bs.getDestination();
+	    			}
     			}
     		}
 

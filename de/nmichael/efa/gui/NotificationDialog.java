@@ -112,9 +112,7 @@ public class NotificationDialog extends BaseDialog {
                 } catch(InterruptedException e) {
                 }
             }
-            
-            //not threadsafe
-            //cancel();
+
         	SwingUtilities.invokeLater(new Runnable() {
         	      public void run() {
         	            cancel();

@@ -10,13 +10,32 @@
 
 package de.nmichael.efa.gui;
 
-import de.nmichael.efa.*;
+import java.awt.AWTEvent;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+
+import javax.swing.AbstractButton;
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+
+import de.nmichael.efa.Daten;
 import de.nmichael.efa.core.items.IItemType;
-import de.nmichael.efa.util.*;
+import de.nmichael.efa.util.ActionHandler;
 import de.nmichael.efa.util.Dialog;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
+import de.nmichael.efa.util.EfaUtil;
+import de.nmichael.efa.util.Help;
+import de.nmichael.efa.util.Logger;
 
 // @i18n complete
 public abstract class BaseFrame extends JFrame implements ActionListener {
@@ -61,7 +80,6 @@ public abstract class BaseFrame extends JFrame implements ActionListener {
         	Logger.log(e);
             return false;
         }
-   
     }
 
     public void showMe() {
@@ -79,7 +97,7 @@ public abstract class BaseFrame extends JFrame implements ActionListener {
         if (focusItem != null) {
             focusItem.requestFocus();
         }
-        this.setVisible(true);       
+        this.setVisible(true); 
     }
 
     public void setRequestFocus(IItemType item) {

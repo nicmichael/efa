@@ -283,7 +283,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 	private ItemTypeBoolean efaDirekt_listAllowToggleBoatsPersons;
 	private ItemTypeBoolean efaDirekt_showEingabeInfos;
 	private ItemTypeBoolean efaDirekt_showBootsschadenButton;
-	private ItemTypeBoolean boatNotCleanedButton;
+	private ItemTypeBoolean efaDirekt_showBoatNotCleanedButton;
 	private ItemTypeInteger efaDirekt_maxFBAnzeigenFahrten;
 	private ItemTypeInteger efaDirekt_anzFBAnzeigenFahrten;
 	private ItemTypeBoolean efaDirekt_FBAnzeigenAuchUnvollstaendige;
@@ -293,10 +293,10 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 	private ItemTypeFontName efaDirekt_BthsFontNameButton;
 	private ItemTypeInteger efaDirekt_BthsTableFontSize;
 	private ItemTypeStringList efaDirekt_BthsFontStyle;
-	private ItemTypeFontName efaDirekt_OtherFontNameButton;
-	private ItemTypeInteger efaDirekt_otherFontSize;
-	private ItemTypeInteger efaDirekt_otherTableFontSize;
-	private ItemTypeStringList efaDirekt_otherFontStyle;	
+	private ItemTypeFontName efa_OtherFontNameButton;
+	private ItemTypeInteger efa_otherFontSize;
+	private ItemTypeInteger efa_otherTableFontSize;
+	private ItemTypeStringList efa_otherFontStyle;	
 	private ItemTypeBoolean efaDirekt_colorizeInputField;
 	private ItemTypeBoolean efaDirekt_showZielnameFuerBooteUnterwegs;
 	private ItemTypeString efadirekt_adminLastOsCommand;
@@ -309,6 +309,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 	private ItemTypeString efaDirekt_newsText;
 	private ItemTypeInteger efaDirekt_newsScrollSpeed;
 	private ItemTypeBoolean efaDirekt_startMaximized;
+	private ItemTypeBoolean efaDirekt_startMaximizedRespectTaskbar;
 	private ItemTypeBoolean efaDirekt_fensterNichtVerschiebbar;
 	private ItemTypeBoolean efaDirekt_immerImVordergrund;
 	private ItemTypeBoolean efaDirekt_immerImVordergrundBringToFront;
@@ -967,22 +968,22 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 					3,3,3);
 
 			String defaultFont=getDefaultFont();
-			addParameter(efaDirekt_OtherFontNameButton = new ItemTypeFontName("EfaOtherFontNameButton",
+			addParameter(efa_OtherFontNameButton = new ItemTypeFontName("EfaOtherFontNameButton",
 					defaultFont, defaultFont,
 					IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
 					International.getString("Schriftart"),false));			
 			
-			addParameter(efaDirekt_otherFontSize = new ItemTypeInteger("EfaOtherFontSize", 12, 6, 32, false,
+			addParameter(efa_otherFontSize = new ItemTypeInteger("EfaOtherFontSize", 12, 6, 32, false,
 					IItemType.TYPE_PUBLIC,
 					BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
 					International.getString("Schriftgröße in Punkten (6 bis 32, Standard: 12)")));
-			addParameter(efaDirekt_otherFontStyle = new ItemTypeStringList("EfaOtherFontStyle", "",
+			addParameter(efa_otherFontStyle = new ItemTypeStringList("EfaOtherFontStyle", "",
 					makeFontStyleArray(STRINGLIST_VALUES), makeFontStyleArray(STRINGLIST_DISPLAY),
 					IItemType.TYPE_PUBLIC,
 					BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
 					International.getString("Schriftstil")));
 
-			addParameter(efaDirekt_otherTableFontSize = new ItemTypeInteger("EfaOtherTableFontSize", 12, 6, 18,
+			addParameter(efa_otherTableFontSize = new ItemTypeInteger("EfaOtherTableFontSize", 12, 6, 20,
 					false, IItemType.TYPE_PUBLIC,
 					BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
 					International.getString("Tabellen-Schriftgröße in Punkten (6 bis 20, Standard: 12)")));					
@@ -1030,7 +1031,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 			addParameter(efaDirekt_showBootsschadenButton = new ItemTypeBoolean("BoatDamageEnableReporting", true,
 					IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_COMMON),
 					International.getString("Melden von Bootsschäden erlauben")));
-			addParameter(boatNotCleanedButton = new ItemTypeBoolean("ShowBoatNotCleanedButton", false,
+			addParameter(efaDirekt_showBoatNotCleanedButton = new ItemTypeBoolean("ShowBoatNotCleanedButton", false,
 					IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_COMMON), 
 					International.getString("Melden von ungeputzten Booten erlauben")));
 			
@@ -1239,15 +1240,27 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 			addHeader("efaGuiBoathouseWindow", IItemType.TYPE_EXPERT,
 					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
 					International.getString("Fensterpositionierung"), 3);
-
+			addHint("efaDirekt_startMaximizedHint", 
+					IItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
+					International.getString("Auf Bildschirmgroesse bzw. auf die Breite-Hoehe in Allgemein->Fenster maximieren"),3,0, 6);
 			addParameter(efaDirekt_startMaximized = new ItemTypeBoolean("EfaBoathouseWindowMaximized", true,
 					IItemType.TYPE_EXPERT,
 					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
 					International.getString("efa maximiert starten")));
+			addHint("EfaBoathouseWindowMaximizedRespectTaskBarHint", 
+					IItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
+					International.getString("Wirkt nur, wenn Allgemein->Fenster die Fenster-Offsets X und Y beide 0 sind"),3, 10, 6);
+			addParameter(efaDirekt_startMaximizedRespectTaskbar = new ItemTypeBoolean("EfaBoathouseWindowMaximizedRespectTaskBar", true,
+					IItemType.TYPE_EXPERT,
+					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
+					International.getString("Beim Maximieren Groesse und Position der Taskleisten beruecksichtigen")));
+
 			addParameter(efaDirekt_fensterNichtVerschiebbar = new ItemTypeBoolean("EfaBoathouseWindowFixedPosition",
 					true, IItemType.TYPE_EXPERT,
 					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
 					International.getString("Hauptfenster nicht verschiebbar")));
+			efaDirekt_fensterNichtVerschiebbar.setPadding(0, 0, 20, 2);
+			
 			addParameter(efaDirekt_immerImVordergrund = new ItemTypeBoolean("EfaBoathouseWindowAlwaysOnTop", false,
 					IItemType.TYPE_EXPERT,
 					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
@@ -1256,7 +1269,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 					"EfaBoathouseWindowAlwaysOnTopBringToFront", false, IItemType.TYPE_INTERNAL,
 					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
 					International.getString("efa immer im Vordergrund") + " (bringToFront)"));
-
+			
 			addHeader("efaGuiBoathouseFont", IItemType.TYPE_PUBLIC,
 					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
 					International.getString("Schriftart"), 3);
@@ -1269,7 +1282,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 			addParameter(efaDirekt_BthsFontSize = new ItemTypeInteger("EfaBoathouseFontSize", 16, 6, 32, false,
 					IItemType.TYPE_PUBLIC,
 					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
-					International.getString("Schriftgröße in Punkten (6 bis 32, Standard: 12)")));
+					International.getString("Schriftgröße in Punkten (6 bis 32, Standard: 16)")));
 			
 			addParameter(efaDirekt_BthsFontStyle = new ItemTypeStringList("EfaBoathouseFontStyle", "",
 					makeFontStyleArray(STRINGLIST_VALUES), makeFontStyleArray(STRINGLIST_DISPLAY),
@@ -1277,10 +1290,10 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
 					International.getString("Schriftstil")));
 
-			addParameter(efaDirekt_BthsTableFontSize = new ItemTypeInteger("EfaBoathouseTableFontSize", 12, 6, 18,
+			addParameter(efaDirekt_BthsTableFontSize = new ItemTypeInteger("EfaBoathouseTableFontSize", 14, 6, 20,
 					false, IItemType.TYPE_PUBLIC,
 					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
-					International.getString("Tabellen-Schriftgröße in Punkten (6 bis 20, Standard: 12)")));
+					International.getString("Tabellen-Schriftgröße in Punkten (6 bis 20, Standard: 14)")));
 
 			addHeader("efaGuiBoathouseOther", IItemType.TYPE_PUBLIC,
 					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
@@ -2400,8 +2413,8 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 		return efaDirekt_showBootsschadenButton.getValue();
 	}
 
-	public boolean getShowBoatNotCleanedButton() {
-		return boatNotCleanedButton.getValue();
+	public boolean getValueEfaDirekt_showBoatNotCleanedButton() {
+		return efaDirekt_showBoatNotCleanedButton.getValue();
 	}
 
 	public int getValueEfaDirekt_maxFBAnzeigenFahrten() {
@@ -2441,19 +2454,19 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 	}
 
 	public String getValue_OtherFontName() {
-		return efaDirekt_OtherFontNameButton.getValueFromField();
+		return efa_OtherFontNameButton.getValueFromField();
 	}
 	
 	public int getValue_OtherFontSize() {
-		return efaDirekt_otherFontSize.getValue();
+		return efa_otherFontSize.getValue();
 	}
 
 	public int getValue_OtherTableFontSize() {
-		return efaDirekt_otherTableFontSize.getValue();
+		return efa_otherTableFontSize.getValue();
 	}
 
 	public String getValue_OtherFontStyle() {
-		return efaDirekt_otherFontStyle.getValue();
+		return efa_otherFontStyle.getValue();
 	}
 
 	
@@ -2553,6 +2566,10 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 		return efaDirekt_startMaximized.getValue();
 	}
 
+	public boolean getValueEfaDirekt_startMaximizedRespectTaskbar() {
+		return efaDirekt_startMaximizedRespectTaskbar.getValue();
+	}
+	
 	public boolean getValueEfaDirekt_fensterNichtVerschiebbar() {
 		return efaDirekt_fensterNichtVerschiebbar.getValue();
 	}
@@ -3038,6 +3055,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 					if (item == efaDirekt_BthsFontSize || item == efaDirekt_BthsTableFontSize || item == efaDirekt_BthsFontNameButton 
 							|| item == efaDirekt_BthsFontStyle || item == efaDirekt_listAllowToggleBoatsPersons
 							|| item == efaDirekt_autoPopupOnBoatLists || item == efaDirekt_fensterNichtVerschiebbar
+							|| item == efaDirekt_startMaximized || item == efaDirekt_startMaximizedRespectTaskbar
 							|| item == useFunctionalityRowing || item == useFunctionalityRowingGermany
 							|| item == useFunctionalityRowingBerlin || item == useFunctionalityCanoeing
 							|| item == useFunctionalityCanoeingGermany || item == developerFunctions
@@ -3048,7 +3066,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 							|| item == efaDirekt_boatsNotAvailableListSize || item == windowXOffset
 							|| item == windowYOffset || item == screenWidth || item == screenHeight
 							|| item == efaHeaderUseForTabbedPanes || item == lookAndFeel
-							|| item == efaDirekt_otherFontSize || item == efaDirekt_otherFontStyle || item == efaDirekt_otherTableFontSize
+							|| item == efa_otherFontSize || item == efa_otherFontStyle || item == efa_otherTableFontSize
 							|| item == efaGuiToolTipSpecialColors) {
 						changedSettings.put(item.getDescription(), "foo");
 					}
@@ -3241,19 +3259,16 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 
 	private String getDefaultLookAndFeel() {
 		String[] laf = makeLookAndFeelArray(STRINGLIST_VALUES);
-		if (true || Daten.isOsLinux()) { // let's do this for all OS'es
-			for (int i = 0; i < laf.length; i++) {
-				if (laf[i].endsWith(Daten.LAF_EFAFLAT_LIGHT)) {
-					return laf[i];
-				}
+		for (int i = 0; i < laf.length; i++) {
+			if (laf[i].endsWith(Daten.LAF_EFAFLAT_LIGHT)) {
+				return laf[i];
 			}
 		}
+		
 		// no flatlaf installed? Try MetalLookAndFeel instead.
-		if (true || Daten.isOsLinux()) { // let's do this for all OS'es
-			for (int i = 0; i < laf.length; i++) {
-				if (laf[i].endsWith(Daten.LAF_METAL)) {
-					return laf[i];
-				}
+		for (int i = 0; i < laf.length; i++) {
+			if (laf[i].endsWith(Daten.LAF_METAL)) {
+				return laf[i];
 			}
 		}
 
@@ -3279,11 +3294,15 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 		} else if (uiFontsString.matches(".*segoe.ui.*")){
 			return "Segoe UI";
 		} else if (uiFontsString.matches(".*piboto.*")) {
-			return "Piboto";
-		} else if (uiFontsString.matches(".*liberation.*")) {
-			return "Liberation San";
+			return "Piboto";		
+		} else if (uiFontsString.matches(".*noto.sans.display.*")) {
+			return "Noto Sans Display";			
+		} else if (uiFontsString.matches(".*noto.sans.*")) {
+			return "Noto Sans";		
 		} else if (uiFontsString.matches(".*roboto.*")) {
-			return "Roboto";
+			return "Roboto";				
+		} else if (uiFontsString.matches(".*liberation.sans*")) {
+			return "Liberation Sans";
 		}
 		return "Dialog";
 	}

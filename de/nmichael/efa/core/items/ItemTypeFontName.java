@@ -160,7 +160,7 @@ public class ItemTypeFontName extends ItemTypeLabelValue implements IItemListene
 		String[] guiFonts = EfaUtil.makeFontFamilyArray(false, Daten.efaConfig.FONT_NAME_LAF_DEFAULT_FONT);
 		
 		ItemTypeLabel hint = new ItemTypeLabel("_GUIITEM_GENERIC_HINT", IItemType.TYPE_PUBLIC, null,  " " 
-				+ (Daten.isOsLinux() ? International.getString("Probieren Sie die Schriftart 'Piboto' oder 'Liberation Sans'") : International.getString("Probieren Sie die Schriftart 'Arial' oder 'Segoe UI'"))); 
+				+ (Daten.isOsLinux() ? International.getString("Probieren Sie die Schriftart Piboto oder Liberation Sans") : International.getString("Probieren Sie die Schriftart 'Arial' oder 'Segoe UI'"))); 
 	
         hint.setPadding(0, 0, 12, 12);
     	hint.setFieldGrid(3,GridBagConstraints.EAST, GridBagConstraints.BOTH);
