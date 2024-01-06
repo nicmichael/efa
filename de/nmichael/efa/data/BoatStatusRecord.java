@@ -208,9 +208,10 @@ public class BoatStatusRecord extends DataRecord {
      * @return Destination and DestinationVariant name
      */
     public String getDestination() {
+    	
         LogbookRecord r = getLogbookRecord(); 	
         if (r==null) {
-        	return "";
+        	return International.getString("Fehler: kein Fahrtenbucheintrag zu Boot auf Fahrt");
         } else {
         	return r.getDestinationAndVariantName();
         }
@@ -243,7 +244,13 @@ public class BoatStatusRecord extends DataRecord {
     public LogbookRecord getLogbookRecord() {
         try {
             Logbook l = Daten.project.getLogbook(getLogbook(), false);
-            return l.getLogbookRecord(getEntryNo());
+            
+            if (l==null) {
+            	return null;
+            } else {
+            	return l.getLogbookRecord(getEntryNo());
+            }
+            	
         } catch(Exception e) {
             Logger.logdebug(e);
         }

@@ -182,7 +182,7 @@ public class MeteoAstroWidget extends Widget {
         addHeader("WidgetMeteoWeather",IItemType.TYPE_PUBLIC, "", International.getString("Wetter anzeigen"), 3);  
         addHint("WidgetMeteoWeatherDisabled",IItemType.TYPE_PUBLIC, "", International.getString("Die Wetteranzeige ist nicht verfügbar - WetterAPI von Yahoo wurde eingestellt."), 3,6,6);
         
-        addParameterInternal(new ItemTypeBoolean(PARAM_SHOWWEATHER, true,
+        addParameterInternal(new ItemTypeBoolean(PARAM_SHOWWEATHER, false,
                 IItemType.TYPE_EXPERT, "",
                 International.getString("Wetterdaten anzeigen") +
                 " (" + International.getString("Internetverbindung erforderlich") + ")"));

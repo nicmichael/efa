@@ -55,6 +55,8 @@ public class Dialog {
     public static JTextArea programOutText = null;
     public static ProgressMonitor progress = null;
     public static Dimension screenSize = new Dimension(1024, 768); // nur Default-Values..... ;-)
+    public static int screenXOffset=0;
+    public static int screenYOffset=0;
     public static boolean tourRunning = false;
     private static int FONT_SIZE = -1;
     private static int ORG_FONT_SIZE = 12;
@@ -64,30 +66,78 @@ public class Dialog {
     private static int MAX_DIALOG_WIDTH = 200; // Number of Characters
     private static int MAX_DIALOG_HEIGHT = 50; // Number of Lines
 
-    public static void initializeScreenSize() {
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+    public static void initializeScreenSize(JFrame frame) {
+        Dimension myScreenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        int myScreenXOffset=0;
+        int myScreenYOffset=0;
+        try {
+        	// efaBoathouse can start maximized
+        	// If Common->Window Screenwidth/height is NOT set manually (at least one element>0),
+        	// efaBoathouse shall start maximized on the whole screen of monitor one.
+        	// then we need to take care, that there may be one or more taskbars which consume space on the screen.
+         	
+        	if (frame != null && isEfaBoathouseAndAutoScreenOffset()) {
+        		Insets screenInsets = Toolkit.getDefaultToolkit().getScreenInsets(frame.getGraphicsConfiguration());
+        	// nur wenn keine 
+                if (Logger.isTraceOn(Logger.TT_GUI, 4)) {
+                    Logger.log(Logger.DEBUG, Logger.MSG_DEBUG_GUI_WINDOWS,
+                            "Screen size=" + myScreenSize.toString()+ "Screen insets="+screenInsets.toString());
+                }
+                myScreenSize= new Dimension(myScreenSize.width-screenInsets.left-screenInsets.right, 
+                				   		    myScreenSize.height-screenInsets.top-screenInsets.bottom);
+                myScreenXOffset=screenInsets.left;
+                myScreenYOffset=screenInsets.top;
+        	} 
+        } catch (Exception e) {
+        	Logger.logdebug(e);
+        }
+        
         if (Daten.isOsLinux()) {
             // Workaround für Linux: Fenster verschwinden oder werden falsch positioniert, wenn die die
             // volle Bildschirmgröße haben
-            Dialog.screenSize = new Dimension(screenSize.width - 1, screenSize.height - 1);
+            Dialog.screenSize = new Dimension(myScreenSize.width - 1, myScreenSize.height - 1);
         } else {
-            Dialog.screenSize = screenSize;
+            Dialog.screenSize = myScreenSize;
         }
         if (Daten.efaConfig == null) {
             return;
         }
+        
+        //Check if we have an manual override for screen width and screen height
         if (Daten.efaConfig.getValueScreenWidth() > 0) {
             Dialog.screenSize.width = Daten.efaConfig.getValueScreenWidth();
         }
         if (Daten.efaConfig.getValueScreenHeight() > 0) {
             Dialog.screenSize.height = Daten.efaConfig.getValueScreenHeight();
         }
+        
+        //manual setup for x and y offset in efaconfig shall be taken first.
+        Dialog.screenXOffset = (Daten.efaConfig.getValueWindowXOffset()>0? Daten.efaConfig.getValueWindowXOffset() : myScreenXOffset);
+        Dialog.screenYOffset = (Daten.efaConfig.getValueWindowYOffset()>0? Daten.efaConfig.getValueWindowYOffset() : myScreenYOffset);
+        
         initializeMaxDialogSizes();
         if ((Daten.efaConfig.getValueMaxDialogWidth() > 0 || Daten.efaConfig.getValueMaxDialogHeight() > 0)) {
             Dialog.setMaxDialogSizes(Daten.efaConfig.getValueMaxDialogWidth(), Daten.efaConfig.getValueMaxDialogHeight());
         }
+        if (Logger.isTraceOn(Logger.TT_GUI, 4)) {
+            Logger.log(Logger.DEBUG, Logger.MSG_DEBUG_GUI_WINDOWS,
+                    "Screen dimensions: Size=" + Dialog.screenSize.toString()+ " XOffSet="+Dialog.screenXOffset+ " YOffSet="+Dialog.screenYOffset);
+            Logger.log(Logger.DEBUG, Logger.MSG_DEBUG_GUI_WINDOWS,
+                    "Dialog dimensions: MAX_DIALOG_WIDTH="+Dialog.MAX_DIALOG_WIDTH + "MAX_DIALOG_HEIGHT="+Dialog.MAX_DIALOG_HEIGHT);
+        }
     }
 
+    /**
+     * @return true if efaBoathouse and screen size has been manually set in common -> window and user wants to respect the taskbars..
+     */
+    private static Boolean isEfaBoathouseAndAutoScreenOffset() {
+    	if (Daten.efaConfig!=null) {
+    		return ( Daten.isApplEfaBoathouse() && (Daten.efaConfig.getValueWindowXOffset()+Daten.efaConfig.getValueWindowYOffset()==0) && Daten.efaConfig.getValueEfaDirekt_startMaximizedRespectTaskbar());
+    	} else {
+    		return false;
+    	}
+    }
+        
     // max size that a dialog may have, depending on screen size
     public static Dimension getMaxSize(Dimension d) {
         Dimension newd = new Dimension(d);
@@ -370,6 +420,7 @@ public class Dialog {
             } catch (NoClassDefFoundError e) {
                 EfaUtil.foo();
             }
+            w.toFront();
         }
         if (Logger.isDebugLogging() && Logger.isTraceOn(Logger.TT_GUI)) {
             Logger.log(Logger.DEBUG, Logger.MSG_DEBUG_GUI_WINDOWS, "Dialog.frameOpened(" + w.getClass().getCanonicalName() + ")");
@@ -554,12 +605,8 @@ public class Dialog {
             y = ((screen != null ? screen.height : screenSize.height) - dlgSize.height) / 2;
 
             // add offset
-            if (Daten.efaConfig != null && Daten.efaConfig.getValueWindowXOffset() > 0) {
-                x += Daten.efaConfig.getValueWindowXOffset();
-            }
-            if (Daten.efaConfig != null && Daten.efaConfig.getValueWindowYOffset() > 0) {
-                y += Daten.efaConfig.getValueWindowYOffset();
-            }
+            x += Math.max(0, screenXOffset);
+            y += Math.max(0, screenYOffset);
 
             // place dialog on same screen as parent dialog (for multi-screen environments)
             if (loc != null && screen != null) {

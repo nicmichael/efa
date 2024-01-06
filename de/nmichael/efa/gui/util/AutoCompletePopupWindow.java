@@ -65,6 +65,10 @@ public class AutoCompletePopupWindow extends JWindow {
     JList list = new JList();
 
     private AutoCompletePopupWindow(Window parent) {
+    	// we do not wand to call super(parent) here as then the list window gets the focus.
+    	// we just want the list window to popup, but the parent window shall keep the focus,
+    	// was the itemType field controls filtering data.
+    	//super(parent);
         this.setModalExclusionType(ModalExclusionType.APPLICATION_EXCLUDE);
         try {
             jbInit();
@@ -73,10 +77,10 @@ public class AutoCompletePopupWindow extends JWindow {
                 scrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(25, 1));
             }
             scrollPane.setHorizontalScrollBar(null);
-            // Bugfix: AutoCompletePopupWindow muß unter Windows ebenfalls alwaysOnTop sein, wenn EfaDirektFrame alwaysOnTop ist, da sonst die Popup-Liste nicht erscheint
-            if (Daten.osName.startsWith("Windows") && Daten.efaConfig != null &&
-                Daten.efaConfig.getValueEfaDirekt_immerImVordergrund()) {
-                de.nmichael.efa.java15.Java15.setAlwaysOnTop(this, true);
+            // Bugfix: AutoCompletePopupWindow muß unter Windows und linux (!) ebenfalls alwaysOnTop sein, 
+            // wenn EfaDirektFrame alwaysOnTop ist, da sonst die Popup-Liste nicht erscheint
+            if (Daten.efaConfig != null && Daten.efaConfig.getValueEfaDirekt_immerImVordergrund()) {
+            	de.nmichael.efa.java15.Java15.setAlwaysOnTop(this, true);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -170,14 +174,17 @@ public class AutoCompletePopupWindow extends JWindow {
      * @param field Textfield where the AutoCompletePopupWindow shall be displayed
      */
     private void showAtTextField(JTextField field) {
-        if (showingAt == field) {
-            // Unter Windows bewirkt toFront(), daß der ursprüngliche Frame den Fokus verliert, daher muß unter Windows darauf verzichtet werden
+    	if (showingAt == field) {
+
+        	//unter windows reicht aber, das fenster wieder sichtbar zu machen, damit es ganz oben angezeigt wird.
+            //das machen wir auf jeden Fall, um ggfs. Probleme mit unterschiedlichen  Window Managern aus dem Weg zu gehen.
+        	this.setVisible(true);
+        	
+        	// Unter Windows bewirkt toFront(), daß der ursprüngliche Frame den Fokus verliert, daher muß unter Windows darauf verzichtet werden
             if (!Daten.osName.startsWith("Windows")) {
                 this.toFront();
-            } else { 
-            	//unter windows reicht aber, das fenster wieder sichtbar zu machen, damit es ganz oben angezeigt wird.
-            	this.setVisible(true);
-            }
+            } 
+
             return;
         }
 
@@ -291,17 +298,20 @@ public class AutoCompletePopupWindow extends JWindow {
      * @param callback Method which is called when the AutoCompletePopupWindow is hidden (this should induce that the callee takes over a given value as current value).
      */
     public static void showAndSelect(JTextField field, AutoCompleteList list, String selectedEntry, AutoCompletePopupWindowCallback callback) {
-        try {
+    	try {
             if (window == null) {
                 window = new AutoCompletePopupWindow(Dialog.frameCurrent());
             }
             window.callback = callback;
-            if (window.setListData(list) == 0) {
-                return;
-            }
+            
+            // we ignore the return value of setListData - even if there is nothing to show,
+            // we show the popup window. An empty window provides the info that there is no matching item.
+            // not showing up the popup window may also irritate the user.
+            window.setListData(list);
             window.showAtTextField(field);
             window.selectEintrag(selectedEntry);
         } catch (Exception e) {
+        	Logger.logdebug(e);
         }
     }
 

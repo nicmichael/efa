@@ -796,7 +796,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         boatNotCleanedButton.setIcon(getIcon(BaseDialog.IMAGE_SOAP));
         boatNotCleanedButton.displayOnGui(this, mainInputPanel, 4, 20);
         boatNotCleanedButton.registerItemListener(this);
-        boatNotCleanedButton.setVisible(isModeBoathouse() && Daten.efaConfig.getShowBoatNotCleanedButton());
+        boatNotCleanedButton.setVisible(isModeBoathouse() && Daten.efaConfig.getValueEfaDirekt_showBoatNotCleanedButton());
 
         // Save Button
         saveButton = new ItemTypeButton("SAVE", IItemType.TYPE_PUBLIC, null, International.getString("Eintrag speichern"));
@@ -4437,7 +4437,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         setFieldEnabled(false, false, distance);
         setFieldEnabled(true, true, comments);
         setFieldEnabled(true, Daten.efaConfig.getValueEfaDirekt_showBootsschadenButton(), boatDamageButton);
-        setFieldEnabled(true, Daten.efaConfig.getShowBoatNotCleanedButton(), boatNotCleanedButton);
+        setFieldEnabled(true, Daten.efaConfig.getValueEfaDirekt_showBoatNotCleanedButton(), boatNotCleanedButton);
 
         efaBoathouseSetPersonAndBoat(item);
         distance.parseAndShowValue("");
@@ -4478,7 +4478,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         setFieldEnabled(false, false, distance);
         setFieldEnabled(true, true, comments);
         setFieldEnabled(true, Daten.efaConfig.getValueEfaDirekt_showBootsschadenButton(), boatDamageButton);
-        setFieldEnabled(true, Daten.efaConfig.getShowBoatNotCleanedButton(), boatNotCleanedButton);
+        setFieldEnabled(true, Daten.efaConfig.getValueEfaDirekt_showBoatNotCleanedButton(), boatNotCleanedButton);
 
         currentBoatUpdateGui( (currentRecord.getBoatVariant() >= 0 ? currentRecord.getBoatVariant() : -1) );
         updateTimeInfoFields();
@@ -4524,7 +4524,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         setFieldEnabled(true, true, distance);
         setFieldEnabled(true, true, comments);
         setFieldEnabled(true, Daten.efaConfig.getValueEfaDirekt_showBootsschadenButton(), boatDamageButton);
-        setFieldEnabled(true, Daten.efaConfig.getShowBoatNotCleanedButton(), boatNotCleanedButton);
+        setFieldEnabled(true, Daten.efaConfig.getValueEfaDirekt_showBoatNotCleanedButton(), boatNotCleanedButton);
 
         currentBoatUpdateGui( (currentRecord.getBoatVariant() >= 0 ? currentRecord.getBoatVariant() : -1) );
         updateTimeInfoFields();
@@ -4548,7 +4548,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         setFieldEnabled(true, true, distance);
         setFieldEnabled(true, true, comments);
         setFieldEnabled(true, Daten.efaConfig.getValueEfaDirekt_showBootsschadenButton(), boatDamageButton);
-        setFieldEnabled(true, Daten.efaConfig.getShowBoatNotCleanedButton(), boatNotCleanedButton);
+        setFieldEnabled(true, Daten.efaConfig.getValueEfaDirekt_showBoatNotCleanedButton(), boatNotCleanedButton);
 
         efaBoathouseSetPersonAndBoat(item);
         updateTimeInfoFields();

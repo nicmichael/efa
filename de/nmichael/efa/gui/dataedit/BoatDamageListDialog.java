@@ -61,7 +61,7 @@ public class BoatDamageListDialog extends DataListDialog {
         
         // Table update: Minimum column widths of 95 pix for the timestamp colums 
         // so they show at least the date part fully readable. 
-        this.minColumnWidths = new int[] {110,0,100,100,12};        
+        this.minColumnWidths = new int[] {110,0,150,150,20};        
     }
 
     public void keyAction(ActionEvent evt) {

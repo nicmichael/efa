@@ -682,7 +682,7 @@ public class ItemTypeStringAutoComplete extends ItemTypeString implements AutoCo
         } 
 
         if (Logger.isTraceOn(Logger.TT_GUI, 5)) {
-            Logger.log(Logger.DEBUG, Logger.MSG_GUI_DEBUGGUI, "mode "+mode);
+            Logger.log(Logger.DEBUG, Logger.MSG_GUI_DEBUGGUI, "Mode "+mode);
         }
         
         if (e == null || mode == Mode.enter || mode == Mode.escape) {
@@ -694,10 +694,6 @@ public class ItemTypeStringAutoComplete extends ItemTypeString implements AutoCo
         String complete="";
 
         if (mode == Mode.normal || ((mode == Mode.enter || mode == Mode.escape || mode == Mode.none))) {
-
-            if (Logger.isTraceOn(Logger.TT_GUI, 5)) {
-                Logger.log(Logger.DEBUG, Logger.MSG_GUI_DEBUGGUI, "Looking for next element...");
-            }
 
         	// Down Arrow or STRG+F opens the poup list.
             if (e != null && ((e.getKeyCode() == KeyEvent.VK_DOWN)
@@ -720,7 +716,7 @@ public class ItemTypeStringAutoComplete extends ItemTypeString implements AutoCo
             }
 
             if (Logger.isTraceOn(Logger.TT_GUI, 5)) {
-                Logger.log(Logger.DEBUG, Logger.MSG_GUI_DEBUGGUI, "Searchfor="+searchFor+" - element (complete)="+complete);
+                Logger.log(Logger.DEBUG, Logger.MSG_GUI_DEBUGGUI, "User entered text="+searchFor+" matching item="+complete);
                 Logger.log(Logger.DEBUG, Logger.MSG_GUI_DEBUGGUI, "AutoCompleteWindow showing at "+this.getName()+"="+AutoCompletePopupWindow.isShowingAt(textField));
             }
             
@@ -775,14 +771,14 @@ public class ItemTypeStringAutoComplete extends ItemTypeString implements AutoCo
 
 
         // in case of versionized data, make sure it also valid
-        boolean valid = true;
+        boolean valid = false;
         if (matching && validAtDateItem != null) {
             long t = LogbookRecord.getValidAtTimestamp(validAtDateItem.getDate(),
                     (validAtTimeItem != null ? validAtTimeItem.getTime() : null));
             valid = autoCompleteList.isValidAt(textField.getText(), t);
-            }
-        if (!valid) {
-           matching = false;
+	        if (!valid) {
+	           matching = false;
+	        }
         } else {
             valid = true;
         }
@@ -790,9 +786,9 @@ public class ItemTypeStringAutoComplete extends ItemTypeString implements AutoCo
         if (matching) {
             setButtonColor( Color.green );
         } else {
-            setButtonColor( Color.orange);
+        	setButtonColor( (valid ? Color.red : Color.orange ) ); // @todo should be green or orange? used to be orange instead of green; used for hidden records. Color.orange) );        
         }
-
+        
         if (mode == Mode.enter) {
         	textField.select(-1, -1);
         	textField.setCaretPosition(textField.getText().length());

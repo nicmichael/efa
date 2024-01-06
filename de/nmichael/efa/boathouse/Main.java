@@ -15,6 +15,7 @@ import javax.swing.SwingUtilities;
 import de.nmichael.efa.Daten;
 import de.nmichael.efa.Program;
 import de.nmichael.efa.gui.EfaBoathouseFrame;
+import de.nmichael.efa.util.Dialog;
 import de.nmichael.efa.util.International;
 import de.nmichael.efa.util.Logger;
 
@@ -31,6 +32,13 @@ public class Main extends Program {
         super(Daten.APPL_EFABH, args);
 
         EfaBoathouseFrame frame = new EfaBoathouseFrame();
+        
+        //Screen size settings are calculated already in Program initialisation  
+        //somewhere in the super() call above. But at that time, no Swing window has been initialized.
+        //We cannot determine the actual available screen area which are not covered by task bars and other stuff,
+        //as lang there is no java GUI present. So now, we can determine the screen size and provide it 
+        //with a window handle.
+        Dialog.initializeScreenSize(frame); // we do it again, here
 
         /*
          * During "showing" the efaBths frame, a lot of GUI and background tasks are initialized.

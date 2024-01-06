@@ -75,6 +75,8 @@ public class EfaUtil {
 	private static String UMLAUTS 		= "åàáâăäāąćçčèéêęëėěēìíîįīïďđģķĺļłńňñņòóôőõöōøřŕůùúûűüųūýÿšśşťţżžź";
 	private static String REPLACEMENT 	= "aaaaaaaaccceeeeeeeeiiiiiiddgklllnnnnoooooooorruuuuuuuuyysssttzzz"; 
 
+    private static String UMLAUTSEXTEND = UMLAUTS + "ßæœ";// those umlauts get translated to two characters
+
     public static String escapeXml(String str) {
         str = replaceString(str, "&", "&amp;");
         str = replaceString(str, "<", "&lt;");
@@ -230,7 +232,7 @@ public class EfaUtil {
     }    
     
     public static boolean containsUmlaut(String data) {
-    	return data.toLowerCase().matches(".*["+UMLAUTS+"]+.*");
+    	return data.toLowerCase().matches(".*["+UMLAUTSEXTEND+"]+.*");
     }
     
     public static String getString(String s, int length) {
@@ -2265,7 +2267,7 @@ public class EfaUtil {
 	public static Vector <String>makeFontFamilyVector (Boolean showAllFonts, String DEFAULT_FONT_NAME) {
         GraphicsEnvironment graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment();
         Font[] allFonts = graphicsEnvironment.getAllFonts();
-        String guiFontRegexp=".*arial.*|.*dialog|.*roboto.*|.*tahoma.*|.*trebuchet.*|.*verdana.*|.*inter.*|.*sansserif|.*segoe.ui.*|.*verdana.*|.*cantarell.*|.*dejavu.*|.*liberation.*|.*piboto.*|.*quicksand.*|.*helvetic.*";        
+        String guiFontRegexp="arial.*|dialog|roboto.*|tahoma.*|trebuchet.*|.*inter.*|.*sansserif|segoe.ui.*|verdana.*|cantarell.*|dejavu.*|liberation.*|.*piboto.*|noto.sans|noto.sans.display.*|quicksand.*";        
         Vector <String>fontFamilies = new Vector<String>();
         
         for (Font font : allFonts) {
