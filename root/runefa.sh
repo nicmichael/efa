@@ -45,6 +45,9 @@ CP=$CP:program/plugins/jh.jar
 # FTP Plugin
 CP=$CP:program/plugins/edtftpj.jar
 
+# SFTP support for FTP Plugin
+CP=$CP:program/plugins/jsch-0.1.55.jar
+
 # Mail Plugin
 CP=$CP:program/plugins/javax.mail.jar
 CP=$CP:program/plugins/activation.jar
