@@ -59,7 +59,7 @@ public class Plugins {
 
         if (pluginName.equals(PLUGIN_FTP)) {
             try {
-                FTPClient tmp = new FTPClient(null, null, null, null, null, null);
+                FTPClient tmp = new FTPClient(null, null, null, null, null, null,0);
                 tmp.runUpload();
                 return true;
             } catch (NoClassDefFoundError e) {

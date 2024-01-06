@@ -46,6 +46,9 @@ SET CP=%CP%;program/plugins/jh.jar
 REM Classpath: FTP-Plugin
 SET CP=%CP%;program/plugins/edtftpj.jar
 
+REM Classpath: SFTP support for FTP Plugin
+SET CP=%CP%;program/plugins/jsch-0.1.55.jar
+
 REM Classpath: MAIL-Plugin
 SET CP=%CP%;program/plugins/javax.mail.jar
 SET CP=%CP%;program/plugins/activation.jar
