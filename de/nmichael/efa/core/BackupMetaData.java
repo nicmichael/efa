@@ -136,13 +136,14 @@ public class BackupMetaData extends XMLWriter {
     public boolean read(String zipFile) {
         try {
             zipFileName = null;
-            ZipFile zip = new ZipFile(zipFile);
-            ZipEntry entry = zip.getEntry(BACKUP_META);
-            InputStream in = zip.getInputStream(entry);
-            XMLReader parser = EfaUtil.getXMLReader();
-            BackupMetaDataParser xmlhandler = new BackupMetaDataParser(this);
-            parser.setContentHandler(xmlhandler);
-            parser.parse(new InputSource(in));
+            try (ZipFile zip = new ZipFile(zipFile)) {
+				ZipEntry entry = zip.getEntry(BACKUP_META);
+				InputStream in = zip.getInputStream(entry);
+				XMLReader parser = EfaUtil.getXMLReader();
+				BackupMetaDataParser xmlhandler = new BackupMetaDataParser(this);
+				parser.setContentHandler(xmlhandler);
+				parser.parse(new InputSource(in));
+			}
             zipFileName = zipFile;
         } catch(Exception e) {
             Logger.logdebug(e);

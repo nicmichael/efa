@@ -226,7 +226,6 @@ public class Boats extends StorageObject {
 
         public void run() {
             setRunning(true);
-            this.setName("MergeBoatsProgressTask");
             logInfo(International.getString("Datensätze zusammenfügen") + " ...\n");
             try {
                 Project p = boats.getProject();
