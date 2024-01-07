@@ -2443,7 +2443,6 @@ public class StatisticTask extends ProgressTask {
 
     public void run() {
         setRunning(true);
-        this.setName("StatisticTask");
         try {
             // if we finish creating the statistics before progressDialog.showDialog()
             // in createStatistics() has completed, and at the end of creating the statistic

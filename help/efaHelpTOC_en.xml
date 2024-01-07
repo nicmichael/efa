@@ -10,7 +10,7 @@
        <tocitem text="About efa" target="default"/>
        <tocitem text="Installation" target="install"/>
        <tocitem text="Configuration" target="configure"/>
-       <tocitem text="efa Look&Feel" target="efaflatlaf"/>
+       <tocitem text="efa LookAndFeel" target="efaflatlaf"/>
    </tocitem>
 
 </tocitem>

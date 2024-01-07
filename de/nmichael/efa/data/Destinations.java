@@ -195,7 +195,6 @@ public class Destinations extends StorageObject {
 
         public void run() {
             setRunning(true);
-            this.setName("MergeDestinationsProgressTask");
             logInfo(International.getString("Datensätze zusammenfügen") + " ...\n");
             try {
                 Project p = destinations.getProject();

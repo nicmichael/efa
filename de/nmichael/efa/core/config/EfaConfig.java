@@ -244,6 +244,10 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 	private ItemTypeBoolean efaBoathouseBoatListWithReservationInfo;
 	private ItemTypeString efaBoathouseNonAllowedUnknownPersonNames;
 	private ItemTypeBoolean efaDirekt_eintragHideUnnecessaryInputFields;
+	
+	private ItemTypeBoolean efaDirekt_eintragPresentLastTripOnNewEntry;
+	private ItemTypeBoolean efaDirekt_eintragPresentLastTripOnLateEntry;
+	private ItemTypeInteger	efaDirekt_eintragPresentLastTripTimeout;
 	private ItemTypeInteger efaDirekt_plusMinutenAbfahrt;
 	private ItemTypeInteger efaDirekt_minusMinutenAnkunft;
 	private ItemTypeBoolean allowEnterEndDate;
@@ -1142,7 +1146,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 			addParameter(efaDirekt_eintragHideUnnecessaryInputFields = new ItemTypeBoolean("InputHideUnnecessaryFields",
 					true, IItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_INPUT),
 					International.getString("Beim Eintrag von Fahrten unnötige Eingabefelder ausblenden")));
-
+			
 			addHeader("efaBthsInputUnknownValues", IItemType.TYPE_PUBLIC,
 					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_INPUT),
 					International.getString("Umgang mit unbekannten Werten"), 3);
@@ -1228,6 +1232,34 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_INPUT), International
 							.getString("Vorgeschlagene Kilometer bei bekannten Zielen können nicht geändert werden")));
 
+			addHeader("PresentLastTripValues", IItemType.TYPE_EXPERT,
+					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_INPUT),
+					International.getString("Anlage mehrerer Fahrten hintereinander vereinfachen"), 3);
+			
+			addDescription("PresentLastTripDescription1", IItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_INPUT),
+					"<html>"+International.getStringWithMnemonic("PRESENT_LAST_TRIP_DESCRIPTION1")+"</html>", 3, 2,10);
+/*			addDescription("PresentLastTripDescription2", IItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_INPUT),
+					International.getString("und die Fahrten werden direkt hintereinander eingegeben."), 3, 2,10);
+			addDescription("PresentLastTripDescription3", IItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_INPUT),
+					International.getMessage("Wird die nächste Fahrt mit <{anderes_boot}> innerhalb eines Zeitraums erfasst,",International.getString("anderes Boot")), 3, 10, 2);
+			addDescription("PresentLastTripDescription4", IItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_INPUT),
+					International.getMessage("so werden die meisten Teile der letzten Fahrt im '{fahrt_beginnen}' Dialog übernommen.", International.getString("Fahrt beginnen")), 3, 2,10);
+	*/		
+			addParameter(efaDirekt_eintragPresentLastTripOnNewEntry = new ItemTypeBoolean("PresentLastTripOnNewEntry",
+					false, IItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_INPUT),
+					International.getString("Bei Eintragung von Fahrten Teile der vorangegangenen Fahrt einblenden")));
+
+			addParameter(efaDirekt_eintragPresentLastTripOnLateEntry = new ItemTypeBoolean("PresentLastTripOnLateEntry",
+					false, IItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_INPUT),
+					International.getString("Bei Eintragung von Fahrt-Nachträgen Teile der vorangegangenen Fahrt einblenden")));
+			
+			// minimum MUST be 1 minute, not zero, as otherwise the code in efaBaseFrame does not work correctly.
+			addParameter(efaDirekt_eintragPresentLastTripTimeout = new ItemTypeInteger("PresentLastTripTimeout", 2, 1,
+					45, false, IItemType.TYPE_EXPERT,
+					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_INPUT),
+					International.getString("Einblenden der vorhergehenden Fahrt bis maximal X Minuten")));			
+			
+			
 			// ============================= BOATHOUSE:GUI =============================
 
 			addHint("efaGuiBoathouseWindowHint", IItemType.TYPE_PUBLIC,
@@ -1728,6 +1760,10 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 			}
 
 			// ============================= CRONTAB =============================
+			
+			addHint("CronTabHint", IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_CRONTAB),
+					"<html>"+International.getStringWithMnemonic("Hiermit koennen Sie regelmaessig efaCLI-Kommandos ausfuehren lassen.")+"</html>",3,0,20);
+			
 			addParameter(crontab = new ItemTypeItemList("CronTab", new Vector<IItemType[]>(), this,
 					IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_CRONTAB),
 					International.getString("Automatische Abläufe")));
@@ -1890,7 +1926,8 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 
 	private IItemType addHint(String uniqueName, int type, String category, String caption, int gridWidth,
 			int padBefore, int padAfter) {
-		ItemTypeLabel item = (ItemTypeLabel) addDescription(uniqueName, type, category, " " + caption, gridWidth,
+		//if caption starts with html, do not have a blank as a prefix as this will disable html rendering.
+		ItemTypeLabel item = (ItemTypeLabel) addDescription(uniqueName, type, category, (caption.startsWith("<html>") ? caption : " "+caption), gridWidth,
 				padBefore, padAfter);
 		// item.setImage(BaseDialog.getIcon(ImagesAndIcons.IMAGE_MENU_ABOUT));
 		item.setBackgroundColor(hintBackgroundColor);
@@ -2256,7 +2293,17 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 	public boolean getValueEfaDirekt_eintragHideUnnecessaryInputFields() {
 		return efaDirekt_eintragHideUnnecessaryInputFields.getValue();
 	}
-
+	
+	public boolean getValueEfaDirekt_eintragPresentLastTripOnNewEntry() {
+		return efaDirekt_eintragPresentLastTripOnNewEntry.getValue();
+	}
+	public boolean getValueEfaDirekt_eintragPresentLastTripOnLateEntry(){
+		return efaDirekt_eintragPresentLastTripOnLateEntry.getValue();
+	}
+	public int 	getValueEfaDirekt_eintragPresentLastTripTimeout(){
+		return efaDirekt_eintragPresentLastTripTimeout.getValue();
+	}	
+	
 	public int getValueEfaDirekt_plusMinutenAbfahrt() {
 		return efaDirekt_plusMinutenAbfahrt.getValue();
 	}

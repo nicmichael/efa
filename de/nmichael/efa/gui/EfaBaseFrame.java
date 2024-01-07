@@ -4439,7 +4439,18 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         setFieldEnabled(true, Daten.efaConfig.getValueEfaDirekt_showBootsschadenButton(), boatDamageButton);
         setFieldEnabled(true, Daten.efaConfig.getValueEfaDirekt_showBoatNotCleanedButton(), boatNotCleanedButton);
 
-        efaBoathouseSetPersonAndBoat(item);
+        /* EFA_0015 - Late Entry shall use data from latest session, if boat and person both are null
+         * (so the user started "start session" without choosing a boat or a person in advance */
+        if (item != null && (item.boat != null || item.person!=null)) {
+        	efaBoathouseSetPersonAndBoat(item);
+        	setRequestFocus(date);
+        } else {
+        	if (Daten.efaConfig.getValueEfaDirekt_eintragPresentLastTripOnNewEntry()) {
+	        	efaBoathouseSetDataFromLatestSession();
+	        	setRequestFocus(boat);
+        	}
+        }
+        
         distance.parseAndShowValue("");
         updateTimeInfoFields();
         return true;
@@ -4550,12 +4561,48 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         setFieldEnabled(true, Daten.efaConfig.getValueEfaDirekt_showBootsschadenButton(), boatDamageButton);
         setFieldEnabled(true, Daten.efaConfig.getValueEfaDirekt_showBoatNotCleanedButton(), boatNotCleanedButton);
 
-        efaBoathouseSetPersonAndBoat(item);
+        /* EFA_0015 - Late Entry shall use data from latest session, if boat and person both are null
+         * (so the user started "late entry" without choosing a boat or a person in advance */
+        if (item != null && (item.boat != null || item.person!=null)) {
+        	efaBoathouseSetPersonAndBoat(item);
+        } else {
+        	if (Daten.efaConfig.getValueEfaDirekt_eintragPresentLastTripOnLateEntry()) {
+        		efaBoathouseSetDataFromLatestSession();
+        		// no special field to set focus on when presenting last Entry for late entry - we always start with date field in late entry.
+        	}
+        }
+        
         updateTimeInfoFields();
         setRequestFocus(date);
         return true;
     }
 
+    private void efaBoathouseSetDataFromLatestSession() {
+
+    	LogbookRecord myReference = logbook.getLastLogbookRecord();
+
+    	//last entry might be null if the logbook is empty
+    	if (myReference != null) {
+    		// we want to present the values of the last record only when we want to
+    		// add a new entry within N minutes after the last one
+    		// efaconfig makes sure that the value is >0
+    		if ((System.currentTimeMillis()-myReference.getLastModified())< (Daten.efaConfig.getValueEfaDirekt_eintragPresentLastTripTimeout()*60*1000)) {
+	    		setField(date, myReference);
+	    		setField(enddate, myReference);
+	    		setField(starttime, myReference);
+	    		setField(endtime, myReference);
+	    		setField(destination, myReference);
+	            setDestinationInfo( (myReference != null ? myReference.getDestinationRecord(getValidAtTimestamp(myReference)) : null) );
+	    		setField(waters, myReference);
+	    		setField(distance,myReference);
+	    		setField(comments, myReference);
+    		}
+
+    	}
+
+    }
+    
+    
     boolean efaBoathouseAbortSession(ItemTypeBoatstatusList.BoatListItem item) {
         currentRecord = null;
         try {
