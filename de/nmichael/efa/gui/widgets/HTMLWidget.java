@@ -134,7 +134,7 @@ public class HTMLWidget extends Widget {
     private class HTMLUpdater extends Thread {
 
         volatile boolean keepRunning = true;
-        private String url = null;
+        private volatile String url = null;
         private volatile int updateIntervalInSeconds = 24*3600;
 
         public void run() {
@@ -178,6 +178,7 @@ public class HTMLWidget extends Widget {
                     }
                     Thread.sleep(updateIntervalInSeconds*1000);
                 } catch (InterruptedException e) {
+                	//This is when the thread gets interrupted when it is sleeping.
                 	EfaUtil.foo();            
                 } catch (Exception e) {
                 	Throwable t = e.getCause();
@@ -199,8 +200,9 @@ public class HTMLWidget extends Widget {
             this.interrupt();
         }
 
-        public void stopHTML() {
+        public synchronized void stopHTML() {
             keepRunning = false;
+            interrupt(); // wake up thread
         }
 
     }

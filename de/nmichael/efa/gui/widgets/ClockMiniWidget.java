@@ -43,9 +43,19 @@ public class ClockMiniWidget {
         return label;
     }
 
+    public void setVisible(Boolean value) {
+    	SwingUtilities.invokeLater(new Runnable() {
+    		public void run() {
+                label.setVisible(value);
+    		}
+    	});     
+    	clockUpdater.setVisible(value);
+    }
+    
     class ClockUpdater extends Thread {
 
         volatile boolean keepRunning = true;
+        volatile boolean visible=true;
 
         /*
          * Gets the remaining seconds until the next full minute
@@ -67,16 +77,22 @@ public class ClockMiniWidget {
                 try {
                 	// simply setting label text is not thread safe with swing.
                 	//label.setText(EfaUtil.getCurrentTimeStampHHMM());
+                	if (visible) {
+	                	//Use invokelater as swing threadsafe ways
+	                	SwingUtilities.invokeLater(new MainGuiClockUpdater(label, EfaUtil.getCurrentTimeStampHHMM().toString()));
+	                	
+	                	//wait until next full minute plus one sec. this is more accurate than just waiting 60.000 msec
+	                	//from a random offset.
+	                	long waitTime=getMilliSecondsToFullMinute()+1000;
+	                    Thread.sleep(waitTime);
+                	} else {
+                		Thread.sleep(60*60*1000); // not visible, so sleep an hour
+                	}
                 	
-                	//Use invokelater as swing threadsafe ways
-                	SwingUtilities.invokeLater(new MainGuiClockUpdater(label, EfaUtil.getCurrentTimeStampHHMM().toString()));
-                	
-                	//wait until next full minute plus one sec. this is more accurate than just waiting 60.000 msec
-                	//from a random offset.
-                	long waitTime=getMilliSecondsToFullMinute()+1000;
-                    Thread.sleep(waitTime);
-                    
-                } catch (Exception e) {
+                } catch (InterruptedException e) {
+                	EfaUtil.foo();
+                } 
+                catch (Exception e) {
                     Logger.logdebug(e);
                 }
             }
@@ -84,8 +100,14 @@ public class ClockMiniWidget {
 
         public void stopClock() {
             keepRunning = false;
+            interrupt();
         }
 
+        public synchronized void setVisible(Boolean value) {
+        	visible=value;
+        	interrupt();//wake up thread
+        }
+        
     }
     
     /**
