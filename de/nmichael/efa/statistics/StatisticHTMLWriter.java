@@ -31,7 +31,9 @@ import de.nmichael.efa.util.Logger;
 
 public class StatisticHTMLWriter extends StatisticWriter {
 
-    private static String EFA_STYLES = "efa-html-styles.css";
+    private static final String HTML_FILE_EFA_END_TAG = "<!--EFA-ENDE-->";
+	private static final String HTML_FILE_EFA_START_TAG = "<!--EFA-START-->";
+	private static String EFA_STYLES = "efa-html-styles.css";
 
     public StatisticHTMLWriter(StatisticsRecord sr, StatisticsData[] sd) {
         super(sr, sd);
@@ -63,7 +65,7 @@ public class StatisticHTMLWriter extends StatisticWriter {
             f = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(sr.sOutputFile), sr.getOutputEncoding()));
             if (sr.sOutputHtmlUpdateTable) {
                 String zz;
-                while ((zz = fo.readLine()) != null && !zz.trim().equals("<!--EFA-START-->")) {
+                while ((zz = fo.readLine()) != null && !zz.trim().equals(HTML_FILE_EFA_START_TAG)) {
                     f.write(zz + "\n");
                 }
             } else {
@@ -81,7 +83,7 @@ public class StatisticHTMLWriter extends StatisticWriter {
             }
 
             // Start des eigentlichen Bereichs
-            f.write("<!--EFA-START-->\n");
+            f.write(HTML_FILE_EFA_START_TAG+"\n");
 
             f.write("<table class=\"header\">\n");
             int rowspan = 5;
@@ -345,8 +347,8 @@ public class StatisticHTMLWriter extends StatisticWriter {
             // Ende des eigentlichen Bereichs
             if (sr.sOutputHtmlUpdateTable) {
                 String zz;
-                while ((zz = fo.readLine()) != null && !zz.trim().equals("<!--EFA-ENDE-->"));
-                f.write("\n<!--EFA-ENDE-->\n");
+                while ((zz = fo.readLine()) != null && !zz.trim().equals(HTML_FILE_EFA_END_TAG));
+                f.write("\n"+HTML_FILE_EFA_END_TAG+"\n");
                 while ((zz = fo.readLine()) != null) {
                     f.write(zz + "\n");
                 }
@@ -354,7 +356,7 @@ public class StatisticHTMLWriter extends StatisticWriter {
                 File bak = new File(tmpFile);
                 bak.delete();
             } else {
-                f.write("\n<!--EFA-ENDE-->\n");
+                f.write("\n"+HTML_FILE_EFA_END_TAG+"\n");
                 f.write("</body>\n");
                 f.write("</html>\n");
             }

@@ -11,8 +11,6 @@
 package de.nmichael.efa.data.efacloud;
 
 import de.nmichael.efa.Daten;
-import de.nmichael.efa.core.config.AdminRecord;
-import de.nmichael.efa.core.config.Admins;
 import de.nmichael.efa.gui.EfaBaseFrame;
 import de.nmichael.efa.gui.EfaBoathouseFrame;
 import de.nmichael.efa.gui.EfaCloudConfigDialog;
@@ -699,21 +697,6 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
     }
 
     /**
-     * Full application restart to reset all queues and communication. The function is provided for the raspberry bootup
-     * system time issue.
-     */
-    void restartEfa() {
-        if (efaGUIroot instanceof EfaBoathouseFrame) {
-            // Indicate the restart cause. This has no effect on the queue handling.
-            Logger.log(Logger.WARNING, Logger.MSG_EFACLOUDSYNCH_INFO, International
-                    .getMessage("Kommunikation zu '{URL}' ist nachhaltig gestört. Versuche einen Neustart des Programms zur Behebung.",
-                            efaCloudUrl));
-            AdminRecord admin = Daten.admins.getAdmin(Admins.SUPERADMIN);
-            ((EfaBoathouseFrame) efaGUIroot).cancel(null, EfaBoathouseFrame.EFA_EXIT_REASON_AUTORESTART, admin, true);
-        }
-    }
-
-    /**
      * Display the current status in the GUI.
      */
     public void showStatusAtGUI() {
@@ -1285,4 +1268,3 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
     }
 
 }
-

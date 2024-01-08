@@ -2,13 +2,16 @@
 <Plugins>
 
     <Plugin name="ftp">
-        <FullName>edtFTPj/Free</FullName>
-        <Version>2.3.0</Version>
-        <Copyright>Copyright (c) Enterprise Distributed Technologies, licensed under the GNU LGPL</Copyright>
+        <FullName>edtFTPj/Free &amp; JCraft jSch Library</FullName>
+        <Version>2.3.0 / 0.1.55</Version>
+        <Copyright>edtFTPj Copyright (c) Enterprise Distributed Technologies, licensed under the GNU LGPL; 
+			jSch Copyright (c) 2002-2015 Atsuhiko Yamanaka, JCraft,Inc., Licensed under a BSD-style license
+		</Copyright>
         <Description lang="de">FTP-Upload von Statistiken aus efa heraus</Description>
         <Description lang="en">FTP Upload of statistics directly from efa</Description>
         <Files baseurl="http://efa.nmichael.de/plugins/ftp/">
             <File size="186258">edtftpj.jar</File>
+            <File size="280681">jsch-0.1.55.jar</File>            
         </Files>
     </Plugin>
 
