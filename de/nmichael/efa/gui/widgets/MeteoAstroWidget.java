@@ -413,6 +413,7 @@ public class MeteoAstroWidget extends Widget {
 
     public void stop() {
         try {
+        	// stopHTML also lets the thread die, and efaBths is responsible to set up a new thread.
             htmlUpdater.stopHTML();
         } catch(Exception eignore) {
             // nothing to do, might not be initialized
@@ -772,20 +773,24 @@ public class MeteoAstroWidget extends Widget {
 
                     // Use Swing thread-safe update method instead
                     SwingUtilities.invokeLater(new UpdateHtmlMeteoPaneRunner(htmlPane,htmlDoc.toString()));
-                } catch(Exception e) {
+                } 
+                catch(Exception e) {
                     Logger.logdebug(e);
                 }
 
                 try {
                     Thread.sleep(Math.max(updateIntervalInSeconds, 3600) * 1000);
-                } catch(Exception e) {
+                } catch (InterruptedException e) {
+                	EfaUtil.foo();
+                }catch(Exception e) {
                     Logger.logdebug(e);
                 }
             }
         }
         
-        public void stopHTML() {
+        public synchronized void stopHTML() {
             keepRunning = false;
+            interrupt(); // wake up thread
         }
 
         private String saveImage(String image, String format) {

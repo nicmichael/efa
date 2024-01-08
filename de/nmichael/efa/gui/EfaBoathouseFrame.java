@@ -875,7 +875,7 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
         if (clock == null) {
             clock = new ClockMiniWidget();
         }
-        clock.getGuiComponent().setVisible(Daten.efaConfig.getValueEfaDirekt_showUhr());
+        clock.setVisible(Daten.efaConfig.getValueEfaDirekt_showUhr());
     }
 
     private void updateGuiNews() {
@@ -884,7 +884,7 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
         }
         news.setText(Daten.efaConfig.getValueEfaDirekt_newsText());
         news.setScrollSpeed(Daten.efaConfig.getValueEfaDirekt_newsScrollSpeed());
-        news.getGuiComponent().setVisible(Daten.efaConfig.getValueEfaDirekt_showNews());
+        news.setVisible(Daten.efaConfig.getValueEfaDirekt_showNews());
         if (isDisplayable()) {
             packFrame("updateGuiNews()");
         }

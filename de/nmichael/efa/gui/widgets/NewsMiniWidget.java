@@ -19,6 +19,7 @@ import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
+import de.nmichael.efa.util.EfaUtil;
 import de.nmichael.efa.util.Logger;
 
 public class NewsMiniWidget {
@@ -46,6 +47,15 @@ public class NewsMiniWidget {
         newsUpdater.setScrollSpeed(scrollSpeed);
     }
 
+    public void setVisible(Boolean value) {
+    	SwingUtilities.invokeLater(new Runnable() {
+    		public void run() {
+                label.setVisible(value);
+    		}
+    	});    
+    	// update the thread. we do not need to calculate ticket contents if we are not visible.
+    	newsUpdater.setVisible(value); 
+    }
     public void stopNews() {
         newsUpdater.stopNews();
     }
@@ -57,6 +67,7 @@ public class NewsMiniWidget {
     class NewsUpdater extends Thread {
 
         volatile boolean keepRunning = true;
+        volatile boolean visible=true;
         private String text;
         private int startPosition;
         private int length;
@@ -64,6 +75,7 @@ public class NewsMiniWidget {
         private int maxCharsToShow = 50;
         private int maxWidth = 600;
         private int maxCharWidth = 0;
+
         public void run() {
             try {
                 Thread.sleep(1000);
@@ -73,19 +85,26 @@ public class NewsMiniWidget {
             while (keepRunning) {
                 
                 try {
-                	//gets maxWidth depending on labels's width 
-                	//and gets maxChar, depending on the "X" character's length in the current font
-                 	getMaxCharsToShow();
-
-                	//Use invokelater as swing threadsafe ways
-                    SwingUtilities.invokeLater(new MainGuiNewsUpdater(label, getText(text, startPosition, maxCharsToShow)));
-
-                    startPosition = (startPosition + 1) % (length + 3);
-                    if (length <= maxCharsToShow) {
-                        Thread.sleep(60000);
-                    } else {
-                        Thread.sleep(scrollSpeed);
-                    }
+                	if (visible) {
+	                	//gets maxWidth depending on labels's width 
+	                	//and gets maxChar, depending on the "X" character's length in the current font
+	                 	getMaxCharsToShow();
+	
+	                	//Use invokelater as swing threadsafe ways
+	                    SwingUtilities.invokeLater(new MainGuiNewsUpdater(label, getText(text, startPosition, maxCharsToShow)));
+	
+	                    startPosition = (startPosition + 1) % (length + 3);
+	                    if (length <= maxCharsToShow) {
+	                        Thread.sleep(60000);
+	                    } else {
+	                        Thread.sleep(scrollSpeed);
+	                    }
+                	} else {
+                		//not visible. sleep an hour. if someone makes us visible, we get woken up by an interruptedexception.
+                		Thread.sleep(60*60*1000);
+                	}
+                } catch (InterruptedException e) {
+                	EfaUtil.foo();
                 } catch (Exception e) {
                     Logger.logdebug(e);
                 }
@@ -135,19 +154,30 @@ public class NewsMiniWidget {
             return t;
         }
         
-        public void setText(String text) {
+        /* in the following functions, it is neccessary to interrupt the thread to get the settings get active.
+         * because sometimes, the sleep time is very high.
+         */
+        public synchronized void setText(String text) {
             this.text = text;
             this.length = text.length();
             this.startPosition = 0;
             getMaxCharsToShow();
+            interrupt();
         }
 
-        public void setScrollSpeed(int scrollSpeed) {
+        public synchronized void setScrollSpeed(int scrollSpeed) {
             this.scrollSpeed = scrollSpeed;
+            interrupt();
         }
 
-        public void stopNews() {
+        public synchronized void stopNews() {
             keepRunning = false;
+            interrupt();
+        }
+        
+        public synchronized void setVisible(boolean value) {
+        	visible=value;
+        	interrupt();
         }
 
     }

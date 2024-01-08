@@ -52,6 +52,7 @@
             <ChangeItem>BugFix: Swing Multithreading Problemm gelöst bei automatischem Fahrtenbuchwechsel, periorischem oder geplanten efaBths Neustart und Aktualisierung des efaCloud status im Fenstertitel.</ChangeItem>
             <ChangeItem>BugFix: Dialog für automatisches Beenden/Neustarten von efa zeigt den Grund korrekt an.</ChangeItem>
             <ChangeItem>BugFix: Resource Leak behoben: Die während eines Backups erstellte ZIP-Datei wird nach Abschluss geschlossen.</ChangeItem>
+			<ChangeItem>BugFix: News- und Uhr Widgets laufen im Hintergrund nicht weiter, wenn sie nicht sichtbar sind.</ChangeItem>
             <ChangeItem>BugFix: efaCloud: Verbesserungen der Synchronisation: bei Re-Synchronisation 'kürzlich' geänderter/neuer Datensätze berücksichtigt nur noch Datensätze der letzten 5 Tage statt 30 Tage.</ChangeItem>
             <ChangeItem>BugFix: efaCloud: Verbesserungen der Synchronisation: Besserer Umgang mit der Situation, wenn die Klartext-Namen durch UUIDs ersetzt werden (durch Aufräumarbeiten am Jahresende).</ChangeItem>
             <ChangeItem>BugFix: efaCloud: Projekt kann nicht mehr mit leeren Feldern zu efaCloud-Credentials in ein efaCloud-Projekt umgestellt werden.</ChangeItem>
@@ -104,6 +105,7 @@
             <ChangeItem>BugFix: Fixed swing multithreading problem when performing automatic logbook change, exiting efa due to periodic or planned restart, and updating efaCloud status in the title bar.</ChangeItem>
             <ChangeItem>BugFix: Dialog for automatic shutdown/restart of efa now shows the reason.</ChangeItem>
             <ChangeItem>BugFix: Removed resource leak: ZIP file created during a backup gets closed afterwards.</ChangeItem>
+			<ChangeItem>BugFix: Widgets for clock and news stop running in background if invisible.</ChangeItem>
 			<ChangeItem>BugFix: efaCloud: Sync improvements: when resyncing 'recently' changed/created records only records of the last 5 days are considered, instead of the last 30 days.</ChangeItem>
             <ChangeItem>BugFix: efaCloud: Sync improvements: better handling when names of boats and other items get replaced by uuids (by cleaning actions at the end of the year).</ChangeItem>
             <ChangeItem>BugFix: efaCloud: Cannot convert an existing project to efaCloud then efaCloud credential fields are empty</ChangeItem>
