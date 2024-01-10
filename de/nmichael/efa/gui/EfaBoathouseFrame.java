@@ -447,9 +447,10 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
                 efaLabel.setIcon(getIcon(ImagesAndIcons.IMAGE_EFA_ICON_SMALL ));
                 titleLabel.setText(Daten.EFA_LONGNAME);
                 titleLabel.setForeground(Color.white);
-                titleLabel.setFont(titleLabel.getFont().deriveFont(12f));
+                titleLabel.setFont(titleLabel.getFont().deriveFont(Font.BOLD,12f));
                 titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
-                titleLabel.setHorizontalTextPosition(SwingConstants.CENTER);
+                titleLabel.setHorizontalTextPosition(SwingConstants.LEFT);
+                titleLabel.setIconTextGap(20);
                 titleLabel.setBackground(bgColor);
                 JButton closeButton = new JButton();
                 closeButton.setIcon(getIcon(ImagesAndIcons.IMAGE_FRAME_CLOSE ));
@@ -1287,8 +1288,16 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
             TxRequestQueue txq = TxRequestQueue.getInstance();
             if (txq != null)
                 txq.setEfaGUIrootContainer(this);   // is relevant only at startup
-            String efaCloudStatus = (txq != null) ? txq.getStateForDisplay() : "";
+            String efaCloudStatus = (txq != null) ? txq.getStateForDisplay(false) : "";
             titleLabel.setText(Daten.EFA_LONGNAME + " [" + Daten.project.getProjectName() +
+                    (logbook != null && logbook.isOpen() ? ": " + logbook.getName() : "") + 
+                    (Daten.project.getMyBoathouseName() != null ? " - " + Daten.project.getMyBoathouseName() : "") +
+                    "] " + efaCloudStatus);
+            
+            titleLabel.setIcon((txq != null) ? txq.getStateIconForDisplay(): null);
+            
+            efaCloudStatus = (txq != null) ? txq.getStateForDisplay(true) : "";
+            this.setTitle(Daten.EFA_LONGNAME + " [" + Daten.project.getProjectName() +
                     (logbook != null && logbook.isOpen() ? ": " + logbook.getName() : "") + 
                     (Daten.project.getMyBoathouseName() != null ? " - " + Daten.project.getMyBoathouseName() : "") +
                     "]" + efaCloudStatus);

@@ -876,7 +876,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
                         TxRequestQueue txq = TxRequestQueue.getInstance();
                         if (txq != null)
                             txq.setEfaGUIrootContainer(this);   // is relevant only at startup
-                        String efaCloudStatus = (txq != null) ? txq.getStateForDisplay() : "";
+                        String efaCloudStatus = (txq != null) ? txq.getStateForDisplay(true) : "";
                         setTitle(
                                 Daten.project.getProjectName() + ": " + logbook.getName() + " - " + Daten.EFA_LONGNAME +
                                         adminNameString + efaCloudStatus);
