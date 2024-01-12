@@ -83,6 +83,13 @@ public class ImagesAndIcons {
 	public static final String IMAGE_BUTTON_SPECIAL = "button_special.png";
 	public static final String IMAGE_BUTTON_STAT = "button_stat.png";
 	public static final String IMAGE_EFA_ICON_SMALL = "efa_icon_small.png";
+	public static final String IMAGE_EFACLOUD_AUTHENTICATING = "efacloud_AUTHENTICATING.png";
+	public static final String IMAGE_EFACLOUD_DISCONNECTED = "efacloud_DISCONNECTED.png";
+	public static final String IMAGE_EFACLOUD_IDLE = "efacloud_IDLE.png";
+	public static final String IMAGE_EFACLOUD_PAUSED = "efacloud_PAUSED.png";
+	public static final String IMAGE_EFACLOUD_STOPPED = "efacloud_STOPPED.png";
+	public static final String IMAGE_EFACLOUD_SYNCHRONIZING = "efacloud_SYNCHRONIZING.png";
+	public static final String IMAGE_EFACLOUD_WORKING = "efacloud_WORKING.png";
 	public static final String IMAGE_FRAME_CLOSE = "frame_close.png";
 	public static final String IMAGE_MENU_ABOUT = "menu_about.png";
 	public static final String IMAGE_MENU_ADMINS = "menu_admins.png";
