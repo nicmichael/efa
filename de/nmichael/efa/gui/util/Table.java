@@ -24,7 +24,7 @@ public class Table extends JTable {
 
     BaseDialog dlg;
     TableSorter sorter;
-    TableCellRenderer renderer;
+    EfaTableCellRenderer renderer;
     TableItemHeader[] header;
     TableItem[][] data;
     private boolean dontResize = false;
@@ -35,7 +35,7 @@ public class Table extends JTable {
     private int minColumnWidth = 50;
     private int[] minColumnWidths = null;
 
-    public Table(BaseDialog dlg, TableSorter sorter, TableCellRenderer renderer, 
+    public Table(BaseDialog dlg, TableSorter sorter, EfaTableCellRenderer renderer, 
             TableItemHeader[] header, TableItem[][] data, boolean allowSorting) {
         super(sorter);
         this.dlg = dlg;
@@ -57,7 +57,7 @@ public class Table extends JTable {
         this.setRowHeight(fm.getHeight()+4);
 
         if (renderer == null) {
-            renderer = new TableCellRenderer();
+            renderer = new EfaTableCellRenderer();
             renderer.setAlternatingRowColor(Daten.efaConfig.getTableAlternatingRowColor());
         }
         setDefaultRenderer(Object.class, renderer);
@@ -215,11 +215,11 @@ public class Table extends JTable {
         return createTable(dlg, null, header, data);
     }
 
-    public static Table createTable(BaseDialog dlg, TableCellRenderer renderer, TableItemHeader[] header, TableItem[][] data) {
+    public static Table createTable(BaseDialog dlg, EfaTableCellRenderer renderer, TableItemHeader[] header, TableItem[][] data) {
         return createTable(dlg, renderer, header, data, true);
     }
 
-    public static Table createTable(BaseDialog dlg, TableCellRenderer renderer, TableItemHeader[] header,
+    public static Table createTable(BaseDialog dlg, EfaTableCellRenderer renderer, TableItemHeader[] header,
             TableItem[][] data, boolean allowSorting) {
         for (int i=0; i<data.length; i++) {
             for (int j=0; j<data[i].length; j++) {
@@ -247,7 +247,7 @@ public class Table extends JTable {
         return sorter.getSortingAscending();
     }
 
-    public TableCellRenderer getRenderer() {
+    public EfaTableCellRenderer getRenderer() {
         return renderer;
     }
 

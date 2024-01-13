@@ -9,6 +9,8 @@
 			<ChangeItem>Neu: EfaFlatLight LookAndFeel bietet eine klare, modernere Darstellung. In weiten Bereichen konfigurierbar.</ChangeItem>
 			<ChangeItem>Neu: EfaFlatLight Standard-Look nach Update oder Installation. Bei Update ist ein Neustart des Rechners erforderlich, damit efaFlatLight aktiv wird.</ChangeItem>
 			<ChangeItem>Neu: Fallback: Wenn flatLaf-Bibliothek nicht gefunden wird, wird METAL als Standard-Look verwendet.</ChangeItem>
+			<ChangeItem>Neu: EfaCloud-Status-Icons in blauer efaBths-Titelleiste sind besser dargestellt.</ChangeItem>
+			<ChangeItem>Neu: Fahrtenbuch-Anzeige in efaBths nutzt alternierende Zeilenfarben für mehr Übersicht.</ChangeItem>
             <ChangeItem>Neu: EfaConfig: Schriftart für efaBths und efaBase einstellbar. Bessere Standardschrift für alle LookAndFeel.</ChangeItem>
             <ChangeItem>Neu: EfaConfig: Tooltip-Farben sind konfigurierbar.</ChangeItem>
             <ChangeItem>Neu: EfaConfig: Neustrukturierung der Konfiguration mit Überschriften und Hinweisen zu einzelnen Konfigurationselementen.</ChangeItem>
@@ -61,6 +63,8 @@
 			<ChangeItem>New: EfaFlatLight LookAndFeel provides a clear, modern look of efa. Customizable in wide ranges.</ChangeItem>
 			<ChangeItem>New: EfaFlatLight is the standard LookAndFeel after update or new install. After an update, a reboot of the machine is neccessary to activate flatlaf.</ChangeItem>
 			<ChangeItem>New: Fallback: If flatlaf library cannot be found, METAL is used as standard LookAndFeel.</ChangeItem>
+			<ChangeItem>New: Blue window title bar of efaBths shows efaCloud-status as icons instead of text.</ChangeItem>
+			<ChangeItem>New: Show Logbook dialog in efaBths makes use of alternating row colors.</ChangeItem>
             <ChangeItem>New: EfaConfig: Font is customizable for all LookAndFeel in efaBase and efaBths. Better standard font for all LookAndFeel.</ChangeItem>
             <ChangeItem>New: EfaConfig: Tooltip colores customizable.</ChangeItem>
             <ChangeItem>New: EfaConfig: Restructuring of the configuration with headings and notes on individual configuration elements.</ChangeItem>

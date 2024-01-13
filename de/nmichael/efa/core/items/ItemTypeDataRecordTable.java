@@ -95,7 +95,7 @@ public class ItemTypeDataRecordTable extends ItemTypeTable implements IItemListe
         setData(persistence, validAt, admin, filterFieldName, filterFieldValue);
         setActions(actions, actionTypes, actionIcons);
         this.itemListenerActionTable = itemListenerActionTable;
-        renderer = new de.nmichael.efa.gui.util.TableCellRenderer();
+        renderer = new de.nmichael.efa.gui.util.EfaTableCellRenderer();
         renderer.setAlternatingRowColor(Daten.efaConfig.getTableAlternatingRowColor());
         renderer.setMarkedBold(false);
         renderer.setMarkedForegroundColor(markedCellColor);
