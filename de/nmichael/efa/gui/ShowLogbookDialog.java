@@ -9,31 +9,65 @@
  */
 package de.nmichael.efa.gui;
 
+import java.awt.AWTEvent;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.util.Hashtable;
+import java.util.UUID;
+
+import javax.swing.DefaultCellEditor;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JDialog;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.TableModelEvent;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
+
 import de.nmichael.efa.Daten;
-import de.nmichael.efa.core.items.*;
-import de.nmichael.efa.data.*;
+import de.nmichael.efa.core.items.IItemListener;
+import de.nmichael.efa.core.items.IItemType;
+import de.nmichael.efa.core.items.ItemTypeBoolean;
+import de.nmichael.efa.core.items.ItemTypeInteger;
+import de.nmichael.efa.core.items.ItemTypeStringAutoComplete;
+import de.nmichael.efa.core.items.ItemTypeTextArea;
+import de.nmichael.efa.data.Logbook;
+import de.nmichael.efa.data.LogbookRecord;
+import de.nmichael.efa.data.MessageRecord;
+import de.nmichael.efa.data.Messages;
 import de.nmichael.efa.data.storage.DataKey;
 import de.nmichael.efa.data.storage.DataKeyIterator;
 import de.nmichael.efa.data.types.DataTypeIntString;
 import de.nmichael.efa.gui.util.AutoCompleteList;
-import de.nmichael.efa.gui.util.TableSorter;
+import de.nmichael.efa.gui.util.EfaTableCellRenderer;
 import de.nmichael.efa.gui.util.TableHeaderCellRendererBold;
-import de.nmichael.efa.util.*;
+import de.nmichael.efa.gui.util.TableSorter;
 import de.nmichael.efa.util.Dialog;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.Hashtable;
-import java.util.UUID;
-import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.TableModelEvent;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.DefaultTableModel;
+import de.nmichael.efa.util.EfaUtil;
+import de.nmichael.efa.util.International;
+import de.nmichael.efa.util.Logger;
 
 public class ShowLogbookDialog extends BaseDialog implements IItemListener {
 
-    private Logbook logbook;
+	private static final long serialVersionUID = -2271729956595866905L;
+
+	private Logbook logbook;
     private JScrollPane scrollPane;
     private JTable table;
     private TableSorter sorter;
@@ -146,8 +180,10 @@ public class ShowLogbookDialog extends BaseDialog implements IItemListener {
         int c = Math.min(count, max);
         Object[][] fahrten = new Object[c][11];
         row2entryno = new Hashtable<Integer,DataTypeIntString>();
-
+        Font f = this.getFont();
+        FontMetrics fm = this.getFontMetrics(f);     
         try {
+   	
             DataKeyIterator it = logbook.data().getStaticIterator();
             DataKey k = it.getLast();
             while (k != null) {
@@ -181,13 +217,20 @@ public class ShowLogbookDialog extends BaseDialog implements IItemListener {
                 Object[] mRowTitle = new Object[1];
                 mRowTitle[0] = "foo";
                 MyNestedJTable mTable = new MyNestedJTable(mRowData, mRowTitle) {
+					private static final long serialVersionUID = 4113309999908631888L;
 
-                    public boolean isCellEditable(int row, int column) {
+					public boolean isCellEditable(int row, int column) {
                         return false;
                     }
                 };
-                mTable.getColumn("foo").setCellRenderer(new HighlightTableCellRenderer());
+                // user alternate row coloring on the inner table for crews 
+                HighlightTableCellRenderer myInnerRenderer = new HighlightTableCellRenderer();
+                if (Daten.efaConfig.getValueEfaDirekt_tabelleAlternierendeZeilenFarben()) {
+                	myInnerRenderer.setAlternatingRowColor(Daten.efaConfig.getTableAlternatingRowColor());
+                }
+                mTable.getColumn("foo").setCellRenderer(myInnerRenderer);
                 mTable.setShowGrid(false);
+                mTable.setRowHeight(fm.getHeight()+6);
                 fahrten[c][4] = mTable;
 
                 fahrten[c][5] = r.getStartTime();
@@ -221,7 +264,12 @@ public class ShowLogbookDialog extends BaseDialog implements IItemListener {
 
         sorter = new TableSorter(new DefaultTableModel(fahrten, title));
         table = new MyJTable(sorter);
-        table.getColumn(International.getString("Steuermann")).setCellRenderer(new HighlightTableCellRenderer());
+        
+        HighlightTableCellRenderer mySteuermannRenderer = new HighlightTableCellRenderer();
+        if (Daten.efaConfig.getValueEfaDirekt_tabelleAlternierendeZeilenFarben()) {
+        	mySteuermannRenderer.setAlternatingRowColor(Daten.efaConfig.getTableAlternatingRowColor());
+        }
+        table.getColumn(International.getString("Steuermann")).setCellRenderer(mySteuermannRenderer);
         table.getColumn(International.getString("Mannschaft")).setCellRenderer(new TableInTableRenderer());
 
         ButtonRenderer buttonRenderer = new ButtonRenderer();
@@ -229,18 +277,23 @@ public class ShowLogbookDialog extends BaseDialog implements IItemListener {
         table.getColumn("C").setCellEditor(new ButtonEditor(buttonRenderer));
         
         // Update for standard tables: increase row height for better readability
-        Font f = this.getFont();
-        FontMetrics fm = this.getFontMetrics(f);
-        table.setRowHeight(fm.getHeight()+4);
-        
+        table.setRowHeight(fm.getHeight()+6);
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         // Update for standard tables: Replace default header renderer with bold+dark background renderer 
-        javax.swing.table.TableCellRenderer l_originalRenderer = table.getTableHeader().getDefaultRenderer();
+        TableCellRenderer l_originalRenderer = table.getTableHeader().getDefaultRenderer();
 
 
         TableHeaderCellRendererBold r = new TableHeaderCellRendererBold(l_originalRenderer);
         r.setBackground(Daten.efaConfig.getTableHeaderBackgroundColor());
         r.setForeground(Daten.efaConfig.getTableHeaderHeaderColor());
         table.getTableHeader().setDefaultRenderer(r);
+        
+        EfaTableCellRenderer renderer = new  EfaTableCellRenderer();
+        if (Daten.efaConfig.getValueEfaDirekt_tabelleAlternierendeZeilenFarben()) {
+            renderer.setAlternatingRowColor(Daten.efaConfig.getTableAlternatingRowColor());
+        }
+        table.setDefaultRenderer(Object.class, renderer);
+
         
         updateNestedTableHeight();
         sorter.addMouseListenerToHeaderInTable(table);
@@ -392,7 +445,9 @@ public class ShowLogbookDialog extends BaseDialog implements IItemListener {
 
     class MyJTable extends JTable {
 
-        public MyJTable(TableSorter sorter) {
+		private static final long serialVersionUID = 7627514043061724774L;
+
+		public MyJTable(TableSorter sorter) {
             super(sorter);
         }
 
@@ -426,9 +481,12 @@ public class ShowLogbookDialog extends BaseDialog implements IItemListener {
         }
     }
 
-    class MyNestedJTable extends JTable {
+    private class MyNestedJTable extends JTable {
 
-        String toText = "";
+		private static final long serialVersionUID = -1632568401117917149L;
+		
+		private boolean startsWithOddRow=true;
+		String toText = "";
         Object[][] data = null;
         Object[] title = null;
 
@@ -451,6 +509,15 @@ public class ShowLogbookDialog extends BaseDialog implements IItemListener {
         public Object clone() {
             return new MyNestedJTable(data, title);
         }
+        
+        public void setStartWithOddRow(boolean value) {
+        	startsWithOddRow=value;
+        }
+        
+        public boolean getStartWithOddRow() {
+        	return startsWithOddRow;
+        }
+        
     }
 
     class TableItem {
@@ -480,6 +547,8 @@ public class ShowLogbookDialog extends BaseDialog implements IItemListener {
                 if (value == null) {
                     return null;
                 }
+                ((MyNestedJTable) value).setStartWithOddRow(row % 2 == 1);
+                //((MyNestedJTable) value).setCurrentRowSelected(isSelected); 
                 return (Component) value;
             } catch (Exception e) {
                 return null;
@@ -488,30 +557,69 @@ public class ShowLogbookDialog extends BaseDialog implements IItemListener {
     }
 
     class HighlightTableCellRenderer extends DefaultTableCellRenderer {
-
-        public Component getTableCellRendererComponent(JTable table, Object value,
+    	
+		private static final long serialVersionUID = -1661015873516314571L;
+		
+	    private Color alternateColor = new Color(219,234,249);
+	    private boolean useAlternatingColor= false;
+	    
+		public Component getTableCellRendererComponent(JTable table, Object value,
                 boolean isSelected, boolean hasFocus, int row, int column) {
             try {
-                if (value == null) {
-                    return null;
-                }
+
+
                 Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-                String txt = value.toString();
-//            if (txt.startsWith(FahrtenbuchAnzeigenFrame.BOLD)) {
+	            Color bkgColor = null;
+	            Color fgColor = null;
+	            
                 if (((TableItem) value).isBold()) {
                     c.setFont(c.getFont().deriveFont(Font.BOLD));
-//                table.setValueAt(txt.substring(FahrtenbuchAnzeigenFrame.BOLD.length()), row, column);
                 }
+
+                if (this.useAlternatingColor) {
+    	            
+                	if (table instanceof MyNestedJTable) {
+                		Boolean startsWithOdd=((MyNestedJTable) table).getStartWithOddRow();
+                		if (startsWithOdd) {
+                			bkgColor = (row % 2 == 0 ? null : alternateColor);
+                		} else {
+            	            bkgColor = (row % 2 == 0 ? alternateColor : null);
+                		}
+                	} else {
+                		bkgColor = (row % 2 == 0 ? alternateColor : null);
+                		this.setVerticalTextPosition(SwingConstants.TOP);
+                	}
+                }      
+                
+                if (isSelected) {
+                    bkgColor = table.getSelectionBackground();
+                    // Update for standard tables: when selected, we should always use the selection foreground.
+                    fgColor= table.getSelectionForeground();
+                    if (c.getFont().isBold()) {
+                    	c.setFont(c.getFont().deriveFont(Font.BOLD | Font.ITALIC));
+                    } else {
+                    	c.setFont(c.getFont().deriveFont(Font.BOLD));
+                    }
+                }
+                c.setBackground(bkgColor);    
+	            c.setForeground(fgColor);
                 return this;
             } catch (Exception e) {
                 return null;
             }
         }
+		
+	    public void setAlternatingRowColor(Color c) {
+	    	this.alternateColor = c;
+	    	this.useAlternatingColor=(c!=null && Daten.efaConfig.getValueEfaDirekt_tabelleAlternierendeZeilenFarben());
+	    }
     }
 
     class ButtonRenderer extends JButton implements TableCellRenderer {
 
-        public ButtonRenderer() {
+		private static final long serialVersionUID = -4274374186561493972L;
+
+		public ButtonRenderer() {
             setOpaque(true);
         }
 
@@ -525,7 +633,9 @@ public class ShowLogbookDialog extends BaseDialog implements IItemListener {
 
     class ButtonEditor extends DefaultCellEditor {
 
-        protected JButton button;
+		private static final long serialVersionUID = -2250457297780802588L;
+
+		protected JButton button;
         private DataTypeIntString entryNo;
 
         public ButtonEditor(JButton button) {

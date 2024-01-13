@@ -10,8 +10,6 @@
 
 package de.nmichael.efa.core.items;
 
-import de.nmichael.efa.util.*;
-import de.nmichael.efa.util.Dialog;
 import de.nmichael.efa.gui.util.*;
 import java.util.*;
 import java.awt.*;
@@ -26,7 +24,7 @@ public class ItemTypeTable extends ItemType implements ActionListener, ITableEdi
     protected String value;
 
     protected Table table;
-    protected TableCellRenderer renderer;
+    protected EfaTableCellRenderer renderer;
     protected JScrollPane scrollPane;
     protected EfaMouseListener mouseListener;
     protected JPopupMenu popup;

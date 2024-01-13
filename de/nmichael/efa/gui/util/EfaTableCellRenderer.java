@@ -15,7 +15,7 @@ import javax.swing.table.*;
 import de.nmichael.efa.Daten;
 import de.nmichael.efa.gui.ImagesAndIcons;
 
-public class TableCellRenderer extends DefaultTableCellRenderer {
+public class EfaTableCellRenderer extends DefaultTableCellRenderer {
 
 	private static final long serialVersionUID = 4970624188985566921L;
 
@@ -27,19 +27,15 @@ public class TableCellRenderer extends DefaultTableCellRenderer {
     private Color disabledFgColor = Color.gray;
     private int fontSize = -1;
     private Icon hiddenIcon = ImagesAndIcons.getIcon(ImagesAndIcons.IMAGE_BUTTON_HIDE);
-
+    private boolean useAlternatingColor= false;
     public Component getTableCellRendererComponent(JTable table, Object value,
             boolean isSelected, boolean hasFocus, int row, int column) {
         try {
-            if (value == null) {
-                return null;
-            }
+
             Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
             boolean isMarked = value instanceof TableItem && ((TableItem)value).isMarked();
             boolean isDisabled = value instanceof TableItem && ((TableItem)value).isDisabled();
             boolean isInvisible = value instanceof TableItem && ((TableItem)value).isInvisible();
-            
-            String txt = value.toString();
             
             //Update for standard tables: indent cell content for better readability
             if (c instanceof JComponent) {
@@ -53,7 +49,7 @@ public class TableCellRenderer extends DefaultTableCellRenderer {
             Color bkgColor = null;
             Color fgColor = Color.black;
 
-            if (Daten.efaConfig.getValueEfaDirekt_tabelleAlternierendeZeilenFarben()) {
+            if (this.useAlternatingColor) {
 	            bkgColor = (row % 2 == 0 ? alternateColor : null);
             }  
             
@@ -61,7 +57,11 @@ public class TableCellRenderer extends DefaultTableCellRenderer {
                 bkgColor = table.getSelectionBackground();
                 // Update for standard tables: when selected, we should always use the selection foreground.
                 fgColor= table.getSelectionForeground();
-                c.setFont(c.getFont().deriveFont(Font.BOLD));
+                if (this.getFont().isBold()) {
+                	c.setFont(c.getFont().deriveFont(Font.BOLD | Font.ITALIC));
+                } else {
+                	c.setFont(c.getFont().deriveFont(Font.BOLD));
+                }
             } else {
                 if (isDisabled && disabledBkgColor != null) {
                     bkgColor = disabledBkgColor;
@@ -106,7 +106,6 @@ public class TableCellRenderer extends DefaultTableCellRenderer {
             }
             if (fontSize > 0) {
                 c.setFont(c.getFont().deriveFont((float)fontSize));
-                c.setFont(c.getFont().deriveFont(Font.BOLD));
             }
 
             c.setBackground(bkgColor);
@@ -139,10 +138,10 @@ public class TableCellRenderer extends DefaultTableCellRenderer {
 
     public void setAlternatingRowColor(Color c) {
     	this.alternateColor = c;
+    	this.useAlternatingColor=(c!=null && Daten.efaConfig.getValueEfaDirekt_tabelleAlternierendeZeilenFarben());
     }
     public void setFontSize(int size) {
         this.fontSize = size;
     }
-
 }
 
