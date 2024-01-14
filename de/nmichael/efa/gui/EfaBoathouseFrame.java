@@ -182,10 +182,12 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
     JPanel centerPanel = new JPanel();
     JPanel northPanel = new JPanel();
     JPanel southPanel = new JPanel();
+    
 
     // Window GUI Items
     JLabel titleLabel = new JLabel();
-
+    JButton closeButton;
+    
     // Data
     EfaBoathouseBackgroundTask efaBoathouseBackgroundTask;
     CrontabThread crontabThread;
@@ -452,7 +454,7 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
                 titleLabel.setHorizontalTextPosition(SwingConstants.LEFT);
                 titleLabel.setIconTextGap(20);
                 titleLabel.setBackground(bgColor);
-                JButton closeButton = new JButton();
+                closeButton = new JButton();
                 closeButton.setIcon(getIcon(ImagesAndIcons.IMAGE_FRAME_CLOSE ));
                 closeButton.setBackground(bgColor);
                 closeButton.setForeground(Color.white);
@@ -2656,6 +2658,13 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
             updateGuiElements();
             iniGuiHeaderColors();
             iniGuiTooltipDelays();
+            if (Daten.isApplEfaBoathouse() && Daten.isEfaFlatLafActive() && (closeButton!=null)) {
+                //EfaFlatLaf gets renitialized when efaConfig Dialog gets closed. 
+            	//this makes the closebutton in the blue header to get a border, and thus it grows.
+            	//we revoke the border when closing admin mode, then.
+                closeButton.setFont(closeButton.getFont().deriveFont(10f));
+                closeButton.setBorder(null);
+            }
         } finally {
             Daten.applMode = Daten.APPL_MODE_NORMAL;
         }
