@@ -19,9 +19,11 @@ import java.awt.FontMetrics;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.util.Hashtable;
 import java.util.UUID;
 
@@ -57,6 +59,7 @@ import de.nmichael.efa.data.types.DataTypeIntString;
 import de.nmichael.efa.gui.util.AutoCompleteList;
 import de.nmichael.efa.gui.util.EfaTableCellRenderer;
 import de.nmichael.efa.gui.util.TableHeaderCellRendererBold;
+import de.nmichael.efa.gui.util.TableItem;
 import de.nmichael.efa.gui.util.TableSorter;
 import de.nmichael.efa.util.Dialog;
 import de.nmichael.efa.util.EfaUtil;
@@ -216,7 +219,7 @@ public class ShowLogbookDialog extends BaseDialog implements IItemListener {
                 }
                 Object[] mRowTitle = new Object[1];
                 mRowTitle[0] = "foo";
-                MyNestedJTable mTable = new MyNestedJTable(mRowData, mRowTitle) {
+                MyNestedJTable mTable = new MyNestedJTable(mRowData, mRowTitle, Daten.efaConfig.getValueEfaDirekt_tabelleShowTooltip()) {
 					private static final long serialVersionUID = 4113309999908631888L;
 
 					public boolean isCellEditable(int row, int column) {
@@ -263,7 +266,7 @@ public class ShowLogbookDialog extends BaseDialog implements IItemListener {
         }
 
         sorter = new TableSorter(new DefaultTableModel(fahrten, title));
-        table = new MyJTable(sorter);
+        table = new MyJTable(sorter, Daten.efaConfig.getValueEfaDirekt_tabelleShowTooltip());
         
         HighlightTableCellRenderer mySteuermannRenderer = new HighlightTableCellRenderer();
         if (Daten.efaConfig.getValueEfaDirekt_tabelleAlternierendeZeilenFarben()) {
@@ -279,6 +282,7 @@ public class ShowLogbookDialog extends BaseDialog implements IItemListener {
         // Update for standard tables: increase row height for better readability
         table.setRowHeight(fm.getHeight()+6);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
         // Update for standard tables: Replace default header renderer with bold+dark background renderer 
         TableCellRenderer l_originalRenderer = table.getTableHeader().getDefaultRenderer();
 
@@ -447,8 +451,11 @@ public class ShowLogbookDialog extends BaseDialog implements IItemListener {
 
 		private static final long serialVersionUID = 7627514043061724774L;
 
-		public MyJTable(TableSorter sorter) {
+		private Boolean tooltipsEnabled=false;
+		
+		public MyJTable(TableSorter sorter, Boolean showToolTips) {
             super(sorter);
+            tooltipsEnabled=showToolTips;
         }
 
         public boolean isCellEditable(int row, int column) {
@@ -479,6 +486,33 @@ public class ShowLogbookDialog extends BaseDialog implements IItemListener {
             super.tableChanged(e);
             updateNestedTableHeight();
         }
+        
+   	 	public String getToolTipText(MouseEvent event) {
+	        try {
+	        	if (tooltipsEnabled) {
+	                int row = rowAtPoint(event.getPoint());
+	                int col = columnAtPoint(event.getPoint());
+					
+	                // SGB Update for tables: Tooltipp shall be presented only if the value does not fit into row. 
+	                if (col!=-1 && row !=-1) {
+						
+	                	javax.swing.table.TableCellRenderer l_renderer = getCellRenderer(row, col);
+						Component l_component = prepareRenderer (l_renderer, row, col);
+						Rectangle l_cellRect=getCellRect(row, col, false);
+
+						if (l_cellRect.width >= l_component.getPreferredSize().width) {
+							// do not show any tooltip if the column has enough space for the value
+							return null;
+						} else {
+							return getValueAt(row, col).toString();
+						}
+					}
+	            }            
+	        } catch (Exception eignore) {
+	        }
+	        return null;
+	    }
+        
     }
 
     private class MyNestedJTable extends JTable {
@@ -486,14 +520,18 @@ public class ShowLogbookDialog extends BaseDialog implements IItemListener {
 		private static final long serialVersionUID = -1632568401117917149L;
 		
 		private boolean startsWithOddRow=true;
+		private boolean tooltipsEnabled=false;
 		String toText = "";
         Object[][] data = null;
         Object[] title = null;
 
-        public MyNestedJTable(Object[][] data, Object[] title) {
+        public MyNestedJTable(Object[][] data, Object[] title, Boolean showToolTips) {
             super(data, title);
+            this.tooltipsEnabled=showToolTips;
             this.data = data;
             this.title = title;
+            this.setShowGrid(false);
+            this.setShowHorizontalLines(true);
             toText = "";
             for (int i = 0; i < data.length; i++) {
                 for (int j = 0; j < data[i].length; j++) {
@@ -507,7 +545,7 @@ public class ShowLogbookDialog extends BaseDialog implements IItemListener {
         }
 
         public Object clone() {
-            return new MyNestedJTable(data, title);
+            return new MyNestedJTable(data, title, tooltipsEnabled);
         }
         
         public void setStartWithOddRow(boolean value) {
@@ -517,10 +555,36 @@ public class ShowLogbookDialog extends BaseDialog implements IItemListener {
         public boolean getStartWithOddRow() {
         	return startsWithOddRow;
         }
-        
+
+        public String getToolTipText(MouseEvent event) {
+	        try {
+	        	if (tooltipsEnabled) {
+	                int row = rowAtPoint(event.getPoint());
+	                int col = columnAtPoint(event.getPoint());
+					
+	                // SGB Update for tables: Tooltipp shall be presented only if the value does not fit into row. 
+	                if (col!=-1 && row !=-1) {
+						
+	                	javax.swing.table.TableCellRenderer l_renderer = getCellRenderer(row, col);
+						Component l_component = prepareRenderer (l_renderer, row, col);
+						Rectangle l_cellRect=getCellRect(row, col, false);
+
+						if (l_cellRect.width >= l_component.getPreferredSize().width) {
+							// do not show any tooltip if the column has enough space for the value
+							return null;
+						} else {
+							return getValueAt(row, col).toString();
+						}
+					}
+	            }            
+	        } catch (Exception eignore) {
+	        }
+	        return null;
+	    }        
+                
     }
 
-    class TableItem {
+    private class TableItem {
 
         private String txt;
         private boolean bold;
@@ -537,6 +601,7 @@ public class ShowLogbookDialog extends BaseDialog implements IItemListener {
         public boolean isBold() {
             return bold;
         }
+
     }
 
     class TableInTableRenderer implements TableCellRenderer {
@@ -547,8 +612,9 @@ public class ShowLogbookDialog extends BaseDialog implements IItemListener {
                 if (value == null) {
                     return null;
                 }
+                // this is neccessary so that the nested table starts with the same alternating 
+                // row color as the current line.
                 ((MyNestedJTable) value).setStartWithOddRow(row % 2 == 1);
-                //((MyNestedJTable) value).setCurrentRowSelected(isSelected); 
                 return (Component) value;
             } catch (Exception e) {
                 return null;

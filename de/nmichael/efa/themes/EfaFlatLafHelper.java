@@ -65,6 +65,13 @@ public class EfaFlatLafHelper {
         	myCustomSettings.put("@efaTableHeaderBackground", "#"+EfaUtil.getColor(Daten.efaConfig.getTableHeaderBackgroundColor()));
         	myCustomSettings.put("@efaTableHeaderForeground", "#"+EfaUtil.getColor(Daten.efaConfig.getTableHeaderHeaderColor()));
         	myCustomSettings.put("@efaFocusColor", "#"+EfaUtil.getColor(Daten.efaConfig.getEfaGuiflatLaf_FocusColor()));
+        	if (Daten.efaConfig.getValueEfaDirekt_tabelleAlternierendeZeilenFarben()==false) {
+        		// Flatlaf looks cleaner when it uses no lines for tables. 
+        		// but then it needs alternating row colors to keep the rows apart.
+        		// so if no alternating rowcolors are active, we at least show horizontalLines.
+        		myCustomSettings.put("Table.showHorizontalLines", "true");
+        	}
+        		
         	//setting flatLaf efaTableAlternateRowColor will ENABLE alternate row color styling in flatlaf.
         	//efa itself has a special tableCellRenderer which supports alternate row coloring, and this cell renderer is NOT active
         	//for displaying the big logbook dialogue available in efaBths. 
@@ -86,6 +93,7 @@ public class EfaFlatLafHelper {
         	
         	//inform Flatlaf about custom settings
         	myLaf.setExtraDefaults(myCustomSettings); 
+        
         	
         	if (Daten.lookAndFeel.endsWith(Daten.LAF_EFAFLAT_LIGHT)) {
 	        	EfaFlatLightLookAndFeel.setup(myLaf);
@@ -95,6 +103,7 @@ public class EfaFlatLafHelper {
 	        	EfaFlatDarkLookAndFeel.setup(myLaf);
 	        	EfaFlatDarkLookAndFeel.updateUILater();
         	}
+        	
         }
     	
     }	

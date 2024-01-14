@@ -4443,13 +4443,12 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
          * (so the user started "start session" without choosing a boat or a person in advance */
         if (item != null && (item.boat != null || item.person!=null)) {
         	efaBoathouseSetPersonAndBoat(item);
-        	setRequestFocus(date);
-        } else {
-        	if (Daten.efaConfig.getValueEfaDirekt_eintragPresentLastTripOnNewEntry()) {
+        } else if (Daten.efaConfig.getValueEfaDirekt_eintragPresentLastTripOnNewEntry()) {
 	        	efaBoathouseSetDataFromLatestSession();
-	        	setRequestFocus(boat);
-        	}
+	            setRequestFocus(boat);
         }
+
+
         
         distance.parseAndShowValue("");
         updateTimeInfoFields();
