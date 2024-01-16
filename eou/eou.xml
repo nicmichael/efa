@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <efaOnlineUpdate>
 	<Version>
-        <VersionID>2.3.4_00</VersionID>
+        <VersionID>2.4.0_00</VersionID>
         <ReleaseDate>TODO</ReleaseDate>
-        <DownloadUrl>http://efa.nmichael.de/download/efa234.zip</DownloadUrl>
+        <DownloadUrl>http://efa.nmichael.de/download/efa240.zip</DownloadUrl>
         <DownloadSize>TODO</DownloadSize>
         <Changes lang="de">
 			<ChangeItem>Neu: EfaFlatLight LookAndFeel bietet eine klare, modernere Darstellung. In weiten Bereichen konfigurierbar.</ChangeItem>
@@ -58,7 +58,8 @@
             <ChangeItem>BugFix: emil: Einheitliche Höhe für Textfelder. Textfelder können nicht mehr zu klein sein in bestimmten LookAndFeels. Schnellere Scrollgeschwindigkeit in der Teilnehmerliste.</ChangeItem>
 			<ChangeItem>Bugfix: Keine Exception im Admintask zur Berechnung des Vereinsarbeit-Übertrags mehr, wenn zu einem Projekt ohne Vereinsarbeit gewechselt wird.</ChangeItem>
 			<ChangeItem>Bugfix: Bei aktivem Tooltip-Support zeigen Tabellen auch Tooltips für Spaltenüberschriften.</ChangeItem>
-			<ChangeItem>Bugfix: Fahrtenbuch anzeigen zeigt breitere Spalten für Datum- und Zeitfelder an (gut bei Verwendung größerer Schriftarten)</ChangeItem>
+			<ChangeItem>Bugfix: Fahrtenbuch anzeigen: zeigt breitere Spalten für Datum- und Zeitfelder an (gut bei Verwendung größerer Schriftarten)</ChangeItem>
+			<ChangeItem>Bugfix: Fahrtenbuch anzeigen: Darstellungsfehler behoben, wenn die Crew eines Fahrtenbucheintrags leer war.</ChangeItem>
 			<ChangeItem>Bugfix: Admin Modus: Dialoge zur Auswahl von Projekten, Fahrtenbüchern, Vereinsarbeit, Plugins werden besser dargestellt in allen LookAndFeels.</ChangeItem>
 			<ChangeItem>Bugfix: efaBths: Blaue Titelleiste verändert ihre Größe nicht mehr, wenn efaFlatLaf aktiv ist, und die efa-Konfiguration geändert wurde.</ChangeItem>
 			<ChangeItem>Bugfix: Tabellen: Wenn alternierende Zeilen aktiv sind, zeigt das efaFlatLaf zumindest horizontale Linien in den Tabellen an.</ChangeItem>        
@@ -119,7 +120,8 @@
 			<ChangeItem>BugFix: Widgets for clock and news stop running in background if invisible.</ChangeItem>
 			<ChangeItem>Bugfix: no exception in admintask for carryover calculation when changing project to a project where no clubwork has been defined in efabase.</ChangeItem>            
 			<ChangeItem>Bugfix: When tooltips are active for tables, tooltips are shown for table column headers.</ChangeItem>
-			<ChangeItem>Bugfix: Show Logbook dialog shows date and time colums with a larger width.</ChangeItem>
+			<ChangeItem>Bugfix: Show Logbook dialog: shows date and time colums with a larger width.</ChangeItem>
+			<ChangeItem>Bugfix: Show Logbook dialog: Fixed a rendering error when the crew of the logbook entry is empty.</ChangeItem>
 			<ChangeItem>Bugfix: Admin mode: Dialogs for selecting Projects, Logbooks, Clubwork, Plugins are better readable in any LookAndFeels.</ChangeItem>
 			<ChangeItem>Bugfix: efaBths: Blue title bar does not change it's size when efaFlatLaf is active and config items get saved in admin mode.</ChangeItem>
 			<ChangeItem>Bugfix: Tables: when alternating row colors are deactivated, flatlaf shows horizontal lines for better readability in tables.</ChangeItem>        
