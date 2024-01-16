@@ -477,10 +477,10 @@ public abstract class DataListDialog extends BaseDialog implements IItemListener
                         String s = r.getKeyAsTextDescription();
                         keyMapping.put(k.encodeAsString(), k);
                         items.put(k.encodeAsString(),
-                                "ID: " + s + "<br>" +
+                                "<html>ID: " + s + "<br>" +
                                 International.getString("Name") + ": " + r.getQualifiedName() +
                                 (r.getPersistence().data().getMetaData().isVersionized() ? "<br>" +
-                                 International.getString("Gültigkeit") + ": " + r.getValidRangeString() : ""));
+                                 International.getString("Gültigkeit") + ": " + r.getValidRangeString() : "")+"</html>");
                     }
                 }
                 String[] keys = items.keySet().toArray(new String[0]);

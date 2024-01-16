@@ -43,7 +43,8 @@ public class Table extends JTable {
         this.renderer = renderer;
         this.header = header;
         this.data = data;
-
+        this.setTableHeader(new TableHeaderWithTooltips(this.getColumnModel()));
+        
         if (Daten.efaConfig.getValueEfaDirekt_tabelleAlternierendeZeilenFarben()) {
         	// Update for standard tables: Update for standard inverted cursor
         	// only applied when using alternating row colors - otherwise the standard of the lookandfeel is used.
@@ -313,4 +314,25 @@ public class Table extends JTable {
     public void setMinColumnWidths(int[] minColumnWidths) {
         this.minColumnWidths = minColumnWidths;
     }
+    
+    private class TableHeaderWithTooltips extends JTableHeader {
+
+		private static final long serialVersionUID = -7345224027810977124L;
+
+		TableHeaderWithTooltips(TableColumnModel columnModel) {
+          super(columnModel);//do everything a normal JTableHeader does
+        }
+
+		/**
+		 * return the caption of the clumn the mouse is hovering.
+		 * do not check wether a tooltip is neccessary or not
+		 */
+        public String getToolTipText(MouseEvent e) {
+            java.awt.Point p = e.getPoint();
+            int index = columnModel.getColumnIndexAtX(p.x);
+            //int realIndex = columnModel.getColumn(index).getModelIndex();
+			
+            return this.getColumnModel().getColumn(index).getHeaderValue().toString();
+        }
+    }    
 }
