@@ -830,11 +830,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 					International.getString("Look & Feel")));
 			addParameter(lafButtonFocusColor = new ItemTypeColor("LookAndFeel_ButtonFocusColor", "", "",
 					IItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
-					"Look & Feel ButtonFocusColor", true));
-
-			/*addHeader("efaGuiFlatLafColors", IItemType.TYPE_PUBLIC,
-					BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
-					International.getString("EFA Flat Look&Feel Basisfarben"), 3);*/
+					"LookAndFeel ButtonFocusColor", true));
 
 			addHint("efaGuiFlatLafColorsHint", IItemType.TYPE_PUBLIC,
 					BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),

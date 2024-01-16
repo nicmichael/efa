@@ -528,7 +528,7 @@ public class Project extends StorageObject {
                                     description.append((j > 0 ? ", " : "") + clubworkNames[j]);
                                 }
                             }
-                            items.put(name, description.toString());
+                            items.put(name, "<html>"+description.toString()+"</html>");
                         } catch (Exception e1) {
                         }
                     }
@@ -545,10 +545,10 @@ public class Project extends StorageObject {
         for (int i = 0; logbooks != null && i < logbooks.length; i++) {
             ProjectRecord r = getLoogbookRecord(logbooks[i]);
             if (r != null) {
-                String name = "<b>" + International.getString("Fahrtenbuch") + ":</b> <b style=\"color:blue\">" + logbooks[i] + "</b><br>";
+                String name = "<b>" + International.getString("Fahrtenbuch") + ":</b> <b><font color=blue>" + logbooks[i] + "</font></b><br>";
                 String description = (r.getDescription() != null && r.getDescription().length() > 0 ? r.getDescription() + " " : "");
                 description += "(" + r.getStartDate().toString() + " - " + r.getEndDate() + ")";
-                items.put(logbooks[i], name + description);
+                items.put(logbooks[i], "<html>"+name + description+"</html>");
             }
         }
         return items;
@@ -560,10 +560,10 @@ public class Project extends StorageObject {
         for (int i = 0; clubworks != null && i < clubworks.length; i++) {
             ProjectRecord r = getClubworkBookRecord(clubworks[i]);
             if (r != null) {
-                String name = "<b>" + International.getString("Vereinsarbeit") + ":</b> <b style=\"color:blue\">" + clubworks[i] + "</b><br>";
+                String name = "<b>" + International.getString("Vereinsarbeit") + ":</b> <b><font color=blue>" + clubworks[i] + "</font></b><br>";
                 String description = (r.getDescription() != null && r.getDescription().length() > 0 ? r.getDescription() + " " : "");
                 description += "(" + r.getStartDate().toString() + " - " + r.getEndDate() + ")";
-                items.put(clubworks[i], name + description);
+                items.put(clubworks[i], "<html>"+name + description+"</html>");
             }
         }
         return items;

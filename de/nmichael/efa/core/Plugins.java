@@ -147,12 +147,12 @@ public class Plugins {
             PluginInfo p = getPluginInfo(name);
             StringBuilder s = new StringBuilder();
             boolean installed = p.isInsalled();
-            s.append("<table width=\"100%\" bgcolor=\"#" +  (installed ? "ccffcc" : "ffcccc") + "\"><tr><td>");
-            s.append("<b>" + International.getString("Plugin") + ": " + name + " (" + p.getFullName() + ")</b>");
+            s.append("<html><table width=\"100%\" bgcolor=\"#" +  (installed ? "ccffcc" : "ffcccc") + "\"><tr><td><font color=#000000");
+            s.append("<b>" + International.getString("Plugin") + ": " + name + " (" + p.getFullName()+ ")</b>");
             s.append(" - " + International.getString("Version") + ": " + p.getVersion() + "<br>");
-            s.append(p.getCopyright() + "<br>");
-            s.append("<i>" + p.getDescription() + "</i><br>");
-            s.append("</td></tr></table>");
+            s.append(p.getCopyright().replaceAll("(\\r\\n|\\n)", "<br>") + "<br>");
+            s.append("<i>" + p.getDescription().replaceAll("(\\r\\n|\\n)", "<br>") + "</i><br>");
+            s.append("</font></td></tr></table></html>");
             items.put(name, s.toString());
         }
         return items;
