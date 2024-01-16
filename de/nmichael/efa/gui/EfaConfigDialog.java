@@ -212,7 +212,6 @@ public class EfaConfigDialog extends BaseTabbedDialog {
 				JScrollPane scrollPane = new JScrollPane(innerPanel);
 		        scrollPane.setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
 				scrollPane.setPreferredSize(getTabPanelPreferredSize(getSubCatCount(thisCatKey)));
-				int ia = scrollPane.getVerticalScrollBar().getUnitIncrement();
 				scrollPane.getVerticalScrollBar().setUnitIncrement(12);
 				innerPanel.setLayout(new GridBagLayout());
 				panel.setLayout(new BorderLayout());

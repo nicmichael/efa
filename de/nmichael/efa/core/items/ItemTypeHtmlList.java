@@ -28,7 +28,6 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.border.Border;
-import javax.swing.border.EmptyBorder;
 
 import de.nmichael.efa.Daten;
 import de.nmichael.efa.gui.util.EfaMouseListener;
@@ -36,7 +35,10 @@ import de.nmichael.efa.util.EfaUtil;
 import de.nmichael.efa.util.Logger;
 
 // @i18n complete
-
+/**
+ * This class requires that all items that shall be shown begin with <html> and end with </html> to 
+ * be rendered correctly.
+ */
 public class ItemTypeHtmlList extends ItemType implements ActionListener {
 
     protected String value;
