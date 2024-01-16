@@ -480,6 +480,7 @@ public class ShowLogbookDialog extends BaseDialog implements IItemListener {
                     }
                 }
             } catch (Exception ee) {
+            	Logger.logdebug(ee);
             }
             super.valueChanged(e);
         }
@@ -511,6 +512,7 @@ public class ShowLogbookDialog extends BaseDialog implements IItemListener {
 					}
 	            }            
 	        } catch (Exception eignore) {
+	        	Logger.logdebug(eignore);
 	        }
 	        return null;
 	    }
@@ -580,6 +582,7 @@ public class ShowLogbookDialog extends BaseDialog implements IItemListener {
 					}
 	            }            
 	        } catch (Exception eignore) {
+	        	Logger.logdebug(eignore);
 	        }
 	        return null;
 	    }        
@@ -619,6 +622,7 @@ public class ShowLogbookDialog extends BaseDialog implements IItemListener {
                 ((MyNestedJTable) value).setStartWithOddRow(row % 2 == 1);
                 return (Component) value;
             } catch (Exception e) {
+            	Logger.logdebug(e);
                 return null;
             }
         }
@@ -640,12 +644,11 @@ public class ShowLogbookDialog extends BaseDialog implements IItemListener {
 	            Color bkgColor = null;
 	            Color fgColor = null;
 	            
-                if (((TableItem) value).isBold()) {
+                if (value !=null && ((TableItem) value).isBold()) {
                     c.setFont(c.getFont().deriveFont(Font.BOLD));
                 }
 
                 if (this.useAlternatingColor) {
-    	            
                 	if (table instanceof MyNestedJTable) {
                 		Boolean startsWithOdd=((MyNestedJTable) table).getStartWithOddRow();
                 		if (startsWithOdd) {
@@ -673,6 +676,7 @@ public class ShowLogbookDialog extends BaseDialog implements IItemListener {
 	            c.setForeground(fgColor);
                 return this;
             } catch (Exception e) {
+            	Logger.logdebug(e);
                 return null;
             }
         }
