@@ -32,6 +32,7 @@ import java.util.GregorianCalendar;
 public class EmilFrame extends JFrame {
   final static String PROGRAMMNAME = "emil - elektronischer Meldedatei Editor";
   final static String KURZTITEL = "emil";
+  final static int FIELD_HEIGHT=24;
   EmilConfig cfg;
 
   WettDefs wettDefs = null;
@@ -222,7 +223,7 @@ public class EmilFrame extends JFrame {
     wettPanel.setLayout(gridBagLayout1);
     jLabel2.setText("Jahr: ");
     wettJahr.setNextFocusableComponent(vereinsname);
-    wettJahr.setPreferredSize(new Dimension(100, 19));
+    wettJahr.setPreferredSize(new Dimension(100, FIELD_HEIGHT));
     wettJahr.addKeyListener(new java.awt.event.KeyAdapter() {
       public void keyTyped(KeyEvent e) {
         dateiGeaendert(e);
@@ -242,7 +243,7 @@ public class EmilFrame extends JFrame {
     jLabel4.setText("Benutzername: ");
     jLabel5.setText("Mitgliederzahl: ");
     mitglieder.setNextFocusableComponent(meldName);
-    mitglieder.setPreferredSize(new Dimension(50, 19));
+    mitglieder.setPreferredSize(new Dimension(50, FIELD_HEIGHT));
     mitglieder.addKeyListener(new java.awt.event.KeyAdapter() {
       public void keyTyped(KeyEvent e) {
         dateiGeaendert(e);
@@ -254,7 +255,7 @@ public class EmilFrame extends JFrame {
       }
     });
     benutzername.setNextFocusableComponent(mitglieder);
-    benutzername.setPreferredSize(new Dimension(150, 19));
+    benutzername.setPreferredSize(new Dimension(150, FIELD_HEIGHT));
     benutzername.addKeyListener(new java.awt.event.KeyAdapter() {
       public void keyTyped(KeyEvent e) {
         dateiGeaendert(e);
@@ -266,7 +267,7 @@ public class EmilFrame extends JFrame {
     jLabel6.setText("Meldender: Name: ");
     jLabel7.setText("email: ");
     meldName.setNextFocusableComponent(meldEmail);
-    meldName.setPreferredSize(new Dimension(225, 19));
+    meldName.setPreferredSize(new Dimension(225, FIELD_HEIGHT));
     meldName.addKeyListener(new java.awt.event.KeyAdapter() {
       public void keyTyped(KeyEvent e) {
         dateiGeaendert(e);
@@ -319,7 +320,7 @@ public class EmilFrame extends JFrame {
     teilnehmerPanel.setBorder(border1);
     jPanel4.setBorder(BorderFactory.createEtchedBorder());
     meldEmail.setNextFocusableComponent(versandName);
-    meldEmail.setPreferredSize(new Dimension(200, 19));
+    meldEmail.setPreferredSize(new Dimension(200, FIELD_HEIGHT));
     meldEmail.addKeyListener(new java.awt.event.KeyAdapter() {
       public void keyTyped(KeyEvent e) {
         dateiGeaendert(e);
@@ -345,28 +346,28 @@ public class EmilFrame extends JFrame {
     jLabel10.setText("Straße: ");
     jLabel11.setText("PLZ, Ort: ");
     versandName.setNextFocusableComponent(versandZusatz);
-    versandName.setPreferredSize(new Dimension(200, 19));
+    versandName.setPreferredSize(new Dimension(200, FIELD_HEIGHT));
     versandName.addKeyListener(new java.awt.event.KeyAdapter() {
       public void keyTyped(KeyEvent e) {
         dateiGeaendert(e);
       }
     });
     versandZusatz.setNextFocusableComponent(versandStrasse);
-    versandZusatz.setPreferredSize(new Dimension(200, 19));
+    versandZusatz.setPreferredSize(new Dimension(200, FIELD_HEIGHT));
     versandZusatz.addKeyListener(new java.awt.event.KeyAdapter() {
       public void keyTyped(KeyEvent e) {
         dateiGeaendert(e);
       }
     });
     versandStrasse.setNextFocusableComponent(versandOrt);
-    versandStrasse.setPreferredSize(new Dimension(220, 19));
+    versandStrasse.setPreferredSize(new Dimension(220, FIELD_HEIGHT));
     versandStrasse.addKeyListener(new java.awt.event.KeyAdapter() {
       public void keyTyped(KeyEvent e) {
         dateiGeaendert(e);
       }
     });
     versandOrt.setNextFocusableComponent(wett);
-    versandOrt.setPreferredSize(new Dimension(130, 19));
+    versandOrt.setPreferredSize(new Dimension(130, FIELD_HEIGHT));
     versandOrt.addKeyListener(new java.awt.event.KeyAdapter() {
       public void keyTyped(KeyEvent e) {
         dateiGeaendert(e);
@@ -395,7 +396,7 @@ public class EmilFrame extends JFrame {
     jLabel16.setText("Geschlecht: ");
     jLabel17.setText("Kilometer: ");
     nachname.setNextFocusableComponent(vorname);
-    nachname.setPreferredSize(new Dimension(150, 19));
+    nachname.setPreferredSize(new Dimension(150, FIELD_HEIGHT));
     nachname.addKeyListener(new java.awt.event.KeyAdapter() {
       public void keyTyped(KeyEvent e) {
         eintragGeaendert(e);
@@ -405,7 +406,7 @@ public class EmilFrame extends JFrame {
       }
     });
     vorname.setNextFocusableComponent(jahrgang);
-    vorname.setPreferredSize(new Dimension(150, 19));
+    vorname.setPreferredSize(new Dimension(150, FIELD_HEIGHT));
     vorname.addKeyListener(new java.awt.event.KeyAdapter() {
       public void keyTyped(KeyEvent e) {
         eintragGeaendert(e);
@@ -415,7 +416,7 @@ public class EmilFrame extends JFrame {
       }
     });
     jahrgang.setNextFocusableComponent(geschlecht);
-    jahrgang.setPreferredSize(new Dimension(150, 19));
+    jahrgang.setPreferredSize(new Dimension(150, FIELD_HEIGHT));
     jahrgang.addFocusListener(new java.awt.event.FocusAdapter() {
       public void focusLost(FocusEvent e) {
         jahrgang_focusLost(e);
@@ -430,14 +431,14 @@ public class EmilFrame extends JFrame {
       }
     });
     geschlecht.setNextFocusableComponent(kilometer);
-    geschlecht.setPreferredSize(new Dimension(150, 19));
+    geschlecht.setPreferredSize(new Dimension(150, FIELD_HEIGHT));
     geschlecht.addItemListener(new java.awt.event.ItemListener() {
       public void itemStateChanged(ItemEvent e) {
         geschlecht_itemStateChanged(e);
       }
     });
     kilometer.setNextFocusableComponent(adresse);
-    kilometer.setPreferredSize(new Dimension(150, 19));
+    kilometer.setPreferredSize(new Dimension(150, FIELD_HEIGHT));
     kilometer.addFocusListener(new java.awt.event.FocusAdapter() {
       public void focusLost(FocusEvent e) {
         kilometer_focusLost(e);
@@ -722,7 +723,7 @@ public class EmilFrame extends JFrame {
     }
     for (int i=0; i<n; i++) {
       fahrtDatum[i] = new JTextField();
-      fahrtDatum[i].setPreferredSize(new Dimension(80, 19));
+      fahrtDatum[i].setPreferredSize(new Dimension(80, FIELD_HEIGHT));
       fahrtDatum[i].addKeyListener(new java.awt.event.KeyAdapter() {
         public void keyTyped(KeyEvent e) {
           eintragGeaendert(e);
@@ -741,7 +742,7 @@ public class EmilFrame extends JFrame {
     }
     for (int i=0; i<n; i++) {
       fahrtZiel[i] = new JTextField();
-      fahrtZiel[i].setPreferredSize(new Dimension(300, 19));
+      fahrtZiel[i].setPreferredSize(new Dimension(300, FIELD_HEIGHT));
       fahrtZiel[i].addKeyListener(new java.awt.event.KeyAdapter() {
         public void keyTyped(KeyEvent e) {
           eintragGeaendert(e);
@@ -755,7 +756,7 @@ public class EmilFrame extends JFrame {
     }
     for (int i=0; i<n; i++) {
       fahrtKm[i] = new JTextField();
-      fahrtKm[i].setPreferredSize(new Dimension(40, 19));
+      fahrtKm[i].setPreferredSize(new Dimension(40, FIELD_HEIGHT));
       fahrtKm[i].addKeyListener(new java.awt.event.KeyAdapter() {
         public void keyTyped(KeyEvent e) {
           eintragGeaendert(e);
@@ -774,7 +775,7 @@ public class EmilFrame extends JFrame {
     }
     for (int i=0; i<n; i++) {
       fahrtZf[i] = new JTextField();
-      fahrtZf[i].setPreferredSize(new Dimension(40, 19));
+      fahrtZf[i].setPreferredSize(new Dimension(40, FIELD_HEIGHT));
       fahrtZf[i].addKeyListener(new java.awt.event.KeyAdapter() {
         public void keyTyped(KeyEvent e) {
           eintragGeaendert(e);
