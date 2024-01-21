@@ -25,21 +25,25 @@ public class Program {
 
     public Program(int applId, String[] args) {
         Daten.program = this;
-        try {
-        	//Install the efaFlatLaf by setting it's actual classname by String, and not bei Class.getName().
-        	//This is neccessary as when there is no flatlaf-3.2.5 library present, efa would simply fail to start up
-        	//as yet alone the import of the flatlaf library in this class "Program" would keep efa from starting 
-        	//because of an ClassNotFoundError.
-        	UIManager.installLookAndFeel("efaFlatLightLaf", "de.nmichael.efa.themes.EfaFlatLightLookAndFeel");
-        } catch (Exception e) {
-        	// efaFlatlaf cannot get installed when a flatLaf-3.2.5.jar is not available in Class path.
-        	// so... if an error occurs, no flatlaf has been installed.
-        	EfaUtil.foo();
-        }
+        if (applId != Daten.APPL_CLI) {
+	        try {
+	        	//Install the efaFlatLaf by setting it's actual classname by String, and not bei Class.getName().
+	        	//This is neccessary as when there is no flatlaf-3.2.5 library present, efa would simply fail to start up
+	        	//as yet alone the import of the flatlaf library in this class "Program" would keep efa from starting 
+	        	//because of an ClassNotFoundError.
+	        	
+	        	UIManager.installLookAndFeel("efaFlatLightLaf", "de.nmichael.efa.themes.EfaFlatLightLookAndFeel");
 
-        //Dark LAF is prepared but not yet ready.
-        //UIManager.installLookAndFeel("efaFlatDarkLaf", "de.nmichael.efa.themes.EfaFlatDarkLookAndFeel");
-        
+	        	//Dark LAF is prepared but not yet ready.
+		        //UIManager.installLookAndFeel("efaFlatDarkLaf", "de.nmichael.efa.themes.EfaFlatDarkLookAndFeel");
+	        	
+	        } catch (Exception e) {
+	        	// efaFlatlaf cannot get installed when a flatLaf-3.2.5.jar is not available in Class path.
+	        	// so... if an error occurs, no flatlaf has been installed.
+	        	EfaUtil.foo();
+	        }
+	
+        }
         Daten.iniBase(applId);
         checkArgs(args);
         newlyCreatedAdminRecord = Daten.initialize();
