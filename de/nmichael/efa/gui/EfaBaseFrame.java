@@ -651,6 +651,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
                 IItemType.TYPE_PUBLIC, null, "");
         starttimeInfoLabel.setFieldGrid(5, GridBagConstraints.WEST, GridBagConstraints.NONE);
         starttimeInfoLabel.setVisible(false);
+        starttimeInfoLabel.setPadding(0, 0, VERTICAL_WHITESPACE_PADDING_GROUPS, 0);        
         starttimeInfoLabel.displayOnGui(this, mainInputPanel, 3, 9);
         endtimeInfoLabel = new ItemTypeLabel("GUIITEM_ENDTIME_INFOLABEL",
                 IItemType.TYPE_PUBLIC, null, "");
