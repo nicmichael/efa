@@ -250,11 +250,15 @@ public class EfaCloudConfigDialog extends BaseTabbedDialog implements IItemListe
             // if the current storage type is xml, this method is called to make it efaCloud
             // That will also trigger a rebuild of the server side tables.
             if (pr.getProjectStorageType() == IDataAccess.TYPE_FILE_XML) {
-                if (itemType.getName().equalsIgnoreCase(BUTTON_EFACLOUD_ACTIVATE)) {
+                String efaCloudURL = ((ItemTypeString) super.getItem("efaCloudURL")).getValue();
+                String storageUsername = ((ItemTypeString) super.getItem("efaCloudUsername")).getValue();
+                String storagePassword = ((ItemTypeString) super.getItem("efaCloudPassword")).getValue();
+                if (itemType.getName().equalsIgnoreCase(BUTTON_EFACLOUD_ACTIVATE) && (efaCloudURL.length() > 7)
+                    && (storageUsername.length() > 1) && (storagePassword.length() > 7)) {
                     // read the entered parameters into the project record.
-                    pr.setProjectEfaCloudURL(((ItemTypeString) super.getItem("efaCloudURL")).getValue());
-                    pr.setProjectStorageUsername(((ItemTypeString) super.getItem("efaCloudUsername")).getValue());
-                    pr.setProjectStoragePassword(((ItemTypeString) super.getItem("efaCloudPassword")).getValue());
+                    pr.setProjectEfaCloudURL(efaCloudURL);
+                    pr.setProjectStorageUsername(storageUsername);
+                    pr.setProjectStoragePassword(storagePassword);
                     pr.setProjectStorageType(IDataAccess.TYPE_EFA_CLOUD);
                     // Store the changed settings
                     String prjName = pr.getName();
@@ -299,6 +303,16 @@ public class EfaCloudConfigDialog extends BaseTabbedDialog implements IItemListe
                         return;
                     }
                 }
+                else if (itemType.getName().equalsIgnoreCase(BUTTON_EFACLOUD_ACTIVATE))
+                    if (efaCloudURL.length() <= 7)
+                        de.nmichael.efa.util.Dialog.infoDialog(International.getString("URL zu kurz"),
+                            International.getString("efaCloud wurde nicht aktiviert. Bitte versuche es neu."));
+                    else if (storageUsername.length() <= 1)
+                        de.nmichael.efa.util.Dialog.infoDialog(International.getString("Benutzername zu kurz"),
+                                International.getString("efaCloud wurde nicht aktiviert. Bitte versuche es neu."));
+                    else if (storagePassword.length() <= 7)
+                        de.nmichael.efa.util.Dialog.infoDialog(International.getString("Paßwort zu kurz"),
+                                International.getString("efaCloud wurde nicht aktiviert. Bitte versuche es neu."));
             }
 
             // other efaCloud actions

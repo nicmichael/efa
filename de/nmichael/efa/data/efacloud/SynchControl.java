@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
+import static de.nmichael.efa.data.LogbookRecord.*;
 import static de.nmichael.efa.data.efacloud.TxRequestQueue.*;
 
 class SynchControl {
@@ -34,7 +35,7 @@ class SynchControl {
     // The names of the tables which allow the key to be modified upon server side insert
     static final String[] tables_with_key_fixing_allowed = TableBuilder.fixid_allowed.split(" ");
     static final long clockoffsetBuffer = 600000L; // max number of millis which client clock may be offset, 10 mins
-    static final long synch_upload_look_back_ms = 30 * 24 * 3600000L; // period in past to check for upload
+    static final long synch_upload_look_back_ms = 5 * 24 * 3600000L; // period in past to check for upload
     static final long surely_newer_after_ms = 600000L; // delta of LastModified to indicate for sure a newer record
 
     long timeOfLastSynch;
@@ -118,7 +119,7 @@ class SynchControl {
         table_fixing_index = 0;
         keyFixingTxCount = 0;
         synch_upload_all = synch_request == TxRequestQueue.RQ_QUEUE_START_SYNCH_UPLOAD_ALL;
-        synch_upload = synch_request == TxRequestQueue.RQ_QUEUE_START_SYNCH_UPLOAD || synch_upload_all;
+        synch_upload = (synch_request == TxRequestQueue.RQ_QUEUE_START_SYNCH_UPLOAD) || synch_upload_all;
         synch_download_all = !synch_upload && (timeOfLastSynch < clockoffsetBuffer);
         String synchMessage = (synch_upload) ? International
                 .getString("Synchronisation client to server (upload) starting") : International
@@ -532,6 +533,25 @@ class SynchControl {
                     diff++;
                 }
             }
+        }
+        // special and most common case of an efa logbook record: If multiple names are replaced by UUIDs, it is still
+        // the same record, although many fields did change. Identity therefore is checked on EntryId, BoatId, Date,
+        // StartTime and EndTime
+        if (tablename.equalsIgnoreCase("efa2logbook") && (diff >= allowedMismatches)) {
+            String dr1Str = (dr1.getAsString(ENTRYID) == null) ? "null" : dr1.getAsString(ENTRYID) + ",";
+            dr1Str += (dr1.getAsString(DATE) == null) ? "null" : dr1.getAsString(DATE) + ",";
+            dr1Str += (dr1.getAsString(BOATID) == null) ? "null" : dr1.getAsString(BOATID) + ",";
+            dr1Str += (dr1.getAsString(STARTTIME) == null) ? "null" : dr1.getAsString(STARTTIME) + ",";
+            dr1Str += (dr1.getAsString(ENDTIME) == null) ? "null" : dr1.getAsString(ENDTIME);
+            String dr2Str = (dr2.getAsString(ENTRYID) == null) ? "null" : dr2.getAsString(ENTRYID) + ",";
+            dr2Str += (dr2.getAsString(DATE) == null) ? "null" : dr2.getAsString(DATE) + ",";
+            dr2Str += (dr2.getAsString(BOATID) == null) ? "null" : dr2.getAsString(BOATID) + ",";
+            dr2Str += (dr2.getAsString(STARTTIME) == null) ? "null" : dr2.getAsString(STARTTIME) + ",";
+            dr2Str += (dr2.getAsString(ENDTIME) == null) ? "null" : dr2.getAsString(ENDTIME);
+            if (dr1Str.equalsIgnoreCase(dr2Str))
+                return "";
+            else
+                return fieldList.toString();
         }
         return (diff <= allowedMismatches) ? "" : fieldList.toString();
     }
