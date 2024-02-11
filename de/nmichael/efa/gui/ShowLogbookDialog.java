@@ -449,7 +449,7 @@ public class ShowLogbookDialog extends BaseDialog implements IItemListener {
         }
     }
 
-    class MyJTable extends JTable {
+    private class MyJTable extends JTable {
 
 		private static final long serialVersionUID = 7627514043061724774L;
 
@@ -519,6 +519,13 @@ public class ShowLogbookDialog extends BaseDialog implements IItemListener {
         
     }
 
+    /** 
+     * MyNestedJTable is a table which is placed into a single cell.
+     * It is used for the "Crew" column. 
+     * 
+     * For it's inner cells, it uses the background color of the row it is currently used.
+     * 
+     */
     private class MyNestedJTable extends JTable {
 
 		private static final long serialVersionUID = -1632568401117917149L;
@@ -652,9 +659,9 @@ public class ShowLogbookDialog extends BaseDialog implements IItemListener {
                 	if (table instanceof MyNestedJTable) {
                 		Boolean startsWithOdd=((MyNestedJTable) table).getStartWithOddRow();
                 		if (startsWithOdd) {
-                			bkgColor = (row % 2 == 0 ? null : alternateColor);
+                			bkgColor = null; //(row % 2 == 0 ? null : alternateColor);
                 		} else {
-            	            bkgColor = (row % 2 == 0 ? alternateColor : null);
+            	            bkgColor = alternateColor; // (row % 2 == 0 ? alternateColor : null);
                 		}
                 	} else {
                 		bkgColor = (row % 2 == 0 ? alternateColor : null);

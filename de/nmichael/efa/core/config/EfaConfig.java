@@ -1327,7 +1327,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
 					International.getString("Sonstiges"), 3);
 
-			addParameter(efaDirekt_vereinsLogo = new ItemTypeImage("ClubLogo", "", 192, 64, IItemType.TYPE_PUBLIC,
+			addParameter(efaDirekt_vereinsLogo = new ItemTypeImage("ClubLogo", "", 320, 200, IItemType.TYPE_PUBLIC,
 					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI ),
 					International.getString("Vereinslogo")));
 

@@ -66,6 +66,8 @@ public class StatisticsListDialog extends DataListDialog {
             //this.markedCellBold = true;
         }
 
+        this.minColumnWidths = new int[] {70,0,0,150,130,130};                
+        
         if (admin != null && admin.isAllowedEditStatistics()) {
             actionText = new String[]{
                         ItemTypeDataRecordTable.ACTIONTEXT_NEW,

@@ -479,7 +479,7 @@ public class Dialog {
             return null;
         }
         return (Window) frameStack.peek();
-    }
+    }	
 
     // (this,"Fahrtenbuchdatei erstellen","efa Fahrtenbuch (*.efb)","efb",Daten.fahrtenbuch.getFileName(),true);
     public static String dateiDialog(Window frame, String titel, String typen, String extension, String startdir, boolean save) {
@@ -498,12 +498,18 @@ public class Dialog {
             }
 
             if (typen != null && extension != null) {
-                int wo;
+            	int wo;
                 if ((wo = extension.indexOf("|")) >= 0) {
-                    String ext1, ext2;
+                    String ext1, ext2, ext3;
                     ext1 = extension.substring(0, wo);
                     ext2 = extension.substring(wo + 1, extension.length());
-                    dlg.setFileFilter((javax.swing.filechooser.FileFilter) new EfaFileFilter(typen, ext1, ext2));
+                    if ((wo = ext2.indexOf("|")) >=0) {
+                    	ext3 = ext2.substring(wo + 1, ext2.length());
+                    	ext2 = ext2.substring(0, wo);
+                        dlg.setFileFilter((javax.swing.filechooser.FileFilter) new EfaFileFilter(typen, ext1, ext2, ext3));
+                    } else {                    
+                    	dlg.setFileFilter((javax.swing.filechooser.FileFilter) new EfaFileFilter(typen, ext1, ext2));
+                    }
                 } else {
                     dlg.setFileFilter((javax.swing.filechooser.FileFilter) new EfaFileFilter(typen, extension));
                 }
