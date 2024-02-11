@@ -710,7 +710,14 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
             try {
                 logoLabel.setIcon(new ImageIcon(Daten.efaConfig.getValueEfaDirekt_vereinsLogo()));
                 logoLabel.setMinimumSize(new Dimension(200, 80));
-                logoLabel.setPreferredSize(new Dimension(200, 80));
+                if (logoLabel.getIcon()!=null) {
+                	logoLabel.setPreferredSize(new Dimension(
+                				Math.max(200, logoLabel.getIcon().getIconWidth()), 
+                				Math.max(80, logoLabel.getIcon().getIconHeight())));
+                } else {
+                	logoLabel.setPreferredSize(new Dimension(200,80));
+                }
+                logoLabel.setMaximumSize(new Dimension(logoLabel.getWidth(),logoLabel.getHeight()));
                 logoLabel.setHorizontalAlignment(SwingConstants.CENTER);
                 logoLabel.setHorizontalTextPosition(SwingConstants.CENTER);
             } catch (Exception e) {

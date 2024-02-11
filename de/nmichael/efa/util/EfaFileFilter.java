@@ -19,6 +19,7 @@ public class EfaFileFilter extends javax.swing.filechooser.FileFilter {
   String description = "";
   String ext1 = "";
   String ext2 = "";
+  String ext3 = "";
   int anz=0;
 
   public EfaFileFilter(String descr, String ext) {
@@ -28,14 +29,22 @@ public class EfaFileFilter extends javax.swing.filechooser.FileFilter {
   }
 
   public EfaFileFilter(String descr, String ext1, String ext2) {
-    description = descr;
-    this.ext1 = ext1.toUpperCase();
-    this.ext2 = ext2.toUpperCase();
-    anz=2;
-  }
+	    description = descr;
+	    this.ext1 = ext1.toUpperCase();
+	    this.ext2 = ext2.toUpperCase();
+	    anz=2;
+	  }
+
+  public EfaFileFilter(String descr, String ext1, String ext2, String ext3) {
+	    description = descr;
+	    this.ext1 = ext1.toUpperCase();
+	    this.ext2 = ext2.toUpperCase();
+	    this.ext3 = ext3.toUpperCase();
+	    anz=3;
+	  }
 
   public boolean accept (File f) {
-    return f.isDirectory() || f.getName().toUpperCase().endsWith(ext1) || (anz == 2 && f.getName().toUpperCase().endsWith(ext2));
+    return f.isDirectory() || f.getName().toUpperCase().endsWith(ext1) || (anz == 2 && f.getName().toUpperCase().endsWith(ext2)) || (anz == 3 && f.getName().toUpperCase().endsWith(ext3));
   }
 
   public String getDescription() {

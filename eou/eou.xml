@@ -15,6 +15,7 @@
             <ChangeItem>Neu: EfaConfig: Tooltip-Farben sind konfigurierbar.</ChangeItem>
             <ChangeItem>Neu: EfaConfig: Neustrukturierung der Konfiguration mit Überschriften und Hinweisen zu einzelnen Konfigurationselementen.</ChangeItem>
             <ChangeItem>Neu: EfaConfig: Überschriftenfarbe kann auch für Registerkarten genutzt werden (Metal and WindowsClassic LookAndFeel).</ChangeItem>
+            <ChangeItem>Neu: EfaConfig: Vereins-Logo kann bis 320x200 Pixel gross werden.</ChangeItem>
 			<ChangeItem>Neu: EfaConfig: Beim Maximieren von Fenstern kann efa den Platzberdarf der Taskbars berücksichtigen</ChangeItem>
             <ChangeItem>Neu: EfaConfig: EfaBootshaus-&amp;Eingabe: Option zur vereinfachten Anlage mehrerer ähnlicher Fahrten hintereinander (Expertenmodus)</ChangeItem>
             <ChangeItem>Neu: Versteckte Elemente im Boots- und PersonenDialog zeigen ein Icon und einen Tooltip zu ihrem Status.</ChangeItem>
@@ -77,6 +78,7 @@
             <ChangeItem>New: EfaConfig: Tooltip colores customizable.</ChangeItem>
             <ChangeItem>New: EfaConfig: Restructuring of the configuration with headings and notes on individual configuration elements.</ChangeItem>
             <ChangeItem>New: EfaConfig: Heading colors can be used for highlighting tab headers (Metal and WindowsClassic LookAndFeel).</ChangeItem>
+            <ChangeItem>New: EfaConfig: Club logo can have a bigger size of 320x200 pixels.</ChangeItem>
 			<ChangeItem>New: EfaConfig: When maximizing windows, efa can respect taskbar size and location</ChangeItem>
             <ChangeItem>New: EfaConfig: efa-Boat House&amp;Input: New option to simplify input of multiple similar sessions (expert mode).</ChangeItem>
             <ChangeItem>New: efaBths: Clock widget and buttons use bold font, even if not setup in efaConfig.</ChangeItem>
