@@ -17,7 +17,7 @@
             <ChangeItem>Neu: EfaConfig: Überschriftenfarbe kann auch für Registerkarten genutzt werden (Metal and WindowsClassic LookAndFeel).</ChangeItem>
             <ChangeItem>Neu: EfaConfig: Vereins-Logo kann bis 320x200 Pixel gross werden.</ChangeItem>
 			<ChangeItem>Neu: EfaConfig: Beim Maximieren von Fenstern kann efa den Platzberdarf der Taskbars berücksichtigen</ChangeItem>
-            <ChangeItem>Neu: EfaConfig: EfaBootshaus-&amp;Eingabe: Option zur vereinfachten Anlage mehrerer ähnlicher Fahrten hintereinander (Expertenmodus)</ChangeItem>
+            <ChangeItem>Neu: EfaConfig: EfaBootshaus-&gt;Eingabe: Option zur vereinfachten Anlage mehrerer ähnlicher Fahrten hintereinander (Expertenmodus)</ChangeItem>
             <ChangeItem>Neu: Versteckte Elemente im Boots- und PersonenDialog zeigen ein Icon und einen Tooltip zu ihrem Status.</ChangeItem>
             <ChangeItem>Neu: efaBths: Uhrzeit-Widget und Buttons immer mit fetter Schrift auch wenn keine fette Schrift vorgesehen ist.</ChangeItem>
             <ChangeItem>Neu: Vereinsarbeit-Dialog hat angepasste Tabellen-Spaltenbreiten, damit die Daten einfacher zu lesen sind.</ChangeItem>
@@ -52,7 +52,8 @@
             <ChangeItem>BugFix: Keine (versteckte) Exception mehr bei Initialisierung von efaBths wenn der Spezialbutton angezeigt wird. Spezialbutton zeigt nun das zugehörige Icon.</ChangeItem>
             <ChangeItem>BugFix: Key F3 im 'Fahrt beginnen' Dialog öffnet nicht mehr den Suchdialog für das Fahrtenbuch.</ChangeItem>
             <ChangeItem>BugFix: BEREIT wird nur noch nach der GUI-Initialisierung von efaBths und efaBase in das Log geschrieben, statt beim Anzeigen von BaseFrame.</ChangeItem>
-            <ChangeItem>BugFix: Swing Multithreading Problemm gelöst bei automatischem Fahrtenbuchwechsel, periorischem oder geplanten efaBths Neustart und Aktualisierung des efaCloud status im Fenstertitel.</ChangeItem>
+            <ChangeItem>BugFix: Swing Multithreading Problem gelöst bei automatischem Fahrtenbuchwechsel, periorischem oder geplanten efaBths Neustart und Aktualisierung des efaCloud status im Fenstertitel.</ChangeItem>
+            <ChangeItem>BugFix: Swing Multithreading Problem gelöst bei Aufruf von Statistiken mit interaktiver Abfrage von Namen, Booten, Gruppen.</ChangeItem>
             <ChangeItem>BugFix: Dialog für automatisches Beenden/Neustarten von efa zeigt den Grund korrekt an.</ChangeItem>
             <ChangeItem>BugFix: Resource Leak behoben: Die während eines Backups erstellte ZIP-Datei wird nach Abschluss geschlossen.</ChangeItem>
 			<ChangeItem>BugFix: News- und Uhr Widgets laufen im Hintergrund nicht weiter, wenn sie nicht sichtbar sind.</ChangeItem>
@@ -117,6 +118,7 @@
             <ChangeItem>BugFix: Key F3 in start session dialog does no longer invoke searching in logbook dialog.</ChangeItem>
             <ChangeItem>BugFix: READY will only be written in efa.log after the GUI initialization of efaBths and efaBase, and no longer after showing of BaseFrame.</ChangeItem>
             <ChangeItem>BugFix: Fixed swing multithreading problem when performing automatic logbook change, exiting efa due to periodic or planned restart, and updating efaCloud status in the title bar.</ChangeItem>
+            <ChangeItem>BugFix: Fixed swing multithreading problem when running parametized statistics with interactive specification of persons, boats, groups.</ChangeItem>
             <ChangeItem>BugFix: Dialog for automatic shutdown/restart of efa now shows the reason.</ChangeItem>
             <ChangeItem>BugFix: Removed resource leak: ZIP file created during a backup gets closed afterwards.</ChangeItem>
 			<ChangeItem>BugFix: Widgets for clock and news stop running in background if invisible.</ChangeItem>

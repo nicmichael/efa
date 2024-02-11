@@ -30,6 +30,8 @@ import de.nmichael.efa.gui.ProgressDialog;
 import de.nmichael.efa.util.*;
 import java.util.*;
 
+import javax.swing.SwingUtilities;
+
 public class StatisticTask extends ProgressTask {
 
     private static final int WORK_PER_STATISTIC = 100;
@@ -2399,18 +2401,68 @@ public class StatisticTask extends ProgressTask {
         }
         return true;
     }
-
+    
+    /**
+     * Ensures the statistics are prepared (for instance, interactive values are requested from the user).
+     * Also take care that the code is run Swing Thread-Safe, if run in GUI Application. 
+     * @param mySR StatisticsRecord
+     * @return true if statistics are prepared.
+     */    
+    private Boolean isStatisticsPrepared(StatisticsRecord mySR) {
+		if (Daten.isGuiAppl()) {
+			BooleanWrapper statisticsPrepared=new BooleanWrapper(false);
+			try {
+				SwingUtilities.invokeAndWait(new Runnable() {
+					public void run() {
+						statisticsPrepared.setValue(mySR.prepareStatisticSettings(admin));
+					}
+				});            
+				} catch (Exception e) {
+					Logger.logdebug(e);
+			}
+			return statisticsPrepared.getValue();
+		} else {
+		    return mySR.prepareStatisticSettings(admin);
+		}
+    }
+    
+    /**
+     * Ensures an online update is run if the statistics needs it.
+     * Also take care that the code is run Swing Thread-Safe, if run in GUI Application. 
+     * @param mySR StatisticsRecord
+     * @return true if Online Update has been done for the statistics, or no online update was neccessary.
+     */
+    private Boolean isOnlineUpdateDone(StatisticsRecord mySR) {
+		if (Daten.isGuiAppl()) {
+			BooleanWrapper onlineUpdateDone=new BooleanWrapper(false);
+			
+			try {
+				SwingUtilities.invokeAndWait(new Runnable() {
+					public void run() {
+						onlineUpdateDone.setValue(checkOnlineUpdateIfNeeded(mySR));
+					}
+				});            
+			} catch (Exception e) {
+				Logger.logdebug(e);
+			}
+			return onlineUpdateDone.getValue();
+			
+		} else {
+			return checkOnlineUpdateIfNeeded(mySR);
+		}
+    }    
+    
     private String createStatistic(StatisticsRecord sr, int statisticsNumber) {
         this.sr = sr;
         data = new Hashtable<Object, StatisticsData>();
 
-        if (!sr.prepareStatisticSettings(admin)) {
-            return null;
-        }
-        
-        if (!checkOnlineUpdateIfNeeded(sr)) {
-            return null;
-        }
+		if (!isStatisticsPrepared(sr)) {
+			return null;
+		}
+			        
+		if (!isOnlineUpdateDone(sr)) {
+			return null;
+		}
         
         logInfo(International.getMessage("Erstelle Statistik für den Zeitraum {from} bis {to} ...",
                 sr.sStartDate.toString(), sr.sEndDate.toString()) + "\n", false, true);
@@ -2526,4 +2578,25 @@ public class StatisticTask extends ProgressTask {
                 : null));
         statisticTask.createStatistics(progressDialog);
     }
+    
+    /**
+     * An object as a wrapper for a Boolean value.
+     * It is needed to handle the return values of methods called from within a SwingUtils.invokeAndWait call.  
+     */
+    private class BooleanWrapper {
+    	
+    	Boolean innerValue=false;
+    	
+    	public BooleanWrapper(Boolean value) {
+    		innerValue=value;
+    	}
+    	
+    	public void setValue(Boolean value) {
+    		innerValue=value;
+    	}
+    	public Boolean getValue() {
+    		return innerValue;
+    	}
+    }
+    
 }
