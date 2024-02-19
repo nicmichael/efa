@@ -130,8 +130,20 @@ public class MetaData {
         return TYPES[i];
     }
 
+    /**
+     * Returns the iDataAccess field type of a given field.
+     * If fieldName does not exists, it returns iDataAccess.DATA_UNKOWN.
+     * 
+     * @param fieldName
+     * @return iDataAccess field type value (int). If fieldName does not exist, it returns IDataAccess.DATA_UNKOWN.
+     */
     public int getFieldType(String fieldName) {
-        return getFieldType(getFieldIndex(fieldName));
+        int fieldIndex = getFieldIndex(fieldName);
+    	if (fieldIndex>=0) {
+    		return getFieldType(fieldIndex);
+    	} else {
+    		return IDataAccess.DATA_UNKNOWN;
+    	}
     }
 
     public String[] getKeyFields() {
