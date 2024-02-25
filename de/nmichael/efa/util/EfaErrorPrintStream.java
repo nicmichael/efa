@@ -14,6 +14,8 @@ import de.nmichael.efa.*;
 import de.nmichael.efa.util.Dialog;
 import java.io.*;
 
+import javax.swing.SwingUtilities;
+
 // @i18n complete
 
 public class EfaErrorPrintStream extends PrintStream {
@@ -121,7 +123,12 @@ public class EfaErrorPrintStream extends PrintStream {
         }
 
         public void run() {
-            Dialog.exceptionError(message, stacktrace);
+        	this.setName("EfaErrorPrintStream.ErrorThread");
+        	SwingUtilities.invokeLater(new Runnable() {
+      	      public void run() {
+                  Dialog.exceptionError(message, stacktrace);
+      	      }
+        	});        	
         }
     }
 }

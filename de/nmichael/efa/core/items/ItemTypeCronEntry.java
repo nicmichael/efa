@@ -20,6 +20,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.event.KeyEvent;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -177,7 +178,7 @@ public class ItemTypeCronEntry extends ItemTypeLabelValue {
         return s.toString();
     }
 
-    private JTextField initializeField(String labelTxt, int width, JPanel panel, int y) {
+    private JTextField initializeField(String labelTxt, int width, JPanel panel, int y, Boolean withToolTip) {
         JLabel l = new JLabel(labelTxt + ":");
         JTextField f = new JTextField();
         Dialog.setPreferredSize(f, width, 19);
@@ -194,6 +195,11 @@ public class ItemTypeCronEntry extends ItemTypeLabelValue {
                 f.setDisabledTextColor(fieldColor);
             }
         }
+        if (withToolTip) {
+	        f.addKeyListener(new java.awt.event.KeyAdapter() {
+	            public void keyReleased(KeyEvent e) { updateTooltip(f); }
+	        });
+        }
         f.addFocusListener(new FocusAdapter() {
             public void focusLost(FocusEvent e) {
                 updateFieldFocusLost((JTextField)e.getSource());
@@ -202,15 +208,19 @@ public class ItemTypeCronEntry extends ItemTypeLabelValue {
         return f;
     }
 
+    private void updateTooltip(JTextField theField) {
+    	theField.setToolTipText(theField.getText());
+    }
+    
     protected JComponent initializeField() {
         JPanel p = new JPanel();
         p.setLayout(new GridBagLayout());
-        fMinute    = initializeField(International.getString("Minute"), 100, p, 0);
-        fHour      = initializeField(International.getString("Stunde"), 100, p, 1);
-        fDay       = initializeField(International.getString("Tag"), 100, p, 2);
-        fMonth     = initializeField(International.getString("Monat"), 100, p, 3);
-        fDayOfWeek = initializeField(International.getString("Wochentag"), 100, p, 4);
-        fCommand   = initializeField(International.getString("Kommando"), 400, p, 5);
+        fMinute    = initializeField(International.getString("Minute"), 100, p, 0,false);
+        fHour      = initializeField(International.getString("Stunde"), 100, p, 1, false);
+        fDay       = initializeField(International.getString("Tag"), 100, p, 2,false);
+        fMonth     = initializeField(International.getString("Monat"), 100, p, 3,false);
+        fDayOfWeek = initializeField(International.getString("Wochentag"), 100, p, 4,false);
+        fCommand   = initializeField(International.getString("Kommando"), 380, p, 5,true);
         fFrequency = new JLabel();
         p.add(fFrequency, new GridBagConstraints(1, 6, 1, 1, 0.0, 0.0,
                 GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 2), 0, 0));
@@ -240,6 +250,7 @@ public class ItemTypeCronEntry extends ItemTypeLabelValue {
         }
         if (fCommand != null) {
             fCommand.setText(command != null ? command : "");
+            fCommand.setToolTipText(fCommand.getText());//show complete command in tooltip
         }
         showFrequency();
     }
@@ -272,6 +283,7 @@ public class ItemTypeCronEntry extends ItemTypeLabelValue {
         }
         if (fCommand == f) {
             f.setText(f.getText().trim());
+            f.setToolTipText(f.getText());//show complete command in tooltip
         }
         showFrequency();
     }

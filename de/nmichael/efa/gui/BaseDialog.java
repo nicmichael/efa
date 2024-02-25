@@ -17,6 +17,8 @@ import de.nmichael.efa.util.*;
 import de.nmichael.efa.util.Dialog;
 import de.nmichael.efa.core.items.*;
 import de.nmichael.efa.gui.ImagesAndIcons;
+import de.nmichael.efa.gui.util.AutoCompletePopupWindow;
+
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -210,7 +212,15 @@ public abstract class BaseDialog extends JDialog implements ActionListener {
         }
 
         if (evt.getActionCommand().equals(KEYACTION_ESCAPE)) {
-            cancel();
+        	Component focusedComp=this.getFocusOwner();
+        	if (focusedComp instanceof JTextField) {
+        		if (AutoCompletePopupWindow.isShowingAt((JTextField) focusedComp)) {
+        			// do not hide window if autocomplete window is currently showing
+        			return;
+        		}
+        	}
+    		// otherwise, hide basewindow.
+        	cancel();
         }
 
         if (evt.getActionCommand().equals(KEYACTION_F1)) {
@@ -304,6 +314,7 @@ public abstract class BaseDialog extends JDialog implements ActionListener {
         mainScrollPane.setPreferredSize(Dialog.getMaxSize(dim));
 
         mainScrollPane.getViewport().add(mainPanel, null);
+        mainScrollPane.setBorder(BorderFactory.createEmptyBorder(4,4,4,4));        
     }
 
     protected abstract void iniDialog() throws Exception;
@@ -353,23 +364,8 @@ public abstract class BaseDialog extends JDialog implements ActionListener {
     public JScrollPane getScrollPane() {
         return mainScrollPane;
     }
-
     public static ImageIcon getIcon(String name) {
-        try {
-            if (name.indexOf("/") < 0) {
-                name = Daten.IMAGEPATH + name;
-            }
-            if (Logger.isTraceOn(Logger.TT_GUI, 9)) {
-                Logger.log(Logger.DEBUG, Logger.MSG_DEBUG_GUI_ICONS, "getIcon("+name+")");
-            }
-            return new ImageIcon(BaseDialog.class.getResource(name));
-        } catch(Exception e) {
-            if (Logger.isTraceOn(Logger.TT_GUI, 9)) {
-                Logger.log(Logger.DEBUG, Logger.MSG_DEBUG_GUI_ICONS, "getIcon("+name+"): no icon found!");
-            }
-            Logger.logdebug(e);
-            return null;
-        }
+    	return ImagesAndIcons.getIcon(name); // use a central function instead of redundant code.
     }
 
     public static ImageIcon getScaledImage(String name) {

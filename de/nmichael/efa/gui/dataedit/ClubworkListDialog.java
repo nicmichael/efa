@@ -53,6 +53,9 @@ public class ClubworkListDialog extends DataListDialog {
             super.filterFieldName = "Flag";
             super.filterFieldValue = ""+ClubworkRecord.Flags.Normal.ordinal();
         }
+        
+		//From and to columns should be wider than default
+		this.minColumnWidths = new int[] {150,120,150,0,80,80};           
     }
 
     public void keyAction(ActionEvent evt) {
@@ -134,7 +137,7 @@ public class ClubworkListDialog extends DataListDialog {
             table.setMinColumnWidths(minColumnWidths);
         }
         table.setButtonPanelPosition(buttonPanelPosition);
-        table.setFieldSize(600, 500);
+        table.setFieldSize(650, 500);
         table.setPadding(0, 0, 10, 0);
         table.displayOnGui(this, mainTablePanel, BorderLayout.CENTER);
 

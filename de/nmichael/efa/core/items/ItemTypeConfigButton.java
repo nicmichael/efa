@@ -10,12 +10,26 @@
 
 package de.nmichael.efa.core.items;
 
-import de.nmichael.efa.util.*;
+import java.awt.Color;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.util.StringTokenizer;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JColorChooser;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+import de.nmichael.efa.Daten;
 import de.nmichael.efa.util.Dialog;
-import java.util.*;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
+import de.nmichael.efa.util.EfaUtil;
+import de.nmichael.efa.util.International;
+import de.nmichael.efa.util.Logger;
+import de.nmichael.efa.util.Mnemonics;
 
 // @i18n complete
 
@@ -103,6 +117,9 @@ public class ItemTypeConfigButton extends ItemType {
         button.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(ActionEvent e) { buttonHit(e); }
         });
+        
+        EfaUtil.handleButtonOpaqueForLookAndFeels(button);        
+        
         if (isChangeableShow) {
             checkbox = new JCheckBox();
             checkbox.setText(International.getString("anzeigen"));

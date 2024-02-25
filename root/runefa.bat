@@ -46,6 +46,9 @@ SET CP=%CP%;program/plugins/jh.jar
 REM Classpath: FTP-Plugin
 SET CP=%CP%;program/plugins/edtftpj.jar
 
+REM Classpath: SFTP support for FTP Plugin
+SET CP=%CP%;program/plugins/jsch-0.1.55.jar
+
 REM Classpath: MAIL-Plugin
 SET CP=%CP%;program/plugins/javax.mail.jar
 SET CP=%CP%;program/plugins/activation.jar
@@ -61,16 +64,22 @@ SET CP=%CP%;program/plugins/commons-logging.jar
 SET CP=%CP%;program/plugins/fop.jar
 SET CP=%CP%;program/plugins/xmlgraphics-commons.jar
 
-REM Classpath: Weather-lugin
+REM Classpath: EFA Flat Laf
+SET CP=%CP%;program/plugins/flatlaf-3.2.5.jar
+
+REM Classpath: Weather-Plugin
 SET CP=%CP%;program/plugins/commons-codec.jar
 SET CP=%CP%;program/plugins/signpost-core.jar
+
 
 REM # ##########################################
 REM # JVM Settings                             #
 REM # ##########################################
 
 REM Java Heap
-SET EFA_JAVA_HEAP=128m
+REM A higher Java Heaps helps to speed up efa on slower computers
+REM As garbage collection needs to run at lower frequencies
+SET EFA_JAVA_HEAP=160m
 SET EFA_NEW_SIZE=32m
 IF EXIST javaheap.bat CALL javaheap.bat
 

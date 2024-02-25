@@ -21,7 +21,7 @@ import de.nmichael.efa.core.config.AdminRecord;
 import de.nmichael.efa.core.config.EfaTypes;
 import de.nmichael.efa.core.items.IItemType;
 import de.nmichael.efa.core.items.ItemTypeDate;
-import de.nmichael.efa.core.items.ItemTypeLabel;
+import de.nmichael.efa.core.items.ItemTypeLabelHeader;
 import de.nmichael.efa.core.items.ItemTypeRadioButtons;
 import de.nmichael.efa.core.items.ItemTypeString;
 import de.nmichael.efa.core.items.ItemTypeStringAutoComplete;
@@ -772,15 +772,10 @@ public class BoatReservationRecord extends DataRecord {
 
 
 
-        v.add(item = new ItemTypeLabel("GUI_BOAT_NAME",
-                IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getMessage("Reservierung für {boat}", boatName)));
+        v.add(item = new ItemTypeLabelHeader("GUI_BOAT_NAME",
+                IItemType.TYPE_PUBLIC, CAT_BASEDATA, " "+International.getMessage("Reservierung für {boat}", boatName)));
         item.setPadding(0, 0, 0, 10);// 10 pix vertical distance from next row
-        
-        if (Daten.efaConfig.getBoathouseHeaderUseHighlightColor()) {
-			item.setBackgroundColor(Daten.efaConfig.getBoathouseHeaderBackgroundColor());
-			item.setColor(Daten.efaConfig.getBoathouseHeaderForegroundColor());
-	        item.setFieldGrid(5,GridBagConstraints.EAST, GridBagConstraints.BOTH);
-		}        
+        item.setFieldGrid(5,GridBagConstraints.EAST, GridBagConstraints.BOTH);
         
         v.add(item = new ItemTypeRadioButtons(BoatReservationRecord.TYPE, (getType() != null && getType().length() > 0 ? getType() : TYPE_ONETIME),
                 new String[] {

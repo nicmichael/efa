@@ -22,6 +22,8 @@ import java.io.File;
 // @i18n complete (needs no internationalization -- only relevant for Germany)
 
 public class EmilConfigFrame extends JDialog implements ActionListener {
+  
+  private static int FIELD_HEIGHT = 24;
   EmilFrame parent;
   BorderLayout borderLayout1 = new BorderLayout();
   JButton saveButton = new JButton();
@@ -123,11 +125,11 @@ public class EmilConfigFrame extends JDialog implements ActionListener {
     jLabel3.setLabelFor(std_csv);
     jLabel3.setText("Standard CSV-Datei: ");
     std_csv.setNextFocusableComponent(stdcvsButton);
-    std_csv.setPreferredSize(new Dimension(400, 19));
+    std_csv.setPreferredSize(new Dimension(400, FIELD_HEIGHT));
     dir_csv.setNextFocusableComponent(cvsdirButton);
-    dir_csv.setPreferredSize(new Dimension(400, 19));
+    dir_csv.setPreferredSize(new Dimension(400, FIELD_HEIGHT));
     dir_efw.setNextFocusableComponent(efwdirButton);
-    dir_efw.setPreferredSize(new Dimension(400, 19));
+    dir_efw.setPreferredSize(new Dimension(400, FIELD_HEIGHT));
     nurExportErfuellt.setNextFocusableComponent(saveButton);
     nurExportErfuellt.setText("beim Export nur Teilnehmer exportieren, die die Bedingungen erfüllt " +
     "haben");

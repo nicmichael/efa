@@ -10,8 +10,6 @@
 
 package de.nmichael.efa.core.items;
 
-import de.nmichael.efa.util.*;
-import de.nmichael.efa.util.Dialog;
 import de.nmichael.efa.gui.util.*;
 import java.util.*;
 import java.awt.*;
@@ -26,7 +24,7 @@ public class ItemTypeTable extends ItemType implements ActionListener, ITableEdi
     protected String value;
 
     protected Table table;
-    protected TableCellRenderer renderer;
+    protected EfaTableCellRenderer renderer;
     protected JScrollPane scrollPane;
     protected EfaMouseListener mouseListener;
     protected JPopupMenu popup;
@@ -264,6 +262,7 @@ public class ItemTypeTable extends ItemType implements ActionListener, ITableEdi
     public int displayOnGui(Window dlg, JPanel panel, int x, int y) {
         this.dlg = dlg;
         iniDisplay();
+        //the two 1.0 values make the panel grow with the window.
         panel.add(scrollPane, new GridBagConstraints(x, y, fieldGridWidth, fieldGridHeight, 1.0, 1.0,
                 fieldGridAnchor, fieldGridFill, new Insets(padYbefore, padXbefore+10, padYafter, padXafter+10), 0, 0));
         return 1;

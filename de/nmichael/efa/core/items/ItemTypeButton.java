@@ -23,7 +23,9 @@ public class ItemTypeButton extends ItemType {
 
     protected JButton button;
     protected ImageIcon icon;
-
+    protected Insets margin;
+    protected boolean boldfont;
+    
     public ItemTypeButton(String name, 
             int type, String category, String description) {
         this.name = name;
@@ -35,13 +37,23 @@ public class ItemTypeButton extends ItemType {
     }
 
     public IItemType copyOf() {
-        return new ItemTypeButton(name, type, category, description);
+    	ItemTypeButton newItem= new ItemTypeButton(name, type, category, description);
+    	if (margin!=null) {
+    		newItem.setMargin(margin.top,margin.left, margin.bottom, margin.right);
+	    }
+    	newItem.setBold(this.boldfont);
+    	return newItem;
     }
 
     protected void iniDisplay() {
         button = new JButton();
         Dialog.setPreferredSize(button, fieldWidth, fieldHeight);
-        button.setMargin(new Insets(1, 1, 1, 1));
+        // an inset of 1,1,1,1 leads to a very harsh look of the button as the icon+text are very close to the button border.
+        // so better stick with the default margins. the margin of 1,1,1,1 is needed for efaBaseFrame display of up and down buttons for crew members
+        // and is set via setmargin()
+        if (this.margin !=null) {
+        	button.setMargin(this.margin);
+        }
         if (border != null) {
             button.setBorder(border);
         }
@@ -66,6 +78,9 @@ public class ItemTypeButton extends ItemType {
             public void focusGained(FocusEvent e) { field_focusGained(e); }
             public void focusLost(FocusEvent e) { field_focusLost(e); }
         });
+        if(boldfont) {
+        	button.setFont(button.getFont().deriveFont(Font.BOLD));
+        }
         button.setVisible(isVisible);
         this.field = button;
         saveBackgroundColor(true);
@@ -120,7 +135,9 @@ public class ItemTypeButton extends ItemType {
 
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
-        button.setEnabled(enabled);
+        if (button!=null) {
+        	button.setEnabled(enabled);
+        }
     }
 
     public void setIcon(ImageIcon icon) {
@@ -133,4 +150,16 @@ public class ItemTypeButton extends ItemType {
             button.setText(s);
         }
     }
+    
+    public void setMargin(int top, int left, int bottom, int right) {
+    	this.margin=new Insets(top,left,bottom,right);
+    	if (button != null) {
+    		button.setMargin(this.margin);     
+    	}
+    }
+    
+    public void setBold(Boolean value) {
+    	this.boldfont=value;
+    }
 }
+

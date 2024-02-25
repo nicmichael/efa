@@ -1528,6 +1528,7 @@ public class Audit extends Thread {
     }
 
     public void run() {
+    	this.setName("AuditTask");
         runAudit();
     }
 

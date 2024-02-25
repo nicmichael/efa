@@ -10,11 +10,7 @@
 
 package de.nmichael.efa.core.items;
 
-import de.nmichael.efa.core.items.ItemTypeLabelValue;
 import de.nmichael.efa.util.*;
-import de.nmichael.efa.util.Dialog;
-import java.awt.*;
-import javax.swing.*;
 import java.util.regex.*;
 
 // @i18n complete

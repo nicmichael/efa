@@ -95,7 +95,8 @@ public class ItemTypeDataRecordTable extends ItemTypeTable implements IItemListe
         setData(persistence, validAt, admin, filterFieldName, filterFieldValue);
         setActions(actions, actionTypes, actionIcons);
         this.itemListenerActionTable = itemListenerActionTable;
-        renderer = new de.nmichael.efa.gui.util.TableCellRenderer();
+        renderer = new de.nmichael.efa.gui.util.EfaTableCellRenderer();
+        renderer.setAlternatingRowColor(Daten.efaConfig.getTableAlternatingRowColor());
         renderer.setMarkedBold(false);
         renderer.setMarkedForegroundColor(markedCellColor);
         renderer.setMarkedBold(markedCellBold);
@@ -280,6 +281,7 @@ public class ItemTypeDataRecordTable extends ItemTypeTable implements IItemListe
             if (isVersionized && (!r.isValidAt(myValidAt) || r.getInvisible())) {
                 for (TableItem it : content) {
                     it.setDisabled(true);
+                    if (r.getInvisible()) {it.setInvisible(true);}
                 }
             }
 

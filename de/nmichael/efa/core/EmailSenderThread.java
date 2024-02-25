@@ -325,6 +325,7 @@ public class EmailSenderThread extends Thread {
     }
 
     public void run() {
+    	this.setName("EmailSenderThread");
         int errorCount = 0;
         while(true) {
             try {

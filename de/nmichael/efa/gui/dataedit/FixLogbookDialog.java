@@ -184,6 +184,7 @@ public class FixLogbookDialog extends BaseDialog implements IItemListener {
                 International.getString("Durchsuche Fahrtenbuch") + " ...", 0, 100);
         new Thread() {
             public void run() {
+            	this.setName("FixLogBookDialog.NextStepThread");
                 switch(step) {
                     case 2:
                         findPersonsToFix(progressMonitor);
@@ -197,10 +198,18 @@ public class FixLogbookDialog extends BaseDialog implements IItemListener {
                 }
                 progressMonitor.setProgress(100);
                 if (progressMonitor.isCanceled()) {
-                    cancel();
+                	  SwingUtilities.invokeLater(new Runnable() {
+                  	      public void run() {
+                          	cancel();
+                  	      }
+                    	});                    
                 } else {
-                    updateFields();
-                    validate();
+              	  SwingUtilities.invokeLater(new Runnable() {
+              	      public void run() {
+                          updateFields();
+                          validate();
+              	      }
+                	});                    	
                 }
             }
         }.start();

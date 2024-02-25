@@ -1,0 +1,539 @@
+<html>
+<head>
+<style>
+body {
+  font-family: helvetica, sans serif;
+}
+</style>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>efa - elektronisches Fahrtenbuch Version 2</title>
+</head>
+<body bgcolor="#ffffff" font="Helvetica">
+
+<h1><a name="konfiguration_des_look_feel"></a>Configuration of the  Look&amp;Feel</h1>
+
+
+<h3>Table of contents</h3>
+
+
+<ul>
+<li><a href="#konfiguration_des_look_feel">Configuration of the  Look&amp;Feel</a>
+<ul>
+<li><a href="#allgemeines">General</a></li>
+<li><a href="#efa_flatlaf">EFA FlatLaf</a></li>
+<li><a href="#konfiguration">Configuration</a></li>
+<li><a href="#allgemein_-_erscheinungsbild">Common -&gt; Appearance</a>
+<ul>
+<li><a href="#look_feel">Look&amp;Feel</a></li>
+<li><a href="#farben_fuer_efaflatlaf">Colors for efaFlatLaf</a></li>
+<li><a href="#ueberschriften-darstellung">Heading settings</a></li>
+<li><a href="#tabellenfarben">Table colors</a></li>
+<li><a href="#tabellendarstellung">Table representation</a></li>
+<li><a href="#tooltips">Tooltips</a></li>
+<li><a href="#schriftart_fuer_efabase">Font for efaBase</a></li>
+</ul>
+</li>
+<li><a href="#vorgehensweise_zur_aenderung_der_farben_von_flatlaf">How to change the colors of efaFlatLaf</a></li>
+<li><a href="#themen_fuer_flatlaf">Themes for FlatLaf</a>
+<ul>
+<li><a href="#flatlaf_standard_heller_dunkler">Flatlaf brighter, darker</a></li>
+<li><a href="#nimbus">Nimbus</a></li>
+<li><a href="#metal">Metal</a></li>
+</ul></li>
+</ul></li>
+</ul>
+
+<h2><a name="allgemeines"></a>General</h2>
+
+
+<p>
+In Java, a Look&amp;Feel defines the way the interface is displayed. This includes
+</p>
+<ul>
+<li> Coloring
+</li>
+<li> Font and style used
+</li>
+<li> Representation of surface elements with edges or rounded corners.
+</li>
+</ul>
+
+<p>
+From a technical point of view, EFA basically supports all standard look and feels defined in Java. The most common Java looks are “Metal”, “Nimbus” and “Motif”, although the “Windows” and “WindowsClassic” looks are also available under Windows. The “GTK” look is only available under Linux.
+</p>
+
+<p>
+The <strong>Metal Look&amp;Feel</strong> works best because it supports all of EFA's features well. This particularly includes the colored buttons on the efaBootsHaus homepage. The Metal Look&Feel font is easy to read on the screen. The Metal Look&amp;Feel font is easy to read on the screen.
+</p>
+
+<p>
+The <strong>Nimbus Look&amp;Feel</strong>works less well because it has some problems when displaying the logbook in efaBootshaus. The Windows Look&amp;Feel, on the other hand, does not support colored buttons, and the tabs are not well highlighted either.
+</p>
+
+<p>
+Windows/WindowsClassic and GTK Look&amp;Feel used their own fonts, which changed the display of EFA again.
+</p>
+
+<h2><a name="efa_flatlaf"></a>EFA FlatLaf</h2>
+<p>
+All the Look&amp;Feel of standard Java are now getting old and no longer seem modern. In addition, every look and feel other than metal has technical or display-specific difficulties.
+</p>
+
+<p>
+Therefore, a new look and feel was developed for EFA 2.4, which is based on the open source library <a href="https://www.formdev.com/flatlaf/" title="https://www.formdev.com/flatlaf/" rel="ugc nofollow">FlatLaf</a> based.
+</p>
+
+<p>
+Essential Features
+</p>
+<ul>
+<li> optimized for good visibility of screen contents 
+</li>
+<li> large screen elements, e.g. scrollbars (easy to hit) 
+</li>
+<li> current look with rounded corners 
+</li>
+<li> customizable in terms of color 
+</li>
+</ul>
+
+<p>
+During development, care was taken to ensure that as many of the coloring properties as possible could also be used in the other standard Java looks.
+</p>
+
+<p>
+Whether this works depends heavily on the respective standard Java looks. The Windows LookAndFeel lacks the ability to set the color of the current tab in a user-specific manner.
+</p>
+<h2><a name="konfiguration"></a>Configuration</h2>
+<p>
+How efaBootshaus is displayed can be configured in two different areas in EFA:
+</p>
+<ul>
+<li> <strong>Configuration → General → Appearance</strong><br/>
+These are the properties that affect all efa programs. E.g. efaBase, efaBths, etc.
+Here, in particular, the color scheme is determined, as well as basic information about the screen and the positioning of the EFA window on it.<br/>
+<br/>
+
+</li>
+<li> <strong>Configuration → efa-Boat House → Appearance</strong><br/>
+These properties only affect efa-Boat House. 
+</li>
+</ul>
+
+<p>
+In order to produce an optimal result for efaBootshaus, adjustments are required in both areas.
+</p>
+
+<h2><a name="allgemein_-_erscheinungsbild"></a>Common -&gt; Appearance</h2>
+<p>
+<img src="efaflatlaf_config.png"  alt="" />
+</p>
+
+<p>
+In this tab the LookAndFeel is set for the following EFA programs:
+</p>
+<ul>
+<li> efaBase
+</li>
+<li> efaBootshaus
+</li>
+<li> emil
+</li>
+</ul>
+
+<h3><a name="look_feel"></a>Look&amp;Feel</h3>
+<p>
+This property sets the basic representation of efa. The list of available looks depends on the operating system you choose. The GTK Look&Feel, for example, is only available under Linux, while the Windows Looks are only available under Windows operating systems. The “standard” is determined from the Java specifications for the respective operating system on which EFA runs. On Windows the default is Windows LookAndFeel, on Linux it is “GTK”.
+</p>
+
+<p>
+The <strong>Metal</strong> Look and the newly developed <strong>efaFlatLight Look</strong>  work best for efaBase and efaBths .
+</p>
+
+<h3><a name="farben_fuer_efaflatlaf"></a>Colors for efaFlatLaf</h3>
+<p>
+The standard color scheme for efaFlatLaf is intended to enable optimal visibility of the screen contents.
+</p>
+
+<p>
+The individual colors can be adjusted by pressing the “Select color” button. Pressing the red “X” behind it resets the color to the efaFlatLaf standard.<br/>
+<img src="efaflatlaf_farbauswahl.png"  alt="" />
+</p>
+<ul>
+<li> <strong>Background color</strong><br/>
+The background color for all masks.  <br/>
+The Flatlaf is programmed to assume a light background color. This can also be chosen relatively dark. efaFlatLaf currently does not support a true “dark mode”.
+<br/>
+<br/>
+<strong>Note:</strong> If the “Start journey” dialog was already open before the background color was changed, it will only adopt the new background color after an efa restart. It is recommended to always restart efa after completing coloring changes, even though most changes affect EFA immediately after closing the config dialog.<br/>
+<br/>
+
+</li>
+<li> <strong>Lighten background for input fields (%)</strong><br/>
+This configuration property applies to buttons, input fields, list fields, table backgrounds. These should stand out from the actual background color.  <br/>
+<br/>
+Here you can set how much brighter the input fields/buttons/… should be. For a very light color, 8% is enough; for a darker color, you can also enter 15% or 20% here.  <br/>
+The default value is 10. <br/>
+<br/>
+
+</li>
+<li> <strong>Accent color</strong><br/>
+The accent color is used as the basis for all scroll bars, selected entries in lists and for tabs.<br/>
+<br/>
+
+</li>
+<li> <strong>Focus color</strong> <br/>
+The Flatlaf can highlight the interface element that currently has the input focus with a colored frame. Typically this should be a relatively light color so that it is noticeable.  <br/>
+A good choice is if the focus color is the complementary color to the accent color. <br/>
+<br/>
+
+</li>
+</ul>
+
+<h3><a name="ueberschriften-darstellung"></a>Headers</h3>
+
+<ul>
+<li> <strong>Highlight headings</strong><br/>
+Highlight headings of the boat lists in the main window of efaBootshaus, as well as the headings within efaConfig and individual list elements when maintaining boats and people.<br/>
+<br/>
+
+</li>
+<li> <strong>Highlight tab titles</strong><br/>
+The active tab can be highlighted in color. This setting only affects the Metal Look and the WindowsClassic Look. <br/>
+<br/>
+
+</li>
+<li> <strong>Headings background color</strong><br/>
+This should be a dark color. It looks good when the heading color is identical to the accent color of efaFlatLaf.<br/>
+<br/>
+
+</li>
+<li> <strong>Headings text color</strong><br/>
+This should be a light color, such as white.  <br/>
+The text color is also used to display the border around the headings.<br/>
+<br/>
+
+</li>
+</ul>
+
+<h3><a name="tabellenfarben"></a>Table colors</h3>
+
+<p>
+These properties work in all look and feel.<br/>
+<br/>
+
+</p>
+<ul>
+<li> <strong>Table Header Background Color</strong><br/>
+Used for better highlighting the table headings.<br/>
+This color should be characterized by a darker tone compared to the background of the alternating lines.
+<br/>
+<br/>
+
+</li>
+<li> <strong>Table Header Foreground Color</strong><br/>
+If the heading background color is relatively light, this setting should be “black” and if it is relatively dark, to “white”.
+<br/>
+<br/>
+
+</li>
+<li> <strong>Alternating Color</strong><br/>
+Tables can have every other row with a different background color.<br/>
+efa assumes that the background color is light and the font color is always black. Therefore, only the background of the alternating lines can be set here.<br/>
+<br/>
+
+</li>
+<li> <strong>Selected row Background Color</strong><br/>
+This color should clearly stand out from the table heading color and the background for the alternating rows.
+<br/>
+<br/>
+
+</li>
+<li> <strong>Selected row Foreground Color</strong><br/>
+If the background color for the selected line is rather dark, a white font color should be selected here.<br/>
+<br/>
+
+</li>
+</ul>
+
+<h3><a name="tabellendarstellung"></a>Table representation</h3>
+
+
+<p>
+These settings apply to all Look&Feels.<br/>
+
+</p>
+<ul>
+<li> <strong>Tables: Show tooltip if column is cut off</strong><br/>
+Efa works even on relatively small monitors. This means that table contents cannot always be displayed completely. If this setting is active, a tool tip with the full text is displayed when the mouse is hovered over truncated text.
+<br/>
+<br/>
+Note: at efaBths, the duration until the tool tip appears is set via “efa-Boat House → Appearance”.<br/>
+<br/>
+
+</li>
+<li> <strong>Use alternating row color in tables</strong><br/>
+Give every other row of the table an alternative background color.<br/>
+<br/>
+
+</li>
+<li> <strong>Tables: Find entries with special characters more easily</strong><br/>
+If the function is active, the following applies: If the search field below a table is filled with text containing only Latin letters, the table will also find entries with umlauts. The search term „Andre“ also matches on en entry „Andr<strong>é</strong>“.<br/>
+However, if at least one umlaut is entered in the search field, an explicit search will be made for entries that contain this umlaut. <br/>
+This feature can be configured <eb>separately</em> for  
+<ul>
+<li> ables (off by default),  
+</li>
+<li> Boathouse lists in efaBths (on by default, see Efa-Boat House→Appearance→Boat List Filter Fields in Expert Mode) 
+</li>
+<li> Popup lists for boat names, people, etc. (on by default, see General→Input→Popup window for element selection in expert mode)<br/>
+
+</li>
+</ul>
+</li>
+</ul>
+
+<h3><a name="tooltips"></a>Tooltips</h3>
+
+
+<p>
+These properties work in every look and feel. <br/>
+The background color of the tooltip cannot be set in Nimbus Look&Feel.<br/>
+
+</p>
+
+<p>
+<img src="tooltip_farben.png"  alt="" />
+</p>
+<ul>
+<li> <strong>Use custom colors for Tooltips</strong><br/>
+If this function is switched off, the standard colors of the respective look and feel are used.<br/>
+<br/>
+
+</li>
+<li> <strong>Tooltip background color</strong><br/>
+Default background color of all tooltips in efa.<br/>
+<br/>
+
+</li>
+<li> <strong>Tooltip foreground color</strong><br/>
+Default text color of all tool tips in efa. .<br/>
+In FlatLaf, this color is also used for the frame of the tool tip.<br/>
+<br/>
+
+</li>
+<li> <strong>Tooltip header background color</strong><br/>
+This setting is currently only used by efaBootshaus, but is intended for several areas in the future. This heading color should contrast <em>slightly</em> with the default background color. It is <em>not</em> recommended to choose a dark background color here, as this has a very dominant effect on tool tips. <br/>
+<br/>
+This setting is applied even if “Tooltips with custom coloring” is turned off.<br/>
+<br/>
+
+</li>
+<li> <strong>Tooltip header foreground color</strong><br/>
+This setting is currently only used by efaBootshaus, but is intended for several areas in the future. The text color should be identical to the standard tooltip text color.  <br/>
+This setting is applied even if “Tooltips with custom coloring” is turned off.<br/>
+<br/>
+<br/>
+
+</li>
+</ul>
+
+<h3><a name="schriftart_fuer_efabase"></a>Font for efaBase</h3>
+
+
+<p>
+These properties can be used for all look and feel.<br/>
+
+</p>
+
+<p>
+The properties only work in efaBase, not in other efa programs.
+A font size of 14 points is recommended.<br/>
+<br/>
+
+</p>
+
+<h2><a name="vorgehensweise_zur_aenderung_der_farben_von_flatlaf"></a>How to change the colors of FlatLaf</h2>
+
+
+<p><img src="efaflatlaf_farbauswahl.png"  alt="" />
+</p>
+
+<p>
+Pressing the “Select Color” button opens the standard Java color selection dialog.
+</p>
+
+
+<ul>
+<li> <strong>Swatches</strong><br/>
+This tab offers a direct selection of colors from the full spectrum.        <br/>
+It can be used well to select background and text colors for headings.<br/>
+<p>
+<img src="farbkonfig_swatches.png"  alt="" />
+</p>
+<br/>
+
+</li>
+<li> <strong>RGB</strong><br/>
+The RGB tab allows you to select the color components using the three primary colors red, green and blue. Each of the colors can be chosen on a scale from 0 to 255.  <br/>
+The direct entry of a hexadecimal color code is particularly relevant. Here, already known color values ​​(e.g. from the topics in the following chapter) can be entered and adopted using copy/paste. <br/>
+ <br/>
+ <img src="farbkonfig_RGB.png"/><br/>
+ <br/>
+<br/>
+
+</li>
+<li> <strong>HSL</strong><br/>
+<img src="farbkonfig_HSL.png"/><br/>The HSL tab is the friend of every person who wants to vary background colors.<br/>
+In the screenshot above you can see the standard background color of efaFlatLaf. This is a slightly orange gray (this can be seen because the square color area changes to an orange hue as it becomes more saturated). Even if it is hardly noticeable in the direct color value, this ensures a slightly warm coloring of efa.
+<br/>
+This color was deliberately chosen, also to make it easier to adapt the basic theme. <br/>
+<br/>
+From here you can easily change the brightness value of the FlatLaf and, for example, create a darker LAF that emphasizes the contrasts more. <br/><img src="farbkonfig_HSL_dunkler.png"/></a> <br/>
+<br/>
+<p>
+You can also create a reddish tone in the background color by changing the slider for “Color Tone”. <br/><img src="farbkonfig_HSL_roetlich.png"  />
+<br/>
+<br/>
+</p>
+</li>
+</ul>
+
+
+<h2><a name="themen_fuer_flatlaf"></a>Themes for FlatLaf</h2>
+
+
+
+
+<h3><a name="flatlaf_standard_heller_dunkler"></a>Flatlaf brighter, darker</h3>
+
+
+<p>
+<strong> Flatlaf brighter </strong>
+</p>
+<div ><table  border=1>
+	<thead>
+	<tr>
+		<th> Property </th><th> Hex-Color code for use in RGB tab </th>
+	</tr>
+	</thead>
+	<tr>
+		<td> Background 		</td><td> F4F3EF </td>
+	</tr>
+	<tr>
+		<td> Lighten background for edit fields </td><td> 8%  </td>
+	</tr>
+</table>
+
+<p>
+<strong> Flatlaf darker </strong>
+</p>
+<div class="table sectionedit17"><table  border=1>
+	<thead>
+	<tr>
+		<th> Property </th><th> Hex-Color code for use in RGB tab </th>
+	</tr>
+	</thead>
+	<tr>
+		<td> Background 		</td><td> E5E3D9 </td>
+	</tr>
+	<tr>
+		<td> Lighten background for edit fields </td><td> 14%  </td>
+	</tr>
+</table>
+
+
+
+<h3><a name="nimbus"></a>Nimbus</h3>
+
+
+<p>
+A Nimbus-like coloring can be achieved using the following color codes:<br/>
+</p>
+<div ><table  border=1>
+	<thead>
+	<tr>
+		<th> Property </th><th> Hex-Color code for use in RGB tabe </th>
+	</tr>
+	</thead>
+	<tr>
+		<td> Background 		</td><td> D6D9DF </td>
+	</tr>
+	<tr>
+		<td> Lighten background for edit fields </td><td> 20%  </td>
+	</tr>
+	<tr>
+		<td> Accent Color		</td><td> 5388BA </td>
+	</tr>
+	<tr>
+		<td> Headings background	</td><td> 7E9CB8 </td>
+	</tr>
+	<tr>
+		<td> Table Header Background		</td><td> 6190BB </td>
+	</tr>
+	<tr>
+		<td> Alternating row color	</td><td> D8E3ED </td>
+	</tr>
+	<tr>
+		<td> Table selection color	</td><td> 5E86AA </td>
+	</tr>
+	<tr>
+		<td> Tooltip Background		</td><td> E0EAF4 </td>
+	</tr>
+	<tr>
+		<td> Tooltip Header Background		</td><td> EFF4F9 </td>
+	</tr>
+	<tr>
+		<td> Tooltip text color	</td><td> 15416A </td>
+	</tr>
+</table>
+
+
+
+<h3><a name="metal"></a>Metal</h3>
+
+
+<p>
+a Metal-like coloring can be achieved using the following color codes:<br/>
+</p>
+<div ><table border=1>
+	<thead>
+	<tr>
+		<th> Property </th><th> Hex-Color code for use in RGB tab </th>
+	</tr>
+	</thead>
+	<tr>
+		<td> Background 		</td><td> EEEEEE </td>
+	</tr>
+	<tr>
+		<td> Lighten background for edit fields </td><td> 10%  </td>
+	</tr>
+	<tr>
+		<td> Accent Color		</td><td> 4878A5 </td>
+	</tr>
+	<tr>
+		<td> Headings background	</td><td> 4878A5</td>
+	</tr>
+	<tr>
+		<td> Table Header Background		</td><td> B1C7DC </td>
+	</tr>
+	<tr>
+		<td> Alternating row color	</td><td> DBEAF9 </td>
+	</tr>
+	<tr>
+		<td> Table selection color	</td><td> 4878A5 </td>
+	</tr>
+	<tr>
+		<td> Tooltip Background		</td><td> E0EDF9 </td>
+	</tr>
+	<tr>
+		<td> Tooltip Header Background		</td><td> FAFCFE </td>
+	</tr>
+	<tr>
+		<td> Tooltip text color	</td><td> 15416A </td>
+	</tr>
+</table>
+
+
+</body>
+</html>

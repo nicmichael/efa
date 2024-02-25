@@ -2,13 +2,16 @@
 <Plugins>
 
     <Plugin name="ftp">
-        <FullName>edtFTPj/Free</FullName>
-        <Version>2.3.0</Version>
-        <Copyright>Copyright (c) Enterprise Distributed Technologies, licensed under the GNU LGPL</Copyright>
+        <FullName>edtFTPj/Free &amp; JCraft jSch Library</FullName>
+        <Version>2.3.0 / 0.1.55</Version>
+        <Copyright>edtFTPj Copyright (c) Enterprise Distributed Technologies, licensed under the GNU LGPL; 
+			jSch Copyright (c) 2002-2015 Atsuhiko Yamanaka, JCraft,Inc., Licensed under a BSD-style license
+		</Copyright>
         <Description lang="de">FTP-Upload von Statistiken aus efa heraus</Description>
         <Description lang="en">FTP Upload of statistics directly from efa</Description>
         <Files baseurl="http://efa.nmichael.de/plugins/ftp/">
             <File size="186258">edtftpj.jar</File>
+            <File size="280681">jsch-0.1.55.jar</File>            
         </Files>
     </Plugin>
 
@@ -71,6 +74,17 @@
         <Files baseurl="http://efa.nmichael.de/plugins/weather/">
             <File size="44558">signpost-core.jar</File>
             <File size="284184">commons-codec.jar</File>
+        </Files>
+    </Plugin>
+
+    <Plugin name="flatlaf">
+        <FullName>FlatLaf - Flat Look and Feel</FullName>
+        <Version>3.2.5</Version>
+        <Copyright>FlatLaf is open source licensed under the Apache 2.0 License.</Copyright>
+        <Description lang="de">FlatLaf Look and Feel</Description>
+        <Description lang="en">FlatLaf Look and Feel</Description>
+        <Files baseurl="http://efa.nmichael.de/plugins/flatlaf">
+            <File size="818435">flatlaf-3.2.5.jar</File>
         </Files>
     </Plugin>
 

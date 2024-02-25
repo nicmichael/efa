@@ -34,6 +34,7 @@ public class Plugins {
     public static final String PLUGIN_MAIL = "mail";
     public static final String PLUGIN_PDF = "pdf";
     public static final String PLUGIN_WEATHER = "weather";
+    public static final String PLUGIN_FLATLAF = "flatlaf";
 
     private Hashtable<String,PluginInfo> pluginInfos;
 
@@ -58,11 +59,15 @@ public class Plugins {
 
         if (pluginName.equals(PLUGIN_FTP)) {
             try {
-                FTPClient tmp = new FTPClient(null, null, null, null, null, null);
+                FTPClient tmp = new FTPClient(null, null, null, null, null, null,0);
                 tmp.runUpload();
                 return true;
             } catch (NoClassDefFoundError e) {
                 return false;
+            } catch (Exception e) {
+            	// we just catch the exception instead of logging it.
+            	// there can be no successful upload with the ftp client with the parameters given.
+            	EfaUtil.foo();
             }
         }
 
@@ -110,6 +115,12 @@ public class Plugins {
                 return false;
             }
         }
+        
+        if (pluginName.equals(PLUGIN_FLATLAF)) {
+        	// During initialization of efa programs it is determined if flatlaf library is actually present.
+        	// a failure mostly comes from a missing flatlaf-3.2.5.jar in the classpath.
+        	return Daten.flatLafInitializationOK;
+        }        
 
         return false;
     }
@@ -136,12 +147,12 @@ public class Plugins {
             PluginInfo p = getPluginInfo(name);
             StringBuilder s = new StringBuilder();
             boolean installed = p.isInsalled();
-            s.append("<table width=\"100%\" bgcolor=\"#" +  (installed ? "ccffcc" : "ffcccc") + "\"><tr><td>");
-            s.append("<b>" + International.getString("Plugin") + ": " + name + " (" + p.getFullName() + ")</b>");
+            s.append("<html><table width=\"100%\" bgcolor=\"#" +  (installed ? "ccffcc" : "ffcccc") + "\"><tr><td><font color=#000000");
+            s.append("<b>" + International.getString("Plugin") + ": " + name + " (" + p.getFullName()+ ")</b>");
             s.append(" - " + International.getString("Version") + ": " + p.getVersion() + "<br>");
-            s.append(p.getCopyright() + "<br>");
-            s.append("<i>" + p.getDescription() + "</i><br>");
-            s.append("</td></tr></table>");
+            s.append(p.getCopyright().replaceAll("(\\r\\n|\\n)", "<br>") + "<br>");
+            s.append("<i>" + p.getDescription().replaceAll("(\\r\\n|\\n)", "<br>") + "</i><br>");
+            s.append("</font></td></tr></table></html>");
             items.put(name, s.toString());
         }
         return items;
@@ -167,7 +178,6 @@ class PluginInfoFileParser extends XmlHandler {
     private PluginInfo plugin;
     private Hashtable<String,PluginInfo> plugins = new Hashtable<String,PluginInfo>();
     private String descrlang;
-    private String baseurl;
     private int filesize;
 
     public PluginInfoFileParser() {

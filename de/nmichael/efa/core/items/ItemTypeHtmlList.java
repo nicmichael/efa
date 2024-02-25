@@ -10,21 +10,40 @@
 
 package de.nmichael.efa.core.items;
 
-import de.nmichael.efa.util.*;
-import de.nmichael.efa.util.Dialog;
-import de.nmichael.efa.gui.util.*;
-import java.util.*;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.util.Hashtable;
+
+import javax.swing.BorderFactory;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.JList;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.border.Border;
+
+import de.nmichael.efa.Daten;
+import de.nmichael.efa.gui.util.EfaMouseListener;
+import de.nmichael.efa.util.EfaUtil;
+import de.nmichael.efa.util.Logger;
 
 // @i18n complete
-
+/**
+ * This class requires that all items that shall be shown begin with <html> and end with </html> to 
+ * be rendered correctly.
+ */
 public class ItemTypeHtmlList extends ItemType implements ActionListener {
 
     protected String value;
 
-    protected JList list;
+    protected JList <String>list;
     protected JScrollPane scrollPane;
     protected EfaMouseListener mouseListener;
     protected JPopupMenu popup;
@@ -47,6 +66,7 @@ public class ItemTypeHtmlList extends ItemType implements ActionListener {
         fieldGridFill = GridBagConstraints.NONE;
     }
 
+    @SuppressWarnings({"unchecked"})
     public IItemType copyOf() {
         return new ItemTypeHtmlList(name, keys.clone(), (Hashtable<String,String>)items.clone(), value, type, category, description);
     }
@@ -67,7 +87,7 @@ public class ItemTypeHtmlList extends ItemType implements ActionListener {
             }
                 list.setListData(elements);
             } else {
-                list.setListData(new Object[0]);
+                list.setListData(new String[0]);
             }
             for (int i=0; keys != null && value != null && i<keys.length; i++) {
                 if (value.equals(keys[i])) {
@@ -85,7 +105,7 @@ public class ItemTypeHtmlList extends ItemType implements ActionListener {
                     getClass().getName() + ".iniDisplay() fieldWidth=" + fieldWidth +
                     ", fieldHeight=" + fieldHeight);
         }
-        list = new JList();
+        list = new JList <String>() ;
         list.setCellRenderer(new MyCellRenderer());
         scrollPane = new JScrollPane();
         scrollPane.setPreferredSize(new Dimension(fieldWidth, fieldHeight));
@@ -170,17 +190,22 @@ public class ItemTypeHtmlList extends ItemType implements ActionListener {
         this.popupActions = actions;
     }
 
-    class MyCellRenderer extends JEditorPane implements ListCellRenderer {
+    private class MyCellRenderer extends DefaultListCellRenderer {
 
-        public Component getListCellRendererComponent(
-                JList list, // the list
-                Object value, // value to display
-                int index, // cell index
-                boolean isSelected, // is the cell selected
-                boolean cellHasFocus) // does the cell have focus
+		private static final long serialVersionUID = 4881509201954839243L;
+		private Border emptyB = BorderFactory.createEmptyBorder(4, 4, 4, 4); 
+		
+		public Component getListCellRendererComponent(
+                JList<?> list,
+                Object value,
+                int index,
+                boolean isSelected,
+                boolean cellHasFocus)
         {
+			super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+			
             String s = value.toString();
-            setContentType("text/html");
+
             setText(s);
             if (Logger.isTraceOn(Logger.TT_GUI, 6)) {
                 Logger.log(Logger.DEBUG, Logger.MSG_DEBUG_GUI_ELEMENTS,
@@ -188,15 +213,27 @@ public class ItemTypeHtmlList extends ItemType implements ActionListener {
                         getPreferredSize().getHeight() + ", s = " + s);
             }
             if (isSelected) {
-                setBackground(list.getSelectionBackground());
-                setForeground(list.getSelectionForeground());
+            	if (!Daten.lookAndFeel.endsWith(Daten.LAF_METAL)) {
+            		// Nimbus does not paint background for selected cells very well.
+            		// using .brighter() on the color fixes the problem (by probably converting a DerivedColor to an actual color).
+            		// This code works ok with the other looks, except for metal, so... 
+            		// in metal we use the original code.
+            		setBackground(list.getSelectionBackground().brighter()); 
+            	} else {
+            		setBackground(list.getSelectionBackground()); 
+            	}
+            	setForeground(list.getSelectionForeground());
             } else {
-                setBackground(list.getBackground());
-                setForeground(list.getForeground());
+            	setBackground(list.getBackground());
+            	setForeground(list.getForeground());
             }
-            setEnabled(list.isEnabled());
-            setFont(list.getFont());
-            setOpaque(true);
+
+            /*
+            
+            setEnabled(list.isEnabled());*/
+            //setFont(list.getFont());
+            //setOpaque(true);
+            this.setBorder(emptyB);
             int height = (int) getPreferredSize().getHeight();
             if (height < 25) {
                 // some environments have display problems with this list and only show the
@@ -208,8 +245,8 @@ public class ItemTypeHtmlList extends ItemType implements ActionListener {
                     Logger.log(Logger.DEBUG, Logger.MSG_DEBUG_GUI_ELEMENTS,
                             getClass().getName() + ".MyCellRenderer setting preferred height = " + height);
                 }
-                setPreferredSize(new Dimension(fieldWidth, height));
-            }
+                setPreferredSize(new Dimension(list.getWidth(), height));
+            } 
             return this;
         }
     }

@@ -91,6 +91,12 @@ public class AutoCompleteList {
     public AutoCompleteList() {
     }
 
+    //for debug purposes
+    public synchronized String getSizes() {
+    	return (dataVisible==null ? "visible: null " : " visible: "+dataVisible.size()) +  
+    			(dataVisibleFiltered==null ? " dataVisibleFiltered: null " : " dataVisibleFiltered: "+dataVisibleFiltered.size());
+    }
+    
     public AutoCompleteList(IDataAccess dataAccess) {
         setDataAccess(dataAccess);
     }
@@ -285,6 +291,7 @@ public class AutoCompleteList {
                 dataVisibleBackup = new Vector<String>(dataVisible);
             }
         } catch (Exception e) {
+        	Logger.logdebug(e);
         }
         updateVisibleFilteredList();
     }

@@ -208,9 +208,10 @@ public class BoatStatusRecord extends DataRecord {
      * @return Destination and DestinationVariant name
      */
     public String getDestination() {
+    	
         LogbookRecord r = getLogbookRecord(); 	
         if (r==null) {
-        	return "";
+        	return International.getString("Fehler: kein Fahrtenbucheintrag zu Boot auf Fahrt");
         } else {
         	return r.getDestinationAndVariantName();
         }
@@ -243,7 +244,13 @@ public class BoatStatusRecord extends DataRecord {
     public LogbookRecord getLogbookRecord() {
         try {
             Logbook l = Daten.project.getLogbook(getLogbook(), false);
-            return l.getLogbookRecord(getEntryNo());
+            
+            if (l==null) {
+            	return null;
+            } else {
+            	return l.getLogbookRecord(getEntryNo());
+            }
+            	
         } catch(Exception e) {
             Logger.logdebug(e);
         }
@@ -318,15 +325,11 @@ public class BoatStatusRecord extends DataRecord {
         IItemType item;
         Vector<IItemType> v = new Vector<IItemType>();
 
-        v.add(item = new ItemTypeLabel("GUI_BOAT_NAME",
-                IItemType.TYPE_PUBLIC, CAT_STATUS, International.getMessage("Bootsstatus für {boat}", getBoatNameAsString(System.currentTimeMillis()))));
+        v.add(item = new ItemTypeLabelHeader("GUI_BOAT_NAME",
+                IItemType.TYPE_PUBLIC, CAT_STATUS, " "+International.getMessage("Bootsstatus für {boat}", getBoatNameAsString(System.currentTimeMillis()))));
         item.setPadding(0, 0, 0, 10);
 
-        if (Daten.efaConfig.getBoathouseHeaderUseHighlightColor()) {
-			item.setBackgroundColor(Daten.efaConfig.getBoathouseHeaderBackgroundColor());
-			item.setColor(Daten.efaConfig.getBoathouseHeaderForegroundColor());
-	        item.setFieldGrid(2,GridBagConstraints.EAST, GridBagConstraints.BOTH);
-		}
+        item.setFieldGrid(2,GridBagConstraints.EAST, GridBagConstraints.BOTH);
         
         v.add(item = new ItemTypeString(BoatStatusRecord.BOATTEXT, getBoatText(),
                 IItemType.TYPE_EXPERT, CAT_STATUS,

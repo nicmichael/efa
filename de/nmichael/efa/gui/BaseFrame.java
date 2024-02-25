@@ -10,13 +10,32 @@
 
 package de.nmichael.efa.gui;
 
-import de.nmichael.efa.*;
+import java.awt.AWTEvent;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+
+import javax.swing.AbstractButton;
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+
+import de.nmichael.efa.Daten;
 import de.nmichael.efa.core.items.IItemType;
-import de.nmichael.efa.util.*;
+import de.nmichael.efa.util.ActionHandler;
 import de.nmichael.efa.util.Dialog;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
+import de.nmichael.efa.util.EfaUtil;
+import de.nmichael.efa.util.Help;
+import de.nmichael.efa.util.Logger;
 
 // @i18n complete
 public abstract class BaseFrame extends JFrame implements ActionListener {
@@ -57,7 +76,8 @@ public abstract class BaseFrame extends JFrame implements ActionListener {
             _prepared = true;
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
+        	Logger.log(e);
             return false;
         }
     }
@@ -68,7 +88,8 @@ public abstract class BaseFrame extends JFrame implements ActionListener {
     
     public void showFrame() {
         if (!_prepared && !prepareDialog()) {
-            return;
+            Logger.log(Logger.ERROR, "FRAME NOT PREPARED");
+        	return;
         }
         Daten.iniSplashScreen(false);
         Dialog.setDlgLocation(this);
@@ -76,7 +97,7 @@ public abstract class BaseFrame extends JFrame implements ActionListener {
         if (focusItem != null) {
             focusItem.requestFocus();
         }
-        this.setVisible(true);
+        this.setVisible(true); 
     }
 
     public void setRequestFocus(IItemType item) {
@@ -156,31 +177,41 @@ public abstract class BaseFrame extends JFrame implements ActionListener {
     }
 
     protected void iniDialogCommonFinish() {
-        getContentPane().add(basePanel, null);
-        basePanel.add(mainScrollPane, BorderLayout.CENTER);
+        try {
+	    	getContentPane().add(basePanel, null);
+	        basePanel.add(mainScrollPane, BorderLayout.CENTER);
+	
+	        // intelligent sizing of this Dialog:
+	        // make it as big as necessary for display without scrollbars (plus some margin),
+	        // as long as it does not exceed the configured screen size.
+	        Dimension dim = mainPanel.getPreferredSize();
+	        Dimension minDim = mainPanel.getMinimumSize();
+	        if (minDim.width > dim.width) {
+	            dim.width = minDim.width;
+	        }
+	        if (minDim.height > dim.height) {
+	            dim.height = minDim.height;
+	        }
+	        if (dim.width < 100) {
+	            dim.width = 100;
+	        }
+	        if (dim.height < 50) {
+	            dim.height = 50;
+	        }
+	        dim.width  += mainScrollPane.getVerticalScrollBar().getPreferredSize().getWidth() + 40;
+	        dim.height += mainScrollPane.getHorizontalScrollBar().getPreferredSize().getHeight() + 20;
+	        mainScrollPane.setPreferredSize(Dialog.getMaxSize(dim));
+	
+	        mainScrollPane.getViewport().add(mainPanel, null);
+	        int borderSize=4;
+	        if (Daten.efaConfig.getValueEfaDirekt_startMaximized()) {
+	        	borderSize=0;
+	        }
+	        mainScrollPane.setBorder(BorderFactory.createEmptyBorder(borderSize,borderSize,borderSize,borderSize));
+        } catch (Exception e) {
+        	Logger.logdebug(e);
+        }
 
-        // intelligent sizing of this Dialog:
-        // make it as big as necessary for display without scrollbars (plus some margin),
-        // as long as it does not exceed the configured screen size.
-        Dimension dim = mainPanel.getPreferredSize();
-        Dimension minDim = mainPanel.getMinimumSize();
-        if (minDim.width > dim.width) {
-            dim.width = minDim.width;
-        }
-        if (minDim.height > dim.height) {
-            dim.height = minDim.height;
-        }
-        if (dim.width < 100) {
-            dim.width = 100;
-        }
-        if (dim.height < 50) {
-            dim.height = 50;
-        }
-        dim.width  += mainScrollPane.getVerticalScrollBar().getPreferredSize().getWidth() + 40;
-        dim.height += mainScrollPane.getHorizontalScrollBar().getPreferredSize().getHeight() + 20;
-        mainScrollPane.setPreferredSize(Dialog.getMaxSize(dim));
-
-        mainScrollPane.getViewport().add(mainPanel, null);
     }
 
     //protected abstract void iniDialog() throws Exception;
@@ -227,21 +258,7 @@ public abstract class BaseFrame extends JFrame implements ActionListener {
     }
 
     public static ImageIcon getIcon(String name) {
-        try {
-            if (name.indexOf("/") < 0) {
-                name = Daten.IMAGEPATH + name;
-            }
-            if (Logger.isTraceOn(Logger.TT_GUI, 9)) {
-                Logger.log(Logger.DEBUG, Logger.MSG_DEBUG_GUI_ICONS, "getIcon("+name+")");
-            }
-            return new ImageIcon(BaseFrame.class.getResource(name));
-        } catch(Exception e) {
-            if (Logger.isTraceOn(Logger.TT_GUI, 9)) {
-                Logger.log(Logger.DEBUG, Logger.MSG_DEBUG_GUI_ICONS, "getIcon("+name+"): no icon found!");
-            }
-            Logger.logdebug(e);
-            return null;
-        }
+    	return ImagesAndIcons.getIcon(name);
     }
 
     protected void setIcon(AbstractButton button, ImageIcon icon) {

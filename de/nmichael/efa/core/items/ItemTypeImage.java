@@ -142,8 +142,8 @@ public class ItemTypeImage extends ItemType {
         String file = Dialog.dateiDialog(dlg,
                 International.getMessage("{item} auswählen",
                 getDescription()),
-                International.getString("Bild-Datei")+" (*.gif, *.jpg)",
-                "gif|jpg",
+                International.getString("Bild-Datei")+" (*.gif, *.jpg, *.png)",
+                "gif|jpg|png",
                 startDirectory, selectedFile, null,
                 false, false);
         if (file != null) {

@@ -35,7 +35,9 @@ public class ItemTypeBoolean extends ItemType {
     }
 
     public IItemType copyOf() {
-        return new ItemTypeBoolean(name, value, type, category, description);
+        ItemTypeBoolean myCopy = new ItemTypeBoolean(name, value, type, category, description);
+        myCopy.setPadding(padXbefore, padXafter, padYbefore, padYafter);
+        return myCopy;
     }
 
     public void parseValue(String value) {

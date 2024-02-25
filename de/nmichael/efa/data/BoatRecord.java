@@ -10,19 +10,50 @@
 
 package de.nmichael.efa.data;
 
-import de.nmichael.efa.gui.dataedit.DataEditDialog;
-import de.nmichael.efa.gui.dataedit.BoatReservationEditDialog;
-import de.nmichael.efa.gui.dataedit.BoatDamageEditDialog;
-import de.nmichael.efa.data.storage.*;
-import de.nmichael.efa.data.types.*;
-import de.nmichael.efa.core.items.*;
-import de.nmichael.efa.core.config.*;
-import de.nmichael.efa.util.*;
-import de.nmichael.efa.gui.util.*;
+import java.awt.GridBagConstraints;
+import java.util.Arrays;
+import java.util.Hashtable;
+import java.util.UUID;
+import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.swing.ButtonGroup;
+import javax.swing.JDialog;
+
 import de.nmichael.efa.Daten;
-import java.util.regex.*;
-import java.util.*;
-import javax.swing.*;
+import de.nmichael.efa.core.config.AdminRecord;
+import de.nmichael.efa.core.config.EfaTypes;
+import de.nmichael.efa.core.items.IItemFactory;
+import de.nmichael.efa.core.items.IItemListenerDataRecordTable;
+import de.nmichael.efa.core.items.IItemType;
+import de.nmichael.efa.core.items.ItemTypeBoolean;
+import de.nmichael.efa.core.items.ItemTypeDataRecordTable;
+import de.nmichael.efa.core.items.ItemTypeDate;
+import de.nmichael.efa.core.items.ItemTypeDecimal;
+import de.nmichael.efa.core.items.ItemTypeInteger;
+import de.nmichael.efa.core.items.ItemTypeItemList;
+import de.nmichael.efa.core.items.ItemTypeLabelHeader;
+import de.nmichael.efa.core.items.ItemTypeString;
+import de.nmichael.efa.core.items.ItemTypeStringAutoComplete;
+import de.nmichael.efa.core.items.ItemTypeStringList;
+import de.nmichael.efa.data.storage.DataKey;
+import de.nmichael.efa.data.storage.DataRecord;
+import de.nmichael.efa.data.storage.IDataAccess;
+import de.nmichael.efa.data.storage.MetaData;
+import de.nmichael.efa.data.storage.StorageObject;
+import de.nmichael.efa.data.types.DataTypeDate;
+import de.nmichael.efa.data.types.DataTypeDecimal;
+import de.nmichael.efa.data.types.DataTypeList;
+import de.nmichael.efa.gui.dataedit.BoatDamageEditDialog;
+import de.nmichael.efa.gui.dataedit.BoatReservationEditDialog;
+import de.nmichael.efa.gui.dataedit.DataEditDialog;
+import de.nmichael.efa.gui.util.TableItem;
+import de.nmichael.efa.gui.util.TableItemHeader;
+import de.nmichael.efa.util.Dialog;
+import de.nmichael.efa.util.EfaUtil;
+import de.nmichael.efa.util.International;
+import de.nmichael.efa.util.Logger;
 
 // @i18n complete
 
@@ -1125,8 +1156,9 @@ public class BoatRecord extends DataRecord implements IItemFactory, IItemListene
                 groups, getValidFrom(), getInvalidFrom()-1,
                 International.getString("Gruppe, der mindestens eine Person angehören muß")));
         item.setFieldSize(300, -1);
-        v.add(item = new ItemTypeBoolean(BoatRecord.ONLYWITHBOATCAPTAIN, getOnlyWithBoatCaptain(),
-                IItemType.TYPE_PUBLIC, CAT_USAGE, International.getString("Boot darf nur mit Obmann genutzt werden")));
+        
+        v.add(createHeader("_WeitereEigenschaften", IItemType.TYPE_PUBLIC, CAT_USAGE, International.getString("Weitere Eigenschaften"), 2));
+        
         v.add(item = getGuiItemTypeStringAutoComplete(BoatRecord.DEFAULTCREWID, getDefaultCrewId(),
                 IItemType.TYPE_PUBLIC, CAT_USAGE,
                 crews, getValidFrom(), getInvalidFrom()-1,
@@ -1142,6 +1174,9 @@ public class BoatRecord extends DataRecord implements IItemFactory, IItemListene
                 International.getString("Standard-Ziel")));
         item.setFieldSize(300, -1);
 
+        v.add(item = new ItemTypeBoolean(BoatRecord.ONLYWITHBOATCAPTAIN, getOnlyWithBoatCaptain(),
+                IItemType.TYPE_PUBLIC, CAT_USAGE, International.getString("Boot darf nur mit Obmann genutzt werden")));
+        
         // CAT_RESERVATIONS
         if (getId() != null && admin != null && admin.isAllowedEditBoatReservation()) {
             v.add(item = new ItemTypeDataRecordTable(GUIITEM_RESERVATIONS,
@@ -1327,5 +1362,30 @@ public class BoatRecord extends DataRecord implements IItemFactory, IItemListene
     public boolean deleteCallback(DataRecord[] records) {
         return true;
     }
+    
+	/**
+	 * Adds a header item in an efa GUI. This header value is not safed within
+	 * efaConfig. There is no word-wrap for the caption.
+	 * 
+	 * The header automatically gets a blue background and white text color; this
+	 * cannot be configured as efaConfig cannot refer to its own settings whenn
+	 * calling the constructor.
+	 * 
+	 * @param uniqueName Unique name of the element (as for all of efaConfig
+	 *                   elements need unique names)
+	 * @param type       TYPE_PUBLIC, TYPE_EXPERT, TYPE_INTERNAL
+	 * @param category   Category in which the header is placed
+	 * @param caption    Caption
+	 * @param gridWidth  How many GridBagLayout cells shall this header be placed
+	 *                   in?
+	 */
+	private IItemType createHeader(String uniqueName, int type, String category, String caption, int gridWidth) {
+		// ensure that the header value does not get saved in efaConfig file by adding a
+		// special prefix
+		IItemType item = new ItemTypeLabelHeader("_" + uniqueName, type, category, " " + caption);
+		item.setPadding(0, 0, 10, 10);
+		item.setFieldGrid(3, GridBagConstraints.EAST, GridBagConstraints.BOTH);
+		return item;
+	}
     
 }

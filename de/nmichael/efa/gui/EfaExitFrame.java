@@ -9,35 +9,28 @@
  */
 package de.nmichael.efa.gui;
 
-import de.nmichael.efa.*;
-import de.nmichael.efa.gui.util.*;
-import de.nmichael.efa.gui.widgets.*;
+import de.nmichael.efa.Daten;
+
 import de.nmichael.efa.util.*;
 import de.nmichael.efa.util.Dialog;
-import de.nmichael.efa.core.config.*;
-import de.nmichael.efa.core.items.*;
-import de.nmichael.efa.data.*;
-import de.nmichael.efa.data.types.*;
-import de.nmichael.efa.data.storage.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import javax.swing.border.*;
-import java.util.*;
-import java.io.*;
 
 public class EfaExitFrame extends BaseFrame {
 
-    private static EfaExitFrame dlg = null;
+	private static final long serialVersionUID = 7311812898221459649L;
+
+	private static EfaExitFrame dlg = null;
     private boolean restart;
     private int who;
     private CountdownThread thread;
     EfaBoathouseFrame efaBoathouseFrame;
     JPanel jPanel1 = new JPanel();
-    JLabel jLabel0 = new JLabel();
-    JLabel jLabel1 = new JLabel();
-    JLabel sekundenLabel = new JLabel();
-    JLabel jLabel3 = new JLabel();
+    JLabel reasonLabel = new JLabel();
+    JLabel shutDownLabelPart1 = new JLabel();
+    JLabel shutDownLabelSeconds = new JLabel();
+    JLabel shutDownLabelPart2 = new JLabel();
     JButton dontExitButton = new JButton();
 
     public EfaExitFrame(EfaBoathouseFrame efaBoathouseFrame) {
@@ -52,26 +45,26 @@ public class EfaExitFrame extends BaseFrame {
     protected void iniDialog() throws Exception {
         jPanel1.setBackground(Color.red);
         jPanel1.setLayout(new GridBagLayout());
-        jLabel0.setFont(new java.awt.Font("Dialog", 1, 18));
-        jLabel0.setForeground(Color.black);
-        jLabel1.setFont(new java.awt.Font("Dialog", 1, 18));
-        jLabel1.setForeground(Color.black);
+        reasonLabel.setFont(new java.awt.Font("Dialog", 1, 18));
+        reasonLabel.setForeground(Color.black);
+        shutDownLabelPart1.setFont(new java.awt.Font("Dialog", 1, 18));
+        shutDownLabelPart1.setForeground(Color.black);
         String t = International.getMessage("efa wird in {sec} Sekunden automatisch beendet ...", 10);
         if (t != null && t.length() > 0) {
             int pos = t.indexOf("10");
             if (pos >= 0) {
                 String t1 = t.substring(0, pos);
                 String t2 = t.substring(pos + 2);
-                jLabel1.setText(t1);
-                jLabel3.setText(t2);
+                shutDownLabelPart1.setText(t1);
+                shutDownLabelPart2.setText(t2);
             }
         }
-        sekundenLabel.setFont(new java.awt.Font("Dialog", 1, 18));
-        sekundenLabel.setForeground(Color.black);
-        sekundenLabel.setText("10");
-        jLabel3.setFont(new java.awt.Font("Dialog", 1, 18));
-        jLabel3.setForeground(Color.black);
-        jLabel0.setText(" --- " + International.getString("Grund") + " --- ");
+        shutDownLabelSeconds.setFont(new java.awt.Font("Dialog", 1, 18));
+        shutDownLabelSeconds.setForeground(Color.black);
+        shutDownLabelSeconds.setText("10");
+        shutDownLabelPart2.setFont(new java.awt.Font("Dialog", 1, 18));
+        shutDownLabelPart2.setForeground(Color.black);
+        reasonLabel.setText(" --- " + International.getString("Grund") + " --- ");
         Mnemonics.setButton(this, dontExitButton, International.getStringWithMnemonic("efa noch nicht beenden"));
         dontExitButton.addActionListener(new java.awt.event.ActionListener() {
 
@@ -81,10 +74,10 @@ public class EfaExitFrame extends BaseFrame {
         });
         this.setTitle(International.getString("Automatisches Beenden von efa"));
         mainPanel.add(jPanel1, BorderLayout.CENTER);
-        jPanel1.add(jLabel0, new GridBagConstraints(0, 0, 3, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(20, 20, 0, 20), 0, 0));
-        jPanel1.add(jLabel1, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5, 20, 0, 0), 0, 0));
-        jPanel1.add(sekundenLabel, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5, 0, 0, 0), 0, 0));
-        jPanel1.add(jLabel3, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5, 0, 0, 20), 0, 0));
+        jPanel1.add(reasonLabel, new GridBagConstraints(0, 0, 3, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(20, 20, 0, 20), 0, 0));
+        jPanel1.add(shutDownLabelPart1, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5, 20, 0, 0), 0, 0));
+        jPanel1.add(shutDownLabelSeconds, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5, 0, 0, 0), 0, 0));
+        jPanel1.add(shutDownLabelPart2, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5, 0, 0, 20), 0, 0));
         jPanel1.add(dontExitButton, new GridBagConstraints(0, 2, 3, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(50, 20, 20, 20), 0, 0));
 
         thread = new CountdownThread(this);
@@ -121,9 +114,11 @@ public class EfaExitFrame extends BaseFrame {
     }
 
     private void activateExitFrame(String reason) {
-        jLabel0.setText(reason);
         this.dontExitButton.requestFocus();
         dlg.showFrame();
+        // the reason must be set AFTER running dlg.showFrame() as showframe may run the first time
+        // and sets the reasonLabel to a static text.
+        reasonLabel.setText(reason);        
         if (thread == null) {
             thread = new CountdownThread(this);
         }
@@ -149,21 +144,25 @@ public class EfaExitFrame extends BaseFrame {
     class CountdownThread extends Thread {
 
         public boolean stopRunning;
-        int left;
-        EfaExitFrame frame;
-        String[] secLeft = new String[10];
+        private String secondsLeftText;
+        private EfaExitFrame frame;
 
         public CountdownThread(EfaExitFrame frame) {
             this.frame = frame;
-            stopRunning = false;
-            for (int i = 0; i < 10; i++) {
-                secLeft[i] = Integer.toString(10 - i);
-            }
+            this.stopRunning = false;
         }
 
         public void run() {
-            for (int i = 0; i < 10; i++) {
-                frame.sekundenLabel.setText(secLeft[i]);
+        	this.setName("CountDownThread");
+            for (int remainingSeconds = 10; remainingSeconds >0; remainingSeconds--) {
+            	
+            	//okay, this is a hack, but it does the trick for converting remainingSeconds into a String.
+            	secondsLeftText=""+remainingSeconds;
+            	SwingUtilities.invokeLater(new Runnable() {
+          	      public void run() {
+                      frame.shutDownLabelSeconds.setText(secondsLeftText);
+          	      }
+            	});
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {

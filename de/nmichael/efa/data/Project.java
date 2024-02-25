@@ -139,8 +139,9 @@ public class Project extends StorageObject {
             p.convertInternal();
             Daten.project = p;
             p.openAllData();
+            Audit auditTask = null;
             if (p.getProjectStorageType() == IDataAccess.TYPE_FILE_XML && runAudit) {
-                (new Audit(p)).start();
+                auditTask = new Audit(p);
             }
             if (p.getProjectStorageType() == IDataAccess.TYPE_EFA_REMOTE) {
                 p.remoteDataAccess = DataAccess.createDataAccess(p, IDataAccess.TYPE_EFA_REMOTE,
@@ -158,6 +159,12 @@ public class Project extends StorageObject {
                 p.isRemoteOpen = (p.getClubRecord() != null);
             }
             p._inOpeningProject = false;
+            if (auditTask!=null) {
+	            // Audit checks for p._inOpeningProject=false. So to be sure, 
+	            // Audit can only be started after p._inOpeningProject is set to false.
+            	auditTask.start(); // AuditTask is a thread that runs in background.
+            	auditTask.join(); // this would wait for audit task to complete, before we can proceed.
+            }
         } catch (Exception ee) {
             if (!silent) {
                 Logger.log(ee);
@@ -521,7 +528,7 @@ public class Project extends StorageObject {
                                     description.append((j > 0 ? ", " : "") + clubworkNames[j]);
                                 }
                             }
-                            items.put(name, description.toString());
+                            items.put(name, "<html>"+description.toString()+"</html>");
                         } catch (Exception e1) {
                         }
                     }
@@ -538,10 +545,10 @@ public class Project extends StorageObject {
         for (int i = 0; logbooks != null && i < logbooks.length; i++) {
             ProjectRecord r = getLoogbookRecord(logbooks[i]);
             if (r != null) {
-                String name = "<b>" + International.getString("Fahrtenbuch") + ":</b> <b style=\"color:blue\">" + logbooks[i] + "</b><br>";
+                String name = "<b>" + International.getString("Fahrtenbuch") + ":</b> <b><font color=blue>" + logbooks[i] + "</font></b><br>";
                 String description = (r.getDescription() != null && r.getDescription().length() > 0 ? r.getDescription() + " " : "");
                 description += "(" + r.getStartDate().toString() + " - " + r.getEndDate() + ")";
-                items.put(logbooks[i], name + description);
+                items.put(logbooks[i], "<html>"+name + description+"</html>");
             }
         }
         return items;
@@ -553,10 +560,10 @@ public class Project extends StorageObject {
         for (int i = 0; clubworks != null && i < clubworks.length; i++) {
             ProjectRecord r = getClubworkBookRecord(clubworks[i]);
             if (r != null) {
-                String name = "<b>" + International.getString("Vereinsarbeit") + ":</b> <b style=\"color:blue\">" + clubworks[i] + "</b><br>";
+                String name = "<b>" + International.getString("Vereinsarbeit") + ":</b> <b><font color=blue>" + clubworks[i] + "</font></b><br>";
                 String description = (r.getDescription() != null && r.getDescription().length() > 0 ? r.getDescription() + " " : "");
                 description += "(" + r.getStartDate().toString() + " - " + r.getEndDate() + ")";
-                items.put(clubworks[i], name + description);
+                items.put(clubworks[i], "<html>"+name + description+"</html>");
             }
         }
         return items;

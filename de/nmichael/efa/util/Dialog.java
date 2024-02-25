@@ -9,14 +9,34 @@
  */
 package de.nmichael.efa.util;
 
-import de.nmichael.efa.gui.BrowserDialog;
-import de.nmichael.efa.core.*;
-import de.nmichael.efa.core.config.EfaConfig;
-import de.nmichael.efa.*;
-import javax.swing.*;
-import java.awt.*;
-import java.util.*;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Frame;
+import java.awt.Insets;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.TextField;
+import java.awt.Toolkit;
+import java.awt.Window;
 import java.io.File;
+import java.util.Stack;
+import java.util.Vector;
+
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.ProgressMonitor;
+import javax.swing.UIDefaults;
+import javax.swing.UIManager;
+import javax.swing.plaf.FontUIResource;
+
+import de.nmichael.efa.Daten;
+import de.nmichael.efa.core.ExceptionFrame;
+import de.nmichael.efa.core.config.EfaConfig;
 
 // @i18n complete
 public class Dialog {
@@ -35,6 +55,8 @@ public class Dialog {
     public static JTextArea programOutText = null;
     public static ProgressMonitor progress = null;
     public static Dimension screenSize = new Dimension(1024, 768); // nur Default-Values..... ;-)
+    public static int screenXOffset=0;
+    public static int screenYOffset=0;
     public static boolean tourRunning = false;
     private static int FONT_SIZE = -1;
     private static int ORG_FONT_SIZE = 12;
@@ -44,30 +66,78 @@ public class Dialog {
     private static int MAX_DIALOG_WIDTH = 200; // Number of Characters
     private static int MAX_DIALOG_HEIGHT = 50; // Number of Lines
 
-    public static void initializeScreenSize() {
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+    public static void initializeScreenSize(JFrame frame) {
+        Dimension myScreenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        int myScreenXOffset=0;
+        int myScreenYOffset=0;
+        try {
+        	// efaBoathouse can start maximized
+        	// If Common->Window Screenwidth/height is NOT set manually (at least one element>0),
+        	// efaBoathouse shall start maximized on the whole screen of monitor one.
+        	// then we need to take care, that there may be one or more taskbars which consume space on the screen.
+         	
+        	if (frame != null && isEfaBoathouseAndAutoScreenOffset()) {
+        		Insets screenInsets = Toolkit.getDefaultToolkit().getScreenInsets(frame.getGraphicsConfiguration());
+        	// nur wenn keine 
+                if (Logger.isTraceOn(Logger.TT_GUI, 4)) {
+                    Logger.log(Logger.DEBUG, Logger.MSG_DEBUG_GUI_WINDOWS,
+                            "Screen size=" + myScreenSize.toString()+ "Screen insets="+screenInsets.toString());
+                }
+                myScreenSize= new Dimension(myScreenSize.width-screenInsets.left-screenInsets.right, 
+                				   		    myScreenSize.height-screenInsets.top-screenInsets.bottom);
+                myScreenXOffset=screenInsets.left;
+                myScreenYOffset=screenInsets.top;
+        	} 
+        } catch (Exception e) {
+        	Logger.logdebug(e);
+        }
+        
         if (Daten.isOsLinux()) {
             // Workaround für Linux: Fenster verschwinden oder werden falsch positioniert, wenn die die
             // volle Bildschirmgröße haben
-            Dialog.screenSize = new Dimension(screenSize.width - 1, screenSize.height - 1);
+            Dialog.screenSize = new Dimension(myScreenSize.width - 1, myScreenSize.height - 1);
         } else {
-            Dialog.screenSize = screenSize;
+            Dialog.screenSize = myScreenSize;
         }
         if (Daten.efaConfig == null) {
             return;
         }
+        
+        //Check if we have an manual override for screen width and screen height
         if (Daten.efaConfig.getValueScreenWidth() > 0) {
             Dialog.screenSize.width = Daten.efaConfig.getValueScreenWidth();
         }
         if (Daten.efaConfig.getValueScreenHeight() > 0) {
             Dialog.screenSize.height = Daten.efaConfig.getValueScreenHeight();
         }
+        
+        //manual setup for x and y offset in efaconfig shall be taken first.
+        Dialog.screenXOffset = (Daten.efaConfig.getValueWindowXOffset()>0? Daten.efaConfig.getValueWindowXOffset() : myScreenXOffset);
+        Dialog.screenYOffset = (Daten.efaConfig.getValueWindowYOffset()>0? Daten.efaConfig.getValueWindowYOffset() : myScreenYOffset);
+        
         initializeMaxDialogSizes();
         if ((Daten.efaConfig.getValueMaxDialogWidth() > 0 || Daten.efaConfig.getValueMaxDialogHeight() > 0)) {
             Dialog.setMaxDialogSizes(Daten.efaConfig.getValueMaxDialogWidth(), Daten.efaConfig.getValueMaxDialogHeight());
         }
+        if (Logger.isTraceOn(Logger.TT_GUI, 4)) {
+            Logger.log(Logger.DEBUG, Logger.MSG_DEBUG_GUI_WINDOWS,
+                    "Screen dimensions: Size=" + Dialog.screenSize.toString()+ " XOffSet="+Dialog.screenXOffset+ " YOffSet="+Dialog.screenYOffset);
+            Logger.log(Logger.DEBUG, Logger.MSG_DEBUG_GUI_WINDOWS,
+                    "Dialog dimensions: MAX_DIALOG_WIDTH="+Dialog.MAX_DIALOG_WIDTH + "MAX_DIALOG_HEIGHT="+Dialog.MAX_DIALOG_HEIGHT);
+        }
     }
 
+    /**
+     * @return true if efaBoathouse and screen size has been manually set in common -> window and user wants to respect the taskbars..
+     */
+    private static Boolean isEfaBoathouseAndAutoScreenOffset() {
+    	if (Daten.efaConfig!=null) {
+    		return ( Daten.isApplEfaBoathouse() && (Daten.efaConfig.getValueWindowXOffset()+Daten.efaConfig.getValueWindowYOffset()==0) && Daten.efaConfig.getValueEfaDirekt_startMaximizedRespectTaskbar());
+    	} else {
+    		return false;
+    	}
+    }
+        
     // max size that a dialog may have, depending on screen size
     public static Dimension getMaxSize(Dimension d) {
         Dimension newd = new Dimension(d);
@@ -350,6 +420,7 @@ public class Dialog {
             } catch (NoClassDefFoundError e) {
                 EfaUtil.foo();
             }
+            w.toFront();
         }
         if (Logger.isDebugLogging() && Logger.isTraceOn(Logger.TT_GUI)) {
             Logger.log(Logger.DEBUG, Logger.MSG_DEBUG_GUI_WINDOWS, "Dialog.frameOpened(" + w.getClass().getCanonicalName() + ")");
@@ -408,7 +479,7 @@ public class Dialog {
             return null;
         }
         return (Window) frameStack.peek();
-    }
+    }	
 
     // (this,"Fahrtenbuchdatei erstellen","efa Fahrtenbuch (*.efb)","efb",Daten.fahrtenbuch.getFileName(),true);
     public static String dateiDialog(Window frame, String titel, String typen, String extension, String startdir, boolean save) {
@@ -427,12 +498,18 @@ public class Dialog {
             }
 
             if (typen != null && extension != null) {
-                int wo;
+            	int wo;
                 if ((wo = extension.indexOf("|")) >= 0) {
-                    String ext1, ext2;
+                    String ext1, ext2, ext3;
                     ext1 = extension.substring(0, wo);
                     ext2 = extension.substring(wo + 1, extension.length());
-                    dlg.setFileFilter((javax.swing.filechooser.FileFilter) new EfaFileFilter(typen, ext1, ext2));
+                    if ((wo = ext2.indexOf("|")) >=0) {
+                    	ext3 = ext2.substring(wo + 1, ext2.length());
+                    	ext2 = ext2.substring(0, wo);
+                        dlg.setFileFilter((javax.swing.filechooser.FileFilter) new EfaFileFilter(typen, ext1, ext2, ext3));
+                    } else {                    
+                    	dlg.setFileFilter((javax.swing.filechooser.FileFilter) new EfaFileFilter(typen, ext1, ext2));
+                    }
                 } else {
                     dlg.setFileFilter((javax.swing.filechooser.FileFilter) new EfaFileFilter(typen, extension));
                 }
@@ -534,12 +611,8 @@ public class Dialog {
             y = ((screen != null ? screen.height : screenSize.height) - dlgSize.height) / 2;
 
             // add offset
-            if (Daten.efaConfig != null && Daten.efaConfig.getValueWindowXOffset() > 0) {
-                x += Daten.efaConfig.getValueWindowXOffset();
-            }
-            if (Daten.efaConfig != null && Daten.efaConfig.getValueWindowYOffset() > 0) {
-                y += Daten.efaConfig.getValueWindowYOffset();
-            }
+            x += Math.max(0, screenXOffset);
+            y += Math.max(0, screenYOffset);
 
             // place dialog on same screen as parent dialog (for multi-screen environments)
             if (loc != null && screen != null) {
@@ -561,7 +634,7 @@ public class Dialog {
     public static UIDefaults getUiDefaults() {
         try {
             String laf = UIManager.getLookAndFeel().getClass().getCanonicalName();
-            if (laf.endsWith("NimbusLookAndFeel")) {
+            if (laf.endsWith(Daten.LAF_NIMBUS)) {
                 return UIManager.getLookAndFeelDefaults();
             } else {
                 return UIManager.getDefaults();
@@ -571,11 +644,11 @@ public class Dialog {
         }
     }
 
-    public static void setFontSize(UIDefaults uid, String font, int size, int style) {
-        Font orgFont = uid.getFont(font);
+    public static void setFontSize(UIDefaults uid, String fontProperty, String fontName, int size, int style) {
+        Font orgFont = uid.getFont(fontProperty);
         if (orgFont == null) {
             Logger.log(Logger.WARNING, Logger.MSG_WARN_FONTDOESNOTEXIST,
-                    International.getMessage("Schriftart {font} exisitert nicht; ihre Größe kann nicht geändert werden!", font));
+                    International.getMessage("Schriftart {font} exisitert nicht; ihre Größe kann nicht geändert werden!", fontProperty));
             return;
         }
         if (!FONT_SIZE_CHANGED) {
@@ -586,41 +659,68 @@ public class Dialog {
             }
         }
         Font newFont;
-        if (style == -1) {
-            newFont = orgFont.deriveFont((float) size);
-        } else if (size <= 0) {
-            newFont = orgFont.deriveFont(style);
+        if (fontName == null) {
+	        if (style == -1) {
+	            newFont = orgFont.deriveFont((float) size);
+	        } else if (size <= 0) {
+	            newFont = orgFont.deriveFont(style);
+	        } else {
+	            newFont = orgFont.deriveFont(style, (float) size);
+	        }
         } else {
-            newFont = orgFont.deriveFont(style, (float) size);
+	        if (style == -1) {
+	            newFont = new Font(fontName, style, size);
+	        } else if (size <= 0) {
+	            newFont = new Font(fontName, style, 12);
+	        } else {
+	            newFont = new Font(fontName, style, size);
+	        }        	
         }
-        uid.put(font, newFont);
+        uid.put(fontProperty, newFont);
         FONT_SIZE_CHANGED = true;
     }
 
-    public static void setGlobalFontSize(int size, int style) {
+    public static void setGlobalFontSize(String fontName, int size, int style) {
         FONT_SIZE = size;
         FONT_STYLE = style;
+		if (!Daten.isEfaFlatLafActive()){
+        
+	        UIDefaults uid = getUiDefaults();
 
-        UIDefaults uid = getUiDefaults();
+	        java.util.Enumeration keys = uid.keys();
+	        while (keys.hasMoreElements()) {
+	            Object key = keys.nextElement();
+	            //Object value = uid.get(key);
+	            String fontProperty = (key == null ? null : key.toString());
+	            if (fontProperty != null
+	                    && (fontProperty.endsWith(".font")
+	                    || (fontProperty.startsWith("OptionPane") && fontProperty.endsWith("Font")))) {
+	             
+	            	if (!fontProperty.equals("TableHeader.font") && !fontProperty.equals("Table.font")) {
+	            		setFontSize(uid, fontProperty, 
+	            				(fontName.equalsIgnoreCase(Daten.efaConfig.FONT_NAME_LAF_DEFAULT_FONT)==true ? null : fontName), size, style);
+	                }
+	            }
+	        }
 
-        java.util.Enumeration keys = uid.keys();
-        while (keys.hasMoreElements()) {
-            Object key = keys.nextElement();
-            Object value = uid.get(key);
-            String font = (key == null ? null : key.toString());
-            if (font != null
-                    && (font.endsWith(".font")
-                    || (font.startsWith("OptionPane") && font.endsWith("Font")))) {
-                if (!font.equals("TableHeader.font") && !font.equals("Table.font")) {
-                    setFontSize(uid, font, size, style);
-                }
-            }
-        }
-        initializeMaxDialogSizes();
+		} else {
+			if (fontName.equalsIgnoreCase(Daten.efaConfig.FONT_NAME_LAF_DEFAULT_FONT)) {
+				UIManager.put("defaultFont", new FontUIResource("Dialog",style,size));
+			} else {
+				UIManager.put("defaultFont", new FontUIResource(fontName,style,size));				
+			}
+		}
+
+		initializeMaxDialogSizes();
 
     }
+    
+    public static void setGlobalTableFontSize(String fontName, int size) {
+		UIManager.put("Table.font", new FontUIResource(fontName,Font.PLAIN,Math.max(8, Math.min(18, size))));
+		UIManager.put("TableHeader.font", new FontUIResource(fontName,Font.BOLD,Math.max(8, Math.min(18, size))));
+    }
 
-    public static void setGlobalFontSize(int size, String style) {
+    public static void setGlobalFontSize(String fontName, int size, String style) {
         int _style = -1;
         if (style.equals(EfaConfig.FONT_PLAIN)) {
             _style = Font.PLAIN;
@@ -628,7 +728,7 @@ public class Dialog {
         if (style.equals(EfaConfig.FONT_BOLD)) {
             _style = Font.BOLD;
         }
-        setGlobalFontSize(size, _style);
+        setGlobalFontSize(fontName, size, _style);
     }
 
     public static void setPreferredSize(JComponent comp, int width, int height) {

@@ -19,7 +19,9 @@ import java.awt.event.*;
 
 public class ProgressDialog extends BaseDialog {
 
-    private ProgressTask progressTask;
+	private static final long serialVersionUID = 4155197013485180926L;
+
+	private ProgressTask progressTask;
     private JTextArea loggingTextArea;
     private JLabel currentStatusLabel;
     private JProgressBar progressBar;

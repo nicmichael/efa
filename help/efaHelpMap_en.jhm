@@ -8,4 +8,5 @@
         <mapID target="install" url="main/install_en.html" />
         <mapID target="configure" url="main/configure_en.html" />
         <mapID target="de.nmichael.efa.gui.EfaConfigDialog" url="gui/EfaConfigDialog_en.html" />
+        <mapID target="efaflatlaf" url="main/efaflatlaf_en.html" />
 </map>

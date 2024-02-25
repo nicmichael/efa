@@ -64,6 +64,7 @@ public class EfaOnlineThread extends Thread {
     }
 
     public void run() {
+    	this.setName("EfaOnlineThread");
         while(true) {
             try {
                 if (Daten.efaConfig != null ? Daten.efaConfig.getValueDataRemoteEfaOnlineEnabled() : false) {

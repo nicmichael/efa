@@ -51,10 +51,22 @@ public class VersionizedDataEditDialog extends UnversionizedDataEditDialog imple
         JPanel versionPanel = new JPanel();
         versionPanel.setLayout(new GridBagLayout());
 
+        /* Panel layout
+         * 
+         * |                 |                 |                   |                   |       
+         * |[                       Versionen                     ]|				   |
+         * |[                                                     ]| [Auswählen]	   | 
+         * |[           Table 3 rows high                         ]| [Neu]    		   |
+         * |[ 									                  ]| [Löschen]         |
+         * |[Versionlabel                     ]|[           Gültigkeitszeitraum ändern]|       
+         * 
+         */
+        
         JLabel versionLabel = new JLabel();
         Mnemonics.setLabel(this, versionLabel, International.getString("Versionen"));
-        versionPanel.add(versionLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
-                                    GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 10, 0, 0), 0, 0));
+        versionPanel.add(versionLabel, new GridBagConstraints(0, 0, 2, 1, 0.0, 0.0,
+                                    GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(10, 10, 0, 0), 0, 0));
+        versionLabel.setFont(versionLabel.getFont().deriveFont(Font.BOLD));
 
         //versionList = new ItemTypeHtmlList("VERSION_LIST", null, null, null, IItemType.TYPE_PUBLIC, null, International.getString("Versionen"));
         versionList = new ItemTypeTable("VERSION_LIST", new String[] {
@@ -69,7 +81,7 @@ public class VersionizedDataEditDialog extends UnversionizedDataEditDialog imple
         };
         versionList.setPopupActions(actions);
         versionList.registerItemListener(this);
-        versionList.setFieldGrid(2, 3, GridBagConstraints.CENTER, GridBagConstraints.NONE);
+        versionList.setFieldGrid(2, 3, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL);
         versionList.setPadding(10, 10, 0, 10);
         versionList.setFieldSize(500, 100);
         versionList.displayOnGui(_parent, versionPanel, 0, 1);
@@ -109,8 +121,9 @@ public class VersionizedDataEditDialog extends UnversionizedDataEditDialog imple
 
         selectedVersionLabel = new JLabel();
         Mnemonics.setLabel(this, selectedVersionLabel, International.getString("Version"));
-        versionPanel.add(selectedVersionLabel, new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0,
+        versionPanel.add(selectedVersionLabel, new GridBagConstraints(0, 4, 2, 1, 0.0, 0.0,
                                     GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(30, 0, 5, 0), 0, 0));
+        selectedVersionLabel.setFont(selectedVersionLabel.getFont().deriveFont(Font.BOLD));
 
         JButton versionValidityChangeButton = new JButton();
         Mnemonics.setButton(this, versionValidityChangeButton, 

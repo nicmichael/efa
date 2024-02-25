@@ -33,6 +33,7 @@ import java.util.Vector;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -51,13 +52,16 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import de.nmichael.efa.Daten;	
+import de.nmichael.efa.Daten;
 import de.nmichael.efa.gui.BaseDialog;
 import de.nmichael.efa.gui.util.EfaMouseListener;
+import de.nmichael.efa.gui.util.RoundedBorder;
+import de.nmichael.efa.gui.util.RoundedLabel;
 import de.nmichael.efa.util.Dialog;
 import de.nmichael.efa.util.EfaUtil;
 import de.nmichael.efa.util.Logger;
 import de.nmichael.efa.util.Mnemonics;
+import de.nmichael.efa.gui.ImagesAndIcons;
 
 public class ItemTypeList extends ItemType implements ActionListener, DocumentListener, KeyListener {
 
@@ -74,15 +78,17 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
     int iconWidth = 0;
     int iconHeight = 0;
 
-    protected static final String LIST_SECTION_STRING = "------";
+    protected static final String LIST_SECTION_STRING = "----";
     //Spacings for pretty rendering
     private static final int SPACING_BOATNAME_SECONDPART  = 60; //60 pixels
-	  private static final int HORZ_SINGLE_BORDER=5;
-	  private static Border _emptyBorder = new EmptyBorder(2, HORZ_SINGLE_BORDER, 2, HORZ_SINGLE_BORDER);
-	  private static Color _separatorBackground = new Color(240,240,240);
+	private static final int HORZ_SINGLE_BORDER=5;
+	private static Border _emptyBorder = new EmptyBorder(2, HORZ_SINGLE_BORDER, 2, HORZ_SINGLE_BORDER);
+	private Color _separatorBackground = new Color(240,240,240);
+	private Color _filterTextfieldDefaultBackground = Color.WHITE;
     private boolean showFilterField = false;
   	private boolean showTwoColumnList=false;
     protected String other_item_text=""; //item text of the element for <other boat> or <other person>
+    private ImageIcon defaultIconForCellRenderer;
     
     class ListDataCellRenderer extends DefaultListCellRenderer {
         public Component getListCellRendererComponent(JList list, Object value,
@@ -93,7 +99,7 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
                 try {
                 	BuildIcon(value);
                 } catch(Exception eignore) {
-                		Logger.log(eignore);
+                	Logger.log(eignore);
                 }
             }
 
@@ -101,7 +107,7 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
             	this.setBorder(_emptyBorder);
             	
             	if (showTwoColumnList) {
-            		/* Pretty lists
+            		/* Two Column Lists
             		 * Data is put together in ItemTypeBoatStatuslist.sortBootsList and sortMemberList
             		 * 
             		 * - Center separator texts, with grey background
@@ -131,10 +137,11 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
 		            	if (item.separator) {
 			                if (!isSelected) { setBackground(_separatorBackground); }
 		                    this.setHorizontalAlignment(JLabel.CENTER);
+		                    this.setFont(this.getFont().deriveFont(Font.BOLD)); 
 			            } else { // not a separator
 			            	if (item.secondaryElement!=null) {
 			            		//only build the p
-			            		this.setText(getHTMLTableFor(item.text, item.secondaryElement));
+			            		this.setText(getHTMLTableFor(item.text, item.secondaryElement, isSelected));
 			            	} 
 		            		setHorizontalAlignment(JLabel.LEFT);
 		            
@@ -176,11 +183,11 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
             icon = BaseDialog.getIcon(item.image);
         }
         if (icon == null) {
-            BufferedImage image = new BufferedImage(iconWidth, iconHeight,
-                    BufferedImage.TYPE_INT_ARGB);
-            Graphics2D g = image.createGraphics();
             if (item.colors != null && item.colors.length > 0) {
-                if (item.colors.length == 1) {
+                BufferedImage image = new BufferedImage(iconWidth, iconHeight,
+                        BufferedImage.TYPE_INT_ARGB);
+                Graphics2D g = image.createGraphics();
+            	if (item.colors.length == 1) {
                     g.setColor(item.colors[0]);
                     g.fillOval(0, 0, iconWidth, iconHeight);
                 } else {
@@ -193,16 +200,18 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
                         currentAngle += anglePerColor;
                     }
                 }
+                icon = new ImageIcon(image);
+            	
             } else {
                 if (!item.separator) {
-                    g.setColor(new Color (230,230,230));
-                    g.fillOval(0, 0, iconWidth, iconHeight);
+
+                	icon=buildDefaultIcon(iconWidth, iconHeight);
+
                 }
             }
-            icon = new ImageIcon(image);
         }
-        if (icon.getIconWidth() > iconWidth
-                || icon.getIconHeight() > iconHeight) {
+        
+        if (icon != null && (icon.getIconWidth() > iconWidth || icon.getIconHeight() > iconHeight)) {
             icon = new ImageIcon(icon.getImage().getScaledInstance(iconWidth, iconHeight,
                     Image.SCALE_SMOOTH));
         }
@@ -213,6 +222,18 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
         }
     }
     
+    private synchronized ImageIcon buildDefaultIcon(int iconWidth, int iconHeight) {
+    	if (defaultIconForCellRenderer==null) {
+            ImageIcon icon = null;
+            BufferedImage image = new BufferedImage(iconWidth, iconHeight, BufferedImage.TYPE_INT_ARGB);
+
+            Graphics2D g = image.createGraphics();
+            g.setColor(new Color (230,230,230));
+    	    g.fillOval(0, 0, iconWidth, iconHeight);
+            defaultIconForCellRenderer= new ImageIcon(image);    		
+    	}
+    	return defaultIconForCellRenderer;
+    }
 
     /*
      * Creates a HTML table consisting of two rows.
@@ -220,13 +241,11 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
      * - right row gets remaining space and is truncated on the right side, if contents do not fit.
      *   also, right row contents are rendered in grey text color.
      */
-    private String getHTMLTableFor(String firstPart, String secondPart) {
+private String getHTMLTableFor(String firstPart, String secondPart, boolean isSelected) {
     	
-    	// der Aufbau der HTML-Tabelle ist wegen dem Kürzen des secondPart performancelastig,
-    	// wenn es eine volle Bootstabelle gibt. Bei ~200 Booten und einem Raspi3
-    	// braucht das Aufbauen der Liste der verfügbaren Boote 400-800 Millisekunden mit HTML-Tabelle,
-    	// statt 20-40 Millisekunden ohne. Das merkt man schon sehr.
-    	// Daher wird eine HTML-Tabelle nur dann aufgebaut, wenn es einen secondPart gibt.
+		// we only build an HTML table, if there is a secondPart to be displayed.
+	    // building html tables takes a lot of time on a raspberry pi 3b with a boat list
+		// of around 200 Boats. So skipping html tables saves a lot of performance.
     	
     	if (secondPart== null) {
     		return firstPart;
@@ -234,45 +253,68 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
     		return firstPart;
     	}
 
+    	try {
     	//es gibt einen Secondpart, jetzt lohnt sich eine HTML-Tabelle
-    	boolean cutText = false;
     	
-		long listWidth=Math.max(80,list.getParent().getWidth()-2*HORZ_SINGLE_BORDER-2);
-		FontMetrics myFontMetrics = label.getFontMetrics(label.getFont());
-		
-		long firstPartLength= myFontMetrics.stringWidth(firstPart);
-		long maxStringWidth = listWidth-SPACING_BOATNAME_SECONDPART-firstPartLength-4;
-		long characterWidth = myFontMetrics.stringWidth("X");
-		
-		if (iconWidth >0 ) {
-			maxStringWidth= listWidth-SPACING_BOATNAME_SECONDPART-(iconWidth)-firstPartLength-4;
-		}
-		
-        int stringWidth = myFontMetrics.stringWidth(secondPart);
-        
-        //listWidth can be zero directly after start of efaBoatHouse, so we stop under this condition.
-        while (listWidth>0 &&(stringWidth>maxStringWidth) && (secondPart.length()>0)) {
-        	// Performance: Strings which are very much longer than maxStringWitdh must be reduced faster than just
-        	//one character per iteration.
-        	int cutChars=(int)Math.abs((int)(maxStringWidth-stringWidth)/characterWidth); 
-        	cutChars=(int)Math.min(secondPart.length(), cutChars); // limit cut items to length of second part
-        	
-        	secondPart=secondPart.substring(0,secondPart.length()-(int)Math.max(((cutChars)),1)).trim();
-        	stringWidth = myFontMetrics.stringWidth(secondPart);
-        	cutText=true;
-        }
-
-        if (cutText &&secondPart.length()>0) {secondPart+="\u2026";} //append an ellipsis
-        Integer tableWidth =new Integer((int)listWidth-Math.max(iconWidth,0)-4);
-        
-        return  "<html><table border=0 cellpadding=0 cellspacing=0 width='"
-        		.concat(tableWidth.toString())
-        		.concat("'><tr><td align=left>")
-        		.concat(EfaUtil.escapeHtml(firstPart))
-        		.concat("</td><td align=right><font color=#888888>")
-        		.concat(EfaUtil.escapeHtml(secondPart))
-        		.concat("</font></td></tr></table></html>");
-		
+			long listWidth=Math.max(80,list.getParent().getWidth()-2*HORZ_SINGLE_BORDER-2);
+			FontMetrics myFontMetrics = label.getFontMetrics(label.getFont());
+			
+			long firstPartLength= myFontMetrics.stringWidth(firstPart);
+			long maxStringWidth = listWidth-SPACING_BOATNAME_SECONDPART-(iconWidth)-firstPartLength-4;
+	
+			if (maxStringWidth>0) {
+				// determine the maximum string length of the secondPart to be displayed...
+		        int stringWidth = 0;
+		        char[] readText = secondPart.toCharArray();
+		        int stringLength= secondPart.length();
+		    	boolean cutText = false;
+		        
+		        for (int currentChar=0; currentChar< stringLength; currentChar++) {
+		        	stringWidth += myFontMetrics.charWidth(readText[currentChar]);
+		        	if (stringWidth > maxStringWidth) {
+		        		cutText=true;
+		        		if (currentChar>0) {
+		        			secondPart=secondPart.substring(0,currentChar)+("\u2026");
+		        		} else {
+		        			secondPart="\u2026";
+		        		}
+		        		break;
+		        	}
+		        }
+			} else {
+				secondPart="";
+				}	        
+	       /* old code
+	        //listWidth can be zero directly after start of efaBoatHouse, so we stop under this condition.
+	        while (listWidth>0 &&(stringWidth>maxStringWidth) && (secondPart.length()>0)) {
+	        	// Performance: Strings which are very much longer than maxStringWitdh must be reduced faster than just
+	        	//one character per iteration.
+	        	int cutChars=(int)Math.abs((int)(maxStringWidth-stringWidth)/characterWidth); 
+	        	cutChars=(int)Math.min(secondPart.length(), cutChars); // limit cut items to length of second part
+	        	
+	        	secondPart=secondPart.substring(0,secondPart.length()-(int)Math.max(((cutChars)),1)).trim();
+	        	stringWidth = myFontMetrics.stringWidth(secondPart);
+	        	cutText=true;
+	        }
+	        
+	*/
+	        Integer tableWidth =new Integer((int)listWidth-Math.max(iconWidth,0)-6);
+	       
+	        // font color only shall apply if the item is not selected.
+	        String fontColorTag="color=#888888>";
+	        if (isSelected) {fontColorTag=">";}
+	        
+	        return  "<html><table border=0 cellpadding=0 cellspacing=0 width='"
+	        		.concat(tableWidth.toString())
+	        		.concat("'><tr><td align=left>")
+	        		.concat(EfaUtil.escapeHtml(firstPart))
+	        		.concat("</td><td align=right><font ").concat(fontColorTag)
+	        		.concat(EfaUtil.escapeHtml(secondPart))
+	        		.concat("</font></td></tr></table></html>");
+    	} catch (Exception e) {
+    		Logger.logdebug(e);
+    		return firstPart;
+    	}
     }
 }
 
@@ -337,6 +379,10 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
         this.showFilterField = showFilterField;
         this.showTwoColumnList= showTwoColumnList;
         data = new DefaultListModel<ItemTypeListData>();
+        //overwrite standard separator color with efaFlatBackgroundColor if efaFlat is the current look
+        if (Daten.isEfaFlatLafActive()) {
+        	this._separatorBackground=Daten.efaConfig.getEfaGuiflatLaf_Background();
+       }
     }
     
     public ItemTypeList(String name,
@@ -493,8 +539,14 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
         mypanel.setLayout(new BorderLayout());
 
         if (getDescription() != null) {
-            label = new JLabel();
-            Mnemonics.setLabel(dlg, label, getDescription() + ": ");
+            if (Daten.efaConfig.getHeaderUseHighlightColor()) {
+            	label = new RoundedLabel();            
+                label.setBorder(new RoundedBorder(this.color));
+            }else {
+            	label = new JLabel();
+            	label.setBorder(new EmptyBorder(4,0,4,0));//4 pixel space before and after the label
+            }
+            Mnemonics.setLabel(dlg, label, " " + getDescription() + ": ");
             label.setHorizontalAlignment(SwingConstants.CENTER);
             if (type == IItemType.TYPE_EXPERT) {
                 label.setForeground(Color.red);
@@ -516,7 +568,6 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
             
             Dialog.setPreferredSize(label, fieldWidth, 20);
             
-            label.setBorder(new EmptyBorder(4,0,4,0));//4 pixel space before and after the label
         }
 
         list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -526,6 +577,7 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
             menuItem.setActionCommand(EfaMouseListener.EVENT_POPUP_CLICKED + "_" + actions[i].substring(0, 1));
             menuItem.addActionListener(this);
             popup.add(menuItem);
+            menuItem.setIcon(getIconFromActionID(actions[i].substring(0, 1)));
         }
         // KeyListeners entfernen, damit unter Java 1.4.x nicht automatisch gescrollt wird, sondern durch den eigenen Algorithmus
         try {
@@ -587,7 +639,8 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
 	        filterPanel.add(filterTextField, BorderLayout.CENTER);
 	        panelDescriptionAndFilter.add(filterPanel, BorderLayout.SOUTH);
 	        this.field=filterTextField; // by this, when the boat status list receives focus, and the filter text field is visible, the filter text field gets the focus.
-
+	        _filterTextfieldDefaultBackground = filterTextField.getBackground();
+	        
 	        filterTextField.addFocusListener(new java.awt.event.FocusAdapter() {
 	            public void focusGained(FocusEvent e) {
 	                filterTextField.setBackground(Color.YELLOW);
@@ -596,10 +649,11 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
 	        filterTextField.addFocusListener(new java.awt.event.FocusAdapter() {
 	            public void focusLost(FocusEvent e) {
 	            	if (!filterTextField.getText().isEmpty()) {
-	            		filterTextField.setBackground(new Color(255,255,204));
+	            		filterTextField.setBackground(new Color(255,255,204)); //some white yellow so it is clear that some stuff is in this field.
 
 	            	} else {	
-	            		filterTextField.setBackground(Color.WHITE);
+	            		// use standard background color. for flatlaf, this is not white as it is for the other lafs.
+	            		filterTextField.setBackground(_filterTextfieldDefaultBackground); 
 	            	}
 	            }
 	        });
@@ -611,6 +665,16 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
         return mypanel;
     }
 
+    private Icon getIconFromActionID(String actionID) {
+    	if (actionID.equals("1")) return ImagesAndIcons.getIcon(ImagesAndIcons.IMAGE_ACTION_START_SESSION);
+    	if (actionID.equals("2")) return ImagesAndIcons.getIcon(ImagesAndIcons.IMAGE_ACTION_FINISH_SESSION);	
+    	if (actionID.equals("3")) return ImagesAndIcons.getIcon(ImagesAndIcons.IMAGE_ACTION_LATE_ENTRY);
+    	if (actionID.equals("5")) return ImagesAndIcons.getIcon(ImagesAndIcons.IMAGE_ACTION_ABORT_SESSION);
+    	if (actionID.equals("6")) return ImagesAndIcons.getIcon(ImagesAndIcons.IMAGE_ACTION_BOAT_RESERVATIONS);
+    	
+    	return null;
+    }
+    
     public void actionPerformed(ActionEvent e) {
         if (listener != null) {
             listener.itemListenerAction(this, e);
@@ -687,7 +751,7 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
 			this.filterTextField.setText("");
         	updateLastFilterChange();
     		if (!this.filterTextField.hasFocus()) {
-    			this.filterTextField.setBackground(Color.WHITE);
+    			this.filterTextField.setBackground(_filterTextfieldDefaultBackground);
     		}
     		filter();    
     	}
@@ -919,7 +983,12 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
     //if filtertextfield is empty, set list Data to the alldata.
     private void filter() {
         
-    	if (this.showFilterField) {
+		// this.filterTextField actually CAN be null also if this.showFilterField is true
+		// this is the fact for personsAvailableList which is only shown after first user interaction - 
+		// before the user interaction of showing the personsAvailableList, the filterTextfield is null.
+		// so let's avoid a nullpointerexception here. 
+
+    	if (this.showFilterField && this.filterTextField!=null) {
 
     		boolean ignoreSpecialCharacters = Daten.efaConfig.getValueEfaBoathouseFilterTextfieldEasyFindEntriesWithSpecialCharacters();
     		
@@ -1038,5 +1107,11 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
     
     public void setShowTwoColumnList(boolean twoColumns) {
     	showTwoColumnList=twoColumns;
+    }
+    
+    public void updateSeparatorColorFromEfaConfig() {
+        if (Daten.isEfaFlatLafActive()) {
+        	this._separatorBackground=Daten.efaConfig.getEfaGuiflatLaf_Background();
+       }
     }
 }

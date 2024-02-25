@@ -1,0 +1,585 @@
+<html>
+<head>
+<style>
+body {
+  font-family: helvetica, sans serif;
+}
+</style>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>efa - elektronisches Fahrtenbuch Version 2</title>
+</head>
+<body bgcolor="#ffffff">
+
+<h1><a name="konfiguration_des_look_feel">Konfiguration des Look&amp;Feel</a></h1>
+
+
+<h3>Inhaltsverzeichnis</h3>
+
+
+<ul>
+<li><a href="#konfiguration_des_look_feel">Konfiguration des Look&amp;Feel</a>
+<ul>
+<li><a href="#allgemeines">Allgemeines</a></li>
+<li><a href="#efa_flatlaf">EFA FlatLaf</a></li>
+<li><a href="#konfiguration">Konfiguration</a></li>
+<li><a href="#allgemein_-_erscheinungsbild">Allgemein -&gt; Erscheinungsbild</a>
+<ul>
+<li><a href="#look_feel">Look&amp;Feel</a></li>
+<li><a href="#farben_fuer_efaflatlaf">Farben für efaFlatLaf</a></li>
+<li><a href="#ueberschriften-darstellung">Überschriften-Darstellung</a></li>
+<li><a href="#tabellenfarben">Tabellenfarben</a></li>
+<li><a href="#tabellendarstellung">Tabellendarstellung</a></li>
+<li><a href="#tooltips">Tooltips</a></li>
+<li><a href="#schriftart_fuer_efabase">Schriftart für efaBase</a></li>
+</ul>
+</li>
+<li><a href="#vorgehensweise_zur_aenderung_der_farben_von_flatlaf">Vorgehensweise zur Änderung der Farben von FlatLaf</a></li>
+<li><a href="#themen_fuer_flatlaf">Themen für FlatLaf</a>
+<ul>
+<li><a href="#flatlaf_standard_heller_dunkler">Flatlaf Standard, heller, dunkler</a></li>
+<li><a href="#nimbus">Nimbus</a></li>
+<li><a href="#metal">Metal</a></li>
+</ul></li>
+</ul></li>
+</ul>
+
+<h2><a name="allgemeines">Allgemeines</a></h2>
+
+
+<p>
+Ein Look&amp;Feel definiert in Java die Art und weise, wie die Oberfläche dargestellt wird. Dazu gehören
+</p>
+<ul>
+<li> Farbgebung
+</li>
+<li> Verwendete Schriftart und Schriftstil
+</li>
+<li> Darstellung von Oberflächenelementen mit Kanten oder abgerundeten Ecken.
+</li>
+</ul>
+
+<p>
+Grundsätzlich unterstützt EFA in technischer Hinsicht alle in Java definierten Standard Look&amp;Feels. 
+Die geläufigsten Java-Looks sind „Metal“, „Nimbus“ und „Motif“, wobei unter Windows zusätzlich Windows die Looks „Windows“ und „WindowsClassic“ zur Verfügung stehen. Allein unter Linux zur Verfügung steht das „GTK“ Look.
+</p>
+
+<p>
+Das <strong>Metal Look&amp;Feel</strong> funktioniert am Besten, weil es alle Features von EFA gut unterstützt. Dazu gehören insbesondere die farbigen Schaltflächen auf der Startseite von efaBootsHaus. Die Schrift vom Metal Look&amp;Feel ist auf dem Bildschirm gut lesbar.
+</p>
+
+<p>
+Weniger gut funktioniert das <strong>Nimbus Look&amp;Feel</strong>, weil es bei der Darstellung der Fahrtenbuchs in efaBootshaus einige Probleme hat. Das Windows Look&amp;Feel hingegen unterstützt keine farbigen Schaltflächen, und auch die Tabreiter sind nicht gut hervorgehoben.
+</p>
+
+<p>
+Windows/WindowsClassic sowie GTK Look&amp;Feel nutzten eigene Schriftarten, was die Darstellung von EFA nochmal verändert. 
+</p>
+
+
+
+<h2><a name="efa_flatlaf">EFA FlatLaf</a></h2>
+
+
+<p>
+Alle Look&amp;Feels von Standard Java sind inzwischen in die Jahre gekommen und wirken nicht mehr modern. Zudem hat jedes Look&amp;Feel außer Metal technische oder Darstellungsspezifische Schwierigkeiten.
+</p>
+
+<p>
+Daher wurde für EFA 2.4 wurde ein neues Look&amp;Feel entwickelt, das auf der Open-Source-Bibliothek <a href="https://www.formdev.com/flatlaf/" title="https://www.formdev.com/flatlaf/" rel="ugc nofollow">FlatLaf.</a> basiert.
+</p>
+
+<p>
+Wesentliche Features
+</p>
+<ul>
+<li> optimiert für gute Erkennbarkeit von Bildschirminhalten
+</li>
+<li> große Bildschirmelemente, z.B. Scrollbars (einfach zu treffen)
+</li>
+<li> aktueller Look mit abgerundeten Tecken
+</li>
+<li> personalisierbar in Bezug auf Farbgebung
+</li>
+</ul>
+
+<p>
+Bei der Entwicklung wurde darauf geachtet, dass möglichst viele der Farbgebungs-Eigenschaften auch in den anderen Standard-Java Looks genutzt werden können.
+</p>
+
+<p>
+Ob das funktioniert, hängt stark von den jeweiligen Standard-Java Looks ab. So fehlt dem Windows-LookAndFeel die Möglichkeit, die Farbe der aktuellen Registerkarte benutzerspezifisch zu setzen.
+</p>
+
+
+
+<h2><a name="konfiguration">Konfiguration</a></h2>
+
+
+<p>
+Wie efaBootshaus dargestellt wird, lässt sich über zwei verschiedene Bereiche in EFA konfigurieren:
+</p>
+<ul>
+<li> <strong>Konfiguration → Allgemein → Erscheinungsbild</strong><br/>
+Dies sind die Eigenschaften, die sich auf alle efa Programme auswirken. Also efaBase, efaBths usw.<br/>
+Hier werden insbesondere die Farbgebung festgelegt, und grundsätzliche Angaben zum Bildschirm und die Positionierung des EFA-Fensters darauf.<br/>
+<br/>
+
+</li>
+<li> <strong>Konfiguration → efa-Bootshaus → Erscheinungsbild</strong><br/>
+Diese Eigenschaften wirken sich nur auf efaBoothaus aus.
+</li>
+</ul>
+
+<p>
+Um ein optimales Ergebnis für efaBootshaus zu erzeugen, sind Anpassungen in beiden Bereichen erforderlich.
+</p>
+
+
+
+<h2><a name="allgemein_-_erscheinungsbild">Allgemein -&gt; Erscheinungsbild</a></h2>
+
+
+<p>
+<img src="efaflatlaf_config.png" alt="" />
+</p>
+
+<p>
+In dieser Registerkarte wird das LookAndFeel für die folgenden EFA-Programme gesetzt:
+</p>
+<ul>
+<li> efaBase
+</li>
+<li> efaBootshaus
+</li>
+<li> emil
+</li>
+</ul>
+
+
+
+<h3><a name="look_feel">Look&amp;Feel</a></h3>
+
+
+<p>
+Setzt die grundlegende Darstellung von efa. Die Liste der verfügbaren Looks ist abhängig vom gewählten Betriebssystem. Das GTK Look&amp;Feel z.B. ist nur unter Linux verfügbar, die Windows Looks hingegen nur unter den Windows-Betriebssystemen.
+Der „Standard“ ermittelt sich aus den Java-Vorgaben zum jeweiligen Betriebssystem, auf dem EFA läuft. Unter Windows ist der Standard Windows-LookAndFeel, unter Linux „GTK“. 
+</p>
+
+<p>
+Am Besten für efaBase und efaBths funktionieren hier das <strong>Metal</strong> Look sowie das neu entwickelte <strong>efaFlatLight</strong> Look.
+</p>
+
+
+
+<h3><a name="farben_fuer_efaflatlaf">Farben für efaFlatLaf</a></h3>
+
+
+<p>
+Die Standard-Farbgebung für efaFlatLaf soll eine optimale Erkennbarkeit der Bildschirminhalte ermöglichen.
+</p>
+
+<p>
+Die einzelnen Farben können durch Betätigung der „Farbe auswählen“ Schaltfläche angepasst werden.
+Eine Betätigung des roten „X“ dahinter setzt die Farbe auf den Standard von efaFlatLaf zurück.
+<img src="efaflatlaf_farbauswahl.png"  alt="" />
+</p>
+<ul>
+<li> <strong>Hintergrundfarbe</strong><br/>
+Die Hintergrundfarbe für alle Masken.<br/>
+Das Flatlaf ist so programmiert, dass es von einer hellen Hintergrundfarbe ausgeht. Diese darf auch releativ dunkel gewählt werden. Einen echten „Dunklen Modus“ unterstützt efaFlatLaf derzeit nicht.<br/>
+<br/>
+<strong>Hinweis:</strong> Wenn der „Fahrt beginnen“ Dialog vor Änderung der Hintergrundfarbe bereits geöffnet war, so nimmt dieser die neue Hintergrundfarbe erst nach einem efa-Neustart an. Es ist empfehlenswert, nach Abschluss von Änderungen von Farbgebungs-Änderungen immer einen efa-Neustart durchzuführen, auch wenn die meisten Änderungen sich direkt nach dem Schließen des Konfig-Dialogs auf EFA auswirken.<br/>
+<br/>
+
+</li>
+<li> <strong>Hintergrund für Eingabefelder aufhellen (%)</strong><br/>
+Diese Konfigurationseigenschaft bezieht sich auf Schaltflächen, Eingabefelder, Listenfelder, Tabellenhintergründe. Diese sollen sich von der eigentlichen Hintergrundfarbe abheben. <br/>
+<br/>
+Hier kann eingestellt werden, wieviel % heller die Eingabefelder/Schaltflächen/… sein sollen. Für eine sehr helle Farbgebung reicht hier 8%, für eine dunkler gewählte Farbgebung kann man hier auch mal 15% oder 20% eintragen. <br/>
+Der Standardwert ist 10.<br/>
+<br/>
+
+</li>
+<li> <strong>Akzentfarbe</strong><br/>
+Die Akzentfarbe wird als Grundlage für alle Scroll-Balken, selektierte Einträge in Listen und für Registerkarten genutzt.<br/>
+<br/>
+
+</li>
+<li> <strong>Fokusfarbe</strong> <br/>
+Das Flatlaf kann das aktuell mit dem Eingabefokus versehene Oberflächenelement durch einen farbigen Rahmen hervorheben. Üblicherweise sollte dies eine relativ helle Farbe sein, damit sie entsprechend auffällig ist.<br/>
+ Eine gute Wahl ist es, wenn die Fokusfarbe die Komplementärfarbe zur Akzentfarbe ist. <br/>
+<br/>
+
+</li>
+</ul>
+
+
+
+<h3><a name="ueberschriften-darstellung">Überschriften-Darstellung</a></h3>
+
+<ul>
+<li> <strong>Überschriften hervorheben</strong><br/>
+Überschriften der Bootslisten im Hauptfenster von efaBootshaus hervorheben, genauso wie die Überschriften innerhalb von efaConfig und einzelnen Listenelementen bei der Pflege von Booten und Personen.<br/>
+<br/>
+
+</li>
+<li> <strong>Überschriften von Registerkarten hervorheben</strong><br/>
+Die aktive Registerkarte kann farbig hervorgehoben werden. Diese Einstellung wirkt ausschließlich auf das Metal Look und das WindowsClassic Look. <br/>
+<br/>
+
+</li>
+<li> <strong>Überschriften Hintergrundfarbe</strong><br/>
+Dies sollte eine dunkle Farbe sein. Es sieht gut aus, wenn die Überschriften-Farbe identisch ist zur Akzentfarbe zu efaFlatLaf.<br/>
+<br/>
+
+</li>
+<li> <strong>Überschriften Textfarbe</strong><br/>
+Dies sollte eine helle Farbe sein, z.B. weiß.<br/>
+Die Textfarbe wird auch für die Darstellung des Rahmens um die Überschriften verwendet.<br/>
+<br/>
+
+</li>
+</ul>
+
+
+
+<h3><a name="tabellenfarben"></a>Tabellenfarben</h3>
+
+
+<p>
+Diese Eigenschaften wirken in allen Look&amp;Feels.<br/>
+<br/>
+
+</p>
+<ul>
+<li> <strong>Tabellen-Überschriften Hintergrundfarbe</strong><br/>
+Dient zur besseren Hervorhebung der Tabellenüberschriften. <br/>
+Diese Farbe sollte sich durch einen dunkleren Farbton im Vergleich zum Hintergrund der alternierenden Zeilen auszeichnen.<br/>
+<br/>
+
+</li>
+<li> <strong>Tabellen-Überschriften Textfarbe</strong><br/>
+Bei einer relativ hellen Überschriften-Hintergrundfarbe sollte diese Einstellung „Schwarz“ sein, bei einer relativ dunklen „weiß“.<br/>
+<br/>
+
+</li>
+<li> <strong>Hintergrund der alternierenden Zeilen</strong><br/>
+Tabellen können jede zweite Zeile mit einer anderen Hintergrundfarbe versehen.<br/>
+Dabei geht efa davon aus, dass die Hintergrundfarbe hell ist, und die Schriftfarbe immer schwarz. Daher kann hier nur der Hintergrund der alternierenden Zeilen gesetzt werden.<br/>
+<br/>
+
+</li>
+<li> <strong>Selektierte Zeile Hintergrundfarbe</strong><br/>
+Diese Farbe sollte sich deutlich von der Tabellen-Überschriftenfarbe und dem Hintergrund für die alternierenden Zeilen abheben.<br/>
+<br/>
+
+</li>
+<li> <strong>Selektierte Zeile Textfarbe</strong><br/>
+Ist die Hintergrundfarbe für die selektierte eher dunkel, sollte hier eine weiße Schriftfarbe gewählt werden.<br/>
+<br/>
+
+</li>
+</ul>
+
+
+
+<h3><a name="tabellendarstellung"></a>Tabellendarstellung</h3>
+
+
+<p>
+Diese Einstellungen wirken bei allen Look&amp;Feels.<br/>
+
+</p>
+<ul>
+<li> <strong>Tabellen mit Tooltipps für zu lange Texte</strong><br/>
+Efa funktioniert auch auf releativ kleinen Monitoren. Dies führt dazu, dass Tabelleninhalte nicht immer vollständig dargestellt werden können. Ist diese Einstellung aktiv, wird bei abgeschnittenen Texten beim Überfahren mit der Maus ein Tooltipp mit dem vollständigen Text dargestellt.<br/>
+<br/>
+Hinweis: bei efaBths wird die Dauer bis zum Erscheinen des Tooltipps über „efa-Bootshaus → Erscheinungsbild“ eingestellt.<br/>
+<br/>
+
+</li>
+<li> <strong>Tabellen mit alternierenden Zeilenfarben</strong><br/>
+Jede zweite Zeile der Tabelle mit einer alternativen Hintergrundfarbe versehen.<br/>
+<br/>
+
+</li>
+<li> <strong>Tabellen sollen bei Filterung Einträge mit Sonderzeichen einfacher finden</strong><br/>
+Ist die Funktion aktiv, so gilt: Wird in das Suchfeld unter einer Tabelle ein Text nur mit lateinischen Buchstaben gefüllt, findet die Tabelle auch Einträge mit Umlauten. „Andre“ findet dann auch einen Eintrag „Andr<strong>é</strong>“.<br/>
+Wird allerdings im Suchfeld mindestens ein Umlaut eingegeben, so wird explizit nach Einträgen gesucht, die diesen Umlaut beinhalten.<br/>
+Diese Funktion kann <em>separat</em> konfiguriert werden für 
+<ul>
+<li> Tabellen (standardmäßig aus), 
+</li>
+<li> Bootshaus-Listen in efaBths (standardmäßig ein, siehe Efa-Bootshaus→Erscheinungsbild→Bootslisten-Filter-Felder im Expertenmodus)
+</li>
+<li> Vervollständigungs-Listen für Bootsnamen, Personen usw. (standardmäßig ein, siehe Allgemein→Eingabe→Popup-Fenster zur Elementauswahl im Expertenmodus)<br/>
+
+</li>
+</ul>
+</li>
+</ul>
+
+
+
+<h3><a name="tooltips"></a>Tooltips</h3>
+
+
+<p>
+Diese Eigenschaften wirken in allen Look&amp;Feel.<br/>
+Die Hintergrundfarbe des Tooltip kann im Nimbus Look&amp;Feel nicht gesetzt werden.<br/>
+
+</p>
+
+<p>
+<img src="tooltip_farben.png" alt="" />
+</p>
+<ul>
+<li> <strong>Tooltipps mit eigener Farbgebung</strong><br/>
+Ist diese funktion ausgeschaltet, werden die Standard-Farben des jeweiligen Look&amp;Feel genutzt.<br/>
+<br/>
+
+</li>
+<li> <strong>Tooltipp Hintergrundfarbe</strong><br/>
+Standard-Hingergrundfarbe aller Tooltipps in efa.<br/>
+<br/>
+
+</li>
+<li> <strong>Tooltipp Textfarbe</strong><br/>
+Standard-Textfarbe aller Tooltipps in efa.<br/>
+Im FlatLaf wird diese Farbe auch für den Rahmen des Tooltipps genutzt.<br/>
+<br/>
+
+</li>
+<li> <strong>Tooltipp-Überschriften Hintergrundfarbe</strong><br/>
+Diese Einstellung wird derzeit nur von efaBootshaus genutzt, ist zukünftig aber für mehrere Bereiche vorgesehen. Diese Überschriftenfarbe sollte sich <em>leicht</em> von der Standard-Hintergrundfarbe abheben. Es ist <em>nicht</em> empfehlenswert, hier eine dunkle Hintergrundfarbe zu wählen, da dies bei Tooltipps sehr dominant wirkt.<br/>
+<br/>
+Diese Einstellung wird auch verwendet, wenn „Tooltipps mit eigener Farbgebung“ ausgeschaltet ist.<br/>
+<br/>
+
+</li>
+<li> <strong>Tooltipp-Überschriften Textfarbe</strong><br/>
+Diese Einstellung wird derzeit nur von efaBootshaus genutzt, ist zukünftig aber für mehrere Bereiche vorgesehen. Die Textfarbe sollte identisch sein mit der Standard Tooltipp Textfarbe.<br/>
+Diese Einstellung wird auch verwendet, wenn „Tooltipps mit eigener Farbgebung“ ausgeschaltet ist.<br/>
+<br/>
+
+</li>
+</ul>
+
+
+
+<h3 ><a name="schriftart_fuer_efabase"></a>Schriftart für efaBase</h3>
+
+
+<p>
+Diese Eigenschaften sind für alle Look&amp;Feel nutzbar.<br/>
+
+</p>
+
+<p>
+Die Eigenschaften wirkt nur in efaBase, nicht in anderen efa-Programmen.<br/>
+Empfehlenswert ist eine Schriftgröße von 14 Punkt.<br/>
+<br/>
+
+</p>
+
+
+
+<h2 ><a name="vorgehensweise_zur_aenderung_der_farben_von_flatlaf"></a>Vorgehensweise zur Änderung der Farben von FlatLaf</h2>
+
+
+<p>
+<a href="efaflatlaf_farbauswahl.png" title="efaflatlaf_farbauswahl.png"><img src="efaflatlaf_farbauswahl.png" alt="" /></a>
+</p>
+
+<p>
+Durch die Betätigung der Schaltfläche „Farbe auswählen“ wird der Standard-Farbauswahl-Dialog von Java geöffnet.
+</p>
+
+
+<ul>
+<li> <strong>Swatches</strong>  <br/>
+Diese Registerkarte bietet eine direkte Auswahl von Farben aus dem vollen Spektrum.<br/>
+Sie lässt sich gut nutzen zur Auswahl von Hintergrunds- und Textfarben von Überschriften.<br/>
+<br/>
+<p>
+<img src="farbkonfig_swatches.png" alt="" />
+</p>
+ <br/>
+<br/>
+<br/>
+
+</li>
+<li> <strong>RGB</strong>
+<br/>Die Registerkarte RGB ermöglicht die Auswahl der Farbkomponenten über die drei Grundfarben Rot, Grün, Blau. Jede der Farben kann auf einer Skala von 0 bis 255 gewählt werden.<br/>
+Besonders relevant ist die Direkteingabe eines hexadezimalen Farbcodes. Hier können bereits bekannte Farbwerte (z.B. aus den Themen im Folgekapitel) per Copy/Paste eingetragen und übernommen werden. <br/>
+<br/>
+<img src="farbkonfig_RGB.png" alt="" />
+<br/>
+<br/>
+<br/>
+
+
+</li>
+<li> <strong>HSL</strong>
+<br/>Die HSL-Registerkarte ist der Freund einer jeden Person, die Hintergrundsfarben variieren möchte.<br/>
+<img src="farbkonfig_HSL.png" alt="" />
+In dem links nebenstehenden Bildschirmfoto sieht man die Standard-Hintergrundfarbe von efaFlatLaf. Diese ist ein leicht orangenes Grau (dies ist erkennbar daran, dass der viereckige Farbbereich bei mehr Sättigung in den orangenen Farbton wechselt). Auch wenn es im direkten Farbwert kaum auffällt, sorgt dies für eine leicht warme Farbgebung von efa.<br/>
+<br/>
+Diese Farbe wurde bewusst gewählt, auch für eine einfachere Anpassung des Basis-Themas.<br/>
+<br/>
+Von hier aus ausgehend kann man beim FlatLaf gut den Helligkeitswert ändern und z.B. ein dunkleres LAF erzeugen, das die Kontraste mehr hervorhebt. <br/><img src="farbkonfig_HSL_dunkler.png" alt=""/> <br/>
+<br/>
+
+
+
+<p>
+Genauso lässt sich aber auch duuch Veränderung des Sliders für „Farbton“ ein rötlicher Ton der Hintergrundfarbe erzeugen.<br/> 
+<img src="farbkonfig_HSL_roetlich.png" alt="" />
+<br/>
+<br/>
+
+</p>
+</li>
+</ul>
+
+
+<h2><a name="themen_fuer_flatlaf"></a>Themen für FlatLaf</h2>
+
+
+
+
+<h3><a name="flatlaf_standard_heller_dunkler"></a>Flatlaf Standard, heller, dunkler</h3>
+
+
+<p>
+<strong> Flatlaf heller </strong>
+</p>
+<table border=1>
+	<thead>
+	<tr>
+		<th > Eigenschaft </th><th > Hex-Farbwert für RGB-Registerkarte </th>
+	</tr>
+	</thead>
+	<tr>
+		<td> Hintergrund 		</td><td> F4F3EF </td>
+	</tr>
+	<tr>
+		<td> Eingabefelder aufhellen </td><td> 8%  </td>
+	</tr>
+</table>
+
+<p>
+<strong> Flatlaf dunkler </strong>
+</p>
+<table border=1>
+	<thead>
+	<tr>
+		<th > Eigenschaft </th><th > Hex-Farbwert für RGB-Registerkarte </th>
+	</tr>
+	</thead>
+	<tr>
+		<td> Hintergrund 		</td><td> E5E3D9 </td>
+	</tr>
+	<tr>
+		<td> Eingabefelder aufhellen </td><td> 14%  </td>
+	</tr>
+</table>
+
+
+
+<h3 id="nimbus">Nimbus</h3>
+
+
+<p>
+Eine Nimbus-ähnliche Farbgebung ist erreichbar über folgende Farbcodes:<br/>
+
+
+</p>
+<table border=1>
+	<thead>
+	<tr>
+		<th > Eigenschaft </th><th > Hex-Farbwert für RGB-Registerkarte </th>
+	</tr>
+	</thead>
+	<tr>
+		<td> Hintergrund 		</td><td> D6D9DF </td>
+	</tr>
+	<tr>
+		<td> Eingabefelder aufhellen </td><td> 20%  </td>
+	</tr>
+	<tr>
+		<td> Akzent		</td><td> 5388BA </td>
+	</tr>
+	<tr>
+		<td> Überschriften HG	</td><td> 7E9CB8 </td>
+	</tr>
+	<tr>
+		<td> TabelleÜberHG		</td><td> 6190BB </td>
+	</tr>
+	<tr>
+		<td> TabelleAlternate	</td><td> D8E3ED </td>
+	</tr>
+	<tr>
+		<td> TabelleSelColor	</td><td> 5E86AA </td>
+	</tr>
+	<tr>
+		<td> ToolTipHG		</td><td> E0EAF4 </td>
+	</tr>
+	<tr>
+		<td> ToolTIPHG2		</td><td> EFF4F9 </td>
+	</tr>
+	<tr>
+		<td> TooltipTextColor	</td><td> 15416A </td>
+	</tr>
+</table>
+
+
+
+<h3 id="metal">Metal</h3>
+
+
+<p>
+Eine Metal-ähnliche Farbgebung ist erreichbar über folgende Farbcodes:<br/>
+
+<table border=1>
+	<thead>
+	<tr>
+		<th > Eigenschaft </th><th > Hex-Farbwert für RGB-Registerkarte </th>
+	</tr>
+	</thead>
+	<tr>
+		<td> Hintergrund 		</td><td> EEEEEE </td>
+	</tr>
+	<tr>
+		<td> Eingabefelder aufhellen </td><td> 10%  </td>
+	</tr>
+	<tr>
+		<td> Akzent		</td><td> 4878A5 </td>
+	</tr>
+	<tr>
+		<td> Überschriften HG	</td><td> 4878A5</td>
+	</tr>
+	<tr>
+		<td> TabelleÜberHG		</td><td> B1C7DC </td>
+	</tr>
+	<tr>
+		<td> TabelleAlternate	</td><td> DBEAF9 </td>
+	</tr>
+	<tr>
+		<td> TabelleSelColor	</td><td> 4878A5 </td>
+	</tr>
+	<tr>
+		<td> ToolTipHG		</td><td> E0EDF9 </td>
+	</tr>
+	<tr>
+		<td> ToolTIPHG2		</td><td> FAFCFE </td>
+	</tr>
+	<tr>
+		<td> TooltipTextColor	</td><td> 15416A </td>
+	</tr>
+</table>
+<br/>
+
+
+</body>
+</html>

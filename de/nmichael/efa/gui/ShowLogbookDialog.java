@@ -9,31 +9,69 @@
  */
 package de.nmichael.efa.gui;
 
+import java.awt.AWTEvent;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.util.Hashtable;
+import java.util.UUID;
+
+import javax.swing.DefaultCellEditor;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JDialog;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.TableModelEvent;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumnModel;
+
 import de.nmichael.efa.Daten;
-import de.nmichael.efa.core.items.*;
-import de.nmichael.efa.data.*;
+import de.nmichael.efa.core.items.IItemListener;
+import de.nmichael.efa.core.items.IItemType;
+import de.nmichael.efa.core.items.ItemTypeBoolean;
+import de.nmichael.efa.core.items.ItemTypeInteger;
+import de.nmichael.efa.core.items.ItemTypeStringAutoComplete;
+import de.nmichael.efa.core.items.ItemTypeTextArea;
+import de.nmichael.efa.data.Logbook;
+import de.nmichael.efa.data.LogbookRecord;
+import de.nmichael.efa.data.MessageRecord;
+import de.nmichael.efa.data.Messages;
 import de.nmichael.efa.data.storage.DataKey;
 import de.nmichael.efa.data.storage.DataKeyIterator;
 import de.nmichael.efa.data.types.DataTypeIntString;
 import de.nmichael.efa.gui.util.AutoCompleteList;
-import de.nmichael.efa.gui.util.TableSorter;
+import de.nmichael.efa.gui.util.EfaTableCellRenderer;
 import de.nmichael.efa.gui.util.TableHeaderCellRendererBold;
-import de.nmichael.efa.util.*;
+import de.nmichael.efa.gui.util.TableSorter;
 import de.nmichael.efa.util.Dialog;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.Hashtable;
-import java.util.UUID;
-import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.TableModelEvent;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.DefaultTableModel;
+import de.nmichael.efa.util.EfaUtil;
+import de.nmichael.efa.util.International;
+import de.nmichael.efa.util.Logger;
 
 public class ShowLogbookDialog extends BaseDialog implements IItemListener {
 
-    private Logbook logbook;
+	private static final long serialVersionUID = -2271729956595866905L;
+
+	private Logbook logbook;
     private JScrollPane scrollPane;
     private JTable table;
     private TableSorter sorter;
@@ -146,8 +184,10 @@ public class ShowLogbookDialog extends BaseDialog implements IItemListener {
         int c = Math.min(count, max);
         Object[][] fahrten = new Object[c][11];
         row2entryno = new Hashtable<Integer,DataTypeIntString>();
-
+        Font f = this.getFont();
+        FontMetrics fm = this.getFontMetrics(f);     
         try {
+   	
             DataKeyIterator it = logbook.data().getStaticIterator();
             DataKey k = it.getLast();
             while (k != null) {
@@ -180,14 +220,21 @@ public class ShowLogbookDialog extends BaseDialog implements IItemListener {
                 }
                 Object[] mRowTitle = new Object[1];
                 mRowTitle[0] = "foo";
-                MyNestedJTable mTable = new MyNestedJTable(mRowData, mRowTitle) {
+                MyNestedJTable mTable = new MyNestedJTable(mRowData, mRowTitle, Daten.efaConfig.getValueEfaDirekt_tabelleShowTooltip()) {
+					private static final long serialVersionUID = 4113309999908631888L;
 
-                    public boolean isCellEditable(int row, int column) {
+					public boolean isCellEditable(int row, int column) {
                         return false;
                     }
                 };
-                mTable.getColumn("foo").setCellRenderer(new HighlightTableCellRenderer());
+                // user alternate row coloring on the inner table for crews 
+                HighlightTableCellRenderer myInnerRenderer = new HighlightTableCellRenderer();
+                if (Daten.efaConfig.getValueEfaDirekt_tabelleAlternierendeZeilenFarben()) {
+                	myInnerRenderer.setAlternatingRowColor(Daten.efaConfig.getTableAlternatingRowColor());
+                }
+                mTable.getColumn("foo").setCellRenderer(myInnerRenderer);
                 mTable.setShowGrid(false);
+                mTable.setRowHeight(fm.getHeight()+6);
                 fahrten[c][4] = mTable;
 
                 fahrten[c][5] = r.getStartTime();
@@ -220,8 +267,14 @@ public class ShowLogbookDialog extends BaseDialog implements IItemListener {
         }
 
         sorter = new TableSorter(new DefaultTableModel(fahrten, title));
-        table = new MyJTable(sorter);
-        table.getColumn(International.getString("Steuermann")).setCellRenderer(new HighlightTableCellRenderer());
+        table = new MyJTable(sorter, Daten.efaConfig.getValueEfaDirekt_tabelleShowTooltip());
+        table.setTableHeader(new TableHeaderWithTooltips(table.getColumnModel()));
+        
+        HighlightTableCellRenderer mySteuermannRenderer = new HighlightTableCellRenderer();
+        if (Daten.efaConfig.getValueEfaDirekt_tabelleAlternierendeZeilenFarben()) {
+        	mySteuermannRenderer.setAlternatingRowColor(Daten.efaConfig.getTableAlternatingRowColor());
+        }
+        table.getColumn(International.getString("Steuermann")).setCellRenderer(mySteuermannRenderer);
         table.getColumn(International.getString("Mannschaft")).setCellRenderer(new TableInTableRenderer());
 
         ButtonRenderer buttonRenderer = new ButtonRenderer();
@@ -229,13 +282,24 @@ public class ShowLogbookDialog extends BaseDialog implements IItemListener {
         table.getColumn("C").setCellEditor(new ButtonEditor(buttonRenderer));
         
         // Update for standard tables: increase row height for better readability
-        Font f = this.getFont();
-        FontMetrics fm = this.getFontMetrics(f);
-        table.setRowHeight(fm.getHeight()+4);
-        
+        table.setRowHeight(fm.getHeight()+6);
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
         // Update for standard tables: Replace default header renderer with bold+dark background renderer 
-        javax.swing.table.TableCellRenderer l_originalRenderer = table.getTableHeader().getDefaultRenderer();
-        table.getTableHeader().setDefaultRenderer(new TableHeaderCellRendererBold(l_originalRenderer));
+        TableCellRenderer l_originalRenderer = table.getTableHeader().getDefaultRenderer();
+
+
+        TableHeaderCellRendererBold r = new TableHeaderCellRendererBold(l_originalRenderer);
+        r.setBackground(Daten.efaConfig.getTableHeaderBackgroundColor());
+        r.setForeground(Daten.efaConfig.getTableHeaderHeaderColor());
+        table.getTableHeader().setDefaultRenderer(r);
+        
+        EfaTableCellRenderer renderer = new  EfaTableCellRenderer();
+        if (Daten.efaConfig.getValueEfaDirekt_tabelleAlternierendeZeilenFarben()) {
+            renderer.setAlternatingRowColor(Daten.efaConfig.getTableAlternatingRowColor());
+        }
+        table.setDefaultRenderer(Object.class, renderer);
+
         
         updateNestedTableHeight();
         sorter.addMouseListenerToHeaderInTable(table);
@@ -264,33 +328,33 @@ public class ShowLogbookDialog extends BaseDialog implements IItemListener {
         for (int i = 0; i < 11; i++) {
             switch (i) {
                 case 0:
-                    widths[i] = 5 * width / 100; // LfdNr
-                    if (widths[i] > 40) {
-                        widths[i] = 40;
+                    widths[i] = 6 * width / 100; // LfdNr
+                    if (widths[i] > 50) {
+                        widths[i] = 50;
                     }
                     break;
                 case 1:
-                    widths[i] = 8 * width / 100; // Datum
-                    if (widths[i] > 80) {
-                        widths[i] = 80;
+                    widths[i] = 10 * width / 100; // Datum
+                    if (widths[i] > 110) {
+                        widths[i] = 110;
                     }
                     break;
                 case 5:
-                    widths[i] = 5 * width / 100; // Abfahrt
-                    if (widths[i] > 50) {
-                        widths[i] = 50;
+                    widths[i] = 6 * width / 100; // Abfahrt
+                    if (widths[i] > 65) {
+                        widths[i] = 65;
                     }
                     break;
                 case 6:
-                    widths[i] = 5 * width / 100; // Ankunft
-                    if (widths[i] > 50) {
-                        widths[i] = 50;
+                    widths[i] = 6 * width / 100; // Ankunft
+                    if (widths[i] > 65) {
+                        widths[i] = 65;
                     }
                     break;
                 case 8:
-                    widths[i] = 6 * width / 100; // Boots-Km
-                    if (widths[i] > 50) {
-                        widths[i] = 50;
+                    widths[i] = 7 * width / 100; // Boots-Km
+                    if (widths[i] > 70) {
+                        widths[i] = 70;
                     }
                     break;
                 case 10:
@@ -362,10 +426,12 @@ public class ShowLogbookDialog extends BaseDialog implements IItemListener {
             text.setCaretPosition(Integer.MAX_VALUE);
             text.setLabelGrid(2, -1, -1);
             text.setNotNull(true);
+            text.setFieldGrid(3, GridBagConstraints.EAST, GridBagConstraints.NONE);
             long now = System.currentTimeMillis();
             ItemTypeStringAutoComplete from = new ItemTypeStringAutoComplete("FROM", "",
                     IItemType.TYPE_PUBLIC, "",
-                    International.getString("Dein Name"), false);
+                    International.getString("Dein Name"), true);
+
             from.setAutoCompleteData(new AutoCompleteList(Daten.project.getPersons(false).data(), now, now));
             from.setAlwaysReturnPlainText(true);
             from.setNotNull(true);
@@ -383,10 +449,15 @@ public class ShowLogbookDialog extends BaseDialog implements IItemListener {
         }
     }
 
-    class MyJTable extends JTable {
+    private class MyJTable extends JTable {
 
-        public MyJTable(TableSorter sorter) {
+		private static final long serialVersionUID = 7627514043061724774L;
+
+		private Boolean tooltipsEnabled=false;
+		
+		public MyJTable(TableSorter sorter, Boolean showToolTips) {
             super(sorter);
+            tooltipsEnabled=showToolTips;
         }
 
         public boolean isCellEditable(int row, int column) {
@@ -409,6 +480,7 @@ public class ShowLogbookDialog extends BaseDialog implements IItemListener {
                     }
                 }
             } catch (Exception ee) {
+            	Logger.logdebug(ee);
             }
             super.valueChanged(e);
         }
@@ -417,18 +489,60 @@ public class ShowLogbookDialog extends BaseDialog implements IItemListener {
             super.tableChanged(e);
             updateNestedTableHeight();
         }
+        
+   	 	public String getToolTipText(MouseEvent event) {
+	        try {
+	        	if (tooltipsEnabled) {
+	                int row = rowAtPoint(event.getPoint());
+	                int col = columnAtPoint(event.getPoint());
+					
+	                // SGB Update for tables: Tooltipp shall be presented only if the value does not fit into row. 
+	                if (col!=-1 && row !=-1) {
+						
+	                	javax.swing.table.TableCellRenderer l_renderer = getCellRenderer(row, col);
+						Component l_component = prepareRenderer (l_renderer, row, col);
+						Rectangle l_cellRect=getCellRect(row, col, false);
+
+						if (l_cellRect.width >= l_component.getPreferredSize().width) {
+							// do not show any tooltip if the column has enough space for the value
+							return null;
+						} else {
+							return getValueAt(row, col).toString();
+						}
+					}
+	            }            
+	        } catch (Exception eignore) {
+	        	Logger.logdebug(eignore);
+	        }
+	        return null;
+	    }
+        
     }
 
-    class MyNestedJTable extends JTable {
+    /** 
+     * MyNestedJTable is a table which is placed into a single cell.
+     * It is used for the "Crew" column. 
+     * 
+     * For it's inner cells, it uses the background color of the row it is currently used.
+     * 
+     */
+    private class MyNestedJTable extends JTable {
 
-        String toText = "";
+		private static final long serialVersionUID = -1632568401117917149L;
+		
+		private boolean startsWithOddRow=true;
+		private boolean tooltipsEnabled=false;
+		String toText = "";
         Object[][] data = null;
         Object[] title = null;
 
-        public MyNestedJTable(Object[][] data, Object[] title) {
+        public MyNestedJTable(Object[][] data, Object[] title, Boolean showToolTips) {
             super(data, title);
+            this.tooltipsEnabled=showToolTips;
             this.data = data;
             this.title = title;
+            this.setShowGrid(false);
+            this.setShowHorizontalLines(true);
             toText = "";
             for (int i = 0; i < data.length; i++) {
                 for (int j = 0; j < data[i].length; j++) {
@@ -442,11 +556,47 @@ public class ShowLogbookDialog extends BaseDialog implements IItemListener {
         }
 
         public Object clone() {
-            return new MyNestedJTable(data, title);
+            return new MyNestedJTable(data, title, tooltipsEnabled);
         }
+        
+        public void setStartWithOddRow(boolean value) {
+        	startsWithOddRow=value;
+        }
+        
+        public boolean getStartWithOddRow() {
+        	return startsWithOddRow;
+        }
+
+        public String getToolTipText(MouseEvent event) {
+	        try {
+	        	if (tooltipsEnabled) {
+	                int row = rowAtPoint(event.getPoint());
+	                int col = columnAtPoint(event.getPoint());
+					
+	                // SGB Update for tables: Tooltipp shall be presented only if the value does not fit into row. 
+	                if (col!=-1 && row !=-1) {
+						
+	                	javax.swing.table.TableCellRenderer l_renderer = getCellRenderer(row, col);
+						Component l_component = prepareRenderer (l_renderer, row, col);
+						Rectangle l_cellRect=getCellRect(row, col, false);
+
+						if (l_cellRect.width >= l_component.getPreferredSize().width) {
+							// do not show any tooltip if the column has enough space for the value
+							return null;
+						} else {
+							return getValueAt(row, col).toString();
+						}
+					}
+	            }            
+	        } catch (Exception eignore) {
+	        	Logger.logdebug(eignore);
+	        }
+	        return null;
+	    }        
+                
     }
 
-    class TableItem {
+    private class TableItem {
 
         private String txt;
         private boolean bold;
@@ -463,9 +613,10 @@ public class ShowLogbookDialog extends BaseDialog implements IItemListener {
         public boolean isBold() {
             return bold;
         }
+
     }
 
-    class TableInTableRenderer implements TableCellRenderer {
+    private class TableInTableRenderer implements TableCellRenderer {
 
         public Component getTableCellRendererComponent(JTable table, Object value,
                 boolean isSelected, boolean hasFocus, int row, int column) {
@@ -473,38 +624,81 @@ public class ShowLogbookDialog extends BaseDialog implements IItemListener {
                 if (value == null) {
                     return null;
                 }
+                // this is neccessary so that the nested table starts with the same alternating 
+                // row color as the current line.
+                ((MyNestedJTable) value).setStartWithOddRow(row % 2 == 1);
                 return (Component) value;
             } catch (Exception e) {
+            	Logger.logdebug(e);
                 return null;
             }
         }
     }
 
-    class HighlightTableCellRenderer extends DefaultTableCellRenderer {
-
-        public Component getTableCellRendererComponent(JTable table, Object value,
+    private class HighlightTableCellRenderer extends DefaultTableCellRenderer {
+    	
+		private static final long serialVersionUID = -1661015873516314571L;
+		
+	    private Color alternateColor = new Color(219,234,249);
+	    private boolean useAlternatingColor= false;
+	    
+		public Component getTableCellRendererComponent(JTable table, Object value,
                 boolean isSelected, boolean hasFocus, int row, int column) {
             try {
-                if (value == null) {
-                    return null;
-                }
+
+
                 Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-                String txt = value.toString();
-//            if (txt.startsWith(FahrtenbuchAnzeigenFrame.BOLD)) {
-                if (((TableItem) value).isBold()) {
+	            Color bkgColor = null;
+	            Color fgColor = null;
+	            
+                if (value !=null && ((TableItem) value).isBold()) {
                     c.setFont(c.getFont().deriveFont(Font.BOLD));
-//                table.setValueAt(txt.substring(FahrtenbuchAnzeigenFrame.BOLD.length()), row, column);
                 }
+
+                if (this.useAlternatingColor) {
+                	if (table instanceof MyNestedJTable) {
+                		Boolean startsWithOdd=((MyNestedJTable) table).getStartWithOddRow();
+                		if (startsWithOdd) {
+                			bkgColor = null; //(row % 2 == 0 ? null : alternateColor);
+                		} else {
+            	            bkgColor = alternateColor; // (row % 2 == 0 ? alternateColor : null);
+                		}
+                	} else {
+                		bkgColor = (row % 2 == 0 ? alternateColor : null);
+                		this.setVerticalTextPosition(SwingConstants.TOP);
+                	}
+                }      
+                
+                if (isSelected) {
+                    bkgColor = table.getSelectionBackground();
+                    // Update for standard tables: when selected, we should always use the selection foreground.
+                    fgColor= table.getSelectionForeground();
+                    if (c.getFont().isBold()) {
+                    	c.setFont(c.getFont().deriveFont(Font.BOLD | Font.ITALIC));
+                    } else {
+                    	c.setFont(c.getFont().deriveFont(Font.BOLD));
+                    }
+                }
+                c.setBackground(bkgColor);    
+	            c.setForeground(fgColor);
                 return this;
             } catch (Exception e) {
+            	Logger.logdebug(e);
                 return null;
             }
         }
+		
+	    public void setAlternatingRowColor(Color c) {
+	    	this.alternateColor = c;
+	    	this.useAlternatingColor=(c!=null && Daten.efaConfig.getValueEfaDirekt_tabelleAlternierendeZeilenFarben());
+	    }
     }
 
-    class ButtonRenderer extends JButton implements TableCellRenderer {
+    private class ButtonRenderer extends JButton implements TableCellRenderer {
 
-        public ButtonRenderer() {
+		private static final long serialVersionUID = -4274374186561493972L;
+
+		public ButtonRenderer() {
             setOpaque(true);
         }
 
@@ -516,9 +710,11 @@ public class ShowLogbookDialog extends BaseDialog implements IItemListener {
 
     }
 
-    class ButtonEditor extends DefaultCellEditor {
+    private class ButtonEditor extends DefaultCellEditor {
 
-        protected JButton button;
+		private static final long serialVersionUID = -2250457297780802588L;
+
+		protected JButton button;
         private DataTypeIntString entryNo;
 
         public ButtonEditor(JButton button) {
@@ -552,5 +748,26 @@ public class ShowLogbookDialog extends BaseDialog implements IItemListener {
             super.fireEditingStopped();
         }
     }
+    
+    private class TableHeaderWithTooltips extends JTableHeader {
+
+		private static final long serialVersionUID = 6995328318883617447L;
+
+		TableHeaderWithTooltips(TableColumnModel columnModel) {
+          super(columnModel);//do everything a normal JTableHeader does
+        }
+
+		/**
+		 * return the caption of the clumn the mouse is hovering.
+		 * do not check wether a tooltip is neccessary or not
+		 */
+        public String getToolTipText(MouseEvent e) {
+            java.awt.Point p = e.getPoint();
+            int index = columnModel.getColumnIndexAtX(p.x);
+            //int realIndex = columnModel.getColumn(index).getModelIndex();
+			
+            return this.getColumnModel().getColumn(index).getHeaderValue().toString();
+        }
+    }        
 
 }

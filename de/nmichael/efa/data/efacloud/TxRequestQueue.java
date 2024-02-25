@@ -10,19 +10,26 @@
  */
 package de.nmichael.efa.data.efacloud;
 
+import java.awt.Container;
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.Vector;
+
+import javax.swing.ImageIcon;
+import javax.swing.SwingUtilities;
+
 import de.nmichael.efa.Daten;
-import de.nmichael.efa.core.config.AdminRecord;
-import de.nmichael.efa.core.config.Admins;
 import de.nmichael.efa.gui.EfaBaseFrame;
 import de.nmichael.efa.gui.EfaBoathouseFrame;
 import de.nmichael.efa.gui.EfaCloudConfigDialog;
+import de.nmichael.efa.gui.ImagesAndIcons;
 import de.nmichael.efa.util.International;
 import de.nmichael.efa.util.Logger;
-
-import java.awt.*;
-import java.io.*;
-import java.text.SimpleDateFormat;
-import java.util.*;
 
 /**
  * <p>The efaCloud transaction request queue manager.</p>
@@ -172,6 +179,18 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
         QUEUE_STATE_SYMBOL.put(QUEUE_IS_IDLE, "  ✔");
         QUEUE_STATE_SYMBOL.put(QUEUE_IS_SYNCHRONIZING, " ⟳");
     }
+    
+    public static final HashMap<Integer, ImageIcon> QUEUE_STATE_ICON = new HashMap<Integer, ImageIcon>();
+
+    static {
+    	QUEUE_STATE_ICON.put(QUEUE_IS_STOPPED, ImagesAndIcons.getIcon(ImagesAndIcons.IMAGE_EFACLOUD_STOPPED));
+    	QUEUE_STATE_ICON.put(QUEUE_IS_AUTHENTICATING, ImagesAndIcons.getIcon(ImagesAndIcons.IMAGE_EFACLOUD_AUTHENTICATING));
+    	QUEUE_STATE_ICON.put(QUEUE_IS_PAUSED, ImagesAndIcons.getIcon(ImagesAndIcons.IMAGE_EFACLOUD_PAUSED));
+    	QUEUE_STATE_ICON.put(QUEUE_IS_DISCONNECTED, ImagesAndIcons.getIcon(ImagesAndIcons.IMAGE_EFACLOUD_DISCONNECTED));
+    	QUEUE_STATE_ICON.put(QUEUE_IS_WORKING, ImagesAndIcons.getIcon(ImagesAndIcons.IMAGE_EFACLOUD_WORKING));
+    	QUEUE_STATE_ICON.put(QUEUE_IS_IDLE, ImagesAndIcons.getIcon(ImagesAndIcons.IMAGE_EFACLOUD_IDLE));
+    	QUEUE_STATE_ICON.put(QUEUE_IS_SYNCHRONIZING, ImagesAndIcons.getIcon(ImagesAndIcons.IMAGE_EFACLOUD_SYNCHRONIZING));
+    }    
 
     private static int txID;                  // the last used transaction ID
     private static int txcID;                 // the last used transaction container ID
@@ -382,10 +401,16 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
      *
      * @return the state of operation, e. g. TX_QUEUE_WORKING
      */
-    public String getStateForDisplay() {
-        String efaCloudStatus = QUEUE_STATE_SYMBOL.get(txq.getState());
-        if (efaCloudStatus == null)
-            efaCloudStatus = TxRequestQueue.QUEUE_STATE_SYMBOL.get(TxRequestQueue.QUEUE_IS_AUTHENTICATING);
+    public String getStateForDisplay(Boolean withState) {
+    	if (txq==null) 
+    		return "";
+    	
+    	String efaCloudStatus = "";
+    	if (withState) {
+    		efaCloudStatus=QUEUE_STATE_SYMBOL.get(txq.getState());
+            if (efaCloudStatus == null)
+                efaCloudStatus = TxRequestQueue.QUEUE_STATE_SYMBOL.get(TxRequestQueue.QUEUE_IS_AUTHENTICATING);
+    	}
         if ((getQueueSize(TX_BUSY_QUEUE_INDEX) + getQueueSize(TX_PENDING_QUEUE_INDEX) +
                 getQueueSize(TX_SYNCH_QUEUE_INDEX)) == 0)
             return efaCloudStatus;
@@ -394,10 +419,25 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
                 getQueueSize(TX_BUSY_QUEUE_INDEX) > 0) ? queues.get(TX_BUSY_QUEUE_INDEX).firstElement() : (((
                 getQueueSize(TX_SYNCH_QUEUE_INDEX) > 0) ? queues.get(TX_SYNCH_QUEUE_INDEX).firstElement() : null)));
         String txID = (tx == null) ? "" : "#" + tx.ID + " ";
-        return efaCloudStatus + " - " + txID + getQueueSize(TX_BUSY_QUEUE_INDEX) + "|" +
+        return (efaCloudStatus.isEmpty() ? "" : efaCloudStatus+ " - " ) + txID + getQueueSize(TX_BUSY_QUEUE_INDEX) + "|" +
                 getQueueSize(TX_PENDING_QUEUE_INDEX) + "|" + getQueueSize(TX_SYNCH_QUEUE_INDEX);
     }
 
+    /**
+     * Get an icon for display in the base frame of efaBoathouse top decoration
+     * @return
+     */
+    public ImageIcon getStateIconForDisplay() {
+    	if (txq==null) 
+    		return null;
+    	
+		ImageIcon efaCloudStatus=QUEUE_STATE_ICON.get(txq.getState());
+        if (efaCloudStatus == null) 
+        	efaCloudStatus = QUEUE_STATE_ICON.get(TxRequestQueue.QUEUE_IS_AUTHENTICATING);
+        return efaCloudStatus;
+    }
+    
+    
     /**
      * Simple getter
      *
@@ -701,9 +741,17 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
      */
     public void showStatusAtGUI() {
         if (efaGUIroot instanceof EfaBaseFrame)
-            ((EfaBaseFrame) efaGUIroot).setTitle();
+        	SwingUtilities.invokeLater(new Runnable() {
+        		public void run() {
+                	((EfaBaseFrame) efaGUIroot).setTitle();
+        		}
+        	});              	
         else if (efaGUIroot instanceof EfaBoathouseFrame)
-            ((EfaBoathouseFrame) efaGUIroot).updateProjectLogbookInfo();
+        	SwingUtilities.invokeLater(new Runnable() {
+        		public void run() {
+                    ((EfaBoathouseFrame) efaGUIroot).updateProjectLogbookInfo();
+        		}
+        	});              	
     }
 
     /**
@@ -1260,4 +1308,3 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
     }
 
 }
-

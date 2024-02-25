@@ -1,6 +1,13 @@
 package de.nmichael.efa.gui;
 
+import javax.swing.ImageIcon;
+
+import de.nmichael.efa.Daten;
+import de.nmichael.efa.util.Logger;
+
 public class ImagesAndIcons {
+	public static final String ARROW_DOWN = "arrow_down.png";
+	public static final String ARROW_UP = "arrow_up.png";
 	public static final String BIGIMAGE_CLOSEDOORS = "notification_closedoors.png";
 	public static final String BIGIMAGE_DARKNESS = "notification_darkness.png";
 	public static final String BIGIMAGE_INFO = "notification_info.png";
@@ -76,6 +83,13 @@ public class ImagesAndIcons {
 	public static final String IMAGE_BUTTON_SPECIAL = "button_special.png";
 	public static final String IMAGE_BUTTON_STAT = "button_stat.png";
 	public static final String IMAGE_EFA_ICON_SMALL = "efa_icon_small.png";
+	public static final String IMAGE_EFACLOUD_AUTHENTICATING = "efacloud_AUTHENTICATING.png";
+	public static final String IMAGE_EFACLOUD_DISCONNECTED = "efacloud_DISCONNECTED.png";
+	public static final String IMAGE_EFACLOUD_IDLE = "efacloud_IDLE.png";
+	public static final String IMAGE_EFACLOUD_PAUSED = "efacloud_PAUSED.png";
+	public static final String IMAGE_EFACLOUD_STOPPED = "efacloud_STOPPED.png";
+	public static final String IMAGE_EFACLOUD_SYNCHRONIZING = "efacloud_SYNCHRONIZING.png";
+	public static final String IMAGE_EFACLOUD_WORKING = "efacloud_WORKING.png";
 	public static final String IMAGE_FRAME_CLOSE = "frame_close.png";
 	public static final String IMAGE_MENU_ABOUT = "menu_about.png";
 	public static final String IMAGE_MENU_ADMINS = "menu_admins.png";
@@ -112,6 +126,22 @@ public class ImagesAndIcons {
 	public static final String IMAGE_MENU_UPDATE = "menu_update.png";
 	public static final String IMAGE_MENU_WATERS = "menu_waters.png";
 
-	
+    public static ImageIcon getIcon(String name) {
+        try {
+            if (name.indexOf("/") < 0) {
+                name = Daten.IMAGEPATH + name;
+            }
+            if (Logger.isTraceOn(Logger.TT_GUI, 9)) {
+                Logger.log(Logger.DEBUG, Logger.MSG_DEBUG_GUI_ICONS, "getIcon("+name+")");
+            }
+            return new ImageIcon(BaseDialog.class.getResource(name));
+        } catch(Exception e) {
+            if (Logger.isTraceOn(Logger.TT_GUI, 9)) {
+                Logger.log(Logger.DEBUG, Logger.MSG_DEBUG_GUI_ICONS, "getIcon("+name+"): no icon found!");
+            }
+            Logger.logdebug(e);
+            return null;
+        }
+    }
 
 }

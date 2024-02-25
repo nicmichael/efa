@@ -1,5 +1,5 @@
 #!/bin/sh
-
+ 
 # ##########################################
 # Check for updated JAR files and install  #
 # ##########################################
@@ -45,6 +45,9 @@ CP=$CP:program/plugins/jh.jar
 # FTP Plugin
 CP=$CP:program/plugins/edtftpj.jar
 
+# SFTP support for FTP Plugin
+CP=$CP:program/plugins/jsch-0.1.55.jar
+
 # Mail Plugin
 CP=$CP:program/plugins/javax.mail.jar
 CP=$CP:program/plugins/activation.jar
@@ -60,6 +63,9 @@ CP=$CP:program/plugins/commons-logging.jar
 CP=$CP:program/plugins/fop.jar
 CP=$CP:program/plugins/xmlgraphics-commons.jar
 
+# EFA Flat Laf
+CP=$CP:program/plugins/flatlaf-3.2.5.jar
+
 # Weather Plugin
 CP=$CP:program/plugins/commons-codec.jar
 CP=$CP:program/plugins/signpost-core.jar
@@ -74,7 +80,9 @@ if [ -f java.heap ] ; then
   . ./java.heap
 fi
 if [ "$EFA_JAVA_HEAP" = "" ] ; then
-  EFA_JAVA_HEAP=128m
+# A higher Java Heaps helps to speed up efa on slower computers
+# As garbage collection needs to run at lower frequencies
+  EFA_JAVA_HEAP=160m
 fi
 if [ "$EFA_NEW_SIZE" = "" ] ; then
   EFA_NEW_SIZE=32m

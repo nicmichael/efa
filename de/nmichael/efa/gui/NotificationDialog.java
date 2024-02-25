@@ -52,6 +52,10 @@ public class NotificationDialog extends BaseDialog {
 
         JTextPane t = new JTextPane();
         t.setContentType("text/html");
+        if (Daten.isEfaFlatLafActive()) {
+            t.putClientProperty("html.disable", Boolean.TRUE); 
+        	t.setFont(t.getFont().deriveFont(Font.PLAIN,14));
+        }
         t.setEditable(false);
         t.setText("<html><body bgcolor=\"#" + bkcolor + "\">" +
                 "<table cellpadding=\"20\" align=\"center\"><tr>" +
@@ -92,6 +96,7 @@ public class NotificationDialog extends BaseDialog {
 
     class CloseTimeoutThread extends Thread {
         public void run() {
+        	this.setName("CloseTimeoutThread");
             for (int i=0; i<closeTimeout;i++) {
     	    	String value= International.getMessage("Dieses Fenster schließt automatisch in {sec} Sekunden ...",
                           Math.max(closeTimeout-i, 0));
@@ -107,9 +112,7 @@ public class NotificationDialog extends BaseDialog {
                 } catch(InterruptedException e) {
                 }
             }
-            
-            //not threadsafe
-            //cancel();
+
         	SwingUtilities.invokeLater(new Runnable() {
         	      public void run() {
         	            cancel();

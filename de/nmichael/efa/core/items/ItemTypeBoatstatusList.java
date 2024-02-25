@@ -26,6 +26,8 @@ import de.nmichael.efa.data.types.DataTypeDate;
 import java.awt.Color;
 import java.util.UUID;
 
+import javax.swing.SwingUtilities;
+
 public class ItemTypeBoatstatusList extends ItemTypeList {
 
     public static final int SEATS_OTHER = 99;
@@ -35,6 +37,12 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
     EfaBoathouseFrame efaBoathouseFrame;
     private String STR_RESERVIERT_FUER=International.getString("Reserviert für").toLowerCase();
     private String STR_BOOTSSCHADEN=International.getString("Bootsschaden");
+    
+    //Cache for special tooltip colors, set up when sorting boatslist items and determining tooltip texts
+    private String cacheToolTipBgColorText="";
+    private String cacheToolTipFontColorOpeningTag = "";
+    private String cacheToolTipFontColorClosingTag = "";
+
     
     public ItemTypeBoatstatusList(String name,
             int type, String category, String description,
@@ -62,7 +70,12 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
         list.setSelectedIndex(-1);
         setItems(vdata);
         showValue();
-        //list.repaint();  //do not call list.repaint here. this can cause nullpointerexceptions in jLabel.setIcon() for some reason... 
+        //update the list sometime when the current event is over
+        SwingUtilities.invokeLater(new Runnable() {
+  	      public void run() {
+                list.repaint();
+  	      }
+    	});
     }
 
     /**
@@ -90,6 +103,11 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
 
         long now = System.currentTimeMillis();
         Boats boats = Daten.project.getBoats(false);
+        
+        // Performance for creating tooltips: cache the current config of tooltip colors
+   		this.cacheToolTipBgColorText=(Daten.efaConfig.getToolTipSpecialColors() ? "bgcolor=\"#"+EfaUtil.getColor(Daten.efaConfig.getToolTipHeaderBackgroundColor())+"\"": "");
+   		this.cacheToolTipFontColorOpeningTag = (Daten.efaConfig.getToolTipSpecialColors() ? "<font color=\"#"+EfaUtil.getColor(Daten.efaConfig.getToolTipHeaderForegroundColor())+"\">": "");
+   		this.cacheToolTipFontColorClosingTag = (Daten.efaConfig.getToolTipSpecialColors()? "</font>": "");
 
         Groups groups = Daten.project.getGroups(false);
         boolean buildToolTips = Daten.efaConfig.getValueEfaBoathouseExtdToolTips();
@@ -115,7 +133,7 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
                     }
                 }
             }
-            this.iconWidth = (groupColors.size() > 0 ? Daten.efaConfig.getValueEfaDirekt_fontSize() : 0);
+            this.iconWidth = (groupColors.size() > 0 ? Daten.efaConfig.getValueEfaDirekt_BthsFontSize() : 0);
             this.iconHeight = this.iconWidth;
         } catch(Exception e) {
             Logger.logdebug(e);
@@ -440,17 +458,23 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
    		    			String groups = bli.boat.getAllowedGroupsAsNameString(System.currentTimeMillis());
    		                if (groups.length() > 0) {
    		                	boatRuderErlaubnis = (boatRuderErlaubnis.length() > 0 ? boatRuderErlaubnis + ", "
-   		                            : "; " + International.getMessage("nur für {something}", groups));
+   		                            : International.getMessage("nur für {something}", groups));
    		                }
    	    			}
    	    		}
 
    	    		//concat is the fastest way to build strings
-   	    		String result = "<html><body><table border=\"0\"><tr><td align=\"left\"><b>"
+   	    		String result = "<html><body><table border=\"0\"><tr "+this.cacheToolTipBgColorText+"><td align=\"left\"><b>"
+   	    				.concat(this.cacheToolTipFontColorOpeningTag)
    	    				.concat(EfaUtil.escapeHtml(boatName))
+   	    				.concat(this.cacheToolTipFontColorClosingTag)
    	    				.concat("</b></td><td align=\"right\">")
+   	    				.concat(this.cacheToolTipFontColorOpeningTag)
    	    				.concat(EfaUtil.escapeHtml(boatTimeEntry))
-   	    				.concat("</td></tr><tr><td colspan=2><hr></td></tr>");
+   	    				.concat(this.cacheToolTipFontColorClosingTag)
+   	    				.concat("</td></tr>"); 
+//   				.concat("</td></tr><tr><td colspan=2><hr></td></tr>");
+
    	    		if (!boatReservation.isEmpty()) {
    	    			result=result.concat("<tr><td align=\"left\" colspan=2>")
    	    				.concat(EfaUtil.escapeHtml(boatReservation))
@@ -618,14 +642,17 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
     		} else if (showReservation && isCommentBoardReservation(bs.getComment())) {
     				return getBoatReservationString(bs.getBoatId(), rTodayCache, 0, false);
     		} else {
-    			
-    			if (showDestination) { 
-	    			//Boat is not available, but neither damage nor reservation.
-	    			//so maybe it's a boat on a multi-day tour, regatta or whatsoever.
-	    			//if the current BoatStatus has a destination set, show the destination.
-	        		 return bs.getDestination();
-    			} else { 
-    				return null;
+    			if (bs.getLogbookRecord()==null) {
+    				// A not available boat, which has no logbook record - has been put manually to the not available list.
+    				// let's see if there is a comment we can show
+    				return bs.getComment(); // may as well be null
+    			} else {
+	    			if (showDestination) { 
+		    			//Boat is not available, but neither damage nor reservation.
+		    			//so maybe it's a boat on a multi-day tour, regatta or whatsoever.
+		    			//if the current BoatStatus has a destination set, show the destination.
+		        		 return bs.getDestination();
+	    			}
     			}
     		}
 
@@ -670,8 +697,9 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
         for (int i = 0; i < a.length; i++) {
             String name = a[i].name;
             if (name.length() > 0) {
-                if (name.toUpperCase().charAt(0) != lastChar) {
-                    lastChar = name.toUpperCase().charAt(0);
+                if (EfaUtil.replaceAllUmlautsLowerCaseFast(name).toUpperCase().charAt(0) != lastChar) {
+                    //name.toUpperCase().charAt(0) 
+                	lastChar = EfaUtil.replaceAllUmlautsLowerCaseFast(name).toUpperCase().charAt(0);
                     vv.add(new ItemTypeListData("---------- " + lastChar + " ----------", null, null, null, true, SEATS_OTHER));
                 }
                 vv.add(new ItemTypeListData(name, 
@@ -775,6 +803,7 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
         this.color = c;
         if (label!=null) {
             label.setForeground(color);
+            label.repaint();
 	    }
     }
     
@@ -790,6 +819,7 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
 	        } else {
 	        	label.setOpaque(false);
 	        }
+	        label.repaint();
         }
     }    
 

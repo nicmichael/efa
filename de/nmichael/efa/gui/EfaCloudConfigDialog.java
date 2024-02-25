@@ -32,7 +32,7 @@ import java.util.Vector;
  */
 public class EfaCloudConfigDialog extends BaseTabbedDialog implements IItemListener {
 
-    private static final String ACTIVATION_INFO = "ACTIVATION_INFO";
+	private static final String ACTIVATION_INFO = "ACTIVATION_INFO";
     private static final String BUTTON_EFACLOUD_ACTIVATE = "BUTTON_EFACLOUD_ACTIVATE";
     private static final String BUTTON_EFACLOUD_DEACTIVATE = "BUTTON_EFACLOUD_DEACTIVATE";
     private static final String BUTTON_EFACLOUD_START = "BUTTON_EFACLOUD_START";
