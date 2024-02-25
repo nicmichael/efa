@@ -1365,7 +1365,7 @@ public class Daten {
 		return false;
 	}
 
-	public static Vector getUIProperties() {
+	public static Vector <String>getUIProperties() {
 
 		Vector<String> infos = new Vector<String>();
 		UIDefaults uid = Dialog.getUiDefaults();
@@ -1386,7 +1386,7 @@ public class Daten {
 		return infos;
 	}
 
-	public static Vector getCSSInfo() {
+	public static Vector <String>getCSSInfo() {
 
 		Vector<String> infos = new Vector<String>();
 		HTMLEditorKit kit = new HTMLEditorKit();
@@ -1401,11 +1401,11 @@ public class Daten {
 		return infos;
 	}
 
-	public static Vector getEfaInfos() {
+	public static Vector <String>getEfaInfos() {
 		return getEfaInfos(true, true, true, true, false);
 	}
 
-	public static Vector getEfaInfos(boolean efaInfos, boolean pluginInfos, boolean javaInfos, boolean hostInfos,
+	public static Vector <String>getEfaInfos(boolean efaInfos, boolean pluginInfos, boolean javaInfos, boolean hostInfos,
 			boolean jarInfos) {
 		Vector<String> infos = new Vector<String>();
 

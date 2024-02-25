@@ -169,7 +169,7 @@ public class EfaAboutDialog extends BaseDialog {
 	}	
 	
 	private void iniEfaSystemInfos() {
-		Vector infos = Daten.getEfaInfos();
+		Vector <String>infos = Daten.getEfaInfos();
         for (int i = 0; infos != null && i < infos.size(); i++) {
             efaInfosText.append((String) infos.get(i) + "\n");
         }
@@ -180,15 +180,22 @@ public class EfaAboutDialog extends BaseDialog {
         //Add GUI Debug info, if debug info is activated in efaConfig or by Commandline
         if (Logger.isDebugLogging()||Logger.isDebugLoggingActivatedByCommandLine()) {
 	        // Get UI Defaults Properties
+        	
+        	efaInfosText.append("\n\n\nDisplayFonts\n-------------\n");
+	        Vector<String> fonts = EfaUtil.makeFontFamilyVector(false, null);
+	        if (fonts!=null) {
+	        	efaInfosText.append(fonts.toString());
+	        }
+	        
         	efaInfosText.append("\n\n\nUIManager.getDefaults()\n-------------\n");
-	        Vector lafProperties = Daten.getUIProperties();
+	        Vector <String>lafProperties = Daten.getUIProperties();
 	        for (int i = 0; lafProperties != null && i < lafProperties.size(); i++) {
 	            efaInfosText.append((String) lafProperties.get(i) + "\n");
 	        }
 	        
 	        // Get HTML CSS Stylesheet Default Rules
 	        efaInfosText.append("\n\n\nHTMLEditorKit().getStyleSheet() rules\n-------------\n");
-	        Vector htmlCSSRules = Daten.getCSSInfo();
+	        Vector <String>htmlCSSRules = Daten.getCSSInfo();
 	        for (int i = 0; htmlCSSRules != null && i < htmlCSSRules.size(); i++) {
 	            efaInfosText.append((String) htmlCSSRules.get(i) + "\n");
 	        }
