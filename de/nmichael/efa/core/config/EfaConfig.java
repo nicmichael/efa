@@ -3346,7 +3346,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 			return "Segoe UI";
 		} else if (uiFontsString.matches(".*piboto.*")) {
 			return "Piboto";		
-		} else if (uiFontsString.matches(".*liberation.sans*")) {
+		} else if (uiFontsString.matches(".*liberation.sans.*")) {
 			return "Liberation Sans";
 		} else if (uiFontsString.matches(".*roboto.*")) {
 			return "Roboto";				
