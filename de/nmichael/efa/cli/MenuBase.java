@@ -30,7 +30,7 @@ public abstract class MenuBase {
     }
 
     public void printUsage(String cmd, String args, String description) {
-        cli.loginfo(EfaUtil.getString(cmd, 16) + " " + EfaUtil.getString(args, 35) + " " + description);
+        cli.loginfo(EfaUtil.getString(cmd, 17) + " " + EfaUtil.getString(args, 35) + " " + description);
     }
 
     public void printHelpHeader(String menu) {
