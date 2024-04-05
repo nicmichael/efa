@@ -10,12 +10,14 @@
 
 package de.nmichael.efa.cli;
 
+import java.util.Hashtable;
 import java.util.Stack;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
 import de.nmichael.efa.Daten;
 import de.nmichael.efa.util.EfaUtil;
+import de.nmichael.efa.util.Logger;
 
 public abstract class MenuBase {
 
@@ -95,5 +97,28 @@ public abstract class MenuBase {
         } else {
         	return "";
         }
+    }
+    
+    protected Hashtable<String, String> getOptionsFromArgs(String args) {
+        Hashtable<String, String> options = new Hashtable<String, String>();
+        try {
+            StringTokenizer tok = new StringTokenizer(args, " ");
+            while (tok.hasMoreTokens()) {
+                String s = tok.nextToken().trim();
+                if (s.startsWith("-")) {
+                    int pos = s.indexOf("=");
+                    String name = s.substring(1).toLowerCase();
+                    String value = "";
+                    if (pos > 0) {
+                        name = s.substring(1, pos).toLowerCase();
+                        value = s.substring(pos + 1);
+                    }
+                    options.put(name, value);
+                }
+            }
+        } catch (Exception e) {
+            Logger.logdebug(e);
+        }
+        return options;
     }
 }
