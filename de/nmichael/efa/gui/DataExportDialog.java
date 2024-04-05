@@ -56,11 +56,10 @@ public class DataExportDialog extends BaseDialog {
     private JRadioButton exportSelectSelected;
     private JRadioButton exportSelectFiltered;
     private JScrollPane selectedFieldsScrollPane;
-    private JList selectedFields;
+    private JList <String>selectedFields;
     private ButtonGroup fileTypeGroup;
     private JRadioButton fileTypeXml;
     private JRadioButton fileTypeCsv;
-    private JRadioButton fileTypeCsvUtf8;
     private ItemTypeStringList encoding;
     private ItemTypeFile file;
     private ItemTypeString fileTypeCsvSeparator;
@@ -163,6 +162,7 @@ public class DataExportDialog extends BaseDialog {
         if (filteredData == null || filteredData.size() == 0) {
             exportSelectFiltered.setEnabled(false);
         }
+        
         exportSelectPanel.add(exportSelectLabel, new GridBagConstraints(0, 0, 3, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE,
                 new Insets(10, 0, 0, 0), 0, 0));
         exportSelectPanel.add(exportSelectAll, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE,
@@ -176,11 +176,11 @@ public class DataExportDialog extends BaseDialog {
 
         JLabel fieldsLabel = new JLabel();
         Mnemonics.setLabel(this, fieldsLabel, International.getString("ausgewählte Felder") + ":");
-        mainControlPanel.add(fieldsLabel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE,
+        mainControlPanel.add(fieldsLabel, new GridBagConstraints(0, 2, 4, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE,
                 new Insets(10, 0, 0, 0), 0, 0));
         mainPanel.add(mainControlPanel, BorderLayout.NORTH);
 
-        selectedFields = new JList();
+        selectedFields = new JList<String>();
         selectedFields.setListData(fieldDescription);
         selectedFields.setSelectedIndices(selectedIndices);
         selectedFieldsScrollPane = new JScrollPane();
@@ -191,19 +191,16 @@ public class DataExportDialog extends BaseDialog {
         JPanel filePanel = new JPanel();
         filePanel.setLayout(new GridBagLayout());
         JLabel fileTypeLabel = new JLabel();
-        Mnemonics.setLabel(this, fileTypeLabel, International.getString("Export als"));
+        Mnemonics.setLabel(this, fileTypeLabel, International.getString("Export als")+": ");
         fileTypeXml = new JRadioButton();
         Mnemonics.setButton(this, fileTypeXml, International.getStringWithMnemonic("XML-Datei"));
         fileTypeXml.setSelected(true);
         fileTypeCsv = new JRadioButton();
         Mnemonics.setButton(this, fileTypeCsv, International.getStringWithMnemonic("CSV-Datei"));
-        fileTypeCsvUtf8 = new JRadioButton();
-        Mnemonics.setButton(this, fileTypeCsvUtf8, International.getStringWithMnemonic("CSV-Datei (mit BOM für UTF-8)"));
         
         fileTypeGroup = new ButtonGroup();
         fileTypeGroup.add(fileTypeXml);
         fileTypeGroup.add(fileTypeCsv);
-        fileTypeGroup.add(fileTypeCsvUtf8);
         fileTypeXml.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 fileTypeChanged();
@@ -214,45 +211,33 @@ public class DataExportDialog extends BaseDialog {
                 fileTypeChanged();
             }
         });
-        fileTypeCsvUtf8.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                fileTypeChanged();
-            }
-        });
-        
+
         fileTypeCsvSeparator=new ItemTypeString(StatisticsRecord.OUTPUTCSVSEPARATOR, ";",
                 IItemType.TYPE_PUBLIC, "",
                 International.getString("Feldtrenner") + " (CSV)");
         fileTypeCsvSeparator.setEnabled(false);//Not enabled by default, as XML export is standard
         fileTypeCsvSeparator.setMinCharacters(1);
+        fileTypeCsvSeparator.setFieldSize(70,21);
+        fileTypeCsvSeparator.setFieldGrid(1, GridBagConstraints.WEST, GridBagConstraints.NONE);
+        
         fileTypeCsvQuotes = new ItemTypeString(StatisticsRecord.OUTPUTCSVQUOTES, "\"",
                 IItemType.TYPE_PUBLIC, "",
-                International.getString("Texttrenner") + " (CSV)");
+                "   "+International.getString("Texttrenner") + " (CSV)");
         fileTypeCsvQuotes.setEnabled(false);//Not enabled by default, as XML export is standard
         fileTypeCsvQuotes.setMinCharacters(1);
-
+        fileTypeCsvQuotes.setFieldSize(70, 21);
+        fileTypeCsvQuotes.setFieldGrid(4, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL);
+        
         String defaultLanguage=Locale.getDefault().getCountry();
         String myLocaleList[]=Locale.getISOCountries();
         fileTypeCsvLocale = new ItemTypeStringList("CSVLOCALE", defaultLanguage,
         		myLocaleList, 
         		myLocaleList,
         		IItemType.TYPE_PUBLIC, "", 
-        		International.getStringWithMnemonic("Regionales Format")+" (CSV)"
+        		International.getStringWithMnemonic("Regionales Format")
         		);
         fileTypeCsvLocale.setEnabled(false);//Not enabled by default, as XML export is standard        
-        
-        filePanel.add(fileTypeLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE,
-                new Insets(10, 0, 0, 0), 0, 0));
-        filePanel.add(fileTypeXml, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE,
-                new Insets(10, 0, 0, 0), 0, 0));
-        filePanel.add(fileTypeCsv, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE,
-                new Insets(0, 0, 0, 0), 0, 0));
-        filePanel.add(fileTypeCsvUtf8, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE,
-                new Insets(0, 0, 0, 0), 0, 0));
-        
-        fileTypeCsvSeparator.displayOnGui(this, filePanel,  4);
-        fileTypeCsvQuotes.displayOnGui(this, filePanel,  5);
-        fileTypeCsvLocale.displayOnGui(this, filePanel,  6);
+        fileTypeCsvLocale.setFieldGrid(6, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL);
         
         encoding = new ItemTypeStringList("ENCODING", Daten.ENCODING_UTF,
                 new String[] { Daten.ENCODING_UTF, Daten.ENCODING_ISO },
@@ -260,7 +245,14 @@ public class DataExportDialog extends BaseDialog {
                 IItemType.TYPE_PUBLIC, "",
                 International.getStringWithMnemonic("Zeichensatz")
                 );
-        encoding.displayOnGui(this, filePanel, 7);
+        encoding.setFieldGrid(6, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL);
+    
+        filePanel.add(fileTypeLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE,
+                new Insets(10, 0, 0, 0), 0, 0));
+        filePanel.add(fileTypeXml, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE,
+                new Insets(10, 0, 0, 0), 0, 0));
+        filePanel.add(fileTypeCsv, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE,
+                new Insets(0, 0, 0, 0), 0, 0));
         
         String dir = Daten.efaConfig.getLastExportDirectory();
         if (dir == null || dir.length() == 0 || !(new File(dir)).isDirectory()) {
@@ -277,7 +269,15 @@ public class DataExportDialog extends BaseDialog {
                     International.getString("Export in Datei"));
         file.setNotNull(true);
         file.setPadding(0, 0, 0, 10);
-        file.displayOnGui(this, filePanel, 8);
+        file.setFieldGrid(5, GridBagConstraints.WEST, GridBagConstraints.NONE);
+        
+        
+        fileTypeCsvSeparator.displayOnGui(this, filePanel,  0,4);
+        fileTypeCsvQuotes.displayOnGui(this, filePanel,  2,4);
+        fileTypeCsvLocale.displayOnGui(this, filePanel,  5);   
+        encoding.displayOnGui(this, filePanel, 6);        
+        
+        file.displayOnGui(this, filePanel, 7);
         mainPanel.add(filePanel, BorderLayout.SOUTH);
 
         closeButton.setIcon(getIcon(BaseDialog.IMAGE_RUN));
@@ -330,10 +330,14 @@ public class DataExportDialog extends BaseDialog {
         if (fileTypeXml.isSelected()){
         	format=DataExport.Format.xml;
         } else if (fileTypeCsv.isSelected()) {
-        	format=DataExport.Format.csv;	
-        } else if (fileTypeCsvUtf8.isSelected()) {
-        	format=DataExport.Format.csv_bom_utf8;
-        }
+        	encoding.getValueFromGui(); // read from gui field into encoding data field
+        	//automatically set export format to csv with bom if encoding is set to UTF8
+        	if (encoding.getValue().toString().equalsIgnoreCase(Daten.ENCODING_UTF)) {
+        		format=DataExport.Format.csv_bom_utf8;
+        	} else {
+        		format=DataExport.Format.csv;
+        	}
+        } 
         
         encoding.getValueFromField();
         file.getValueFromField();

@@ -60,13 +60,18 @@ public class MenuData extends MenuBase {
     public void printHelpContext() {
         printUsage(CMD_LIST,        "[all|invisible|deleted]", "list " + storageObjectDescription);
         printUsage(CMD_SHOW,        "[name|index]", "show record");
-        printUsage(CMD_EXPORT,      "[-format=xml|csv|csv_bom_utf8] [-encoding=ENCODING] [-csvlocale=LOCALE] [-csvsep=X] [-csvquote=X] [-email=emailadress] [-emailsubject=value] <filename>", "export records to a file and to an email adress");
+        printUsage(CMD_EXPORT,      "[-format=xml|csv] [-encoding=ENCODING] [-csvlocale=LOCALE] [-csvsep=X] [-csvquote=X] [-email=emailadress] [-emailsubject=value] <filename>", "export records to a file and to an email adress");
         printUsage(CMD_IMPORT,      "[-encoding=ENCODING] [-csvsep=X] [-csvquote=X] [-impmode=add|update|addupdate] [-updversion=update|new] [-entryno=dupskip|dupadd|alwaysadd] <filename>", "import records");
         cli.loginfo("");
         cli.loginfo("ENCODING   - Any encoding, e.g. ISO-8859-1 or UTF-8. UTF-8 is default.");
-        cli.loginfo("LOCALE 	- Any ISO-Code for a country, e.g. DE or EN" );
+        cli.loginfo("LOCALE     - Any ISO-Code for a country, e.g. DE or EN" );
         cli.loginfo("");
-        cli.loginfo("Format		- csv_bom_utf8 is neccessary for Microsoft(r) Excel to read UTF8-based csv files.");
+        cli.loginfo("csvsep     - CSV field separator. A single character.");
+        cli.loginfo("             Default for import and export: ;");
+        cli.loginfo("csvquote   - CSV quote for text fields." );
+        cli.loginfo("             Default for import and export: \" ");
+        cli.loginfo("");
+        cli.loginfo("             If you want to set csvquote to empty, specify csvquote=  ");
         cli.loginfo("");
     }
 
@@ -143,9 +148,9 @@ public class MenuData extends MenuBase {
         Hashtable<String,String> options = getOptionsFromArgs(args);
         args = removeOptionsFromArgs(args);
 
-        String csvSeparator="|";
+        String csvSeparator=";";
         String csvQuote="\"";
-        Locale csvLocale = null;
+        Locale csvLocale = null;  // if no locale is specified, the standard of the system is used.
         String emailSubj="";
         String filename = args;
 
@@ -161,23 +166,16 @@ public class MenuData extends MenuBase {
             format = DataExport.Format.csv;
         }
         
-        if (options.get(EXPORT_OPTION_FORMAT) != null && options.get(EXPORT_OPTION_FORMAT).equalsIgnoreCase("csv_bom_utf8")) {
-            format = DataExport.Format.csv_bom_utf8;
-        }
-        
         //------ get csv export options
+        //default values of csvSeparator and csvQuote have both been set earlier.
+        //now check if the user has specified these parameters.
+
         if (options.get(EXPORT_OPTION_CSV_SEPARATOR)!=null) {
         	csvSeparator=options.get(EXPORT_OPTION_CSV_SEPARATOR);
-        	if (csvSeparator.isEmpty()) {
-        		csvSeparator="|";
-        	}
         }
         
         if (options.get(EXPORT_OPTION_CSV_QUOTE)!=null) {
         	csvQuote=options.get(EXPORT_OPTION_CSV_QUOTE);
-        	if (csvQuote.isEmpty()) {
-        		csvQuote="\"";
-        	}
         }
 
         if (options.get(EXPORT_OPTION_LOCALE)!=null) {
@@ -209,6 +207,12 @@ public class MenuData extends MenuBase {
         		encoding = Charset.defaultCharset().toString();
         	}
         }        
+
+        // correct file type for csv if encoding is utf-8
+        // as csv files with utf-8 need a BOM to be read correctly by ms excel (r)
+        if (encoding.equalsIgnoreCase(Daten.ENCODING_UTF) && (format == DataExport.Format.csv)) {
+            format = DataExport.Format.csv_bom_utf8;
+        }
 
         
        //------ export the data         
@@ -247,8 +251,28 @@ public class MenuData extends MenuBase {
         }
         String csvSeparator = options.get("csvsep");
         String csvQuotes = options.get("csvquote");
-        char csep = (csvSeparator != null && csvSeparator.length() > 0 ? csvSeparator.charAt(0) : '\0');
-        char cquo = (csvQuotes != null && csvQuotes.length() > 0 ? csvQuotes.charAt(0) : '\0');
+        char csep = '\0';
+        char cquo = '\0';
+        
+        //handle default setting for csvseparator. 
+        if (csvSeparator != null) {
+        	//-csvsep has been specified by user (as it is not null), but may be empty. 
+        	//if empty, set to '\0' so it won't affect the later import; otherwise use first char.
+        	csep = (csvSeparator.length() > 0 ? csvSeparator.charAt(0) : '\0'); 
+        } else {
+        	//-csvsep has not been specified, so default to ;
+        	csep = ';';
+        }
+        
+        if (csvQuotes != null) {
+        	cquo = (csvQuotes.length() > 0 ? csvQuotes.charAt(0) : '\0'); 
+        } else {
+        	cquo='"'; //default to " if empty
+        }
+        
+        // we don't have to check for xml or csv format, efa does it on it's own.
+        // also, the import routine automatically removes a BOM which may prefix the csv's first line.
+        
         String importMode = options.get("impmode");
         if (importMode != null && importMode.equalsIgnoreCase("add")) {
             importMode = DataImport.IMPORTMODE_ADD;
