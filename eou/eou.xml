@@ -2,9 +2,9 @@
 <efaOnlineUpdate>
 	<Version>
         <VersionID>2.4.0_00</VersionID>
-        <ReleaseDate>TODO</ReleaseDate>
+        <ReleaseDate>05.04.2024</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa240.zip</DownloadUrl>
-        <DownloadSize>TODO</DownloadSize>
+        <DownloadSize>6547777</DownloadSize>
         <Changes lang="de">
 			<ChangeItem>Neu: EfaFlatLight LookAndFeel bietet eine klare, modernere Darstellung. In weiten Bereichen konfigurierbar.</ChangeItem>
 			<ChangeItem>Neu: EfaFlatLight Standard-Look nach Update oder Installation. Bei Update ist ein Neustart des Rechners erforderlich, damit efaFlatLight aktiv wird.</ChangeItem>
