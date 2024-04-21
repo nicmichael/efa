@@ -33,6 +33,8 @@ public class MenuMain extends MenuBase {
         printUsage(CLI.MENU_GROUPS,           "", "groups");
         printUsage(CLI.MENU_STATUS,           "", "status");
         printUsage(CLI.MENU_WATERS,           "", "waters");
+        printUsage(CLI.MENU_CLUBWORK_BASE		, "", "club work from efaBase");
+        printUsage(CLI.MENU_CLUBWORK_BOATHOUSE	, "", "club work from efaBoatHouse");
         if (Daten.efaConfig.getValueUseFunctionalityRowingGermany()) {
             printUsage(CLI.MENU_FAHRTENABZEICHEN, "", "fahrtenabzeichen");
         }
@@ -94,6 +96,22 @@ public class MenuMain extends MenuBase {
                 menuStack.push(CLI.MENU_BOATSTATUS);
                 return runCommandWithArgs(args);
             }
+            if (cmd.equalsIgnoreCase(CLI.MENU_CLUBWORK_BASE)) {
+                if (!cli.getAdminRecord().isAllowedEditClubwork()) {
+                    cli.logerr("You don't have permission to access this function.");
+                    return CLI.RC_NO_PERMISSION;
+                }
+                menuStack.push(CLI.MENU_CLUBWORK_BASE);
+                return runCommandWithArgs(args);
+            }  
+            if (cmd.equalsIgnoreCase(CLI.MENU_CLUBWORK_BOATHOUSE)) {
+                if (!cli.getAdminRecord().isAllowedEditClubwork()) {
+                    cli.logerr("You don't have permission to access this function.");
+                    return CLI.RC_NO_PERMISSION;
+                }
+                menuStack.push(CLI.MENU_CLUBWORK_BOATHOUSE);
+                return runCommandWithArgs(args);
+            }   
             if (cmd.equalsIgnoreCase(CLI.MENU_CREWS)) {
                 if (!cli.getAdminRecord().isAllowedEditCrews()) {
                     cli.logerr("You don't have permission to access this function.");

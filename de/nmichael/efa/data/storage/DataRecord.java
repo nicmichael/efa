@@ -178,6 +178,15 @@ public abstract class DataRecord implements Cloneable, Comparable {
     public String[] getFields() {
         return metaData.getFields();
     }
+    
+    /**
+     * Returns true if a specified field name exists in the data record.
+     * @param fieldName Name (case-sensitive) of the field
+     * @return
+     */
+    public boolean isField(String fieldName) {
+    	return metaData.isField(fieldName);
+    }
 
     public int getFieldCount() {
         return metaData.getNumberOfFields();
