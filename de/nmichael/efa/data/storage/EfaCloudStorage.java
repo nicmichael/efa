@@ -178,9 +178,15 @@ public class EfaCloudStorage extends XMLFile {
                     // It will only be used during the synchronization process.
                     if (fieldName.equals("LastModification"))
                         dataRecord.LastModification = value;
-                    else
-                        // the dataRecord.set() function will ignore fields outside its metadata definition
-                        dataRecord.set(fieldName, value, false);
+                    else {
+                    	//Bugfix EFA#74 / https://github.com/nicmichael/efa/issues/138
+                    	// the field "ClientSideKey" exists in efaCloud, but not in efa.
+                    	// ignore this field when setting values.
+                    	if (!fieldName.equals("ClientSideKey")) {
+                            // the dataRecord.set() function will ignore fields outside its metadata definition
+                            dataRecord.set(fieldName, value, false);
+                    	}
+                    }
                     c++;
                 } catch (Exception e) {
                     Logger.log(Logger.ERROR, Logger.MSG_FILE_PARSEERROR, International.getMessage(

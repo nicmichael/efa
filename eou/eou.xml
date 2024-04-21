@@ -11,6 +11,7 @@
             <ChangeItem>Neu: CSV DatenExport: efaCLI mit Export für Vereinsarbeit.</ChangeItem>
             <ChangeItem>Neu: CSV DatenImport: CSV-Dateien in UTF-8 mit BOM (aus Tabellenkalkulationen) lassen sich importieren.</ChangeItem>
             <ChangeItem>Neu: Backup: efa.log Datei kann mit gesichert werden (wird aber nicht wiederhergestellt)</ChangeItem>
+            <ChangeItem>BugFix: efaCloud: Im Debug Modus werden keine unnötigen Nullpointer-Exceptions mehr ins Log geschrieben. https://github.com/nicmichael/efa/issues/138</ChangeItem>          
         </Changes>
         <Changes lang="en">
             <ChangeItem>New: CSV export: Created files are more suitable for processing in spreadsheet programs, especially in localized variants.</ChangeItem>
@@ -18,13 +19,14 @@
             <ChangeItem>New: CSV export: efaCLI can export clubwork.</ChangeItem>
             <ChangeItem>New: CSV import: UTF-8 CSV files with BOM (created by spreadsheets programs) can be used for import.</ChangeItem>
             <ChangeItem>New: Backup: efa.log file can be added to the items which are included in the backup.</ChangeItem>
+            <ChangeItem>BugFix: efaCloud: No more exceptions logged in debug mode. https://github.com/nicmichael/efa/issues/138 </ChangeItem>          
         </Changes>
     </Version>
 	<Version>
         <VersionID>2.4.0_00</VersionID>
-        <ReleaseDate>TODO</ReleaseDate>
+        <ReleaseDate>05.04.2024</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa240.zip</DownloadUrl>
-        <DownloadSize>TODO</DownloadSize>
+        <DownloadSize>6547777</DownloadSize>
         <Changes lang="de">
 			<ChangeItem>Neu: EfaFlatLight LookAndFeel bietet eine klare, modernere Darstellung. In weiten Bereichen konfigurierbar.</ChangeItem>
 			<ChangeItem>Neu: EfaFlatLight Standard-Look nach Update oder Installation. Bei Update ist ein Neustart des Rechners erforderlich, damit efaFlatLight aktiv wird.</ChangeItem>
