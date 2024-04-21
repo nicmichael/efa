@@ -13,12 +13,9 @@ import de.nmichael.efa.Daten;
 import de.nmichael.efa.data.efawett.WettDef;
 import de.nmichael.efa.data.efawett.WettDefGruppe;
 import de.nmichael.efa.data.efawett.WettDefs;
-import de.nmichael.efa.core.config.EfaTypes;
-import de.nmichael.efa.data.BoatRecord;
 import de.nmichael.efa.data.LogbookRecord;
 import de.nmichael.efa.data.StatisticsRecord;
 import de.nmichael.efa.data.types.DataTypeDistance;
-import de.nmichael.efa.util.EfaUtil;
 import java.util.Arrays;
 import java.util.Hashtable;
 

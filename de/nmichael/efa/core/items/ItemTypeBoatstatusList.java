@@ -19,7 +19,6 @@ import de.nmichael.efa.gui.*;
 import de.nmichael.efa.data.*;
 import de.nmichael.efa.data.storage.DataKey;
 import de.nmichael.efa.data.storage.DataKeyIterator;
-import de.nmichael.efa.data.storage.DataRecord;
 import de.nmichael.efa.data.types.DataTypeIntString;
 import de.nmichael.efa.data.types.DataTypeList;
 import de.nmichael.efa.data.types.DataTypeDate;
