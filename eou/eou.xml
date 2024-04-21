@@ -1,6 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <efaOnlineUpdate>
 	<Version>
+        <VersionID>2.4.1_00</VersionID>
+        <ReleaseDate>TODO</ReleaseDate>
+        <DownloadUrl>TODO</DownloadUrl>
+        <DownloadSize>TODO</DownloadSize>
+        <Changes lang="de">
+            <ChangeItem>Neu: CSV DatenExport: Erzeugte Dateien lassen sich besser mit Tabellenkalkulationen wie MS Excel(r) verarbeiten. </ChangeItem>
+            <ChangeItem>Neu: CSV DatenExport: efaCLI mit erweiterten Parametern für Datenexport.</ChangeItem>
+            <ChangeItem>Neu: CSV DatenExport: efaCLI mit Export für Vereinsarbeit.</ChangeItem>
+            <ChangeItem>Neu: CSV DatenImport: CSV-Dateien in UTF-8 mit BOM (aus Tabellenkalkulationen) lassen sich importieren.</ChangeItem>
+            <ChangeItem>Neu: Backup: efa.log Datei kann mit gesichert werden (wird aber nicht wiederhergestellt)</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>New: CSV export: Created files are more suitable for processing in spreadsheet programs, especially in localized variants.</ChangeItem>
+            <ChangeItem>New: CSV export: efaCLI has extended parameters for data export.</ChangeItem>
+            <ChangeItem>New: CSV export: efaCLI can export clubwork.</ChangeItem>
+            <ChangeItem>New: CSV import: UTF-8 CSV files with BOM (created by spreadsheets programs) can be used for import.</ChangeItem>
+            <ChangeItem>New: Backup: efa.log file can be added to the items which are included in the backup.</ChangeItem>
+        </Changes>
+    </Version>
+	<Version>
         <VersionID>2.4.0_00</VersionID>
         <ReleaseDate>TODO</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa240.zip</DownloadUrl>
