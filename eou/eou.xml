@@ -12,6 +12,7 @@
             <ChangeItem>Neu: CSV DatenImport: CSV-Dateien in UTF-8 mit BOM (aus Tabellenkalkulationen) lassen sich importieren.</ChangeItem>
             <ChangeItem>Neu: Backup: efa.log Datei kann mit gesichert werden (wird aber nicht wiederhergestellt)</ChangeItem>
             <ChangeItem>Neu: EFB-Sync: Fahrtart kann dem EFB-Kommentartext vorangestellt werden.</ChangeItem>
+            <ChangeItem>BugFix: EFB-Sync: Schlägt das DB-Update einer Fahrt fehl, werden trotzdem alle weiteren Fahrten synchronisiert.</ChangeItem>            
             <ChangeItem>BugFix: efaCloud: Im Debug Modus werden keine unnötigen Nullpointer-Exceptions mehr ins Log geschrieben. https://github.com/nicmichael/efa/issues/138</ChangeItem>          
         </Changes>
         <Changes lang="en">
