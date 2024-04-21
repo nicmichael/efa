@@ -51,7 +51,9 @@ import de.nmichael.efa.util.Mnemonics;
 
 public class DataExportDialog extends BaseDialog {
 
-    private ItemTypeDateTime validAtDateTime;
+	private static final long serialVersionUID = 7716554593280135453L;
+	
+	private ItemTypeDateTime validAtDateTime;
     private JRadioButton exportSelectAll;
     private JRadioButton exportSelectSelected;
     private JRadioButton exportSelectFiltered;
@@ -171,12 +173,12 @@ public class DataExportDialog extends BaseDialog {
                 new Insets(0, 0, 10, 10), 0, 0));
         exportSelectPanel.add(exportSelectFiltered, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE,
                 new Insets(0, 0, 10, 10), 0, 0));
-        mainControlPanel.add(exportSelectPanel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE,
+        mainControlPanel.add(exportSelectPanel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
                 new Insets(10, 0, 0, 0), 0, 0));
 
         JLabel fieldsLabel = new JLabel();
         Mnemonics.setLabel(this, fieldsLabel, International.getString("ausgewählte Felder") + ":");
-        mainControlPanel.add(fieldsLabel, new GridBagConstraints(0, 2, 4, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE,
+        mainControlPanel.add(fieldsLabel, new GridBagConstraints(0, 2, 4, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
                 new Insets(10, 0, 0, 0), 0, 0));
         mainPanel.add(mainControlPanel, BorderLayout.NORTH);
 
@@ -201,6 +203,7 @@ public class DataExportDialog extends BaseDialog {
         fileTypeGroup = new ButtonGroup();
         fileTypeGroup.add(fileTypeXml);
         fileTypeGroup.add(fileTypeCsv);
+
         fileTypeXml.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 fileTypeChanged();
@@ -249,10 +252,13 @@ public class DataExportDialog extends BaseDialog {
     
         filePanel.add(fileTypeLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE,
                 new Insets(10, 0, 0, 0), 0, 0));
-        filePanel.add(fileTypeXml, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE,
+        
+        filePanel.add(fileTypeCsv, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE,
                 new Insets(10, 0, 0, 0), 0, 0));
-        filePanel.add(fileTypeCsv, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE,
-                new Insets(0, 0, 0, 0), 0, 0));
+        
+        filePanel.add(fileTypeXml, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE,
+                new Insets(10, 0, 0, 0), 0, 0));
+
         
         String dir = Daten.efaConfig.getLastExportDirectory();
         if (dir == null || dir.length() == 0 || !(new File(dir)).isDirectory()) {
