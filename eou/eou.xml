@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <efaOnlineUpdate>
 	<Version>
+        <VersionID>2.4.1_00</VersionID>
+        <ReleaseDate>TODO</ReleaseDate>
+        <DownloadUrl>TODO</DownloadUrl>
+        <DownloadSize>TODO</DownloadSize>
+        <Changes lang="de">
+            <ChangeItem>BugFix: efaCloud: Im Debug Modus werden keine unnötigen Nullpointer-Exceptions mehr ins Log geschrieben. https://github.com/nicmichael/efa/issues/138</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>BugFix: efaCloud: No more exceptions logged in debug mode. https://github.com/nicmichael/efa/issues/138 </ChangeItem>
+        </Changes>
+    </Version>
+	<Version>
         <VersionID>2.4.0_00</VersionID>
         <ReleaseDate>TODO</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa240.zip</DownloadUrl>
