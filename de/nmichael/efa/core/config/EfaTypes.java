@@ -10,7 +10,6 @@
 package de.nmichael.efa.core.config;
 
 import de.nmichael.efa.*;
-import de.nmichael.efa.data.BoatRecord;
 import de.nmichael.efa.data.LogbookRecord;
 import de.nmichael.efa.util.*;
 import de.nmichael.efa.data.storage.*;

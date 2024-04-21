@@ -11,10 +11,8 @@ package de.nmichael.efa.cli;
 
 import de.nmichael.efa.Daten;
 import de.nmichael.efa.data.Logbook;
-import de.nmichael.efa.data.storage.DataExport;
 import de.nmichael.efa.data.sync.KanuEfbSyncTask;
 
-import java.util.Hashtable;
 import java.util.Stack;
 import java.util.Vector;
 

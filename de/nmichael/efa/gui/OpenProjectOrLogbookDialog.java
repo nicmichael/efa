@@ -23,7 +23,6 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import java.util.*;
-import java.io.*;
 
 // @i18n complete
 public class OpenProjectOrLogbookDialog extends BaseDialog implements IItemListener {

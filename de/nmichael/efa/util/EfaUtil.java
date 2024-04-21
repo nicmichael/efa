@@ -64,7 +64,6 @@ import de.nmichael.efa.core.config.EfaTypes;
 import de.nmichael.efa.data.types.DataTypeTime;
 import de.nmichael.efa.efa1.DatenFelder;
 import de.nmichael.efa.efa1.Synonyme;
-import javax.swing.SwingUtilities;
 
 // @i18n complete
 public class EfaUtil {

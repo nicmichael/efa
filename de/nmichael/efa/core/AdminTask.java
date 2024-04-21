@@ -16,7 +16,6 @@ import de.nmichael.efa.data.Waters;
 import de.nmichael.efa.data.types.DataTypeDate;
 import de.nmichael.efa.gui.AdminDialog;
 import de.nmichael.efa.util.Dialog;
-import de.nmichael.efa.util.EfaUtil;
 import de.nmichael.efa.util.International;
 import de.nmichael.efa.util.Logger;
 import javax.swing.JDialog;

@@ -9,7 +9,6 @@
  */
 package de.nmichael.efa.data.types;
 
-import java.time.LocalTime;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 

@@ -16,8 +16,6 @@ import de.nmichael.efa.core.items.*;
 import de.nmichael.efa.gui.util.*;
 import de.nmichael.efa.util.*;
 
-import java.awt.AWTEvent;
-import java.awt.event.FocusEvent;
 import java.util.*;
 import java.util.regex.*;
 

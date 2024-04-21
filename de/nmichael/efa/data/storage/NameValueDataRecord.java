@@ -10,13 +10,6 @@
 
 package de.nmichael.efa.data.storage;
 
-import de.nmichael.efa.data.storage.*;
-import de.nmichael.efa.data.types.*;
-import de.nmichael.efa.core.items.*;
-import de.nmichael.efa.gui.util.*;
-import de.nmichael.efa.util.*;
-import java.util.*;
-
 // @i18n complete
 
 public class NameValueDataRecord { //extends DataRecord {

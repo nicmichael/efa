@@ -9,16 +9,7 @@
  */
 package de.nmichael.efa.gui.util;
 
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.event.*;
-import javax.swing.*;
-import javax.swing.border.*;
-import javax.swing.table.*;
-
 import de.nmichael.efa.util.International;
-
-import java.util.Vector;
 
 public class TableItem {
 

@@ -10,11 +10,7 @@
 
 package de.nmichael.efa.efa1;
 
-import de.nmichael.efa.efa1.SortedList;
-import de.nmichael.efa.efa1.DatenListe;
 import java.io.*;
-import java.util.Hashtable;
-import de.nmichael.efa.*;
 import de.nmichael.efa.util.*;
 
 // @i18n complete

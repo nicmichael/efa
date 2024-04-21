@@ -20,9 +20,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.Arrays;
 
-import de.nmichael.efa.Daten;
 import de.nmichael.efa.data.StatisticsRecord;
-import de.nmichael.efa.data.types.DataTypeHours;
 import de.nmichael.efa.util.Dialog;
 import de.nmichael.efa.util.EfaUtil;
 import de.nmichael.efa.util.International;
