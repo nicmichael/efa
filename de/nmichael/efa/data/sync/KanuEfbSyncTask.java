@@ -536,6 +536,7 @@ public class KanuEfbSyncTask extends ProgressTask {
             boolean isKnownBoatButNonSupportedCanoeBoatType=false;
             boolean isEmptyBoatRecordTrip=false;
             boolean isEmptyBoatRecordTrip_SyncAnyway=false;
+            boolean useTripTypeAsCommentPrefix=Daten.efaConfig.getValueKanuEfb_SyncTripTypePrefix();
 
             KanuEfbStatistics kStatistics=new KanuEfbStatistics(logbook.data().getNumberOfRecords());
             
@@ -631,7 +632,9 @@ public class KanuEfbSyncTask extends ProgressTask {
                 		&& (!isKnownBoatButNonSupportedCanoeBoatType)
                 		) {
                 	
-                	createRequestWithStatistics(request, r, efaEntryIds, kStatistics, isUpdatedTrip, isEmptyBoatRecordTrip, isEmptyBoatRecordTrip_SyncAnyway);
+                	createRequestWithStatistics(request, r, efaEntryIds, kStatistics, 
+                								isUpdatedTrip, isEmptyBoatRecordTrip, isEmptyBoatRecordTrip_SyncAnyway,
+                								useTripTypeAsCommentPrefix);
                 	
                 } else {
                     if (r != null) {
@@ -692,9 +695,15 @@ public class KanuEfbSyncTask extends ProgressTask {
 	                    if (result == 0 || // 0 - ok - new trip accepted
 	                        result == 1 || // 1 - ok - existing trip updated
 	                        result == 2) { // 2 - ok - existing trip deleted
-	                        r.setSyncTime(thisSync);
-	                        logbook.data().update(r);
-	                        ok = true;
+	                        try {
+	                        	r.setSyncTime(thisSync);
+	                        	logbook.data().update(r);
+		                        ok = true;
+	                        } catch (Exception e) {
+	                        	ok = false;
+	                            logInfo(Logger.WARNING, Logger.MSG_SYNC_WARNINCORRECTRESPONSE, "Fehler beim Synchronisieren von Fahrt: Trip ID "+tripId+": Exception." + e.getMessage());
+	                        }
+	                        
 	                    }
 	                } else {
 	                    logInfo(Logger.WARNING, Logger.MSG_SYNC_WARNINCORRECTRESPONSE, "Fehler beim Synchronisieren von Fahrt: Trip ID "+tripId+" unbekannt (Code "+result+" - "+resultText+")");
@@ -707,7 +716,8 @@ public class KanuEfbSyncTask extends ProgressTask {
 	                } else {
 	                    logInfo(Logger.WARNING, Logger.MSG_SYNC_WARNINCORRECTRESPONSE, "Fehler beim Synchronisieren von Fahrt: "+tripId+" (Code "+result+" - "+resultText+")");
 	                }
-	            }
+	            }//next trip
+	            
 	            logInfo(Logger.INFO, Logger.MSG_SYNC_SYNCINFO, countSyncTrips + "/"+ statistics.getRequestCnt() +  " Datensätze synchronisiert.");
 	        } else {
 	            logInfo(Logger.ERROR, Logger.MSG_SYNC_ERRORINVALIDRESPONSE, "Ungültige Synchronisierungs-Antwort.");
@@ -723,7 +733,7 @@ public class KanuEfbSyncTask extends ProgressTask {
     }
     
     private void createRequestWithStatistics(StringBuilder request,  LogbookRecord r, Hashtable<String,LogbookRecord> efaEntryIds, KanuEfbStatistics statistics, 
-    		boolean isUpdatedTrip, boolean isEmptyBoatRecordTrip, boolean isEmptyBoatRecordTrip_SyncAnyway) {
+    		boolean isUpdatedTrip, boolean isEmptyBoatRecordTrip, boolean isEmptyBoatRecordTrip_SyncAnyway, boolean useTripTypePrefixForComment) {
     	//we want to check if the current trip leads to at least one request. 
     	//if not, the trip is ignored due to the fact that none of the crew members has an EfbID.
     	long oldRequestCnt=statistics.getRequestCnt(); 
@@ -845,8 +855,15 @@ public class KanuEfbSyncTask extends ProgressTask {
                     request.append("</line>");
                     request.append("</lines>");
 
-                    if (r.getComments() != null && r.getComments().length() > 0) {
-                        request.append("<comment><![CDATA[" + r.getComments() + "]]></comment>");
+                    //Kommentar vorhanden, oder soll die Fahrtart dem Kommentar vorangesetzt werden?
+                    if (((r.getComments() != null && r.getComments().length() > 0)) || useTripTypePrefixForComment) {
+                    	String prefix="";
+                    	// wenn konfiguriert, für alles außer "normale Fahrt" einen Präfix setzen beim Kommentar
+                    	if (useTripTypePrefixForComment && (!triptype.equalsIgnoreCase(EfaTypes.TYPE_SESSION_NORMAL))) {
+                    		prefix = Daten.efaTypes.getValue(EfaTypes.CATEGORY_SESSION, triptype)+": ";
+                    	} 
+                    	request.append("<comment><![CDATA[" + prefix + (r.getComments() == null ? "" : r.getComments()) + "]]></comment>");
+
                     }
 
                     request.append("<changeDate>" + r.getLastModified() + "</changeDate>");
