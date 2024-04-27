@@ -48,7 +48,8 @@ public class AdminListDialog extends DataListDialog {
             actionType = null; // only ADD, EDIT, DELETE (no IMPORT, EXPORT)
         } else {
             efaLiveRepair = Daten.admins.isEfaLiveAdminExists();
-            if (Daten.project.getProjectStorageType() == IDataAccess.TYPE_EFA_CLOUD) {
+            //EFA#78/Issue#142: If no project is open, we should not check if the project is efaCloud based.
+            if ((Daten.project != null) && (Daten.project.getProjectStorageType() == IDataAccess.TYPE_EFA_CLOUD)) {
                 actionText = new String[]{
                         ItemTypeDataRecordTable.ACTIONTEXT_EDIT,
                         ItemTypeDataRecordTable.ACTIONTEXT_DELETE,
