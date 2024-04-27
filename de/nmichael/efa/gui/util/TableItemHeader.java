@@ -21,6 +21,7 @@ public class TableItemHeader {
 
     private String txt;
     private int maxColumnWidth = -1;
+    private Boolean isVisible=true;
 
     public TableItemHeader(String txt) {
         this.txt = txt;
@@ -32,7 +33,7 @@ public class TableItemHeader {
     }
 
     public void updateColumnWidth(String cellContent) {
-        if (cellContent != null && cellContent.length() > maxColumnWidth) {
+        if ((isVisible) && (cellContent != null && cellContent.length() > maxColumnWidth)) {
             maxColumnWidth = cellContent.length();
         }
     }
@@ -44,5 +45,12 @@ public class TableItemHeader {
     public int getMaxColumnWidth() {
         return maxColumnWidth;
     }
+    
+    public Boolean getVisible(){
+    	return isVisible;
+    }
 
+    public void setVisible(Boolean value) {
+    	this.isVisible=value;
+    }
 }

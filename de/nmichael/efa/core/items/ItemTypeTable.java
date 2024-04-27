@@ -10,12 +10,31 @@
 
 package de.nmichael.efa.core.items;
 
-import de.nmichael.efa.gui.util.*;
-import java.util.*;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
+import java.awt.Rectangle;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.util.Arrays;
+import java.util.Hashtable;
+import java.util.Vector;
+
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.ListSelectionModel;
+import javax.swing.table.TableModel;
+
 import de.nmichael.efa.Daten;
+import de.nmichael.efa.gui.util.EfaMouseListener;
+import de.nmichael.efa.gui.util.EfaTableCellRenderer;
+import de.nmichael.efa.gui.util.Table;
+import de.nmichael.efa.gui.util.TableItem;
+import de.nmichael.efa.gui.util.TableItemHeader;
 
 // @i18n complete
 
@@ -44,6 +63,7 @@ public class ItemTypeTable extends ItemType implements ActionListener, ITableEdi
     private int minColumnWidth = -1;
     private int[] minColumnWidths = null;
     private int _moveRowSelectionUponNextRefresh = 0;
+    private Vector<Integer> permanentSecondarySortingColumns=new Vector<Integer>();
 
     public ItemTypeTable(String name, TableItemHeader[] header, Hashtable<String,TableItem[]> items, String value,
             int type, String category, String description) {
@@ -127,6 +147,7 @@ public class ItemTypeTable extends ItemType implements ActionListener, ITableEdi
                 scrollPane.remove(table);
             }
             table = Table.createTable(null, renderer, header, data, sortingEnabled);
+            permanentSecondarySortingColumns.forEach((n) -> table.addPermanentSecondarySortingColumn(n));
             if (fontSize > 0) {
                 table.getRenderer().setFontSize(fontSize);
                 table.setRowHeight(fontSize*2);
@@ -344,6 +365,13 @@ public class ItemTypeTable extends ItemType implements ActionListener, ITableEdi
         this.sortByColumn = sortByColumn;
         this.ascending = ascending;
     }
+    
+    public void addPermanentSecondarySortingColumn(int sortByColumn) {
+    	this.permanentSecondarySortingColumns.add(new Integer(sortByColumn));
+    	if (this.table != null) {
+    		this.table.addPermanentSecondarySortingColumn(sortByColumn);
+    	}
+    }
 
     public void setFontSize(int fontSize) {
         this.fontSize = fontSize;
@@ -382,5 +410,4 @@ public class ItemTypeTable extends ItemType implements ActionListener, ITableEdi
     public void setMoveRowSelectionUponNextRefresh(int direction) {
         _moveRowSelectionUponNextRefresh = direction;
     }
-
 }
