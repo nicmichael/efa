@@ -242,6 +242,7 @@ public class BoatReservationListDialog extends DataListDialog {
 		super.iniDialog();
 		//show only matching items by default in BoatDamageListDialog 
 		table.setIsFilterSet(true);
+		
 	}
 	
     protected void iniControlPanel() {

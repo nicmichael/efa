@@ -905,8 +905,8 @@ public class BoatReservationRecord extends DataRecord {
         header[4] = new TableItemHeader(International.getString("Grund"));
         header[5] = new TableItemHeader(International.getString("Kontakt"));
         header[COLUMN_ID_START] = new TableItemHeader(International.getString("Start")); // when is the next start date/Time of the entry?
-        header[COLUMN_ID_START].setMaxColumnWidth(0);//invisible
-        header[COLUMN_ID_START].setVisible(true);
+        header[COLUMN_ID_START].setMaxColumnWidth(0);//this column must stay invisible, but we need it to 
+        header[COLUMN_ID_START].setVisible(false);
         return header;
     }
 

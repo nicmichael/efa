@@ -27,7 +27,6 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
-import javax.swing.table.TableModel;
 
 import de.nmichael.efa.Daten;
 import de.nmichael.efa.gui.util.EfaMouseListener;
