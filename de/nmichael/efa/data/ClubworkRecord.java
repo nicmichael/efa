@@ -49,6 +49,11 @@ public class ClubworkRecord extends DataRecord implements IItemFactory {
     public static final String FLAG = "Flag";
     public static final String APPROVED = "Approved";
 
+    public static final int COLUMN_ID_LAST_NAME=0;        
+    public static final int COLUMN_ID_FIRST_NAME=1;
+    public static final int COLUMN_ID_DATE=2;
+    
+    
     public enum Flags {
         UNDEFINED,
         Normal,

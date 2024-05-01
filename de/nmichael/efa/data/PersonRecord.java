@@ -66,6 +66,11 @@ public class PersonRecord extends DataRecord implements IItemFactory {
     private static String CAT_FREEUSE = "%05%" + International.getString("Freie Verwendung");
     private static Pattern qnamePattern = Pattern.compile("(.+) \\(([^\\(\\)]+)\\)");
 
+    
+    public static final int COLUMN_ID_LAST_NAME=0;        
+    public static final int COLUMN_ID_FIRST_NAME=1;
+    public static final int COLUMN_ID_BIRTHDATE=2;  
+    
     public static void initialize() {
         Vector<String> f = new Vector<String>();
         Vector<Integer> t = new Vector<Integer>();
