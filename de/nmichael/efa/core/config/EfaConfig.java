@@ -185,6 +185,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 	private ItemTypeBoolean popupComplete;
 	private ItemTypeBoolean popupContainsMode;
 	private ItemTypeBoolean popupContainsModeEasyFindEntriesWithSpecialCharacters;
+	private ItemTypeBoolean	popupContainsModeSelectPrefixItem;
 	private ItemTypeStringList nameFormat;
 	private ItemTypeBoolean correctMisspelledNames;
 	private ItemTypeBoolean skipUhrzeit;
@@ -707,6 +708,10 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 					"AutoCompleteContainsModeEasyFindEntriesWithSpecialCharacters", true, IItemType.TYPE_EXPERT,
 					BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_INPUT), International.getString(
 							"In Popup-Liste bei Suche nach Teilbegriff Einträge mit Sonderzeichen einfacher finden")));
+			addParameter(popupContainsModeSelectPrefixItem = new ItemTypeBoolean(
+					"AutoCompleteContainsModeSelectPrefixItem", true, IItemType.TYPE_EXPERT,
+					BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_INPUT), International.getString(
+							"In Popup-Liste bei Suche nach Teilbegriff den ersten nach Wortanfang passenen Eintrag selektieren")));			
 
 			addHeader("efaCommonInputDestination", IItemType.TYPE_PUBLIC,
 					BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_INPUT),
@@ -2118,6 +2123,10 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 		return popupContainsModeEasyFindEntriesWithSpecialCharacters.getValue();
 	}
 
+	public boolean getValuePopupContainsModeSelectPrefixItem() {
+		return popupContainsModeSelectPrefixItem.getValue();
+	}
+	
 	public String getValueNameFormat() {
 		return nameFormat.getValue();
 	}
