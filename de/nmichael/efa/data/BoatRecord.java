@@ -110,6 +110,10 @@ public class BoatRecord extends DataRecord implements IItemFactory, IItemListene
     private static String GUIITEM_DEFAULTBOATTYPE    = "GUIITEM_DEFAULTBOATTYPE";
     private ButtonGroup buttonGroup = new ButtonGroup();
 
+    public static final int COLUMN_ID_BOAT_NAME = 0;
+    public static final int COLUMN_ID_BOAT_TYPE = 1;
+    public static final int COLUMN_ID_BOAT_OWNER = 2;
+    
     private static Pattern qnamePattern = Pattern.compile("(.+) \\(([^\\(\\)]+)\\)");
 
     public static void initialize() {

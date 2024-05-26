@@ -50,6 +50,11 @@ public class BoatStatusRecord extends DataRecord {
     public static final String ENTRYNO             = "EntryNo";       // the EntryNo if this boat in ONTHEWATER
     public static final String COMMENT             = "Comment";
 
+    public static final int COLUMN_ID_BOAT_NAME = 0;
+    public static final int COLUMN_ID_BOAT_BASE_STATUS = 1;
+    public static final int COLUMN_ID_BOAT_CURRENT_STATUS = 2;
+    public static final int COLUMN_ID_BOAT_COMMENT = 3;
+    
     protected static String CAT_STATUS       = "%06%" + International.getString("Bootsstatus");
     
     public static void initialize() {
@@ -263,6 +268,18 @@ public class BoatStatusRecord extends DataRecord {
     public String getComment() {
         return getString(COMMENT);
     }
+    
+    public String getBoatOwner() {
+    	  Boats boats = getPersistence().getProject().getBoats(false);
+          String boatOwner = "";
+          if (boats != null && getBoatId() != null) {
+              BoatRecord r = boats.getBoat(getBoatId(), System.currentTimeMillis());
+              if (r != null) {
+                  boatOwner = r.getOwner();
+              }
+          } 
+          return boatOwner;    	
+    }
 
     private String getBoatName() {
         Boats boats = getPersistence().getProject().getBoats(false);
@@ -369,20 +386,22 @@ public class BoatStatusRecord extends DataRecord {
     }
 
     public TableItemHeader[] getGuiTableHeader() {
-        TableItemHeader[] header = new TableItemHeader[4];
+        TableItemHeader[] header = new TableItemHeader[5];
         header[0] = new TableItemHeader(International.getString("Boot"));
         header[1] = new TableItemHeader(International.getString("Basis-Status"));
         header[2] = new TableItemHeader(International.getString("aktueller Status"));
         header[3] = new TableItemHeader(International.getString("Bemerkung"));
+        header[4] = new TableItemHeader(International.getString("Eigentümer"));
         return header;
     }
 
     public TableItem[] getGuiTableItems() {
-        TableItem[] items = new TableItem[4];
+        TableItem[] items = new TableItem[5];
         items[0] = new TableItem(getBoatName());
         items[1] = new TableItem(getStatusDescription(getBaseStatus()));
         items[2] = new TableItem(getStatusDescription(getCurrentStatus()));
         items[3] = new TableItem(getComment());
+        items[4] = new TableItem(getBoatOwner());
         return items;
     }
 
