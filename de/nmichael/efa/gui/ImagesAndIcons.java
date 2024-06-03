@@ -22,10 +22,12 @@ public class ImagesAndIcons {
 	public static final String IMAGE_ACTION_FINISH_SESSION = "action_finishSession.png";
 	public static final String IMAGE_ACTION_HELP = "action_help.png";
 	public static final String IMAGE_ACTION_LATE_ENTRY = "action_lateEntry.png";
+	public static final String IMAGE_ACTION_LATE_ENTRY_MULTI = "action_lateEntryMulti.png";
 	public static final String IMAGE_ACTION_LOGBOOK = "action_logbook.png";
 	public static final String IMAGE_ACTION_MESSAGE = "action_message.png";
 	public static final String IMAGE_ACTION_SPECIAL = "action_special.png";
 	public static final String IMAGE_ACTION_START_SESSION = "action_startSession.png";
+	public static final String IMAGE_ACTION_START_SESSION_MULTI = "action_startSessionMulti.png";
 	public static final String IMAGE_ACTION_STATISTICS = "action_statistics.png";
 	public static final String IMAGE_BUTTON_ACCEPT = "button_accept.png";
 	public static final String IMAGE_BUTTON_ADD = "button_add.png";

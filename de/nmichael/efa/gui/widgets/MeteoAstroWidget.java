@@ -423,7 +423,8 @@ public class MeteoAstroWidget extends Widget {
     public void runWidgetWarnings(int mode, boolean actionBegin, LogbookRecord r) {
         try {
             if ((mode == EfaBaseFrame.MODE_BOATHOUSE_START ||
-                 mode == EfaBaseFrame.MODE_BOATHOUSE_START_CORRECT) && !actionBegin &&
+                 mode == EfaBaseFrame.MODE_BOATHOUSE_START_CORRECT ||
+                 mode == EfaBaseFrame.MODE_BOATHOUSE_START_MULTISESSION) && !actionBegin &&
                  isWarnDarkness()) {
                 Calendar cal = new GregorianCalendar();
                 int now = cal.get(Calendar.HOUR_OF_DAY)*60 + cal.get(Calendar.MINUTE);

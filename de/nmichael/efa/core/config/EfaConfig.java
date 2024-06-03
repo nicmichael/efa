@@ -205,6 +205,9 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 	private ItemTypeColor efaGuiflatLaf_AccentColor;
 	private ItemTypeColor efaGuiflatLaf_FocusColor;
 
+	
+	// items starting with efaDirekt are designed to be active in efaBths only.
+	
 	private ItemTypeStringList standardFahrtart;
 	private ItemTypeStringList defaultDistanceUnit;
 	private ItemTypeStringList dateFormat;
@@ -248,6 +251,8 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 	private ItemTypeBoolean efaDirekt_eintragPresentLastTripOnNewEntry;
 	private ItemTypeBoolean efaDirekt_eintragPresentLastTripOnLateEntry;
 	private ItemTypeInteger	efaDirekt_eintragPresentLastTripTimeout;
+	private ItemTypeBoolean efaDirekt_MultisessionSupportStartSession;
+	private ItemTypeBoolean	efaDirekt_MultisessionSupportLateEntry;
 	private ItemTypeInteger efaDirekt_plusMinutenAbfahrt;
 	private ItemTypeInteger efaDirekt_minusMinutenAnkunft;
 	private ItemTypeBoolean allowEnterEndDate;
@@ -1255,7 +1260,15 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_INPUT),
 					International.getString("Einblenden der vorhergehenden Fahrt bis maximal X Minuten")));			
 			
+			addParameter(efaDirekt_MultisessionSupportStartSession = new ItemTypeBoolean("MultiSessionSupportStartsession",
+					false, IItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_INPUT),
+					International.getString("Multisession-Support für Fahrtbeginn")));
 			
+			addParameter(efaDirekt_MultisessionSupportLateEntry = new ItemTypeBoolean("MultiSessionSupportLateEntry",
+					false, IItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_INPUT),
+					International.getString("Multisession-Support für Fahrt-Nachtrag")));
+
+
 			// ============================= BOATHOUSE:GUI =============================
 
 			addHint("efaGuiBoathouseWindowHint", IItemType.TYPE_PUBLIC,
@@ -2298,6 +2311,13 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 	}
 	public int 	getValueEfaDirekt_eintragPresentLastTripTimeout(){
 		return efaDirekt_eintragPresentLastTripTimeout.getValue();
+	}	
+
+	public boolean getValueEfaDirekt_MultisessionSupportStartSession() {
+		return efaDirekt_MultisessionSupportStartSession.getValue();
+	}
+	public boolean getValueEfaDirekt_MultisessionSupportLateEntry(){
+		return efaDirekt_MultisessionSupportLateEntry.getValue();
 	}	
 	
 	public int getValueEfaDirekt_plusMinutenAbfahrt() {

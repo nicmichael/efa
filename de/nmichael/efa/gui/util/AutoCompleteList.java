@@ -86,6 +86,7 @@ public class AutoCompleteList {
     private String _foundValue;
     private boolean filterDataOnlyForThisBoathouse = false;
     private boolean postfixNamesWithBoathouseName = true;
+    private boolean filterDataOnlyOneSeaterBoats = false; //property to only have boats with one seat in this list
     private String filterText=null;
 
     public AutoCompleteList() {
@@ -268,9 +269,12 @@ public class AutoCompleteList {
                             if (Daten.efaConfig.getValuePostfixPersonsWithClubName()) {
                                 s = s + ((PersonRecord)r).getAssociationPostfix();
                             }
-
                         }
 
+                        if (filterDataOnlyOneSeaterBoats && r instanceof BoatRecord) {
+                        	if (!isOneSeaterBoat((BoatRecord)r)) {continue;}
+                        }
+                        
                         if (!r.getDeleted()) {
                             if (s.length() > 0) {
                                 ValidInfo vi = null;
@@ -669,6 +673,28 @@ public class AutoCompleteList {
         pos = 0;
     }
 
+    public void setFilterDataOnlyOneSeaterBoats(boolean value) {
+    	this.filterDataOnlyOneSeaterBoats=value;
+    }    
+    
+    /**
+     * Determine if a boat has at least a variant as a one-seater.
+     * Does not check if the BoatRecord is valid at the current time.
+     * 
+     * @param boatRec BoatRecord (not null)
+     * @return true if Boat has at least one variant as a One-Seater
+     */
+    private boolean isOneSeaterBoat(BoatRecord boatRec) {
+
+        for (int boatVariant=0; boatVariant<boatRec.getNumberOfVariants(); boatVariant++) {
+            if (boatRec.getNumberOfSeats(boatVariant)==1) {
+            	return true;
+            }
+        }
+        //none of the variants is a OneSeater
+        return false;
+    }
+    
     public static void main(String[] args) {
         Vector<String> v = getPermutations("a b c", 7);
         for (int i=0; i<v.size(); i++) {
