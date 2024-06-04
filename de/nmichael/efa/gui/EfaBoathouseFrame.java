@@ -3002,12 +3002,12 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
     private void showStartSessionMultipleDialog(Boolean isLateEntry, ItemTypeBoatstatusList.BoatListItem item) {
 
     	EfaBaseFrameMultisession myFrame = new EfaBaseFrameMultisession(this,
-    			(isLateEntry ? efaBaseFrame.MODE_BOATHOUSE_LATEENTRY_MULTISESSION : efaBaseFrame.MODE_BOATHOUSE_START_MULTISESSION)
+    			(isLateEntry ? EfaBaseFrame.MODE_BOATHOUSE_LATEENTRY_MULTISESSION : EfaBaseFrame.MODE_BOATHOUSE_START_MULTISESSION)
     			);
 
     	try {
             myFrame.efaBoathouseAction=item;
-            myFrame.efaBoathouseAction.mode = (isLateEntry ? efaBaseFrame.MODE_BOATHOUSE_LATEENTRY_MULTISESSION : efaBaseFrame.MODE_BOATHOUSE_START_MULTISESSION);
+            myFrame.efaBoathouseAction.mode = (isLateEntry ? EfaBaseFrame.MODE_BOATHOUSE_LATEENTRY_MULTISESSION : EfaBaseFrame.MODE_BOATHOUSE_START_MULTISESSION);
     		myFrame.showDialog();
     	} catch (Exception e) {
     		Logger.log(e);

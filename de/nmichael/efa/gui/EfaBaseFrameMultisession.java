@@ -40,6 +40,8 @@ import de.nmichael.efa.core.items.ItemTypeStringList;
 import de.nmichael.efa.core.items.ItemTypeTime;
 import de.nmichael.efa.data.BoatRecord;
 import de.nmichael.efa.data.DestinationRecord;
+import de.nmichael.efa.data.GroupRecord;
+import de.nmichael.efa.data.Groups;
 import de.nmichael.efa.data.Logbook;
 import de.nmichael.efa.data.LogbookRecord;
 import de.nmichael.efa.data.PersonRecord;
@@ -47,6 +49,7 @@ import de.nmichael.efa.data.ProjectRecord;
 import de.nmichael.efa.data.storage.IDataAccess;
 import de.nmichael.efa.data.types.DataTypeDate;
 import de.nmichael.efa.data.types.DataTypeDistance;
+import de.nmichael.efa.data.types.DataTypeList;
 import de.nmichael.efa.data.types.DataTypeTime;
 import de.nmichael.efa.gui.util.AutoCompleteList;
 import de.nmichael.efa.util.Dialog;
@@ -88,7 +91,7 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
 	private final static String  STR_SPACER = "   ";
 	private final static String  STR_NAME_LOOKUP = "NAME_LOOKUP";
 	private final static String  STR_BOAT_LOOKUP = "BOOT_LOOKUP";
-	private final static int 	 ADD_HEIGHT_TO_DIALOG = 200; // amount of pixels of free space in the dialog to grow (for additional participants/boats)
+	private final static int 	 ADD_HEIGHT_TO_DIALOG = 180; // amount of pixels of free space in the dialog to grow (for additional participants/boats)
     private JPanel teilnehmerUndBoot;
 	private ItemTypeItemList nameAndBoat;
     
@@ -124,7 +127,7 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
         mainPanel.add(mainInputPanel, BorderLayout.NORTH);
 
         ItemTypeLabelHeader header = createHeader("CREATE_MULTISESSION", 0, null, 
-        		(mode == EfaBaseFrame.MODE_BOATHOUSE_START_MULTISESSION ? International.getString("Multi-Fahrt anlegen") : International.getString("Multi-Nachtrag erfassen")),
+        		(mode == EfaBaseFrame.MODE_BOATHOUSE_START_MULTISESSION ? International.getString("Mehrere Einzelfahrten beginnen") : International.getString("Mehrere Einzelfahrten nachtragen")),
         				HEADER_WIDTH);
         header.displayOnGui(this,  mainInputPanel, 0, yPos);
         yPos++;
@@ -338,7 +341,7 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
                 new Insets(10, 20, 10, 0), 0, 0));
  
         // Save Button
-        saveButton = new ItemTypeButton("SAVE", IItemType.TYPE_PUBLIC, null, International.getString("Eintrag speichern"));
+        saveButton = new ItemTypeButton("SAVE", IItemType.TYPE_PUBLIC, null, (mode == EfaBaseFrame.MODE_BOATHOUSE_START_MULTISESSION ? International.getString("Eintrag speichern") : International.getString("Nachtrag")));
         saveButton.setBackgroundColorWhenFocused(Daten.efaConfig.getValueEfaDirekt_colorizeInputField() ? Color.yellow : null);
         saveButton.setIcon(getIcon(BaseDialog.IMAGE_ACCEPT));
         saveButton.displayOnGui(this, mainPanel, BorderLayout.SOUTH);
@@ -725,6 +728,7 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
             !checkUnknownNames() || 
             !checkProperUnknownNames() ||
             !checkAllowedPersons() ||
+            !checkAllowedPersonsForBoat() ||
             !checkDestinationNameValid() ||
             !checkAllDataEntered() ||
             !checkSessionType()) {
@@ -1178,6 +1182,200 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
                     if (!checkNameForInvalidContent(name, list, curName)) {
                     	return false;
                     }
+                }
+            }
+        }
+        return true;
+    }
+    
+    /**
+     * Checks for each Name/Boat pair whether the Person has a BoatUsageBan, Boat may be used by that person,
+     * or the single person is sufficient to use the boat.
+     * @return true if checks were okay
+     */
+    protected boolean checkAllowedPersonsForBoat() {
+        if (mode == MODE_BOATHOUSE_START || mode == MODE_BOATHOUSE_START_CORRECT || mode == MODE_BOATHOUSE_START_MULTISESSION) {
+	        for (int iCurNameAndBoat =0; iCurNameAndBoat<nameAndBoat.getItemCount(); iCurNameAndBoat++) {
+		    	ItemTypeStringAutoComplete[] acItem= (ItemTypeStringAutoComplete[])nameAndBoat.getItems(iCurNameAndBoat);
+		    	ItemTypeStringAutoComplete curName = acItem[0];
+		    	ItemTypeStringAutoComplete curBoat = acItem[1];
+	
+		    	if (!curBoat.getValue().isEmpty() && !curName.getValue().isEmpty()) {
+			    	if (!checkBoatUsageBan(curBoat, curName)) {
+			    		return false;
+			    	}
+			    	if (!checkMinPersonsInBoat(curBoat, curName)) {
+			    		return false;
+			    	}
+		    	}
+	        }
+        }
+        return true;
+    }
+    
+    /**
+     * Checks for the Name/Boat pair if the person has a BoatUsageBand, or the Boat may not be used by that person
+     * @param theBoat
+     * @param theName
+     * @return true if checks were okay
+     */
+    protected boolean checkBoatUsageBan(ItemTypeStringAutoComplete theBoat, ItemTypeStringAutoComplete theName) {
+        
+	    Groups groups = Daten.project.getGroups(false);
+	    long tstmp = System.currentTimeMillis();
+	    
+	    BoatRecord curBoat = findBoat(theBoat, tstmp);
+        PersonRecord curPerson = findPerson(theName, tstmp);
+        
+        if (curBoat == null) {
+        	return true;
+        }
+
+        DataTypeList<UUID> groupIdList = curBoat.getAllowedGroupIdList();
+        if (groupIdList != null && groupIdList.length() > 0) {
+            String nichtErlaubt = null;
+            int nichtErlaubtAnz = 0;
+            String ptext = theName.getValue().toString();
+            
+            // if a known person is set, check for usage ban
+            if (curPerson != null) { 
+	            if (curPerson.getBoatUsageBan()) {
+	                switch (Dialog.auswahlDialog(International.getString("Bootsbenutzungs-Sperre"),
+	                    International.getMessage("Für {name} liegt zur Zeit eine Bootsbenutzungs-Sperre vor.", curPerson.getQualifiedName()) +
+	                    "\n" +
+	                    International.getString("Was möchtest Du tun?"),
+	                    International.getString("Mannschaft ändern"),
+	                    International.getString("Trotzdem benutzen"))) {
+	                case 0:
+	                    theName.requestFocus();
+	                    return false;
+	                    
+	                case 1:
+	                    break; // we want to proceed with the rest of the code
+	                    
+	                default: //default when the user hits VK_ESCAPE: change crew
+	                    theName.requestFocus();
+	                    return false;
+	                    	
+	                }
+	            }
+            }
+            //check if the person is in any group the boat may be used by
+            boolean inAnyGroup = false;
+            if (curPerson!=null) {
+	            for (int j = 0; j < groupIdList.length(); j++) {
+	                GroupRecord g = groups.findGroupRecord(groupIdList.get(j), tstmp);
+	                if (g != null && g.getMemberIdList() != null && g.getMemberIdList().contains(curPerson.getId())) {
+	                    inAnyGroup = true;
+	                    break;
+	                }
+	            }
+            }
+            
+            if (!inAnyGroup) {
+                String name = (curPerson != null ? curPerson.getQualifiedName() : ptext);
+                nichtErlaubt = (nichtErlaubt == null ? name : nichtErlaubt + "\n" + name);
+                nichtErlaubtAnz++;
+
+            }
+            
+            // a boat may be assigned to a group, but may need a participant of another
+            // like used by a special crew, but needs at least a member of group "trainers"
+            if (Daten.efaConfig.getValueCheckAllowedPersonsInBoat() &&
+                nichtErlaubtAnz > 0 &&
+                nichtErlaubtAnz > curBoat.getMaxNotInGroup()) {
+                String erlaubteGruppen = null;
+                for (int j = 0; j < groupIdList.length(); j++) {
+                    GroupRecord g = groups.findGroupRecord(groupIdList.get(j), tstmp);
+                    String name = (g != null ? g.getName() : null);
+                    if (name == null) {
+                        continue;
+                    }
+                    erlaubteGruppen = (erlaubteGruppen == null ? name : erlaubteGruppen + (j + 1 < groupIdList.length() ? ", " + name : " "
+                            + International.getString("und") + " " + name));
+                }
+                switch (Dialog.auswahlDialog(International.getString("Boot nur für bestimmte Gruppen freigegeben"),
+                        International.getMessage("Das Boot [{boatname}] dürfen nur die Gruppen [{list_of_valid_groups}] nutzen.", theBoat.getValue().toString(), erlaubteGruppen) + "\n"
+                        + International.getString("Folgende Personen gehören keiner der Gruppen an und dürfen das Boot nicht benutzen:") + " \n"
+                        + nichtErlaubt + "\n"
+                        + International.getString("Was möchtest Du tun?"),
+                        International.getString("Anderes Boot wählen"),
+                        International.getString("Mannschaft ändern"),
+                        International.getString("Trotzdem benutzen"))) {
+                    case 0:
+                    	theBoat.requestFocus();
+                        return false;
+                    case 1:
+                        theName.requestFocus();
+                        return false;
+                    case 2:
+                        //TODO: not a possibility to log here, can be logged only when record is created;
+                    	/*logBoathouseEvent(Logger.INFO, Logger.MSG_EVT_UNALLOWEDBOATUSAGE,
+                                          International.getString("Unerlaubte Benutzung eines Bootes"),
+                                          myRecord);*/
+                        break;
+                    default: //default when the user hits VK_ESCAPE: change crew
+                        theName.requestFocus();
+                        return false;                            
+                }
+            }
+        }
+        return true;
+    }
+    
+    /**
+     * Checks if the single person suffices to use the boat, if the boat is assigned to groups.
+     * @param theBoat
+     * @param theName
+     * @return true if check is ok
+     */
+    protected boolean checkMinPersonsInBoat(ItemTypeStringAutoComplete theBoat, ItemTypeStringAutoComplete theName) {
+    	
+	    Groups groups = Daten.project.getGroups(false);
+	    long tstmp = System.currentTimeMillis();
+	    
+	    BoatRecord curBoat = findBoat(theBoat, tstmp);
+        PersonRecord curPerson = findPerson(theName, tstmp);
+        
+        if (curBoat == null) {
+        	return true;
+        }
+    	
+        // Prüfen, ob mind 1 Ruderer (oder Stm) der Gruppe "mind 1 aus Gruppe" im Boot sitzt
+        if (Daten.efaConfig.getValueCheckMinOnePersonsFromGroupInBoat() &&
+            curBoat.getRequiredGroupId() != null) {
+            GroupRecord g = groups.findGroupRecord(curBoat.getRequiredGroupId(), tstmp);
+            boolean found = false;
+            if (curPerson != null) {
+	            if (g != null && g.getMemberIdList() != null) {
+	               found = g.getMemberIdList().contains(curPerson.getId());
+	            }
+            }
+            
+            if (g != null && !found) {
+                switch (Dialog.auswahlDialog(International.getString("Boot erfordert bestimmte Berechtigung"),
+                        International.getMessage("In dem Boot [{boatname}] muß mindestens ein Mitglied der Gruppe [{groupname}] sitzen.", theBoat.getValue().toString(), g.getName()) + "\n"
+                        + International.getString("Was möchtest Du tun?"),
+                        International.getString("Anderes Boot wählen"),
+                        International.getString("Mannschaft ändern"),
+                        International.getString("Trotzdem benutzen")
+                        )) {
+                    case 0:
+                        theBoat.requestFocus();
+                        return false;
+                    case 1:
+                        theName.requestFocus();
+                        return false;
+                    case 2:
+                        //TODO: not a possibility to log here, can be logged only when record is created;                    	
+                        /*logBoathouseEvent(Logger.INFO, Logger.MSG_EVT_UNALLOWEDBOATUSAGE,
+                                          International.getString("Unerlaubte Benutzung eines Bootes"),
+                                          myRecord);*/
+                        break;
+                        
+                    default: //default when the user hits VK_ESCAPE: change crew
+                        theName.requestFocus();
+                        return false;                        	
                 }
             }
         }

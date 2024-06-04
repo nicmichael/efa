@@ -3138,7 +3138,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
          }
          return true;
     }
-    //TODO: das hier funktioniert nicht für MultiSESSION!
+
     protected boolean checkAllowedPersons() {
         if (mode == MODE_BOATHOUSE_START || mode == MODE_BOATHOUSE_START_CORRECT || mode == MODE_BOATHOUSE_START_MULTISESSION) {
             if (currentBoat == null) {
