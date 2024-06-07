@@ -9,8 +9,6 @@
  */
 package de.nmichael.efa.data.efawett;
 
-import de.nmichael.efa.*;
-import de.nmichael.efa.data.efawett.Zielfahrt;
 import de.nmichael.efa.util.EfaUtil;
 import java.util.*;
 

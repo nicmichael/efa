@@ -13,7 +13,6 @@ package de.nmichael.efa.efa1;
 import de.nmichael.efa.*;
 import de.nmichael.efa.util.EfaUtil;
 import de.nmichael.efa.core.config.*;
-import de.nmichael.efa.util.EfaUtil;
 
 // @i18n complete
 

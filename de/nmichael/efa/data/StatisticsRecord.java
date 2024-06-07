@@ -824,6 +824,8 @@ public class StatisticsRecord extends DataRecord implements IItemListener {
                 return International.getString("Wettbewerb");
             case other:
                 return International.getString("Weitere");
+            case UNKNOWN:
+            	return EfaTypes.TEXT_UNKNOWN;
         }
         return EfaTypes.TEXT_UNKNOWN;
     }
@@ -1231,6 +1233,8 @@ public class StatisticsRecord extends DataRecord implements IItemListener {
                 return "PDF";
             case efawett:
                 return International.onlyFor("Meldedatei", "de") + " (" + Daten.EFA_WETT + ")";
+            case UNKNOWN:
+            	return EfaTypes.TEXT_UNKNOWN;
         }
         return EfaTypes.TEXT_UNKNOWN;
     }
@@ -1251,6 +1255,8 @@ public class StatisticsRecord extends DataRecord implements IItemListener {
                 return "pdf";
             case efawett:
                 return "efw";
+            case UNKNOWN:
+            	return "out";
         }
         return "out";
     }
@@ -2273,6 +2279,17 @@ public class StatisticsRecord extends DataRecord implements IItemListener {
                         International.getString("Schaden");
             case clubwork:
                 return International.getString("Vereinsarbeit");
+            
+            // obviously non-supported sort orders
+            case memberNo:
+            	return EfaTypes.TEXT_UNKNOWN;
+            case gender:
+            	return EfaTypes.TEXT_UNKNOWN;
+            case days:
+            	return EfaTypes.TEXT_UNKNOWN;
+            case UNKNOWN:
+            	return EfaTypes.TEXT_UNKNOWN;
+            
         }
         return EfaTypes.TEXT_UNKNOWN;
     }
@@ -3607,6 +3624,8 @@ public class StatisticsRecord extends DataRecord implements IItemListener {
                 return ".pdf";
             case efawett:
                 return ".efw";
+            case UNKNOWN:
+            	return ".out";
         }
         return ".out";
     }
@@ -3796,7 +3815,8 @@ public class StatisticsRecord extends DataRecord implements IItemListener {
                                 pMatrixColumns.put("*** " + International.getString("ungültiger Eintrag") + " ***", mk);
                             }
                         } else if (mk instanceof Hashtable) {
-                            Hashtable<Object,Long> hash = (Hashtable<Object,Long>) mk;
+                            @SuppressWarnings("unchecked")
+							Hashtable<Object,Long> hash = (Hashtable<Object,Long>) mk;
                             Object[] hkeys = hash.keySet().toArray();
                             for (Object hk : hkeys) {
                                 pMatrixColumns.put(hk.toString(), mk);

@@ -10,8 +10,6 @@
 
 package de.nmichael.efa.core.items;
 
-import de.nmichael.efa.core.items.ItemTypeLabelValue;
-import de.nmichael.efa.*;
 import de.nmichael.efa.util.*;
 
 // @i18n complete

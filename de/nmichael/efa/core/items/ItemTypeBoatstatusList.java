@@ -19,7 +19,6 @@ import de.nmichael.efa.gui.*;
 import de.nmichael.efa.data.*;
 import de.nmichael.efa.data.storage.DataKey;
 import de.nmichael.efa.data.storage.DataKeyIterator;
-import de.nmichael.efa.data.storage.DataRecord;
 import de.nmichael.efa.data.types.DataTypeIntString;
 import de.nmichael.efa.data.types.DataTypeList;
 import de.nmichael.efa.data.types.DataTypeDate;
@@ -234,20 +233,7 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
                 }
 
                 // Colors for Groups
-                ArrayList<Color> aColors = new ArrayList<Color>();
-                if (r != null) {
-                    DataTypeList<UUID> grps = r.getAllowedGroupIdList();
-                    if (grps != null && grps.length() > 0) {
-                        for (int g=0; g<grps.length(); g++) {
-                            UUID id = grps.get(g);
-                            Color c = groupColors.get(id);
-                            if (c != null) {
-                                aColors.add(c);
-                            }
-                        }
-                    }
-                }
-                Color[] colors = (aColors.size() > 0 ? aColors.toArray(new Color[0]) : null);
+                Color[] colors = (r!=null ? r.getBoatGroupsPieColors(groupColors) : null); 
 
                 BoatListItem item = new BoatListItem();
                 item.list = this;
@@ -597,7 +583,7 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
         		if (res.getType().equals(BoatReservationRecord.TYPE_ONETIME)) {
         		
 	        		//if (lookAheadMinutes<=0) {//aktuell laufende Reservierungen?
-        			if (res.getReservationValidInMinutes()<=0) {
+        			if (res.getReservationValidInMinutes(true)<=0) {
 	        			if ((res.getDateTo().compareTo(today)==0) && (res.getTimeTo() != null)) {
 	        				//Reservierung endet heute? dann nur noch Uhrzeit anzeigen
 	        				return International.getMessage("Reserviert(r)_bis_{timestamp}", res.getTimeTo().toString(false)).trim();
@@ -610,7 +596,7 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
 	        		}
 	        	} else if (res.getType().equals(BoatReservationRecord.TYPE_WEEKLY) 
 	        			  || res.getType().equals(BoatReservationRecord.TYPE_WEEKLY_LIMITED)){
-	        		if (res.getReservationValidInMinutes()<=0) {//aktuell laufende Reservierungen? //weekly ist immer am aktuellen Tag..
+	        		if (res.getReservationValidInMinutes(true)<=0) {//aktuell laufende Reservierungen? //weekly ist immer am aktuellen Tag..
 	        			return International.getMessage("Reserviert(r)_bis_{timestamp}", res.getTimeTo().toString(false)).trim();
 	        		} else {
 	            		return International.getMessage("Reserviert(r)_ab_{timestamp}", res.getTimeFrom().toString(false)).trim();	
@@ -824,5 +810,3 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
     }    
 
 }
-
-

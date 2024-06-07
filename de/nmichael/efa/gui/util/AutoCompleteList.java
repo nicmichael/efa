@@ -428,6 +428,18 @@ public class AutoCompleteList {
         }
         return null;
     }
+    
+    public synchronized String getFirstByPrefix(String prefix) {
+        prefix = prefix.toLowerCase();
+        lastPrefix = prefix;
+     
+        for (pos = 0; pos < dataVisibleFiltered.size(); pos++) {
+            if (dataVisibleFiltered.get(pos).toLowerCase().startsWith(prefix)) {
+                return dataVisibleFiltered.get(pos);
+            }
+        }
+        return null;
+    }    
 
     public synchronized String getLast(String prefix) {
         prefix = prefix.toLowerCase();
