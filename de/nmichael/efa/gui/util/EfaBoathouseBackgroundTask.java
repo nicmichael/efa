@@ -417,7 +417,9 @@ public class EfaBoathouseBackgroundTask extends Thread {
                             boatStatus.data().update(boatStatusRecord);
                             listChanged = true;
                         }
-                        continue;
+                        // do not move to the next boatStatusRecord for hidden Boats. 
+                        // reservations and damages for hidden boats shall be taken care of as well.
+                        //continue; 
                     }
                     if (boatStatusRecord.getUnknownBoat()) {
                         if (!boatStatusRecord.getCurrentStatus().equals(BoatStatusRecord.STATUS_ONTHEWATER)) {
@@ -435,7 +437,7 @@ public class EfaBoathouseBackgroundTask extends Thread {
                     if (reservations == null || reservations.length == 0) {
                         // no reservations at the moment - nothing to do
                         if (!boatStatusRecord.getCurrentStatus().equals(BoatStatusRecord.STATUS_ONTHEWATER)
-                                && !boatStatusRecord.getShowInList().equals(boatStatusRecord.getCurrentStatus())) {
+                                && boatStatusRecord.getShowInList() != null && !boatStatusRecord.getShowInList().equals(boatStatusRecord.getCurrentStatus())) {
                             boatStatusRecord.setShowInList(null);
                         }
 
@@ -510,8 +512,12 @@ public class EfaBoathouseBackgroundTask extends Thread {
                             || !oldCurrentStatus.equals(boatStatusRecord.getCurrentStatus())) {
                         statusRecordChanged = true;
                     }
-                    if (oldShowInList == null
-                            || !oldShowInList.equals(boatStatusRecord.getShowInList())) {
+                    if ((!boatStatusRecord.getCurrentStatus().equals(BoatStatusRecord.STATUS_HIDE)) 
+                    	&& (oldShowInList == null || !oldShowInList.equals(boatStatusRecord.getShowInList()))) {
+                    	//if the boat is hidden, oldShowInList is always null. 
+                    	//if we would not check again for a hidden boat in this location, 
+                    	//efa would always update a boat status, leading to updates for the record every 10 Seconds or so.
+                    	//as a consequence, the focus would be set to the availableBoatList in efaBoatHouse also every 10 seconds.
                         statusRecordChanged = true;
                     }
                     if ((oldComment == null && boatStatusRecord.getComment() != null && boatStatusRecord.getComment().length() > 0)

@@ -10,7 +10,6 @@
 
 package de.nmichael.efa.core.items;
 
-import de.nmichael.efa.Daten;
 import de.nmichael.efa.gui.BaseDialog;
 import de.nmichael.efa.util.*;
 import de.nmichael.efa.util.Dialog;

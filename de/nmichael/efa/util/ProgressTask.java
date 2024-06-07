@@ -10,7 +10,6 @@
 
 package de.nmichael.efa.util;
 
-import de.nmichael.efa.Daten;
 import de.nmichael.efa.gui.ProgressDialog;
 import de.nmichael.efa.util.EfaUtil.UserMessage;
 import java.io.*;

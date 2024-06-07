@@ -10,11 +10,9 @@
 
 package de.nmichael.efa.data;
 
-import de.nmichael.efa.core.config.*;
 import de.nmichael.efa.util.*;
 import de.nmichael.efa.ex.*;
 import de.nmichael.efa.data.storage.*;
-import de.nmichael.efa.data.types.DataTypeList;
 import java.util.*;
 
 // @i18n complete

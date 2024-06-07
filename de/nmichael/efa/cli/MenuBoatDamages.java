@@ -11,8 +11,6 @@
 package de.nmichael.efa.cli;
 
 import de.nmichael.efa.data.*;
-import de.nmichael.efa.data.storage.*;
-import de.nmichael.efa.util.Logger;
 import java.util.Stack;
 
 public class MenuBoatDamages extends MenuData {

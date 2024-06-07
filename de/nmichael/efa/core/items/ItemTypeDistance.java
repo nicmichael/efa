@@ -10,7 +10,6 @@
 
 package de.nmichael.efa.core.items;
 
-import de.nmichael.efa.*;
 import de.nmichael.efa.data.types.DataTypeDistance;
 import de.nmichael.efa.util.*;
 import javax.swing.*;

@@ -12,7 +12,6 @@ package de.nmichael.efa.util;
 import java.util.*;
 import de.nmichael.efa.core.items.ItemTypeLongLat;
 import de.nmichael.efa.Daten;
-import de.nmichael.efa.util.EfaUtil;
 
 // @i18n complete
 public class SunRiseSet {

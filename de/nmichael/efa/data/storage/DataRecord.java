@@ -13,7 +13,6 @@ package de.nmichael.efa.data.storage;
 import de.nmichael.efa.Daten;
 import de.nmichael.efa.core.config.AdminRecord;
 
-import java.awt.GridBagConstraints;
 import java.util.*;
 import de.nmichael.efa.data.types.*;
 import de.nmichael.efa.core.items.*;
@@ -178,6 +177,15 @@ public abstract class DataRecord implements Cloneable, Comparable {
 
     public String[] getFields() {
         return metaData.getFields();
+    }
+    
+    /**
+     * Returns true if a specified field name exists in the data record.
+     * @param fieldName Name (case-sensitive) of the field
+     * @return
+     */
+    public boolean isField(String fieldName) {
+    	return metaData.isField(fieldName);
     }
 
     public int getFieldCount() {

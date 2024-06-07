@@ -10,14 +10,10 @@
 
 package de.nmichael.efa.elwiz;
 
-import javax.swing.UIManager;
 import java.awt.*;
-import java.io.*;
 import de.nmichael.efa.*;
 import de.nmichael.efa.Daten;
-import de.nmichael.efa.util.*;
 import de.nmichael.efa.util.Dialog;
-import de.nmichael.efa.gui.DownloadMultipleFilesDialog;
 
 // @i18n complete
 public class Main extends Program {
