@@ -1309,10 +1309,9 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
                         theName.requestFocus();
                         return false;
                     case 2:
-                        //TODO: not a possibility to log here, can be logged only when record is created;
-                    	/*logBoathouseEvent(Logger.INFO, Logger.MSG_EVT_UNALLOWEDBOATUSAGE,
+                    	logBoathouseEvent(Logger.INFO, Logger.MSG_EVT_UNALLOWEDBOATUSAGE,
                                           International.getString("Unerlaubte Benutzung eines Bootes"),
-                                          myRecord);*/
+                                          theBoat.getValue().toString(), theName.getValue().toString());
                         break;
                     default: //default when the user hits VK_ESCAPE: change crew
                         theName.requestFocus();
@@ -1367,10 +1366,9 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
                         theName.requestFocus();
                         return false;
                     case 2:
-                        //TODO: not a possibility to log here, can be logged only when record is created;                    	
-                        /*logBoathouseEvent(Logger.INFO, Logger.MSG_EVT_UNALLOWEDBOATUSAGE,
+                        logBoathouseEvent(Logger.INFO, Logger.MSG_EVT_UNALLOWEDBOATUSAGE,
                                           International.getString("Unerlaubte Benutzung eines Bootes"),
-                                          myRecord);*/
+                                          theBoat.getValue().toString(), theName.getValue().toString());
                         break;
                         
                     default: //default when the user hits VK_ESCAPE: change crew

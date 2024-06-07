@@ -960,8 +960,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
     }
 
     protected PersonRecord findPerson(ItemTypeString item, long validAt) {
-        PersonRecord p = null;
-        try {
+         try {
             String s = item.getValueFromField().trim();
             if (Daten.efaConfig.getValuePostfixPersonsWithClubName()) {
                 s = PersonRecord.trimAssociationPostfix(s);
@@ -1548,26 +1547,28 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
 
         // run all checks before saving this entry
         if (!checkMisspelledInput() ||
-            !checkDuplicatePersons() ||
-            !checkPersonsForBoatType() ||
-            !checkDuplicateEntry() ||
-            !checkEntryNo() ||
-            !checkBoatCaptain() ||
-            !checkBoatStatus() ||
-            !checkMultiDayTours() ||
-            !checkSessionType() ||
-            !checkDate() ||
-            !checkTime() ||
-            !checkAllowedDateForLogbook() ||
-            !checkAllDataEntered() ||
-            !checkBoatNameValid(boat) ||
-            !checkCrewNamesValid() ||
-            !checkDestinationNameValid() ||
-            !checkUnknownNames() ||
-            !checkProperUnknownNames() ||
-            !checkAllowedPersons()) {
-            return false;
-        }
+        		!checkDate() ||
+        		!checkBoatNameValid(boat) ||
+        		!checkBoatStatus() ||
+                !checkDuplicatePersons() ||
+                !checkPersonsForBoatType() ||
+                !checkCrewNamesValid() ||
+                !checkUnknownNames() ||
+                !checkProperUnknownNames() ||
+                !checkAllowedPersons() ||
+                !checkPersonsForBoatType() ||
+                !checkBoatCaptain() ||
+                !checkEntryNo() ||
+                !checkMultiDayTours() ||
+                !checkTime() ||
+                !checkAllowedDateForLogbook() ||
+                !checkDestinationNameValid() ||
+                !checkAllDataEntered() ||
+                !checkSessionType() ||
+                !checkDuplicateEntry() 
+        		) {
+                return false;
+            }
 
         boolean success = saveEntryInLogbook();
 
@@ -2332,6 +2333,8 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
                         entryno.getValueFromField(), checkMode);
                 if (!success) {
                     efaBoathouseAction.boat = null; // otherwise next check would fail
+                    boat.requestFocus();
+                    boat.setSelection(0, 255);
                 }
                 return success;
             }
@@ -5184,5 +5187,16 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         efaBoathouseFrame.showEfaBoathouseFrame(efaBoathouseAction, currentRecord);
     }
 
+    public static void logBoathouseEvent(String logType, String logKey, String msg, String boatName, String personName) {
+        Logger.log(logType, logKey, logEventInfoText(logType, logKey, msg, boatName, personName));
+    }
 
+    public static String logEventInfoText(String logType, String logKey, String msg, String boatName, String personName) {
+        String infoText; 
+        infoText = "#" + "MultiSession" + " - " + boatName + " " +
+                          International.getMessage("mit {crew}", personName);
+        return msg + (infoText != null ? ": " + infoText : "");
+    	
+    }
+    
 }
