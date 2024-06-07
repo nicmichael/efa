@@ -14,7 +14,9 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
+import java.awt.RenderingHints;
 import java.awt.Window;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
@@ -50,6 +52,7 @@ import java.util.zip.ZipOutputStream;
 
 import javax.mail.internet.InternetAddress;
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
@@ -2288,7 +2291,35 @@ public class EfaUtil {
     	Collections.sort(fontFamilies,new EfaSortStringComparator());
     	return fontFamilies;
 	}
-    
+
+	/**
+	 * Creates a colored pie chart icon. Each specified color takes 1/nth of the pie
+	 * @param colors Array of Colors to be used. Any color item must not be null.
+	 * @param iconWidth Width of the icon. Must not be 0.
+	 * @param iconHeight Height of the icon. Must not be 0. 
+	 * @return Icon 
+	 */
+	public static ImageIcon createColorPieIcon(Color[] colors, int iconWidth, int iconHeight) {
+	    BufferedImage image = new BufferedImage(iconWidth, iconHeight,
+	            BufferedImage.TYPE_INT_ARGB);
+	    Graphics2D g = image.createGraphics();
+	    g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		if (colors.length == 1) {
+	        g.setColor(colors[0]);
+	        g.fillOval(0, 0, iconWidth, iconHeight);
+	    } else {
+	        int currentAngle = 90;
+	        int anglePerColor = 360 / colors.length;
+	        for (int i=0; i<colors.length; i++) {
+	            g.setColor(colors[i]);
+	            g.fillArc(0, 0, iconWidth, iconHeight,
+	                    currentAngle % 360, anglePerColor);
+	            currentAngle += anglePerColor;
+	        }
+	    }
+		return new ImageIcon(image);
+	}	
+	
     /**
      * Helper class to display a notification message.
      * If this is a GUI application, we asynchronously display a dialog through

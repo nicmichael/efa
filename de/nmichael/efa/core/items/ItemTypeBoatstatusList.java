@@ -233,20 +233,7 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
                 }
 
                 // Colors for Groups
-                ArrayList<Color> aColors = new ArrayList<Color>();
-                if (r != null) {
-                    DataTypeList<UUID> grps = r.getAllowedGroupIdList();
-                    if (grps != null && grps.length() > 0) {
-                        for (int g=0; g<grps.length(); g++) {
-                            UUID id = grps.get(g);
-                            Color c = groupColors.get(id);
-                            if (c != null) {
-                                aColors.add(c);
-                            }
-                        }
-                    }
-                }
-                Color[] colors = (aColors.size() > 0 ? aColors.toArray(new Color[0]) : null);
+                Color[] colors = (r!=null ? r.getBoatGroupsPieColors(groupColors) : null); 
 
                 BoatListItem item = new BoatListItem();
                 item.list = this;
@@ -823,5 +810,3 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
     }    
 
 }
-
-

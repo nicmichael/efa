@@ -8,16 +8,38 @@
  */
 package de.nmichael.efa.data;
 
-import de.nmichael.efa.*;
-import de.nmichael.efa.data.storage.*;
-import de.nmichael.efa.data.types.*;
-import de.nmichael.efa.core.config.*;
-import de.nmichael.efa.core.items.*;
-import de.nmichael.efa.gui.util.*;
-import de.nmichael.efa.util.*;
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.UUID;
+import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import java.util.*;
-import java.util.regex.*;
+import javax.swing.ImageIcon;
+
+import de.nmichael.efa.Daten;
+import de.nmichael.efa.core.config.AdminRecord;
+import de.nmichael.efa.core.config.EfaTypes;
+import de.nmichael.efa.core.items.IItemFactory;
+import de.nmichael.efa.core.items.IItemType;
+import de.nmichael.efa.core.items.ItemTypeBoolean;
+import de.nmichael.efa.core.items.ItemTypeDate;
+import de.nmichael.efa.core.items.ItemTypeItemList;
+import de.nmichael.efa.core.items.ItemTypeString;
+import de.nmichael.efa.core.items.ItemTypeStringAutoComplete;
+import de.nmichael.efa.core.items.ItemTypeStringList;
+import de.nmichael.efa.data.storage.DataKey;
+import de.nmichael.efa.data.storage.DataRecord;
+import de.nmichael.efa.data.storage.IDataAccess;
+import de.nmichael.efa.data.storage.MetaData;
+import de.nmichael.efa.data.types.DataTypeDate;
+import de.nmichael.efa.data.types.DataTypeList;
+import de.nmichael.efa.gui.ImagesAndIcons;
+import de.nmichael.efa.gui.util.TableItem;
+import de.nmichael.efa.gui.util.TableItemHeader;
+import de.nmichael.efa.util.EfaUtil;
+import de.nmichael.efa.util.International;
 
 // @i18n complete
 public class PersonRecord extends DataRecord implements IItemFactory {
@@ -679,7 +701,6 @@ public class PersonRecord extends DataRecord implements IItemFactory {
     public IItemType[] getDefaultItems(String itemName) {
         if (itemName.equals(PersonRecord.GUIITEM_GROUPS)) {
             IItemType[] items = new IItemType[1];
-            String CAT_USAGE = "%04%" + International.getString("Gruppen");
             items[0] = getGuiItemTypeStringAutoComplete(PersonRecord.GUIITEM_GROUPS, null,
                     IItemType.TYPE_PUBLIC, CAT_GROUPS,
                     getPersistence().getProject().getGroups(false), getValidFrom(), getInvalidFrom() - 1,
@@ -852,6 +873,106 @@ public class PersonRecord extends DataRecord implements IItemFactory {
             items[2] = new TableItem(getBirthday());
             items[3] = new TableItem(getStatusName());
         }
+        setIconAndTooltipForEFBSyncAndGroups(items[0]);
         return items;
     }
+    
+    /**
+     * Adds the EFBSync Icon for persons where the efbID is filled.
+     * Adds a tooltip with the efbID to those persons.
+     * @param theEntry TableItem for the person.
+     */
+    private void setIconAndTooltipForEFBSyncAndGroups(TableItem theEntry) {
+    	String result = null;
+    	String efbID = getString(PersonRecord.EFBID);
+    	if (efbID!=null) {
+    		theEntry.addIcon(ImagesAndIcons.getIcon(ImagesAndIcons.IMAGE_MENU_EFBSYNC));
+    		result = "EFB Sync mit ID: "+efbID;
+    	}
+
+    	GroupRecord[] personGroups = getGroupList();
+    	
+    	if (personGroups != null && personGroups.length>0) {
+    		theEntry.addIcon(createGroupPieIcon(personGroups, 16,16));
+			String addendum=International.getString("Gruppen")+":\n";
+			int count=0;
+    		for (int i=0; i<personGroups.length; i++) {
+    			addendum = addendum + (count++ == 0 ? "   " : "\n   ") + personGroups[i].getName();
+    		}
+    		if (result!=null) {
+    			result = result +"\n"+addendum;
+    		} else  {
+    			result = addendum;
+    		}
+    	}
+    
+		theEntry.setToolTipText(result);
+    
+    }
+
+   
+    /**
+     * Create a pie chart icon consisting of the colors of the groups the person is currently assigned to.
+     * @param personGroups
+     * @param iconWidth
+     * @param iconHeight
+     * @return null if person is not currently assigned to a group. 
+     */
+    private ImageIcon createGroupPieIcon(GroupRecord[] personGroups, int iconWidth, int iconHeight) {
+   	 Color[] colors = this.getPersonGroupsPieColors(personGroups); 
+   	 return (colors !=null ? EfaUtil.createColorPieIcon(colors, iconWidth, iconHeight) : null);
+    }
+
+    /**
+     * Return a color list for all groups the person is assigned to currently.
+     * @param personGroups list of groups
+     * @return null if person is assigned to no groups, or personGroups is empty.
+     */
+    public Color[] getPersonGroupsPieColors(GroupRecord[] personGroups) {
+	    // Colors for Groups
+	   ArrayList<Color> aColors = new ArrayList<Color>();
+       DataTypeList<UUID> grps = this.getAllowedGroupIdList(personGroups);
+       if (grps != null && grps.length() > 0) {
+           for (int g=0; g<grps.length(); g++) {
+               UUID id = grps.get(g);
+               Color c = getGroupColor(id);
+               if (c != null) {
+                   aColors.add(c);
+               }
+           }
+       }
+	    return  (aColors.size() > 0 ? aColors.toArray(new Color[0]) : null);
+    }    
+    
+    /**
+     * Return a list of UUIDs representing the groups the person is assigned to currently. 
+     * @param personGroups list of groups
+     * @return list of UUIDs or null, if personGroups is null.
+     */
+    private DataTypeList<UUID> getAllowedGroupIdList(GroupRecord[] personGroups) {
+    	if (personGroups!=null) {
+	    	DataTypeList<UUID> result = new DataTypeList<UUID>();
+	    	
+	    	for (int i=0; i<personGroups.length; i++) {
+	    		result.add(personGroups[i].getId());
+	    	}
+	    	return result;
+    	} else {
+    		return null;
+    	}
+    }
+    
+    /**
+     * Return a color for a specified group record valid at the current time.
+     * @param groupID UUID
+     * @return Color for a group, or null if group does not exists
+     */
+	private Color getGroupColor(UUID groupID) {
+		
+		Groups myGroups= Daten.project.getGroups(false);
+		GroupRecord myRecord = myGroups.findGroupRecord(groupID, System.currentTimeMillis());
+		
+		return (myRecord != null ? EfaUtil.getColor(myRecord.getColor()):null);
+	
+	}    
 }

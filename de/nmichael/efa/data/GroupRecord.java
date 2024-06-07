@@ -10,13 +10,33 @@
 
 package de.nmichael.efa.data;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.image.BufferedImage;
+import java.util.Arrays;
+import java.util.Hashtable;
+import java.util.UUID;
+import java.util.Vector;
+
+import javax.swing.ImageIcon;
+
 import de.nmichael.efa.core.config.AdminRecord;
-import de.nmichael.efa.data.storage.*;
-import de.nmichael.efa.data.types.*;
-import de.nmichael.efa.core.items.*;
-import de.nmichael.efa.gui.util.*;
-import de.nmichael.efa.util.*;
-import java.util.*;
+import de.nmichael.efa.core.items.IItemFactory;
+import de.nmichael.efa.core.items.IItemType;
+import de.nmichael.efa.core.items.ItemTypeColor;
+import de.nmichael.efa.core.items.ItemTypeItemList;
+import de.nmichael.efa.core.items.ItemTypeString;
+import de.nmichael.efa.core.items.ItemTypeStringAutoComplete;
+import de.nmichael.efa.data.storage.DataKey;
+import de.nmichael.efa.data.storage.DataRecord;
+import de.nmichael.efa.data.storage.IDataAccess;
+import de.nmichael.efa.data.storage.MetaData;
+import de.nmichael.efa.data.types.DataTypeList;
+import de.nmichael.efa.gui.util.TableItem;
+import de.nmichael.efa.gui.util.TableItemHeader;
+import de.nmichael.efa.util.EfaUtil;
+import de.nmichael.efa.util.International;
 
 // @i18n complete
 
@@ -285,7 +305,18 @@ public class GroupRecord extends DataRecord implements IItemFactory {
         TableItem[] items = new TableItem[2];
         items[0] = new TableItem(getName());
         items[1] = new TableItem(Integer.toString(getNumberOfMembers()));
+        items[0].addIcon(this.getColorIconForGroup());
         return items;
     }
     
+    private ImageIcon getColorIconForGroup() {
+        BufferedImage image = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
+
+        Graphics2D g = image.createGraphics();
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g.setColor(EfaUtil.getColor(this.getColor()));
+	    g.fillOval(0, 0, 16,16);
+        return new ImageIcon(image);    		
+    }
 }
+
