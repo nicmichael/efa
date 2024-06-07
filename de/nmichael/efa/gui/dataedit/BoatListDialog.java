@@ -56,5 +56,14 @@ public class BoatListDialog extends DataListDialog {
         Boats boats = (Boats)persistence;
         return boats.getMergeBoatsProgressTask(mainKey, mergeKeys);
     }
+    
+	protected void createSpecificItemTypeRecordTable() {
+		
+		super.createSpecificItemTypeRecordTable();
+    
+		table.addPermanentSecondarySortingColumn(BoatRecord.COLUMN_ID_BOAT_TYPE);
+		table.addPermanentSecondarySortingColumn(BoatRecord.COLUMN_ID_BOAT_OWNER);
+		table.addPermanentSecondarySortingColumn(BoatRecord.COLUMN_ID_BOAT_NAME);    
+	}        
 
 }

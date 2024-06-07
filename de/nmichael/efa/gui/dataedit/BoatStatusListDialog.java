@@ -53,4 +53,15 @@ public class BoatStatusListDialog extends DataListDialog {
         }
         return new BoatStatusEditDialog(parent, (BoatStatusRecord)record, false, admin);
     }
+    
+	protected void createSpecificItemTypeRecordTable() {
+		
+		super.createSpecificItemTypeRecordTable();
+
+		table.addPermanentSecondarySortingColumn(BoatStatusRecord.COLUMN_ID_BOAT_BASE_STATUS);
+		table.addPermanentSecondarySortingColumn(BoatStatusRecord.COLUMN_ID_BOAT_CURRENT_STATUS);
+		table.addPermanentSecondarySortingColumn(BoatStatusRecord.COLUMN_ID_BOAT_NAME);        
+
+	}        
+    
 }

@@ -14,6 +14,7 @@ import de.nmichael.efa.Daten;
 import de.nmichael.efa.core.config.AdminRecord;
 import de.nmichael.efa.core.items.IItemType;
 import de.nmichael.efa.core.items.ItemTypeDataRecordTable;
+import de.nmichael.efa.data.BoatReservationRecord;
 import de.nmichael.efa.data.Clubwork;
 import de.nmichael.efa.data.ClubworkRecord;
 import de.nmichael.efa.data.storage.DataRecord;
@@ -203,4 +204,14 @@ public class ClubworkListDialog extends DataListDialog {
             super.itemListenerActionTable(actionId, records);
         }
     }
+    
+	protected void createSpecificItemTypeRecordTable() {
+		
+		super.createSpecificItemTypeRecordTable();
+
+		table.addPermanentSecondarySortingColumn(ClubworkRecord.COLUMN_ID_LAST_NAME);        
+		table.addPermanentSecondarySortingColumn(ClubworkRecord.COLUMN_ID_FIRST_NAME);
+		table.addPermanentSecondarySortingColumn(ClubworkRecord.COLUMN_ID_DATE);
+		
+	}
 }
