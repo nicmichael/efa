@@ -117,6 +117,11 @@ public class BoatStatusRecord extends DataRecord {
         return getUUID(BOATID);
     }
 
+    /**
+     * Return the qualified name of the boat identified by the boatstatus record's boat id, valid at the given timestamp.
+     * @param validAt timestamp (System.currentTimeMillis)
+     * @return Qualified name of the boat, null if no boatrecord can be found for the BoatID.
+     */
     public String getBoatNameAsString(long validAt) {
         Boats b = getPersistence().getProject().getBoats(false);
         if (b != null) {
@@ -269,6 +274,10 @@ public class BoatStatusRecord extends DataRecord {
         return getString(COMMENT);
     }
     
+    /**
+     * Get the name of the boat owner of the current boatstatusrecord's boat.
+     * @return Boat owner's name, or empty string if boat cannot be found for this BoatStatusRecord.
+     */
     public String getBoatOwner() {
     	  Boats boats = getPersistence().getProject().getBoats(false);
           String boatOwner = "";
@@ -281,6 +290,10 @@ public class BoatStatusRecord extends DataRecord {
           return boatOwner;    	
     }
 
+    /**
+     * Get the name of the boat of the current boatstatusrecord.
+     * @return Boat's qualified name, or user-entered name of a foreign boat, with suffix "(unknown boat)".
+     */
     private String getBoatName() {
         Boats boats = getPersistence().getProject().getBoats(false);
         String boatName = "?";
