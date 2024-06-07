@@ -360,56 +360,10 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
     // but unfortunately, as a subclass of efaBaseFrame needs to instantiate these fields. :-/
     
     private void createAllUnusedElements() {
-    
     	entryno = new ItemTypeString(LogbookRecord.ENTRYID, "", IItemType.TYPE_PUBLIC, null, International.getStringWithMnemonic("Lfd. Nr."));
     	entryno.setVisible(false);
-       /* 
-    	opensession = new ItemTypeLabel(LogbookRecord.OPEN, IItemType.TYPE_PUBLIC, null, International.getStringWithMnemonic("Fahrt offen"));
-        opensession.setVisible(false);
-        
-        closesessionButton = new ItemTypeButton("CloseSessionButton", IItemType.TYPE_PUBLIC, null, 
-                International.getStringWithMnemonic("Fahrt offen") + " - " +
-                International.getStringWithMnemonic("jetzt beenden"));
-        closesessionButton.setVisible(false);
-        
-        boat = new ItemTypeStringAutoComplete(LogbookRecord.BOATNAME, "", IItemType.TYPE_PUBLIC, null, International.getStringWithMnemonic("Boot"), true);
-        boat.setVisible(false);
-        boatvariant = new ItemTypeStringList(LogbookRecord.BOATVARIANT, "",
-                null, null,
-                IItemType.TYPE_PUBLIC, null, International.getString("Variante"));
-        boatvariant.setVisible(false);
-        
-        cox = new ItemTypeStringAutoComplete(LogbookRecord.COXNAME, "", IItemType.TYPE_PUBLIC, null, International.getStringWithMnemonic("Steuermann"), true);
-        cox.setVisible(false);
-     */   
+
         crew = new ItemTypeStringAutoComplete[LogbookRecord.CREW_MAX];
-        /*
-        for (int i=1; i<=crew.length; i++) {
-         	 crew[i-1] = new ItemTypeStringAutoComplete(LogbookRecord.getCrewFieldNameName(i), "", IItemType.TYPE_PUBLIC, null,
-                     (i == 1 ? International.getString("Mannschaft") + " " : (i < 10 ? "  " :"")) + Integer.toString(i), true);
-        	crew[i-1].setVisible(false);
-        }
-        
-        boatcaptain = new ItemTypeStringList(LogbookRecord.BOATCAPTAIN, "",
-                LogbookRecord.getBoatCaptainValues(), LogbookRecord.getBoatCaptainDisplay(),
-                IItemType.TYPE_PUBLIC, null, International.getString("Obmann"));
-        boatcaptain.setVisible(false);   
-        
-        sessiongroup = new ItemTypeStringAutoComplete(LogbookRecord.SESSIONGROUPID,
-                "", IItemType.TYPE_PUBLIC, null,
-                International.getStringWithMnemonic("Fahrtgruppe"), true);
-        sessiongroup.setVisible(false);      
-        
-        remainingCrewUpButton = new ItemTypeButton("REMAININGCREWUP", IItemType.TYPE_PUBLIC, null, "");
-        remainingCrewDownButton = new ItemTypeButton("REMAININGCREWDOWN", IItemType.TYPE_PUBLIC, null, "");
-        remainingCrewUpButton.setVisible(false);  
-        remainingCrewDownButton.setVisible(false);  
-        
-        boatDamageButton = new ItemTypeButton("BOATDAMAGE", IItemType.TYPE_PUBLIC, null, International.getString("Bootsschaden melden"));
-        boatNotCleanedButton = new ItemTypeButton("BOATNOTCLEANED", IItemType.TYPE_PUBLIC, null, International.getString("Boot war nicht geputzt"));
-        boatDamageButton.setVisible(false);  
-        boatNotCleanedButton.setVisible(false);     
-        */
     }
     
     /**
@@ -731,6 +685,7 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
             !checkAllowedPersonsForBoat() ||
             !checkDestinationNameValid() ||
             !checkAllDataEntered() ||
+            !checkMultiSessionAtLeastOnePair() ||
             !checkSessionType()) {
             return false;
         }
@@ -945,6 +900,36 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
 	        }
 	    }
 	    return true;
+    }
+    
+    /**
+     * Check if there is at least one name/boat pair with both items filled,
+     * otherwise we cannot create a session.
+     * @return
+     */
+    private boolean checkMultiSessionAtLeastOnePair() {
+    	 
+    	for (int iCurNameAndBoat =0; iCurNameAndBoat<nameAndBoat.getItemCount(); iCurNameAndBoat++) {
+ 	    	ItemTypeStringAutoComplete[] acItem= (ItemTypeStringAutoComplete[])nameAndBoat.getItems(iCurNameAndBoat);
+ 	    	ItemTypeStringAutoComplete curName= acItem[0];
+ 	    	ItemTypeStringAutoComplete curBoat= acItem[1];
+ 	    
+ 	    	if (!curName.getValue().trim().isEmpty() && !curBoat.getValue().trim().isEmpty() ) {
+ 	    		return true; // we found a name/boat pair that is not empty
+ 	    	}
+    	}
+    	
+    	// we only get here if there is not at least one name/boat pair
+
+        Dialog.error(International.getString("Bitte trage mindestens eine Person ein!"));
+    	
+    	if (nameAndBoat.getItemCount()<=0) {
+    		addStandardItems(nameAndBoat, 1);
+    		updateGui();
+    	}
+    	nameAndBoat.requestFocus();
+    	return false;
+ 	    	
     }
     
     /**
