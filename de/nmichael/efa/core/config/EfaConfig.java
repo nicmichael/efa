@@ -224,6 +224,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 	private ItemTypeBoolean efaDirekt_warnEvenNonCriticalBoatDamages;
 	private ItemTypeBoolean efaDirekt_eintragNichtAenderbarUhrzeit;
 	private ItemTypeBoolean efaDirekt_eintragNichtAenderbarKmBeiBekanntenZielen;
+	private ItemTypeBoolean fixCoxForCoxlessUnknownBoats;
 	private ItemTypeBoolean efaBoathouseOnlyEnterKnownBoats;
 	private ItemTypeBoolean efaBoathouseOnlyEnterKnownPersons;
 	private ItemTypeBoolean efaBoathouseOnlyEnterKnownDestinations;
@@ -731,10 +732,13 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 					IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_INPUT),
 					International.getString("Gewässernamen in Zielliste anzeigen")));
 
-			addHeader("efaCommonInputPersons", IItemType.TYPE_EXPERT,
+			addHeader("efaCommonInputPersons", IItemType.TYPE_PUBLIC,
 					BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_INPUT),
 					International.getString("Besatzung"), 3);
 
+			addParameter(fixCoxForCoxlessUnknownBoats = new ItemTypeBoolean("fixCoxForCoxlessUnknownBoats", false, IItemType.TYPE_PUBLIC,
+					BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_INPUT),
+					International.getString("Ein-Personen-Fahrt mit unbekanntem Boot: Person als Crew eintragen (anstatt als Steuermann)")));
 			addParameter(showObmann = new ItemTypeBoolean("BoatCaptainShow", true, IItemType.TYPE_EXPERT,
 					BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_INPUT),
 					International.getString("Obmann-Auswahlliste anzeigen")));
@@ -2276,6 +2280,10 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 		return efaDirekt_eintragNichtAenderbarKmBeiBekanntenZielen.getValue();
 	}
 
+	public boolean getValueFixCoxForCoxlessUnknownBoats() {
+		return fixCoxForCoxlessUnknownBoats.getValue();
+	}	
+	
 	public boolean getValueEfaDirekt_eintragNurBekannteBoote() {
 		return efaBoathouseOnlyEnterKnownBoats.getValue();
 	}
