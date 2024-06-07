@@ -3,7 +3,6 @@ package de.nmichael.efa.drv;
 import de.nmichael.efa.Daten;
 import de.nmichael.efa.util.ActionHandler;
 import de.nmichael.efa.util.EfaUtil;
-import de.nmichael.efa.util.Help;
 import de.nmichael.efa.util.Dialog;
 import java.awt.*;
 import java.awt.event.*;

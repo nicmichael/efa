@@ -10,8 +10,6 @@
 
 package de.nmichael.efa.efa1;
 
-import de.nmichael.efa.*;
-import de.nmichael.efa.efa1.DatenListe;
 import de.nmichael.efa.util.*;
 import de.nmichael.efa.util.Dialog;
 import java.io.*;

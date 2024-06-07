@@ -12,9 +12,6 @@ package de.nmichael.efa.data.storage;
 
 import de.nmichael.efa.*;
 import de.nmichael.efa.core.config.AdminRecord;
-import de.nmichael.efa.data.Logbook;
-import de.nmichael.efa.data.LogbookRecord;
-import de.nmichael.efa.data.types.DataTypeIntString;
 import de.nmichael.efa.util.*;
 import de.nmichael.efa.ex.EfaException;
 import java.util.*;

@@ -28,7 +28,6 @@
 package de.nmichael.efa.gui.util;
 
 import de.nmichael.efa.util.EfaUtil;
-import de.nmichael.efa.util.International;
 import de.nmichael.efa.util.TMJ;
 import de.nmichael.efa.util.TableMap;
 import java.util.Date;

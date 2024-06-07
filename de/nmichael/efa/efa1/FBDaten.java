@@ -11,8 +11,6 @@
 package de.nmichael.efa.efa1;
 
 import de.nmichael.efa.*;
-import de.nmichael.efa.util.*;
-import de.nmichael.efa.efa1.Boote;
 import de.nmichael.efa.core.config.EfaTypes;
 
 // @i18n complete

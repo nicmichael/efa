@@ -9,9 +9,6 @@
  */
 package de.nmichael.efa.data.efawett;
 
-import de.nmichael.efa.data.efawett.WettDefGruppe;
-import de.nmichael.efa.data.efawett.WettDef;
-import de.nmichael.efa.data.efawett.EfaWettMeldung;
 import de.nmichael.efa.core.config.EfaTypes;
 import de.nmichael.efa.data.types.DataTypeDistance;
 import de.nmichael.efa.efa1.DatenListe;
