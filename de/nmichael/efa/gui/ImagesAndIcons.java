@@ -8,6 +8,7 @@ import de.nmichael.efa.util.Logger;
 public class ImagesAndIcons {
 	public static final String ARROW_DOWN = "arrow_down.png";
 	public static final String ARROW_UP = "arrow_up.png";
+	public static final String ARROW_RIGHT_WHITE = "arrow_right_white.png";
 	public static final String BIGIMAGE_CLOSEDOORS = "notification_closedoors.png";
 	public static final String BIGIMAGE_DARKNESS = "notification_darkness.png";
 	public static final String BIGIMAGE_INFO = "notification_info.png";

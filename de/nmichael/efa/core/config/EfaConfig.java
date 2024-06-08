@@ -7,6 +7,7 @@ package de.nmichael.efa.core.config;
 
 import java.awt.Color;
 import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -1776,6 +1777,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 			addParameter(crontab = new ItemTypeItemList("CronTab", new Vector<IItemType[]>(), this,
 					IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_CRONTAB),
 					International.getString("Automatische Abläufe")));
+			crontab.setFieldGrid(2, GridBagConstraints.WEST, GridBagConstraints.BOTH);
 			//crontab.setScrollPane(1000, 400);
 			crontab.setRepeatTitle(false);
 

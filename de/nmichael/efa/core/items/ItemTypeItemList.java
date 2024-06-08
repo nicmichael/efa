@@ -10,6 +10,7 @@
 
 package de.nmichael.efa.core.items;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -28,12 +29,14 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.SwingConstants;
 
 import de.nmichael.efa.Daten;
 import de.nmichael.efa.gui.BaseDialog;
 import de.nmichael.efa.gui.BaseFrame;
+import de.nmichael.efa.gui.ImagesAndIcons;
 import de.nmichael.efa.gui.util.RoundedBorder;
-import de.nmichael.efa.gui.util.RoundedLabel;
+import de.nmichael.efa.gui.util.RoundedPanel;
 import de.nmichael.efa.util.Dialog;
 import de.nmichael.efa.util.EfaUtil;
 import de.nmichael.efa.util.International;
@@ -202,9 +205,9 @@ public class ItemTypeItemList extends ItemType {
         // not used, everything done in displayOnGui(...)
     }
     
+    
     public int displayOnGui(Window dlg, JPanel panel, int x, int y) {
         this.dlg = dlg;
-
         
         if (scrollX > 0 && scrollY > 0) {
             scrollPane = new JScrollPane();
@@ -216,18 +219,40 @@ public class ItemTypeItemList extends ItemType {
             panel.setLayout(new GridBagLayout());
             scrollPane.getViewport().add(panel, null);
         }
-        
+
+        //add a description
+        titlelabel = new JLabel();
+        titlelabel.setBackground(Daten.efaConfig.getHeaderBackgroundColor());
+        titlelabel.setForeground(Daten.efaConfig.getHeaderForegroundColor());
+        titlelabel.setOpaque(true);
+        titlelabel.setFont(titlelabel.getFont().deriveFont(Font.BOLD));
+        titlelabel.setText(" " + getDescription());
+    
+        // we use a roundedPanel as base element so that we can add the caption on the left,
+        // and highlight the add button on the right with some prominent text "new" and an extra arrow icon.
         int myY = 0;
-        if (Daten.efaConfig.getHeaderUseHighlightColor()) {
-	        titlelabel = new RoundedLabel();
-	        titlelabel.setBackground(Daten.efaConfig.getHeaderBackgroundColor());
-	        titlelabel.setForeground(Daten.efaConfig.getHeaderForegroundColor());
-	        titlelabel.setOpaque(true);
-	        titlelabel.setFont(titlelabel.getFont().deriveFont(Font.BOLD));
-	        titlelabel.setBorder(new RoundedBorder(titlelabel.getForeground()));
-        } else {titlelabel=new JLabel();}
-        
-        Mnemonics.setLabel(dlg, titlelabel, " " + getDescription() + ": ");
+      	JPanel titlePanel=new RoundedPanel();
+    	titlePanel.setLayout(new BorderLayout(5,2));
+        titlePanel.setBorder(new RoundedBorder(Daten.efaConfig.getHeaderForegroundColor()));
+        titlePanel.setBackground(Daten.efaConfig.getHeaderBackgroundColor());
+        titlePanel.setForeground(Daten.efaConfig.getHeaderForegroundColor());
+        titlePanel.setOpaque(true);
+        titlePanel.setFont(titlelabel.getFont().deriveFont(Font.BOLD));
+    
+        JLabel iconLabel=new JLabel();
+        iconLabel.setText("        "+International.getString("Neu")); // put some gap between the caption and the "new", neccessary in special when itemTypeItemList has no rows.
+        iconLabel.setFont(titlelabel.getFont());
+        iconLabel.setIconTextGap(4);
+        iconLabel.setBackground(Daten.efaConfig.getHeaderBackgroundColor());
+        iconLabel.setForeground(Daten.efaConfig.getHeaderForegroundColor());
+        iconLabel.setIcon(ImagesAndIcons.getIcon(ImagesAndIcons.ARROW_RIGHT_WHITE));
+        iconLabel.setHorizontalTextPosition(SwingConstants.LEADING);
+
+        titlePanel.add(titlelabel, BorderLayout.WEST);
+        titlePanel.add(iconLabel, BorderLayout.EAST);
+        panel.add(titlePanel, new GridBagConstraints(x, y, xForAddDelButtons, 1, 0.0, 0.0,
+                GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(padYbefore, padXbefore, padYafter , 0), 0, 0));	        
+	        
         if (type == IItemType.TYPE_EXPERT) {
             if (!Daten.efaConfig.getHeaderUseHighlightColor()) {
             	titlelabel.setForeground(Color.red);
@@ -244,8 +269,6 @@ public class ItemTypeItemList extends ItemType {
             public void actionPerformed(ActionEvent e) { addButtonHit(e); }
         });
 
-        panel.add(titlelabel, new GridBagConstraints(x, y, xForAddDelButtons, 1, 0.0, 0.0,
-                GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(padYbefore, padXbefore, padYafter , 0), 0, 0));
         panel.add(addButton, new GridBagConstraints(x+xForAddDelButtons, y, 2, 1, 0.0, 0.0,
                 GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(padYbefore, 2, padYafter, padXafter), 0, 0));
         myY++;

@@ -118,6 +118,7 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
      * 
      */
     /* mostly same elements, but slightly diffrent order of the values */
+    /*
     protected void iniGuiMain() {
     	int yPos=0;
     	int HEADER_WIDTH=9;
@@ -345,6 +346,244 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
         saveButton.setBackgroundColorWhenFocused(Daten.efaConfig.getValueEfaDirekt_colorizeInputField() ? Color.yellow : null);
         saveButton.setIcon(getIcon(BaseDialog.IMAGE_ACCEPT));
         saveButton.displayOnGui(this, mainPanel, BorderLayout.SOUTH);
+        saveButton.registerItemListener(this);
+
+        createAllUnusedElements();
+        
+        destination.setValidAt(date, starttime);
+        
+        Dimension dim = mainPanel.getMinimumSize();
+        dim.height = dim.height + ADD_HEIGHT_TO_DIALOG;
+        mainPanel.setMinimumSize(dim);        
+    }    */
+    
+    protected void iniGuiMain() {
+    	int yPos=0;
+    	int HEADER_WIDTH=9;
+    	
+        JPanel mainInputPanel = new JPanel();
+        mainInputPanel.setLayout(new GridBagLayout());
+        mainPanel.add(mainInputPanel, BorderLayout.NORTH);
+
+        ItemTypeLabelHeader header = createHeader("CREATE_MULTISESSION", 0, null, 
+        		(mode == EfaBaseFrame.MODE_BOATHOUSE_START_MULTISESSION ? International.getString("Mehrere Einzelfahrten beginnen") : International.getString("Mehrere Einzelfahrten nachtragen")),
+        				HEADER_WIDTH);
+        header.displayOnGui(this,  mainInputPanel, 0, yPos);
+        yPos++;
+
+        // Date, Enddate, optionally a button to append end date
+        date = new ItemTypeDate(LogbookRecord.DATE, new DataTypeDate(), IItemType.TYPE_PUBLIC, null, International.getStringWithMnemonic("Datum"));
+        date.showWeekday(true);
+        date.setFieldSize(100, FIELD_HEIGHT);
+        date.setLabelGrid(1, GridBagConstraints.EAST, GridBagConstraints.NONE);
+        date.setFieldGrid(1, GridBagConstraints.WEST, GridBagConstraints.NONE);
+        date.setWeekdayGrid(2, GridBagConstraints.WEST, GridBagConstraints.NONE);
+        date.setBackgroundColorWhenFocused(Daten.efaConfig.getValueEfaDirekt_colorizeInputField() ? Color.yellow : null);
+        date.displayOnGui(this, mainInputPanel, 0, yPos);
+        date.registerItemListener(this);
+        
+        // End Date
+        enddate = new ItemTypeDate(LogbookRecord.ENDDATE, new DataTypeDate(), IItemType.TYPE_PUBLIC, null, International.getStringWithMnemonic("bis"));
+        enddate.setMustBeAfter(date, false);
+        enddate.showWeekday(true);
+        enddate.setFieldSize(100, FIELD_HEIGHT);
+        enddate.setLabelGrid(1, GridBagConstraints.EAST, GridBagConstraints.NONE);
+        enddate.setFieldGrid(2, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL);
+        enddate.setWeekdayGrid(1, GridBagConstraints.WEST, GridBagConstraints.NONE);
+        enddate.showOptional(true);
+        if (isModeBoathouse()) {
+            enddate.setOptionalButtonText("+ " + International.getString("Enddatum"));
+        }
+        enddate.setBackgroundColorWhenFocused(Daten.efaConfig.getValueEfaDirekt_colorizeInputField() ? Color.yellow : null);
+        enddate.displayOnGui(this, mainInputPanel, 4, yPos);
+        enddate.registerItemListener(this);
+        if (isModeBoathouse() && !Daten.efaConfig.getValueAllowEnterEndDate()) {
+            enddate.setVisible(false);
+        }
+
+        yPos++;
+
+        
+        // Start Time, End Time, including according labels  AND Session Type.
+        
+        // StartTime
+        starttime = new ItemTypeTime(LogbookRecord.STARTTIME, new DataTypeTime(), IItemType.TYPE_PUBLIC, null, International.getStringWithMnemonic("Abfahrt"));
+        starttime.setFieldSize(200, FIELD_HEIGHT);
+        starttime.setLabelGrid(1, GridBagConstraints.EAST, GridBagConstraints.NONE);
+        starttime.setFieldGrid(2, GridBagConstraints.WEST, GridBagConstraints.NONE);
+        starttime.enableSeconds(false);
+        starttime.setBackgroundColorWhenFocused(Daten.efaConfig.getValueEfaDirekt_colorizeInputField() ? Color.yellow : null);
+        //starttime.setPadding(0, 0, VERTICAL_WHITESPACE_PADDING_GROUPS, 0);
+        starttime.displayOnGui(this, mainInputPanel, 0, yPos);
+        starttime.registerItemListener(this);
+
+        starttimeInfoLabel = new ItemTypeLabel("GUIITEM_STARTTIME_INFOLABEL",
+                IItemType.TYPE_PUBLIC, null, "");
+        starttimeInfoLabel.setFieldGrid(5, GridBagConstraints.WEST, GridBagConstraints.NONE);
+        starttimeInfoLabel.setVisible(false);
+        //starttimeInfoLabel.setPadding(0, 0, VERTICAL_WHITESPACE_PADDING_GROUPS, 0);        
+        starttimeInfoLabel.displayOnGui(this, mainInputPanel, 3, yPos);
+        
+        yPos++;
+
+        // EndTime
+        endtime = new ItemTypeTime(LogbookRecord.ENDTIME, new DataTypeTime(), IItemType.TYPE_PUBLIC, null, International.getStringWithMnemonic("Ankunft"));
+        endtime.setFieldSize(200, FIELD_HEIGHT);
+        endtime.setLabelGrid(1, GridBagConstraints.EAST, GridBagConstraints.NONE);
+        endtime.setFieldGrid(2, GridBagConstraints.WEST, GridBagConstraints.NONE);
+        endtime.enableSeconds(false);
+        endtime.setBackgroundColorWhenFocused(Daten.efaConfig.getValueEfaDirekt_colorizeInputField() ? Color.yellow : null);
+        endtime.displayOnGui(this, mainInputPanel, 0, yPos);
+        endtime.registerItemListener(this);
+
+        endtimeInfoLabel = new ItemTypeLabel("GUIITEM_ENDTIME_INFOLABEL",
+                IItemType.TYPE_PUBLIC, null, "");
+        endtimeInfoLabel.setFieldGrid(5, GridBagConstraints.WEST, GridBagConstraints.NONE);
+        endtimeInfoLabel.setVisible(false);
+        endtimeInfoLabel.displayOnGui(this, mainInputPanel, 3, yPos);
+
+        endtime.setVisible(mode == EfaBaseFrame.MODE_BOATHOUSE_LATEENTRY_MULTISESSION);
+        endtimeInfoLabel.setVisible(endtime.isVisible());
+        
+        yPos++;
+        
+        // Session Type
+        sessiontype = new ItemTypeStringList(LogbookRecord.SESSIONTYPE, EfaTypes.TYPE_SESSION_NORMAL,
+                EfaTypes.makeSessionTypeArray(EfaTypes.ARRAY_STRINGLIST_VALUES), EfaTypes.makeSessionTypeArray(EfaTypes.ARRAY_STRINGLIST_DISPLAY),
+                IItemType.TYPE_PUBLIC, null, International.getString("Fahrtart"));
+        sessiontype.setFieldSize(200, FIELD_HEIGHT);
+        sessiontype.setLabelGrid(1, GridBagConstraints.EAST, GridBagConstraints.NONE);
+        sessiontype.setFieldGrid(2, GridBagConstraints.WEST, GridBagConstraints.NONE);
+        sessiontype.setBackgroundColorWhenFocused(Daten.efaConfig.getValueEfaDirekt_colorizeInputField() ? Color.yellow : null);
+        sessiontype.displayOnGui(this, mainInputPanel, 0, yPos);
+        sessiontype.registerItemListener(this);
+        sessiontype.setReplaceValues(Daten.efaTypes.getSessionTypeReplaceValues());
+        
+        // Session Type Info
+        sessionTypeInfo = new ItemTypeLabel("SESSIONTYPE_LABEL", IItemType.TYPE_PUBLIC, null, "");
+        sessionTypeInfo.setFieldGrid(5, GridBagConstraints.WEST, GridBagConstraints.NONE);
+        sessionTypeInfo.registerItemListener(this);
+        sessionTypeInfo.activateMouseClickListener();
+        sessionTypeInfo.displayOnGui(this, mainInputPanel, 5, yPos);
+        
+        yPos++;
+        //---------------------------------------------------------------------
+        
+        header = createHeader("CREATE_DESTINATION", 0, null, International.getString("Ziel und weitere Angaben"),HEADER_WIDTH);
+        header.displayOnGui(this,  mainInputPanel, 0, yPos);
+        yPos++;
+
+        // Destination
+        destination = new ItemTypeStringAutoComplete(LogbookRecord.DESTINATIONNAME, "", IItemType.TYPE_PUBLIC, null, 
+                International.getStringWithMnemonic("Ziel") + " / " +
+                International.getStringWithMnemonic("Strecke"), true);
+        destination.setFieldSize(400, FIELD_HEIGHT);
+        destination.setLabelGrid(1, GridBagConstraints.EAST, GridBagConstraints.NONE);
+        destination.setFieldGrid(8, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL);
+        destination.setAutoCompleteData(autoCompleteListDestinations);
+        destination.setChecks(true, false);
+        destination.setIgnoreEverythingAfter(DestinationRecord.DESTINATION_VARIANT_SEPARATOR);
+        destination.setBackgroundColorWhenFocused(Daten.efaConfig.getValueEfaDirekt_colorizeInputField() ? Color.yellow : null);
+        destination.displayOnGui(this, mainInputPanel, 0, yPos);
+        destination.registerItemListener(this);
+        yPos++;
+        
+        destinationInfo = new ItemTypeString("GUIITEM_DESTINATIONINFO", "",
+                IItemType.TYPE_PUBLIC, null, International.getString("Gewässer"));
+        destinationInfo.setFieldSize(400, FIELD_HEIGHT);
+        destinationInfo.setLabelGrid(1, GridBagConstraints.EAST, GridBagConstraints.NONE);
+        destinationInfo.setFieldGrid(8, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL);
+        destinationInfo.displayOnGui(this, mainInputPanel, 0, yPos);
+        destinationInfo.setEditable(false);
+        destinationInfo.setVisible(false);
+        yPos++;
+        
+        // Waters
+        waters = new ItemTypeStringAutoComplete(GUIITEM_ADDITIONALWATERS, "", IItemType.TYPE_PUBLIC, null,
+                International.getStringWithMnemonic("Gewässer"), true);
+        waters.setFieldSize(400, FIELD_HEIGHT);
+        waters.setLabelGrid(1, GridBagConstraints.EAST, GridBagConstraints.NONE);
+        waters.setFieldGrid(8, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL);
+        waters.setAutoCompleteData(autoCompleteListWaters);
+        waters.setChecks(true, false);
+        waters.setIgnoreEverythingAfter(LogbookRecord.WATERS_SEPARATORS);
+        waters.setBackgroundColorWhenFocused(Daten.efaConfig.getValueEfaDirekt_colorizeInputField() ? Color.yellow : null);
+        waters.displayOnGui(this, mainInputPanel, 0, yPos);
+        waters.registerItemListener(this);
+        waters.setVisible(false);        
+        
+        yPos++;
+        	
+        // Distance
+        distance = new ItemTypeDistance(LogbookRecord.DISTANCE, null, IItemType.TYPE_PUBLIC, null,
+                DataTypeDistance.getDefaultUnitName());
+        distance.setFieldSize(200, FIELD_HEIGHT);
+        distance.setLabelGrid(1, GridBagConstraints.EAST, GridBagConstraints.NONE);
+        distance.setFieldGrid(2, GridBagConstraints.WEST, GridBagConstraints.NONE);
+        distance.setBackgroundColorWhenFocused(Daten.efaConfig.getValueEfaDirekt_colorizeInputField() ? Color.yellow : null);
+        distance.displayOnGui(this, mainInputPanel, 0, yPos);
+        distance.registerItemListener(this);     
+        distance.setVisible(mode == EfaBaseFrame.MODE_BOATHOUSE_LATEENTRY_MULTISESSION);
+        
+        yPos++;
+        // Comments
+        comments = new ItemTypeString(LogbookRecord.COMMENTS, null, IItemType.TYPE_PUBLIC, null, International.getStringWithMnemonic("Bemerkungen"));
+        comments.setFieldSize(400, FIELD_HEIGHT);
+        comments.setLabelGrid(1, GridBagConstraints.EAST, GridBagConstraints.NONE);
+        comments.setFieldGrid(8, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL);
+        comments.setBackgroundColorWhenFocused(Daten.efaConfig.getValueEfaDirekt_colorizeInputField() ? Color.yellow : null);
+        comments.setPadding(0, 0, VERTICAL_WHITESPACE_PADDING_GROUPS, 0);
+        comments.displayOnGui(this, mainInputPanel, 0, yPos);
+        comments.registerItemListener(this);
+        yPos++;
+        
+        teilnehmerUndBoot=new JPanel();
+        teilnehmerUndBoot.setLayout(new GridBagLayout());
+        teilnehmerUndBoot.removeAll();
+		teilnehmerUndBoot.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
+
+        mainInputPanel.add(teilnehmerUndBoot, new GridBagConstraints(0, yPos, HEADER_WIDTH, 1, 0, 0,
+                GridBagConstants.WEST, GridBagConstants.HORIZONTAL, new Insets(0,0,0,0), 0, 0));
+        
+        
+       // mainInputPanel.ad
+		nameAndBoat = new ItemTypeItemList("NameAndBoat", new Vector<IItemType[]>(), this,
+				IItemType.TYPE_PUBLIC, null,
+				International.getString("Teilnehmer und Boot"));
+		//crontab.setScrollPane(1000, 400);
+		nameAndBoat.setRepeatTitle(false);        
+		nameAndBoat.setAppendPositionToEachElement(true);
+		nameAndBoat.setXForAddDelButtons(6); // two columns, both with name, edit field, autocomplete button
+		nameAndBoat.setItemsOrientation(ItemTypeItemList.Orientation.horizontal);
+		nameAndBoat.setFieldGrid(8, GridBagConstraints.EAST, GridBagConstraints.BOTH);
+		nameAndBoat.setFirstColumnMinWidth(getLongestLabelTextWidth(mainInputPanel));
+		nameAndBoat.setPadding(0, 0, 10, 10);
+		//nameAndBoat.setFirstColumnMinWidth(mainInputPanelGrid.getLayoutDimensions()[0][0]);
+		// Multisession means at least two persons with an individual boat are to go
+		addStandardItems(nameAndBoat,4);
+		nameAndBoat.displayOnGui(this, teilnehmerUndBoot, 0, 0);
+		nameAndBoat.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
+		
+        // Name (crew) and Boat (single boat items only)
+                
+        yPos++;
+        
+        //---------------- old *-----------------------
+        
+           // Info Label
+        infoLabel.setForeground(Color.blue);
+        infoLabel.setHorizontalTextPosition(SwingConstants.LEFT);
+        infoLabel.setText(" ");
+        mainInputPanel.add(infoLabel,
+                new GridBagConstraints(0, yPos, 8, 1, 0.0, 0.0,
+                GridBagConstraints.WEST, GridBagConstraints.NONE,
+                new Insets(10, 20, 10, 0), 0, 0));
+ 
+        // Save Button
+        saveButton = new ItemTypeButton("SAVE", IItemType.TYPE_PUBLIC, null, (mode == EfaBaseFrame.MODE_BOATHOUSE_START_MULTISESSION ? International.getString("Eintrag speichern") : International.getString("Nachtrag")));
+        saveButton.setBackgroundColorWhenFocused(Daten.efaConfig.getValueEfaDirekt_colorizeInputField() ? Color.yellow : null);
+        saveButton.setIcon(getIcon(BaseDialog.IMAGE_ACCEPT));
+        saveButton.displayOnGui(this, basePanel, BorderLayout.SOUTH); //put it on basepanel so that it does not scroll away when the dialog contents get biggish
         saveButton.registerItemListener(this);
 
         createAllUnusedElements();
