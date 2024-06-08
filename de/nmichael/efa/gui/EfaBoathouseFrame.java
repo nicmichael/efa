@@ -2383,6 +2383,18 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
     }
 
     // Callback from EfaBaseFrame
+    /**
+     * This method is called from 
+     * - EfaBaseFrame (which is the main  GUI for starting, editing, finishing and lateentry of sessions)
+     * - EfaBaseFrameMultiSession (which is the gui for creating/lateentry of multiple single-person sessions.
+     * 
+     * It takes care that some notifications get shown, and that a list of the EfaBoathouseFrame gets the focus.
+     * Also, efaBoatHouseBackgroundTask gets a signal to keep BoatsAvailableList, Personlist, BoatsOntheWaterList and BoatsNotAvailableList up to date,
+     * as mostly this method is called when some data has been added or changed.
+     *  
+     * @param efaBoathouseAction Item of the boathouse list that was selected when starting a boathouse action.
+     * @param r LogbookRecord of the newly created record. May be null.
+     */
     void showEfaBoathouseFrame(ItemTypeBoatstatusList.BoatListItem efaBoathouseAction, LogbookRecord r) {
         bringFrameToFront();
         updateBoatLists(true,false); // must be explicitly called here! only efaBoathouseBackgroundTask.interrupt() is NOT sufficient.
@@ -2452,6 +2464,12 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
     	actionForMultiple(true);
     }
     
+    /**
+     * Checks if a boat item in the available Boat list is selected,
+     * and shows the efaBaseFrameMultipleSession dialog if so.
+     *  
+     * @param lateEntry Boolean: Late Entry mode true or false?
+     */
     private void actionForMultiple(boolean lateEntry) {
     	alive();
     	clearAllPopups();
@@ -2465,6 +2483,8 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
          * and some more.
          * Due to this fact, efaBaseFrame cannot live without having a BoatListItem.
          * So the user has to select a BoatListItem on his own.
+         * 
+         * This is also true for efaBaseFrameMultisession as a subclass of efaBaseFrame.
          */
         ItemTypeBoatstatusList.BoatListItem item = getSelectedListItem();
         if (item == null) {
@@ -2475,8 +2495,8 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
         }        
 
         showStartSessionMultipleDialog(lateEntry, item);
+        clearFilterFieldsIfConfigured();   
 
-        clearFilterFieldsIfConfigured();           	
     }
     
     void actionStartSessionCorrect() {
@@ -3008,7 +3028,7 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
     	try {
             myFrame.efaBoathouseAction=item;
             myFrame.efaBoathouseAction.mode = (isLateEntry ? EfaBaseFrame.MODE_BOATHOUSE_LATEENTRY_MULTISESSION : EfaBaseFrame.MODE_BOATHOUSE_START_MULTISESSION);
-    		myFrame.showDialog();
+            myFrame.showDialog();
     	} catch (Exception e) {
     		Logger.log(e);
     	}

@@ -595,13 +595,18 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
         mainPanel.setMinimumSize(dim);        
     }    
 	
-    // elements in efaBaseFrame which are not used by this dialog.
+    // Create attributes/fields in efaBaseFrame which are not used by this dialog.
     // but unfortunately, as a subclass of efaBaseFrame needs to instantiate these fields. :-/
-    
     private void createAllUnusedElements() {
+    	
+    	// entryNo is used internally when creating records.
+    	// so entryNo is created, but insivible in this dialog.
     	entryno = new ItemTypeString(LogbookRecord.ENTRYID, "", IItemType.TYPE_PUBLIC, null, International.getStringWithMnemonic("Lfd. Nr."));
     	entryno.setVisible(false);
 
+    	//the crew[] array is needed by the efaBaseFrame.itemListenerAction. 
+    	//it needs to be set, but may be empty. 
+    	//as we do not need the crew[] array in MultiSession mode, we simply instantiate the array.
         crew = new ItemTypeStringAutoComplete[LogbookRecord.CREW_MAX];
     }
     
@@ -617,10 +622,6 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
     
     private void iniGuiFieldDefaultValues() {
 
-        /*public static final int MODE_BOATHOUSE_START_MULTISESSION=9;
-        public static final int MODE_BOATHOUSE_LATEENTRY_MULTISESSION=10;
-        */
-    	
     	if (mode == MODE_BOATHOUSE_START_MULTISESSION) {
 	    	// set Date
 	        String d = EfaUtil.getCurrentTimeStampDD_MM_YYYY();
@@ -672,7 +673,7 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
      * Initialize the EfaBaseFrameMultisession dialog.
      * The base class efaBaseFrame is instantiated ONCE in efaBoatHouse and re-used for several cases. Maybe due to performance issues.
      * The EfaBaseFrameMultisession dialog is instantiated every time it is opened.
-     * So it needs an initialisation for the respective autocomplete lists and such. 
+     * So it needs an initialization for the respective autocomplete lists and such. 
      */
     private void iniData() {
 
@@ -742,7 +743,7 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
         
     }    
     
-    /*
+    /**
      * When leaving the name field, check if a known name is entered.
      * If yes, try to find out the person's standard boat and fill its fully qualified name in the second field,
      * if the boat is not yet assigned to another person in this dialog, and it is not on the water (when starting a new session)
@@ -798,7 +799,7 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
 	 * @param list AutoCompleteList for the field
 	 * @return ItemTypeAutoComplete field
 	 */
-    protected ItemTypeStringAutoComplete getGuiAutoComplete(String name, String description, AutoCompleteList list) {
+    private ItemTypeStringAutoComplete getGuiAutoComplete(String name, String description, AutoCompleteList list) {
         ItemTypeStringAutoComplete item = new ItemTypeStringAutoComplete(name, "", IItemType.TYPE_PUBLIC , null, description, true);
         item.setFieldSize(200, FIELD_HEIGHT); // 21 pixels high for new flatlaf, otherwise chars y and p get cut off 
         //true= automatically remove items from the list, if it is chosen by the user.
@@ -855,7 +856,7 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
 	    }
     }
     
-    /*
+    /**
      * updateGui()
      * This method is called when an ItemTypeList gets new items or gets items removed.
      * Usually, this happens on a BaseTabbedDialog. But unfortunately, efaBaseFrame is just a BaseDialog.
@@ -957,19 +958,32 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
         return success;
     }
 
-    private boolean isValidBoatNamePair(int iRow) {
+    /**
+     * Checks if a row in the nameAndBoat list contains both a person name and a boat name.
+     * @param iRow row of nameAndBoat.
+     * @return true if row exists and both person name and boat name are not empty.
+     */
+    private boolean isRowWithBothNameAndBoatSet(int iRow) {
     	try {
-	    	ItemTypeStringAutoComplete[] acItem= (ItemTypeStringAutoComplete[])nameAndBoat.getItems(iRow);
-	    	ItemTypeStringAutoComplete curName= acItem[0];
-	    	ItemTypeStringAutoComplete curBoat = acItem[1];    	
-	    	return (!(curName.getValue().trim().isEmpty() && curBoat.getValue().trim().isEmpty()));
+	    	if (iRow>=0 && iRow<nameAndBoat.getItemCount())  {
+	    		ItemTypeStringAutoComplete[] acItem= (ItemTypeStringAutoComplete[])nameAndBoat.getItems(iRow);
+		    	ItemTypeStringAutoComplete curName= acItem[0];
+		    	ItemTypeStringAutoComplete curBoat = acItem[1];    	
+		    	return (!(curName.getValue().trim().isEmpty() && curBoat.getValue().trim().isEmpty()));
+	    	} else {
+	    		return false;
+	    	}
     	} catch (Exception e) {
     		Logger.logdebug(e);
     		return false;
     	}
     }
     
-    // den Datensatz nun wirklich speichern;
+    /**
+     * Saves a new record for each row where person name and boat name are both present.
+     * Updates also boat status for the respective boat.
+     * @return true if saving all records was successful.
+     */
     protected boolean saveEntriesInLogbook() {
         if (!isLogbookReady()) {
             return false;
@@ -980,9 +994,11 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
         try {
             
         	for (int iCurBoatNamePair=0; iCurBoatNamePair<nameAndBoat.getItemCount(); iCurBoatNamePair++) {
-        		if (isValidBoatNamePair(iCurBoatNamePair)) {
+        		if (isRowWithBothNameAndBoatSet(iCurBoatNamePair)) {
 
-                    LogbookRecord rlast = (LogbookRecord) logbook.data().getLast();
+                    //get a new entry id for each record. this may be slowish, but works better than just obtaining
+        			//the last record id once (outside the loop) and just incrementing it.
+        			LogbookRecord rlast = (LogbookRecord) logbook.data().getLast();
                     int nextEntry = rlast.getEntryId().intValue()+1;
 
                     entryno.setValue(""+nextEntry); // convert incremented last ID to string
@@ -1088,7 +1104,7 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
         super._keyAction(evt);
     }
     
-    /*
+    /**
      * AutoComplete fields which are visible: try to autocomplete the item based on the data entered.
      */
     protected void autocompleteAllFields() {
@@ -1217,7 +1233,8 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
     	        if (s.length() == 0) {
     	            continue;
     	        }
-    	        //TODO: Boat name can only be found if entered in correct spelling, including uppercase/lowercase letters.
+    	        //Boat name can only be found if entered in correct spelling, including uppercase/lowercase letters.
+    	        //that's why we call AutoCompleteAllFields() earlier, because misspelling can be avoided in autocomplete fields.
     	        BoatRecord br = findBoat(curBoat, getValidAtTimestamp(null));
     	        if (br != null) {
                     UUID id = br.getId();
@@ -1230,7 +1247,7 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
                     }
                 }
             }
-            break; // alles ok, keine doppelten --> Pseudoschleife abbrechen
+            break; // no duplicate entries --> cancel pseudo loop
         }
         if (doppelt != null) {
             if (isPersonDoppelt) {
@@ -1285,6 +1302,11 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
  
     }
     
+    /**
+     * Checks all rows in nameAndBoat if a known Boat/Person is valid (for the time of the record),
+     * and if unknown Boat/Persons are formatted correctly and don't have unwanted names in it.
+     * @return true if check is OK.
+     */
     private boolean checkMultiSessionNameAndBoatValuesValid() {
     	
         long preferredValidAt = getValidAtTimestamp(null);
@@ -1327,19 +1349,27 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
         return true;
     }
     
+    /* This method is called from efaBaseFrame and should check if unknown boat names are allowed.
+     * Due to performance reasons, this check is already done in checkMultiSessionNameAndBoatValuesValid
+     */
     protected boolean checkUnknownNamesBoat() {
     	// this state is always true as it gets checked earlier 
-    	// see checkUnknownNamesBoatDetail / checkMultiSessionNameAndBoatValuesValid
     	return true;
     }
 
+    /* This method is called from efaBaseFrame and should check if unknown person names are allowed.
+     * Due to performance reasons, this check is already done in checkMultiSessionNameAndBoatValuesValid
+     */
     protected boolean checkUnknownNamesPerson() {
     	// this state is always true as it gets checked earlier 
-    	// see checkUnknownNamesPersonDetail / checkMultiSessionNameAndBoatValuesValid
     	return true;
     }
     
-    
+    /** 
+     * For a single boat, check if unknown names are allowed. 
+     * @param boatItem
+     * @return
+     */
     private boolean checkUnknownNamesBoatDetail(ItemTypeStringAutoComplete boatItem) {
         if (isModeBoathouse()) {
             if (Daten.efaConfig.getValueEfaDirekt_eintragNurBekannteBoote()) {
@@ -1355,6 +1385,11 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
     	
     }
 
+    /**
+     * For a single person, check if unknown names are allowed
+     * @param personItem
+     * @return
+     */
     private boolean checkUnknownNamesPersonDetail(ItemTypeStringAutoComplete personItem) {
         // Prüfen, ob ggf. nur bekannte Boote/Ruderer/Ziele eingetragen wurden
         if (isModeBoathouse()) {
@@ -1372,7 +1407,7 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
     }    
     
     /**
-     * Checks all cox and crew fields for
+     * Checks all person name fields for
      * * correct format of a name
      * * invalid content
      * @return true if all checks were successfully run.
@@ -1547,7 +1582,7 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
     }
     
     /**
-     * Checks if the single person suffices to use the boat, if the boat is assigned to groups.
+     * Checks if the single person for the boat is allowed/suitable to use the boat, if the boat is assigned to groups.
      * @param theBoat
      * @param theName
      * @return true if check is ok
@@ -1604,6 +1639,11 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
         return true;
     }
     
+    /**
+     * Checks if each row has XOR
+     * - both boat name and person name filled (both set)
+     * - neither boat name nor person name filled (row empty)
+     */
     protected boolean checkAllDataEnteredBoatAndCrew() {
         if (isModeBoathouse()) {
         	// check if for each line either name AND boat are set.
@@ -1633,8 +1673,8 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
     }
     
     /**
-     * this method is called from EfaBaseFrame.getfields()
-     * for multisession items, we simply set the boat to empty, because
+     * This method is called from EfaBaseFrame.getfields().
+     * For MultiSession items, we simply set the boat to empty, because
      * it is set to the actual name/boat pair later.
      */
     protected void getFieldsForBoats(LogbookRecord theRecord) {
@@ -1643,7 +1683,12 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
         theRecord.setBoatVariant(IDataAccess.UNDEFINED_INT);
     }
     
-    protected void getFieldsForCrew(LogbookRecord theRecord) {
+    /**
+     * This method is called from EfaBaseFrame.getfields().
+     * For MultiSession items, we simply set the crew and cox to empty, because
+     * it is set to the actual name/boat pair later.
+     */
+       protected void getFieldsForCrew(LogbookRecord theRecord) {
         // Cox and Crew
         for (int i=0; i<=LogbookRecord.CREW_MAX; i++) {
             if (i == 0) {

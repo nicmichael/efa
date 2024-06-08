@@ -1413,6 +1413,12 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         updateTimeInfoFields();
     }
 
+    /**
+     * Creates a new LogbookRecord if necessary and set it's attributes from the GUI fields.
+     * It works for both efaBaseFrame AND efaBaseFrameMultisession, as the variable parts
+     * for these two variants get done by separate methods.
+     * @return
+     */
     protected LogbookRecord getFields() {
         String s;
         if (!isLogbookReady()) {
@@ -1451,6 +1457,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
             r.setEndTime(null);
         }
 
+        //these methods may get overwritten by subclasses 
         getFieldsForBoats(r);
         getFieldsForCrew(r);
         
@@ -1503,7 +1510,10 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         return r;
     }
     
-    private void autocompleteAllFields() {
+    /**
+     * For any AutoComplete field in this Baseframe, try to use the autocomplete.
+     */
+    protected void autocompleteAllFields() {
         try {
             if (boat.isVisible()) {
                 boat.acpwCallback(null);
@@ -1519,7 +1529,8 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
             if (destination.isVisible()) {
                 destination.acpwCallback(null);
             }
-        } catch(Exception e) {            
+        } catch(Exception e) {     
+        	Logger.logdebug(e);
         }
     }
 
@@ -4767,6 +4778,8 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         } else if (Daten.efaConfig.getValueEfaDirekt_eintragPresentLastTripOnNewEntry()) {
 	        	efaBoathouseSetDataFromLatestSession();
 	            setRequestFocus(boat);
+        } else {
+        	setRequestFocus(date);
         }
 
 
