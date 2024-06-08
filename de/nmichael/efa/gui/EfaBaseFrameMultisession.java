@@ -65,24 +65,37 @@ import de.nmichael.efa.util.Logger;
  *
  * This dialog is created to support this style of trips with an efficient way of entering the same
  * data for multiple group members.
+ * 
  * A user can enter start date/time, type of session  and a set of name/boat pairs.  
  * Also destination, water and comment can be entered.
  * 
  * When saving the item, efa creates a single session entry for each name/boat pair.
  * 
- * The number of automatically added empty name/boat pairs can be configured in efaConfig. 
- * 
  * The dialog takes care for several constraints
+ * - only boats which have a variant of a single person can be chosen.
+ *   Saving an entry for a boat which supports multiple variants: the single variant gets assigned to the new record.
  * - a known boat name may only occur once in the name/boat pairs.
  * - a known person name may only occur once in the name/boat pairs.
  * - the autocompletes of names and boats are automatically cleared of items which are already entered on this dialog
  * - if you enter a person's name, and the person has a standard boat, the boat field is automatically filled
  *   (if the boat is not yet taken by another person)
- * 
+ * - empty rows are ignored.
+ * - a row is rejected when only one fields (name/boat) are filled.
+ * - and all checks that are used
  * 
  * Design decisions
  * ------------------
- * It was a question how to implement this. Should it be put directly to efaBaseFrame (where all Elements are put)
+ * This dialog is a subclass of EfaBaseFrame, which itself is the main frame/dialog where sessions are
+ * started, edited, finished and can be created as late entry sessions.
+ * 
+ * EfaBaseFrame already checks for a lot of constraints, and handles a lot of the logic between the GUI fields.
+ * For instance, if a destination is an unknown text, the waters field will be automatically shown and needs to be filled.
+ * By making the multisession GUI a subclass of efaBaseFrame, most of these constraints and business logic automatically
+ * work for multisession entries without writing redundant code.
+ * 
+ * Multisession entries do not need the crew array, nor do they use a single boat.
+ * To support both single-session (with bigger crews) and multi-session entries, efaBaseFrame got refactored at
+ * the methods which handle crew and boat fields.
  * 
  */
 public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListener, IItemFactory {
