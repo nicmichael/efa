@@ -3040,6 +3040,6 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
 }
 class BoatReservationComparatorByNextOccurrence implements Comparator<BoatReservationRecord> {
 	public int compare(BoatReservationRecord brr1, BoatReservationRecord brr2) {
-		return (int)(brr1.getReservationValidInMinutes() - brr2.getReservationValidInMinutes());
+		return (int)(brr1.getReservationValidInMinutes(true) - brr2.getReservationValidInMinutes(true));
 	}
 }

@@ -15,7 +15,6 @@ import de.nmichael.efa.data.efawett.WettDef;
 import de.nmichael.efa.data.efawett.WettDefGruppe;
 import de.nmichael.efa.data.efawett.WettDefs;
 import de.nmichael.efa.core.config.EfaTypes;
-import de.nmichael.efa.data.PersonRecord;
 import de.nmichael.efa.data.StatisticsRecord;
 import de.nmichael.efa.data.types.DataTypeDistance;
 import de.nmichael.efa.util.EfaUtil;

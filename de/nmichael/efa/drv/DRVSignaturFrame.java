@@ -10,21 +10,15 @@
 
 package de.nmichael.efa.drv;
 
-import de.nmichael.efa.efa1.VereinsConfig;
-import de.nmichael.efa.efa1.Fahrtenabzeichen;
-import de.nmichael.efa.efa1.DatenFelder;
 import de.nmichael.efa.*;
 import de.nmichael.efa.data.efawett.CertInfos;
 import de.nmichael.efa.data.efawett.DRVSignatur;
-import de.nmichael.efa.data.efawett.ESigFahrtenhefte;
-import de.nmichael.efa.data.efawett.EfaWettClient;
 import de.nmichael.efa.util.*;
 import de.nmichael.efa.util.Dialog;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import java.io.*;
-import java.util.*;
 import java.security.cert.*;
 
 // @i18n complete (needs no internationalization -- only relevant for Germany)

@@ -10,7 +10,9 @@
 
 package de.nmichael.efa.data;
 
+import java.awt.Color;
 import java.awt.GridBagConstraints;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.UUID;
@@ -19,6 +21,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 
 import de.nmichael.efa.Daten;
@@ -110,6 +113,10 @@ public class BoatRecord extends DataRecord implements IItemFactory, IItemListene
     private static String GUIITEM_DEFAULTBOATTYPE    = "GUIITEM_DEFAULTBOATTYPE";
     private ButtonGroup buttonGroup = new ButtonGroup();
 
+    public static final int COLUMN_ID_BOAT_NAME = 0;
+    public static final int COLUMN_ID_BOAT_TYPE = 1;
+    public static final int COLUMN_ID_BOAT_OWNER = 2;
+    
     private static Pattern qnamePattern = Pattern.compile("(.+) \\(([^\\(\\)]+)\\)");
 
     public static void initialize() {
@@ -1132,7 +1139,8 @@ public class BoatRecord extends DataRecord implements IItemFactory, IItemListene
                 IItemType.TYPE_PUBLIC, CAT_MOREDATA, International.getString("von allgemein verfügbaren Statistiken ausnehmen")));
         if (Daten.efaConfig.getValueUseFunctionalityCanoeingGermany()) {
             v.add(item = new ItemTypeString(BoatRecord.EFBID, getEfbId(),
-                    IItemType.TYPE_EXPERT, CAT_MOREDATA, International.onlyFor("Kanu-eFB ID","de")));
+                    (Daten.efaConfig.getValueKanuEfb_AlwaysShowKanuEFBFields() ? IItemType.TYPE_PUBLIC : IItemType.TYPE_EXPERT), 
+                    CAT_MOREDATA, International.onlyFor("Kanu-eFB ID","de")));
         }
 
         // CAT_USAGE
@@ -1236,10 +1244,65 @@ public class BoatRecord extends DataRecord implements IItemFactory, IItemListene
         }
         items[1] = new TableItem(type);
         items[2] = new TableItem(getOwner());
+        items[0].addIcon(this.createGroupPieIcon(16,16));
+        items[0].setToolTipText(this.createTooltipForGroups());
         return items;
     }
 
+    private ImageIcon createGroupPieIcon(int iconWidth, int iconHeight) {
+    	 Color[] colors = this.getBoatGroupsPieColors(null); 
+    	 return (colors !=null ? EfaUtil.createColorPieIcon(colors, iconWidth, iconHeight) : null);
+    }
+    
+    private String createTooltipForGroups() {
+    	String result = this.getAllowedGroupsAsNameString(System.currentTimeMillis());
+    	if (result!=null && !result.isEmpty()) {
+    		return International.getString("Gruppen")+":\n   "+result;
+    	} else {
+    		return null;
+    	}
+    		
+    }
+    
+    /**
+     * Returns the colors of all groups the boat is currently assigned to.
+     * Due to performance reasons in the ItemTypeBoatStatusList, an hashtable can be provided 
+     * which contains the color for a certain group (identified by uuid).
+     * 
+     * @param groupColors
+     * @return array of colors, or null, if boat is assigned to no group
+     */
+    public Color[] getBoatGroupsPieColors(Hashtable<UUID, Color> groupColors) {
+    
+	    // Colors for Groups
+	    ArrayList<Color> aColors = new ArrayList<Color>();
+        DataTypeList<UUID> grps = this.getAllowedGroupIdList();
+        if (grps != null && grps.length() > 0) {
+            for (int g=0; g<grps.length(); g++) {
+                UUID id = grps.get(g);
+                Color c = (groupColors!=null ? groupColors.get(id) : getGroupColor(id));
+                if (c != null) {
+                    aColors.add(c);
+                }
+            }
+        }
+	    return  (aColors.size() > 0 ? aColors.toArray(new Color[0]) : null);
+    }
+	    
+    /**
+     * Returns the color of a certain Group
+     * @param groupID UUID of the group
+     * @return Color of the group (may be null), or null if the specified group does not exist. 
+     */
+    private Color getGroupColor(UUID groupID) {
+    	
+    	Groups myGroups= Daten.project.getGroups(false);
+    	GroupRecord myRecord = myGroups.findGroupRecord(groupID, System.currentTimeMillis());
+    	
+    	return (myRecord != null ? EfaUtil.getColor(myRecord.getColor()):null);
 
+    }
+    
     public void saveGuiItems(Vector<IItemType> items) {
         BoatStatus boatStatus = getPersistence().getProject().getBoatStatus(false);
         BoatReservations boatReservations = getPersistence().getProject().getBoatReservations(false);

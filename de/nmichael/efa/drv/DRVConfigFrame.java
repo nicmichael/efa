@@ -14,8 +14,6 @@ import de.nmichael.efa.util.Dialog;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import javax.swing.border.*;
-import java.io.*;
 import de.nmichael.efa.*;
 
 // @i18n complete (needs no internationalization -- only relevant for Germany)

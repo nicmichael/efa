@@ -10,7 +10,6 @@
 
 package de.nmichael.efa.data.storage;
 
-import de.nmichael.efa.Daten;
 import de.nmichael.efa.util.Logger;
 import de.nmichael.efa.util.XmlHandler;
 

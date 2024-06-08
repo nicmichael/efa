@@ -18,7 +18,6 @@ import de.nmichael.efa.data.efacloud.TxRequestQueue;
 import de.nmichael.efa.data.types.*;
 import de.nmichael.efa.data.storage.*;
 import de.nmichael.efa.data.*;
-import static de.nmichael.efa.gui.BaseDialog.getIcon;
 import de.nmichael.efa.gui.util.*;
 import de.nmichael.efa.gui.dataedit.*;
 import de.nmichael.efa.util.*;
@@ -2161,8 +2160,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         }
 
         // disabled functionality: for unknown boats: If only one person entered as cox, change to crew1
-        // TODO: CHECK THIS FOR MN_EFA_075_USE_CREW1_INSTEAD_OF_COX
-        if (false &&
+        if (Daten.efaConfig.getValueFixCoxForCoxlessUnknownBoats() &&
              (getMode() == MODE_BOATHOUSE_START ||
               getMode() == MODE_BOATHOUSE_START_CORRECT ||
               getMode() == MODE_BOATHOUSE_START_MULTISESSION ||

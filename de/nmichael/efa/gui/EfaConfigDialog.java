@@ -12,10 +12,8 @@ package de.nmichael.efa.gui;
 
 import de.nmichael.efa.core.items.*;
 import de.nmichael.efa.util.*;
-import de.nmichael.efa.util.Dialog;
 import de.nmichael.efa.Daten;
 import de.nmichael.efa.core.config.*;
-import de.nmichael.efa.data.storage.IDataAccess;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
