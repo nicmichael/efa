@@ -310,7 +310,8 @@ public abstract class BaseDialog extends JDialog implements ActionListener {
         mainScrollPane.setPreferredSize(Dialog.getMaxSize(dim));
 
         mainScrollPane.getViewport().add(mainPanel, null);
-        mainScrollPane.setBorder(BorderFactory.createEmptyBorder(4,4,4,4));        
+        mainScrollPane.setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
+        mainScrollPane.getVerticalScrollBar().setUnitIncrement(12); // faster scrolling with the mouse
     }
 
     protected abstract void iniDialog() throws Exception;

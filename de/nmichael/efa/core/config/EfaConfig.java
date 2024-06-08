@@ -7,6 +7,7 @@ package de.nmichael.efa.core.config;
 
 import java.awt.Color;
 import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -206,6 +207,9 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 	private ItemTypeColor efaGuiflatLaf_AccentColor;
 	private ItemTypeColor efaGuiflatLaf_FocusColor;
 
+	
+	// items starting with efaDirekt are designed to be active in efaBths only.
+	
 	private ItemTypeStringList standardFahrtart;
 	private ItemTypeStringList defaultDistanceUnit;
 	private ItemTypeStringList dateFormat;
@@ -250,6 +254,8 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 	private ItemTypeBoolean efaDirekt_eintragPresentLastTripOnNewEntry;
 	private ItemTypeBoolean efaDirekt_eintragPresentLastTripOnLateEntry;
 	private ItemTypeInteger	efaDirekt_eintragPresentLastTripTimeout;
+	private ItemTypeBoolean efaDirekt_MultisessionSupportStartSession;
+	private ItemTypeBoolean	efaDirekt_MultisessionSupportLateEntry;
 	private ItemTypeInteger efaDirekt_plusMinutenAbfahrt;
 	private ItemTypeInteger efaDirekt_minusMinutenAnkunft;
 	private ItemTypeBoolean allowEnterEndDate;
@@ -1239,34 +1245,38 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_INPUT), International
 							.getString("Vorgeschlagene Kilometer bei bekannten Zielen können nicht geändert werden")));
 
-			addHeader("PresentLastTripValues", IItemType.TYPE_EXPERT,
+			addHeader("PresentLastTripValues", IItemType.TYPE_PUBLIC,
 					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_INPUT),
 					International.getString("Anlage mehrerer Fahrten hintereinander vereinfachen"), 3);
 			
-			addDescription("PresentLastTripDescription1", IItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_INPUT),
+			addDescription("PresentLastTripDescription1", IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_INPUT),
 					"<html>"+International.getStringWithMnemonic("PRESENT_LAST_TRIP_DESCRIPTION1")+"</html>", 3, 2,10);
-/*			addDescription("PresentLastTripDescription2", IItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_INPUT),
-					International.getString("und die Fahrten werden direkt hintereinander eingegeben."), 3, 2,10);
-			addDescription("PresentLastTripDescription3", IItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_INPUT),
-					International.getMessage("Wird die nächste Fahrt mit <{anderes_boot}> innerhalb eines Zeitraums erfasst,",International.getString("anderes Boot")), 3, 10, 2);
-			addDescription("PresentLastTripDescription4", IItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_INPUT),
-					International.getMessage("so werden die meisten Teile der letzten Fahrt im '{fahrt_beginnen}' Dialog übernommen.", International.getString("Fahrt beginnen")), 3, 2,10);
-	*/		
+			
+			addParameter(efaDirekt_MultisessionSupportStartSession = new ItemTypeBoolean("MultiSessionSupportStartsession",
+					true, IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_INPUT),
+					International.getString("Fahrtbeginn: Vereinfachte Eingabe für mehrere Einzelfahrten")));
+			
+			addParameter(efaDirekt_MultisessionSupportLateEntry = new ItemTypeBoolean("MultiSessionSupportLateEntry",
+					true, IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_INPUT),
+					International.getString("Nachtrag: Vereinfachte Eingabe für mehrere Einzelfahrten")));
+
+			addDescription("PresentLastTripDescription2", IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_INPUT),
+					"<html>"+International.getStringWithMnemonic("PRESENT_LAST_TRIP_DESCRIPTION2")+"</html>", 3, 20,10);
+
 			addParameter(efaDirekt_eintragPresentLastTripOnNewEntry = new ItemTypeBoolean("PresentLastTripOnNewEntry",
-					false, IItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_INPUT),
+					false, IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_INPUT),
 					International.getString("Bei Eintragung von Fahrten Teile der vorangegangenen Fahrt einblenden")));
 
 			addParameter(efaDirekt_eintragPresentLastTripOnLateEntry = new ItemTypeBoolean("PresentLastTripOnLateEntry",
-					false, IItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_INPUT),
+					false, IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_INPUT),
 					International.getString("Bei Eintragung von Fahrt-Nachträgen Teile der vorangegangenen Fahrt einblenden")));
 			
 			// minimum MUST be 1 minute, not zero, as otherwise the code in efaBaseFrame does not work correctly.
 			addParameter(efaDirekt_eintragPresentLastTripTimeout = new ItemTypeInteger("PresentLastTripTimeout", 2, 1,
-					45, false, IItemType.TYPE_EXPERT,
+					45, false, IItemType.TYPE_PUBLIC,
 					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_INPUT),
 					International.getString("Einblenden der vorhergehenden Fahrt bis maximal X Minuten")));			
-			
-			
+
 			// ============================= BOATHOUSE:GUI =============================
 
 			addHint("efaGuiBoathouseWindowHint", IItemType.TYPE_PUBLIC,
@@ -1454,6 +1464,10 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 
 			// ============================= BOATHOUSE:GUIBUTTONS
 			// =============================
+			
+			addHint("efaMultiSessinoSupportHintOnButtons", 
+					IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUIBUTTONS),
+					International.getString("Konfiguration der Schaltflächen hinter 'Fahrt beginnen' und 'Nachtrag' via efa-Bootshaus -> Eingabe -> Vereinfachte Anlage..."),3, 6, 6);
 			addParameter(efaDirekt_butFahrtBeginnen = new ItemTypeConfigButton("ButtonStartSession",
 					International.getString("Fahrt beginnen"), "CCFFCC", true, false, true, false,
 					IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUIBUTTONS),
@@ -1780,6 +1794,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 			addParameter(crontab = new ItemTypeItemList("CronTab", new Vector<IItemType[]>(), this,
 					IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_CRONTAB),
 					International.getString("Automatische Abläufe")));
+			crontab.setFieldGrid(2, GridBagConstraints.WEST, GridBagConstraints.BOTH);
 			//crontab.setScrollPane(1000, 400);
 			crontab.setRepeatTitle(false);
 
@@ -2323,6 +2338,13 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 	}
 	public int 	getValueEfaDirekt_eintragPresentLastTripTimeout(){
 		return efaDirekt_eintragPresentLastTripTimeout.getValue();
+	}	
+
+	public boolean getValueEfaDirekt_MultisessionSupportStartSession() {
+		return efaDirekt_MultisessionSupportStartSession.getValue();
+	}
+	public boolean getValueEfaDirekt_MultisessionSupportLateEntry(){
+		return efaDirekt_MultisessionSupportLateEntry.getValue();
 	}	
 	
 	public int getValueEfaDirekt_plusMinutenAbfahrt() {

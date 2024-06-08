@@ -150,7 +150,8 @@ public class AlertWidget extends Widget implements IItemFactory {
             }
             for (int i = 0; i < list.size(); i++) {
                 if ((((mode == EfaBaseFrame.MODE_BOATHOUSE_START
-                        || mode == EfaBaseFrame.MODE_BOATHOUSE_START_CORRECT) && !actionBegin
+                        || mode == EfaBaseFrame.MODE_BOATHOUSE_START_CORRECT
+                        || mode == EfaBaseFrame.MODE_BOATHOUSE_START_MULTISESSION) && !actionBegin
                         && isShowOnSessionStart(list, i))
                         || (mode == EfaBaseFrame.MODE_BOATHOUSE_FINISH && !actionBegin
                         && isShowOnSessionFinish(list, i))) && isShowForBoat(list, i, bType, bSeats)
