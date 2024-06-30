@@ -830,6 +830,41 @@ public class ItemTypeStringAutoComplete extends ItemTypeString implements AutoCo
         }
     }
 
+    /**
+     * Checks if the currently selected item in ItemTypeStringAutoComplete field is matching to the text the user entered.
+     * @return boolean
+     */
+    public boolean isCurrentTextMatching() {
+        AutoCompleteList list = getAutoCompleteList();
+        JTextField textField = (JTextField)this.field;	
+        if (list != null && textField != null) {
+        	return list.getExact(textField.getText())!=null;
+        } 
+        return false;
+    }
+
+    
+    /**
+     * Checks if the currently selected item in ItemTypeStringAutoComplete field is valid at the time the session takes place
+     * (the session type is obtained by validAtDateItem and validAtTimeItem).
+     * @return boolean
+     */
+    public boolean isCurrentTextValid(){
+        boolean valid = false;
+        JTextField textField = (JTextField)this.field;	
+        
+        if (textField != null && isCurrentTextMatching() && validAtDateItem != null) {
+            long t = LogbookRecord.getValidAtTimestamp(validAtDateItem.getDate(),
+                    (validAtTimeItem != null ? validAtTimeItem.getTime() : null));
+            valid = autoCompleteList.isValidAt(textField.getText(), t);
+        } else {
+            valid = false;
+        }
+        
+        return valid;
+        
+    }
+    
     public void acpwCallback(JTextField field) {
         autoComplete(null);
     }

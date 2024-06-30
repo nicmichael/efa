@@ -272,7 +272,7 @@ public class AutoCompleteList {
                         }
 
                         if (filterDataOnlyOneSeaterBoats && r instanceof BoatRecord) {
-                        	if (!isOneSeaterBoat((BoatRecord)r)) {continue;}
+                        	if (!((BoatRecord)r).isOneSeaterBoat()) {continue;}
                         }
                         
                         if (!r.getDeleted()) {
@@ -688,24 +688,6 @@ public class AutoCompleteList {
     public void setFilterDataOnlyOneSeaterBoats(boolean value) {
     	this.filterDataOnlyOneSeaterBoats=value;
     }    
-    
-    /**
-     * Determine if a boat has at least a variant as a one-seater.
-     * Does not check if the BoatRecord is valid at the current time.
-     * 
-     * @param boatRec BoatRecord (not null)
-     * @return true if Boat has at least one variant as a One-Seater
-     */
-    private boolean isOneSeaterBoat(BoatRecord boatRec) {
-
-        for (int boatVariant=0; boatVariant<boatRec.getNumberOfVariants(); boatVariant++) {
-            if (boatRec.getNumberOfSeats(boatVariant)==1) {
-            	return true;
-            }
-        }
-        //none of the variants is a OneSeater
-        return false;
-    }
     
     public static void main(String[] args) {
         Vector<String> v = getPermutations("a b c", 7);
