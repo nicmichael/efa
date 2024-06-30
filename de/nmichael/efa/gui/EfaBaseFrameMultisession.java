@@ -27,7 +27,6 @@ import de.nmichael.efa.core.config.EfaTypes;
 import de.nmichael.efa.core.items.IItemFactory;
 import de.nmichael.efa.core.items.IItemListener;
 import de.nmichael.efa.core.items.IItemType;
-import de.nmichael.efa.core.items.ItemTypeBoatstatusList;
 import de.nmichael.efa.core.items.ItemTypeButton;
 import de.nmichael.efa.core.items.ItemTypeDate;
 import de.nmichael.efa.core.items.ItemTypeDistance;
@@ -39,6 +38,7 @@ import de.nmichael.efa.core.items.ItemTypeStringAutoComplete;
 import de.nmichael.efa.core.items.ItemTypeStringList;
 import de.nmichael.efa.core.items.ItemTypeTime;
 import de.nmichael.efa.data.BoatRecord;
+import de.nmichael.efa.data.Boats;
 import de.nmichael.efa.data.DestinationRecord;
 import de.nmichael.efa.data.GroupRecord;
 import de.nmichael.efa.data.Groups;
@@ -936,6 +936,7 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
             !checkProperUnknownNames() ||
             !checkAllowedPersons() ||
             !checkAllowedPersonsForBoat() ||
+            !checkSinglePersonBoats() ||
             !checkDestinationNameValid() ||
             !checkAllDataEntered() ||
             !checkMultiSessionAtLeastOnePair() ||
@@ -1683,6 +1684,82 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
             }
         }
         return true;
+    }
+    
+    /**
+     * Checks if every boat name in nameAndBoat points to a boat that has a single person configuration.
+     * This check is performend against the FULL boat list (with valid, visible items).
+     * A Message is displayed for the first boat that does not support a single person configuration.
+     * 
+     * Why do we do this check? First at the entry time, the invalid boat is stored by it's name in the session.
+     * But after a Project re-opening, oder a restart of efa, the Audit task starts and tries to convert boat names in sessions
+     * into links to present boats. This leads to entries in the session log where a single person runs a 4-seater boat.
+     * 
+     * This shall be avoided.
+     * 
+     * On the other hand, we want to support Multisession for Boats which are NOT in the boat database of efa.
+     * For instance, the member's boats which are stored at home, and therefore are not in the boat database of efa.
+     * 
+     * @return true if check ok
+     */
+    private boolean checkSinglePersonBoats() {
+
+    	Vector <ItemTypeStringAutoComplete> uncertainBoatFields = new  Vector <ItemTypeStringAutoComplete>();
+    	
+    	// Get all Boat edit fields which do not have a green dot behind their Value.
+        for (int iCurNameAndBoat =0; iCurNameAndBoat<nameAndBoat.getItemCount(); iCurNameAndBoat++) {
+	    	ItemTypeStringAutoComplete[] acItem= (ItemTypeStringAutoComplete[])nameAndBoat.getItems(iCurNameAndBoat);
+	    	ItemTypeStringAutoComplete curBoat = acItem[1];
+	    	
+	    	if (!(curBoat.getValue().trim().isEmpty())){
+		    	//find those boat entries which are not-empty and also not matching/not valid
+		    	if (!curBoat.isCurrentTextMatching() && ! curBoat.isCurrentTextValid()) {
+		    		uncertainBoatFields.add(curBoat);
+		    	}
+	    	}
+        }
+        
+        // check if the Boat's case insensitive name is in the boat list (valid and visible)
+        if (uncertainBoatFields.size()>0) {
+        	
+        	Boats allBoats = Daten.project.getBoats(false);
+        	BoatRecord aBoat;
+        	
+        	for (int icurUncertainBoat =0; icurUncertainBoat<uncertainBoatFields.size(); icurUncertainBoat++) {
+        		
+        	    long timePreferredValidity = LogbookRecord.getValidAtTimestamp(this.date.getDate(),
+                           (this.starttime != null ? this.starttime.getTime() : null));
+        	    
+        	    String boatName = uncertainBoatFields.get(icurUncertainBoat).getValueFromField();
+        		
+        	    // this is a key-based approach, which only succeeds if the name of the Boat is case-sensitively correct and correctly spelled. 
+        		aBoat= allBoats.getBoat(boatName, this.logbookValidFrom, this.logbookInvalidFrom-1, timePreferredValidity);
+        		
+        		if (aBoat == null) {
+        			// maybe boat has not been found, because case-sensitivity errors in name field
+        			// this a linear, non-sorted search in a list of all boats, which may be around 200 entries.
+        			// it's slow, but I don't expect the number of total entries to be above 10, and the number of
+        			// uncertain boats to be more than 2-3. So, give it a chance.
+        			aBoat = allBoats.getBoatCaseInsensitive(boatName, timePreferredValidity);
+        		}
+        		
+    			if (aBoat != null) {
+    				//now, check if boat is visible, and supports a single-seater variant
+    				if ((aBoat.isValidAt(timePreferredValidity)) && (!aBoat.getInvisible()) && (aBoat.isOneSeaterBoat())) {
+    					return true;
+    				} else {
+    					//go to the uncertain field
+    					uncertainBoatFields.get(icurUncertainBoat).requestFocus();
+    					
+    					//Show message;
+    					Dialog.error(International.getMessage("In diesem Dialog dürfen nur 'Einer'-Boote verwendet werden.\nDas Boot [{boatname}] ist kein 'Einer'.", boatName));
+    					return false;
+    				}
+    			}
+        	}
+        	return false;
+        }
+        return true; // no boat specified, so no problem with the boats
     }
     
     /**

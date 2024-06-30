@@ -10,11 +10,9 @@
 
 package de.nmichael.efa.data;
 
-import de.nmichael.efa.core.config.*;
 import de.nmichael.efa.util.*;
 import de.nmichael.efa.ex.*;
 import de.nmichael.efa.data.storage.*;
-import de.nmichael.efa.data.types.DataTypeList;
 import java.util.*;
 
 // @i18n complete
@@ -88,6 +86,42 @@ public class Boats extends StorageObject {
             Logger.logdebug(e);
             return null;
         }
+    }
+    
+    /**
+     * Get a Boat record for the case insensitive name of the boat
+     * @param boatName 
+     * @param validAt
+     * @return 
+     */
+    public BoatRecord getBoatCaseInsensitive(String boatName, long validAt) {
+    	try {
+    		String[] boatNameContents= staticBoatRecord.getQualifiedNameValues(boatName);
+            DataKey[] keys = data().getAllKeys();
+            
+            for (int curKey=0; curKey<keys.length; curKey++) {
+            	BoatRecord myBoatRec=(BoatRecord) data().get(keys[curKey]);
+            	
+            	String recName = myBoatRec.getName().trim();
+            	String boatNameName = boatNameContents[0].trim();
+            	if (recName.equalsIgnoreCase(boatNameName)) {
+            		//hey, we have a match on the boat name
+            		if (boatNameContents[1]!=null && !boatNameContents[1].trim().isEmpty()){
+            			if (myBoatRec.getNameAffix().equalsIgnoreCase(boatNameContents[1].trim())) {
+            				return myBoatRec;
+            			} else {
+            				continue; //next item
+            			}
+            		} else {
+            			return myBoatRec;
+            		}
+            	}
+            }
+            return null;
+        } catch(Exception e) {
+            Logger.logdebug(e);
+            return null;
+        }    	
     }
     
     // find any record being valid at least partially in the specified range

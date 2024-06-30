@@ -852,6 +852,23 @@ public class BoatRecord extends DataRecord implements IItemFactory, IItemListene
         return null;
     }
 
+    /**
+     * Determine if a boat has at least a variant as a one-seater.
+     * Does not check if the BoatRecord is valid at the current time.
+     * 
+     * @param boatRec BoatRecord (not null)
+     * @return true if Boat has at least one variant as a One-Seater
+     */
+    public boolean isOneSeaterBoat() {
+
+        for (int boatVariant=0; boatVariant<this.getNumberOfVariants(); boatVariant++) {
+            if (this.getNumberOfSeats(boatVariant)==1) {
+            	return true;
+            }
+        }
+        //none of the variants is a OneSeater
+        return false;
+    }    
 
     public IItemType[] getDefaultItems(String itemName) {
         if (itemName.equals(BoatRecord.GUIITEM_BOATTYPES)) {
