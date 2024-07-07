@@ -10,6 +10,8 @@
 
 package de.nmichael.efa.data;
 
+import de.nmichael.efa.Daten;
+import de.nmichael.efa.data.efacloud.TextResource;
 import de.nmichael.efa.util.*;
 import de.nmichael.efa.data.storage.*;
 import de.nmichael.efa.data.types.DataTypeIntString;
@@ -90,6 +92,7 @@ public class BoatStatus extends StorageObject {
             DataKey k = it.getFirst();
             while (k != null) {
                 BoatStatusRecord r = (BoatStatusRecord) data().get(k);
+
                 if (r != null && !r.getDeletedOrInvisible()) {
                     if (Logger.isTraceOn(Logger.TT_GUI, 9)) {
                         Logger.log(Logger.DEBUG, Logger.MSG_DEBUG_BOATLISTS,
@@ -97,11 +100,19 @@ public class BoatStatus extends StorageObject {
                                 " (boathouse " + r.getOnlyInBoathouseIdAsInt() + ": " +
                                 r.getOnlyInBoathouseId() + ")");
                     }
-                    if (r.getOnlyInBoathouseIdAsInt() < 0
-                            || r.getOnlyInBoathouseIdAsInt() == boathouseId) {
-                        String s = (getBoatsForLists ? r.getShowInList() : r.getCurrentStatus());
-                        if (s != null && s.equals(status)) {
+                    //  for boats on the water show only those which have sessions in the current logbook
+                    if (status.equalsIgnoreCase(BoatStatusRecord.STATUS_ONTHEWATER)) {
+                        String rLogbook = (r.getLogbook() == null) ? "-" : r.getLogbook();
+                        if (rLogbook.equalsIgnoreCase(Daten.project.getCurrentLogbookEfaBoathouse()))
                             v.add(r);
+                    } else {
+                        // for all other show only the boats which are in this boathouse, if they are restricted.
+                        if (r.getOnlyInBoathouseIdAsInt() < 0
+                                || r.getOnlyInBoathouseIdAsInt() == boathouseId) {
+                            String s = (getBoatsForLists ? r.getShowInList() : r.getCurrentStatus());
+                            if (s != null && s.equals(status)) {
+                                v.add(r);
+                            }
                         }
                     }
                 }
