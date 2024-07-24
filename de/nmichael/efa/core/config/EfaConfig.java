@@ -1320,9 +1320,9 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
 					International.getString("efa immer im Vordergrund")));
 			addParameter(efaDirekt_immerImVordergrundBringToFront = new ItemTypeBoolean(
-					"EfaBoathouseWindowAlwaysOnTopBringToFront", false, IItemType.TYPE_INTERNAL,
+					"EfaBoathouseWindowAlwaysOnTopBringToFront", false, IItemType.TYPE_EXPERT,
 					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
-					International.getString("efa immer im Vordergrund") + " (bringToFront)"));
+					International.getString("efa immer im Vordergrund - efa jede Minute in den Vordergrund bringen")));
 			
 			addHeader("efaGuiBoathouseFont", IItemType.TYPE_PUBLIC,
 					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
