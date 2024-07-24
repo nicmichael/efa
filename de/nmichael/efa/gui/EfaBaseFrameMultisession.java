@@ -481,7 +481,37 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
         
         yPos++;
         //---------------------------------------------------------------------
+        // Name (crew) and Boat (single boat items only)		
         
+        teilnehmerUndBoot=new JPanel();
+        teilnehmerUndBoot.setLayout(new GridBagLayout());
+        teilnehmerUndBoot.removeAll();
+		teilnehmerUndBoot.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
+		
+		nameAndBoat = new ItemTypeItemList("NameAndBoat", new Vector<IItemType[]>(), this,
+				IItemType.TYPE_PUBLIC, null,
+				International.getString("Teilnehmer und Boot"));
+		//crontab.setScrollPane(1000, 400);
+		nameAndBoat.setRepeatTitle(false);        
+		nameAndBoat.setAppendPositionToEachElement(true);
+		nameAndBoat.setXForAddDelButtons(6); // two columns, both with name, edit field, autocomplete button
+		nameAndBoat.setItemsOrientation(ItemTypeItemList.Orientation.horizontal);
+		nameAndBoat.setFieldGrid(8, GridBagConstraints.EAST, GridBagConstraints.BOTH);
+		nameAndBoat.setFirstColumnMinWidth(getLongestLabelTextWidth(mainInputPanel));
+		nameAndBoat.setPadding(0, 0, 10, 10);
+		//nameAndBoat.setFirstColumnMinWidth(mainInputPanelGrid.getLayoutDimensions()[0][0]);
+		// Multisession means at least two persons with an individual boat are to go
+		addStandardItems(nameAndBoat,4);
+		nameAndBoat.displayOnGui(this, teilnehmerUndBoot, 0, 0);
+		nameAndBoat.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
+	
+		
+		if (!Daten.efaConfig.getValueEfaDirekt_MultisessionLastGuiElemParticipants()){
+		   mainInputPanel.add(teilnehmerUndBoot, new GridBagConstraints(0, yPos, HEADER_WIDTH, 1, 0, 0,
+		                      GridBagConstants.WEST, GridBagConstants.HORIZONTAL, new Insets(0,0,0,0), 0, 0));
+		}
+		yPos++;
+		
         header = createHeader("CREATE_DESTINATION", 0, null, International.getString("Ziel und weitere Angaben"),HEADER_WIDTH);
         header.displayOnGui(this,  mainInputPanel, 0, yPos);
         yPos++;
@@ -549,35 +579,14 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
         comments.displayOnGui(this, mainInputPanel, 0, yPos);
         comments.registerItemListener(this);
         yPos++;
-        
-        teilnehmerUndBoot=new JPanel();
-        teilnehmerUndBoot.setLayout(new GridBagLayout());
-        teilnehmerUndBoot.removeAll();
-		teilnehmerUndBoot.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
 
-        mainInputPanel.add(teilnehmerUndBoot, new GridBagConstraints(0, yPos, HEADER_WIDTH, 1, 0, 0,
-                GridBagConstants.WEST, GridBagConstants.HORIZONTAL, new Insets(0,0,0,0), 0, 0));
         
-        
-       // mainInputPanel.ad
-		nameAndBoat = new ItemTypeItemList("NameAndBoat", new Vector<IItemType[]>(), this,
-				IItemType.TYPE_PUBLIC, null,
-				International.getString("Teilnehmer und Boot"));
-		//crontab.setScrollPane(1000, 400);
-		nameAndBoat.setRepeatTitle(false);        
-		nameAndBoat.setAppendPositionToEachElement(true);
-		nameAndBoat.setXForAddDelButtons(6); // two columns, both with name, edit field, autocomplete button
-		nameAndBoat.setItemsOrientation(ItemTypeItemList.Orientation.horizontal);
-		nameAndBoat.setFieldGrid(8, GridBagConstraints.EAST, GridBagConstraints.BOTH);
-		nameAndBoat.setFirstColumnMinWidth(getLongestLabelTextWidth(mainInputPanel));
-		nameAndBoat.setPadding(0, 0, 10, 10);
-		//nameAndBoat.setFirstColumnMinWidth(mainInputPanelGrid.getLayoutDimensions()[0][0]);
-		// Multisession means at least two persons with an individual boat are to go
-		addStandardItems(nameAndBoat,4);
-		nameAndBoat.displayOnGui(this, teilnehmerUndBoot, 0, 0);
-		nameAndBoat.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
-		
-        // Name (crew) and Boat (single boat items only)
+        //Alternate layout: put participans after all other GUI elements
+		if (Daten.efaConfig.getValueEfaDirekt_MultisessionLastGuiElemParticipants()){
+			   mainInputPanel.add(teilnehmerUndBoot, new GridBagConstraints(0, yPos, HEADER_WIDTH, 1, 0, 0,
+			                      GridBagConstants.WEST, GridBagConstants.HORIZONTAL, new Insets(0,0,0,0), 0, 0));
+		}
+
                 
         yPos++;
         
@@ -923,12 +932,21 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
         // users have found strange ways of working around completion...
         autocompleteAllFields();
 
-        // run all checks before saving this entry
+        Boolean checkMultisessionLast=Daten.efaConfig.getValueEfaDirekt_MultisessionLastGuiElemParticipants();
+
+        // check all data in the appropriate order of the fields.
+        // as user can select where the items for boat/person are located in the GUI, 
+        // the order of the checks have to change depending on the order of the fields in the gui
+        
         if (!checkDate() ||
             !checkTime() ||
             !checkAllowedDateForLogbook() ||
             !checkMultiDayTours() ||
-        	!checkMultiSessionMisspelledPersons() ||
+            
+            !checkDestinationAndOther(checkMultisessionLast) ||
+            
+	        !checkMultiSessionAtLeastOnePair() ||	
+            !checkMultiSessionMisspelledPersons() ||
             !checkMultiSessionDuplicatePersonsAndBoats() ||
             !checkMultiSessionBoatStatus() ||
             !checkMultiSessionNameAndBoatValuesValid()||
@@ -937,12 +955,15 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
             !checkAllowedPersons() ||
             !checkAllowedPersonsForBoat() ||
             !checkSinglePersonBoats() ||
-            !checkDestinationNameValid() ||
-            !checkAllDataEntered() ||
-            !checkMultiSessionAtLeastOnePair() ||
-            !checkSessionType()) {
+            
+
+            !checkDestinationAndOther(!checkMultisessionLast) ||
+	        
+	        //check session type last, as for trips >30km, efa asks if the session type is correct.
+	        !checkSessionType()) {
             return false;
         }
+       
 
         boolean success = saveEntriesInLogbook();
 
@@ -971,6 +992,20 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
         
         return success;
     }
+
+
+    /**
+     * Check for valid Destination and other values, if the check shall be performed in this place
+     * @param performCheck
+     * @return true if all checks return true, or the check shall not be performed.
+     */
+	private boolean checkDestinationAndOther(boolean performCheck) {
+        if (performCheck) {
+        	return (checkDestinationNameValid() && checkAllDataEntered());
+        } else {
+        	return true;
+        }
+	}
 
     /**
      * Checks if a row in the nameAndBoat list contains both a person name and a boat name.

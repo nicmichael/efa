@@ -254,6 +254,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 	private ItemTypeInteger	efaDirekt_eintragPresentLastTripTimeout;
 	private ItemTypeBoolean efaDirekt_MultisessionSupportStartSession;
 	private ItemTypeBoolean	efaDirekt_MultisessionSupportLateEntry;
+	private ItemTypeBoolean efaDirekt_MultisessionLastGuiElemParticipants;
 	private ItemTypeInteger efaDirekt_plusMinutenAbfahrt;
 	private ItemTypeInteger efaDirekt_minusMinutenAnkunft;
 	private ItemTypeBoolean allowEnterEndDate;
@@ -1249,6 +1250,10 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 					true, IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_INPUT),
 					International.getString("Nachtrag: Vereinfachte Eingabe für mehrere Einzelfahrten")));
 
+			addParameter(efaDirekt_MultisessionLastGuiElemParticipants = new ItemTypeBoolean("MultiSessionLastGuiElemParticipants",
+					true, IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_INPUT),
+					International.getString("Teilnehmer und Boot am Ende des Dialogs erfassen")));
+			
 			addDescription("PresentLastTripDescription2", IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_INPUT),
 					"<html>"+International.getStringWithMnemonic("PRESENT_LAST_TRIP_DESCRIPTION2")+"</html>", 3, 20,10);
 
@@ -2321,7 +2326,9 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 	public boolean getValueEfaDirekt_MultisessionSupportLateEntry(){
 		return efaDirekt_MultisessionSupportLateEntry.getValue();
 	}	
-	
+	public boolean getValueEfaDirekt_MultisessionLastGuiElemParticipants() {
+		return efaDirekt_MultisessionLastGuiElemParticipants.getValue();
+	}	
 	public int getValueEfaDirekt_plusMinutenAbfahrt() {
 		return efaDirekt_plusMinutenAbfahrt.getValue();
 	}
