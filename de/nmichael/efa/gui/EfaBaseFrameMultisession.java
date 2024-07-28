@@ -1047,8 +1047,11 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
 
                     //get a new entry id for each record. this may be slowish, but works better than just obtaining
         			//the last record id once (outside the loop) and just incrementing it.
+        			int nextEntry=1; // use first record id#1 only if there is no other record in the db.
         			LogbookRecord rlast = (LogbookRecord) logbook.data().getLast();
-                    int nextEntry = rlast.getEntryId().intValue()+1;
+        			if (rlast != null) {
+        				nextEntry = rlast.getEntryId().intValue()+1;
+        			}
 
                     entryno.setValue(""+nextEntry); // convert incremented last ID to string
                     isNewRecord = true; // always create new records
