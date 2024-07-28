@@ -7,13 +7,14 @@
         <DownloadSize>TODO</DownloadSize>
         <Changes lang="de">
             <ChangeItem>Neu: efaBths Listen: Farbicons für Bootslisten werden geglättet dargestellt.</ChangeItem>
+			<ChangeItem>Neu: Neuer Dialog für Erfassung von Wanderfahrten (Multisession), wenn mehrere Leute im eigenen Boot zu einer gemeinsamen Fahrt aufbrechen. Konfigurierbar in efaConfig.</ChangeItem>
             <ChangeItem>Neu: Autovervollständigungs-Listen: bei der Suche nach Teilbegriff wird immer der Eintrag vorselektiert, der mit dem Suchbegriff beginnt.</ChangeItem>
             <ChangeItem>Neu: Neue Option in Konfiguration-&gt;Allgemein-&gt;Eingabe-&gt;Besatzung: bei Einsitzer-Fahrten die Person als Crew statt als Steuermann eintragen.</ChangeItem>
             <ChangeItem>Neu: Adminmodus/Personen: Personen, die in einer oder mehreren Gruppen sind, haben das zugehörige Icon, und der Tooltip stellt die Gruppen dar.</ChangeItem>
             <ChangeItem>Neu: Adminmodus/Personen: Personen, die eine Kanu-eFB-ID haben, erhalten ein passendes Icon, und der Tooltip beinhaltet die eFB-ID.</ChangeItem>
             <ChangeItem>Neu: Adminmodus/Boote: Boote, die in einer oder mehreren Gruppen sind, haben das zugehörige Icon, und der Tooltip stellt die Gruppen dar.</ChangeItem>
             <ChangeItem>Neu: Adminmodus/Gruppen: In der Tabelle dargestellte Gruppen zeigen ihre Farbe an.</ChangeItem>
-            <ChangeItem>Neu: CSV DatenExport: Erzeugte Dateien lassen sich besser mit aktuellen Tabellenkalkulationen verarbeiten. </ChangeItem>
+            <ChangeItem>Neu: CSV DatenExport: Erzeugte Dateien lassen sich besser mit aktuellen Tabellenkalkulationen verarbeiten. Automatische Erstellung eines BOM, wenn bei CSV der Zeichensatz UTF-8 gewählt wird.</ChangeItem>
             <ChangeItem>Neu: CSV DatenExport: efaCLI mit erweiterten Parametern für Datenexport.</ChangeItem>
             <ChangeItem>Neu: CSV DatenExport: efaCLI mit Export für Vereinsarbeit.</ChangeItem>
             <ChangeItem>Neu: CSV DatenImport: CSV-Dateien in UTF-8 mit BOM (aus Tabellenkalkulationen) lassen sich importieren.</ChangeItem>
@@ -22,28 +23,33 @@
             <ChangeItem>Neu: EFB-Sync: Fahrtart kann dem EFB-Kommentartext vorangestellt werden.</ChangeItem>
             <ChangeItem>Neu: EFB-Sync: Schlägt das DB-Update einer Fahrt fehl, werden trotzdem alle weiteren Fahrten synchronisiert.</ChangeItem>
             <ChangeItem>Neu: EFB-Sync: Option in EfaConfig-&gt;Sync um die KanuEFB-ID Felder für Personen, Boote, Gewässer immer anzeigen zu lassen.</ChangeItem>         
+			<ChangeItem>BugFix: In efaBootshaus funktioniert im Admin-Bereich: Fahrtenbuch wieder die Suche mit F3.</ChangeItem>           
             <ChangeItem>BugFix: Abgelaufene Bootsreservierungen von "versteckten" Booten werden gelöscht.</ChangeItem>
             <ChangeItem>BugFix: In Beta-Versionen wird im Admin-Modus nicht mehr beständig die Aktualisierung der Gewässerliste angeboten.</ChangeItem>
+            <ChangeItem>BugFix: Versteckte Option für "efa immer im Vordergrund" wird wieder angezeigt.</ChangeItem>
             <ChangeItem>BugFix: efaCloud: Kein Nullpointer-Fehler mehr beim Betreten des Admin-Modus, wenn kein Projekt geöffnet ist.</ChangeItem>
             <ChangeItem>BugFix: efaCloud: Im Debug Modus werden keine unnötigen Nullpointer-Exceptions mehr ins Log geschrieben. https://github.com/nicmichael/efa/issues/138</ChangeItem>
             <ChangeItem>Code: Refactoring: Unnötige Imports entfernt.</ChangeItem>          
         </Changes>
         <Changes lang="en">
             <ChangeItem>New: efaBths boatlists: Icons for boat groups are rendered aliased.</ChangeItem>
+			<ChangeItem>New: New dialog for input of multiple similar sessions (multiple persons go on the same trip with their own boat)</ChangeItem>
             <ChangeItem>New: Popup-Lists: when searching in partial text mode, the preselected entry is now the first of the result set that BEGINS with the search text.</ChangeItem>
             <ChangeItem>New: New option in Configuration-&gt;Common-&gt;Input-&gt;Crew: when creating single person sessions, set the person as crew instead of as cox.</ChangeItem>
             <ChangeItem>New: Admin mode/Persons: Persons who are in one or more groups get the respecive group color icon, and the group names are visible in the tooltip.</ChangeItem>
             <ChangeItem>New: Admin mode/Persons (German Kanoers only): Persons who have a Kanu-eFB-ID assigned get the respective EFB icon and the tooltip shows the eFB-ID.</ChangeItem>
             <ChangeItem>New: Admin mode/Boats: Boats which are in one or more groups get the respecive group color icon, and the group names are visible in the tooltip.</ChangeItem>
             <ChangeItem>New: Admin mode/Groups: Groups show their respective color in the table.</ChangeItem>
-            <ChangeItem>New: CSV export: Created files are more suitable for processing in spreadsheet programs, especially in localized variants.</ChangeItem>
+            <ChangeItem>New: CSV export: Created files are more suitable for processing in spreadsheet programs, especially in localized variants. CSV gets a BOM, if UTF-8 charset is chosen.</ChangeItem>
             <ChangeItem>New: CSV export: efaCLI has extended parameters for data export.</ChangeItem>
             <ChangeItem>New: CSV export: efaCLI can export clubwork.</ChangeItem>
             <ChangeItem>New: CSV import: UTF-8 CSV files with BOM (created by spreadsheets programs) can be used for import.</ChangeItem>
 			<ChangeItem>New: Better sorting of items in the tables for editing boat reservations, persons, boats... when sorting by another column.</ChangeItem>
             <ChangeItem>New: Backup: efa.log file can be added to the items which are included in the backup.</ChangeItem>
+            <ChangeItem>BugFix: in efaBths the loogbook dialog supports the F3 key again.</ChangeItem>
             <ChangeItem>BugFix: Outdated boatreservations of "hidden" boats are deleted.</ChangeItem>
             <ChangeItem>BugFix: In beta versions there are no more questions for updateing the waters list in admin mode.</ChangeItem>
+            <ChangeItem>BugFix: Hidden option for "efa always on top" gets shown again.</ChangeItem>
             <ChangeItem>BugFix: efaCloud: No more nullpointer exception when entering admin mode and no open project.</ChangeItem>
             <ChangeItem>BugFix: efaCloud: No more exceptions logged in debug mode. https://github.com/nicmichael/efa/issues/138 </ChangeItem>
             <ChangeItem>Code: Refactoring: Removed unused import statemens.</ChangeItem>          
