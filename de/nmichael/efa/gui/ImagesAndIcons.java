@@ -58,6 +58,7 @@ public class ImagesAndIcons {
 	public static final String IMAGE_BUTTON_HELP = "button_help.png";
 	public static final String IMAGE_BUTTON_HIDE = "button_hide.png";
 	public static final String IMAGE_BUTTON_IMPORT = "button_import.png";
+	public static final String IMAGE_BUTTON_JUMP_TO = "button_jump_to.png";
 	public static final String IMAGE_BUTTON_LAST = "button_last.png";
 	public static final String IMAGE_BUTTON_LIST = "button_list.png";
 	public static final String IMAGE_BUTTON_LOGOUT = "button_logout.png";
