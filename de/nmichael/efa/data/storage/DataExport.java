@@ -24,6 +24,7 @@ import java.util.Vector;
 
 import de.nmichael.efa.data.types.DataTypeDate;
 import de.nmichael.efa.data.types.DataTypeDecimal;
+import de.nmichael.efa.data.types.DataTypeDistance;
 import de.nmichael.efa.util.EfaUtil;
 import de.nmichael.efa.util.Logger;
 
@@ -114,6 +115,7 @@ public class DataExport {
             	fw.write('\ufeff');
             }
             
+            // write header for CSV files
             if (format == Format.csv || format == Format.csv_bom_utf8 ) {
                 for (int i=0; i<fields.length; i++) {
                     fw.write( (i > 0 ? csvDelimiter : "") + fields[i]);
@@ -191,7 +193,8 @@ public class DataExport {
 
                     	Boolean isTextField= (iFieldType==IDataAccess.DATA_TEXT);
                         Boolean isFloatField = (iFieldType==IDataAccess.DATA_DOUBLE);
-                        Boolean isDateField = (iFieldType==IDataAccess.DATA_DATE);                    	
+                        Boolean isDateField = (iFieldType==IDataAccess.DATA_DATE);    
+                        Boolean isDistanceField = (iFieldType==IDataAccess.DATA_DISTANCE);
 
                     	if (isTextField) {
                     		//if (and only if) we export a string type field, include quotes, als long as the value is not empty 
@@ -211,7 +214,19 @@ public class DataExport {
                     			}
                     		}
                             fw.write((i > 0 ? csvDelimiter : "") + (value != null ? EfaUtil.replace(value, csvDelimiter, "", true) : ""));
-
+                    	} else if (isDistanceField && csvLocale!=null) {
+                    		Object value1=r.get(fields[i]);
+                    		value=null;
+                    		if (value1!= null) {
+                    			if (value1.getClass() == DataTypeDistance.class) {
+                    				// format the decimal value according to the csv locale, and add the unit afterwards.
+                            		value = csvDecimalFormat.format(((DataTypeDistance) value1).getValue().getValue()); //double getValue() as we want the decimal Value
+                            		value = value + " " + ((DataTypeDistance) value1).getUnit();
+                    			} else {
+                    				value=value1.toString();
+                    			}
+                    		}
+                            fw.write((i > 0 ? csvDelimiter : "") + (value != null ? EfaUtil.replace(value, csvDelimiter, "", true) : ""));                    		
                     	} else if (isDateField && csvLocale!=null) {
                     		DataTypeDate value2= (DataTypeDate) r.get(fields[i]);
                     		value = (value2!=null ? csvDateFormat.format(value2.getDate()) : null);
@@ -242,14 +257,28 @@ public class DataExport {
         return lastError;
     }
 
-    /*
-     * Checks if a field is a textfield in the datarecord.
-     * textfields need quotes when exported to CSV.
+    /** 
+     * Convert actual field type to a more common one which may need special handling in CSV files. 
+     * return IDataAccess.DATA_TEXT for all field types which need to be encapsulated with " in CSV
+     *        IDataAccess.DATA_DOUBLE for decimal fields (which need to be rendered correctly by using locales
+     *        IDataAccess.DATE for DATE fields 
+     *        IDataAccess. actual field Type for all other fieldtypes (which need no special handling in CSV files). 
      */
         private int getAbstractFieldType (DataRecord r, String fieldName) {
         	try {
-    	    	int fieldType=r.getFieldType(fieldName);
+        		int fieldType;
+        		// fieldname may point to a virtual field, like "crew1" in a logbook.
+        		// you cannot determine a fieldType for such a virtual field.
+        		// this would lead to (intended) nullpointer exceptions in debug log when determining a field type for such virtual fields.
+        		// this is disturbing and can be avoided.
+        		if (r.metaData.isField(fieldName)) {
+        			fieldType=r.getFieldType(fieldName);
+        		} else {
+        			//it's a virtual field, so data type is text.
+        			fieldType=IDataAccess.DATA_TEXT;
+        		}
 
+        		// correct fieldtype to a more abstract one
     	    	if (fieldType == IDataAccess.DATA_STRING 
     	    			|| fieldType == IDataAccess.DATA_TEXT 
     	    			|| fieldType == IDataAccess.DATA_UUID
@@ -258,19 +287,20 @@ public class DataExport {
     					|| fieldType == IDataAccess.DATA_PASSWORDC
     					|| fieldType == IDataAccess.DATA_LIST_STRING
     					|| fieldType == IDataAccess.DATA_LIST_INTEGER
-    					|| fieldType == IDataAccess.DATA_LIST_UUID) {
+    					|| fieldType == IDataAccess.DATA_LIST_UUID
+    					|| fieldType == IDataAccess.DATA_VIRTUAL
+    					|| fieldType == IDataAccess.DATA_UNKNOWN) {
     					return IDataAccess.DATA_TEXT;
     			}
 
+    	    	//decimal and double are the same for csv export.
+    	    	//but we won't check for distances as data type as they always come along with a unit, and thus need no special handling in csv files.
     			if (fieldType==IDataAccess.DATA_DECIMAL || fieldType == IDataAccess.DATA_DOUBLE) {
     				return IDataAccess.DATA_DOUBLE;
     			}
 
-    			if (fieldType==IDataAccess.DATA_DATE ) {
-    				return IDataAccess.DATA_DATE; 
-    			}
-
-    			return IDataAccess.DATA_INTEGER;
+    			//nothing to correct? then, return the actual fieldType of the field.
+    			return fieldType;
 
         	} catch (Exception e) {
         		//return text field format, if fieldtype cannot be determinded

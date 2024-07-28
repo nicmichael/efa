@@ -397,10 +397,21 @@ public class DataImport extends ProgressTask {
                             if (value != null && value.length() > 0) {
                                 try {
                                     // special locale handling of imported decimals
-                                	// Bugfix: if fieldName in (header[i]) does not exist, getFieldType returns IDataAccess.DATA_UNKNOWN.
-                                	// This does not hurt here, as we are only looking for EXISTING field's type
-                                    if (dummyRecord.getFieldType(header[i]) == IDataAccess.DATA_DECIMAL) {
+                                	// the following code produces no more nullpointer exceptions in debug mode, as we check
+                                	// wether the fieldname actually exists in the target record. this is not true for virtual fields like crew1 etc.
+                                	int fieldType;
+                                	String fieldName=header[i];
+                                	if (dummyRecord.metaData.isField(fieldName)) {
+                                		fieldType=dummyRecord.getFieldType(fieldName);
+                                	} else {
+                                		fieldType=IDataAccess.DATA_UNKNOWN;
+                                	}
+                                	
+                                    if ((fieldType == IDataAccess.DATA_DECIMAL)||
+                                    	(fieldType == IDataAccess.DATA_DOUBLE) ||
+                                    	(fieldType == IDataAccess.DATA_DISTANCE)){
                                         value = EfaUtil.replace(value, Character.toString(International.getThousandsSeparator()), "");
+                                        // any decimal separator which is defined in the locale of the current language is converted to US locale for import
                                         value = EfaUtil.replace(value, Character.toString(International.getDecimalSeparator()), ".");
                                     }
                                     if (!r.setFromText(header[i], value.trim())) {
