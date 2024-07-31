@@ -177,6 +177,17 @@ public class EfaAboutDialog extends BaseDialog {
             efaInfosText.append(International.getString("Keine Systeminformationen verfügbar."));
         }
         
+        //Add Display information
+        
+    	efaInfosText.append("\n\n\nDisplayInfo\n-------------\n");
+        Vector<String> displayInfo = Daten.getDisplayInfos();
+        if (displayInfo!=null) {
+	        for (int i = 0; displayInfo != null && i < displayInfo.size(); i++) {
+	            efaInfosText.append((String) displayInfo.get(i) + "\n");
+	        }
+        }
+        
+        
         //Add GUI Debug info, if debug info is activated in efaConfig or by Commandline
         if (Logger.isDebugLogging()||Logger.isDebugLoggingActivatedByCommandLine()) {
 	        // Get UI Defaults Properties

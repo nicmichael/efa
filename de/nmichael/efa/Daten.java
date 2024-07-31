@@ -17,6 +17,10 @@ import static de.nmichael.efa.core.config.EfaTypes.TYPE_SESSION_TRAINING;
 
 import java.awt.Color;
 import java.awt.Frame;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.Rectangle;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -70,6 +74,7 @@ import de.nmichael.efa.util.Logger;
 // @i18n complete
 public class Daten {
 
+	private static final String KEY_VALUE_DELIMITER = " = ";
 	public final static String VERSION = "2.4.0"; // Version für die Ausgabe (z.B. 2.1.0, kann aber
 																	// auch Zusätze wie "alpha" o.ä. enthalten)
 	public final static String VERSIONID = "2.4.0_00"; // VersionsID: Format: "X.Y.Z_MM"; final-Version z.B. 1.4.0_00;
@@ -1376,7 +1381,7 @@ public class Daten {
 			Object value = uid.get(key);
 
 			if (value != null) {
-				infos.add(key + " = " + value.toString().replaceAll("\n", " "));
+				infos.add(key + KEY_VALUE_DELIMITER + value.toString().replaceAll("\n", " "));
 			} else {
 				infos.add(key + " = <null>");
 			}
@@ -1384,6 +1389,42 @@ public class Daten {
 
 		infos.sort(new EfaSortStringComparator());
 		return infos;
+	}
+	
+	public static Vector <String>getDisplayInfos() {
+
+		Vector<String> infos = new Vector<String>();
+		int curDevice=0;
+		try {
+			
+			GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+			GraphicsDevice[] gs = ge.getScreenDevices();
+			infos.add("Number of Displays" + KEY_VALUE_DELIMITER+ gs.length);
+			infos.add("");
+			for(GraphicsDevice curGs : gs)
+			{
+			      GraphicsConfiguration gc = curGs.getDefaultConfiguration();
+			      Rectangle bounds = gc.getBounds();
+			      
+			      infos.add("Display "+curDevice+" Name"+KEY_VALUE_DELIMITER+curGs.getIDstring());
+			      infos.add("Display "+curDevice+" Offset (X/Y)"+KEY_VALUE_DELIMITER+bounds.getX()+" / " +bounds.getY());
+			      infos.add("Display "+curDevice+" Dimensions (Width/Height)"+KEY_VALUE_DELIMITER+bounds.getWidth()+" / "+bounds.getHeight());
+			      infos.add("Display "+curDevice+" Scaling factor" +KEY_VALUE_DELIMITER+ gc.getDefaultTransform().getScaleY());      
+			      infos.add("");
+			      curDevice++;
+			}			
+		} catch (Exception e) {
+			infos.add("Error during getting display infos.\n"+e.getLocalizedMessage());
+		}
+	
+		if (curDevice==0) {infos.add("");}
+		infos.add("sun.java2d.uiScale.enabled" +KEY_VALUE_DELIMITER+  System.getProperty("sun.java2d.uiScale.enabled"));
+		infos.add("sun.java2d.uiScale" +KEY_VALUE_DELIMITER+  System.getProperty("sun.java2d.uiScale"));
+		infos.add("flatlaf.uiScale.enabled" +KEY_VALUE_DELIMITER+  System.getProperty("flatlaf.uiScale.enabled"));	
+		infos.add("flatlaf.uiScale" +KEY_VALUE_DELIMITER+  System.getProperty("flatlaf.uiScale"));	
+		infos.add("laf.scaleFactor" +KEY_VALUE_DELIMITER+ Dialog.getUiDefaults().get("laf.scaleFactor"));
+		return infos;
+		
 	}
 
 	public static Vector <String>getCSSInfo() {
