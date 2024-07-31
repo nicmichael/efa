@@ -21,6 +21,7 @@ import java.awt.GridBagConstraints;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -184,24 +185,7 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
         }
         if (icon == null) {
             if (item.colors != null && item.colors.length > 0) {
-                BufferedImage image = new BufferedImage(iconWidth, iconHeight,
-                        BufferedImage.TYPE_INT_ARGB);
-                Graphics2D g = image.createGraphics();
-            	if (item.colors.length == 1) {
-                    g.setColor(item.colors[0]);
-                    g.fillOval(0, 0, iconWidth, iconHeight);
-                } else {
-                    int currentAngle = 90;
-                    int anglePerColor = 360 / item.colors.length;
-                    for (int i=0; i<item.colors.length; i++) {
-                        g.setColor(item.colors[i]);
-                        g.fillArc(0, 0, iconWidth, iconHeight,
-                                currentAngle % 360, anglePerColor);
-                        currentAngle += anglePerColor;
-                    }
-                }
-                icon = new ImageIcon(image);
-            	
+            	icon = EfaUtil.createColorPieIcon(item.colors, iconWidth, iconHeight);
             } else {
                 if (!item.separator) {
 
@@ -224,10 +208,10 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
     
     private synchronized ImageIcon buildDefaultIcon(int iconWidth, int iconHeight) {
     	if (defaultIconForCellRenderer==null) {
-            ImageIcon icon = null;
             BufferedImage image = new BufferedImage(iconWidth, iconHeight, BufferedImage.TYPE_INT_ARGB);
 
             Graphics2D g = image.createGraphics();
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             g.setColor(new Color (230,230,230));
     	    g.fillOval(0, 0, iconWidth, iconHeight);
             defaultIconForCellRenderer= new ImageIcon(image);    		

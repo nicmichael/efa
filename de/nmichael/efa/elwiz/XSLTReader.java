@@ -10,7 +10,6 @@
 
 package de.nmichael.efa.elwiz;
 
-import de.nmichael.efa.util.EfaUtil;
 import de.nmichael.efa.util.Logger;
 import java.util.Vector;
 import org.xml.sax.XMLReader;

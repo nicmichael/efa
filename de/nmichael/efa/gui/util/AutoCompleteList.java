@@ -86,6 +86,7 @@ public class AutoCompleteList {
     private String _foundValue;
     private boolean filterDataOnlyForThisBoathouse = false;
     private boolean postfixNamesWithBoathouseName = true;
+    private boolean filterDataOnlyOneSeaterBoats = false; //property to only have boats with one seat in this list
     private String filterText=null;
 
     public AutoCompleteList() {
@@ -268,9 +269,12 @@ public class AutoCompleteList {
                             if (Daten.efaConfig.getValuePostfixPersonsWithClubName()) {
                                 s = s + ((PersonRecord)r).getAssociationPostfix();
                             }
-
                         }
 
+                        if (filterDataOnlyOneSeaterBoats && r instanceof BoatRecord) {
+                        	if (!((BoatRecord)r).isOneSeaterBoat()) {continue;}
+                        }
+                        
                         if (!r.getDeleted()) {
                             if (s.length() > 0) {
                                 ValidInfo vi = null;
@@ -428,6 +432,18 @@ public class AutoCompleteList {
         }
         return null;
     }
+    
+    public synchronized String getFirstByPrefix(String prefix) {
+        prefix = prefix.toLowerCase();
+        lastPrefix = prefix;
+     
+        for (pos = 0; pos < dataVisibleFiltered.size(); pos++) {
+            if (dataVisibleFiltered.get(pos).toLowerCase().startsWith(prefix)) {
+                return dataVisibleFiltered.get(pos);
+            }
+        }
+        return null;
+    }    
 
     public synchronized String getLast(String prefix) {
         prefix = prefix.toLowerCase();
@@ -669,6 +685,10 @@ public class AutoCompleteList {
         pos = 0;
     }
 
+    public void setFilterDataOnlyOneSeaterBoats(boolean value) {
+    	this.filterDataOnlyOneSeaterBoats=value;
+    }    
+    
     public static void main(String[] args) {
         Vector<String> v = getPermutations("a b c", 7);
         for (int i=0; i<v.size(); i++) {

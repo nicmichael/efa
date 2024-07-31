@@ -146,6 +146,10 @@ public class BoatDamageListDialog extends DataListDialog {
                 actionText, actionType, actionImage, // default actions: new, edit, delete
                 this,
                 IItemType.TYPE_PUBLIC, "BASE_CAT", getTitle());
+
+		table.addPermanentSecondarySortingColumn(BoatDamageRecord.COLUMN_ID_BOAT_NAME);        
+		table.addPermanentSecondarySortingColumn(BoatDamageRecord.COLUMN_ID_REPORTDATE);
+		table.addPermanentSecondarySortingColumn(BoatDamageRecord.COLUMN_ID_DAMAGE);	
 	}
 	
 	protected void iniDialog() throws Exception {

@@ -17,6 +17,7 @@ import de.nmichael.efa.data.storage.DataKey;
 import de.nmichael.efa.data.storage.DataKeyIterator;
 import de.nmichael.efa.data.storage.DataRecord;
 import de.nmichael.efa.data.storage.EfaCloudStorage;
+import de.nmichael.efa.data.storage.IDataAccess;
 import de.nmichael.efa.data.types.DataTypeIntString;
 import de.nmichael.efa.ex.EfaException;
 import de.nmichael.efa.util.International;
@@ -506,10 +507,19 @@ class SynchControl {
         if (tablename.equalsIgnoreCase("efa2persons") ||
                 tablename.equalsIgnoreCase("efa2clubwork")) archiveIDcarrier = "LastName";
         if (tablename.equalsIgnoreCase("efa2messages")) archiveIDcarrier = "Subject";
-        String ln1 = dr1.getAsString(archiveIDcarrier);
-        String ln2 = dr2.getAsString(archiveIDcarrier);
-        if (((ln1 != null) && ln1.startsWith("archiveID:")) || ((ln2 != null) && ln2.startsWith("archiveID:")))
-                return "";
+        
+        //Bugfix EFA#74 / https://github.com/nicmichael/efa/issues/138
+        //looking for values in fields which do not exist causes debug exception logging.
+        //this is excessive in this place. So we check if the field name we are looking for exists in the data record
+        //only check for archiveID: in the field record if the archiveIDcarrier field exists.
+        
+        if (dr1.isField(archiveIDcarrier)) {
+        	String ln1 = dr1.getAsString(archiveIDcarrier);
+            String ln2 = dr2.getAsString(archiveIDcarrier);
+            if (((ln1 != null) && ln1.startsWith("archiveID:")) || ((ln2 != null) && ln2.startsWith("archiveID:")))
+                    return "";        	
+        }
+    
         int allowedMismatches = (TableBuilder.allowedMismatches.get(tablename) == null) ?
                 TableBuilder.allowedMismatchesDefault : TableBuilder.allowedMismatches.get(tablename);
         if (allowedMismatches == 0) return "";    // no check required: e.g. case fahrtenhefte

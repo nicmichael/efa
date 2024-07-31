@@ -115,7 +115,8 @@ public class WatersRecord extends DataRecord {
         ((ItemTypeTextArea)item).setWrap(true);
         if (Daten.efaConfig.getValueUseFunctionalityCanoeingGermany()) {
             v.add(item = new ItemTypeString(WatersRecord.EFBID, getEfbId(),
-                    IItemType.TYPE_EXPERT, CAT_BASEDATA, International.onlyFor("Kanu-eFB ID","de")));
+            		(Daten.efaConfig.getValueKanuEfb_AlwaysShowKanuEFBFields() ? IItemType.TYPE_PUBLIC : IItemType.TYPE_EXPERT), 
+            		CAT_BASEDATA, International.onlyFor("Kanu-eFB ID","de")));
         }
         return v;
     }

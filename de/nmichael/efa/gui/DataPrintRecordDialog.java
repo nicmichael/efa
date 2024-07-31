@@ -14,7 +14,6 @@ import de.nmichael.efa.Daten;
 import de.nmichael.efa.core.config.AdminRecord;
 import de.nmichael.efa.core.items.*;
 import de.nmichael.efa.data.storage.*;
-import de.nmichael.efa.gui.util.TableItemHeader;
 import de.nmichael.efa.util.*;
 import de.nmichael.efa.util.Dialog;
 import java.awt.*;

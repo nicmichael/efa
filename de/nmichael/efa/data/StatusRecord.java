@@ -15,7 +15,6 @@ import java.awt.GridBagConstraints;
 import java.util.UUID;
 import java.util.Vector;
 
-import de.nmichael.efa.Daten;
 import de.nmichael.efa.core.config.AdminRecord;
 import de.nmichael.efa.core.items.IItemListener;
 import de.nmichael.efa.core.items.IItemType;

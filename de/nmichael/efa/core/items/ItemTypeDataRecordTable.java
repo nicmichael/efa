@@ -22,13 +22,12 @@ import de.nmichael.efa.gui.ImagesAndIcons;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import java.util.*;
 
 // @i18n complete
-public class ItemTypeDataRecordTable extends ItemTypeTable implements IItemListener {
+public class ItemTypeDataRecordTable extends ItemTypeTable implements IItemListener, KeyListener {
 
 	/* Documentation on action numbers: (see @iniDisplayActionTable)
 	 * <0  				Do not show this action in the popup menu for an element in the table.
@@ -291,6 +290,7 @@ public class ItemTypeDataRecordTable extends ItemTypeTable implements IItemListe
         keys = items.keySet().toArray(new String[0]);
         Arrays.sort(keys);
         super.showValue();
+        table.addKeyListener(this);
     }
 
     public void itemListenerAction(IItemType itemType, AWTEvent event) {
@@ -448,9 +448,20 @@ public class ItemTypeDataRecordTable extends ItemTypeTable implements IItemListe
             updateData();
             showValue();
         }
-        if (event != null && event instanceof KeyEvent && event.getID() == KeyEvent.KEY_RELEASED && itemType == searchField) {
-        	filterTableContents();
-        }
+		if (event != null && event instanceof KeyEvent && event.getID() == KeyEvent.KEY_RELEASED && itemType == searchField) {
+			switch (((KeyEvent) event).getKeyCode()) {
+				case KeyEvent.VK_UP:
+				case KeyEvent.VK_PAGE_UP:
+				case KeyEvent.VK_DOWN:
+				case KeyEvent.VK_PAGE_DOWN:
+					table.requestFocus();
+					break;
+	
+				default:
+					filterTableContents();
+					break;
+			}
+		}
         if (event != null
                 && (event instanceof KeyEvent && event.getID() == KeyEvent.KEY_RELEASED && itemType == searchField)
                 || (event instanceof ActionEvent && event.getID() == ActionEvent.ACTION_PERFORMED && itemType == filterBySearch)) {
@@ -791,5 +802,20 @@ public class ItemTypeDataRecordTable extends ItemTypeTable implements IItemListe
     
     public ItemTypeBoolean getFilterBySearch() {
     	return filterBySearch;
+    }
+    
+    // Key Listener Interface for table
+    public void keyTyped(KeyEvent e) {
+    }
+
+    public void keyPressed(KeyEvent e) {
+    }
+
+    public void keyReleased(KeyEvent e) {
+		if (e.getKeyCode() == KeyEvent.VK_F && (e.getModifiers() & KeyEvent.CTRL_MASK) != 0) {
+			// STRG+F in the table: goto searchfield, select all content
+			searchField.requestFocus();
+			searchField.setSelection(0, 2048);
+		}    	
     }
 }

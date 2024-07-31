@@ -49,6 +49,10 @@ public class DestinationRecord extends DataRecord implements IItemFactory {
     private static String GUIITEM_DESTINATIONAREAS = "GUIITEM_DESTINATIONAREAS";
     private static String GUIITEM_WATERSIDLIST = "GUIITEM_WATERSIDLIST";
 
+    public static final int COLUMN_ID_NAME		= 0;        
+    public static final int COLUMN_ID_WATER		= 2;
+    public static final int COLUMN_ID_DISTANCE	= 1;
+    
     public static void initialize() {
         Vector<String> f = new Vector<String>();
         Vector<Integer> t = new Vector<Integer>();

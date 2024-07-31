@@ -10,7 +10,6 @@
 package de.nmichael.efa.core.config;
 
 import de.nmichael.efa.*;
-import de.nmichael.efa.efa1.DatenListe;
 import de.nmichael.efa.util.Logger;
 import de.nmichael.efa.util.EfaUtil;
 import java.io.*;

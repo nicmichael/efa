@@ -10,7 +10,6 @@
 
 package de.nmichael.efa.efa1;
 
-import de.nmichael.efa.*;
 import de.nmichael.efa.util.EfaUtil;
 import java.util.Hashtable;
 

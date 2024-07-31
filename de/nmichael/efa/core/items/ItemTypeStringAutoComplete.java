@@ -59,7 +59,9 @@ import de.nmichael.efa.util.Logger;
  * Filtered_List style
  * - user enters some text. this text is regarded as a filter which is applied to all entries in the dropdown list.
  * - dropdown list opens automatically when typing text, displaying only matching items.
- * - user MUST use ENTER key to select the desired entry. 
+ * - if an item in the list matches by prefix, it gets selected.
+ *    - the user may choose other items of the list which are not matching by prefix using the arrow keys.
+ * - user MUST use ENTER or TAB key to select the desired entry. 
  * - there is no auto completion by the system.
  * - User interaction
  * 		- KEY_DOWN	Select another item within the dropdownlist (next item). Item must apply to the filter entered by the user.
@@ -82,7 +84,8 @@ public class ItemTypeStringAutoComplete extends ItemTypeString implements AutoCo
         escape
     }
 
-    protected boolean showButton;
+    protected boolean showButton; // is the status button (green/orange/red) visible?
+    protected boolean showButtonFocusable; // is the status button (green/orange/red) focusable with keyboard?
     protected boolean useAutocompleteList;
     protected JButton button;
     protected Color originalButtonColor;
@@ -99,7 +102,8 @@ public class ItemTypeStringAutoComplete extends ItemTypeString implements AutoCo
     protected ItemTypeDate validAtDateItem;
     protected ItemTypeTime validAtTimeItem;
     protected boolean onChoosenDeleteFromList = false; // @todo - added by Velten
-
+    // two ItemTypeStringAutoComplete can be connected, for instance in an ItemTypeItemList.
+    protected ItemTypeStringAutoComplete otherField; 
 
     public ItemTypeStringAutoComplete(String name, String value, int type,
             String category, String description, boolean showButton) {
@@ -126,6 +130,7 @@ public class ItemTypeStringAutoComplete extends ItemTypeString implements AutoCo
         if (showButton) {
             button = new JButton();
             originalButtonColor = button.getBackground();
+            button.setFocusable(showButtonFocusable);
             Dialog.setPreferredSize(button, fieldHeight-4, fieldHeight-8);
             button.addActionListener(new java.awt.event.ActionListener() {
                 public void actionPerformed(ActionEvent e) { 
@@ -151,7 +156,10 @@ public class ItemTypeStringAutoComplete extends ItemTypeString implements AutoCo
         	//needed for dialogs where some button is the default button and reacts to ENTER.
         	//and if the autocomplete list is defined as filtered list.
         	public void keyPressed(KeyEvent e) { 
-            	if ((e!=null) && e.getKeyCode()==KeyEvent.VK_ENTER && Daten.efaConfig.getValuePopupContainsMode()) {autoComplete(e);}}
+            	if ((e!=null) && e.getKeyCode()==KeyEvent.VK_ENTER && Daten.efaConfig.getValuePopupContainsMode()) {
+            		autoComplete(e);
+        		}
+        	}
         });   
     }
 
@@ -711,7 +719,14 @@ public class ItemTypeStringAutoComplete extends ItemTypeString implements AutoCo
                 }
             } else {
                 if ((e != null) && e.getKeyCode() != KeyEvent.VK_DOWN) {
-                    complete = list.getFirst(searchFor); // Taste gedrückt --> OK, Wortanfang genügt
+                    if (Daten.efaConfig.getValuePopupContainsModeSelectPrefixItem()) {
+                		complete = list.getFirstByPrefix(textField.getText());
+                		if (complete==null) {
+                    		complete = list.getFirst(textField.getText()); // Taste gedrückt --> OK, Wortanfang genügt
+                		}
+                	} else {
+                		complete = list.getFirst(textField.getText()); // Taste gedrückt --> OK, Wortanfang genügt
+                	}         
                 }                	
             }
 
@@ -762,7 +777,14 @@ public class ItemTypeStringAutoComplete extends ItemTypeString implements AutoCo
 
        if (mode == Mode.delete) {
             if (withPopup && useAutocompleteList && e != null && mode != Mode.none) {
-            	complete = list.getFirst(textField.getText());
+                if (Daten.efaConfig.getValuePopupContainsModeSelectPrefixItem()) {
+            		complete = list.getFirstByPrefix(textField.getText());
+            		if (complete==null) {
+                		complete = list.getFirst(textField.getText()); // Taste gedrückt --> OK, Wortanfang genügt
+            		}
+            	} else {
+            		complete = list.getFirst(textField.getText()); // Taste gedrückt --> OK, Wortanfang genügt
+            	}            	
                 AutoCompletePopupWindow.showAndSelect(textField, list, (complete != null ? complete : textField.getText()), null);
             }
         }
@@ -808,6 +830,41 @@ public class ItemTypeStringAutoComplete extends ItemTypeString implements AutoCo
         }
     }
 
+    /**
+     * Checks if the currently selected item in ItemTypeStringAutoComplete field is matching to the text the user entered.
+     * @return boolean
+     */
+    public boolean isCurrentTextMatching() {
+        AutoCompleteList list = getAutoCompleteList();
+        JTextField textField = (JTextField)this.field;	
+        if (list != null && textField != null) {
+        	return list.getExact(textField.getText())!=null;
+        } 
+        return false;
+    }
+
+    
+    /**
+     * Checks if the currently selected item in ItemTypeStringAutoComplete field is valid at the time the session takes place
+     * (the session type is obtained by validAtDateItem and validAtTimeItem).
+     * @return boolean
+     */
+    public boolean isCurrentTextValid(){
+        boolean valid = false;
+        JTextField textField = (JTextField)this.field;	
+        
+        if (textField != null && isCurrentTextMatching() && validAtDateItem != null) {
+            long t = LogbookRecord.getValidAtTimestamp(validAtDateItem.getDate(),
+                    (validAtTimeItem != null ? validAtTimeItem.getTime() : null));
+            valid = autoCompleteList.isValidAt(textField.getText(), t);
+        } else {
+            valid = false;
+        }
+        
+        return valid;
+        
+    }
+    
     public void acpwCallback(JTextField field) {
         autoComplete(null);
     }
@@ -876,5 +933,45 @@ public class ItemTypeStringAutoComplete extends ItemTypeString implements AutoCo
     	}
     	return false;
     			
+    }
+    
+    public void setShowButtonFocusable(Boolean value) {
+    	this.showButtonFocusable=value;
+    	if (button != null) {
+    		button.setFocusable(value);
+    	}
+    }
+    
+    public boolean getShowButton() {
+    	return this.showButton;
+    }
+
+    public ItemTypeStringAutoComplete getOtherField() {
+    	return this.otherField;
+    }
+
+    public void setOtherField(ItemTypeStringAutoComplete other) {
+    	this.otherField=other;
+    }
+
+    /**
+     * Removes a value from the visible list.
+     * This is necessary for efaBaseFrame: when you enter multiple crew members,
+     * any assigned person for the session gets removed from the visible list 
+     * of the personAutoCompleteList. The original list still contains the value.
+     * 
+     * Use reset() on the actual AutoCompleteList behind this ItemTypeStringAutoComplete field
+     * to un-hide all hidden items.
+     * 
+     * @param value Value to be removed from the AutoCompleteList
+     */
+    public void removeFromVisible(String value) {
+
+        if(onChoosenDeleteFromList && !value.isEmpty()) {
+            Vector<String> vis = autoCompleteList.getDataVisible();
+            if(vis.remove(value)) {
+                autoCompleteList.setDataVisible(vis);
+            }
+        }    	
     }
 }

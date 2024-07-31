@@ -14,7 +14,6 @@ import de.nmichael.efa.efa1.Mehrtagesfahrt;
 import de.nmichael.efa.Daten;
 import de.nmichael.efa.core.config.EfaTypes;
 import de.nmichael.efa.data.*;
-import de.nmichael.efa.data.storage.*;
 import de.nmichael.efa.data.types.*;
 import de.nmichael.efa.efa1.*;
 import de.nmichael.efa.util.*;

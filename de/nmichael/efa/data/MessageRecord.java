@@ -21,8 +21,6 @@ import de.nmichael.efa.util.*;
 import java.awt.GridBagConstraints;
 import java.util.*;
 
-import javax.swing.SwingConstants;
-
 // @i18n complete
 
 public class MessageRecord extends DataRecord {
