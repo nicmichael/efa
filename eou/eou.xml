@@ -15,7 +15,7 @@
             <ChangeItem>Neu: Adminmodus/Boote: Boote, die in einer oder mehreren Gruppen sind, haben das zugehörige Icon, und der Tooltip stellt die Gruppen dar.</ChangeItem>
             <ChangeItem>Neu: Adminmodus/Bootsstatus: Zum Boot werden Basis-Status, aktueller Status und Eigentümer angezeigt.</ChangeItem>
             <ChangeItem>Neu: Adminmodus/Gruppen: In der Tabelle dargestellte Gruppen zeigen ihre Farbe an.</ChangeItem>
-            <ChangeItem>Neu: CSV DatenExport: Erzeugte Dateien lassen sich besser mit aktuellen Tabellenkalkulationen verarbeiten. Automatische Erstellung eines BOM, wenn bei CSV der Zeichensatz UTF-8 gewählt wird.</ChangeItem>
+            <ChangeItem>Neu: CSV DatenExport: Erzeugte CSV-Dateien lassen sich besser mit aktuellen Tabellenkalkulationen verarbeiten, wenn Format 'CSV (mit BOM)' gewählt wird.</ChangeItem>
             <ChangeItem>Neu: CSV DatenExport: efaCLI mit erweiterten Parametern für Datenexport.</ChangeItem>
             <ChangeItem>Neu: CSV DatenExport: efaCLI mit Export für Vereinsarbeit.</ChangeItem>
             <ChangeItem>Neu: CSV DatenImport: CSV-Dateien in UTF-8 mit BOM (aus Tabellenkalkulationen) lassen sich importieren.</ChangeItem>
