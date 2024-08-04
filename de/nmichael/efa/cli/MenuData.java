@@ -60,11 +60,13 @@ public class MenuData extends MenuBase {
     public void printHelpContext() {
         printUsage(CMD_LIST,        "[all|invisible|deleted]", "list " + storageObjectDescription);
         printUsage(CMD_SHOW,        "[name|index]", "show record");
-        printUsage(CMD_EXPORT,      "[-format=xml|csv] [-encoding=ENCODING] [-csvlocale=LOCALE] [-csvsep=X] [-csvquote=X] [-email=emailadress] [-emailsubject=value] <filename>", "export records to a file and to an email adress");
+        printUsage(CMD_EXPORT,      "[-format=xml|csv|csv_bom_utf8] [-encoding=ENCODING] [-csvlocale=LOCALE] [-csvsep=X] [-csvquote=X] [-email=emailadress] [-emailsubject=value] <filename>", "export records to a file and to an email adress");
         printUsage(CMD_IMPORT,      "[-encoding=ENCODING] [-csvsep=X] [-csvquote=X] [-impmode=add|update|addupdate] [-updversion=update|new] [-entryno=dupskip|dupadd|alwaysadd] <filename>", "import records");
         cli.loginfo("");
         cli.loginfo("ENCODING   - Any encoding, e.g. ISO-8859-1 or UTF-8. UTF-8 is default.");
         cli.loginfo("LOCALE     - Any ISO-Code for a country, e.g. DE or EN" );
+        cli.loginfo("");
+        cli.loginfo("Format		- csv_bom_utf8 is neccessary for some spreadsheet programs to read UTF8-based CSV files.");
         cli.loginfo("");
         cli.loginfo("csvsep     - CSV field separator. A single character.");
         cli.loginfo("             Default for import and export: ;");
@@ -166,6 +168,10 @@ public class MenuData extends MenuBase {
             format = DataExport.Format.csv;
         }
         
+        if (options.get(EXPORT_OPTION_FORMAT) != null && options.get(EXPORT_OPTION_FORMAT).equalsIgnoreCase("csv_bom_utf8")) {
+            format = DataExport.Format.csv_bom_utf8;
+        }
+        
         //------ get csv export options
         //default values of csvSeparator and csvQuote have both been set earlier.
         //now check if the user has specified these parameters.
@@ -208,11 +214,6 @@ public class MenuData extends MenuBase {
         	}
         }        
 
-        // correct file type for csv if encoding is utf-8
-        // as csv files with utf-8 need a BOM to be read correctly by ms excel (r)
-        if (encoding.equalsIgnoreCase(Daten.ENCODING_UTF) && (format == DataExport.Format.csv)) {
-            format = DataExport.Format.csv_bom_utf8;
-        }
 
         
        //------ export the data         
