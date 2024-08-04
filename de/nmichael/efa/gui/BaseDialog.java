@@ -26,6 +26,8 @@ import javax.swing.border.*;
 
 // @i18n complete
 public abstract class BaseDialog extends JDialog implements ActionListener {
+	
+	private static final String NOT_STORED_ITEM_PREFIX = "_";
 
     public static final String IMAGE_ACCEPT    = ImagesAndIcons.IMAGE_BUTTON_ACCEPT;
     public static final String IMAGE_ADD       = ImagesAndIcons.IMAGE_BUTTON_ADD;
@@ -397,4 +399,54 @@ public abstract class BaseDialog extends JDialog implements ActionListener {
         return (helpTopic2 != null ? new String[] { helpTopic1, helpTopic2 } : new String[] { helpTopic1 });
     }
 
+	/**
+	 * Adds an hint element to the GUI. Hints have a slight blue background and display
+	 * additional informations for the user.
+	 * 
+	 * @param uniqueName Unique name of the IItemType in the GUI
+	 * @param type TYPE_PUBLIC, TYPE_EXPERT, TYPE_INTERNAL
+	 * @param category Category where the element shall show up. May be null.
+	 * @param caption Caption of the hint. Should be single-line.
+	 * @param gridWidth How many grids may this hint be expanded
+	 * @param padBefore pixels of whitespace before
+	 * @param padAfter pixels of whitespace after the hint.
+	 * @return
+	 */
+    protected IItemType addHint(String uniqueName, int type, String category, String caption, int gridWidth,
+			int padBefore, int padAfter) {
+		//if caption starts with html, do not have a blank as a prefix as this will disable html rendering.
+		ItemTypeLabel item = (ItemTypeLabel) addDescription(uniqueName, type, category, (caption.startsWith("<html>") ? caption : " "+caption), gridWidth,
+				padBefore, padAfter);
+		// item.setImage(BaseDialog.getIcon(ImagesAndIcons.IMAGE_MENU_ABOUT));
+		item.setBackgroundColor(Daten.efaConfig.hintBackgroundColor);
+		item.setHorizontalAlignment(SwingConstants.LEFT);
+		item.setRoundShape(false);
+		return item;
+	}    
+	
+	/**
+	 * Adds a description item in an efa GUI. This description value is not safed
+	 * within efaConfig. There is no word-wrap for the caption.
+	 * 
+	 * This is similar to @see addHeader(), but the element does not get a
+	 * highlighted background.
+	 * 
+	 * @param uniqueName Unique name of the element (as for all of efaConfig
+	 *                   elements need unique names)
+	 * @param type       TYPE_PUBLIC, TYPE_EXPERT, TYPE_INTERNAL
+	 * @param category   Category in which the description is placed
+	 * @param caption    Caption
+	 * @param gridWidth  How many GridBagLayout cells shall this description be
+	 *                   placed in?
+	 */
+	private IItemType addDescription(String uniqueName, int type, String category, String caption, int gridWidth,
+			int padBefore, int padAfter) {
+		// ensure that the description value does not get saved in efaConfig file by
+		// adding a special prefix
+		IItemType item = new ItemTypeLabel(NOT_STORED_ITEM_PREFIX + uniqueName, type, category, caption);
+		item.setPadding(0, 0, padBefore, padAfter);
+		item.setFieldGrid(3, GridBagConstraints.EAST, GridBagConstraints.BOTH);
+		return item;
+	}	
+    
 }

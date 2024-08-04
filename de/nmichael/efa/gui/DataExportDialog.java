@@ -53,6 +53,7 @@ public class DataExportDialog extends BaseDialog {
 
 	private static final long serialVersionUID = 7716554593280135453L;
 	
+	private final String SPACER = "    ";
 	private ItemTypeDateTime validAtDateTime;
     private JRadioButton exportSelectAll;
     private JRadioButton exportSelectSelected;
@@ -62,6 +63,7 @@ public class DataExportDialog extends BaseDialog {
     private ButtonGroup fileTypeGroup;
     private JRadioButton fileTypeXml;
     private JRadioButton fileTypeCsv;
+    private JRadioButton fileTypeCsvUtf8;
     private ItemTypeStringList encoding;
     private ItemTypeFile file;
     private ItemTypeString fileTypeCsvSeparator;
@@ -190,26 +192,42 @@ public class DataExportDialog extends BaseDialog {
         selectedFieldsScrollPane.getViewport().add(selectedFields);
         mainPanel.add(selectedFieldsScrollPane, BorderLayout.CENTER);
 
+        
+		IItemType hint = addHint("DataExportCSVHint", IItemType.TYPE_PUBLIC,
+				null,
+				International.getString(
+						"CSV-Export für Tabellenkalkulationen: Bei UTF-8 Zeichensatz 'CSV-Datei (mit BOM)' verwenden."),
+				3, 20, 3);        
+		
         JPanel filePanel = new JPanel();
         filePanel.setLayout(new GridBagLayout());
+        hint.displayOnGui(this, filePanel, 1,0);        
+        
         JLabel fileTypeLabel = new JLabel();
         Mnemonics.setLabel(this, fileTypeLabel, International.getString("Export als")+": ");
         fileTypeXml = new JRadioButton();
         Mnemonics.setButton(this, fileTypeXml, International.getStringWithMnemonic("XML-Datei"));
         fileTypeXml.setSelected(true);
         fileTypeCsv = new JRadioButton();
-        Mnemonics.setButton(this, fileTypeCsv, International.getStringWithMnemonic("CSV-Datei"));
-        
+        Mnemonics.setButton(this, fileTypeCsv, International.getStringWithMnemonic("CSV-Datei")+SPACER);
+        fileTypeCsvUtf8 = new JRadioButton();
+        Mnemonics.setButton(this, fileTypeCsvUtf8, International.getStringWithMnemonic("CSV-Datei (mit BOM)")+SPACER);
         fileTypeGroup = new ButtonGroup();
+        fileTypeGroup.add(fileTypeCsvUtf8);;
         fileTypeGroup.add(fileTypeXml);
         fileTypeGroup.add(fileTypeCsv);
-
+        
         fileTypeXml.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 fileTypeChanged();
             }
         });
         fileTypeCsv.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                fileTypeChanged();
+            }
+        });
+        fileTypeCsvUtf8.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 fileTypeChanged();
             }
@@ -250,14 +268,19 @@ public class DataExportDialog extends BaseDialog {
                 );
         encoding.setFieldGrid(6, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL);
     
-        filePanel.add(fileTypeLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE,
+        filePanel.add(fileTypeLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE,
+                new Insets(10, 0, 0, 0), 0, 0));
+
+        filePanel.add(fileTypeCsv, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE,
                 new Insets(10, 0, 0, 0), 0, 0));
         
-        filePanel.add(fileTypeCsv, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE,
+        filePanel.add(fileTypeCsvUtf8, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE,
                 new Insets(10, 0, 0, 0), 0, 0));
         
-        filePanel.add(fileTypeXml, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE,
+        filePanel.add(fileTypeXml, new GridBagConstraints(3, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE,
                 new Insets(10, 0, 0, 0), 0, 0));
+        
+        
 
         
         String dir = Daten.efaConfig.getLastExportDirectory();
@@ -275,15 +298,15 @@ public class DataExportDialog extends BaseDialog {
                     International.getString("Export in Datei"));
         file.setNotNull(true);
         file.setPadding(0, 0, 0, 10);
-        file.setFieldGrid(5, GridBagConstraints.WEST, GridBagConstraints.NONE);
+        file.setFieldGrid(3, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL);
         
         
-        fileTypeCsvSeparator.displayOnGui(this, filePanel,  0,4);
-        fileTypeCsvQuotes.displayOnGui(this, filePanel,  2,4);
-        fileTypeCsvLocale.displayOnGui(this, filePanel,  5);   
-        encoding.displayOnGui(this, filePanel, 6);        
+        fileTypeCsvSeparator.displayOnGui(this, filePanel,  0,5);
+        fileTypeCsvQuotes.displayOnGui(this, filePanel,  2,5);
+        fileTypeCsvLocale.displayOnGui(this, filePanel,  6);   
+        encoding.displayOnGui(this, filePanel, 7);        
         
-        file.displayOnGui(this, filePanel, 7);
+        file.displayOnGui(this, filePanel, 8);
         mainPanel.add(filePanel, BorderLayout.SOUTH);
 
         closeButton.setIcon(getIcon(BaseDialog.IMAGE_RUN));
@@ -336,14 +359,10 @@ public class DataExportDialog extends BaseDialog {
         if (fileTypeXml.isSelected()){
         	format=DataExport.Format.xml;
         } else if (fileTypeCsv.isSelected()) {
-        	encoding.getValueFromGui(); // read from gui field into encoding data field
-        	//automatically set export format to csv with bom if encoding is set to UTF8
-        	if (encoding.getValue().toString().equalsIgnoreCase(Daten.ENCODING_UTF)) {
-        		format=DataExport.Format.csv_bom_utf8;
-        	} else {
-        		format=DataExport.Format.csv;
-        	}
-        } 
+       		format=DataExport.Format.csv;
+        } else if (fileTypeCsvUtf8.isSelected()) {
+        	format=DataExport.Format.csv_bom_utf8;
+        }
         
         encoding.getValueFromField();
         file.getValueFromField();
