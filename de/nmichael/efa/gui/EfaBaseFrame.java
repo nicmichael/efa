@@ -224,9 +224,13 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
 
     public void _keyAction(ActionEvent evt) {
     	//F3 is the key to search (again) in the logbook.
-    	//this makes sens for efaBase where the main screen is the edit screen for logbook items.
-    	//it does not make sense for all other efa GUI Applications to call SearchLogbookDialog.search().
-        if (evt.getActionCommand().equals(KEYACTION_F3)  && Daten.isApplEfaBase()) {
+    	//this makes sens for efaBase where the main screen is the edit screen for logbook items,
+    	//and also in admin mode of efaBths. But not in other dialogs which derive from efaBaseFrame.
+    	
+    	//isModeFull is true if we are running within efabase, oder admin mode is active
+    	//fixed Git issue Git#171/EFA#87 
+    	
+        if (evt.getActionCommand().equals(KEYACTION_F3)  && isModeFull()) {
             SearchLogbookDialog.search();
         }
         if (evt.getActionCommand().equals(KEYACTION_F4)) {
@@ -438,7 +442,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
             }
         });
 
-        Dialog.setPreferredSize(toolBar_goToEntry, 30, 19);
+        Dialog.setPreferredSize(toolBar_goToEntry, 30, FIELD_HEIGHT);
         toolBar_goToEntry.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(KeyEvent e) {
                 goToEntry(toolBar_goToEntry.getText().trim(), false);
@@ -454,6 +458,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         });
 
         toolBar_goToEntryNext.setMargin(new Insets(2, 3, 2, 3));
+        toolBar_goToEntryNext.setToolTipText(International.getString("Nächsten Eintrag suchen (F3)"));
         Mnemonics.setButton(this, toolBar_goToEntryNext,
                 null,
                 BaseDialog.IMAGE_SEARCHNEXT);
@@ -479,10 +484,14 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         toolBar.add(toolBar_spaceLabel2, null);
         toolBar.add(toolBar_searchButton, null);
         JLabel toolBar_goToEntryLabel = new JLabel();
-        toolBar_goToEntryLabel.setText("  \u21B7 "); // \u00BB \u23E9
+        //toolBar_goToEntryLabel.setText("  \u21B7 "); // \u00BB \u23E9 // EFA#87: this character is not available in all fonts - replaced by an icon.
+        toolBar_goToEntryLabel.setIcon(ImagesAndIcons.getIcon(ImagesAndIcons.IMAGE_BUTTON_JUMP_TO));
+        toolBar_goToEntryLabel.setText(" ");//toolBar_goToEntryLabel.setVerticalAlignment(SwingConstants.CENTER);
+        toolBar_goToEntryLabel.setToolTipText(International.getString("Schnellsuche: zum nächsten Eintrag springen, der den folgenden Text enthält"));
         toolBar.add(toolBar_goToEntryLabel, null);
         toolBar.add(toolBar_goToEntry, null);
         toolBar.add(toolBar_goToEntryNext, null);
+        
 
         mainPanel.add(toolBar, BorderLayout.NORTH);
     }
