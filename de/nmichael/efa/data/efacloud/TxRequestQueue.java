@@ -415,9 +415,17 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
                 getQueueSize(TX_SYNCH_QUEUE_INDEX)) == 0)
             return efaCloudStatus;
         // find the first transaction for ID display
-        Transaction tx = (getQueueSize(TX_BUSY_QUEUE_INDEX) > 0) ? queues.get(TX_BUSY_QUEUE_INDEX).firstElement() : ((
-                getQueueSize(TX_BUSY_QUEUE_INDEX) > 0) ? queues.get(TX_BUSY_QUEUE_INDEX).firstElement() : (((
-                getQueueSize(TX_SYNCH_QUEUE_INDEX) > 0) ? queues.get(TX_SYNCH_QUEUE_INDEX).firstElement() : null)));
+        Transaction tx = null;
+        try {
+	        tx = (getQueueSize(TX_BUSY_QUEUE_INDEX) > 0) ? queues.get(TX_BUSY_QUEUE_INDEX).firstElement() : ((
+	                getQueueSize(TX_BUSY_QUEUE_INDEX) > 0) ? queues.get(TX_BUSY_QUEUE_INDEX).firstElement() : (((
+	                getQueueSize(TX_SYNCH_QUEUE_INDEX) > 0) ? queues.get(TX_SYNCH_QUEUE_INDEX).firstElement() : null)));
+        } catch (Exception e) {
+        	// in some conditions, getQueuesize returns a value >0, but when getting the queue's first element,
+        	// there may be no more element... an then an exception occurs. This may be as efacloud thread is running in background,
+        	// and so the queue items are processed in background.
+        	// as this function is used for efaBths/efaBase header only, we do not need to document an exception here.
+        }
         String txID = (tx == null) ? "" : "#" + tx.ID + " ";
         return (efaCloudStatus.isEmpty() ? "" : efaCloudStatus+ " - " ) + txID + getQueueSize(TX_BUSY_QUEUE_INDEX) + "|" +
                 getQueueSize(TX_PENDING_QUEUE_INDEX) + "|" + getQueueSize(TX_SYNCH_QUEUE_INDEX);
