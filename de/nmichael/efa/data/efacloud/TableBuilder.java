@@ -17,10 +17,7 @@ import de.nmichael.efa.data.storage.MetaData;
 import de.nmichael.efa.data.storage.StorageObject;
 import de.nmichael.efa.util.International;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Locale;
+import java.util.*;
 
 public class TableBuilder {
 
@@ -215,6 +212,25 @@ public class TableBuilder {
         allowedMismatches.put("efa2statistics", 0);  // All may change
     }
     public static final String fixid_allowed = "efa2logbook efa2messages efa2boatdamages efa2boatreservations";
+    public static final ArrayList<String> tablenames = new ArrayList<>();
+    static {
+        tablenames.add("efa2autoincrement");
+        tablenames.add("efa2boatdamages");
+        tablenames.add("efa2boatreservations");
+        tablenames.add("efa2boats");
+        tablenames.add("efa2boatstatus");
+        tablenames.add("efa2crews");
+        tablenames.add("efa2destinantions");
+        tablenames.add("efa2fahrtenabzeichen");
+        tablenames.add("efa2groups");
+        tablenames.add("efa2logbook");
+        tablenames.add("efa2messages");
+        tablenames.add("efa2persons");
+        tablenames.add("efa2sessiongroups");
+        tablenames.add("efa2statistics");
+        tablenames.add("efa2status");
+        tablenames.add("efa2waters");
+    }
 
     // cache to hold all special fields for checking when building the tables
     private final HashMap<String, RecordFieldDefinition> specialFields = new HashMap<String, RecordFieldDefinition>();
@@ -316,8 +332,8 @@ public class TableBuilder {
         // do not cut numbers, Ids or similar. That will create illegalArgument exceptions when reading back.
         if (((rtf.datatypeIndex == IDataAccess.DATA_STRING) || (rtf.datatypeIndex == IDataAccess.DATA_TEXT)
                 || (rtf.datatypeIndex == IDataAccess.DATA_LIST_STRING) || (rtf.datatypeIndex == IDataAccess.DATA_VIRTUAL))
-                && (value.length() >= rtf.maxLength))
-            return value.substring(0, rtf.maxLength - 4) + " ...";
+                && (value.length() > rtf.maxLength))     // Do not use >= because ecrids have the exact length of 12 characters set in the server db layout
+            return value.substring(0, (int) (rtf.maxLength * 0.9 - 6) ) + " ..."; // cut length to max bytes for UTF-8 String.
         else
             return value;
     }

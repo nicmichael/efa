@@ -49,6 +49,7 @@ public class StatusRecord extends DataRecord implements IItemListener {
     public static final String AUTOSETONAGE        = "AutoSetOnAge";
     public static final String MINAGE              = "MinAge";
     public static final String MAXAGE              = "MaxAge";
+    public static final String ECRID               = "ecrid";
 
     public static final String[] IDX_NAME = new String[] { NAME };
 
@@ -71,6 +72,7 @@ public class StatusRecord extends DataRecord implements IItemListener {
         f.add(AUTOSETONAGE);                      t.add(IDataAccess.DATA_BOOLEAN);
         f.add(MINAGE);                            t.add(IDataAccess.DATA_INTEGER);
         f.add(MAXAGE);                            t.add(IDataAccess.DATA_INTEGER);
+        f.add(ECRID);                             t.add(IDataAccess.DATA_STRING);
         MetaData metaData = constructMetaData(Status.DATATYPE, f, t, false);
         metaData.setKey(new String[] { ID });
         metaData.addIndex(IDX_NAME);

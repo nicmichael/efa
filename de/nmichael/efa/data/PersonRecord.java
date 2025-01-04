@@ -77,6 +77,8 @@ public class PersonRecord extends DataRecord implements IItemFactory {
     public static final String FREEUSE1 = "FreeUse1";
     public static final String FREEUSE2 = "FreeUse2";
     public static final String FREEUSE3 = "FreeUse3";
+    public static final String ECRID = "ecrid";
+
     public static final String[] IDX_NAME_NAMEAFFIX = new String[]{FIRSTLASTNAME, NAMEAFFIX};
     private static String GUIITEM_GROUPS = "GUIITEM_GROUPS";
     private static String CAT_BASEDATA = "%01%" + International.getString("Basisdaten");
@@ -154,6 +156,8 @@ public class PersonRecord extends DataRecord implements IItemFactory {
         f.add(FREEUSE3);
         t.add(IDataAccess.DATA_STRING);
         f.add(EFBID);
+        t.add(IDataAccess.DATA_STRING);
+        f.add(ECRID);
         t.add(IDataAccess.DATA_STRING);
         MetaData metaData = constructMetaData(Persons.DATATYPE, f, t, true);
         metaData.setKey(new String[]{ID}); // plus VALID_FROM

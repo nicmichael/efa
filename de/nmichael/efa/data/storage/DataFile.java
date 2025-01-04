@@ -11,6 +11,8 @@
 package de.nmichael.efa.data.storage;
 
 import de.nmichael.efa.*;
+import de.nmichael.efa.data.efacloud.Ecrid;
+import de.nmichael.efa.data.efacloud.TableBuilder;
 import de.nmichael.efa.util.*;
 import de.nmichael.efa.ex.EfaException;
 import java.util.*;
@@ -240,6 +242,10 @@ public abstract class DataFile extends DataAccess {
             if (recovered || shouldWriteMirrorFile()) {
                 saveStorageObject();
             }
+            String fName = filename.substring(filename.lastIndexOf('.') + 1);
+            if ((Daten.project != null) && (Daten.project.getProjectStorageType() == IDataAccess.TYPE_EFA_CLOUD)
+                && TableBuilder.tablenames.contains(fName))
+                    Ecrid.addAll(this.getPersistence());
         } catch(Exception e) {
             if (logex) {
                 Logger.log(e);
@@ -790,8 +796,10 @@ public abstract class DataFile extends DataAccess {
      */
     protected void deleteLocal(DataKey key, long lockID) throws EfaException {
         DataRecord record = get(key);
-        record.isCopyFromServer = true;
-        modifyRecord(record, lockID, false, false, true);
+        if (record != null) {
+            record.isCopyFromServer = true;
+            modifyRecord(record, lockID, false, false, true);
+        }
     }
 
     public void deleteVersionized(DataKey key, int merge) throws EfaException {

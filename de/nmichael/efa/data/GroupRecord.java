@@ -50,6 +50,7 @@ public class GroupRecord extends DataRecord implements IItemFactory {
     public static final String NAME                = "Name";
     public static final String COLOR               = "Color";
     public static final String MEMBERIDLIST        = "MemberIdList";
+    public static final String ECRID               = "ecrid";
 
     public static final String[] IDX_NAME = new String[] { NAME };
 
@@ -64,6 +65,7 @@ public class GroupRecord extends DataRecord implements IItemFactory {
         f.add(NAME);                              t.add(IDataAccess.DATA_STRING);
         f.add(COLOR);                             t.add(IDataAccess.DATA_STRING);
         f.add(MEMBERIDLIST);                      t.add(IDataAccess.DATA_LIST_UUID);
+        f.add(ECRID);                             t.add(IDataAccess.DATA_STRING);
         MetaData metaData = constructMetaData(Groups.DATATYPE, f, t, true);
         metaData.setKey(new String[] { ID }); // plus VALID_FROM
         metaData.addIndex(IDX_NAME);

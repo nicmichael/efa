@@ -70,6 +70,7 @@ public class BoatDamageRecord extends DataRecord {
     public static final String CLAIM                = "Claim";
     public static final String NOTES                = "Notes";
     public static final String LOGBOOKTEXT          = "LogbookText";
+    public static final String ECRID                = "ecrid";
 
     public static final String[] IDX_BOATID = new String[] { BOATID };
 
@@ -103,6 +104,7 @@ public class BoatDamageRecord extends DataRecord {
         f.add(CLAIM);                    t.add(IDataAccess.DATA_BOOLEAN);
         f.add(NOTES);                    t.add(IDataAccess.DATA_STRING);
         f.add(LOGBOOKTEXT);              t.add(IDataAccess.DATA_STRING);
+        f.add(ECRID);                    t.add(IDataAccess.DATA_STRING);
         MetaData metaData = constructMetaData(BoatDamages.DATATYPE, f, t, false);
         metaData.setKey(new String[] { BOATID, DAMAGE });
         metaData.addIndex(IDX_BOATID);

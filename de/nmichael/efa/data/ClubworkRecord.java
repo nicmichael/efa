@@ -46,6 +46,7 @@ public class ClubworkRecord extends DataRecord implements IItemFactory {
     public static final String GUIITEM_PERSONIDLIST = "PersonList";
     public static final String FLAG = "Flag";
     public static final String APPROVED = "Approved";
+    public static final String ECRID = "ecrid";
 
     public static final int COLUMN_ID_LAST_NAME=0;        
     public static final int COLUMN_ID_FIRST_NAME=1;
@@ -89,6 +90,8 @@ public class ClubworkRecord extends DataRecord implements IItemFactory {
         t.add(IDataAccess.DATA_INTEGER);
         f.add(APPROVED);
         t.add(IDataAccess.DATA_BOOLEAN);
+        f.add(ECRID);
+        t.add(IDataAccess.DATA_STRING);
 
         MetaData metaData = constructMetaData(Clubwork.DATATYPE, f, t, false);
         metaData.setKey(new String[]{ID});

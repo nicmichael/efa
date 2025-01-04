@@ -42,7 +42,8 @@ public class MessageRecord extends DataRecord {
     public static final String READ                  = "Read";
     public static final String TOBEMAILED            = "ToBeMailed";
     public static final String REPLYTO               = "ReplyTo";
-    
+    public static final String ECRID                 = "ecrid";
+
     private boolean forceNewMsg = false; // mark this messages as new
 
     public static void initialize() {
@@ -59,6 +60,7 @@ public class MessageRecord extends DataRecord {
         f.add(READ);                              t.add(IDataAccess.DATA_BOOLEAN);
         f.add(TOBEMAILED);                        t.add(IDataAccess.DATA_BOOLEAN);
         f.add(REPLYTO);                           t.add(IDataAccess.DATA_STRING);
+        f.add(ECRID);                             t.add(IDataAccess.DATA_STRING);
         MetaData metaData = constructMetaData(Messages.DATATYPE, f, t, false);
         metaData.setKey(new String[] { MESSAGEID });
     }

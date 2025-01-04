@@ -431,7 +431,7 @@ public abstract class DataRecord implements Cloneable, Comparable {
         } else {
             set(fieldName, value);
         }
-        return (value.equals(getAsText(fieldName)));
+        return (value == null) ? (getAsText(fieldName) == null) : value.equals(getAsText(fieldName));
     }
 
     public String addTextItemToList(String fieldName, String value) {

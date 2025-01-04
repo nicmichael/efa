@@ -30,6 +30,7 @@ public class WatersRecord extends DataRecord {
     public static final String EFBID               = "EfbId";
     public static final String NAME                = "Name";
     public static final String DETAILS             = "Details";
+    public static final String ECRID               = "ecrid";
 
     public static final String[] IDX_NAME = new String[] { NAME };
 
@@ -41,6 +42,7 @@ public class WatersRecord extends DataRecord {
         f.add(NAME);                              t.add(IDataAccess.DATA_STRING);
         f.add(DETAILS);                           t.add(IDataAccess.DATA_STRING);
         f.add(EFBID);                             t.add(IDataAccess.DATA_STRING);
+        f.add(ECRID);                             t.add(IDataAccess.DATA_STRING);
         MetaData metaData = constructMetaData(Waters.DATATYPE, f, t, false);
         metaData.setKey(new String[] { ID });
         metaData.addIndex(IDX_NAME);

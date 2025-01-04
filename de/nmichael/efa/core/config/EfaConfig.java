@@ -3474,6 +3474,14 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 		addParameter(typesGender = new ItemTypeHashtable<String>("_TYPES_GENDER", "", true, IItemType.TYPE_EXPERT,
 				BaseTabbedDialog.makeCategory(CATEGORY_TYPES, CATEGORY_TYPES_GEND),
 				International.getString("Geschlecht")));
+		
+		Boolean bCanoeingInGermany= (this.getValueUseFunctionalityCanoeingGermany());
+		if (bCanoeingInGermany) {
+			addHint("BOATS_CANOEING_GERMANY_EFBSYNC_HINT", IItemType.TYPE_EXPERT,
+					BaseTabbedDialog.makeCategory(CATEGORY_TYPES, CATEGORY_TYPES_BOAT),
+					International.onlyFor("<html>Kanufahren in Deutschland ist aktiv. Nutzen Sie die Kanu-EFB-Synchronisation?<br>Wenn ja, sollten Sie bei Hinzufügen neuer Bootsarten nach einem EFA-Neustart <br>in der Registerkarte SYNCHRONISATION die zu synchronisierenden Bootsarten auf Korrektheit prüfen.</html>", "de"),
+					3, 20,10);
+		}
 		addParameter(typesBoat = new ItemTypeHashtable<String>("_TYPES_BOAT", "", true, IItemType.TYPE_EXPERT,
 				BaseTabbedDialog.makeCategory(CATEGORY_TYPES, CATEGORY_TYPES_BOAT),
 				International.getString("Bootsart")));

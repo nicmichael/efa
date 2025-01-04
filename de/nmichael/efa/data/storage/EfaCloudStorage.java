@@ -12,6 +12,7 @@
 package de.nmichael.efa.data.storage;
 
 import de.nmichael.efa.Daten;
+import de.nmichael.efa.data.*;
 import de.nmichael.efa.data.efacloud.*;
 import de.nmichael.efa.ex.EfaException;
 import de.nmichael.efa.util.Dialog;
@@ -84,10 +85,46 @@ public class EfaCloudStorage extends XMLFile {
                                    boolean useSynchQueue) {
         Transaction.TX_TYPE type = (add) ? Transaction.TX_TYPE.INSERT : (update) ? Transaction.TX_TYPE.UPDATE :
                 (delete) ? Transaction.TX_TYPE.DELETE : Transaction.TX_TYPE.NOP;
+        // keys may have to be removed at the API, in order not to lose them locally, work with a clone.
+        DataRecord apiRecord = dataRecord.cloneRecord();
         ArrayList<String> record = new ArrayList<String>();
-        for (String field : dataRecord.getFields()) {
-            String value = dataRecord.getString(field);
-            if ((value != null && value.length() > 0) || update)
+        if (add) {
+            // the data record must have an ecrid when added.
+            String ecrid = dataRecord.getAsText(Ecrid.ECRID_FIELDNAME);
+            if ((ecrid == null) || (ecrid.isEmpty())) {
+                ecrid = Ecrid.generate();
+                dataRecord.setFromText(Ecrid.ECRID_FIELDNAME, ecrid);
+                apiRecord.setFromText(Ecrid.ECRID_FIELDNAME, ecrid);
+                // store the same ecrid locally
+                try {
+                    modifyLocalRecord(dataRecord, false, true, false);
+                    Ecrid.iEcrids.put(ecrid, dataRecord);
+                } catch (EfaException e) {
+                    // if the local storage fails, synchronisation will fix the problem later.
+                }
+            }
+            // the data record must not have an autoincrement field, this is to be set by the server.
+            if (dataRecord instanceof LogbookRecord)
+                apiRecord.setFromText("EntryId", null);
+            else if (dataRecord instanceof BoatDamageRecord)
+                apiRecord.setFromText("Damage", null);
+            else if (dataRecord instanceof BoatReservationRecord)
+                apiRecord.setFromText("Reservation", null);
+            else if (dataRecord instanceof MessageRecord)
+                apiRecord.setFromText("MessageId", null);
+        }
+        for (String field : apiRecord.getFields()) {
+            String value = apiRecord.getString(field);
+            int fieldType = apiRecord.getFieldType(field);
+            // numeric fields must not be set to null. They must have a value
+            boolean updateOnlyIfNotEmpty = (fieldType == IDataAccess.DATA_BOOLEAN) ||
+                    (fieldType == IDataAccess.DATA_INTEGER) ||
+                    (fieldType == IDataAccess.DATA_LONGINT) ||
+                    (fieldType == IDataAccess.DATA_DECIMAL) ||
+                    (fieldType == IDataAccess.DATA_DOUBLE) ||
+                    (fieldType == IDataAccess.DATA_DATE) ||
+                    (fieldType == IDataAccess.DATA_TIME);
+            if ((value != null && !value.isEmpty()) || (update && !updateOnlyIfNotEmpty))
                 record.add(field + ";" + CsvCodec.encodeElement(value, CsvCodec.DEFAULT_DELIMITER,
                         CsvCodec.DEFAULT_QUOTATION));   // fields need no csv encoding
         }
@@ -105,26 +142,96 @@ public class EfaCloudStorage extends XMLFile {
     }
 
     /**
-     * Copy server a server side data record into this local data base. This will use the standard modifyDataRecord
+     * Copy server a server side data record into this local database. This will use the standard modifyDataRecord
      * procedure of its super class XMLfile, but add a flag to the record. That way the standard procedure, can
-     * distinguish this call from a normal call and bypass the call of the the modifyServerRecord.
+     * distinguish this call from a normal call and bypass the call of the modifyServerRecord.
+     * When updating and the existing record which is found using the ecrid has a different an efa data key,
+     * The record is not updated, but the existing one is deleted and the new dataRecord inserted.
      *
      * @param dataRecord the new or changed record, or the record to delete
-     * @param lock       the lock which shall be used (usually a global lock)
      * @param add        set true, if the modify transaction is an insert to
      * @param update     set true, if the modify transaction is an update
      * @param delete     set true, if the modify transaction is a record deletion
      * @throws EfaException if the data manipulation at XMLfile ran into an error.
+     * @return true, if the modification was executed, false else. Execution may be suppressed due to unsufficient
+     * key matching.
      */
-    public void modifyLocalRecord(DataRecord dataRecord, long lock, boolean add, boolean update, boolean delete) throws
+    public boolean modifyLocalRecord(DataRecord dataRecord, boolean add, boolean update, boolean delete) throws
             EfaException {
         dataRecord.isCopyFromServer = true;
-        if (add)
-            add(dataRecord, lock);
-        if (update)
-            update(dataRecord, lock);
-        if (delete) {
-            deleteLocal(constructKey(dataRecord), lock);
+        boolean done = false;
+        long globalLock = -1L;
+        try {
+            if (add) {
+                globalLock = acquireGlobalLock();
+                add(dataRecord, globalLock);
+                releaseGlobalLock(globalLock);
+                return true;
+            }
+            if (update || delete) {
+                DataKey newKey = dataRecord.getKey();
+                // Try using the ecrid first
+                DataRecord existingRecord = Ecrid.iEcrids.get(dataRecord.getAsText(Ecrid.ECRID_FIELDNAME));
+                if ((existingRecord != null) && (existingRecord.getAsText(Ecrid.ECRID_FIELDNAME) != null)) {
+                    // both existing and new record have an ecrid and they match, because the lookup used the ecrid
+                    // if the efa keys match, the operation can be executed
+                    DataKey existingKey = existingRecord.getKey();
+                    if (newKey.compareTo(existingKey) == 0) {
+                        globalLock = acquireGlobalLock();
+                        if (update)
+                            update(dataRecord, globalLock);
+                        else {
+                            if (get(existingKey) != null)
+                                // the record was not yet locally deleted.
+                                delete(existingKey, globalLock);
+                        }
+                        releaseGlobalLock(globalLock);
+                        done = true;
+                    } else {
+                        // if the local record has a different efa key, insert the dataRecord instead of updating it and do not delete.
+                        if (update) {
+                            // editing the logbook while the session is open is usually prohibited. Allow temporarily
+                            boolean isModifyRecordCallbackEnabled = isPreModifyRecordCallbackEnabled();
+                            if (dataRecord instanceof LogbookRecord)
+                                setPreModifyRecordCallbackEnabled(false);
+                            globalLock = acquireGlobalLock();
+                            deleteLocal(existingRecord.getKey(), globalLock);
+                            add(dataRecord, globalLock);
+                            releaseGlobalLock(globalLock);
+                            // reset isModifyRecordCallbackEnabled to cached value
+                            setPreModifyRecordCallbackEnabled(isModifyRecordCallbackEnabled);
+                            done = true;
+                        }
+                        // if the local record has a different efa key, do not delete.
+                    }
+
+                    // the local record was not found using the ecrid. Try the standard efa key matchhing instead
+                } else {
+                    // the local record was not found by ecrid matching
+                    if (existingRecord == null)
+                        existingRecord = get(newKey);
+                    // if the existing record has an ecrid identifier it is a different one and must not be modified,
+                    // except for the autoincrement record which will always be synchronized to the server
+                    if ((existingRecord != null) &&
+                            ((existingRecord.getAsText(Ecrid.ECRID_FIELDNAME) == null)
+                                    || (existingRecord instanceof AutoIncrementRecord))) {
+                        // dataRecord and existingRecord have the same efa data key
+                        globalLock = acquireGlobalLock();
+                        if (update)
+                            update(dataRecord, globalLock);
+                        else
+                            deleteLocal(constructKey(dataRecord), globalLock);
+                        releaseGlobalLock(globalLock);
+                        done = true;
+                    }
+                }
+                return done;
+            }
+            return false;
+        } catch (EfaException e) {
+            if (globalLock >= 0L)
+                releaseGlobalLock(globalLock);
+            throw e;
         }
     }
 
@@ -141,7 +248,6 @@ public class EfaCloudStorage extends XMLFile {
         if (csvString.trim().isEmpty())
             return ret;
         // parse the text
-        char d = CsvCodec.DEFAULT_DELIMITER;
         char q = CsvCodec.DEFAULT_QUOTATION;
         int MAX_VALUE_LENGTH = 65536;
         DataRecord dataRecord;

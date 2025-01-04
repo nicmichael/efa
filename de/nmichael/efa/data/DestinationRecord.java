@@ -43,6 +43,7 @@ public class DestinationRecord extends DataRecord implements IItemFactory {
     public static final String DISTANCE            = "Distance";
     public static final String ONLYINBOATHOUSEID   = "OnlyInBoathouseId";
     public static final String WATERSIDLIST        = "WatersIdList";
+    public static final String ECRID               = "ecrid";
 
     public static final String[] IDX_NAME = new String[] { NAME };
 
@@ -68,6 +69,7 @@ public class DestinationRecord extends DataRecord implements IItemFactory {
         f.add(DISTANCE);                          t.add(IDataAccess.DATA_DISTANCE);
         f.add(ONLYINBOATHOUSEID);                 t.add(IDataAccess.DATA_STRING);
         f.add(WATERSIDLIST);                      t.add(IDataAccess.DATA_LIST_UUID);
+        f.add(ECRID);                             t.add(IDataAccess.DATA_STRING);
         MetaData metaData = constructMetaData(Destinations.DATATYPE, f, t, true);
         metaData.setKey(new String[] { ID }); // plus VALID_FROM
         metaData.addIndex(IDX_NAME);

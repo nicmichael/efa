@@ -69,6 +69,7 @@ public class BoatReservationRecord extends DataRecord {
     public static final String PERSONNAME          = "PersonName";
     public static final String REASON              = "Reason";
     public static final String CONTACT             = "Contact";
+    public static final String ECRID               = "ecrid";
 
     public static final int COLUMN_ID_NAME = 0;
     public static final int COLUMN_ID_START = 6;
@@ -94,6 +95,7 @@ public class BoatReservationRecord extends DataRecord {
         f.add(PERSONNAME);               t.add(IDataAccess.DATA_STRING);
         f.add(REASON);                   t.add(IDataAccess.DATA_STRING);
         f.add(CONTACT);                  t.add(IDataAccess.DATA_STRING);
+        f.add(ECRID);                    t.add(IDataAccess.DATA_STRING);
         MetaData metaData = constructMetaData(BoatReservations.DATATYPE, f, t, false);
         metaData.setKey(new String[] { BOATID, RESERVATION });
         metaData.addIndex(IDX_BOATID);

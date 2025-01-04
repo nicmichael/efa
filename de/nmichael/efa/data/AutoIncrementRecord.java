@@ -27,6 +27,7 @@ public class AutoIncrementRecord extends DataRecord {
     public static final String SEQUENCE             = "Sequence";
     public static final String INTVALUE             = "IntValue";
     public static final String LONGVALUE            = "LongValue";
+    public static final String ECRID                = "ecrid";
 
     public static void initialize() {
         Vector<String> f = new Vector<String>();
@@ -35,6 +36,7 @@ public class AutoIncrementRecord extends DataRecord {
         f.add(SEQUENCE);                 t.add(IDataAccess.DATA_STRING);
         f.add(INTVALUE);                 t.add(IDataAccess.DATA_INTEGER);
         f.add(LONGVALUE);                t.add(IDataAccess.DATA_LONGINT);
+        f.add(ECRID);                    t.add(IDataAccess.DATA_STRING);
         MetaData metaData = constructMetaData(AutoIncrement.DATATYPE, f, t, false);
         metaData.setKey(new String[] { SEQUENCE });
     }

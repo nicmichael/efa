@@ -38,6 +38,7 @@ public class SessionGroupRecord extends DataRecord {
     public static final String STARTDATE           = "StartDate";
     public static final String ENDDATE             = "EndDate";
     public static final String ACTIVEDAYS          = "ActiveDays";
+    public static final String ECRID               = "ecrid";
 
     public static final String[] IDX_LOGBOOK = new String[] { LOGBOOK };
 
@@ -53,6 +54,7 @@ public class SessionGroupRecord extends DataRecord {
         f.add(STARTDATE);                         t.add(IDataAccess.DATA_DATE);
         f.add(ENDDATE);                           t.add(IDataAccess.DATA_DATE);
         f.add(ACTIVEDAYS);                        t.add(IDataAccess.DATA_INTEGER);
+        f.add(ECRID);                             t.add(IDataAccess.DATA_STRING);
 
         MetaData metaData = constructMetaData(SessionGroups.DATATYPE, f, t, false);
         metaData.setKey(new String[] { ID });

@@ -261,6 +261,8 @@ public class StatisticsRecord extends DataRecord implements IItemListener {
     
     public static final String SHOWDATAVALID_STATENDTIME = "StatEndTime";
     public static final String SHOWDATAVALID_LASTTRIPTIME = "LastTripTime";
+    public static final String ECRID = "ecrid";
+
 
     private static final int ARRAY_STRINGLIST_VALUES = 1;
     private static final int ARRAY_STRINGLIST_DISPLAY = 2;
@@ -652,6 +654,7 @@ public class StatisticsRecord extends DataRecord implements IItemListener {
         f.add(OPTIONSUMGUESTSANDOTHERS);          t.add(IDataAccess.DATA_BOOLEAN);
         f.add(OPTIONSUMGUESTSBYCLUB);             t.add(IDataAccess.DATA_BOOLEAN);
         f.add(OPTIONSHOWVALIDLASTTRIP);           t.add(IDataAccess.DATA_STRING);
+        f.add(ECRID);                             t.add(IDataAccess.DATA_STRING);
         MetaData metaData = constructMetaData(Statistics.DATATYPE, f, t, false);
         metaData.setKey(new String[] { ID });
         metaData.addIndex(IDX_NAME);
@@ -3581,14 +3584,14 @@ public class StatisticsRecord extends DataRecord implements IItemListener {
         } else {
             sOutputFile = getOutputFile();
         }
-        if (FTPClient.isFTP(sOutputFile)) {
-            try {
+        try {
+            if (FTPClient.isFTP(sOutputFile)) {
                 sOutputFtpClient = new FTPClient(sOutputFile, Daten.efaTmpDirectory + "output.ftp");
-            } catch (NoClassDefFoundError e) {
-                Dialog.error(International.getString("Fehlendes Plugin") + ": " + Plugins.PLUGIN_FTP);
-                return false;
+                sOutputFile = Daten.efaTmpDirectory + "output.ftp";
             }
-            sOutputFile = Daten.efaTmpDirectory + "output.ftp";
+        } catch (NoClassDefFoundError e) {
+            Dialog.error(International.getString("Fehlendes Plugin") + ": " + Plugins.PLUGIN_FTP);
+            return false;
         }
         if (Email.getEmailAddressFromMailtoString(sOutputFile.toLowerCase()) != null) {
             sEmailAddresses = Email.getEmailAddressFromMailtoString(sOutputFile.toLowerCase());
