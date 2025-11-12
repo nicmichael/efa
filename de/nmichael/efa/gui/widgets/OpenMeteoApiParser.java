@@ -1,5 +1,7 @@
 package de.nmichael.efa.gui.widgets;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -112,8 +114,8 @@ public class OpenMeteoApiParser {
     	JSONObject current = json.getJSONObject("current_weather");
 
         int openMeteoCode = current.getInt("weathercode");
-        double temp = current.getDouble("temperature");
-        double windspeed = current.getDouble("windspeed");
+        double temp = roundToOneDigit(current.getDouble("temperature"));
+        double windspeed = roundToOneDigit(current.getDouble("windspeed"));
         double winddirection = current.getDouble("winddirection");
         		
         // Current Weather -------------------------------
@@ -134,12 +136,12 @@ public class OpenMeteoApiParser {
         JSONObject daily = json.getJSONObject("daily");
         
         WeatherDataDaily wdd = new WeatherDataDaily();
-        wdd.setPrecipitation_sum(daily.getJSONArray("precipitation_sum").getDouble(0));
-        wdd.setSunshine_duration(daily.getJSONArray("sunshine_duration").getDouble(0));
-        wdd.setTemperature_2m_max(daily.getJSONArray("temperature_2m_max").getDouble(0));
-        wdd.setTemperature_2m_min(daily.getJSONArray("temperature_2m_min").getDouble(0));
-        wdd.setUv_index_clear_sky_max(daily.getJSONArray("uv_index_clear_sky_max").getDouble(0));
-        wdd.setUv_index_max(daily.getJSONArray("uv_index_max").getDouble(0));
+        wdd.setPrecipitation_sum(roundToOneDigit(daily.getJSONArray("precipitation_sum").getDouble(0)));
+        wdd.setSunshine_duration(roundToOneDigit(daily.getJSONArray("sunshine_duration").getDouble(0)));
+        wdd.setTemperature_2m_max(roundToOneDigit(daily.getJSONArray("temperature_2m_max").getDouble(0)));
+        wdd.setTemperature_2m_min(roundToOneDigit(daily.getJSONArray("temperature_2m_min").getDouble(0)));
+        wdd.setUv_index_clear_sky_max(roundToOneDigit(daily.getJSONArray("uv_index_clear_sky_max").getDouble(0)));
+        wdd.setUv_index_max(roundToOneDigit(daily.getJSONArray("uv_index_max").getDouble(0)));
 
         openMeteoCode = daily.getJSONArray("weather_code").getInt(0);
         wdd.setOpenMeteoCode(openMeteoCode);
@@ -183,6 +185,12 @@ public class OpenMeteoApiParser {
     }
     
     
+    private static double roundToOneDigit(double value) {
+    	return new BigDecimal(value)
+    	                    .setScale(1, RoundingMode.HALF_UP)
+    	                    .doubleValue();
+    }
+    
 	private static void calculateHourlyWeatherCodeAndIcons(WeatherDataHourly data) {
 		
 		List<Integer> openMeteoCode = new ArrayList<Integer>();
@@ -205,7 +213,7 @@ public class OpenMeteoApiParser {
 	    		iconcode.add(iconCodeSingle);
 	    		description.add(descriptionSingle);
 	    		uvicon.add(uvIconSingle);
-	    		
+	    		index++;
 			}
 		}
 		
@@ -232,6 +240,7 @@ public class OpenMeteoApiParser {
         }
         return list;
     }
+    
 
     private static List<Integer> toIntList(JSONArray arr) {
         List<Integer> list = new ArrayList<>();

@@ -52,7 +52,7 @@ public class WeatherRendererCurrentUVIndex extends WeatherRenderer {
 		curWeather_temp.setFont(
 				roundPanel.getFont().deriveFont((float) (Daten.efaConfig.getValueEfaDirekt_BthsFontSize() + 8)));
 		curWeather_temp.setFont(curWeather_temp.getFont().deriveFont(Font.BOLD));
-		curWeather_temp.setText(" "+wdf.getCurrentWeather().getTemperature() +" "+ ww.getTempLabel(true));
+		curWeather_temp.setText(" "+WeatherRendererError.oneDecimal(wdf.getCurrentWeather().getTemperature()) +" "+ ww.getTempLabel(true));
 
 		curWeather_icon.setIcon(WeatherIcons.getWeatherIconForCode(wdf.getCurrentWeather().getIconCode(), 64,
 				wdf.getCurrentWeather().getIsDay() == 1, false));
@@ -60,27 +60,26 @@ public class WeatherRendererCurrentUVIndex extends WeatherRenderer {
 		curWeather_icon.setIconTextGap(0);
 		curWeather_icon.setHorizontalTextPosition(SwingConstants.LEFT);
 		
-		curWeather_minTemp.setText(minTemp + tempLabel);
+		curWeather_minTemp.setText(WeatherRendererError.oneDecimal(minTemp) + tempLabel);
 		curWeather_minTemp.setForeground(Daten.efaConfig.getToolTipHeaderForegroundColor());
 
-		curWeather_maxTemp.setText(maxTemp + tempLabel);
+		curWeather_maxTemp.setText(WeatherRendererError.oneDecimal(maxTemp) + tempLabel);
 		curWeather_maxTemp.setForeground(Daten.efaConfig.getToolTipHeaderForegroundColor());
 
-		DecimalFormat df = new DecimalFormat("#.#");
-		curWeather_sunshine.setText(df.format(sunshine));
+		curWeather_sunshine.setText(WeatherRenderer.oneDecimal(sunshine));
 		curWeather_sunshine.setForeground(Daten.efaConfig.getToolTipHeaderForegroundColor());
 
 		curWeather_sunshineUnit.setText("h");
 		curWeather_sunshineUnit.setForeground(Daten.efaConfig.getToolTipHeaderForegroundColor());
 		curWeather_sunshineUnit.setFont(
 				roundPanel.getFont().deriveFont((float) (Daten.efaConfig.getValueEfaDirekt_BthsFontSize() -4)));
-
-		df = new DecimalFormat("#.#");
-		curWeather_uvindex.setText(df.format(uvindex));
+		curWeather_sunshineUnit.setVerticalTextPosition(SwingConstants.BOTTOM);
+		
+		curWeather_uvindex.setText(WeatherRenderer.oneDecimal(uvindex));
 		curWeather_uvindex.setForeground(Daten.efaConfig.getToolTipHeaderForegroundColor());
 		curWeather_uvindex.setHorizontalAlignment(SwingConstants.RIGHT);
 		
-		df = new DecimalFormat("#");
+		DecimalFormat df = new DecimalFormat("#");
 		curWeather_rain.setText(df.format(rain)); 
 		curWeather_rain.setForeground(Daten.efaConfig.getToolTipHeaderForegroundColor());
 		
@@ -88,7 +87,7 @@ public class WeatherRendererCurrentUVIndex extends WeatherRenderer {
 		curWeather_rainUnit.setForeground(Daten.efaConfig.getToolTipHeaderForegroundColor());
 		curWeather_rainUnit.setFont(
 				roundPanel.getFont().deriveFont((float) (Daten.efaConfig.getValueEfaDirekt_BthsFontSize() -4)));
-
+		curWeather_rainUnit.setVerticalTextPosition(SwingConstants.BOTTOM);
 		/*	roundpanel
 		 *  | HEADER                                   |	
 		 * 	|curtemp |  weatherIcon | pnlMinMax  
@@ -115,7 +114,7 @@ public class WeatherRendererCurrentUVIndex extends WeatherRenderer {
 		pnlSunshine.add(curWeather_sunshine, 
 				new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.EAST,GridBagConstraints.VERTICAL, new Insets(0, 2, 2, 2), 0, 0));		
 		pnlSunshine.add(curWeather_sunshineUnit, 
-				new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,GridBagConstraints.VERTICAL, new Insets(0, 2, 2, 2), 0, 0));		
+				new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0, GridBagConstraints.SOUTHWEST,GridBagConstraints.VERTICAL, new Insets(0, 2, 2, 2), 0, 0));		
 		
 		// uv index
 		pnlUV.add(new JLabel (WeatherIcons.getIcon(WeatherIcons.IMAGE_UV_INDEX)), 
@@ -134,7 +133,7 @@ public class WeatherRendererCurrentUVIndex extends WeatherRenderer {
 		pnlRain.add(curWeather_rain, 
 				new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.EAST,GridBagConstraints.VERTICAL, new Insets(0, 2, 2, 2), 0, 0));		
 		pnlRain.add(curWeather_rainUnit, 
-				new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0, GridBagConstraints.EAST,GridBagConstraints.VERTICAL, new Insets(0, 2, 2, 2), 0, 0));		
+				new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0, GridBagConstraints.SOUTHEAST,GridBagConstraints.VERTICAL, new Insets(0, 2, 2, 2), 0, 0));		
 				
 		//wind just a label 
 		curWeather_wind.setText(International.getString("Wind") + ": "

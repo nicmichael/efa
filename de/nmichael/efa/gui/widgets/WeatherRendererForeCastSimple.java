@@ -22,7 +22,7 @@ import de.nmichael.efa.util.Logger;
 public class WeatherRendererForeCastSimple extends WeatherRenderer {
 
 	public static void renderWeather(WeatherDataForeCast wdf, JPanel roundPanel, WeatherWidgetInstance ww) {
-		String tempLabel = ww.getTempLabel(true);
+		String tempLabel = ww.getTempLabel(false);
 		
 		// Build the main panel view
 		

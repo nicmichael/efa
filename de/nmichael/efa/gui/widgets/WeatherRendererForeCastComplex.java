@@ -23,7 +23,7 @@ public class WeatherRendererForeCastComplex extends WeatherRenderer {
 		// Build the main panel view
 		int hourlyIndex = wdf.getHourly().getIndexForCurrentTime();
 
-		roundPanel.add(getLocationHeader(ww.getCaption()), new GridBagConstraints(0, 0, 7, 1, 1.0, 0.0, GridBagConstraints.CENTER,
+		roundPanel.add(getLocationHeader(ww.getCaption()), new GridBagConstraints(0, 0, 9, 1, 1.0, 0.0, GridBagConstraints.CENTER,
 			GridBagConstraints.BOTH, new Insets(2, 2, 2, 2), 0, 0));		
 		
 				addForeCastPanel(WeatherRenderer.getHourlyHourRendering(wdf, hourlyIndex), 
@@ -66,7 +66,9 @@ public class WeatherRendererForeCastComplex extends WeatherRenderer {
 		JLabel weatherIconLabel = initializeLabel(roundPanel);
 		JLabel tempLabel = initializeLabel(roundPanel);
 		JLabel uvIndexLabel = initializeLabel(roundPanel);
-		JLabel rainLabel = initializeLabel(roundPanel);
+		JLabel uvIndexLegendLabel = initializeLabel(roundPanel);
+		JLabel uvIndexStatusLabel = initializeLabel(roundPanel);
+		//JLabel rainLabel = initializeLabel(roundPanel);
 		JLabel rainIcon = initializeLabel(roundPanel);
 		JLabel rainLabelPercent = initializeLabel(roundPanel);
 		
@@ -86,33 +88,40 @@ public class WeatherRendererForeCastComplex extends WeatherRenderer {
 		tempLabel.setForeground(Daten.efaConfig.getToolTipHeaderForegroundColor());
 		tempLabel.setHorizontalTextPosition(SwingConstants.CENTER);
 
-		uvIndexLabel.setIcon(uvIndexLevel);
-		uvIndexLabel.setHorizontalTextPosition(SwingConstants.LEFT);
-		uvIndexLabel.setIconTextGap(4);
+		uvIndexLegendLabel.setIcon(WeatherIcons.getIcon(WeatherIcons.IMAGE_UV_INDEX));
+		uvIndexLegendLabel.setIconTextGap(0);
+	
+		uvIndexLabel.setIconTextGap(0);
 		uvIndexLabel.setText(uvIndex);
 		uvIndexLabel.setForeground(Daten.efaConfig.getToolTipHeaderForegroundColor());
+		
+		uvIndexStatusLabel.setIcon(uvIndexLevel);
+		uvIndexStatusLabel.setIconTextGap(0);
+		
 		
 		rainIcon.setIcon(WeatherIcons.getIcon(WeatherIcons.IMAGE_RAIN));
 		rainIcon.setIconTextGap(0);
 		rainIcon.setHorizontalTextPosition(SwingConstants.RIGHT);		
 		
-		rainLabel.setText(rain);
-		rainLabel.setForeground(Daten.efaConfig.getToolTipHeaderForegroundColor());
+		//rainLabel.setText(rain);
+		//rainLabel.setForeground(Daten.efaConfig.getToolTipHeaderForegroundColor());
 
 		rainLabelPercent.setText(rainPercentage);
 		rainLabelPercent.setForeground(Daten.efaConfig.getToolTipHeaderForegroundColor());
 		rainLabelPercent.setHorizontalTextPosition(SwingConstants.CENTER);
 
 		
-   	    roundPanel.add(timeLabel,   		new GridBagConstraints(0, startY, 1, 2, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.VERTICAL, 		new Insets(4,0,0,2), 0, 0));
-   	    roundPanel.add(weatherIconLabel, 	new GridBagConstraints(1, startY, 1, 2, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.VERTICAL, 	    new Insets(4,2,0,2), 0, 0));
+   	    roundPanel.add(timeLabel,   		new GridBagConstraints(0, startY, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.VERTICAL, 		new Insets(4,4,0,2), 0, 0));
+   	    roundPanel.add(weatherIconLabel, 	new GridBagConstraints(1, startY, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.VERTICAL, 	    new Insets(4,2,0,2), 0, 0));
+   	    roundPanel.add(tempLabel, 			new GridBagConstraints(3, startY, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.VERTICAL, 		new Insets(4,4,0,4), 0, 0));	
    	    
-   	    roundPanel.add(tempLabel, 			new GridBagConstraints(4, startY, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.VERTICAL, 		new Insets(4,4,0,4), 0, 0));	
-   	    roundPanel.add(uvIndexLabel, 		new GridBagConstraints(5, startY, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.VERTICAL, 	new Insets(4,4,3,4), 0, 0));
-   		
-   	    roundPanel.add(rainIcon, 			new GridBagConstraints(3, startY+1, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER,   GridBagConstraints.VERTICAL, 	new Insets(0,2,0,0), 0, 0));
-   	    roundPanel.add(rainLabel, 			new GridBagConstraints(4, startY+1, 1, 1, 0.0, 0.0, GridBagConstraints.EAST,   GridBagConstraints.VERTICAL, 		new Insets(0,2,0,5), 0, 0));
-   		roundPanel.add(rainLabelPercent, 	new GridBagConstraints(5, startY+1, 1, 1, 0.0, 1.0, GridBagConstraints.EAST, 	GridBagConstraints.VERTICAL, 		new Insets(0,2,4,2), 0, 0));
+   	    roundPanel.add(uvIndexLegendLabel,	new GridBagConstraints(4, startY, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.VERTICAL, 	new Insets(4,2,0,2), 0, 0));
+   	    roundPanel.add(uvIndexLabel, 		new GridBagConstraints(5, startY, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.VERTICAL, 	new Insets(4,2,0,2), 0, 0));
+   	    roundPanel.add(uvIndexStatusLabel, 	new GridBagConstraints(6, startY, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.VERTICAL, 	new Insets(4,2,0,2), 0, 0));
+     		
+   	    roundPanel.add(rainIcon, 			new GridBagConstraints(7, startY, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER,   GridBagConstraints.VERTICAL, 	new Insets(4,2,0,0), 0, 0));
+   	    //roundPanel.add(rainLabel, 			new GridBagConstraints(4, startY+1, 1, 1, 0.0, 0.0, GridBagConstraints.EAST,   GridBagConstraints.VERTICAL, 		new Insets(0,2,0,5), 0, 0));
+   		roundPanel.add(rainLabelPercent, 	new GridBagConstraints(8, startY, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, 	GridBagConstraints.VERTICAL, 		new Insets(4,2,0,2), 0, 0));
 
 		// Klick auf das Icon wird an Parent weitergeleitet
    		weatherIconLabel.addMouseListener(new MouseAdapter() {

@@ -48,28 +48,28 @@ public class WeatherRendererCurrentWind extends WeatherRenderer {
 		curWeather_temp.setFont(
 				roundPanel.getFont().deriveFont((float) (Daten.efaConfig.getValueEfaDirekt_BthsFontSize() + 10)));
 		curWeather_temp.setFont(curWeather_temp.getFont().deriveFont(Font.BOLD));
-		curWeather_temp.setText(wdf.getCurrentWeather().getTemperature() + ww.getTempLabel(false));
+		curWeather_temp.setText(WeatherRenderer.oneDecimal(wdf.getCurrentWeather().getTemperature()) + ww.getTempLabel(false));
 
 		curWeather_icon.setIcon(WeatherIcons.getWeatherIconForCode(wdf.getCurrentWeather().getIconCode(), 64,
 				wdf.getCurrentWeather().getIsDay() == 1, false));
 		curWeather_icon.setToolTipText(wdf.getCurrentWeather().getDescription());
 
-		curWeather_minTemp.setText(minTemp + tempLabel);
+		curWeather_minTemp.setText(WeatherRenderer.oneDecimal(minTemp) + tempLabel);
 		curWeather_minTemp.setForeground(Daten.efaConfig.getToolTipHeaderForegroundColor());
 
-		curWeather_maxTemp.setText(maxTemp + tempLabel);
+		curWeather_maxTemp.setText(WeatherRenderer.oneDecimal(maxTemp) + tempLabel);
 		curWeather_maxTemp.setForeground(Daten.efaConfig.getToolTipHeaderForegroundColor());
 
-		DecimalFormat df = new DecimalFormat("#.#");
-		curWeather_sunshine.setText(df.format(sunshine));
+		curWeather_sunshine.setText(WeatherRenderer.oneDecimal(sunshine));
 		curWeather_sunshine.setForeground(Daten.efaConfig.getToolTipHeaderForegroundColor());
 
 		curWeather_sunshineUnit.setText("h");
 		curWeather_sunshineUnit.setForeground(Daten.efaConfig.getToolTipHeaderForegroundColor());
 		curWeather_sunshineUnit.setFont(
 				roundPanel.getFont().deriveFont((float) (Daten.efaConfig.getValueEfaDirekt_BthsFontSize() -4)));
-
-		df = new DecimalFormat("#");
+		curWeather_sunshineUnit.setVerticalTextPosition(SwingConstants.BOTTOM);
+		
+		DecimalFormat df = new DecimalFormat("#");
 		curWeather_rain.setText(df.format(rain)); 
 		curWeather_rain.setForeground(Daten.efaConfig.getToolTipHeaderForegroundColor());
 
@@ -77,7 +77,7 @@ public class WeatherRendererCurrentWind extends WeatherRenderer {
 		curWeather_rainUnit.setForeground(Daten.efaConfig.getToolTipHeaderForegroundColor());
 		curWeather_rainUnit.setFont(
 				roundPanel.getFont().deriveFont((float) (Daten.efaConfig.getValueEfaDirekt_BthsFontSize() -4)));
-
+		curWeather_rainUnit.setVerticalTextPosition(SwingConstants.BOTTOM);
 		/*	roundpanel
 		 *  | HEADER                                             |	
 		 * 	|CurrentTemp|WeatherIcon|pnlMinMaxSunRain            |

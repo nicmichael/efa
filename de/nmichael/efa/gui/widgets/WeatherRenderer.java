@@ -4,6 +4,7 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.text.DecimalFormat;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -61,7 +62,7 @@ public abstract class WeatherRenderer {
 	}
 	
 	protected static ImageIcon getHourlyWeatherIcon(WeatherDataForeCast wdf, int hourlyIndex) {
-		return WeatherIcons.getWeatherIconForCode(wdf.getHourly().getIconcode().get(hourlyIndex), 48, wdf.getHourly().getIsDay().get(hourlyIndex)==1, false);
+		return WeatherIcons.getWeatherIconForCode(wdf.getHourly().getIconcode().get(hourlyIndex), 48, wdf.getHourly().getIsDay().get(hourlyIndex)==1, true);
 	}
 	
 	protected static String getHourlyDescription (WeatherDataForeCast wdf, int hourlyIndex) {
@@ -69,23 +70,24 @@ public abstract class WeatherRenderer {
 	}
 	
 	protected static String getHourlyTemp(WeatherDataForeCast wdf, int hourlyIndex, String tempLabel) {
-		return wdf.getHourly().getTemperature2m().get(hourlyIndex) + tempLabel;
+		return oneDecimal(wdf.getHourly().getTemperature2m().get(hourlyIndex)) + tempLabel;
 	}
 	
 	protected static String getHourlyUVIndexVal(WeatherDataForeCast wdf, int hourlyIndex) {
-		return wdf.getHourly().getUvIndex().get(hourlyIndex) +"";//convert to string effortlessly
+		return oneDecimal(wdf.getHourly().getUvIndex().get(hourlyIndex));
 	}
 
 	protected static ImageIcon getHourlyUVIndexIcon(WeatherDataForeCast wdf, int hourlyIndex) {
-		return wdf.getHourly().getUv_index_icon().get(hourlyIndex);//convert to string effortlessly
+		return wdf.getHourly().getUv_index_icon().get(hourlyIndex);
 	}
 	
 	protected static String getHourlyRain(WeatherDataForeCast wdf, int hourlyIndex) {
-		return wdf.getHourly().getPrecipitation().get(hourlyIndex) +"";//convert to string effortlessly
+		return oneDecimal(wdf.getHourly().getPrecipitation().get(hourlyIndex));
 	}
 	
 	protected static String getHourlyRainPercentage(WeatherDataForeCast wdf, int hourlyIndex) {
-		return wdf.getHourly().getPrecipitationProb().get(hourlyIndex)+"";
+		DecimalFormat df = new DecimalFormat("#");
+		return df.format(wdf.getHourly().getPrecipitationProb().get(hourlyIndex));
 	}
 
 	
@@ -99,5 +101,9 @@ public abstract class WeatherRenderer {
 		return localDateTime.format(formatter);
 	}
 	
+	protected static String oneDecimal(double value) {
+		DecimalFormat df = new DecimalFormat("#.#");
+		return df.format(value);
+	}
 	
 }
