@@ -154,7 +154,7 @@ public class OpenMeteoApiParser {
         
         // Hourly Units -------------------------------
         JSONObject hu = root.getJSONObject("hourly_units");
-        HourlyUnits units = new HourlyUnits();
+        WeatherDataHourlyUnits units = new WeatherDataHourlyUnits();
         units.setTime(hu.getString("time"));
         units.setTemperature2m(hu.getString("temperature_2m"));
         units.setWeatherCode(hu.getString("weather_code"));

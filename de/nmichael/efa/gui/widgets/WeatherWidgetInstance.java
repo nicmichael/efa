@@ -304,10 +304,6 @@ public class WeatherWidgetInstance extends WidgetInstance implements IWidgetInst
             interrupt(); // wake up thread
         }
 
-
-    	
-
-        
     }
 
     private class UpdateWeatherRunner implements Runnable {

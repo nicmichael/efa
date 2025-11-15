@@ -1,6 +1,6 @@
 package de.nmichael.efa.gui.widgets;
 
-public class HourlyUnits {
+public class WeatherDataHourlyUnits {
 
     private String time;
     private String temperature2m;
@@ -52,6 +52,4 @@ public class HourlyUnits {
 		this.time = time;
 	}
 
-    // Getter & Setter
-    // ...
 }

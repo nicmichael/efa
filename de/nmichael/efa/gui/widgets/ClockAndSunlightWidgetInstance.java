@@ -288,9 +288,7 @@ public class ClockAndSunlightWidgetInstance extends WidgetInstance implements IW
         private JPanel panel;
 
         public PanelUpdater(JPanel thePanel) {
-
         	this.panel=thePanel;
-        
         }
 
         public void run() {

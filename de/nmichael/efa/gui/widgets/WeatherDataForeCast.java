@@ -7,7 +7,7 @@ public class WeatherDataForeCast {
     private double longitude;
     private double elevation;
     private WeatherDataCurrent currentWeather;
-    private HourlyUnits hourlyUnits;
+    private WeatherDataHourlyUnits hourlyUnits;
     private WeatherDataHourly hourly;
     private WeatherDataDaily daily;
     private boolean status=false;
@@ -42,10 +42,10 @@ public class WeatherDataForeCast {
 	public void setHourly(WeatherDataHourly hourly) {
 		this.hourly = hourly;
 	}
-	public HourlyUnits getHourlyUnits() {
+	public WeatherDataHourlyUnits getHourlyUnits() {
 		return hourlyUnits;
 	}
-	public void setHourlyUnits(HourlyUnits hourlyUnits) {
+	public void setHourlyUnits(WeatherDataHourlyUnits hourlyUnits) {
 		this.hourlyUnits = hourlyUnits;
 	}
 	public WeatherDataCurrent getCurrentWeather() {

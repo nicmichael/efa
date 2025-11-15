@@ -22,7 +22,24 @@ import de.nmichael.efa.gui.EfaGuiUtils;
 import de.nmichael.efa.util.International;
 import de.nmichael.efa.util.Logger;
 
-
+/*
+ * Widget Class
+ * 
+ * After a refactoring in efa 2.5.1, there are several classes defining the Widget system.
+ * 
+ * First, efa differs between a Widget (as of "Widget Type") and a WidgetInstance.
+ * This is necessary as a Widget can create more than one instance of itself. Like, the HTML widget
+ * can have multiple instances which run autonomously with a different configuration.
+ * 
+ * The Widget defines the type and the configuration data. 
+ * 	   It is used by efaBoathouseFrame to detect the available widget types and to instantiate all Widget Instances to this Widget.
+ *     It defines standard code which is used to define the configuration GUI items (addItem, addHint, ...).
+ *     
+ *     If a new widget is defined, it's class needs to be included in the method getAllWidgetClassNames(). 
+ *     
+ * The WidgetInstance is the actual Widget Instance which fits to a set of configuration which is defined by the Widget.
+ * 
+ */
 public abstract class Widget implements IWidget {
 
     public static final String PARAM_ENABLED        = "Enabled";
@@ -203,9 +220,7 @@ public abstract class Widget implements IWidget {
         Vector <String>result = new Vector<String>();
         result.add(ClockAndSunlightWidget.class.getCanonicalName());
         result.add(WeatherWidget.class.getCanonicalName());
-        result.add(WeatherWidgetMulti.class.getCanonicalName());
         result.add(HTMLWidget.class.getCanonicalName());
-        result.add(HTMLWidgetMulti.class.getCanonicalName());
         result.add(AlertWidget.class.getCanonicalName());
         return result;
     }
