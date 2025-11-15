@@ -36,7 +36,6 @@ import de.nmichael.efa.util.Logger;
  *   - Providing multiple rendering types
  *   - Show a popup window if user clicks on weather widget gui
  * 
- *  
  */
 
 public class WeatherWidget extends Widget implements IItemFactory {

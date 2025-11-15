@@ -54,13 +54,11 @@ public abstract class WidgetInstance implements IWidgetInstance {
 	@Override
 	public void stop() {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void runWidgetWarnings(int mode, boolean actionBegin, LogbookRecord r) {
 		// TODO Auto-generated method stub
-
 	}
 
 	

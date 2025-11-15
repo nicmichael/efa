@@ -42,7 +42,6 @@ public class WeatherWidgetInstance extends WidgetInstance implements IWidgetInst
 	private int htmlPopupHeight;
 	private int updateInterval;
 	
-	
 	@Override
 	public void runWidgetWarnings(int mode, boolean actionBegin, LogbookRecord r) {
 		// Nothing to do here
@@ -269,12 +268,8 @@ public class WeatherWidgetInstance extends WidgetInstance implements IWidgetInst
             while (keepRunning) {
             	
             	try {
-
-            		// only download new weather data after an Interval...
-            		if (needsToUpdateWeather()) {
-            			wdf = WeatherDataCache.getInstance().getWeatherData(ww.getSource(), ww.getLongitude(), ww.getLatitude());
-            			lastWeatherUpdate=System.currentTimeMillis();
-            		}
+            		//WeatherDataCache handles itself if the interval for loading new weather data is exceeded.
+           			wdf = WeatherDataCache.getInstance().getWeatherData(ww.getSource(), ww.getLongitude(), ww.getLatitude());
 	            	
 	            	//Use invokelater as swing threadsafe ways
 	            	SwingUtilities.invokeLater(new UpdateWeatherRunner(this.panel, wdf, ww));

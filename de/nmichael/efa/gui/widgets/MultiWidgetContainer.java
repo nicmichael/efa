@@ -6,6 +6,17 @@ import de.nmichael.efa.core.items.IItemType;
 import de.nmichael.efa.core.items.ItemTypeInteger;
 import de.nmichael.efa.util.International;
 
+/*
+ * The Multiwidgetcontainer is a widget that can contain multiple other widgets.
+ * The contained widgets are put in a panel with cardlayout.
+ * 
+ * Functionality:
+ * - handle multiple other widgets within this container
+ * - automatically switching through all panels every x seconds
+ * - provide left/right buttons so that the user can step through the panels manually
+ * - stop automatic switching when mouse enters the panel
+ * 
+ */
 public class MultiWidgetContainer extends Widget {
 
 	static final String PARAM_AUTOCHANGE = "AutomaticChangeAfterSeconds";
@@ -23,12 +34,10 @@ public class MultiWidgetContainer extends Widget {
         super.setEnabled(true);
         super.setPosition(IWidget.POSITION_CENTER);
 	}
-	
 
     public int getUpdateInterval() {
         return ((ItemTypeInteger)getParameterInternal(PARAM_AUTOCHANGE)).getValue();
     }
-
 
 	@Override
 	public Vector<WidgetInstance> createInstances() {
@@ -38,7 +47,5 @@ public class MultiWidgetContainer extends Widget {
 		returnList.add(wi);
 		return returnList;
 	}
-	
-	
 
 }

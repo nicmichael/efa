@@ -21,7 +21,6 @@ import de.nmichael.efa.gui.util.RoundedPanel;
 public abstract class WeatherRenderer {
 
 	public static void renderWeather(WeatherDataForeCast wdf, JPanel roundPanel, WeatherWidget ww) {
-
 	}
 	
 	protected static JPanel initializePanel(JPanel mainPanel) {

@@ -171,7 +171,6 @@ public class HTMLWidgetInstance extends WidgetInstance implements IWidgetInstanc
 	            t.setDaemon(true);
 	            return t;
 	        });
-		
 
         private volatile String url = null;
         private volatile int updateIntervalInSeconds = 24*3600;
@@ -274,7 +273,6 @@ public class HTMLWidgetInstance extends WidgetInstance implements IWidgetInstanc
             }
         }
 
-
         public void setUseHttpCaching(boolean useHttpCaching) {
 			this.useHttpCaching=useHttpCaching;
 		}
@@ -299,12 +297,10 @@ public class HTMLWidgetInstance extends WidgetInstance implements IWidgetInstanc
             scheduler.shutdownNow();
         }
 
-
     }
 
 	public void setUseHttpCaching(boolean httpCacheActive) {
 		this.useHttpCaching = httpCacheActive;
-		
 	}
 
 }

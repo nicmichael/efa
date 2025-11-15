@@ -1,7 +1,5 @@
 package de.nmichael.efa.gui.widgets;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,6 +11,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import de.nmichael.efa.util.International;
+import de.nmichael.efa.util.Logger;
 
 public class OpenMeteoApiParser {
 
@@ -21,7 +20,7 @@ public class OpenMeteoApiParser {
     public static final Map<Integer, Integer> weatherApiCodeToWeatherApiIconMap = new HashMap<>();
 
     static {
-        // vollständige Mapping-Tabelle (siehe vorherige Antwort)
+        // convert weatherapi weathercode to wmo code, and provide description for weatherapi weathercode
         weatherCodeMap.put(0, 1000); weatherDescMap.put(0, International.getString("WC_MAPI_0"));
         weatherCodeMap.put(1, 1003); weatherDescMap.put(1, International.getString("WC_MAPI_1"));
         weatherCodeMap.put(2, 1006); weatherDescMap.put(2, International.getString("WC_MAPI_2"));
@@ -101,94 +100,94 @@ public class OpenMeteoApiParser {
     }
 
     public static WeatherDataForeCast parseFromOpenMeteo(JSONObject json) {
-
     	
         JSONObject root = json;
-        
         // main object with coordinates, current_weather and hourly_data
         WeatherDataForeCast wdf = new WeatherDataForeCast();
-        wdf.setLatitude(root.getDouble("latitude"));
-        wdf.setLongitude(root.getDouble("longitude"));
-        wdf.setElevation(root.getDouble("elevation"));    	
-    	
-    	JSONObject current = json.getJSONObject("current_weather");
-
-        int openMeteoCode = current.getInt("weathercode");
-        double temp = roundToOneDigit(current.getDouble("temperature"));
-        double windspeed = roundToOneDigit(current.getDouble("windspeed"));
-        double winddirection = current.getDouble("winddirection");
-        		
-        // Current Weather -------------------------------
-        WeatherDataCurrent wd = new WeatherDataCurrent();
-        wd.setTemperature(temp);
-        wd.setWindSpeed(windspeed);
-        wd.setWindDirection(winddirection);
-        wd.setWindDirectionText(WeatherWindDirectionConverter.toCompassDirection(winddirection));
-        wd.setOpenMeteoCode(openMeteoCode);
-        wd.setIsDay(current.getInt("is_day"));
-        wd.setWeatherApiCode(weatherCodeMap.getOrDefault(openMeteoCode, 1000));
-        wd.setIconCode(weatherApiCodeToWeatherApiIconMap.getOrDefault(wd.getWeatherApiCode(), 113));
-        wd.setDescription(weatherDescMap.getOrDefault(openMeteoCode, "Unknown"));
-
-        wdf.setCurrentWeather(wd);
         
-        //Daily Weather -------------------------------
-        JSONObject daily = json.getJSONObject("daily");
-        
-        WeatherDataDaily wdd = new WeatherDataDaily();
-        wdd.setPrecipitation_sum(roundToOneDigit(daily.getJSONArray("precipitation_sum").getDouble(0)));
-        wdd.setSunshine_duration(roundToOneDigit(daily.getJSONArray("sunshine_duration").getDouble(0)));
-        wdd.setTemperature_2m_max(roundToOneDigit(daily.getJSONArray("temperature_2m_max").getDouble(0)));
-        wdd.setTemperature_2m_min(roundToOneDigit(daily.getJSONArray("temperature_2m_min").getDouble(0)));
-        wdd.setUv_index_clear_sky_max(roundToOneDigit(daily.getJSONArray("uv_index_clear_sky_max").getDouble(0)));
-        wdd.setUv_index_max(roundToOneDigit(daily.getJSONArray("uv_index_max").getDouble(0)));
+        try {
 
-        openMeteoCode = daily.getJSONArray("weather_code").getInt(0);
-        wdd.setOpenMeteoCode(openMeteoCode);
-        wdd.setWeatherApiCode(weatherCodeMap.getOrDefault(openMeteoCode, 1000));
-        wdd.setIconCode(weatherApiCodeToWeatherApiIconMap.getOrDefault(wdd.getWeatherApiCode(), 113));
-        wdd.setDescription(weatherDescMap.getOrDefault(openMeteoCode, "Unknown"));
-		wdd.setUv_index_icon(getUVIndexIcon(wdd.getUv_index_max()));
-
-        wdf.setDaily(wdd);
-        
-        // Hourly Units -------------------------------
-        JSONObject hu = root.getJSONObject("hourly_units");
-        WeatherDataHourlyUnits units = new WeatherDataHourlyUnits();
-        units.setTime(hu.getString("time"));
-        units.setTemperature2m(hu.getString("temperature_2m"));
-        units.setWeatherCode(hu.getString("weather_code"));
-        units.setWindSpeed10m(hu.getString("wind_speed_10m"));
-        units.setWindDirection10m(hu.getString("wind_direction_10m"));
-        units.setUvIndex(hu.getString("uv_index"));
-        units.setIsDay(hu.getString("is_day"));
-        wdf.setHourlyUnits(units);
-
-        // Hourly Data -------------------------------
-        JSONObject hd = root.getJSONObject("hourly");
-        WeatherDataHourly hourly = new WeatherDataHourly();
-        hourly.setTime(toLongList(hd.getJSONArray("time")));
-        hourly.setTemperature2m(toDoubleList(hd.getJSONArray("temperature_2m")));
-        hourly.setWeatherCode(toIntList(hd.getJSONArray("weather_code")));
-        hourly.setWindSpeed10m(toDoubleList(hd.getJSONArray("wind_speed_10m")));
-        hourly.setWindDirection10m(toIntList(hd.getJSONArray("wind_direction_10m")));
-        hourly.setUvIndex(toDoubleList(hd.getJSONArray("uv_index")));
-        hourly.setIsDay(toIntList(hd.getJSONArray("is_day")));
-        hourly.setPrecipitation(toDoubleList(hd.getJSONArray("precipitation")));
-        hourly.setPrecipitationProb(toDoubleList(hd.getJSONArray("precipitation_probability")));
-        calculateHourlyWeatherCodeAndIcons(hourly);
-        wdf.setHourly(hourly);
-        
-        wdf.setStatus(true);
-        wdf.setStatusMessage("");
+	        wdf.setLatitude(root.getDouble("latitude"));
+	        wdf.setLongitude(root.getDouble("longitude"));
+	        wdf.setElevation(root.getDouble("elevation"));    	
+	    	
+	    	JSONObject current = json.getJSONObject("current_weather");
+	
+	        int openMeteoCode = current.getInt("weathercode");
+	        double temp = current.getDouble("temperature");
+	        double windspeed = current.getDouble("windspeed");
+	        double winddirection = current.getDouble("winddirection");
+	        		
+	        // Current Weather -------------------------------
+	        WeatherDataCurrent wd = new WeatherDataCurrent();
+	        wd.setTemperature(temp);
+	        wd.setWindSpeed(windspeed);
+	        wd.setWindDirection(winddirection);
+	        wd.setWindDirectionText(WeatherWindDirectionConverter.toCompassDirection(winddirection));
+	        wd.setOpenMeteoCode(openMeteoCode);
+	        wd.setIsDay(current.getInt("is_day"));
+	        wd.setWeatherApiCode(weatherCodeMap.getOrDefault(openMeteoCode, 1000));
+	        wd.setIconCode(weatherApiCodeToWeatherApiIconMap.getOrDefault(wd.getWeatherApiCode(), 113));
+	        wd.setDescription(weatherDescMap.getOrDefault(openMeteoCode, "Unknown"));
+	
+	        wdf.setCurrentWeather(wd);
+	        
+	        //Daily Weather -------------------------------
+	        JSONObject daily = json.getJSONObject("daily");
+	        
+	        WeatherDataDaily wdd = new WeatherDataDaily();
+	        wdd.setPrecipitation_sum(daily.getJSONArray("precipitation_sum").getDouble(0));
+	        wdd.setSunshine_duration(daily.getJSONArray("sunshine_duration").getDouble(0));
+	        wdd.setTemperature_2m_max(daily.getJSONArray("temperature_2m_max").getDouble(0));
+	        wdd.setTemperature_2m_min(daily.getJSONArray("temperature_2m_min").getDouble(0));
+	        wdd.setUv_index_clear_sky_max(daily.getJSONArray("uv_index_clear_sky_max").getDouble(0));
+	        wdd.setUv_index_max(daily.getJSONArray("uv_index_max").getDouble(0));
+	
+	        openMeteoCode = daily.getJSONArray("weather_code").getInt(0);
+	        wdd.setOpenMeteoCode(openMeteoCode);
+	        wdd.setWeatherApiCode(weatherCodeMap.getOrDefault(openMeteoCode, 1000));
+	        wdd.setIconCode(weatherApiCodeToWeatherApiIconMap.getOrDefault(wdd.getWeatherApiCode(), 113));
+	        wdd.setDescription(weatherDescMap.getOrDefault(openMeteoCode, "Unknown"));
+			wdd.setUv_index_icon(getUVIndexIcon(wdd.getUv_index_max()));
+	
+	        wdf.setDaily(wdd);
+	        
+	        // Hourly Units -------------------------------
+	        JSONObject hu = root.getJSONObject("hourly_units");
+	        WeatherDataHourlyUnits units = new WeatherDataHourlyUnits();
+	        units.setTime(hu.getString("time"));
+	        units.setTemperature2m(hu.getString("temperature_2m"));
+	        units.setWeatherCode(hu.getString("weather_code"));
+	        units.setWindSpeed10m(hu.getString("wind_speed_10m"));
+	        units.setWindDirection10m(hu.getString("wind_direction_10m"));
+	        units.setUvIndex(hu.getString("uv_index"));
+	        units.setIsDay(hu.getString("is_day"));
+	        wdf.setHourlyUnits(units);
+	
+	        // Hourly Data -------------------------------
+	        JSONObject hd = root.getJSONObject("hourly");
+	        WeatherDataHourly hourly = new WeatherDataHourly();
+	        hourly.setTime(toLongList(hd.getJSONArray("time")));
+	        hourly.setTemperature2m(toDoubleList(hd.getJSONArray("temperature_2m")));
+	        hourly.setWeatherCode(toIntList(hd.getJSONArray("weather_code")));
+	        hourly.setWindSpeed10m(toDoubleList(hd.getJSONArray("wind_speed_10m")));
+	        hourly.setWindDirection10m(toIntList(hd.getJSONArray("wind_direction_10m")));
+	        hourly.setUvIndex(toDoubleList(hd.getJSONArray("uv_index")));
+	        hourly.setIsDay(toIntList(hd.getJSONArray("is_day")));
+	        hourly.setPrecipitation(toDoubleList(hd.getJSONArray("precipitation")));
+	        hourly.setPrecipitationProb(toDoubleList(hd.getJSONArray("precipitation_probability")));
+	        calculateHourlyWeatherCodeAndIcons(hourly);
+	        wdf.setHourly(hourly);
+	        
+	        wdf.setStatus(true);
+	        wdf.setStatusMessage("");
+        } catch (Exception e) {
+        	wdf.setStatus(false);
+        	wdf.setStatusMessage(e.getLocalizedMessage());
+        	Logger.logdebug(e);
+        }
+	    
         return wdf;
-    }
-    
-    
-    private static double roundToOneDigit(double value) {
-    	return new BigDecimal(value)
-    	                    .setScale(1, RoundingMode.HALF_UP)
-    	                    .doubleValue();
     }
     
 	private static void calculateHourlyWeatherCodeAndIcons(WeatherDataHourly data) {
@@ -241,7 +240,6 @@ public class OpenMeteoApiParser {
         return list;
     }
     
-
     private static List<Integer> toIntList(JSONArray arr) {
         List<Integer> list = new ArrayList<>();
         for (int i = 0; i < arr.length(); i++) {

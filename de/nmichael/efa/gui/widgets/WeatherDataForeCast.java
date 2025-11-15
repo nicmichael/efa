@@ -13,7 +13,6 @@ public class WeatherDataForeCast {
     private boolean status=false;
     private String statusMessage="";
     
-    
     public WeatherDataForeCast() {
     	lastUpdateTimeStamp = System.currentTimeMillis();
     }

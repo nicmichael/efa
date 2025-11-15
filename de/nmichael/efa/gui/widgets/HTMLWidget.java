@@ -23,7 +23,6 @@ import de.nmichael.efa.core.items.ItemTypeFile;
 import de.nmichael.efa.core.items.ItemTypeInteger;
 import de.nmichael.efa.core.items.ItemTypeItemList;
 import de.nmichael.efa.core.items.ItemTypeString;
-import de.nmichael.efa.gui.BaseTabbedDialog;
 import de.nmichael.efa.util.EfaUtil;
 import de.nmichael.efa.util.International;
 import de.nmichael.efa.util.Logger;
@@ -87,8 +86,6 @@ public class HTMLWidget extends Widget implements IWidget, IItemFactory {
 		htmlPageList.setShortDescription(International.getString("Weitere HTML-Seite"));		
 		htmlPageList.setRepeatTitle(true);
     }
-
-   
 
     public void setSize(int width, int height) {
         ((ItemTypeInteger)getParameterInternal(PARAM_WIDTH)).setValue(width);
@@ -217,8 +214,6 @@ public class HTMLWidget extends Widget implements IWidget, IItemFactory {
         }	
 	}
 
-	
-
     public Boolean getHttpCacheActive() {
         return ((ItemTypeBoolean)getParameterInternal(PARAM_USE_HTTP_CACHE)).getValue(); 	
     }
@@ -231,7 +226,6 @@ public class HTMLWidget extends Widget implements IWidget, IItemFactory {
             return false;
         }	
 	}
-
 
 	/*
 	 * getDefaultItems is the factory for all location elements

@@ -8,7 +8,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.text.DecimalFormat;
 
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
@@ -20,8 +19,6 @@ import de.nmichael.efa.util.Logger;
 public class WeatherRendererCurrentUVIndex extends WeatherRenderer {
 
 	public static void renderWeather(WeatherDataForeCast wdf, JPanel roundPanel, WeatherWidgetInstance ww) {
-		
-
 		JLabel curWeather_temp = new JLabel();
 		JLabel curWeather_icon = new JLabel();
 		JLabel curWeather_minTemp = new JLabel();

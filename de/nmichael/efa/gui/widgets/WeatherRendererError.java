@@ -4,10 +4,8 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
-import javax.swing.SwingConstants;
 
 import de.nmichael.efa.Daten;
 import de.nmichael.efa.gui.util.RoundedBorder;

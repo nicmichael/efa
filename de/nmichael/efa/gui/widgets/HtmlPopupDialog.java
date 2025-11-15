@@ -28,7 +28,9 @@ import javax.swing.text.html.HTMLEditorKit;
 
 public class HtmlPopupDialog extends BaseDialog {
 
-    private String url;
+	private static final long serialVersionUID = 8588651499936203196L;
+	
+	private String url;
     private int width;
     private int height;
     private int closeTimeoutSeconds;

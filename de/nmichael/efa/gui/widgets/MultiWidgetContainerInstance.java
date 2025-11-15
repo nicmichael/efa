@@ -29,14 +29,12 @@ public class MultiWidgetContainerInstance extends WidgetInstance implements IWid
 	@Override
 	public void runWidgetWarnings(int mode, boolean actionBegin, LogbookRecord r) {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void stop() {
 		try {
-			// stopHTML also lets the thread die, and efaBths is responsible to set up a new
-			// thread.
+			// stopHTML also lets the thread die, and efaBths is responsible to set up a new thread.
 			panelUpdater.stopRunning();
 		} catch (Exception eignore) {
 			// nothing to do, might not be initialized
@@ -112,11 +110,9 @@ public class MultiWidgetContainerInstance extends WidgetInstance implements IWid
 		try {
 			panelUpdater = new MultiWidgetPanelUpdater(cardLayout, cardPanel, this.getUpdateInterval());
 			panelUpdater.start();
-
 		} catch (Exception e) {
 			Logger.log(e);
 		}
-
 	}
 
 	@Override

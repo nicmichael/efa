@@ -1,11 +1,8 @@
 package de.nmichael.efa.gui.widgets;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.ImageIcon;
-
-import de.nmichael.efa.util.International;
 
 public class WeatherDataHourly {
 	private List<Long> time;
@@ -22,7 +19,6 @@ public class WeatherDataHourly {
 	private List<Integer> iconcode;
 	private List<String> description;
 	private List<ImageIcon> uv_index_icon;
-
     
  	public List<Integer> getIsDay() {
 		return isDay;

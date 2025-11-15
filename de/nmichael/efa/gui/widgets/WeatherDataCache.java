@@ -40,7 +40,6 @@ public class WeatherDataCache {
 	}
 	
 	public synchronized WeatherDataForeCast getWeatherData(String source, String longitude, String latitude) {
-
 		WeatherDataForeCast existing = forecasts.get(longitude+latitude);
 		if ((existing==null) || existing.needsUpdate()){
 			return getNewWeatherData(source, longitude, latitude);
@@ -52,7 +51,6 @@ public class WeatherDataCache {
 	private WeatherDataForeCast getNewWeatherData(String source, String longitude, String latitude) {
 
 		if (source.equalsIgnoreCase(WeatherWidget.WEATHER_SOURCE_OPENMETEO)) {
-
 			try {
 
 				WeatherDataForeCast data = fetchMeteoWeather(longitude, latitude);
@@ -68,7 +66,6 @@ public class WeatherDataCache {
 	}
 
 	private WeatherDataForeCast fetchMeteoWeather(String longitude, String latitude) {
-
 		
 		String urlStr = "https://api.open-meteo.com/v1/forecast?latitude=" + latitude + "&longitude=" + longitude
 				+ "&daily=weather_code,sunshine_duration,uv_index_max,uv_index_clear_sky_max,precipitation_sum,temperature_2m_max,temperature_2m_min,wind_speed_10m_max"
@@ -83,13 +80,12 @@ public class WeatherDataCache {
 				;
 
 		try {
-
 			Logger.log(Logger.DEBUG, International.getString("Lade Wetterdaten von URL: ")+urlStr);
 
 			String response = fetchJSonFromURL(urlStr);
 			JSONObject json = new JSONObject(response.toString());
 			return OpenMeteoApiParser.parseFromOpenMeteo(json);
-
+			
 		} catch (Exception e) {
 			WeatherDataForeCast tmp=new WeatherDataForeCast();
 			tmp.setStatus(false);

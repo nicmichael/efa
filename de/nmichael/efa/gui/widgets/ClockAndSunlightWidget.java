@@ -168,7 +168,4 @@ public class ClockAndSunlightWidget extends Widget {
 		return returnList;
 	}
 
-    
-
-
 }
