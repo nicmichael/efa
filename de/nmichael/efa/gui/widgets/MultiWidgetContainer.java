@@ -11,7 +11,7 @@ public class MultiWidgetContainer extends Widget {
 	static final String PARAM_AUTOCHANGE = "AutomaticChangeAfterSeconds";
 
 	public MultiWidgetContainer() {
-	    super(International.getString("Multi-Widget"), "Multi-Widget", International.getString("Multi-Widget"), true,false);
+	    super(International.getString("Multi-Widget"), "Multi-Widget", International.getString("Multi-Widget"), false, false);
 	    
         addHint("MultiWidgetInfo1",IItemType.TYPE_PUBLIC, "", International.getString("Das Multi-Widget kann in einem Platzbereich mehrere Widgets anzeigen."), 3,6,6);
         addHint("MultiWidgetInfo2",IItemType.TYPE_PUBLIC, "", International.getString("Wählen Sie dazu jeweils in den anderen Widgets als Position \"MultiWidget\" aus."), 3,6,6);

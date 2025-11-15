@@ -24,7 +24,9 @@ public class WeatherRendererError extends WeatherRenderer {
 				roundPanel.getFont().deriveFont((float) (Daten.efaConfig.getValueEfaDirekt_BthsFontSize())));
 		errorLabel1.setFont(errorLabel1.getFont().deriveFont(Font.BOLD));
 		errorLabel1.setText(International.getString("Fehler beim Abruf der Wetterdaten."));
-		errorLabel1.setToolTipText(wdf.getStatusMessage());
+		
+		errorLabel1.setToolTipText((wdf==null ? 
+				International.getString("Prüfen Sie die Logdatei, um die Ursache herauszufinden.") : wdf.getStatusMessage()));
 		errorLabel1.setLineWrap(true);
 		errorLabel1.setWrapStyleWord(true);
 		errorLabel1.setOpaque(false);

@@ -997,7 +997,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 					EfaUtil.getColor(standardErrorBackgroundColor), IItemType.TYPE_PUBLIC,
 					BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
 					International.getString("Fehler Hintergrundfarbe"), false));
-			addParameter(efaGuiErrorForeground = new ItemTypeColor("efaGuiToolTipForeground",
+			addParameter(efaGuiErrorForeground = new ItemTypeColor("efaGuiErrorForeground",
 					EfaUtil.getColor(standardErrorForegroundColor),
 					EfaUtil.getColor(standardErrorForegroundColor), IItemType.TYPE_PUBLIC,
 					BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
