@@ -223,7 +223,7 @@ public class HTMLWidgetInstance extends WidgetInstance implements IWidgetInstanc
                     try {
                         HttpCachedFetcher.FetchResult res = fetcher.fetch();
                         if (res.isNotModified()) {
-                            Logger.log(Logger.INFO, Logger.MSG_GENERIC, "HTMLWidget: Content not modified (304) for " + urlToLoad);
+                            Logger.log(Logger.INFO, Logger.MSG_GENERIC, International.getMessage("HTMLWidget: Inhalt unverändert (304) für '{url}'.",urlToLoad));
                             return;
                         }
                         if (res.isOk() && res.body != null) {

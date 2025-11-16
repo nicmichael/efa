@@ -128,7 +128,7 @@ public class OpenMeteoApiParser {
 	        wd.setIsDay(current.getInt("is_day"));
 	        wd.setWeatherApiCode(weatherCodeMap.getOrDefault(openMeteoCode, 1000));
 	        wd.setIconCode(weatherApiCodeToWeatherApiIconMap.getOrDefault(wd.getWeatherApiCode(), 113));
-	        wd.setDescription(weatherDescMap.getOrDefault(openMeteoCode, "Unknown"));
+	        wd.setDescription(weatherDescMap.getOrDefault(openMeteoCode, International.getString("Unbekannt")));
 	
 	        wdf.setCurrentWeather(wd);
 	        
@@ -147,7 +147,7 @@ public class OpenMeteoApiParser {
 	        wdd.setOpenMeteoCode(openMeteoCode);
 	        wdd.setWeatherApiCode(weatherCodeMap.getOrDefault(openMeteoCode, 1000));
 	        wdd.setIconCode(weatherApiCodeToWeatherApiIconMap.getOrDefault(wdd.getWeatherApiCode(), 113));
-	        wdd.setDescription(weatherDescMap.getOrDefault(openMeteoCode, "Unknown"));
+	        wdd.setDescription(weatherDescMap.getOrDefault(openMeteoCode, International.getString("Unbekannt")));
 			wdd.setUv_index_icon(getUVIndexIcon(wdd.getUv_index_max()));
 	
 	        wdf.setDaily(wdd);

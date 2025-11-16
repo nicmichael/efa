@@ -28,7 +28,7 @@ public class WeatherRendererCurrentUVIndex extends WeatherRenderer {
 		JLabel curWeather_sunshineUnit = new JLabel();
 		JLabel curWeather_rainUnit = new JLabel();
 		JLabel curWeather_uvindex = new JLabel();
-		JLabel curWeather_wind = new JLabel();
+		//JLabel curWeather_wind = new JLabel();
 
 		JPanel pnlSunshine = initializePanel(roundPanel);
 		JPanel pnlUV = initializePanel(roundPanel);
@@ -133,13 +133,14 @@ public class WeatherRendererCurrentUVIndex extends WeatherRenderer {
 				new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0, GridBagConstraints.SOUTHEAST,GridBagConstraints.VERTICAL, new Insets(0, 2, 2, 2), 0, 0));		
 				
 		//wind just a label 
+		/*
 		curWeather_wind.setText(International.getString("Wind") + ": "
 				+ International.getString(wdf.getCurrentWeather().getWindDirectionText()) + " "
 				+ International.getString("mit") + " " + wdf.getCurrentWeather().getWindSpeed()
 				+ ww.getSpeedScale());
 		curWeather_wind.setForeground(Daten.efaConfig.getToolTipHeaderForegroundColor());
 		curWeather_wind.setHorizontalTextPosition(SwingConstants.CENTER);
-		
+		*/
 		// Klick auf das Icon wird an Parent weitergeleitet
         curWeather_icon.addMouseListener(new MouseAdapter() {
             @Override

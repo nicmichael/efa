@@ -24,7 +24,7 @@ public class WeatherRendererError extends WeatherRenderer {
 		errorLabel1.setText(International.getString("Fehler beim Abruf der Wetterdaten."));
 		
 		errorLabel1.setToolTipText((wdf==null ? 
-				International.getString("Prüfen Sie die Logdatei, um die Ursache herauszufinden.") : wdf.getStatusMessage()));
+				International.getString("Ein Protokoll ist in der Logdatei (Admin-Modus: Logdatei anzeigen) zu finden.") : wdf.getStatusMessage()));
 		errorLabel1.setLineWrap(true);
 		errorLabel1.setWrapStyleWord(true);
 		errorLabel1.setOpaque(false);

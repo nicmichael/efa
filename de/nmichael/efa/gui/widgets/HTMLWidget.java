@@ -54,7 +54,7 @@ public class HTMLWidget extends Widget implements IWidget, IItemFactory {
          * So... we support a very first html page, and multiple add-ons.
          */
         
-        addHeader(HEADER_FIRST_HTML, IItemType.TYPE_PUBLIC,"", "Erste HTML-Seite", 3);
+        addHeader(HEADER_FIRST_HTML, IItemType.TYPE_PUBLIC,"", International.getString("Erste HTML-Seite"), 3);
         
         addParameterInternal(new ItemTypeInteger(PARAM_WIDTH, 200, 1, Integer.MAX_VALUE, false,
                 IItemType.TYPE_PUBLIC, "",
@@ -77,7 +77,7 @@ public class HTMLWidget extends Widget implements IWidget, IItemFactory {
         
         addParameterInternal(new ItemTypeBoolean(PARAM_USE_HTTP_CACHE, true,
                 IItemType.TYPE_PUBLIC, "",
-                International.getString("UseHttpCache")));
+                International.getString("HTTP-Caching verwenden")));
         
         // Support multiple HTML Pages
 		addParameterInternal(htmlPageList = new ItemTypeItemList(PARAM_HTML_PAGELIST, new Vector<IItemType[]>(), this,
@@ -274,7 +274,7 @@ public class HTMLWidget extends Widget implements IWidget, IItemFactory {
 
             items[i++] = new ItemTypeBoolean(PARAM_USE_HTTP_CACHE, true,
                     IItemType.TYPE_PUBLIC, "",
-                    International.getString("HTTP-Cache verwenden"));
+                    International.getString("HTTP-Caching verwenden"));
             
             return items;
 		}

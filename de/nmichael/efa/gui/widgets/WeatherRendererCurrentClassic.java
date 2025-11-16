@@ -41,12 +41,12 @@ public class WeatherRendererCurrentClassic extends WeatherRenderer {
 		double minTemp = wdf.getDaily().getTemperature_2m_min();
 		double maxTemp = wdf.getDaily().getTemperature_2m_max();
 
-		curWeather_minTemp.setText(International.getString("Min: ")+ WeatherRenderer.oneDecimal(minTemp) + tempLabel);
+		curWeather_minTemp.setText(International.getString("Min")+": "+ WeatherRenderer.oneDecimal(minTemp) + tempLabel);
 		curWeather_minTemp.setIconTextGap(4);
 		curWeather_minTemp.setForeground(Daten.efaConfig.getToolTipHeaderForegroundColor());
 		curWeather_minTemp.setHorizontalTextPosition(SwingConstants.RIGHT);
 
-		curWeather_maxTemp.setText(International.getString("Max: ")+ WeatherRenderer.oneDecimal(maxTemp) + tempLabel);
+		curWeather_maxTemp.setText(International.getString("Max")+": "+ WeatherRenderer.oneDecimal(maxTemp) + tempLabel);
 		curWeather_maxTemp.setIconTextGap(4);
 		curWeather_maxTemp.setForeground(Daten.efaConfig.getToolTipHeaderForegroundColor());
 		curWeather_maxTemp.setHorizontalTextPosition(SwingConstants.RIGHT);
@@ -54,7 +54,7 @@ public class WeatherRendererCurrentClassic extends WeatherRenderer {
 		curWeather_wind.setText(International.getString("Wind") + ": "
 				+ International.getString(wdf.getCurrentWeather().getWindDirectionText()) + " "
 				+ International.getString("mit") + " " + WeatherRenderer.oneDecimal(wdf.getCurrentWeather().getWindSpeed())
-				+ ww.getSpeedScale());
+				+ " "+ww.getSpeedScale());
 		curWeather_wind.setForeground(Daten.efaConfig.getToolTipHeaderForegroundColor());
 		curWeather_wind.setHorizontalTextPosition(SwingConstants.CENTER);
 		

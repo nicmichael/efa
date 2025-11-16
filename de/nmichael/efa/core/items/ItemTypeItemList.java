@@ -305,10 +305,10 @@ public class ItemTypeItemList extends ItemType {
 
             if (label != null) {
                 panel.add(label, new GridBagConstraints(x, y+myY, 2, 1, 0.0, 0.0,
-                        GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(padYbetween, padXbefore, 0, 0), 0, 0));
+                        GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(padYbetween, padXbefore, padYbetween, 0), 0, 0));
             }
             panel.add(delButton, new GridBagConstraints(x+xForAddDelButtons, y+myY, 1, 1, 0.0, 0.0,
-                    GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets((label==null ? 0 : padYbetween), 2, 0, 0), 0, 0));
+                    GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets((label==null ? 0 : padYbetween), 2, (label==null ? 0 : padYbetween), 0), 0, 0));
             delButtons.put(delButton, i);
             lastItemStart = (label != null ? label : delButton);
             if (repeatTitle) {

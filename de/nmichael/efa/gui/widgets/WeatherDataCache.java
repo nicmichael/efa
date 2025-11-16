@@ -80,7 +80,7 @@ public class WeatherDataCache {
 				;
 
 		try {
-			Logger.log(Logger.DEBUG, International.getString("Lade Wetterdaten von URL: ")+urlStr);
+			Logger.log(Logger.DEBUG, International.getString("Ermittle Wetterdaten von URL:")+" "+urlStr);
 
 			String response = fetchJSonFromURL(urlStr);
 			JSONObject json = new JSONObject(response.toString());
@@ -98,8 +98,8 @@ public class WeatherDataCache {
 	private String fetchJSonFromURL(String urlStr) throws Exception {
 		HttpURLConnection conn = (HttpURLConnection) new URL(urlStr).openConnection();
 		conn.setRequestMethod("GET");
-		conn.setConnectTimeout(5000);//max 5 seconds for connect
-		conn.setReadTimeout(10000); // max 10 seconds for reading data
+		conn.setConnectTimeout(10000);//max 5 seconds for connect
+		conn.setReadTimeout(15000); // max 10 seconds for reading data
 
 		try (BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"))) {
 			StringBuilder sb = new StringBuilder();

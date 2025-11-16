@@ -24,8 +24,8 @@ public class MultiWidgetContainer extends Widget {
 	public MultiWidgetContainer() {
 	    super(International.getString("Multi-Widget"), "Multi-Widget", International.getString("Multi-Widget"), false, false);
 	    
-        addHint("MultiWidgetInfo1",IItemType.TYPE_PUBLIC, "", International.getString("Das Multi-Widget kann in einem Platzbereich mehrere Widgets anzeigen."), 3,6,6);
-        addHint("MultiWidgetInfo2",IItemType.TYPE_PUBLIC, "", International.getString("Wählen Sie dazu jeweils in den anderen Widgets als Position \"MultiWidget\" aus."), 3,6,6);
+        addHintWordWrap("MultiWidgetInfo1",IItemType.TYPE_PUBLIC, "", International.getString("Das Multi-Widget kann in einem Platzbereich mehrere Widgets anzeigen.")+
+        		International.getString("Wählen Sie dazu jeweils in den anderen Widgets als Position \"MultiWidget\" aus."), 3,6,6,550);
         
         addParameterInternal(new ItemTypeInteger(PARAM_AUTOCHANGE, 10, 0, 90, false,
                 IItemType.TYPE_PUBLIC, "",

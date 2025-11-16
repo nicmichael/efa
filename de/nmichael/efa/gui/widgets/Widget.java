@@ -149,6 +149,13 @@ public abstract class Widget implements IWidget {
         addParameterInternal(item);
 		return item;
     }
+
+    protected IItemType addHintWordWrap(String uniqueName, int type, String category, String caption, int gridWidth, int padBefore, int padAfter, int maxWidth) {
+    	IItemType item = EfaGuiUtils.createHintWordWrap(uniqueName, type, category, caption, gridWidth, padBefore, padAfter, maxWidth);
+        addParameterInternal(item);
+		return item;
+    }
+
     
 
     protected IItemType getParameterInternal(String internalName) {

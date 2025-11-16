@@ -87,7 +87,7 @@ public class WeatherWidget extends Widget implements IItemFactory {
 		
 		addParameterInternal(new ItemTypeStringList(PARAM_WEATHER_SOURCE, WEATHER_SOURCE_OPENMETEO,
 				new String[] { WEATHER_SOURCE_OPENMETEO, WEATHER_SOURCE_WEATHERAPI },
-				new String[] { International.getString("OpenMeteo free API (Europe/North America)"),
+				new String[] { International.getString("OpenMeteo kostenfreie API (Europa/Nord Amerika)"),
 						International.getString("WeatherAPI") },
 				IItemType.TYPE_PUBLIC, "", International.getString("Quelle für Wetterdaten")));
 
@@ -141,8 +141,8 @@ public class WeatherWidget extends Widget implements IItemFactory {
             				new String[] { International.getString("Aktuelles Wetter (Klassisch)"), 
             						International.getString("Aktuelles Wetter (Wind)"), 
             						International.getString("Aktuelles Wetter (UV-Index)"), 
-            						International.getString("Vorhersage (einfach)"),
-            						International.getString("Vorhersage (komplex)") },
+            						International.getString("Vorhersage (Einfach)"),
+            						International.getString("Vorhersage (Komplex)") },
             				IItemType.TYPE_PUBLIC, "", International.getString("Layout"));
             items[i++].setPadding(0, 0, 20, 0);
 
