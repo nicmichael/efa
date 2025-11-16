@@ -14,6 +14,7 @@ import java.awt.Color;
 import java.util.Vector;
 
 import de.nmichael.efa.Daten;
+import de.nmichael.efa.core.config.EfaConfig;
 import de.nmichael.efa.core.items.IItemFactory;
 import de.nmichael.efa.core.items.IItemType;
 import de.nmichael.efa.core.items.ItemTypeBoolean;
@@ -68,6 +69,22 @@ public class HTMLWidget extends Widget implements IWidget, IItemFactory {
                 IItemType.TYPE_PUBLIC, "",
                 International.getString("Skalierung")));
 
+        addParameterInternal(new ItemTypeBoolean(PARAM_COLORSACTIVE, false,
+				IItemType.TYPE_PUBLIC, "",
+				International.getString("Standard-Farben definieren")));
+				
+		addParameterInternal(new ItemTypeColor(PARAM_COLORBACKGROUND,
+				EfaUtil.getColor(EfaConfig.standardToolTipBackgroundColor),
+				EfaUtil.getColor(EfaConfig.standardToolTipBackgroundColor), IItemType.TYPE_PUBLIC,
+				"",
+				International.getString("Hintergrundfarbe"), false));
+		
+		addParameterInternal(new ItemTypeColor(PARAM_COLORFORECROUND,
+				EfaUtil.getColor(EfaConfig.standardToolTipForegroundColor),
+				EfaUtil.getColor(EfaConfig.standardToolTipForegroundColor), IItemType.TYPE_PUBLIC,
+						"",
+						International.getString("Textfarbe"), false));	
+		
         addParameterInternal(new ItemTypeFile(PARAM_URL, "",
                 International.getString("HTML-Seite"),
                 International.getString("HTML-Seite"),
@@ -158,7 +175,9 @@ public class HTMLWidget extends Widget implements IWidget, IItemFactory {
 		wi.setUpdateInterval(getUpdateInterval());
 		wi.setUrl(this.getUrl());
 		wi.setWidth(getWidth());
-		wi.setColorsActive(false);;
+		wi.setColorsActive(this.getColorsActive());;
+		wi.setBackgroundColor(this.getBackgroundColor());
+		wi.setForegroundColor(this.getForegroundColor());
 		wi.setUseHttpCaching(getHttpCacheActive());
 		returnList.add(wi);
 		
@@ -208,6 +227,33 @@ public class HTMLWidget extends Widget implements IWidget, IItemFactory {
 	private boolean getColorsActive(ItemTypeItemList list, int i) {
         try {
             return ((ItemTypeBoolean)list.getItem(i, PARAM_COLORSACTIVE)).getValue();
+        } catch(Exception e) {
+            Logger.logdebug(e);
+            return false;
+        }	
+	}
+	
+	private Color getBackgroundColor() {
+        try {
+            return ((ItemTypeColor)getParameterInternal( PARAM_COLORBACKGROUND)).getColor();
+        } catch(Exception e) {
+            Logger.logdebug(e);
+            return null;
+        }	
+	}
+
+	private Color getForegroundColor() {
+        try {
+            return ((ItemTypeColor)getParameterInternal(PARAM_COLORFORECROUND)).getColor();
+        } catch(Exception e) {
+            Logger.logdebug(e);
+            return null;
+        }	
+	}
+
+	private boolean getColorsActive() {
+        try {
+            return ((ItemTypeBoolean)getParameterInternal(PARAM_COLORSACTIVE)).getValue();
         } catch(Exception e) {
             Logger.logdebug(e);
             return false;

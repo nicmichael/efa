@@ -438,17 +438,17 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 	public static Color hintBackgroundColor = new Color(210,225,239);
 	public static Color hintBorderColor = new Color(120,166,213);
 
-	private static Color standardToolTipBackgroundColor = new Color(224,237,249);
-	private static Color standardToolTipForegroundColor = new Color(21,65,106);
+	public static Color standardToolTipBackgroundColor = new Color(224,237,249);
+	public static Color standardToolTipForegroundColor = new Color(21,65,106);
 	
-	private static Color standardToolTipHeaderBackgroundColor = new Color(250,252,254);
-	private static Color standardToolTipHeaderForegroundColor = standardToolTipForegroundColor;	
+	public static Color standardToolTipHeaderBackgroundColor = new Color(250,252,254);
+	public static Color standardToolTipHeaderForegroundColor = standardToolTipForegroundColor;	
 
-	private static Color standardErrorBackgroundColor = new Color(249,224,224);
-	private static Color standardErrorForegroundColor = new Color(148,29,29);
+	public static Color standardErrorBackgroundColor = new Color(249,224,224);
+	public static Color standardErrorForegroundColor = new Color(148,29,29);
 	
-	private static Color standardErrorHeaderBackgroundColor = new Color(254,250,250);
-	private static Color standardErrorHeaderForegroundColor = standardErrorForegroundColor;	
+	public static Color standardErrorHeaderBackgroundColor = new Color(254,250,250);
+	public static Color standardErrorHeaderForegroundColor = standardErrorForegroundColor;	
 	
 	
 	// private internal data
