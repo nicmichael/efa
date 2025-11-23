@@ -1,6 +1,7 @@
 package de.nmichael.efa.gui.widgets;
 
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -20,13 +21,16 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.event.HyperlinkEvent;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
 
 import de.nmichael.efa.Daten;
 import de.nmichael.efa.data.LogbookRecord;
+import de.nmichael.efa.gui.BrowserDialog;
 import de.nmichael.efa.gui.util.RoundedBorder;
 import de.nmichael.efa.gui.util.RoundedPanel;
+import de.nmichael.efa.util.Dialog;
 import de.nmichael.efa.util.EfaUtil;
 import de.nmichael.efa.util.HttpCachedFetcher;
 import de.nmichael.efa.util.International;
@@ -87,6 +91,8 @@ public class HTMLWidgetInstance extends WidgetInstance implements IWidgetInstanc
         HTMLEditorKit kit = (HTMLEditorKit)htmlPane.getEditorKit();
         kit.setAutoFormSubmission(false);
         
+        addHyperlinkAction();
+        
         //now the htmlPane is set up, check if user wants to use a caption.
         if (isCaptionActive()) {
         	createRoundPanelWithCaption();
@@ -103,6 +109,47 @@ public class HTMLWidgetInstance extends WidgetInstance implements IWidgetInstanc
         htmlUpdater.start();
         htmlUpdater.setPage(url, updateInterval);
     }
+
+	/**
+	 * addHyperLinkAction
+	 * 
+	 * Reacts to clicks on hyperlinks in the htmlPane.
+	 * If a standard webbrowser is defined in efaconfig -> common -> external programs,
+	 * this standard webbrowser is used. If not, the standard system webbrowser is used.
+	 * if an error occurrs, the internal webbrowser is used.
+	 */
+	private void addHyperlinkAction() {
+		htmlPane.addHyperlinkListener(e -> {
+            if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+            	String urlString;
+            	try {
+            		urlString = e.getURL().toURI().toString();
+            	} catch (Exception eURLExcept) {
+            		Logger.log(eURLExcept);
+            		return;
+            	}
+            	
+                try {
+                	String theBrowser = Daten.efaConfig.getValueBrowser();
+                	if (theBrowser!=null && theBrowser.trim().length()>0 && theBrowser.trim().equalsIgnoreCase(BrowserDialog.INTERNAL_BROWSER)) {
+                		BrowserDialog.openExternalBrowser(null, urlString);
+                	} else {
+                		//else use standard System function to run a browser.
+                		Desktop.getDesktop().browse(e.getURL().toURI());
+                	}
+                } catch (IOException eIO) {
+            		try {
+            			BrowserDialog.openInternalBrowser(null, urlString);
+            		} catch (Exception eOther){
+            			Logger.log(eOther);
+            		}
+                }
+                catch (Exception ex) {
+        			Logger.log(ex);
+                }
+            }
+        });
+	}
 	
 	private void createRoundPanelWithCaption() {
 

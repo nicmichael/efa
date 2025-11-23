@@ -28,6 +28,8 @@ import java.util.*;
 // @i18n complete
 public class BrowserDialog extends BaseDialog {
 
+	public static final String INTERNAL_BROWSER="INTERN"; 
+	
     JScrollPane htmlScrollPane = new JScrollPane();
     public JEditorPane html = new JEditorPane();
     JPanel northPanel = new JPanel();
@@ -812,7 +814,7 @@ public class BrowserDialog extends BaseDialog {
 
     public static void openExternalBrowser(Window parent, String url) {
         if (Daten.efaConfig.getValueBrowser().length() > 0 &&
-            !Daten.efaConfig.getValueBrowser().equals("INTERN")) {
+            !Daten.efaConfig.getValueBrowser().equals(INTERNAL_BROWSER)) {
             try {
                 Runtime.getRuntime().exec(Daten.efaConfig.getValueBrowser() + " " + url);
             } catch (Exception ee) {
