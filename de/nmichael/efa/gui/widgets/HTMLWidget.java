@@ -24,6 +24,7 @@ import de.nmichael.efa.core.items.ItemTypeFile;
 import de.nmichael.efa.core.items.ItemTypeInteger;
 import de.nmichael.efa.core.items.ItemTypeItemList;
 import de.nmichael.efa.core.items.ItemTypeString;
+import de.nmichael.efa.gui.BaseTabbedDialog;
 import de.nmichael.efa.util.EfaUtil;
 import de.nmichael.efa.util.International;
 import de.nmichael.efa.util.Logger;
@@ -35,11 +36,15 @@ public class HTMLWidget extends Widget implements IWidget, IItemFactory {
     public static final String PARAM_SCALE          = "Scale";
     public static final String PARAM_URL            = "Url";
     public static final String PARAM_USE_HTTP_CACHE = "UseHttpCache";
-    public static final String HEADER_FIRST_HTML	= "FirstHTMLHeader";
+    public static final String HEADER_FIRST_HTML	= NOT_STORED_ITEM_PREFIX+"FirstHTMLHeader";
+    
+    public static final String PARAM_CAPTION		= "Caption";
     
     public static final String PARAM_COLORSACTIVE   = "ColorsActive";
     public static final String PARAM_COLORBACKGROUND= "BackgroundColor";
     public static final String PARAM_COLORFORECROUND= "ForegroundColor";
+    public static final String PARAM_HEADER_COLOR_BACKGROUND = "HeaderBackgroundColor";
+    public static final String PARAM_HEADER_COLOR_FOREGROUND = "HeaderForegroundColor";
     
 	private static final String PARAM_HTML_PAGELIST = "MultiHtmlPageList";
 	private ItemTypeItemList htmlPageList;
@@ -54,8 +59,25 @@ public class HTMLWidget extends Widget implements IWidget, IItemFactory {
          * based on multiple HTML Pages, the configuration data from old efa versions would be lost.
          * So... we support a very first html page, and multiple add-ons.
          */
-        
+        IItemType item;
         addHeader(HEADER_FIRST_HTML, IItemType.TYPE_PUBLIC,"", International.getString("Erste HTML-Seite"), 3);
+        
+		//--- die eigentliche HTML-Seite
+        
+        addParameterInternal(new ItemTypeFile(PARAM_URL, "",
+                International.getString("HTML-Seite"),
+                International.getString("HTML-Seite"),
+                null,ItemTypeFile.MODE_OPEN,ItemTypeFile.TYPE_FILE,
+                IItemType.TYPE_PUBLIC, "",
+                "URL"));
+            
+        addParameterInternal(item = new ItemTypeString(PARAM_CAPTION, "", IItemType.TYPE_PUBLIC, "",
+				International.getString("Beschriftung")));
+        
+        addParameterInternal(item = new ItemTypeBoolean(PARAM_USE_HTTP_CACHE, true,
+                IItemType.TYPE_PUBLIC, "",
+                International.getString("HTTP-Caching verwenden")));
+        item.setPadding(0,0,0,10);       
         
         addParameterInternal(new ItemTypeInteger(PARAM_WIDTH, 200, 1, Integer.MAX_VALUE, false,
                 IItemType.TYPE_PUBLIC, "",
@@ -69,6 +91,7 @@ public class HTMLWidget extends Widget implements IWidget, IItemFactory {
                 IItemType.TYPE_PUBLIC, "",
                 International.getString("Skalierung")));
 
+        //---- Farben
         addParameterInternal(new ItemTypeBoolean(PARAM_COLORSACTIVE, false,
 				IItemType.TYPE_PUBLIC, "",
 				International.getString("Standard-Farben definieren")));
@@ -85,23 +108,28 @@ public class HTMLWidget extends Widget implements IWidget, IItemFactory {
 						"",
 						International.getString("Textfarbe"), false));	
 		
-        addParameterInternal(new ItemTypeFile(PARAM_URL, "",
-                International.getString("HTML-Seite"),
-                International.getString("HTML-Seite"),
-                null,ItemTypeFile.MODE_OPEN,ItemTypeFile.TYPE_FILE,
-                IItemType.TYPE_PUBLIC, "",
-                "URL"));
-        
-        addParameterInternal(new ItemTypeBoolean(PARAM_USE_HTTP_CACHE, true,
-                IItemType.TYPE_PUBLIC, "",
-                International.getString("HTTP-Caching verwenden")));
+		addParameterInternal(new ItemTypeColor(PARAM_HEADER_COLOR_BACKGROUND,
+				EfaUtil.getColor(EfaConfig.standardToolTipHeaderBackgroundColor),
+				EfaUtil.getColor(EfaConfig.standardToolTipHeaderBackgroundColor), IItemType.TYPE_PUBLIC,
+				"",
+				International.getString("Überschriften Hintergrundfarbe"), false));
+
+		addParameterInternal(new ItemTypeColor(PARAM_HEADER_COLOR_FOREGROUND,
+				EfaUtil.getColor(EfaConfig.standardToolTipHeaderForegroundColor),
+				EfaUtil.getColor(EfaConfig.standardToolTipHeaderForegroundColor), IItemType.TYPE_PUBLIC,
+				"",
+				International.getString("Überschriften Textfarbe"), false));
+
         
         // Support multiple HTML Pages
 		addParameterInternal(htmlPageList = new ItemTypeItemList(PARAM_HTML_PAGELIST, new Vector<IItemType[]>(), this,
 				IItemType.TYPE_PUBLIC, "",	
 				International.getString("Weitere HTML-Seiten")));
+		htmlPageList.setPadding(0, 0, 10, 10);
 		htmlPageList.setShortDescription(International.getString("Weitere HTML-Seite"));		
 		htmlPageList.setRepeatTitle(true);
+		htmlPageList.setShowUpDownButtons(true);
+		super.setPosition(IWidget.POSITION_MULTIWIDGET);
     }
 
     public void setSize(int width, int height) {
@@ -117,6 +145,19 @@ public class HTMLWidget extends Widget implements IWidget, IItemFactory {
         return ((ItemTypeInteger)getParameterInternal(PARAM_HEIGHT)).getValue();
     }
     
+    public String getCaption() {
+        return ((ItemTypeString)getParameterInternal(PARAM_CAPTION)).getValue();
+    }
+    
+    public String getCaption(ItemTypeItemList list, int i) {
+        try {
+            return ((ItemTypeString)list.getItem(i, PARAM_CAPTION)).getValue();
+        } catch(Exception e) {
+            Logger.logdebug(e);
+            return "";
+        }
+    }
+       
     public double getScale() {
     	IItemType iscale = getParameterInternal(PARAM_SCALE);
         final double scale = (iscale != null ? ((ItemTypeDouble)iscale).getValue() : 1.0);
@@ -178,7 +219,10 @@ public class HTMLWidget extends Widget implements IWidget, IItemFactory {
 		wi.setColorsActive(this.getColorsActive());;
 		wi.setBackgroundColor(this.getBackgroundColor());
 		wi.setForegroundColor(this.getForegroundColor());
+		wi.setHeaderBackgroundColor(this.getHeaderBackgroundColor());
+		wi.setHeaderForegroundColor(this.getHeaderForegroundColor());
 		wi.setUseHttpCaching(getHttpCacheActive());
+		wi.setCaption(this.getCaption());
 		returnList.add(wi);
 		
 		//add all other html pages
@@ -199,7 +243,10 @@ public class HTMLWidget extends Widget implements IWidget, IItemFactory {
 			wi.setColorsActive(this.getColorsActive(myWList,i));
 			wi.setBackgroundColor(this.getBackgroundColor(myWList, i));
 			wi.setForegroundColor(this.getForegroundColor(myWList, i));
+			wi.setHeaderBackgroundColor(this.getHeaderBackgroundColor(myWList,i));
+			wi.setHeaderForegroundColor(this.getHeaderForegroundColor(myWList,i));
 			wi.setUseHttpCaching(this.getHttpCacheActive(myWList, i));
+			wi.setCaption(this.getCaption(myWList, i));
 			returnList.add(wi);
 		}
 		
@@ -224,6 +271,23 @@ public class HTMLWidget extends Widget implements IWidget, IItemFactory {
         }	
 	}
 
+	private Color getHeaderBackgroundColor(ItemTypeItemList list, int i) {
+        try {
+            return ((ItemTypeColor)list.getItem(i, PARAM_HEADER_COLOR_BACKGROUND)).getColor();
+        } catch(Exception e) {
+            Logger.logdebug(e);
+            return null;
+        }	
+	}
+
+	private Color getHeaderForegroundColor(ItemTypeItemList list, int i) {
+        try {
+            return ((ItemTypeColor)list.getItem(i, PARAM_HEADER_COLOR_FOREGROUND)).getColor();
+        } catch(Exception e) {
+            Logger.logdebug(e);
+            return null;
+        }	
+	}
 	private boolean getColorsActive(ItemTypeItemList list, int i) {
         try {
             return ((ItemTypeBoolean)list.getItem(i, PARAM_COLORSACTIVE)).getValue();
@@ -233,9 +297,10 @@ public class HTMLWidget extends Widget implements IWidget, IItemFactory {
         }	
 	}
 	
+	
 	private Color getBackgroundColor() {
         try {
-            return ((ItemTypeColor)getParameterInternal( PARAM_COLORBACKGROUND)).getColor();
+            return ((ItemTypeColor)getParameterInternal(PARAM_COLORBACKGROUND)).getColor();
         } catch(Exception e) {
             Logger.logdebug(e);
             return null;
@@ -251,6 +316,24 @@ public class HTMLWidget extends Widget implements IWidget, IItemFactory {
         }	
 	}
 
+	
+	private Color getHeaderBackgroundColor() {
+        try {
+            return ((ItemTypeColor)getParameterInternal(PARAM_HEADER_COLOR_BACKGROUND)).getColor();
+        } catch(Exception e) {
+            Logger.logdebug(e);
+            return null;
+        }	
+	}
+
+	private Color getHeaderForegroundColor() {
+        try {
+            return ((ItemTypeColor)getParameterInternal(PARAM_HEADER_COLOR_FOREGROUND)).getColor();
+        } catch(Exception e) {
+            Logger.logdebug(e);
+            return null;
+        }	
+	}
 	private boolean getColorsActive() {
         try {
             return ((ItemTypeBoolean)getParameterInternal(PARAM_COLORSACTIVE)).getValue();
@@ -285,8 +368,24 @@ public class HTMLWidget extends Widget implements IWidget, IItemFactory {
 			
             // build the GUI
            
-            IItemType[] items = new IItemType[8];
+            IItemType[] items = new IItemType[11];
             i=0;
+
+            items[i++] = new ItemTypeFile(PARAM_URL, "",
+                    International.getString("HTML-Seite"),
+                    International.getString("HTML-Seite"),
+                    null,ItemTypeFile.MODE_OPEN,ItemTypeFile.TYPE_FILE,
+                    IItemType.TYPE_PUBLIC, "",
+                    "URL");
+            
+    		items[i++] = new ItemTypeString(PARAM_CAPTION, "", IItemType.TYPE_PUBLIC, "",
+    				International.getString("Beschriftung"));
+            items[i] = new ItemTypeBoolean(PARAM_USE_HTTP_CACHE, true,
+                    IItemType.TYPE_PUBLIC, "",
+                    International.getString("HTTP-Caching verwenden"));
+
+    		items[i++].setPadding(0,0,0,10);    
+
             items[i] = new ItemTypeInteger(PARAM_WIDTH, 200, 1, Integer.MAX_VALUE, false,
                     IItemType.TYPE_PUBLIC, "", International.getString("Breite"));
             items[i++].setPadding(10,0,0,0);
@@ -311,16 +410,18 @@ public class HTMLWidget extends Widget implements IWidget, IItemFactory {
 							"",
 							International.getString("Textfarbe"), false);							
 
-            items[i++] = new ItemTypeFile(PARAM_URL, "",
-                    International.getString("HTML-Seite"),
-                    International.getString("HTML-Seite"),
-                    null,ItemTypeFile.MODE_OPEN,ItemTypeFile.TYPE_FILE,
-                    IItemType.TYPE_PUBLIC, "",
-                    "URL");
+			items[i++] = new ItemTypeColor(PARAM_HEADER_COLOR_BACKGROUND,
+					EfaUtil.getColor(EfaConfig.standardToolTipHeaderBackgroundColor),
+					EfaUtil.getColor(EfaConfig.standardToolTipHeaderBackgroundColor), IItemType.TYPE_PUBLIC,
+					"",
+					International.getString("Überschriften Hintergrundfarbe"), false);
+			
+			items[i++] =new ItemTypeColor(PARAM_HEADER_COLOR_FOREGROUND,
+					EfaUtil.getColor(EfaConfig.standardToolTipHeaderForegroundColor),
+					EfaUtil.getColor(EfaConfig.standardToolTipHeaderForegroundColor), IItemType.TYPE_PUBLIC,
+					"",
+					International.getString("Überschriften Textfarbe"), false);
 
-            items[i++] = new ItemTypeBoolean(PARAM_USE_HTTP_CACHE, true,
-                    IItemType.TYPE_PUBLIC, "",
-                    International.getString("HTTP-Caching verwenden"));
             
             return items;
 		}

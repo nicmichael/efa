@@ -19,6 +19,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
+import java.util.Collections;
 import java.util.Hashtable;
 import java.util.Vector;
 import java.util.regex.Matcher;
@@ -41,6 +42,7 @@ import de.nmichael.efa.gui.util.RoundedPanel;
 import de.nmichael.efa.util.Dialog;
 import de.nmichael.efa.util.EfaUtil;
 import de.nmichael.efa.util.International;
+import de.nmichael.efa.util.Logger;
 import de.nmichael.efa.util.Mnemonics;
 
 public class ItemTypeItemList extends ItemType {
@@ -59,6 +61,8 @@ public class ItemTypeItemList extends ItemType {
     private JLabel titlelabel;
     private JButton addButton;
     private Hashtable<JButton,Integer> delButtons;
+    private Hashtable<JButton,Integer> upButtons;
+    private Hashtable<JButton,Integer> downButtons;
     private JComponent lastItemStart;
     private IItemType lastItemFocus;
     private int xForAddDelButtons = 2;
@@ -70,7 +74,8 @@ public class ItemTypeItemList extends ItemType {
     private int firstColumnMinWidth=0;
     private boolean appendPositionToEachElement = false;
     private Orientation orientation = Orientation.vertical;
-
+    private Boolean showUpDownButtons = false;
+    
     public enum Orientation {
         vertical,
         horizontal
@@ -98,6 +103,13 @@ public class ItemTypeItemList extends ItemType {
         copy.shortDescription = shortDescription;
         copy.scrollX = scrollX;
         copy.scrollY = scrollY;
+        copy.padXafter = padXafter;
+        copy.padXbefore = padXbefore;
+        copy.padYafter = padYafter;
+        copy.padYbefore = padYbefore;
+        copy.setXForAddDelButtons(xForAddDelButtons);
+        copy.setShowUpDownButtons(showUpDownButtons);
+        		
         return copy;
     }
 
@@ -210,6 +222,7 @@ public class ItemTypeItemList extends ItemType {
     public int displayOnGui(Window dlg, JPanel panel, int x, int y) {
         this.dlg = dlg;
         
+        // is a scrollpane set? then add a scrollpane and put the elements within.
         if (scrollX > 0 && scrollY > 0) {
             scrollPane = new JScrollPane();
             scrollPane.setPreferredSize(new Dimension(scrollX, scrollY));
@@ -231,7 +244,7 @@ public class ItemTypeItemList extends ItemType {
     
         // we use a roundedPanel as base element so that we can add the caption on the left,
         // and highlight the add button on the right with some prominent text "new" and an extra arrow icon.
-        int myY = 0;
+        int curYPos = 0;
       	JPanel titlePanel=new RoundedPanel();
     	titlePanel.setLayout(new BorderLayout(5,2));
         titlePanel.setBorder(new RoundedBorder(Daten.efaConfig.getHeaderForegroundColor()));
@@ -262,6 +275,7 @@ public class ItemTypeItemList extends ItemType {
         if (color != null) {
             titlelabel.setForeground(color);
         }
+        
         addButton = new JButton();
         addButton.setIcon(BaseFrame.getIcon("menu_plus.gif"));
         addButton.setMargin(new Insets(0,0,0,0));
@@ -272,22 +286,26 @@ public class ItemTypeItemList extends ItemType {
 
         panel.add(addButton, new GridBagConstraints(x+xForAddDelButtons, y, 2, 1, 0.0, 0.0,
                 GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(padYbefore, 2, padYafter, padXafter), 0, 0));
-        myY++;
+        curYPos++;
 
         if (orientation == Orientation.horizontal) {
-        	ensureFirstColumnMinWidth(panel, myY, firstColumnMinWidth);
-            myY++;
+        	ensureFirstColumnMinWidth(panel, curYPos, firstColumnMinWidth);
+            curYPos++;
         }        
         
         delButtons = new Hashtable<JButton,Integer>();
-        for (int i=0; i<items.size(); i++) {
+        upButtons = new Hashtable<JButton,Integer>();
+        downButtons = new Hashtable<JButton,Integer>();
+       
+        for (int iCurrentItemListIndex=0; iCurrentItemListIndex<items.size(); iCurrentItemListIndex++) {
             JLabel label = null;
             if (repeatTitle) {
                 label = new RoundedLabel();
                 label.setBackground(Daten.efaConfig.getTableHeaderBackgroundColor());
                 label.setBorder(new RoundedBorder(Daten.efaConfig.getTableHeaderHeaderColor()));
                 label.setOpaque(true);
-                Mnemonics.setLabel(dlg, label, " "+getShortDescription() + " [" + (i + 1) + "]: ");
+                label.setFont(titlelabel.getFont().deriveFont(Font.BOLD));
+                Mnemonics.setLabel(dlg, label, " "+getShortDescription() + " [" + (iCurrentItemListIndex + 1) + "]: ");
                 if (type == IItemType.TYPE_EXPERT) {
                     label.setForeground(Color.red);
                 }
@@ -303,19 +321,66 @@ public class ItemTypeItemList extends ItemType {
                 public void actionPerformed(ActionEvent e) { delButtonHit(e); }
             });
 
-            if (label != null) {
-                panel.add(label, new GridBagConstraints(x, y+myY, 2, 1, 0.0, 0.0,
-                        GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(padYbetween, padXbefore, padYbetween, 0), 0, 0));
+            JButton upButton =null;
+            JButton downButton = null;
+            //Only instantiate these buttons if we are to show them
+            if (showUpDownButtons) {
+                upButton = new JButton();
+                upButton.setIcon(ImagesAndIcons.getIcon(ImagesAndIcons.ARROW_UP));
+                upButton.setMargin(new Insets(0,0,0,0));
+                Dialog.setPreferredSize(upButton, 19, 19);
+                upButton.addActionListener(new java.awt.event.ActionListener() {
+                    public void actionPerformed(ActionEvent e) { upButtonHit(e); }
+                });
+                downButton = new JButton();
+                downButton.setIcon(ImagesAndIcons.getIcon(ImagesAndIcons.ARROW_DOWN));
+                downButton.setMargin(new Insets(0,0,0,0));
+                Dialog.setPreferredSize(downButton, 19, 19);
+                downButton.addActionListener(new java.awt.event.ActionListener() {
+                    public void actionPerformed(ActionEvent e) { downButtonHit(e); }
+                });                
+                /*
+                 * [label] [upbutton][downbutton] [delete]
+                 */
+                
+	            if (label != null) {
+	                panel.add(label, new GridBagConstraints(x, y+curYPos, 2, 1, 0.0, 0.0,
+	                        GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(padYbetween, padXbefore, padYbetween, 0), 0, 0));
+	            }
+
+	            panel.add(delButton, new GridBagConstraints(x+xForAddDelButtons, y+curYPos, 1, 1, 0.0, 0.0,
+	                    GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets((label==null ? 0 : padYbetween), 2, (label==null ? 0 : padYbetween), 0), 0, 0));
+	            
+	            panel.add(upButton, new GridBagConstraints(x+xForAddDelButtons+xForAddDelButtons, y+curYPos, 1, 1, 0.0, 0.0,
+	                    GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets((label==null ? 0 : padYbetween), 2, (label==null ? 0 : padYbetween), 0), 0, 0));
+
+	            panel.add(downButton, new GridBagConstraints(x+xForAddDelButtons+xForAddDelButtons+xForAddDelButtons, y+curYPos, 1, 1, 0.0, 0.0,
+	                    GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets((label==null ? 0 : padYbetween), 2, (label==null ? 0 : padYbetween), 0), 0, 0));
+	            
+
+	            delButtons.put(delButton, iCurrentItemListIndex);
+	            upButtons.put(upButton,  iCurrentItemListIndex);
+	            downButtons.put(downButton, iCurrentItemListIndex);
+                
+            } else { 
+	            /*
+	             * [label] [delbutton]
+	             */
+	            if (label != null) {
+	                panel.add(label, new GridBagConstraints(x, y+curYPos, 2, 1, 0.0, 0.0,
+	                        GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(padYbetween, padXbefore, padYbetween, 0), 0, 0));
+	            }
+	            panel.add(delButton, new GridBagConstraints(x+xForAddDelButtons, y+curYPos, 1, 1, 0.0, 0.0,
+	                    GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets((label==null ? 0 : padYbetween), 2, (label==null ? 0 : padYbetween), 0), 0, 0));
+	            delButtons.put(delButton, iCurrentItemListIndex);
             }
-            panel.add(delButton, new GridBagConstraints(x+xForAddDelButtons, y+myY, 1, 1, 0.0, 0.0,
-                    GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets((label==null ? 0 : padYbetween), 2, (label==null ? 0 : padYbetween), 0), 0, 0));
-            delButtons.put(delButton, i);
+
             lastItemStart = (label != null ? label : delButton);
             if (repeatTitle) {
-                myY++;
+                curYPos++;
             }
             
-            IItemType[] myItems = items.get(i);
+            IItemType[] myItems = items.get(iCurrentItemListIndex);
             int myX = x;
             for (IItemType item : myItems) {
                 if (item.getType() != IItemType.TYPE_INTERNAL) {
@@ -325,15 +390,15 @@ public class ItemTypeItemList extends ItemType {
                         if (m.matches()) {
                             descr = m.group(1);
                         }
-                        item.setDescription(descr + " " + (i+1));
+                        item.setDescription(descr + " " + (iCurrentItemListIndex+1));
                     }
-                    int plusY = item.displayOnGui(dlg, panel, myX, y+myY);
+                    int plusY = item.displayOnGui(dlg, panel, myX, y+curYPos);
                     if (item instanceof ItemTypeLabelTextfield) { //neccessary for efaBaseFrameMultisession
                     	((ItemTypeLabelTextfield) item).restoreBackgroundColor();
                     }
                     switch (orientation) {
                         case vertical:
-                            myY += plusY;
+                            curYPos += plusY;
                             break;
                         case horizontal:
                             myX+=2; // a label plus the edit field.
@@ -347,11 +412,11 @@ public class ItemTypeItemList extends ItemType {
                 }
             }
             if (orientation == Orientation.horizontal) {
-                myY++; // after each list item we need to increment myY
+                curYPos++; // after each list item we need to increment myY
             }
 
         }
-        return myY;
+        return curYPos;
     }
 
     private void addButtonHit(ActionEvent e) {
@@ -390,6 +455,60 @@ public class ItemTypeItemList extends ItemType {
         }
     }
 
+    private void upButtonHit(ActionEvent e) {
+    	//no up action neccessary if there is only one element
+    	if (items.size()<=1) {return;}
+    	
+        int idx = upButtons.get(e.getSource());
+        //no up action, if upButton index is invalid or is the topmost element
+        if (idx < 0 || idx >= items.size() || idx == 0) {
+            return;
+        }
+        
+        getValueFromGui();
+        Collections.swap(items, idx, idx-1);
+        changed = true;
+        if (dlg instanceof BaseDialog) {
+            ((BaseDialog)dlg).updateGui();
+        }
+        
+        if (lastItemFocus != null) {
+        	lastItemFocus.requestFocus();
+        }   
+        
+    }
+    
+    private void downButtonHit(ActionEvent e) {
+    	//no down action neccessary if there is only one element
+    	if (items.size()<=1) {return;}
+    	
+        int idx = downButtons.get(e.getSource());
+        //no up action, if downButton index is invalid or is the lowest element
+        if (idx < 0 || idx >= items.size() || idx == items.size()-1) {
+            return;
+        }
+        
+        getValueFromGui();
+        Collections.swap(items, idx, idx+1);
+        changed = true;
+        
+
+        if (dlg instanceof BaseDialog) {
+        	((BaseDialog)dlg).updateGui();
+        }
+
+        try {
+        	lastItemFocus = ((IItemType[])items.get(idx+1))[0];
+        } catch (Exception e1) {
+        	Logger.logdebug(e1);
+        	lastItemFocus = null;
+        }        
+        
+        if (lastItemFocus != null) {
+        	lastItemFocus.requestFocus();
+        }   
+    }
+    
     public void getValueFromGui() {
         for (int i=0; i<items.size(); i++) {
             IItemType[] myItems = items.get(i);
@@ -514,5 +633,13 @@ public class ItemTypeItemList extends ItemType {
     public int getItemCount() {
     	return items.size();
     }
+
+	public Boolean getShowUpDownButtons() {
+		return showUpDownButtons;
+	}
+
+	public void setShowUpDownButtons(Boolean showUpDownButtons) {
+		this.showUpDownButtons = showUpDownButtons;
+	}
     
 }

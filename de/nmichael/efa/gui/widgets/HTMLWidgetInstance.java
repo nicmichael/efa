@@ -5,19 +5,28 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.geom.AffineTransform;
 import java.io.IOException;
 import java.util.concurrent.ScheduledFuture;
 
+import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JEditorPane;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
 
 import de.nmichael.efa.Daten;
 import de.nmichael.efa.data.LogbookRecord;
+import de.nmichael.efa.gui.util.RoundedBorder;
+import de.nmichael.efa.gui.util.RoundedPanel;
 import de.nmichael.efa.util.EfaUtil;
 import de.nmichael.efa.util.HttpCachedFetcher;
 import de.nmichael.efa.util.International;
@@ -31,6 +40,9 @@ public class HTMLWidgetInstance extends WidgetInstance implements IWidgetInstanc
     private JScrollPane scrollPane = new JScrollPane();
     private JEditorPane htmlPane;
     private HTMLUpdater htmlUpdater;
+    private RoundedPanel roundPanel;
+    
+    private String caption;
 
     private int width;
     private int height;
@@ -41,6 +53,8 @@ public class HTMLWidgetInstance extends WidgetInstance implements IWidgetInstanc
     private boolean colorsActive=false;
     private Color backgroundColor;
     private Color foregroundColor;
+    private Color headerbackgroundColor;
+    private Color headerforegroundColor;
 	private boolean useHttpCaching=false;
     
 	@Override
@@ -73,6 +87,11 @@ public class HTMLWidgetInstance extends WidgetInstance implements IWidgetInstanc
         HTMLEditorKit kit = (HTMLEditorKit)htmlPane.getEditorKit();
         kit.setAutoFormSubmission(false);
         
+        //now the htmlPane is set up, check if user wants to use a caption.
+        if (isCaptionActive()) {
+        	createRoundPanelWithCaption();
+        }
+        
         if (getWidth() > 0 && getHeight() > 0) {
             scrollPane.setPreferredSize(new Dimension(getWidth(), getHeight()));
         }
@@ -84,10 +103,53 @@ public class HTMLWidgetInstance extends WidgetInstance implements IWidgetInstanc
         htmlUpdater.start();
         htmlUpdater.setPage(url, updateInterval);
     }
+	
+	private void createRoundPanelWithCaption() {
 
+		roundPanel = new RoundedPanel();
+		
+		roundPanel.setLayout(new GridBagLayout());
+		roundPanel.setBackground(this.getBackgroundColor());
+		roundPanel.setForeground(this.getForegroundColor());
+		roundPanel.setBorder(new RoundedBorder(this.getForegroundColor()));
+		roundPanel.setName("HTMLWidget-RoundPanel");
+		roundPanel.setLayout(new GridBagLayout());
+		
+		JPanel titlePanel= getHTMLCaptionHeader(this.getCaption());
+		
+		roundPanel.add(titlePanel, new GridBagConstraints(0, 0, 4, 1, 1.0, 0.0, GridBagConstraints.CENTER,
+				GridBagConstraints.HORIZONTAL, new Insets(2, 2, 2, 2), 0, 0));	
+			
+		roundPanel.add(scrollPane, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER,
+					GridBagConstraints.BOTH, new Insets(2, 4, 2, 4), 0, 0));
+		
+		scrollPane.setBorder(BorderFactory.createEmptyBorder(1,1,1,1));
+		
+		roundPanel.setMinimumSize(new Dimension(240, 120));
+		roundPanel.revalidate();
+	}
+
+	private JPanel getHTMLCaptionHeader(String caption) {
+		RoundedPanel titlePanel = new RoundedPanel();
+		titlePanel.setLayout(new GridBagLayout());
+		titlePanel.setBackground(this.getHeaderBackgroundColor());
+		titlePanel.setForeground(this.getHeaderForegroundColor());
+	
+		JLabel titleLabel = new JLabel();
+		titleLabel.setText(caption);
+		titleLabel.setHorizontalTextPosition(SwingConstants.CENTER);
+		titleLabel.setForeground(titlePanel.getForeground());
+		titleLabel.setFont(titleLabel.getFont().deriveFont(Font.BOLD));
+		
+		titlePanel.add(titleLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
+				GridBagConstraints.BOTH, new Insets(2, 2, 2, 2), 0, 0));
+		
+		return titlePanel;
+	}	
+	
 	@Override
 	public JComponent getComponent() {
-        return scrollPane;
+        return (isCaptionActive() ? roundPanel : scrollPane);
     }
 
     public void stop() {
@@ -210,6 +272,7 @@ public class HTMLWidgetInstance extends WidgetInstance implements IWidgetInstanc
                     SwingUtilities.invokeLater(() -> {
                         try {
                             htmlPane.setPage(urlObj);
+                            htmlPane.setCaretPosition(0);
                         } catch (IOException ee) {
                             htmlPane.setText(International.getString("FEHLER") + ": "
                                     + International.getMessage("Kann Adresse '{url}' nicht öffnen: {message}", urlToLoad, ee.toString()));
@@ -303,4 +366,31 @@ public class HTMLWidgetInstance extends WidgetInstance implements IWidgetInstanc
 		this.useHttpCaching = httpCacheActive;
 	}
 
+	public String getCaption() {
+		return caption;
+	}
+
+	public void setCaption(String caption) {
+		this.caption = caption;
+	}
+	
+	private boolean isCaptionActive() {
+		return !((caption == null) || caption.isEmpty() || caption.length()==0);
+	}
+
+	public void setHeaderBackgroundColor(Color headerBackgroundColor) {
+		this.headerbackgroundColor=headerBackgroundColor;	
+	}
+
+	public void setHeaderForegroundColor(Color headerForegroundColor) {
+		this.headerforegroundColor=headerForegroundColor;
+	}
+	
+	public Color getHeaderBackgroundColor() {
+		return this.headerbackgroundColor;
+	}
+	
+	public Color getHeaderForegroundColor() {
+		return this.headerforegroundColor;
+	}
 }

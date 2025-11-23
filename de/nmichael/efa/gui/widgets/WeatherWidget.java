@@ -83,7 +83,7 @@ public class WeatherWidget extends Widget implements IItemFactory {
 
 		super(International.getString("Wetter"), "MultiWetter", International.getString("Wetter"), true, true);
 
-		addHeader("MultiWeatherWidgetLocationHeader", IItemType.TYPE_PUBLIC, "", International.getString("Wetter Daten"), 3);
+		addHeader(NOT_STORED_ITEM_PREFIX+"MultiWeatherWidgetLocationHeader", IItemType.TYPE_PUBLIC, "", International.getString("Wetter Daten"), 3);
 		
 		addParameterInternal(new ItemTypeStringList(PARAM_WEATHER_SOURCE, WEATHER_SOURCE_OPENMETEO,
 				new String[] { WEATHER_SOURCE_OPENMETEO, WEATHER_SOURCE_WEATHERAPI },
@@ -106,8 +106,9 @@ public class WeatherWidget extends Widget implements IItemFactory {
 				International.getString("Wetter-Orte")));
 	    locationList.setShortDescription(International.getString("Wetter-Orte"));		
 		locationList.setRepeatTitle(true);
+		locationList.setShowUpDownButtons(true);
 		super.setEnabled(true);
-		super.setPosition(IWidget.POSITION_CENTER);
+		super.setPosition(IWidget.POSITION_MULTIWIDGET);
 
 	}
 
@@ -146,7 +147,7 @@ public class WeatherWidget extends Widget implements IItemFactory {
             				IItemType.TYPE_PUBLIC, "", International.getString("Layout"));
             items[i++].setPadding(0, 0, 20, 0);
 
-            items[i++] = EfaGuiUtils.createDescription("WidgetMeteoHTMLPOPUP",IItemType.TYPE_PUBLIC, "", International.getString("Bei Mausklick auf das Astro/Meteo-Widget kann eine HMTL-Seite angezeigt werden."), 3,20,3);
+            items[i++] = EfaGuiUtils.createDescription(NOT_STORED_ITEM_PREFIX+"WidgetMeteoHTMLPOPUP",IItemType.TYPE_PUBLIC, "", International.getString("Bei Mausklick auf das Astro/Meteo-Widget kann eine HMTL-Seite angezeigt werden."), 3,20,3);
                     
             items[i++] = new ItemTypeFile(PARAM_HTMLPOPUPURL, "",
                             International.getString("HTML-Seite"),

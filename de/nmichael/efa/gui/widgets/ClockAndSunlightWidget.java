@@ -60,7 +60,7 @@ public class ClockAndSunlightWidget extends Widget {
                 IItemType.TYPE_PUBLIC, "",
                 International.getString("Datum anzeigen")));
         
-        addHeader("WidgetMeteoSunrise",IItemType.TYPE_PUBLIC, "", International.getString("Sonnenaufgang/Sonnenuntergang"), 3);        
+        addHeader(NOT_STORED_ITEM_PREFIX+"WidgetMeteoSunrise",IItemType.TYPE_PUBLIC, "", International.getString("Sonnenaufgang/Sonnenuntergang"), 3);        
         addParameterInternal(new ItemTypeBoolean(PARAM_SHOWSUNRISE, true,
                 IItemType.TYPE_PUBLIC, "",
                 International.getString("Sonnenaufgangs- und -untergangszeit anzeigen")));
@@ -73,7 +73,7 @@ public class ClockAndSunlightWidget extends Widget {
                 IItemType.TYPE_PUBLIC, "",
                 International.getString("geographische Länge")));
         
-        addHeader("WidgetMeteoAstroWarning",IItemType.TYPE_PUBLIC, "", International.getString("Warnhinweise bei Dunkelheit"), 3);          
+        addHeader(NOT_STORED_ITEM_PREFIX+"WidgetMeteoAstroWarning",IItemType.TYPE_PUBLIC, "", International.getString("Warnhinweise bei Dunkelheit"), 3);          
         addParameterInternal(new ItemTypeBoolean(PARAM_WARNDARKNESS, true,
                 IItemType.TYPE_PUBLIC, "",
                 International.getString("Bei Fahrtbeginn vor Dunkelheit warnen")));
