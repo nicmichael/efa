@@ -101,7 +101,7 @@ public abstract class WeatherRenderer {
 	}
 	
 	protected static String oneDecimal(double value) {
-		DecimalFormat df = new DecimalFormat("#.#");
+		DecimalFormat df = new DecimalFormat("0.0");
 		return df.format(value);
 	}
 	

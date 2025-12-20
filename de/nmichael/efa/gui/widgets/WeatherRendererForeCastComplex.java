@@ -1,5 +1,6 @@
 package de.nmichael.efa.gui.widgets;
 
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
@@ -101,7 +102,8 @@ public class WeatherRendererForeCastComplex extends WeatherRenderer {
 		
 		rainIcon.setIcon(WeatherIcons.getIcon(WeatherIcons.IMAGE_RAIN));
 		rainIcon.setIconTextGap(0);
-		rainIcon.setHorizontalTextPosition(SwingConstants.LEFT);		
+		rainIcon.setHorizontalTextPosition(SwingConstants.RIGHT);	
+		rainIcon.setIconTextGap(0);
 		
 		//rainLabel.setText(rain);
 		//rainLabel.setForeground(Daten.efaConfig.getToolTipHeaderForegroundColor());
@@ -116,10 +118,10 @@ public class WeatherRendererForeCastComplex extends WeatherRenderer {
    	    roundPanel.add(tempLabel, 			new GridBagConstraints(3, startY, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.VERTICAL, 		new Insets(4,4,0,4), 0, 0));	
    	    
    	    roundPanel.add(uvIndexLegendLabel,	new GridBagConstraints(4, startY, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.VERTICAL, 	new Insets(4,2,0,2), 0, 0));
-   	    roundPanel.add(uvIndexLabel, 		new GridBagConstraints(5, startY, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.VERTICAL, 	new Insets(4,2,0,2), 0, 0));
+   	    roundPanel.add(uvIndexLabel, 		new GridBagConstraints(5, startY, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.VERTICAL, 	new Insets(4,2,0,2), 0, 0));
    	    roundPanel.add(uvIndexStatusLabel, 	new GridBagConstraints(6, startY, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.VERTICAL, 	new Insets(4,0,0,2), 0, 0));
      		
-   	    roundPanel.add(rainIcon, 			new GridBagConstraints(7, startY, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.VERTICAL, 	new Insets(4,4,0,0), 0, 0));
+   	    roundPanel.add(rainIcon, 			new GridBagConstraints(7, startY, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.VERTICAL, 	new Insets(4,4,0,4), 0, 0));
    	    //roundPanel.add(rainLabel, 			new GridBagConstraints(4, startY+1, 1, 1, 0.0, 0.0, GridBagConstraints.EAST,   GridBagConstraints.VERTICAL, 		new Insets(0,2,0,5), 0, 0));
    		roundPanel.add(rainLabelPercent, 	new GridBagConstraints(8, startY, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, 	GridBagConstraints.VERTICAL, 		new Insets(4,0,0,2), 0, 0));
 
@@ -149,14 +151,6 @@ public class WeatherRendererForeCastComplex extends WeatherRenderer {
             	}
             }
         });   		
-   		
-   	    /*
-		myPanel.setLayout(new BorderLayout(0, 0));
-		myPanel.add(timeLabel, BorderLayout.NORTH);
-		myPanel.add(weatherIconLabel, BorderLayout.CENTER);
-		myPanel.add(tempLabel, BorderLayout.SOUTH);
-*/
-		//return myPanel;
 
 	}
 	
