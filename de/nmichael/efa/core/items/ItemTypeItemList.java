@@ -20,6 +20,7 @@ import java.awt.Insets;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Vector;
 import java.util.regex.Matcher;
@@ -45,13 +46,76 @@ import de.nmichael.efa.util.International;
 import de.nmichael.efa.util.Logger;
 import de.nmichael.efa.util.Mnemonics;
 
+
+/** ItemTypeItemList
+
+Sometimes it's necessary to group several attributes into a logical unit,
+and to display multiple elements of these logical units on a single screen.
+
+This is the case, for example, with the "automatic processes" in efaConfig, 
+or where multiple boot types can be specified.
+This is where the ItemTypeItemList class comes in.
+
+Important properties of this class
+----------------------------------------
+setStorageType()
+By default, EFA stores the data in the exact order it is programmed in the user interface - 
+without specifying which configuration element each value is intended for.
+
+This works well as long as the programmer doesn't change the order of the elements. 
+If the order of existing elements in the user interface is changed, the stored data cannot be restored to the correct fields.
+
+Therefore, the StorageType "KEYVALUE" can be set for lists. This type stores the respective keys in addition to the values, 
+making it independent of the order of the elements in the user interface.
+
+WARNING:
+
+It is NO good idea to convert an existing list (where data has already been written in previous EFA versions) to KEYVALUE.
+
+For ItemTypeItemLists in DataRecords (Boats: Boat types, People: Group membership, Groups: Members, Destinations/Routes: water), 
+you should absolutely not change the StorageType to KeyVALUE, as this will make it difficult to restore backups in newer EFA versions 
+to older ones.
+
+Similarly, in efaCloud scenarios, the central distribution of master data for boats, people, etc., to the participating EFA stations
+would cause major problems if all EFA stations have not been synchronized to the new EFA version. So, having an efaCloud installation
+with different versions of efa would then be a problem.
+
+The same applies to storing configuration data in efaConfig, e.g., for automated processes (CronJobs).
+
+setItemsOrientation()
+The elements can be aligned vertically or horizontally.
+If you want to combine vertical and horizontal layout, use vertical layout and 
+additional rendering hints.
+
+setRepeatTitle()
+Defines whether the title should be repeated above each new item in the list in the GUI.
+
+setShowUpDownButtons()
+Defines whether the order of the items in the GUI can be changed.
+
+Using this class
+--------------------------
+The using GUI must implement the `IItemFactory` interface.
+
+The `getDefaultItems(String itemName)` method defines the "record," i.e., the logical unit of an
+entry's attributes, their order, and their display on the user interface.
+
+Secondly, the associated GUI must implement the `updateGUI()` method.
+
+If the using GUI is a derivative of `BaseTabbedDialog`, no further action is required.
+For other GUIs, the `updateGUI()` method must be implemented manually. To avoid repainting problems
+when removing items from the list at runtime, this.revalidate() should be called from the updateGUI() method.
+
+*/
+
 public class ItemTypeItemList extends ItemType {
 
     private static final String LIST_SEPARATOR = "{=%||%=}";
     private static final String ITEM_SEPARATOR = "{=%|%=}";
+    private static final String KEY_SEPARATOR = "{=%%=}";
 
-    private Vector<IItemType[]> items = new Vector<IItemType[]>();
-    private Vector<IItemType[]> deletedItems = new Vector<IItemType[]>();
+    protected Vector<IItemType[]> items = new Vector<IItemType[]>();
+    protected Vector<IItemType[]> deletedItems = new Vector<IItemType[]>();
     private Hashtable<String,String> itemNameMapping = new Hashtable<String,String>();
     private IItemFactory itemFactory;
     private int minNumberOfItems = 0;
@@ -74,11 +138,17 @@ public class ItemTypeItemList extends ItemType {
     private int firstColumnMinWidth=0;
     private boolean appendPositionToEachElement = false;
     private Orientation orientation = Orientation.vertical;
+    private StorageType storageType = StorageType.classic;
     private Boolean showUpDownButtons = false;
     
     public enum Orientation {
         vertical,
         horizontal
+    }
+    
+    public enum StorageType{
+    	classic,
+    	keyvalue
     }
 
     public ItemTypeItemList(String name, Vector<IItemType[]> items, IItemFactory itemFactory,
@@ -99,16 +169,15 @@ public class ItemTypeItemList extends ItemType {
 
     public IItemType copyOf() {
         ItemTypeItemList copy = new ItemTypeItemList(name, (Vector<IItemType[]>)items.clone(), itemFactory, type, category, description);
-        copy.repeatTitle = repeatTitle;
-        copy.shortDescription = shortDescription;
-        copy.scrollX = scrollX;
-        copy.scrollY = scrollY;
-        copy.padXafter = padXafter;
-        copy.padXbefore = padXbefore;
-        copy.padYafter = padYafter;
-        copy.padYbefore = padYbefore;
+        copy.setRepeatTitle(repeatTitle);
+        copy.setShortDescription(shortDescription);
+        copy.setScrollPane(scrollX, scrollY);
+        copy.setPadding(padXbefore, padXafter, padYbefore, padYafter);
+        copy.setFirstColumnMinWidth(firstColumnMinWidth);
+        copy.setAppendPositionToEachElement(appendPositionToEachElement);
         copy.setXForAddDelButtons(xForAddDelButtons);
         copy.setShowUpDownButtons(showUpDownButtons);
+        copy.setStorageType(storageType);
         		
         return copy;
     }
@@ -117,7 +186,13 @@ public class ItemTypeItemList extends ItemType {
         int idx = this.items.size();
         lastItemFocus = null;
         for (IItemType item : items) {
-            String internalName = getName() + "_" + idx + "_" + item.getName();
+        	// check if the subitem's name already consists of the prefixes of the CURRENT itemlist.
+        	// only add them if neccessary. this avoids very long item names when additems is used
+        	// in the context of copyOf method.
+        	String internalName = item.getName();
+            if (!item.getName().startsWith(this.getName())){
+            	internalName = getName() + "_" + idx + "_" + item.getName();
+            }
             itemNameMapping.put(internalName, item.getName());
             item.setName(internalName);
             if (item.isVisible() && item.isEnabled() && item.isEditable()) {
@@ -344,7 +419,7 @@ public class ItemTypeItemList extends ItemType {
                  */
                 
 	            if (label != null) {
-	                panel.add(label, new GridBagConstraints(x, y+curYPos, 2, 1, 0.0, 0.0,
+	                panel.add(label, new GridBagConstraints(x, y+curYPos, xForAddDelButtons, 1, 0.0, 0.0,
 	                        GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(padYbetween, padXbefore, padYbetween, 0), 0, 0));
 	            }
 
@@ -581,7 +656,26 @@ public class ItemTypeItemList extends ItemType {
     }
 
     public String toString() {
-        StringBuilder s1 = new StringBuilder();
+    	if (this.storageType==StorageType.classic) {
+    		return getClassicStorageString();
+    	} else
+    	{
+    		return getKeyValueStorageString();
+    	}
+    }
+
+    /**
+     * Creates Classic Storage (classic efa) for ItemTypeItemList which is dependent on the order of the items in the GUI.
+     * Changing the order of the items on the GUI affects serialization.
+     * 
+     * @return String with serialization 
+     */
+    private String getClassicStorageString() {
+    	
+    	//Build a list 
+    	// each List item separated by LIST_SEPARATOR
+    	// and each value for a list item separated by ITEM_SEPARATOR
+    	StringBuilder s1 = new StringBuilder();
         for (int i=0; items != null && i<items.size(); i++) {
             IItemType[] arr = items.get(i);
             StringBuilder s2 = new StringBuilder();
@@ -592,8 +686,45 @@ public class ItemTypeItemList extends ItemType {
         }
         return s1.toString();
     }
-
+    /**
+     * Creates a serialization where the values have the name of their property as a prefix, separated by KEY_SERPARATOR
+     * @return String with Serialization
+     * 
+     */
+    private String getKeyValueStorageString() {
+        StringBuilder s1 = new StringBuilder();
+        
+        for (int curParamItem=0; items != null && curParamItem<items.size(); curParamItem++) {
+            IItemType[] curParamFields = items.get(curParamItem);
+            StringBuilder s2 = new StringBuilder();
+            for (int curField=0; curParamFields != null && curField<curParamFields.length; curField++) {
+            	//isstoreItem is set automatically to false for hints, descriptions, headers created by EfaGUIUtils
+            	//so we won't store descriptions, hints and such.
+            	if (curParamFields[curField].isStoreItem()) {
+            		s2.append( (s2.length() > 0 ? ITEM_SEPARATOR : "") + getKey(curParamFields[curField].getName())+KEY_SEPARATOR+curParamFields[curField].toString());
+            	}
+            }
+            s1.append( (s1.length() > 0 ? LIST_SEPARATOR : "") + s2.toString());
+        }
+        return s1.toString();    	
+    }
+    
     public void parseValue(String value) {
+    	if (this.storageType==StorageType.classic) {
+    		parseClassicStorageValue(value);
+    	} else
+    	{
+    		parseKeyValueStorageValue(value);
+    	}
+    }
+    
+    /** 
+     * Get the items from classic storage format. The items in the value string
+     * must be in the same order as the items in the GUI to be successful.
+     * 
+     * @param value Serialization of the item list.
+     */
+    private void parseClassicStorageValue(String value) {
         items = new Vector<IItemType[]>();
         if (value == null) {
             return;
@@ -610,6 +741,77 @@ public class ItemTypeItemList extends ItemType {
             }
             items.add(arr);
         }
+    }
+    
+    /**
+     * Get the items in the ItemTypeList from a String serialisation, which
+     * contains keys (names of the items) AND their value. 
+     * Restores all items whose names can be found in the GUI item list.
+     * Order of the items in the serialisation and GUI can differ without causing any harm.
+     * @param value Serialisation of the itemlist
+     */
+    private void parseKeyValueStorageValue(String value) {
+    	//very important to clear item list as otherwise the items in the value parameter will get added.
+        items = new Vector<IItemType[]>(); //clear subitems
+    	if (value == null) {
+            return;
+        }
+        
+        if (!value.contains(KEY_SEPARATOR)){
+    		parseClassicStorageValue(value);
+    		return;
+    	}
+    	
+        //get list elements (which consist of key(name) and value of an item=
+        String[] elementsArray = EfaUtil.split(value, LIST_SEPARATOR);
+        for (int i=0; elementsArray != null && i<elementsArray.length; i++) {
+            if (elementsArray[i] == null) {
+                continue;
+            }
+            
+            //separate current list element subitems and put them in a hashmap
+            String[] keyValueString = EfaUtil.split(elementsArray[i], ITEM_SEPARATOR);
+            HashMap<String, String> kvPairsHash=new HashMap<String, String>();
+
+            for (int curKVPair=0; keyValueString != null && curKVPair<keyValueString.length; curKVPair++) {
+                String[] kvPair=EfaUtil.split(keyValueString[curKVPair], KEY_SEPARATOR);
+                if (kvPair.length>1) {
+                	kvPairsHash.put(kvPair[0], kvPair[1]); 
+                }
+            }
+            
+            //now run through the target items on the GUI and ask each for their name.
+            //look up their name in the hashmap and fill them with the value for their name.
+            //This is stable to changes in the GUI layout, e.g. changing the order, or adding/removing fields.
+
+            //get all configuration items from the factory for this list (by name) to fill them with values
+            IItemType[] guiItems = itemFactory.getDefaultItems(getName());
+            for (int curGUIItemNo=0; guiItems != null && curGUIItemNo<guiItems.length; curGUIItemNo++) {
+                IItemType cur=guiItems[curGUIItemNo];
+                try {
+                	//for some unknown reason, sometimes the item's name just is the single item's name,
+                	//and sometimes it has the full path like  ITEMTYPELISTNAME_0_ITEMNAME.
+                	//to avoid this confusion, we simply get the true simple name of the item by truncating
+                	//everything before the last "_"
+                	String val=kvPairsHash.get(getKey(cur.getName()));
+                	if (val!=null) {
+                		cur.parseValue(val); //set it from the serialization
+                	}
+                } catch(Exception e) {
+                	Logger.log(e);
+                }
+            }
+            items.add(guiItems);//after deserialisation, add it to the item list
+        }
+    }
+    
+    private String getKey(String value) {
+    	int posTiefstrich=value.lastIndexOf("_");
+    	if (posTiefstrich>0) {
+    		return value.substring(posTiefstrich+1, value.length());
+    	} else {
+    		return value;
+    	}
     }
     
     public void setFirstColumnMinWidth(int width) {
@@ -640,6 +842,10 @@ public class ItemTypeItemList extends ItemType {
 
 	public void setShowUpDownButtons(Boolean showUpDownButtons) {
 		this.showUpDownButtons = showUpDownButtons;
+	}
+	
+	public void setStorageType(StorageType value) {
+		this.storageType = value;
 	}
     
 }

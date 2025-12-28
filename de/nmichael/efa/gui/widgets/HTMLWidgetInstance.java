@@ -1,6 +1,7 @@
 package de.nmichael.efa.gui.widgets;
 
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -30,7 +31,6 @@ import de.nmichael.efa.data.LogbookRecord;
 import de.nmichael.efa.gui.BrowserDialog;
 import de.nmichael.efa.gui.util.RoundedBorder;
 import de.nmichael.efa.gui.util.RoundedPanel;
-import de.nmichael.efa.util.Dialog;
 import de.nmichael.efa.util.EfaUtil;
 import de.nmichael.efa.util.HttpCachedFetcher;
 import de.nmichael.efa.util.International;
@@ -102,6 +102,7 @@ public class HTMLWidgetInstance extends WidgetInstance implements IWidgetInstanc
             scrollPane.setPreferredSize(new Dimension(getWidth(), getHeight()));
         }
         scrollPane.getViewport().add(htmlPane, null);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder());// we want no border on an inner scroll pane.
         if (htmlUpdater == null) {
             htmlUpdater = new HTMLUpdater();
         }
@@ -121,6 +122,9 @@ public class HTMLWidgetInstance extends WidgetInstance implements IWidgetInstanc
 	private void addHyperlinkAction() {
 		htmlPane.addHyperlinkListener(e -> {
             if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+            	Cursor old;
+            	old = htmlPane.getCursor();
+            	htmlPane.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             	String urlString;
             	try {
             		urlString = e.getURL().toURI().toString();
@@ -147,6 +151,7 @@ public class HTMLWidgetInstance extends WidgetInstance implements IWidgetInstanc
                 catch (Exception ex) {
         			Logger.log(ex);
                 }
+                htmlPane.setCursor(old);
             }
         });
 	}

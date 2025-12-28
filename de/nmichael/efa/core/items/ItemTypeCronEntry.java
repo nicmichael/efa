@@ -60,9 +60,13 @@ public class ItemTypeCronEntry extends ItemTypeLabelValue {
     
     public IItemType copyOf() {
         ItemTypeCronEntry copy = new ItemTypeCronEntry(name, toString(), type, category, description);
-        copy.fieldWidth = fieldWidth;
-        copy.setPadding(padXbefore, padXafter, padYbefore, padYafter);        
+        copy.setFieldSize(fieldWidth, fieldHeight);
+        copy.setPadding(padXbefore, padXafter, padYbefore, padYafter);
         copy.setIcon((label == null ? null : label.getIcon()));
+        copy.setIsItemOnSameRowAsPreviousItem(itemOnSameRowAsPreviousItem);
+        copy.setItemOnNewRow(itemOnNewRow);
+        copy.setFieldGrid(fieldGridWidth,fieldGridHeight,fieldGridAnchor,fieldGridFill);
+        
         return copy;
     }
 

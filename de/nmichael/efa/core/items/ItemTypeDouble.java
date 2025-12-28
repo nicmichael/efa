@@ -52,8 +52,12 @@ public class ItemTypeDouble extends ItemTypeLabelTextfield {
 
     public IItemType copyOf() {
     	ItemTypeDouble copy = new ItemTypeDouble(name, value, min, max, !isNotNullSet(), type, category, description);
+        copy.setFieldSize(fieldWidth, fieldHeight);
         copy.setPadding(padXbefore, padXafter, padYbefore, padYafter);
         copy.setIcon((label == null ? null : label.getIcon()));
+        copy.setIsItemOnSameRowAsPreviousItem(itemOnSameRowAsPreviousItem);
+        copy.setItemOnNewRow(itemOnNewRow);
+        copy.setFieldGrid(fieldGridWidth,fieldGridHeight,fieldGridAnchor,fieldGridFill);
     	return copy;
     }
 

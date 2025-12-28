@@ -120,7 +120,18 @@ public class ItemTypeStringAutoComplete extends ItemTypeString implements AutoCo
         this.useAutocompleteList = Daten.efaConfig == null || Daten.efaConfig.getValuePopupComplete();
         setAutoCompleteData(autoCompleteList);
     }
-
+    
+    public IItemType copyOf() {
+    	ItemTypeStringAutoComplete copy = new ItemTypeStringAutoComplete(name, value, type, category, description, showButton, autoCompleteList);
+        copy.setFieldSize(fieldWidth, fieldHeight);
+        copy.setPadding(padXbefore, padXafter, padYbefore, padYafter);
+        copy.setIcon((label == null ? null : label.getIcon()));
+        copy.setIsItemOnSameRowAsPreviousItem(itemOnSameRowAsPreviousItem);
+        copy.setItemOnNewRow(itemOnNewRow);
+        copy.setFieldGrid(fieldGridWidth,fieldGridHeight,fieldGridAnchor,fieldGridFill);
+        return copy;
+    }
+    
     public void setValidAt(ItemTypeDate validAtDate, ItemTypeTime validAtTime) {
         this.validAtDateItem = validAtDate;
         this.validAtTimeItem = validAtTime;

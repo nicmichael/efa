@@ -564,7 +564,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 		synchronized (configValues) {
 			for (int i = 0; i < configValueNames.size(); i++) {
 				String name = configValueNames.get(i);
-				if (!name.startsWith("_") && getValue(name) == null) {
+				if (!name.startsWith(NOT_STORED_ITEM_PREFIX) && getValue(name) == null) {
 					addValue(name, configValues.get(name).toString());
 				}
 			}

@@ -46,6 +46,7 @@ public abstract class Widget implements IWidget {
     public static final String PARAM_POSITION       = "Position";
     public static final String PARAM_UPDATEINTERVAL = "UpdateInterval";
     public static final String NOT_STORED_ITEM_PREFIX ="_";
+    private static final int DEFAULT_GRIDWIDTH = 3;
     
     String name;
     String description;
@@ -57,14 +58,20 @@ public abstract class Widget implements IWidget {
     public Widget(String name, String description, boolean ongui, boolean showRefreshInterval) {
     	this(name, name, description, ongui, showRefreshInterval);
     }
+    public Widget(String name, String description, boolean ongui, boolean showRefreshInterval,int gridWidth) {
+    	this(name, name, description, ongui, showRefreshInterval,gridWidth);
+    }
     
-   
     public Widget(String name, String parameterPrefix, String description, boolean ongui, boolean showRefreshInterval) {
+    	this(name, parameterPrefix, description, ongui, showRefreshInterval,DEFAULT_GRIDWIDTH);
+    }
+    
+    public Widget(String name, String parameterPrefix, String description, boolean ongui, boolean showRefreshInterval, int gridWidth) {
         this.name = name;
         this.parameterPrefix = parameterPrefix;
         this.description = description;
         
-        addHeader("WidgetCommon_"+name,IItemType.TYPE_PUBLIC, "", International.getString("Widget Allgemein"), 3);
+        addHeader("WidgetCommon_"+parameterPrefix,IItemType.TYPE_PUBLIC, "", International.getString("Widget Allgemein"), gridWidth);
         addParameterInternal(new ItemTypeBoolean(PARAM_ENABLED, false,
                 IItemType.TYPE_PUBLIC, "",
                 (ongui ?
@@ -97,14 +104,16 @@ public abstract class Widget implements IWidget {
         return "Widget" + this.parameterPrefix + internalName;
     }
 
-    void addParameterInternal(IItemType p) {
+    IItemType addParameterInternal(IItemType p) {
         p.setName(getParameterName(p.getName()));
         parameters.add(p);
+        return p;
     }
     
-    void addParameterInternal(IItemType p, int padYBefore, int padYAfter) {
+    IItemType addParameterInternal(IItemType p, int padYBefore, int padYAfter) {
         p.setPadding(0, 0, padYBefore, padYAfter);        
         addParameterInternal(p);
+        return p;
     }
     
     /**

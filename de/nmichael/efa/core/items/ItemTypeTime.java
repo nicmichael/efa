@@ -41,8 +41,12 @@ public class ItemTypeTime extends ItemTypeLabelTextfield {
 
     public IItemType copyOf() {        
         ItemTypeTime copy = new ItemTypeTime(name, new DataTypeTime(value), type, category, description);
+        copy.setFieldSize(fieldWidth, fieldHeight);
         copy.setPadding(padXbefore, padXafter, padYbefore, padYafter);
         copy.setIcon((label == null ? null : label.getIcon()));
+        copy.setIsItemOnSameRowAsPreviousItem(itemOnSameRowAsPreviousItem);
+        copy.setItemOnNewRow(itemOnNewRow);
+        copy.setFieldGrid(fieldGridWidth,fieldGridHeight,fieldGridAnchor,fieldGridFill);
         return copy;
     }
 

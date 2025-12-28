@@ -1,5 +1,6 @@
 package de.nmichael.efa.gui.widgets;
 
+import java.awt.GridBagConstraints;
 import java.util.Vector;
 
 import de.nmichael.efa.core.items.IItemFactory;
@@ -7,6 +8,7 @@ import de.nmichael.efa.core.items.IItemType;
 import de.nmichael.efa.core.items.ItemTypeFile;
 import de.nmichael.efa.core.items.ItemTypeInteger;
 import de.nmichael.efa.core.items.ItemTypeItemList;
+import de.nmichael.efa.core.items.ItemTypeLabelTextfield;
 import de.nmichael.efa.core.items.ItemTypeLongLat;
 import de.nmichael.efa.core.items.ItemTypeString;
 import de.nmichael.efa.core.items.ItemTypeStringList;
@@ -53,23 +55,26 @@ public class WeatherWidget extends Widget implements IItemFactory {
 	
 	//parameters per location item
 	
-	private static final String PARAM_LATITUDE 				= "MultiWeatherLatitude";
-	private static final String PARAM_LONGITUDE 			= "MultiWeatherLongitude";
-	private static final String PARAM_CAPTION 				= "MultiWeatherCaption";
+	private static final String PARAM_LATITUDE 				= "Latitude";
+	private static final String PARAM_LONGITUDE 			= "Longitude";
+	private static final String PARAM_CAPTION 				= "Caption";
 	
-	private static final String PARAM_POPUPEXECCOMMAND    	= "MultiPopupExecCommand";
-	private static final String PARAM_HTMLPOPUPURL        	= "MultiHtmlPopupUrl";
-	private static final String PARAM_HTMLPOPWIDTH        	= "MultiHtmlPopupWidth";
-	private static final String PARAM_HTMLPOPHEIGHT       	= "MultiHtmlPopupHeight";
+	private static final String PARAM_POPUPEXECCOMMAND    	= "PopupExecCommand";
+	private static final String PARAM_HTMLPOPUPURL        	= "PopupUrl";
+	private static final String PARAM_HTMLPOPWIDTH        	= "PopupWidth";
+	private static final String PARAM_HTMLPOPHEIGHT       	= "PopupHeight";
 	
-	private static final String PARAM_WEATHER_LAYOUT 		= "MultiWeatherLayout";
-	public static final String WEATHER_LAYOUT_CURRENT_CLASSIC = "WeatherLayoutLayoutCurrentClassic";
-	public static final String WEATHER_LAYOUT_CURRENT_WIND = "WeatherLayoutLayoutCurrentWind";
-	public static final String WEATHER_LAYOUT_CURRENT_UVINDEX = "WeatherLayoutLayoutCurrentUVIndex";
+	private static final String PARAM_WEATHER_LAYOUT 		= "Layout";
+	public static final String WEATHER_LAYOUT_CURRENT_CLASSIC = "LayoutCurrentClassic";
+	public static final String WEATHER_LAYOUT_CURRENT_WIND 	= "LayoutCurrentWind";
+	public static final String WEATHER_LAYOUT_CURRENT_UVINDEX = "LayoutCurrentUVIndex";
 	
-	public static final String WEATHER_LAYOUT_FORECASTSIMPLE = "WeatherLayoutForecastSimple";
-	public static final String WEATHER_LAYOUT_FORECASTCOMPLEX = "WeatherLayoutForecastComplex";
+	public static final String WEATHER_LAYOUT_FORECASTSIMPLE  = "LayoutForecastSimple";
+	public static final String WEATHER_LAYOUT_FORECASTCOMPLEX = "LayoutForecastComplex";
 	
+	
+	private static final int WEATHERWIDGET_GRIDWIDTH = 6;
+	private static final int SMALL_FIELDWIDTH = 110;
 	private ItemTypeItemList locationList;
 
 
@@ -81,35 +86,51 @@ public class WeatherWidget extends Widget implements IItemFactory {
 	 */
 	public WeatherWidget() {
 
-		super(International.getString("Wetter"), "MultiWetter", International.getString("Wetter"), true, true);
+		super(International.getString("Wetter"), "MWeather", International.getString("Wetter"), true, true,WEATHERWIDGET_GRIDWIDTH);
 
-		addHeader(NOT_STORED_ITEM_PREFIX+"MultiWeatherWidgetLocationHeader", IItemType.TYPE_PUBLIC, "", International.getString("Wetter Daten"), 3);
-		
-		addParameterInternal(new ItemTypeStringList(PARAM_WEATHER_SOURCE, WEATHER_SOURCE_OPENMETEO,
+		addHeader(NOT_STORED_ITEM_PREFIX+"MultiWeatherWidgetLocationHeader", IItemType.TYPE_PUBLIC, "", 
+				International.getString("Wetter Daten"), WEATHERWIDGET_GRIDWIDTH);
+		IItemType item;
+		addParameterInternal(item=new ItemTypeStringList(PARAM_WEATHER_SOURCE, WEATHER_SOURCE_OPENMETEO,
 				new String[] { WEATHER_SOURCE_OPENMETEO, WEATHER_SOURCE_WEATHERAPI },
 				new String[] { International.getString("OpenMeteo kostenfreie API (Europa/Nord Amerika)"),
 						International.getString("WeatherAPI") },
 				IItemType.TYPE_PUBLIC, "", International.getString("Quelle für Wetterdaten")));
+		item.setFieldGrid(WEATHERWIDGET_GRIDWIDTH-2, -1, GridBagConstraints.HORIZONTAL);
 
-		addParameterInternal(new ItemTypeStringList(PARAM_TEMPERATURESCALE, TEMP_CELSIUS,
+		addParameterInternal(item=new ItemTypeStringList(PARAM_TEMPERATURESCALE, TEMP_CELSIUS,
 				new String[] { TEMP_CELSIUS, TEMP_FAHRENHEIT },
 				new String[] { International.getString("Celsius"), International.getString("Fahrenheit") },
 				IItemType.TYPE_PUBLIC, "", International.getString("Temperaturskala")),10,0);
-
-		addParameterInternal(new ItemTypeStringList(PARAM_SPEEDSCALE, SPEEDSCALE_KMH,
+		item.setFieldGrid(WEATHERWIDGET_GRIDWIDTH-2, -1, GridBagConstraints.HORIZONTAL);
+		
+		addParameterInternal(item=new ItemTypeStringList(PARAM_SPEEDSCALE, SPEEDSCALE_KMH,
 				new String[] { SPEEDSCALE_KMH, SPEEDSCALE_MPH },
 				new String[] { International.getString("km/h"), International.getString("mph") }, IItemType.TYPE_PUBLIC,
 				"", International.getString("Windgeschwindigkeit-Skala")));
+		item.setFieldGrid(WEATHERWIDGET_GRIDWIDTH-2, -1, GridBagConstraints.HORIZONTAL);
 
 		addParameterInternal(locationList = new ItemTypeItemList(PARAM_WEATHER_LOCATIONLIST, new Vector<IItemType[]>(), this,
 				IItemType.TYPE_PUBLIC, "",
-				International.getString("Wetter-Orte")));
+				International.getString("Wetter-Orte"))).setFieldGrid(WEATHERWIDGET_GRIDWIDTH-1);
 	    locationList.setShortDescription(International.getString("Wetter-Orte"));		
 		locationList.setRepeatTitle(true);
 		locationList.setShowUpDownButtons(true);
+		locationList.setXForAddDelButtons(WEATHERWIDGET_GRIDWIDTH-1);
+		locationList.setStorageType(ItemTypeItemList.StorageType.keyvalue);//important flag: GUI items can change in order and elements, without breaking storage
 		super.setEnabled(true);
 		super.setPosition(IWidget.POSITION_MULTIWIDGET);
-
+		
+		// we have a special layout here. 
+		//so we extend the fields for position and interval optically
+		
+		item = this.getParameterInternal(PARAM_ENABLED);
+		item.setFieldGrid(WEATHERWIDGET_GRIDWIDTH-2, -1, GridBagConstraints.HORIZONTAL);
+		item = this.getParameterInternal(PARAM_POSITION);
+		item.setFieldGrid(WEATHERWIDGET_GRIDWIDTH-2, -1, GridBagConstraints.HORIZONTAL);
+		item = this.getParameterInternal(PARAM_UPDATEINTERVAL);
+		item.setFieldGrid(WEATHERWIDGET_GRIDWIDTH-2, -1, GridBagConstraints.HORIZONTAL);
+		
 	}
 
 	
@@ -125,18 +146,27 @@ public class WeatherWidget extends Widget implements IItemFactory {
             int i = item.size()+1;
 			
             // build the GUI
-            
+            ItemTypeLabelTextfield curItem; 
             IItemType[] items = new IItemType[9];
             i=0;
             items[i] = new ItemTypeString(PARAM_CAPTION, "Berlin", IItemType.TYPE_PUBLIC, "",
             				International.getString("Beschriftung"));
-            items[i++].setPadding(0,0,0,10);
+            items[i].setFieldGrid(WEATHERWIDGET_GRIDWIDTH-2, -1, GridBagConstraints.HORIZONTAL);
+            items[i++].setPadding(0,0,0,2);
 
-            items[i++] = new ItemTypeLongLat(PARAM_LATITUDE, ItemTypeLongLat.ORIENTATION_NORTH, 52, 25, 9,
+            items[i] = new ItemTypeLongLat(PARAM_LATITUDE, ItemTypeLongLat.ORIENTATION_NORTH, 52, 25, 9,
             				IItemType.TYPE_PUBLIC, "", International.getString("geographische Breite"));
-            items[i++] = new ItemTypeLongLat(PARAM_LONGITUDE, ItemTypeLongLat.ORIENTATION_EAST, 13, 10, 15,
-            				IItemType.TYPE_PUBLIC, "", International.getString("geographische Länge"));
+            items[i].setFieldGrid(-1, -1, GridBagConstraints.HORIZONTAL);
+            items[i++].setFieldSize(SMALL_FIELDWIDTH, -1);
 
+            
+            curItem = new ItemTypeLongLat(PARAM_LONGITUDE, ItemTypeLongLat.ORIENTATION_EAST, 13, 10, 15,
+            				IItemType.TYPE_PUBLIC, "", International.getString("geographische Länge"));
+            curItem.setIsItemOnSameRowAsPreviousItem(true);
+            curItem.setFieldSize(SMALL_FIELDWIDTH, -1);
+            curItem.setFieldGrid(-1, -1, GridBagConstraints.HORIZONTAL);
+            items[i++] = curItem;
+           
             items[i] = new ItemTypeStringList(PARAM_WEATHER_LAYOUT, WEATHER_LAYOUT_CURRENT_UVINDEX,
             				new String[] { WEATHER_LAYOUT_CURRENT_CLASSIC, WEATHER_LAYOUT_CURRENT_WIND, WEATHER_LAYOUT_CURRENT_UVINDEX, WEATHER_LAYOUT_FORECASTSIMPLE, WEATHER_LAYOUT_FORECASTCOMPLEX },
             				new String[] { International.getString("Aktuelles Wetter (Klassisch)"), 
@@ -145,29 +175,40 @@ public class WeatherWidget extends Widget implements IItemFactory {
             						International.getString("Vorhersage (Einfach)"),
             						International.getString("Vorhersage (Komplex)") },
             				IItemType.TYPE_PUBLIC, "", International.getString("Layout"));
+            items[i].setFieldGrid(WEATHERWIDGET_GRIDWIDTH-2, -1, GridBagConstraints.HORIZONTAL);
             items[i++].setPadding(0, 0, 20, 0);
 
-            items[i++] = EfaGuiUtils.createDescription(NOT_STORED_ITEM_PREFIX+"WidgetMeteoHTMLPOPUP",IItemType.TYPE_PUBLIC, "", International.getString("Bei Mausklick auf das Astro/Meteo-Widget kann eine HMTL-Seite angezeigt werden."), 3,20,3);
+            items[i++] = EfaGuiUtils.createDescription("WidgetMeteoHTMLPOPUP",IItemType.TYPE_PUBLIC, "", 
+            		International.getString("Bei Mausklick auf das Astro/Meteo-Widget kann eine HMTL-Seite angezeigt werden."), WEATHERWIDGET_GRIDWIDTH-1,20,3);
                     
-            items[i++] = new ItemTypeFile(PARAM_HTMLPOPUPURL, "",
+            curItem = new ItemTypeFile(PARAM_HTMLPOPUPURL, "",
                             International.getString("HTML-Seite"),
                             International.getString("HTML-Seite"),
                             null,ItemTypeFile.MODE_OPEN,ItemTypeFile.TYPE_FILE,
                             IItemType.TYPE_PUBLIC, "",
-                            International.getString("HTML-Popup") + ": " +
                             International.getString("HTML-Seite"));
-            items[i++] = new ItemTypeInteger(PARAM_HTMLPOPWIDTH, 400, 1, Integer.MAX_VALUE, false,
+            curItem.setFieldGrid(WEATHERWIDGET_GRIDWIDTH-2, -1, GridBagConstraints.HORIZONTAL);
+            items[i++]=curItem;
+            
+            curItem = new ItemTypeInteger(PARAM_HTMLPOPWIDTH, 400, 1, Integer.MAX_VALUE, false,
                             IItemType.TYPE_PUBLIC, "",
-                            International.getString("HTML-Popup") + ": " +
                             International.getString("Breite"));
-            items[i++] = new ItemTypeInteger(PARAM_HTMLPOPHEIGHT, 200, 1, Integer.MAX_VALUE, false,
+            
+            curItem.setFieldSize(130, -1);
+            items[i++] = curItem;
+            
+            curItem= new ItemTypeInteger(PARAM_HTMLPOPHEIGHT, 200, 1, Integer.MAX_VALUE, false,
                             IItemType.TYPE_PUBLIC, "",
-                            International.getString("HTML-Popup") + ": " +
                             International.getString("Höhe"));
-            items[i++] = new ItemTypeString(PARAM_POPUPEXECCOMMAND, "",
+            curItem.setIsItemOnSameRowAsPreviousItem(true);
+            curItem.setFieldSize(130, -1);
+            items[i++] = curItem;
+
+            items[i] = new ItemTypeString(PARAM_POPUPEXECCOMMAND, "",
                             IItemType.TYPE_PUBLIC, "",
                             International.getMessage("Auszuführendes Kommando vor {event}",
                             International.getString("Popup")));
+            items[i].setFieldGrid(WEATHERWIDGET_GRIDWIDTH-2, -1, GridBagConstraints.HORIZONTAL);
             return items;
 		}
 		return null;

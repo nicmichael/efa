@@ -1472,11 +1472,11 @@ public class BoatRecord extends DataRecord implements IItemFactory, IItemListene
     }
     
 	/**
-	 * Adds a header item in an efa GUI. This header value is not safed within
+	 * Adds a header item in an efa GUI. This header value is not saved within
 	 * efaConfig. There is no word-wrap for the caption.
 	 * 
 	 * The header automatically gets a blue background and white text color; this
-	 * cannot be configured as efaConfig cannot refer to its own settings whenn
+	 * cannot be configured as efaConfig cannot refer to its own settings when
 	 * calling the constructor.
 	 * 
 	 * @param uniqueName Unique name of the element (as for all of efaConfig

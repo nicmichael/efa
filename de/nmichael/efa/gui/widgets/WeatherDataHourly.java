@@ -100,9 +100,21 @@ public class WeatherDataHourly {
 		this.description = description;
 	}	
 	
+	/**
+	 * Returns the index of the array which matches the next forecast item depending of the current systems time. 
+	 *  
+	 *  @return int array index for hourly data indices.
+	 */
     public int getIndexForCurrentTime() {
-
-    	int index=0;
+    	/* 
+    	 * OpenMeteo transmits hourly forecasts in one-hour or three-hour intervals.
+    	 * All values ​​are passed in a separate array, and the `TIME` array specifies the corresponding time for each index.
+    	 * For the forecast widgets, it is now desired to display the forecast for the NEXT occurring three-hourly events.
+    	 * To do this, it is necessary to determine at which index in the array the forecast for the NEXT time interval is located.
+    	 * This method serves this purpose. It utilizes the fact that OpenMeteo stores the Unix time (seconds since January 1, 1970) 
+    	 * based on UTC in the `TIME` array.
+    	 */
+   	 	int index=0;
     	long compareTimeStamp=System.currentTimeMillis();
     	
     	if (time !=null && time.size()>0) {

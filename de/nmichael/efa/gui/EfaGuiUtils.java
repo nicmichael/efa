@@ -32,6 +32,7 @@ public class EfaGuiUtils {
 		//if caption starts with html, do not have a blank as a prefix as this will disable html rendering.
 		ItemTypeLabel item = (ItemTypeLabel) EfaGuiUtils.createDescription(uniqueName, type, category, (caption.startsWith("<html>") ? caption : " "+caption), gridWidth,
 				padBefore, padAfter);
+    	item.setStoreItem(false);//hint for other elements not to store this item (to efaconfig for instance)
 		item.setImage(ImagesAndIcons.getIcon(ImagesAndIcons.IMAGE_INFO));
 		item.setImagePosition(SwingConstants.TRAILING); // info icon should be first, the text trailing.
 		item.setBackgroundColor(EfaConfig.hintBackgroundColor);
@@ -114,8 +115,9 @@ public class EfaGuiUtils {
 		// ensure that the description value does not get saved in efaConfig file by
 		// adding a special prefix
 		ItemTypeLabel item = new ItemTypeLabel(EfaConfig.NOT_STORED_ITEM_PREFIX + uniqueName, type, category, caption);
+    	item.setStoreItem(false);//hint for other elements not to store this item (to efaconfig for instance)
 		item.setPadding(0, 0, padBefore, padAfter);
-		item.setFieldGrid(gridWidth, GridBagConstraints.EAST, GridBagConstraints.BOTH);
+		item.setFieldGrid(gridWidth, GridBagConstraints.EAST, GridBagConstraints.HORIZONTAL);
 		return item;
 	}	
 
@@ -134,8 +136,9 @@ public class EfaGuiUtils {
      */
     public static ItemTypeLabelHeader createHeader(String uniqueName, int type, String category, String caption, int gridWidth) {
     	ItemTypeLabelHeader item = new ItemTypeLabelHeader(EfaConfig.NOT_STORED_ITEM_PREFIX + uniqueName, type, category, " "+caption);
+    	item.setStoreItem(false);//hint for other elements not to store this item (to efaconfig for instance)
         item.setPadding(0, 0, 10, 10);
-        item.setFieldGrid(3,GridBagConstraints.EAST, GridBagConstraints.BOTH);
+        item.setFieldGrid(gridWidth,GridBagConstraints.EAST, GridBagConstraints.BOTH);
         return item;
     }	
 

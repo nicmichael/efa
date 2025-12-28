@@ -37,8 +37,12 @@ public class ItemTypeDecimal extends ItemTypeLabelTextfield {
 
     public IItemType copyOf() {
         ItemTypeDecimal copy = new ItemTypeDecimal(name, new DataTypeDecimal(value), decimalPlaces, onlyPositiveOrNull, type, category, description);
+        copy.setFieldSize(fieldWidth, fieldHeight);
         copy.setPadding(padXbefore, padXafter, padYbefore, padYafter);
         copy.setIcon((label == null ? null : label.getIcon()));
+        copy.setIsItemOnSameRowAsPreviousItem(itemOnSameRowAsPreviousItem);
+        copy.setItemOnNewRow(itemOnNewRow);
+        copy.setFieldGrid(fieldGridWidth,fieldGridHeight,fieldGridAnchor,fieldGridFill);
         return copy;        
     }
 

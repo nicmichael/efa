@@ -47,10 +47,14 @@ public class ItemTypeFile extends ItemTypeString {
     }
 
     public IItemType copyOf() {
-        ItemTypeFile newItem = new ItemTypeFile(name, value, fileItem, fileTypes, fileExtensions, fileOpenSave, fileOrDir, type, category, description);
-        newItem.setPadding(padXbefore, padXafter, padYbefore, padYafter);
-        newItem.setIcon((label == null ? null : label.getIcon()));
-        return newItem;
+        ItemTypeFile copy = new ItemTypeFile(name, value, fileItem, fileTypes, fileExtensions, fileOpenSave, fileOrDir, type, category, description);
+        copy.setFieldSize(fieldWidth, fieldHeight);
+        copy.setPadding(padXbefore, padXafter, padYbefore, padYafter);
+        copy.setIcon((label == null ? null : label.getIcon()));
+        copy.setIsItemOnSameRowAsPreviousItem(itemOnSameRowAsPreviousItem);
+        copy.setItemOnNewRow(itemOnNewRow);
+        copy.setFieldGrid(fieldGridWidth,fieldGridHeight,fieldGridAnchor,fieldGridFill);
+        return copy;
     }
 
     public int displayOnGui(Window dlg, JPanel panel, int x, int y) {

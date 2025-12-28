@@ -11,6 +11,7 @@
 package de.nmichael.efa.gui.widgets;
 
 import java.awt.Color;
+import java.awt.GridBagConstraints;
 import java.util.Vector;
 
 import de.nmichael.efa.Daten;
@@ -23,8 +24,8 @@ import de.nmichael.efa.core.items.ItemTypeDouble;
 import de.nmichael.efa.core.items.ItemTypeFile;
 import de.nmichael.efa.core.items.ItemTypeInteger;
 import de.nmichael.efa.core.items.ItemTypeItemList;
+import de.nmichael.efa.core.items.ItemTypeLabelTextfield;
 import de.nmichael.efa.core.items.ItemTypeString;
-import de.nmichael.efa.gui.BaseTabbedDialog;
 import de.nmichael.efa.util.EfaUtil;
 import de.nmichael.efa.util.International;
 import de.nmichael.efa.util.Logger;
@@ -47,11 +48,14 @@ public class HTMLWidget extends Widget implements IWidget, IItemFactory {
     public static final String PARAM_HEADER_COLOR_FOREGROUND = "HeaderForegroundColor";
     
 	private static final String PARAM_HTML_PAGELIST = "MultiHtmlPageList";
+	private static final int HTMLWIDGET_GRIDWIDTH = 6;
+	private static final int SMALL_FIELDWIDTH = 110;
+	
 	private ItemTypeItemList htmlPageList;
 
     
     public HTMLWidget() {
-        super("Html", International.getString("HTML-Widget"), true, true);
+        super("Html", International.getString("HTML-Widget"), true, true,HTMLWIDGET_GRIDWIDTH);
 
         /* This is for backward compatibility.
          * The former HTML widget just supported a single HTML page to be shown.
@@ -60,65 +64,79 @@ public class HTMLWidget extends Widget implements IWidget, IItemFactory {
          * So... we support a very first html page, and multiple add-ons.
          */
         IItemType item;
-        addHeader(HEADER_FIRST_HTML, IItemType.TYPE_PUBLIC,"", International.getString("Erste HTML-Seite"), 3);
+        ItemTypeLabelTextfield itemlabel;
+        addHeader(HEADER_FIRST_HTML, IItemType.TYPE_PUBLIC,"", International.getString("Erste HTML-Seite"), HTMLWIDGET_GRIDWIDTH);
         
 		//--- die eigentliche HTML-Seite
         
-        addParameterInternal(new ItemTypeFile(PARAM_URL, "",
+        addParameterInternal(itemlabel = new ItemTypeString(PARAM_CAPTION, "", IItemType.TYPE_PUBLIC, "",
+				International.getString("Beschriftung")));
+        itemlabel.setFieldGrid(HTMLWIDGET_GRIDWIDTH-2, -1, GridBagConstraints.HORIZONTAL);
+        
+        addParameterInternal(itemlabel=new ItemTypeFile(PARAM_URL, "",
                 International.getString("HTML-Seite"),
                 International.getString("HTML-Seite"),
                 null,ItemTypeFile.MODE_OPEN,ItemTypeFile.TYPE_FILE,
                 IItemType.TYPE_PUBLIC, "",
                 "URL"));
-            
-        addParameterInternal(item = new ItemTypeString(PARAM_CAPTION, "", IItemType.TYPE_PUBLIC, "",
-				International.getString("Beschriftung")));
+        itemlabel.setFieldGrid(HTMLWIDGET_GRIDWIDTH-2, -1, GridBagConstraints.HORIZONTAL);                
         
         addParameterInternal(item = new ItemTypeBoolean(PARAM_USE_HTTP_CACHE, true,
                 IItemType.TYPE_PUBLIC, "",
                 International.getString("HTTP-Caching verwenden")));
-        item.setPadding(0,0,0,10);       
+        item.setPadding(0,0,0,10); 
+        item.setFieldGrid(HTMLWIDGET_GRIDWIDTH-2, -1, GridBagConstraints.HORIZONTAL);
         
-        addParameterInternal(new ItemTypeInteger(PARAM_WIDTH, 200, 1, Integer.MAX_VALUE, false,
+        addParameterInternal(itemlabel=new ItemTypeInteger(PARAM_WIDTH, 200, 1, Integer.MAX_VALUE, false,
                 IItemType.TYPE_PUBLIC, "",
                 International.getString("Breite")));
+        itemlabel.setFieldSize(SMALL_FIELDWIDTH, -1);
+        itemlabel.setFieldGrid(-1, -1, GridBagConstraints.HORIZONTAL);
 
-        addParameterInternal(new ItemTypeInteger(PARAM_HEIGHT, 50, 1, Integer.MAX_VALUE, false,
+        addParameterInternal(itemlabel=new ItemTypeInteger(PARAM_HEIGHT, 50, 1, Integer.MAX_VALUE, false,
                 IItemType.TYPE_PUBLIC, "",
                 International.getString("Höhe")));
+        itemlabel.setFieldSize(SMALL_FIELDWIDTH, -1);
+        itemlabel.setIsItemOnSameRowAsPreviousItem(true);
+        itemlabel.setFieldGrid(-1, -1, GridBagConstraints.HORIZONTAL);
 
-        addParameterInternal(new ItemTypeDouble(PARAM_SCALE, 1, 0.1, 10, false,
+        addParameterInternal(itemlabel=new ItemTypeDouble(PARAM_SCALE, 1, 0.1, 10, false,
                 IItemType.TYPE_PUBLIC, "",
                 International.getString("Skalierung")));
+        itemlabel.setFieldGrid(HTMLWIDGET_GRIDWIDTH-2, -1, GridBagConstraints.HORIZONTAL);
 
         //---- Farben
-        addParameterInternal(new ItemTypeBoolean(PARAM_COLORSACTIVE, false,
+        addParameterInternal(item=new ItemTypeBoolean(PARAM_COLORSACTIVE, false,
 				IItemType.TYPE_PUBLIC, "",
-				International.getString("Standard-Farben definieren")));
+				International.getString("Eigene Farben verwenden")));
 				
-		addParameterInternal(new ItemTypeColor(PARAM_COLORBACKGROUND,
+		addParameterInternal(item=new ItemTypeColor(PARAM_COLORBACKGROUND,
 				EfaUtil.getColor(EfaConfig.standardToolTipBackgroundColor),
 				EfaUtil.getColor(EfaConfig.standardToolTipBackgroundColor), IItemType.TYPE_PUBLIC,
 				"",
 				International.getString("Hintergrundfarbe"), false));
+        item.setFieldGrid(HTMLWIDGET_GRIDWIDTH-2, -1, GridBagConstraints.HORIZONTAL);
 		
-		addParameterInternal(new ItemTypeColor(PARAM_COLORFORECROUND,
+		addParameterInternal(item=new ItemTypeColor(PARAM_COLORFORECROUND,
 				EfaUtil.getColor(EfaConfig.standardToolTipForegroundColor),
 				EfaUtil.getColor(EfaConfig.standardToolTipForegroundColor), IItemType.TYPE_PUBLIC,
 						"",
 						International.getString("Textfarbe"), false));	
+        item.setFieldGrid(HTMLWIDGET_GRIDWIDTH-2, -1, GridBagConstraints.HORIZONTAL);
 		
-		addParameterInternal(new ItemTypeColor(PARAM_HEADER_COLOR_BACKGROUND,
+		addParameterInternal(item=new ItemTypeColor(PARAM_HEADER_COLOR_BACKGROUND,
 				EfaUtil.getColor(EfaConfig.standardToolTipHeaderBackgroundColor),
 				EfaUtil.getColor(EfaConfig.standardToolTipHeaderBackgroundColor), IItemType.TYPE_PUBLIC,
 				"",
 				International.getString("Überschriften Hintergrundfarbe"), false));
+        item.setFieldGrid(HTMLWIDGET_GRIDWIDTH-2, -1, GridBagConstraints.HORIZONTAL);
 
-		addParameterInternal(new ItemTypeColor(PARAM_HEADER_COLOR_FOREGROUND,
+		addParameterInternal(item=new ItemTypeColor(PARAM_HEADER_COLOR_FOREGROUND,
 				EfaUtil.getColor(EfaConfig.standardToolTipHeaderForegroundColor),
 				EfaUtil.getColor(EfaConfig.standardToolTipHeaderForegroundColor), IItemType.TYPE_PUBLIC,
 				"",
 				International.getString("Überschriften Textfarbe"), false));
+        item.setFieldGrid(HTMLWIDGET_GRIDWIDTH-2, -1, GridBagConstraints.HORIZONTAL);
 
         
         // Support multiple HTML Pages
@@ -129,7 +147,16 @@ public class HTMLWidget extends Widget implements IWidget, IItemFactory {
 		htmlPageList.setShortDescription(International.getString("Weitere HTML-Seite"));		
 		htmlPageList.setRepeatTitle(true);
 		htmlPageList.setShowUpDownButtons(true);
+		htmlPageList.setXForAddDelButtons(HTMLWIDGET_GRIDWIDTH-1);
+		htmlPageList.setStorageType(ItemTypeItemList.StorageType.keyvalue);//important flag: GUI items can change in order and elements, without breaking storage
 		super.setPosition(IWidget.POSITION_MULTIWIDGET);
+		
+		item = this.getParameterInternal(PARAM_ENABLED);
+		item.setFieldGrid(HTMLWIDGET_GRIDWIDTH-2, -1, GridBagConstraints.HORIZONTAL);
+		item = this.getParameterInternal(PARAM_POSITION);
+		item.setFieldGrid(HTMLWIDGET_GRIDWIDTH-2, -1, GridBagConstraints.HORIZONTAL);
+		item = this.getParameterInternal(PARAM_UPDATEINTERVAL);
+		item.setFieldGrid(HTMLWIDGET_GRIDWIDTH-2, -1, GridBagConstraints.HORIZONTAL);
     }
 
     public void setSize(int width, int height) {
@@ -370,58 +397,75 @@ public class HTMLWidget extends Widget implements IWidget, IItemFactory {
            
             IItemType[] items = new IItemType[11];
             i=0;
-
-            items[i++] = new ItemTypeFile(PARAM_URL, "",
+            
+    		items[i] = new ItemTypeString(PARAM_CAPTION, "", IItemType.TYPE_PUBLIC, "",
+    				International.getString("Beschriftung"));
+            items[i++].setFieldGrid(HTMLWIDGET_GRIDWIDTH-2, -1, GridBagConstraints.HORIZONTAL);
+            
+            items[i] = new ItemTypeFile(PARAM_URL, "",
                     International.getString("HTML-Seite"),
                     International.getString("HTML-Seite"),
                     null,ItemTypeFile.MODE_OPEN,ItemTypeFile.TYPE_FILE,
                     IItemType.TYPE_PUBLIC, "",
                     "URL");
+            items[i++].setFieldGrid(HTMLWIDGET_GRIDWIDTH-2, -1, GridBagConstraints.HORIZONTAL);
             
-    		items[i++] = new ItemTypeString(PARAM_CAPTION, "", IItemType.TYPE_PUBLIC, "",
-    				International.getString("Beschriftung"));
+
+            
             items[i] = new ItemTypeBoolean(PARAM_USE_HTTP_CACHE, true,
                     IItemType.TYPE_PUBLIC, "",
                     International.getString("HTTP-Caching verwenden"));
-
+            items[i].setFieldGrid(HTMLWIDGET_GRIDWIDTH-2, -1, GridBagConstraints.HORIZONTAL);
     		items[i++].setPadding(0,0,0,10);    
 
             items[i] = new ItemTypeInteger(PARAM_WIDTH, 200, 1, Integer.MAX_VALUE, false,
                     IItemType.TYPE_PUBLIC, "", International.getString("Breite"));
+            items[i].setFieldSize(SMALL_FIELDWIDTH, -1);
+            items[i].setFieldGrid(-1, -1, GridBagConstraints.HORIZONTAL);
             items[i++].setPadding(10,0,0,0);
 
-            items[i++] = new ItemTypeInteger(PARAM_HEIGHT, 50, 1, Integer.MAX_VALUE, false,
+            items[i] = new ItemTypeInteger(PARAM_HEIGHT, 50, 1, Integer.MAX_VALUE, false,
                     IItemType.TYPE_PUBLIC, "", International.getString("Höhe"));
-            items[i++] = new ItemTypeDouble(PARAM_SCALE, 1, 0.1, 10, false,
+            ((ItemTypeLabelTextfield) items[i]).setIsItemOnSameRowAsPreviousItem(true);
+            items[i].setFieldGrid(-1, -1, GridBagConstraints.HORIZONTAL);
+            items[i++].setFieldSize(SMALL_FIELDWIDTH, -1);
+            
+            items[i] = new ItemTypeDouble(PARAM_SCALE, 1, 0.1, 10, false,
                     IItemType.TYPE_PUBLIC, "", International.getString("Skalierung"));
-
-            items[i++] = new ItemTypeBoolean(PARAM_COLORSACTIVE, true,
+            items[i++].setFieldGrid(HTMLWIDGET_GRIDWIDTH-2, -1, GridBagConstraints.HORIZONTAL);
+            
+            items[i] = new ItemTypeBoolean(PARAM_COLORSACTIVE, true,
 					IItemType.TYPE_PUBLIC, "",
-					International.getString("Standard-Farben definieren"));;
-					
-			items[i++] = new ItemTypeColor(PARAM_COLORBACKGROUND,
+					International.getString("Eigene Farben verwenden"));
+            items[i++].setFieldGrid(HTMLWIDGET_GRIDWIDTH-2, -1, GridBagConstraints.HORIZONTAL);
+            
+			items[i] = new ItemTypeColor(PARAM_COLORBACKGROUND,
 							EfaUtil.getColor(Daten.efaConfig.getToolTipBackgroundColor()),
 							EfaUtil.getColor(Daten.efaConfig.getToolTipBackgroundColor()), IItemType.TYPE_PUBLIC,
 							"",
 							International.getString("Hintergrundfarbe"), false);
-			items[i++] =  new ItemTypeColor(PARAM_COLORFORECROUND,
+            items[i++].setFieldGrid(HTMLWIDGET_GRIDWIDTH-2, -1, GridBagConstraints.HORIZONTAL);
+            
+            items[i] =  new ItemTypeColor(PARAM_COLORFORECROUND,
 					EfaUtil.getColor(Daten.efaConfig.getToolTipForegroundColor()),
 					EfaUtil.getColor(Daten.efaConfig.getToolTipForegroundColor()), IItemType.TYPE_PUBLIC,
 							"",
 							International.getString("Textfarbe"), false);							
-
-			items[i++] = new ItemTypeColor(PARAM_HEADER_COLOR_BACKGROUND,
+            items[i++].setFieldGrid(HTMLWIDGET_GRIDWIDTH-2, -1, GridBagConstraints.HORIZONTAL);
+            
+			items[i] = new ItemTypeColor(PARAM_HEADER_COLOR_BACKGROUND,
 					EfaUtil.getColor(EfaConfig.standardToolTipHeaderBackgroundColor),
 					EfaUtil.getColor(EfaConfig.standardToolTipHeaderBackgroundColor), IItemType.TYPE_PUBLIC,
 					"",
 					International.getString("Überschriften Hintergrundfarbe"), false);
-			
-			items[i++] =new ItemTypeColor(PARAM_HEADER_COLOR_FOREGROUND,
+            items[i++].setFieldGrid(HTMLWIDGET_GRIDWIDTH-2, -1, GridBagConstraints.HORIZONTAL);
+            
+			items[i] =new ItemTypeColor(PARAM_HEADER_COLOR_FOREGROUND,
 					EfaUtil.getColor(EfaConfig.standardToolTipHeaderForegroundColor),
 					EfaUtil.getColor(EfaConfig.standardToolTipHeaderForegroundColor), IItemType.TYPE_PUBLIC,
 					"",
 					International.getString("Überschriften Textfarbe"), false);
-
+            items[i++].setFieldGrid(HTMLWIDGET_GRIDWIDTH-2, -1, GridBagConstraints.HORIZONTAL);
             
             return items;
 		}
