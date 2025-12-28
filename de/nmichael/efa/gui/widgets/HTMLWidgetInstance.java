@@ -96,13 +96,14 @@ public class HTMLWidgetInstance extends WidgetInstance implements IWidgetInstanc
         //now the htmlPane is set up, check if user wants to use a caption.
         if (isCaptionActive()) {
         	createRoundPanelWithCaption();
+            scrollPane.setBorder(BorderFactory.createEmptyBorder());// we want no border on an inner scroll pane.
         }
         
         if (getWidth() > 0 && getHeight() > 0) {
             scrollPane.setPreferredSize(new Dimension(getWidth(), getHeight()));
         }
         scrollPane.getViewport().add(htmlPane, null);
-        scrollPane.setBorder(BorderFactory.createEmptyBorder());// we want no border on an inner scroll pane.
+
         if (htmlUpdater == null) {
             htmlUpdater = new HTMLUpdater();
         }
