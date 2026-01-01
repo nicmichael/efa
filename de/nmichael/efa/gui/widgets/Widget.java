@@ -79,7 +79,7 @@ public abstract class Widget implements IWidget {
                     International.getMessage("{item} aktivieren", description))));
 
         if (ongui) {
-            addParameterInternal(new ItemTypeStringList(PARAM_POSITION, POSITION_BOTTOM,
+            addParameterInternal(new ItemTypeStringList(PARAM_POSITION, POSITION_MULTIWIDGET,
                     new String[]{POSITION_TOP, POSITION_BOTTOM, POSITION_LEFT, POSITION_RIGHT, POSITION_CENTER, POSITION_MULTIWIDGET},
                     new String[]{International.getString("oben"),
                         International.getString("unten"),

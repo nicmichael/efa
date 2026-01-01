@@ -13,7 +13,6 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import de.nmichael.efa.Daten;
-import de.nmichael.efa.util.International;
 import de.nmichael.efa.util.Logger;
 
 public class WeatherRendererCurrentUVIndex extends WeatherRenderer {
@@ -45,11 +44,11 @@ public class WeatherRendererCurrentUVIndex extends WeatherRenderer {
 		String tempLabel = " "+ww.getTempLabel(true);
 		
 		curWeather_temp = new JLabel();
-		curWeather_temp.setForeground(Daten.efaConfig.getToolTipHeaderForegroundColor());
+		curWeather_temp.setForeground(ww.getStandardForeground());
 		curWeather_temp.setFont(
 				roundPanel.getFont().deriveFont((float) (Daten.efaConfig.getValueEfaDirekt_BthsFontSize() + 8)));
 		curWeather_temp.setFont(curWeather_temp.getFont().deriveFont(Font.BOLD));
-		curWeather_temp.setText(" "+WeatherRendererError.oneDecimal(wdf.getCurrentWeather().getTemperature()) +" "+ ww.getTempLabel(true));
+		curWeather_temp.setText(" "+WeatherRenderer.oneDecimal(wdf.getCurrentWeather().getTemperature()) +" "+ ww.getTempLabel(true));
 
 		curWeather_icon.setIcon(WeatherIcons.getWeatherIconForCode(wdf.getCurrentWeather().getIconCode(), 64,
 				wdf.getCurrentWeather().getIsDay() == 1, false));
@@ -57,31 +56,31 @@ public class WeatherRendererCurrentUVIndex extends WeatherRenderer {
 		curWeather_icon.setIconTextGap(0);
 		curWeather_icon.setHorizontalTextPosition(SwingConstants.LEFT);
 		
-		curWeather_minTemp.setText(WeatherRendererError.oneDecimal(minTemp) + tempLabel);
-		curWeather_minTemp.setForeground(Daten.efaConfig.getToolTipHeaderForegroundColor());
+		curWeather_minTemp.setText(WeatherRenderer.oneDecimal(minTemp) + tempLabel);
+		curWeather_minTemp.setForeground(ww.getStandardForeground());
 
-		curWeather_maxTemp.setText(WeatherRendererError.oneDecimal(maxTemp) + tempLabel);
-		curWeather_maxTemp.setForeground(Daten.efaConfig.getToolTipHeaderForegroundColor());
+		curWeather_maxTemp.setText(WeatherRenderer.oneDecimal(maxTemp) + tempLabel);
+		curWeather_maxTemp.setForeground(ww.getStandardForeground());
 
 		curWeather_sunshine.setText(WeatherRenderer.oneDecimal(sunshine));
-		curWeather_sunshine.setForeground(Daten.efaConfig.getToolTipHeaderForegroundColor());
+		curWeather_sunshine.setForeground(ww.getStandardForeground());
 
 		curWeather_sunshineUnit.setText("h");
-		curWeather_sunshineUnit.setForeground(Daten.efaConfig.getToolTipHeaderForegroundColor());
+		curWeather_sunshineUnit.setForeground(ww.getStandardForeground());
 		curWeather_sunshineUnit.setFont(
 				roundPanel.getFont().deriveFont((float) (Daten.efaConfig.getValueEfaDirekt_BthsFontSize() -4)));
 		curWeather_sunshineUnit.setVerticalTextPosition(SwingConstants.BOTTOM);
 		
 		curWeather_uvindex.setText(WeatherRenderer.oneDecimal(uvindex));
-		curWeather_uvindex.setForeground(Daten.efaConfig.getToolTipHeaderForegroundColor());
+		curWeather_uvindex.setForeground(ww.getStandardForeground());
 		curWeather_uvindex.setHorizontalAlignment(SwingConstants.RIGHT);
 		
 		DecimalFormat df = new DecimalFormat("#");
 		curWeather_rain.setText(df.format(rain)); 
-		curWeather_rain.setForeground(Daten.efaConfig.getToolTipHeaderForegroundColor());
+		curWeather_rain.setForeground(ww.getStandardForeground());
 		
 		curWeather_rainUnit.setText("mm");
-		curWeather_rainUnit.setForeground(Daten.efaConfig.getToolTipHeaderForegroundColor());
+		curWeather_rainUnit.setForeground(ww.getStandardForeground());
 		curWeather_rainUnit.setFont(
 				roundPanel.getFont().deriveFont((float) (Daten.efaConfig.getValueEfaDirekt_BthsFontSize() -4)));
 		curWeather_rainUnit.setVerticalTextPosition(SwingConstants.BOTTOM);
@@ -170,7 +169,7 @@ public class WeatherRendererCurrentUVIndex extends WeatherRenderer {
 		
 		// Build the main panel view
 
-		roundPanel.add(getLocationHeader(ww.getCaption(),!ww.getHtmlPopupURL().isEmpty()), new GridBagConstraints(0, 0, 3, 1, 1.0, 0.0, GridBagConstraints.CENTER,
+		roundPanel.add(getLocationHeader(ww.getCaption(),!ww.getHtmlPopupURL().isEmpty(), ww), new GridBagConstraints(0, 0, 3, 1, 1.0, 0.0, GridBagConstraints.CENTER,
 			GridBagConstraints.BOTH, new Insets(2, 2, 2, 2), 0, 0));		
 				
 		//first row

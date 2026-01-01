@@ -24,60 +24,61 @@ public class WeatherRendererForeCastSimple extends WeatherRenderer {
 		
 		int hourlyIndex = wdf.getHourly().getIndexForCurrentTime();
 		
-		roundPanel.add(getLocationHeader(ww.getCaption(),!ww.getHtmlPopupURL().isEmpty()), new GridBagConstraints(0, 0, 4, 1, 1.0, 0.0, GridBagConstraints.CENTER,
+		roundPanel.add(getLocationHeader(ww.getCaption(),!ww.getHtmlPopupURL().isEmpty(), ww), new GridBagConstraints(0, 0, 4, 1, 1.0, 0.0, GridBagConstraints.CENTER,
 			GridBagConstraints.BOTH, new Insets(2, 2, 2, 2), 0, 0));		
 		
 		roundPanel.add(
 				addForeCastPanel(WeatherRenderer.getHourlyHourRendering(wdf, hourlyIndex), 
 						WeatherRenderer.getHourlyWeatherIcon(wdf,hourlyIndex),
 						WeatherRenderer.getHourlyDescription(wdf,hourlyIndex),
-						WeatherRenderer.getHourlyTemp(wdf, hourlyIndex, tempLabel), roundPanel),
+						WeatherRenderer.getHourlyTemp(wdf, hourlyIndex, tempLabel), roundPanel, ww),
 						new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.VERTICAL,
 						new Insets(4, 2, 2, 4), 0, 0));
 		roundPanel.add(
 				addForeCastPanel(WeatherRenderer.getHourlyHourRendering(wdf, hourlyIndex+1) , 
 						WeatherRenderer.getHourlyWeatherIcon(wdf,hourlyIndex+1),
 						WeatherRenderer.getHourlyDescription(wdf,hourlyIndex+1),
-						WeatherRenderer.getHourlyTemp(wdf, hourlyIndex+1, tempLabel), roundPanel),
+						WeatherRenderer.getHourlyTemp(wdf, hourlyIndex+1, tempLabel), roundPanel, ww),
 						new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.VERTICAL,
 						new Insets(4, 2, 2, 4), 0, 0));
 		roundPanel.add(
 				addForeCastPanel(WeatherRenderer.getHourlyHourRendering(wdf, hourlyIndex+2), 
 						WeatherRenderer.getHourlyWeatherIcon(wdf,hourlyIndex+2),
 						WeatherRenderer.getHourlyDescription(wdf,hourlyIndex+2),
-						WeatherRenderer.getHourlyTemp(wdf, hourlyIndex+2, tempLabel), roundPanel),
+						WeatherRenderer.getHourlyTemp(wdf, hourlyIndex+2, tempLabel), roundPanel, ww),
 						new GridBagConstraints(2, 1, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.VERTICAL,
 						new Insets(4, 2, 2, 4), 0, 0));
 		roundPanel.add(
 				addForeCastPanel(WeatherRenderer.getHourlyHourRendering(wdf, hourlyIndex+3), 
 						WeatherRenderer.getHourlyWeatherIcon(wdf,hourlyIndex+3),
 						WeatherRenderer.getHourlyDescription(wdf,hourlyIndex+3),
-						WeatherRenderer.getHourlyTemp(wdf, hourlyIndex+3, tempLabel), roundPanel),
+						WeatherRenderer.getHourlyTemp(wdf, hourlyIndex+3, tempLabel), roundPanel, ww),
 						new GridBagConstraints(3, 1, 1, 1, 1.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.VERTICAL,
 						new Insets(4, 2, 2, 4), 0, 0));
 	}
 
 
-	private static JPanel addForeCastPanel(String time, ImageIcon weatherIcon, String description, String temp, JPanel roundPanel) {
+	private static JPanel addForeCastPanel(String time, ImageIcon weatherIcon, String description, String temp, JPanel roundPanel,
+			WeatherWidgetInstance ww) {
 		JPanel myPanel = initializePanel(roundPanel);
 		JLabel timeLabel = initializeLabel(roundPanel);
 		JLabel weatherIconLabel = initializeLabel(roundPanel);
 		JLabel tempLabel = initializeLabel(roundPanel);
 		
-		myPanel.setForeground(Daten.efaConfig.getToolTipForegroundColor());
-		myPanel.setBackground(Daten.efaConfig.getToolTipBackgroundColor());
+		myPanel.setForeground(ww.getStandardForeground());
+		myPanel.setBackground(ww.getStandardBackground());
 
 		timeLabel.setText(time);
 		timeLabel.setHorizontalTextPosition(SwingConstants.CENTER);
 		timeLabel.setFont(timeLabel.getFont().deriveFont(Font.BOLD));
-		timeLabel.setForeground(Daten.efaConfig.getToolTipHeaderForegroundColor());
+		timeLabel.setForeground(ww.getStandardForeground());
 
 		weatherIconLabel.setIcon(weatherIcon);
 		weatherIconLabel.setIconTextGap(0);
 		weatherIconLabel.setHorizontalTextPosition(SwingConstants.CENTER);
 		weatherIconLabel.setToolTipText(description);
 		tempLabel.setText(temp);
-		tempLabel.setForeground(Daten.efaConfig.getToolTipHeaderForegroundColor());
+		tempLabel.setForeground(ww.getStandardForeground());
 		tempLabel.setHorizontalTextPosition(SwingConstants.CENTER);
 		
    	    myPanel.add(timeLabel,   		new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.VERTICAL, 		new Insets(1,3,1,3), 0, 0));

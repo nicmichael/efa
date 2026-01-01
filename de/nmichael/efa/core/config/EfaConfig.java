@@ -990,33 +990,6 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 					BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
 					International.getString("Tooltipp-Überschriften Textfarbe"), false));					
 			
-
-			addHeader("efaGuiError", IItemType.TYPE_PUBLIC,
-					BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
-					International.getString("Farben für Fehlermeldungen"), 3);
-			
-			addParameter(efaGuiErrorBackground = new ItemTypeColor("efaGuiErrorBackground",
-					EfaUtil.getColor(standardErrorBackgroundColor),
-					EfaUtil.getColor(standardErrorBackgroundColor), IItemType.TYPE_PUBLIC,
-					BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
-					International.getString("Fehler Hintergrundfarbe"), false));
-			addParameter(efaGuiErrorForeground = new ItemTypeColor("efaGuiErrorForeground",
-					EfaUtil.getColor(standardErrorForegroundColor),
-					EfaUtil.getColor(standardErrorForegroundColor), IItemType.TYPE_PUBLIC,
-					BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
-					International.getString("Fehler Textfarbe"), false));		
-
-			addParameter(efaGuiErrorHeaderBackground = new ItemTypeColor("efaGuiErrorHeaderBackground",
-					EfaUtil.getColor(standardErrorHeaderBackgroundColor),
-					EfaUtil.getColor(standardErrorHeaderBackgroundColor), IItemType.TYPE_PUBLIC,
-					BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
-					International.getString("Fehler-Überschriften Hintergrundfarbe"), false));
-			addParameter(efaGuiErrorHeaderForeground = new ItemTypeColor("efaGuiErrorHeaderForeground",
-					EfaUtil.getColor(standardErrorHeaderForegroundColor),
-					EfaUtil.getColor(standardErrorHeaderForegroundColor), IItemType.TYPE_PUBLIC,
-					BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
-					International.getString("Fehler-Überschriften Textfarbe"), false));					
-			
 			addHeader("efaGuiOtherFont", IItemType.TYPE_PUBLIC,
 					BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_GUI),
 					International.getString("Schriftart für efaBase"), 3);

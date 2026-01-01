@@ -16,8 +16,8 @@ public class WeatherRendererError extends WeatherRenderer {
 	
 	public static void renderWeather(WeatherDataForeCast wdf, JPanel roundPanel, WeatherWidgetInstance ww) {
 		JTextArea errorLabel1= new JTextArea();
-		errorLabel1.setBackground(Daten.efaConfig.getErrorBackgroundColor());
-		errorLabel1.setForeground(Daten.efaConfig.getErrorForegroundColor());
+		errorLabel1.setBackground(ww.getErrorBackground());
+		errorLabel1.setForeground(ww.getErrorForeground());
 		errorLabel1.setFont(
 				roundPanel.getFont().deriveFont((float) (Daten.efaConfig.getValueEfaDirekt_BthsFontSize())));
 		errorLabel1.setFont(errorLabel1.getFont().deriveFont(Font.BOLD));
@@ -30,13 +30,13 @@ public class WeatherRendererError extends WeatherRenderer {
 		errorLabel1.setOpaque(false);
 		errorLabel1.setEditable(false);
 		
-		roundPanel.setBackground(Daten.efaConfig.getErrorBackgroundColor());
-		roundPanel.setForeground(Daten.efaConfig.getErrorForegroundColor());
-		roundPanel.setBorder(new RoundedBorder(Daten.efaConfig.getErrorForegroundColor()));
+		roundPanel.setBackground(ww.getErrorBackground());
+		roundPanel.setForeground(ww.getErrorForeground());
+		roundPanel.setBorder(new RoundedBorder(ww.getErrorForeground()));
 		
-		JPanel titlePanel = WeatherRenderer.getLocationHeader(ww.getCaption(), true);
-		titlePanel.setBackground(Daten.efaConfig.getErrorHeaderBackgroundColor());
-		titlePanel.setForeground(Daten.efaConfig.getErrorHeaderForegroundColor());
+		JPanel titlePanel = WeatherRenderer.getLocationHeader(ww.getCaption(), true, ww);
+		titlePanel.setBackground(ww.getErrorHeaderBackground());
+		titlePanel.setForeground(ww.getErrorHeaderForeground());
 		
 		// Build the main panel view
 

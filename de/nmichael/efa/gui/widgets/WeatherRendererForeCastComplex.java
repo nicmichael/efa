@@ -24,7 +24,7 @@ public class WeatherRendererForeCastComplex extends WeatherRenderer {
 		// Build the main panel view
 		int hourlyIndex = wdf.getHourly().getIndexForCurrentTime();
 
-		roundPanel.add(getLocationHeader(ww.getCaption(),!ww.getHtmlPopupURL().isEmpty()), new GridBagConstraints(0, 0, 9, 1, 1.0, 0.0, GridBagConstraints.CENTER,
+		roundPanel.add(getLocationHeader(ww.getCaption(),!ww.getHtmlPopupURL().isEmpty(), ww), new GridBagConstraints(0, 0, 9, 1, 1.0, 0.0, GridBagConstraints.CENTER,
 			GridBagConstraints.BOTH, new Insets(2, 2, 2, 2), 0, 0));		
 		
 				addForeCastPanel(WeatherRenderer.getHourlyHourRendering(wdf, hourlyIndex), 
@@ -34,7 +34,7 @@ public class WeatherRendererForeCastComplex extends WeatherRenderer {
 						WeatherRenderer.getHourlyUVIndexVal(wdf, hourlyIndex), 
 						WeatherRenderer.getHourlyUVIndexIcon(wdf, hourlyIndex),
 						WeatherRenderer.getHourlyRain(wdf, hourlyIndex)+" mm",
-						WeatherRenderer.getHourlyRainPercentage(wdf, hourlyIndex)+"%", roundPanel, startY);
+						WeatherRenderer.getHourlyRainPercentage(wdf, hourlyIndex)+"%", roundPanel, startY, ww);
 
 				startY=startY+2;
 				hourlyIndex++;
@@ -45,7 +45,7 @@ public class WeatherRendererForeCastComplex extends WeatherRenderer {
 						WeatherRenderer.getHourlyUVIndexVal(wdf, hourlyIndex), 
 						WeatherRenderer.getHourlyUVIndexIcon(wdf, hourlyIndex),
 						WeatherRenderer.getHourlyRain(wdf, hourlyIndex)+" mm",
-						WeatherRenderer.getHourlyRainPercentage(wdf, hourlyIndex)+"%", roundPanel, startY);
+						WeatherRenderer.getHourlyRainPercentage(wdf, hourlyIndex)+"%", roundPanel, startY, ww);
 				
 				startY=startY+2;
 				hourlyIndex++;		
@@ -56,12 +56,13 @@ public class WeatherRendererForeCastComplex extends WeatherRenderer {
 						WeatherRenderer.getHourlyUVIndexVal(wdf, hourlyIndex), 
 						WeatherRenderer.getHourlyUVIndexIcon(wdf, hourlyIndex),
 						WeatherRenderer.getHourlyRain(wdf, hourlyIndex)+" mm",
-						WeatherRenderer.getHourlyRainPercentage(wdf, hourlyIndex)+"%", roundPanel, startY);
+						WeatherRenderer.getHourlyRainPercentage(wdf, hourlyIndex)+"%", roundPanel, startY, ww);
 	}
 
 	
 
-	private static void addForeCastPanel(String time, ImageIcon weatherIcon, String weatherDescription, String temp, String uvIndex, ImageIcon uvIndexLevel, String rain, String rainPercentage, JPanel roundPanel, int startY) {
+	private static void addForeCastPanel(String time, ImageIcon weatherIcon, String weatherDescription, String temp, String uvIndex, 
+			ImageIcon uvIndexLevel, String rain, String rainPercentage, JPanel roundPanel, int startY, WeatherWidgetInstance ww) {
 		//JPanel myPanel = initializePanel(roundPanel);
 		JLabel timeLabel = initializeLabel(roundPanel);
 		JLabel weatherIconLabel = initializeLabel(roundPanel);
@@ -79,14 +80,14 @@ public class WeatherRendererForeCastComplex extends WeatherRenderer {
 		timeLabel.setText(time);
 		timeLabel.setHorizontalTextPosition(SwingConstants.CENTER);
 		timeLabel.setFont(timeLabel.getFont().deriveFont(Font.BOLD));
-		timeLabel.setForeground(Daten.efaConfig.getToolTipHeaderForegroundColor());
+		timeLabel.setForeground(ww.getStandardForeground());
 
 		weatherIconLabel.setIcon(weatherIcon);
 		weatherIconLabel.setIconTextGap(0);
 		weatherIconLabel.setHorizontalTextPosition(SwingConstants.CENTER);
 		weatherIconLabel.setToolTipText(weatherDescription);
 		tempLabel.setText(temp);
-		tempLabel.setForeground(Daten.efaConfig.getToolTipHeaderForegroundColor());
+		tempLabel.setForeground(ww.getStandardForeground());
 		tempLabel.setHorizontalTextPosition(SwingConstants.CENTER);
 
 		uvIndexLegendLabel.setIcon(WeatherIcons.getIcon(WeatherIcons.IMAGE_UV_INDEX));
@@ -94,7 +95,7 @@ public class WeatherRendererForeCastComplex extends WeatherRenderer {
 	
 		uvIndexLabel.setIconTextGap(0);
 		uvIndexLabel.setText(uvIndex);
-		uvIndexLabel.setForeground(Daten.efaConfig.getToolTipHeaderForegroundColor());
+		uvIndexLabel.setForeground(ww.getStandardForeground());
 		uvIndexLabel.setHorizontalTextPosition(SwingConstants.RIGHT);
 		uvIndexStatusLabel.setIcon(uvIndexLevel);
 		uvIndexStatusLabel.setIconTextGap(0);
@@ -109,7 +110,7 @@ public class WeatherRendererForeCastComplex extends WeatherRenderer {
 		//rainLabel.setForeground(Daten.efaConfig.getToolTipHeaderForegroundColor());
 
 		rainLabelPercent.setText(rainPercentage);
-		rainLabelPercent.setForeground(Daten.efaConfig.getToolTipHeaderForegroundColor());
+		rainLabelPercent.setForeground(ww.getStandardForeground());
 		rainLabelPercent.setHorizontalTextPosition(SwingConstants.RIGHT);
 
 		

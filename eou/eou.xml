@@ -2,7 +2,7 @@
 <efaOnlineUpdate>
  <Version>
         <VersionID>2.5.1#4</VersionID>
-        <ReleaseDate>29.11.2025</ReleaseDate>
+        <ReleaseDate>01.01.2026</ReleaseDate>
         <DownloadUrl>TODO</DownloadUrl>
         <DownloadSize>TODO</DownloadSize>
      	<MinimumJavaVersion>1.8</MinimumJavaVersion>
@@ -15,15 +15,23 @@
             <ChangeItem>Neu: Widget: HTML-Widget: Klick auf die Fläche des Widgets öffnet die Inhalte in einem Popup-Fenster. Dieses schließt sich automatisch nach 90 Sekunden. </ChangeItem>
             <ChangeItem>Neu: Widget: HTML-Widget: Anzeige einer Sanduhr als Mauszeiger, wenn der Browser nach Klick auf einem Link geöffnet wird.</ChangeItem>
             <ChangeItem>Neu: Widget: HTML-Widget: Reihenfolge der Felder in der Oberfläche verbessert. </ChangeItem>
+            <ChangeItem>Neu: Widget: HTML-Widget: Einzelne HTML-Seiten können ausgeblendet werden.</ChangeItem>
+            <ChangeItem>Neu: Widget: HTML-Widget: HTML-Seite aus früheren efa-Versionen wird nicht mehr angezeigt (und muss manuell eingerichtet werden)</ChangeItem>
             <ChangeItem>Neu: Widget: Wetter-Widget: Reihenfolge der Felder in der Oberfläche verbessert.</ChangeItem>
             <ChangeItem>Neu: Widget: Wetter-Widget: Bessere Formatierung von Fließkommazahlen kleiner 1.</ChangeItem>
+            <ChangeItem>Neu: Widget: Wetter-Widget: Benutzerefinierte Farben für Wetterwidget.</ChangeItem>
+            <Changeitem>Bugfix: Widget: HTML-Widget: Bessere Behandlung des Standard-Browsers auf Linux/RASPIan. Verwendet internen Browser als Fallback, wenn externer Browser nicht geöffnet werden kann.</Changeitem>
         </Changes>
         <Changes lang="en">
             <ChangeItem>New: Widget: HTML-Widget: Clicking in the area of the HTML widget opens a Popup window that closes automatically after 90 seconds.</ChangeItem>
             <ChangeItem>New: Widget: HTML-Widget: Mouse cursor is an hourglass while opening the external browser.</ChangeItem>
             <ChangeItem>New: Widget: HTML-Widget: Optimized order of parameter fields in the GUI.</ChangeItem>
+            <ChangeItem>New: Widget: HTML-Widget: Each HTML page can be set to invisible.</ChangeItem>
+            <ChangeItem>New: Widget: HTML-Widget: HTML-pages configured in earlier versions of efa won't be shown any more (and must be re-configured manually).</ChangeItem>
             <ChangeItem>New: Widget: Weather-Widget: Optimized order of parameter fields in the GUI.</ChangeItem>
             <ChangeItem>New: Widget: Weather-Widget: Optimized rendering of double values &lt; 1.</ChangeItem>
+            <ChangeItem>New: Widget: Weather-Widget: Colors are customizable.</ChangeItem>
+			<Changeitem>Bugfix: Widget: HTML-Widget: Handle default browser on Linux/RASPIan. Open internal browser if external browser fails.</Changeitem>
         </Changes>
 	</Version>
     <Version>

@@ -177,14 +177,25 @@ public class EfaGuiUtils {
             	}
             	
                 try {
-                	String theBrowser = Daten.efaConfig.getValueBrowser();
-                	if (theBrowser!=null && theBrowser.trim().length()>0 && theBrowser.trim().equalsIgnoreCase(BrowserDialog.INTERNAL_BROWSER)) {
-                		BrowserDialog.openExternalBrowser(null, urlString);
+                	String theBrowser = Daten.efaConfig.getValueBrowser().trim();
+                	if (theBrowser!=null && theBrowser.length()>0) {
+                		// use internal browser, if browser config says "INTERN", otherwise start to run the external browser
+                		if (theBrowser.equalsIgnoreCase(BrowserDialog.INTERNAL_BROWSER)) {
+                			BrowserDialog.openInternalBrowser(null, urlString);
+                		} else {
+                			BrowserDialog.openExternalBrowser(null, urlString);               			
+                		}
                 	} else {
                 		//else use standard System function to run a browser.
                 		Desktop.getDesktop().browse(e.getURL().toURI());
                 	}
                 } catch (IOException eIO) {
+            		try {
+            			BrowserDialog.openInternalBrowser(null, urlString);
+            		} catch (Exception eOther){
+            			Logger.log(eOther);
+            		}
+                } catch (UnsupportedOperationException eUOP) {
             		try {
             			BrowserDialog.openInternalBrowser(null, urlString);
             		} catch (Exception eOther){

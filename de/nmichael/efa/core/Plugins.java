@@ -35,6 +35,7 @@ public class Plugins {
     public static final String PLUGIN_PDF = "pdf";
     public static final String PLUGIN_WEATHER = "weather";
     public static final String PLUGIN_FLATLAF = "flatlaf";
+    public static final String PLUGIN_FLATLAF36 = "flatlaf36";
 
     private Hashtable<String,PluginInfo> pluginInfos;
 
@@ -116,12 +117,18 @@ public class Plugins {
             }
         }
         
-        if (pluginName.equals(PLUGIN_FLATLAF)) {
+        if (pluginName.equals(PLUGIN_FLATLAF)||pluginName.equals(PLUGIN_FLATLAF36)) {
         	// During initialization of efa programs it is determined if flatlaf library is actually present.
-        	// a failure mostly comes from a missing flatlaf-3.2.5.jar in the classpath.
+        	// a failure mostly comes from a missing flatlaf-3.2.5.jar in the classpath.  
+        	
+        	// in efa 2.5.1 and newer, we only need flatlaf 3.6. the classpath variable
+        	// in runefa.sh / runefa.bat takes care that the appropriate library version is used;
+        	// but once flatlaf is initialized correctly, we return "true" for both libraries.
         	return Daten.flatLafInitializationOK;
-        }        
-
+        }           
+        
+        //if we are here, an unknown plugin name is queried. put a "warning" log entry.
+        Logger.log(Logger.WARNING, International.getString("Unbekannter Pluginname: ")+pluginName);
         return false;
     }
 

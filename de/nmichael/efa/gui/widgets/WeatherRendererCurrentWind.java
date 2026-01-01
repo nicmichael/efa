@@ -44,7 +44,7 @@ public class WeatherRendererCurrentWind extends WeatherRenderer {
 		String tempLabel = ww.getTempLabel(false);
 		
 		curWeather_temp = new JLabel();
-		curWeather_temp.setForeground(Daten.efaConfig.getToolTipHeaderForegroundColor());
+		curWeather_temp.setForeground(ww.getStandardForeground());
 		curWeather_temp.setFont(
 				roundPanel.getFont().deriveFont((float) (Daten.efaConfig.getValueEfaDirekt_BthsFontSize() + 10)));
 		curWeather_temp.setFont(curWeather_temp.getFont().deriveFont(Font.BOLD));
@@ -55,26 +55,26 @@ public class WeatherRendererCurrentWind extends WeatherRenderer {
 		curWeather_icon.setToolTipText(wdf.getCurrentWeather().getDescription());
 
 		curWeather_minTemp.setText(WeatherRenderer.oneDecimal(minTemp) + tempLabel);
-		curWeather_minTemp.setForeground(Daten.efaConfig.getToolTipHeaderForegroundColor());
+		curWeather_minTemp.setForeground(ww.getStandardForeground());
 
 		curWeather_maxTemp.setText(WeatherRenderer.oneDecimal(maxTemp) + tempLabel);
-		curWeather_maxTemp.setForeground(Daten.efaConfig.getToolTipHeaderForegroundColor());
+		curWeather_maxTemp.setForeground(ww.getStandardForeground());
 
 		curWeather_sunshine.setText(WeatherRenderer.oneDecimal(sunshine));
-		curWeather_sunshine.setForeground(Daten.efaConfig.getToolTipHeaderForegroundColor());
+		curWeather_sunshine.setForeground(ww.getStandardForeground());
 
 		curWeather_sunshineUnit.setText("h");
-		curWeather_sunshineUnit.setForeground(Daten.efaConfig.getToolTipHeaderForegroundColor());
+		curWeather_sunshineUnit.setForeground(ww.getStandardForeground());
 		curWeather_sunshineUnit.setFont(
 				roundPanel.getFont().deriveFont((float) (Daten.efaConfig.getValueEfaDirekt_BthsFontSize() -4)));
 		curWeather_sunshineUnit.setVerticalTextPosition(SwingConstants.BOTTOM);
 		
 		DecimalFormat df = new DecimalFormat("#");
 		curWeather_rain.setText(df.format(rain)); 
-		curWeather_rain.setForeground(Daten.efaConfig.getToolTipHeaderForegroundColor());
+		curWeather_rain.setForeground(ww.getStandardForeground());
 
 		curWeather_rainUnit.setText("mm");
-		curWeather_rainUnit.setForeground(Daten.efaConfig.getToolTipHeaderForegroundColor());
+		curWeather_rainUnit.setForeground(ww.getStandardForeground());
 		curWeather_rainUnit.setFont(
 				roundPanel.getFont().deriveFont((float) (Daten.efaConfig.getValueEfaDirekt_BthsFontSize() -4)));
 		curWeather_rainUnit.setVerticalTextPosition(SwingConstants.BOTTOM);
@@ -118,12 +118,12 @@ public class WeatherRendererCurrentWind extends WeatherRenderer {
 				+ International.getString(wdf.getCurrentWeather().getWindDirectionText()) + " "
 				+ International.getString("mit") + " " + wdf.getCurrentWeather().getWindSpeed()
 				+ ww.getSpeedScale());
-		curWeather_wind.setForeground(Daten.efaConfig.getToolTipHeaderForegroundColor());
+		curWeather_wind.setForeground(ww.getStandardForeground());
 		curWeather_wind.setHorizontalTextPosition(SwingConstants.CENTER);
 
 		// Build the main panel view
 
-		roundPanel.add(getLocationHeader(ww.getCaption(),!ww.getHtmlPopupURL().isEmpty()), new GridBagConstraints(0, 0, 3, 1, 1.0, 0.0, GridBagConstraints.CENTER,
+		roundPanel.add(getLocationHeader(ww.getCaption(),!ww.getHtmlPopupURL().isEmpty(), ww), new GridBagConstraints(0, 0, 3, 1, 1.0, 0.0, GridBagConstraints.CENTER,
 			GridBagConstraints.BOTH, new Insets(2, 2, 2, 2), 0, 0));		
 				
 		roundPanel.add(curWeather_temp, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER,

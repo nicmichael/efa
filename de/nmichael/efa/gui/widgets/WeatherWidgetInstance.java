@@ -1,5 +1,6 @@
 package de.nmichael.efa.gui.widgets;
 
+import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -42,6 +43,16 @@ public class WeatherWidgetInstance extends WidgetInstance implements IWidgetInst
 	private int htmlPopupHeight;
 	private int updateInterval;
 	
+	private Color standardBackground;
+	private Color standardForeground;
+	private Color standardHeaderBackground;
+	private Color standardHeaderForeground;
+	
+	private Color errorBackground;
+	private Color errorForeground;
+	private Color errorHeaderBackground;
+	private Color errorHeaderForeground;
+	
 	@Override
 	public void runWidgetWarnings(int mode, boolean actionBegin, LogbookRecord r) {
 		// Nothing to do here
@@ -72,9 +83,9 @@ public class WeatherWidgetInstance extends WidgetInstance implements IWidgetInst
 		roundPanel = new RoundedPanel();
 		
 		roundPanel.setLayout(new GridBagLayout());
-		roundPanel.setBackground(Daten.efaConfig.getToolTipBackgroundColor());
-		roundPanel.setForeground(Daten.efaConfig.getToolTipForegroundColor());
-		roundPanel.setBorder(new RoundedBorder(Daten.efaConfig.getToolTipForegroundColor()));
+		roundPanel.setBackground(getStandardBackground());
+		roundPanel.setForeground(getStandardForeground());
+		roundPanel.setBorder(new RoundedBorder(getStandardForeground()));
 		roundPanel.setName("WeatherWidget-RoundPanel");
 		//grow in horizontal width
 		mainPanel.add(roundPanel, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER,
@@ -121,9 +132,9 @@ public class WeatherWidgetInstance extends WidgetInstance implements IWidgetInst
 		infoLabel.setOpaque(false);
 		infoLabel.setEditable(false);
 		
-		JPanel titlePanel = WeatherRenderer.getLocationHeader(this.getCaption(), !this.getHtmlPopupURL().isEmpty());
-		titlePanel.setBackground(Daten.efaConfig.getToolTipHeaderBackgroundColor());
-		titlePanel.setForeground(Daten.efaConfig.getToolTipHeaderForegroundColor());
+		JPanel titlePanel = WeatherRenderer.getLocationHeader(this.getCaption(), !this.getHtmlPopupURL().isEmpty(), this);
+		titlePanel.setBackground(getStandardHeaderBackground());
+		titlePanel.setForeground(getStandardHeaderForeground());
 		
 		// Build the main panel view
 
@@ -238,6 +249,70 @@ public class WeatherWidgetInstance extends WidgetInstance implements IWidgetInst
 		this.updateInterval = updateInterval;
 	}
 
+	public Color getStandardBackground() {
+		return standardBackground;
+	}
+
+	public void setStandardBackground(Color standardBackground) {
+		this.standardBackground = standardBackground;
+	}
+
+	public Color getStandardForeground() {
+		return standardForeground;
+	}
+
+	public void setStandardForeground(Color standardForeground) {
+		this.standardForeground = standardForeground;
+	}
+
+	public Color getStandardHeaderBackground() {
+		return standardHeaderBackground;
+	}
+
+	public void setStandardHeaderBackground(Color standardHeaderBackground) {
+		this.standardHeaderBackground = standardHeaderBackground;
+	}
+
+	public Color getStandardHeaderForeground() {
+		return standardHeaderForeground;
+	}
+
+	public void setStandardHeaderForeground(Color standardHeaderForeground) {
+		this.standardHeaderForeground = standardHeaderForeground;
+	}
+
+	public Color getErrorBackground() {
+		return errorBackground;
+	}
+
+	public void setErrorBackground(Color errorBackground) {
+		this.errorBackground = errorBackground;
+	}
+
+	public Color getErrorForeground() {
+		return errorForeground;
+	}
+
+	public void setErrorForeground(Color errorForeground) {
+		this.errorForeground = errorForeground;
+	}
+
+	public Color getErrorHeaderBackground() {
+		return errorHeaderBackground;
+	}
+
+	public void setErrorHeaderBackground(Color errorHeaderBackground) {
+		this.errorHeaderBackground = errorHeaderBackground;
+	}
+
+	public Color getErrorHeaderForeground() {
+		return errorHeaderForeground;
+	}
+
+	public void setErrorHeaderForeground(Color errorHeaderForeground) {
+		this.errorHeaderForeground = errorHeaderForeground;
+	}
+
 	/**
 	 * The WeatherUpdate obtains Weather Data in a separate thread, so that
 	 * the time for getting weather data does not affect the main thread,
@@ -335,8 +410,8 @@ public class WeatherWidgetInstance extends WidgetInstance implements IWidgetInst
 			
 			uwrInnerPanel = new JPanel();
 			uwrInnerPanel.setLayout(new GridBagLayout());
-			uwrInnerPanel.setBackground(Daten.efaConfig.getToolTipBackgroundColor());
-			uwrInnerPanel.setForeground(Daten.efaConfig.getToolTipForegroundColor());
+			uwrInnerPanel.setBackground(uwrWW.getStandardBackground());
+			uwrInnerPanel.setForeground(uwrWW.getStandardForeground());
 			uwrInnerPanel.setBorder(BorderFactory.createEmptyBorder());
 			uwrInnerPanel.setName("WeatherWidget-InnerPanel");
 			

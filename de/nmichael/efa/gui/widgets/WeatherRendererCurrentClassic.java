@@ -28,7 +28,7 @@ public class WeatherRendererCurrentClassic extends WeatherRenderer {
 		String tempLabel = ww.getTempLabel(false);
 		
 		curWeather_temp = new JLabel();
-		curWeather_temp.setForeground(Daten.efaConfig.getToolTipHeaderForegroundColor());
+		curWeather_temp.setForeground(ww.getStandardForeground());
 		curWeather_temp.setFont(
 				roundPanel.getFont().deriveFont((float) (Daten.efaConfig.getValueEfaDirekt_BthsFontSize() + 8)));
 		curWeather_temp.setFont(curWeather_temp.getFont().deriveFont(Font.BOLD));
@@ -43,24 +43,24 @@ public class WeatherRendererCurrentClassic extends WeatherRenderer {
 
 		curWeather_minTemp.setText(International.getString("Min")+": "+ WeatherRenderer.oneDecimal(minTemp) + tempLabel);
 		curWeather_minTemp.setIconTextGap(4);
-		curWeather_minTemp.setForeground(Daten.efaConfig.getToolTipHeaderForegroundColor());
+		curWeather_minTemp.setForeground(ww.getStandardForeground());
 		curWeather_minTemp.setHorizontalTextPosition(SwingConstants.RIGHT);
 
 		curWeather_maxTemp.setText(International.getString("Max")+": "+ WeatherRenderer.oneDecimal(maxTemp) + tempLabel);
 		curWeather_maxTemp.setIconTextGap(4);
-		curWeather_maxTemp.setForeground(Daten.efaConfig.getToolTipHeaderForegroundColor());
+		curWeather_maxTemp.setForeground(ww.getStandardForeground());
 		curWeather_maxTemp.setHorizontalTextPosition(SwingConstants.RIGHT);
 
 		curWeather_wind.setText(International.getString("Wind") + ": "
 				+ International.getString(wdf.getCurrentWeather().getWindDirectionText()) + " "
 				+ International.getString("mit") + " " + WeatherRenderer.oneDecimal(wdf.getCurrentWeather().getWindSpeed())
 				+ " "+ww.getSpeedScale());
-		curWeather_wind.setForeground(Daten.efaConfig.getToolTipHeaderForegroundColor());
+		curWeather_wind.setForeground(ww.getStandardForeground());
 		curWeather_wind.setHorizontalTextPosition(SwingConstants.CENTER);
 		
 		// Build the main panel view
 
-		roundPanel.add(getLocationHeader(ww.getCaption(), !ww.getHtmlPopupURL().isEmpty()), new GridBagConstraints(0, 0, 3, 1, 1.0, 0.0, GridBagConstraints.CENTER,
+		roundPanel.add(getLocationHeader(ww.getCaption(), !ww.getHtmlPopupURL().isEmpty(), ww), new GridBagConstraints(0, 0, 3, 1, 1.0, 0.0, GridBagConstraints.CENTER,
 			GridBagConstraints.BOTH, new Insets(2, 2, 2, 2), 0, 0));		
 		
 		roundPanel.add(curWeather_temp, new GridBagConstraints(0, 1, 1, 2, 0.0, 0.0, GridBagConstraints.CENTER,

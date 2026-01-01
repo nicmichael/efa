@@ -1,10 +1,6 @@
 package de.nmichael.efa.gui.widgets;
 
-import java.awt.BorderLayout;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.text.DecimalFormat;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -14,12 +10,6 @@ import java.time.format.DateTimeFormatter;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.SwingConstants;
-
-import de.nmichael.efa.Daten;
-import de.nmichael.efa.gui.ImagesAndIcons;
-import de.nmichael.efa.gui.util.RoundedPanel;
-import de.nmichael.efa.util.International;
 
 public abstract class WeatherRenderer {
 
@@ -39,10 +29,10 @@ public abstract class WeatherRenderer {
 		ret.setOpaque(false);
 		ret.setForeground(mainPanel.getForeground());
 		return ret;
-	}	
+	}
 	
-	protected static JPanel getLocationHeader(String caption, Boolean showMaximize) {
-		return WidgetInstance.getLocationHeader(caption, false, showMaximize);
+	protected static JPanel getLocationHeader(String caption, Boolean showMaximize, WeatherWidgetInstance ww) {
+		return WidgetInstance.getLocationHeader(caption, false, showMaximize, ww.getStandardHeaderBackground(), ww.getStandardHeaderForeground());
 	}
 	
 	protected static ImageIcon getHourlyWeatherIcon(WeatherDataForeCast wdf, int hourlyIndex) {

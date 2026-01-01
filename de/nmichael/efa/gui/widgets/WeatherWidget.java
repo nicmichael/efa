@@ -1,10 +1,13 @@
 package de.nmichael.efa.gui.widgets;
 
+import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.util.Vector;
 
+import de.nmichael.efa.core.config.EfaConfig;
 import de.nmichael.efa.core.items.IItemFactory;
 import de.nmichael.efa.core.items.IItemType;
+import de.nmichael.efa.core.items.ItemTypeColor;
 import de.nmichael.efa.core.items.ItemTypeFile;
 import de.nmichael.efa.core.items.ItemTypeInteger;
 import de.nmichael.efa.core.items.ItemTypeItemList;
@@ -13,6 +16,7 @@ import de.nmichael.efa.core.items.ItemTypeLongLat;
 import de.nmichael.efa.core.items.ItemTypeString;
 import de.nmichael.efa.core.items.ItemTypeStringList;
 import de.nmichael.efa.gui.EfaGuiUtils;
+import de.nmichael.efa.util.EfaUtil;
 import de.nmichael.efa.util.International;
 import de.nmichael.efa.util.Logger;
 
@@ -42,16 +46,24 @@ import de.nmichael.efa.util.Logger;
 
 public class WeatherWidget extends Widget implements IItemFactory {
 
-	private static final String PARAM_WEATHER_SOURCE 		= "MultiWeatherSource";
-	public  static final String WEATHER_SOURCE_OPENMETEO = "WeatherSourceOpenMeteoFree";
-	public  static final String WEATHER_SOURCE_WEATHERAPI = "WeatherSourceWeatherApi";
-	private static final String PARAM_TEMPERATURESCALE = "MultiTemperatureScale";
-	private static final String PARAM_SPEEDSCALE = "MultiWindSpeedScale";
-	public  static final String SPEEDSCALE_MPH = "mph";
-	public  static final String SPEEDSCALE_KMH = "kmh";
-	public  static final String TEMP_CELSIUS = "CELSIUS";
-	public  static final String TEMP_FAHRENHEIT = "FAHRENHEIT";
-	private static final String PARAM_WEATHER_LOCATIONLIST 	= "MultiWeatherLocationList";
+	public static final String PARAM_WEATHER_ERROR_HEADER_FOREGROUND = "WeatherErrorHeaderForeground";
+	public static final String PARAM_WEATHER_ERROR_HEADER_BACKGROUND = "WeatherErrorHeaderBackground";
+	public static final String PARAM_WEATHER_ERROR_FOREGROUND = "WeatherErrorForeground";
+	public static final String PARAM_WEATHER_ERROR_BACKGROUND = "WeatherErrorBackground";
+	public static final String PARAM_WEATHER_HEADER_FOREGROUND = "WeatherHeaderForeground";
+	public static final String PARAM_WEATHER_HEADER_BACKGROUND = "WeatherHeaderBackground";
+	public static final String PARAM_WEATHER_FOREGROUND = "WeatherForeground";
+	public static final String PARAM_WEATHER_BACKGROUND = "WeatherBackground";
+	public static final String PARAM_WEATHER_SOURCE 		= "MultiWeatherSource";
+	public static final String WEATHER_SOURCE_OPENMETEO = "WeatherSourceOpenMeteoFree";
+	public static final String WEATHER_SOURCE_WEATHERAPI = "WeatherSourceWeatherApi";
+	public static final String PARAM_TEMPERATURESCALE = "MultiTemperatureScale";
+	public static final String PARAM_SPEEDSCALE = "MultiWindSpeedScale";
+	public static final String SPEEDSCALE_MPH = "mph";
+	public static final String SPEEDSCALE_KMH = "kmh";
+	public static final String TEMP_CELSIUS = "CELSIUS";
+	public static final String TEMP_FAHRENHEIT = "FAHRENHEIT";
+	public static final String PARAM_WEATHER_LOCATIONLIST 	= "MultiWeatherLocationList";
 	
 	//parameters per location item
 	
@@ -113,16 +125,82 @@ public class WeatherWidget extends Widget implements IItemFactory {
 		addParameterInternal(locationList = new ItemTypeItemList(PARAM_WEATHER_LOCATIONLIST, new Vector<IItemType[]>(), this,
 				IItemType.TYPE_PUBLIC, "",
 				International.getString("Wetter-Orte"))).setFieldGrid(WEATHERWIDGET_GRIDWIDTH-1);
+		locationList.setPadding(0, 0, 10, 10);
 	    locationList.setShortDescription(International.getString("Wetter-Orte"));		
 		locationList.setRepeatTitle(true);
 		locationList.setShowUpDownButtons(true);
 		locationList.setXForAddDelButtons(WEATHERWIDGET_GRIDWIDTH-1);
 		locationList.setStorageType(ItemTypeItemList.StorageType.keyvalue);//important flag: GUI items can change in order and elements, without breaking storage
-		super.setEnabled(true);
-		super.setPosition(IWidget.POSITION_MULTIWIDGET);
+
+
+		item=addHeader(NOT_STORED_ITEM_PREFIX+"MultiWeatherWidgetColorHeader", IItemType.TYPE_PUBLIC, "",
+				International.getString(International.getString("Farben für Wetter")), WEATHERWIDGET_GRIDWIDTH);
+		item.setPadding(0, 0, 10, 10);
+
+		addParameterInternal(item = new ItemTypeColor(PARAM_WEATHER_BACKGROUND,
+				EfaUtil.getColor(EfaConfig.standardToolTipBackgroundColor),
+				EfaUtil.getColor(EfaConfig.standardToolTipBackgroundColor), IItemType.TYPE_PUBLIC,
+				"",
+				International.getString("Hintergrundfarbe"), false));
+		item.setFieldGrid(WEATHERWIDGET_GRIDWIDTH-2);
+		
+		addParameterInternal(item = new ItemTypeColor(PARAM_WEATHER_FOREGROUND,
+				EfaUtil.getColor(EfaConfig.standardToolTipForegroundColor),
+				EfaUtil.getColor(EfaConfig.standardToolTipForegroundColor), IItemType.TYPE_PUBLIC,
+				"",
+				International.getString("Textfarbe"), false));		
+		item.setFieldGrid(WEATHERWIDGET_GRIDWIDTH-2);
+		
+		addParameterInternal(item = new ItemTypeColor(PARAM_WEATHER_HEADER_BACKGROUND,
+				EfaUtil.getColor(EfaConfig.standardToolTipHeaderBackgroundColor),
+				EfaUtil.getColor(EfaConfig.standardToolTipHeaderBackgroundColor), IItemType.TYPE_PUBLIC,
+				"",
+				International.getString("Überschriften Hintergrundfarbe"), false));
+		item.setFieldGrid(WEATHERWIDGET_GRIDWIDTH-2);
+		addParameterInternal(item = new ItemTypeColor(PARAM_WEATHER_HEADER_FOREGROUND,
+				EfaUtil.getColor(EfaConfig.standardToolTipHeaderForegroundColor),
+				EfaUtil.getColor(EfaConfig.standardToolTipHeaderForegroundColor), IItemType.TYPE_PUBLIC,
+				"",
+				International.getString("Überschriften Textfarbe"), false));		
+		item.setFieldGrid(WEATHERWIDGET_GRIDWIDTH-2);
+		
+		
+		
+		addParameterInternal(item = new ItemTypeColor(PARAM_WEATHER_ERROR_BACKGROUND,
+				EfaUtil.getColor(EfaConfig.standardErrorBackgroundColor),
+				EfaUtil.getColor(EfaConfig.standardErrorBackgroundColor), IItemType.TYPE_PUBLIC,
+				"",
+				International.getString("Fehler Hintergrundfarbe"), false));
+		item.setPadding(0, 0, 20, 0);
+		item.setFieldGrid(WEATHERWIDGET_GRIDWIDTH-2);
+		
+		addParameterInternal(item= new ItemTypeColor(PARAM_WEATHER_ERROR_FOREGROUND,
+				EfaUtil.getColor(EfaConfig.standardErrorForegroundColor),
+				EfaUtil.getColor(EfaConfig.standardErrorForegroundColor), IItemType.TYPE_PUBLIC,
+				"",
+				International.getString("Fehler Textfarbe"), false));		
+		item.setFieldGrid(WEATHERWIDGET_GRIDWIDTH-2);
+		
+		addParameterInternal(item = new ItemTypeColor(PARAM_WEATHER_ERROR_HEADER_BACKGROUND,
+				EfaUtil.getColor(EfaConfig.standardErrorHeaderBackgroundColor),
+				EfaUtil.getColor(EfaConfig.standardErrorHeaderBackgroundColor), IItemType.TYPE_PUBLIC,
+				"",
+				International.getString("Fehler-Überschriften Hintergrundfarbe"), false));
+		item.setFieldGrid(WEATHERWIDGET_GRIDWIDTH-2);
+		
+		addParameterInternal(item = new ItemTypeColor(PARAM_WEATHER_ERROR_HEADER_FOREGROUND,
+				EfaUtil.getColor(EfaConfig.standardErrorHeaderForegroundColor),
+				EfaUtil.getColor(EfaConfig.standardErrorHeaderForegroundColor), IItemType.TYPE_PUBLIC,
+				"",
+				International.getString("Fehler-Überschriften Textfarbe"), false));				
+		item.setFieldGrid(WEATHERWIDGET_GRIDWIDTH-2);
+						
+		
 		
 		// we have a special layout here. 
 		//so we extend the fields for position and interval optically
+		super.setPosition(IWidget.POSITION_MULTIWIDGET);
+		super.setEnabled(true);
 		
 		item = this.getParameterInternal(PARAM_ENABLED);
 		item.setFieldGrid(WEATHERWIDGET_GRIDWIDTH-2, -1, GridBagConstraints.HORIZONTAL);
@@ -253,6 +331,16 @@ public class WeatherWidget extends Widget implements IItemFactory {
 			wwi.setHtmlPopupWidth(this.getHtmlPopupWidth(myWList,i));
 			wwi.setPopupExecCommand(this.getPopupExecCommand(myWList,i));
 		
+			wwi.setStandardBackground(this.getStandardBackground());
+			wwi.setStandardForeground(this.getStandardForeground());
+			wwi.setStandardHeaderBackground(this.getStandardHeaderBackground());
+			wwi.setStandardHeaderForeground(this.getStandardHeaderForeground());
+			
+			wwi.setErrorBackground(this.getErrorBackground());
+			wwi.setErrorForeground(this.getErrorForeground());
+			wwi.setErrorHeaderBackground(this.getErrorHeaderBackground());
+			wwi.setErrorHeaderForeground(this.getErrorHeaderForeground());		
+			
 			returnList.add(wwi);
 		}
 		
@@ -260,6 +348,38 @@ public class WeatherWidget extends Widget implements IItemFactory {
 	};    
     
 
+	private Color getStandardBackground() {
+		return ((ItemTypeColor) getParameterInternal(PARAM_WEATHER_BACKGROUND)).getColor();
+	}
+
+	private Color getStandardForeground() {
+		return ((ItemTypeColor) getParameterInternal(PARAM_WEATHER_FOREGROUND)).getColor();
+	}
+	
+	private Color getStandardHeaderBackground() {
+		return ((ItemTypeColor) getParameterInternal(PARAM_WEATHER_HEADER_BACKGROUND)).getColor();
+	}
+
+	private Color getStandardHeaderForeground() {
+		return ((ItemTypeColor) getParameterInternal(PARAM_WEATHER_HEADER_FOREGROUND)).getColor();
+	}
+
+	private Color getErrorBackground() {
+		return ((ItemTypeColor) getParameterInternal(PARAM_WEATHER_ERROR_BACKGROUND)).getColor();
+	}
+
+	private Color getErrorForeground() {
+		return ((ItemTypeColor) getParameterInternal(PARAM_WEATHER_ERROR_FOREGROUND)).getColor();
+	}
+	
+	private Color getErrorHeaderBackground() {
+		return ((ItemTypeColor) getParameterInternal(PARAM_WEATHER_ERROR_HEADER_BACKGROUND)).getColor();
+	}
+
+	private Color getErrorHeaderForeground() {
+		return ((ItemTypeColor) getParameterInternal(PARAM_WEATHER_ERROR_HEADER_FOREGROUND)).getColor();
+	}
+	
 	public String getWeatherCaption(ItemTypeItemList list, int i) {
         try {
             return ((ItemTypeString)list.getItem(i, PARAM_CAPTION)).getValue();
