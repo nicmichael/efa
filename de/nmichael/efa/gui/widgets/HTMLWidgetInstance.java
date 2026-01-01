@@ -122,9 +122,12 @@ public class HTMLWidgetInstance extends WidgetInstance implements IWidgetInstanc
 			titlePanel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 			titlePanel.addMouseListener(new MouseAdapter() {
 	            public void mouseClicked(MouseEvent e) {
+	            	Cursor old = titlePanel.getCursor();
+	            	titlePanel.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 	                new WidgetPopupDialog(getCaption(),
 	                		getCopy(),
 	                        540, 540, 90).showDialog();
+	                titlePanel.setCursor(old);
 	            }
 	        });
 			
@@ -134,9 +137,12 @@ public class HTMLWidgetInstance extends WidgetInstance implements IWidgetInstanc
 					comp.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 					comp.addMouseListener(new MouseAdapter() {
 			            public void mouseClicked(MouseEvent e) {
+			            	Cursor old = comp.getCursor();
+			            	comp.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 			                new WidgetPopupDialog(getCaption(),
 			                		getCopy(),
 			                        540, 540, 90).showDialog();
+			                comp.setCursor(old);
 			            }
 			        });					
 				}
