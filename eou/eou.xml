@@ -1,5 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <efaOnlineUpdate>
+ <Version>
+        <VersionID>2.5.1#4</VersionID>
+        <ReleaseDate>29.11.2025</ReleaseDate>
+        <DownloadUrl>TODO</DownloadUrl>
+        <DownloadSize>TODO</DownloadSize>
+     	<MinimumJavaVersion>1.8</MinimumJavaVersion>
+		<MinimumEfaCloudVersion>2.3.3</MinimumEfaCloudVersion>
+        <ShowNotics lang="de">Early Access für Test der Widget-Überarbeitung. Basiert auf Beta 2.5.0#21. Einsatz auf eigene Gefahr.</ShowNotics>
+        <ShowNotice lang="de">Wenn efaCloud eingesetzt wird, muss der Server mindestens Version 2.3.3 unterstützen. EfaCloud 2.4.0_12 und höher werden empfohlen.</ShowNotice>
+        <ShowNotics lang="en">Early Access for testing efa widget refactoring. Based on Beta 2.5.0#21. Use at own risk.</ShowNotics>
+        <ShowNotice lang="en">If you use efaCloud, make sure your server at least supports efaCloud Version 2.3.3. It is recommended to upgrade to EfaCloud 2.4.0_12 or above.</ShowNotice>
+        <Changes lang="de">
+            <ChangeItem>Neu: Widget: HTML-Widget: Klick auf die Fläche des Widgets öffnet die Inhalte in einem Popup-Fenster. Dieses schließt sich automatisch nach 90 Sekunden. </ChangeItem>
+            <ChangeItem>Neu: Widget: HTML-Widget: Anzeige einer Sanduhr als Mauszeiger, wenn der Browser nach Klick auf einem Link geöffnet wird.</ChangeItem>
+            <ChangeItem>Neu: Widget: HTML-Widget: Reihenfolge der Felder in der Oberfläche verbessert. </ChangeItem>
+            <ChangeItem>Neu: Widget: Wetter-Widget: Reihenfolge der Felder in der Oberfläche verbessert.</ChangeItem>
+            <ChangeItem>Neu: Widget: Wetter-Widget: Bessere Formatierung von Fließkommazahlen kleiner 1.</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>New: Widget: HTML-Widget: Clicking in the area of the HTML widget opens a Popup window that closes automatically after 90 seconds.</ChangeItem>
+            <ChangeItem>New: Widget: HTML-Widget: Mouse cursor is an hourglass while opening the external browser.</ChangeItem>
+            <ChangeItem>New: Widget: HTML-Widget: Optimized order of parameter fields in the GUI.</ChangeItem>
+            <ChangeItem>New: Widget: Weather-Widget: Optimized order of parameter fields in the GUI.</ChangeItem>
+            <ChangeItem>New: Widget: Weather-Widget: Optimized rendering of double values &lt; 1.</ChangeItem>
+        </Changes>
+	</Version>
     <Version>
         <VersionID>2.5.1#3</VersionID>
         <ReleaseDate>23.11.2025</ReleaseDate>
@@ -24,8 +50,8 @@
             <ChangeItem>New: Widget: HTML-Widget: Clicking on links in HTML-Widgets opens them in a browser.</ChangeItem>
             <ChangeItem>New: Widget: HTML-Widget: Order of HTML-Widgets can be changed.</ChangeItem>
             <ChangeItem>New: Widget: HTML-Widget: In fresh installations, the HTML widget's position is in the multiwidget.</ChangeItem>
-            <ChangeItem>New: Widget: Wetter-Widget: Order of HTML-Widgets can be changed.</ChangeItem>
-            <ChangeItem>New: Widget: Wetter-Widget: In fresh installations, the Weatherwidget's position is in the multiwidget.</ChangeItem>
+            <ChangeItem>New: Widget: Weather-Widget: Order of HTML-Widgets can be changed.</ChangeItem>
+            <ChangeItem>New: Widget: Weather-Widget: In fresh installations, the Weatherwidget's position is in the multiwidget.</ChangeItem>
         </Changes>
 	</Version>
     <Version>

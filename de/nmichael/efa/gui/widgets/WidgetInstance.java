@@ -1,14 +1,22 @@
 package de.nmichael.efa.gui.widgets;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.util.Vector;
 
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 
+import de.nmichael.efa.Daten;
 import de.nmichael.efa.data.LogbookRecord;
+import de.nmichael.efa.gui.ImagesAndIcons;
+import de.nmichael.efa.gui.util.RoundedPanel;
 
 public abstract class WidgetInstance implements IWidgetInstance {
 
@@ -70,6 +78,38 @@ public abstract class WidgetInstance implements IWidgetInstance {
 		return returnList;
 	}
 
+	protected static JPanel getLocationHeader(String caption, Boolean isError, Boolean showMaximize) {
+		return getLocationHeader(caption, isError, showMaximize, null, null);
+	}	
 
+	protected static JPanel getLocationHeader(String caption, Boolean isError, Boolean showMaximize, Color bg, Color fg) {
+		RoundedPanel titlePanel = new RoundedPanel();
+		titlePanel.setLayout(new GridBagLayout());
+		titlePanel.setBackground(isError ? Daten.efaConfig.getErrorBackgroundColor() : (bg == null ? Daten.efaConfig.getToolTipHeaderBackgroundColor() : bg));
+		titlePanel.setForeground(isError ? Daten.efaConfig.getErrorForegroundColor() : (fg == null ? Daten.efaConfig.getToolTipHeaderForegroundColor() : fg));
+	
+		JLabel titleLabel = new JLabel();
+		titleLabel.setText(caption);
+		titleLabel.setHorizontalTextPosition(SwingConstants.CENTER);
+		titleLabel.setForeground(titlePanel.getForeground());
+		titleLabel.setFont(titleLabel.getFont().deriveFont(Font.BOLD));
+		titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		
+		titlePanel.add(titleLabel, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER,
+				GridBagConstraints.HORIZONTAL, new Insets(2, 2, 2, 2), 0, 0));
+		
+		if (showMaximize) {
+	        JLabel iconLabel=new JLabel();
+	        iconLabel.setBackground(Daten.efaConfig.getToolTipHeaderBackgroundColor());
+	        iconLabel.setForeground(Daten.efaConfig.getToolTipHeaderForegroundColor());
+	        iconLabel.setIcon(ImagesAndIcons.getIcon(ImagesAndIcons.IMAGE_MAXIMIZE));
+	        //iconLabel.setHorizontalTextPosition(SwingConstants.LEADING);
+
+	        titlePanel.add(iconLabel, new GridBagConstraints(1, 0, 0, 0, 0.0, 0.0, GridBagConstraints.EAST,
+					GridBagConstraints.NONE, new Insets(2, 2, 2, 2), 0, 0));
+		}
+		
+		return titlePanel;
+	}	
     
 }

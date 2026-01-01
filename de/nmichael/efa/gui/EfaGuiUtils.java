@@ -9,18 +9,26 @@
  */
 package de.nmichael.efa.gui;
 
+import java.awt.Cursor;
+import java.awt.Desktop;
 import java.awt.FontMetrics;
 import java.awt.GridBagConstraints;
+import java.awt.Image;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
+import javax.swing.event.HyperlinkEvent;
 
+import de.nmichael.efa.Daten;
 import de.nmichael.efa.core.config.EfaConfig;
 import de.nmichael.efa.core.items.ItemTypeLabel;
 import de.nmichael.efa.core.items.ItemTypeLabelHeader;
 import de.nmichael.efa.gui.util.RoundedBorder;
+import de.nmichael.efa.util.Logger;
 
 /**
  * This class provides common code to create GUI Elements like Headers, Hints and Descriptions. 
@@ -141,5 +149,54 @@ public class EfaGuiUtils {
         item.setFieldGrid(gridWidth,GridBagConstraints.EAST, GridBagConstraints.BOTH);
         return item;
     }	
+    
+    public static Image getEfaMainIcon() {
+        return ImagesAndIcons.getIcon(ImagesAndIcons.IMAGE_EFA_ICON).getImage();
+    }
+    
+	/**
+	 * addHyperLinkAction
+	 * 
+	 * Reacts to clicks on hyperlinks in the htmlPane.
+	 * If a standard webbrowser is defined in efaconfig -> common -> external programs,
+	 * this standard webbrowser is used. If not, the standard system webbrowser is used.
+	 * if an error occurrs, the internal webbrowser is used.
+	 */
+	public static void addHyperlinkAction(JEditorPane htmlPane) {
+		htmlPane.addHyperlinkListener(e -> {
+            if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+            	Cursor old;
+            	old = htmlPane.getCursor();
+            	htmlPane.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            	String urlString;
+            	try {
+            		urlString = e.getURL().toURI().toString();
+            	} catch (Exception eURLExcept) {
+            		Logger.log(eURLExcept);
+            		return;
+            	}
+            	
+                try {
+                	String theBrowser = Daten.efaConfig.getValueBrowser();
+                	if (theBrowser!=null && theBrowser.trim().length()>0 && theBrowser.trim().equalsIgnoreCase(BrowserDialog.INTERNAL_BROWSER)) {
+                		BrowserDialog.openExternalBrowser(null, urlString);
+                	} else {
+                		//else use standard System function to run a browser.
+                		Desktop.getDesktop().browse(e.getURL().toURI());
+                	}
+                } catch (IOException eIO) {
+            		try {
+            			BrowserDialog.openInternalBrowser(null, urlString);
+            		} catch (Exception eOther){
+            			Logger.log(eOther);
+            		}
+                }
+                catch (Exception ex) {
+        			Logger.log(ex);
+                }
+                htmlPane.setCursor(old);
+            }
+        });
+	}
 
 }

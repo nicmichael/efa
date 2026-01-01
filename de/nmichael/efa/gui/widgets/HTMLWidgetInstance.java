@@ -1,8 +1,8 @@
 package de.nmichael.efa.gui.widgets;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Cursor;
-import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -10,6 +10,8 @@ import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.io.IOException;
 import java.util.concurrent.ScheduledFuture;
@@ -17,18 +19,15 @@ import java.util.concurrent.ScheduledFuture;
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JEditorPane;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
-import javax.swing.event.HyperlinkEvent;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
 
 import de.nmichael.efa.Daten;
 import de.nmichael.efa.data.LogbookRecord;
-import de.nmichael.efa.gui.BrowserDialog;
+import de.nmichael.efa.gui.EfaGuiUtils;
 import de.nmichael.efa.gui.util.RoundedBorder;
 import de.nmichael.efa.gui.util.RoundedPanel;
 import de.nmichael.efa.util.EfaUtil;
@@ -45,6 +44,7 @@ public class HTMLWidgetInstance extends WidgetInstance implements IWidgetInstanc
     private JEditorPane htmlPane;
     private HTMLUpdater htmlUpdater;
     private RoundedPanel roundPanel;
+    private JPanel titlePanel;
     
     private String caption;
 
@@ -53,7 +53,8 @@ public class HTMLWidgetInstance extends WidgetInstance implements IWidgetInstanc
     private double scale;
     private String url;    
     private int updateInterval;
-
+    private boolean useMaximizeButton=true;
+    
     private boolean colorsActive=false;
     private Color backgroundColor;
     private Color foregroundColor;
@@ -91,11 +92,12 @@ public class HTMLWidgetInstance extends WidgetInstance implements IWidgetInstanc
         HTMLEditorKit kit = (HTMLEditorKit)htmlPane.getEditorKit();
         kit.setAutoFormSubmission(false);
         
-        addHyperlinkAction();
+        EfaGuiUtils.addHyperlinkAction(htmlPane);
         
         //now the htmlPane is set up, check if user wants to use a caption.
         if (isCaptionActive()) {
         	createRoundPanelWithCaption();
+            addGeneralPopupAction();
             scrollPane.setBorder(BorderFactory.createEmptyBorder());// we want no border on an inner scroll pane.
         }
         
@@ -112,49 +114,34 @@ public class HTMLWidgetInstance extends WidgetInstance implements IWidgetInstanc
         htmlUpdater.setPage(url, updateInterval);
     }
 
-	/**
-	 * addHyperLinkAction
-	 * 
-	 * Reacts to clicks on hyperlinks in the htmlPane.
-	 * If a standard webbrowser is defined in efaconfig -> common -> external programs,
-	 * this standard webbrowser is used. If not, the standard system webbrowser is used.
-	 * if an error occurrs, the internal webbrowser is used.
-	 */
-	private void addHyperlinkAction() {
-		htmlPane.addHyperlinkListener(e -> {
-            if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-            	Cursor old;
-            	old = htmlPane.getCursor();
-            	htmlPane.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-            	String urlString;
-            	try {
-            		urlString = e.getURL().toURI().toString();
-            	} catch (Exception eURLExcept) {
-            		Logger.log(eURLExcept);
-            		return;
-            	}
-            	
-                try {
-                	String theBrowser = Daten.efaConfig.getValueBrowser();
-                	if (theBrowser!=null && theBrowser.trim().length()>0 && theBrowser.trim().equalsIgnoreCase(BrowserDialog.INTERNAL_BROWSER)) {
-                		BrowserDialog.openExternalBrowser(null, urlString);
-                	} else {
-                		//else use standard System function to run a browser.
-                		Desktop.getDesktop().browse(e.getURL().toURI());
-                	}
-                } catch (IOException eIO) {
-            		try {
-            			BrowserDialog.openInternalBrowser(null, urlString);
-            		} catch (Exception eOther){
-            			Logger.log(eOther);
-            		}
-                }
-                catch (Exception ex) {
-        			Logger.log(ex);
-                }
-                htmlPane.setCursor(old);
-            }
-        });
+	private void addGeneralPopupAction() {
+
+		//popup only when a click appears on any component of the header panel
+		//and useMaximizeButton is false (only) for already maximized component
+		if (titlePanel!=null && this.useMaximizeButton) {
+			titlePanel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+			titlePanel.addMouseListener(new MouseAdapter() {
+	            public void mouseClicked(MouseEvent e) {
+	                new WidgetPopupDialog(getCaption(),
+	                		getCopy(),
+	                        540, 540, 90).showDialog();
+	            }
+	        });
+			
+			for (int curComp=0; curComp <titlePanel.getComponentCount(); curComp++) {
+				Component comp = titlePanel.getComponent(curComp);
+				if (comp!=null) {
+					comp.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+					comp.addMouseListener(new MouseAdapter() {
+			            public void mouseClicked(MouseEvent e) {
+			                new WidgetPopupDialog(getCaption(),
+			                		getCopy(),
+			                        540, 540, 90).showDialog();
+			            }
+			        });					
+				}
+			}
+		}
 	}
 	
 	private void createRoundPanelWithCaption() {
@@ -168,7 +155,7 @@ public class HTMLWidgetInstance extends WidgetInstance implements IWidgetInstanc
 		roundPanel.setName("HTMLWidget-RoundPanel");
 		roundPanel.setLayout(new GridBagLayout());
 		
-		JPanel titlePanel= getHTMLCaptionHeader(this.getCaption());
+		titlePanel= getHTMLCaptionHeader(this.getCaption(),useMaximizeButton);
 		
 		roundPanel.add(titlePanel, new GridBagConstraints(0, 0, 4, 1, 1.0, 0.0, GridBagConstraints.CENTER,
 				GridBagConstraints.HORIZONTAL, new Insets(2, 2, 2, 2), 0, 0));	
@@ -182,22 +169,10 @@ public class HTMLWidgetInstance extends WidgetInstance implements IWidgetInstanc
 		roundPanel.revalidate();
 	}
 
-	private JPanel getHTMLCaptionHeader(String caption) {
-		RoundedPanel titlePanel = new RoundedPanel();
-		titlePanel.setLayout(new GridBagLayout());
-		titlePanel.setBackground(this.getHeaderBackgroundColor());
-		titlePanel.setForeground(this.getHeaderForegroundColor());
-	
-		JLabel titleLabel = new JLabel();
-		titleLabel.setText(caption);
-		titleLabel.setHorizontalTextPosition(SwingConstants.CENTER);
-		titleLabel.setForeground(titlePanel.getForeground());
-		titleLabel.setFont(titleLabel.getFont().deriveFont(Font.BOLD));
-		
-		titlePanel.add(titleLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
-				GridBagConstraints.BOTH, new Insets(2, 2, 2, 2), 0, 0));
-		
-		return titlePanel;
+	private JPanel getHTMLCaptionHeader(String caption, Boolean showMaximize) {
+		return WidgetInstance.getLocationHeader(caption, false, showMaximize, 
+				(this.isColorsActive() ? this.getHeaderBackgroundColor() : null), 
+				(this.isColorsActive() ? this.getHeaderForegroundColor() : null));
 	}	
 	
 	@Override
@@ -445,5 +420,27 @@ public class HTMLWidgetInstance extends WidgetInstance implements IWidgetInstanc
 	
 	public Color getHeaderForegroundColor() {
 		return this.headerforegroundColor;
+	}
+	
+	public void setUseMaximizeButton(Boolean value) {
+		this.useMaximizeButton=value;
+	}
+	
+	public WidgetInstance getCopy() {
+		HTMLWidgetInstance wi = new HTMLWidgetInstance();
+		wi.setHeight(this.getHeight());
+		wi.setScale(this.getScale());
+		wi.setUpdateInterval(this.getUpdateInterval());
+		wi.setUrl(this.getUrl());
+		wi.setWidth(this.getWidth());
+		wi.setColorsActive(colorsActive);
+		wi.setBackgroundColor(this.getBackgroundColor());
+		wi.setForegroundColor(this.getForegroundColor());
+		wi.setHeaderBackgroundColor(this.getHeaderBackgroundColor());
+		wi.setHeaderForegroundColor(this.getHeaderForegroundColor());
+		wi.setUseHttpCaching(useHttpCaching);
+		wi.setCaption(this.getCaption());
+		wi.setUseMaximizeButton(false);
+		return wi;
 	}
 }

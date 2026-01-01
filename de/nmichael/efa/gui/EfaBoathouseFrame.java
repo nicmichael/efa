@@ -19,7 +19,6 @@ import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -166,6 +165,8 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
     public static final int ACTIONID_BOATDAMAGES         = 7;
     public static final int ACTIONID_BOATINFOS           = 8;
     public static final int ACTIONID_LASTBOATUSAGE       = 9;
+    
+    private static final int VERT_BUTTONGAP = 8;
 
     String KEYACTION_F2;
     String KEYACTION_F3;
@@ -338,7 +339,7 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
     }
 
     private void iniGuiBase() {
-        setIconImage(Toolkit.getDefaultToolkit().createImage(EfaBaseFrame.class.getResource("/de/nmichael/efa/img/efa_icon.png")));
+        setIconImage(EfaGuiUtils.getEfaMainIcon());
         mainPanel.setLayout(new BorderLayout());
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         //setting resizable to true would enable resizing the boathouse window.
@@ -758,7 +759,7 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
 
     	buttonPanel.add(myPanel, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(fahrtbeginnTop, 0, 0, 0), 0, 0));        
     	buttonPanel.add(finishSessionButton, new GridBagConstraints(1, 3, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-    	buttonPanel.add(abortSessionButton, new GridBagConstraints(1, 4, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(10, 0, 0, 0), 0, 0));
+    	buttonPanel.add(abortSessionButton, new GridBagConstraints(1, 4, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(VERT_BUTTONGAP, 0, 0, 0), 0, 0));
 
         // same for lateEntryButton and lateEntryButtonMultiple
     	myPanel=new JPanel();
@@ -769,17 +770,17 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
     	myPanel.add(lateEntryButtonMultiple, new GridBagConstraints(9, 1, 1, 1, 0.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.VERTICAL, new Insets(0, 2, 0, 0), 0, 0));
     	lateEntryButtonMultiple.setVisible(Daten.efaConfig.getValueEfaDirekt_MultisessionSupportLateEntry());    
 
-    	buttonPanel.add(myPanel, new GridBagConstraints(1, 5, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(10, 0, 0, 0), 0, 0));        
+    	buttonPanel.add(myPanel, new GridBagConstraints(1, 5, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(VERT_BUTTONGAP, 0, 0, 0), 0, 0));        
         
-    	buttonPanel.add(clubworkButton, new GridBagConstraints(1, 6, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(10, 0, 0, 0), 0, 0));
-    	buttonPanel.add(boatReservationButton, new GridBagConstraints(1, 7, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(10, 0, 0, 0), 0, 0));
-    	buttonPanel.add(showLogbookButton, new GridBagConstraints(1, 8, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(10, 0, 0, 0), 0, 0));
+    	buttonPanel.add(clubworkButton, new GridBagConstraints(1, 6, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(VERT_BUTTONGAP, 0, 0, 0), 0, 0));
+    	buttonPanel.add(boatReservationButton, new GridBagConstraints(1, 7, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(VERT_BUTTONGAP, 0, 0, 0), 0, 0));
+    	buttonPanel.add(showLogbookButton, new GridBagConstraints(1, 8, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(VERT_BUTTONGAP, 0, 0, 0), 0, 0));
     	buttonPanel.add(statisticsButton, new GridBagConstraints(1, 9, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-    	buttonPanel.add(messageToAdminButton, new GridBagConstraints(1, 10, 1, 1, 0.0, 0.0, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, new Insets(10, 0, 0, 0), 0, 0));
-    	buttonPanel.add(adminButton, new GridBagConstraints(1, 11, 1, 1, 0.0, 0.0, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, new Insets(10, 0, 0, 0), 0, 0));
-    	buttonPanel.add(specialButton, new GridBagConstraints(1, 12, 1, 1, 0.0, 0.0, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, new Insets(10, 0, 0, 0), 0, 0));
-    	buttonPanel.add(helpButton, new GridBagConstraints(1, 13, 1, 1, 0.0, 0.0, GridBagConstraints.SOUTH, GridBagConstraints.NONE, new Insets(10, 0, 0, 0), 0, 0));
-    	buttonPanel.add(efaButton, new GridBagConstraints(1, 14, 1, 1, 0.0, 0.0, GridBagConstraints.SOUTH, GridBagConstraints.NONE, new Insets(10, 0, 0, 0), 0, 0));
+    	buttonPanel.add(messageToAdminButton, new GridBagConstraints(1, 10, 1, 1, 0.0, 0.0, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, new Insets(VERT_BUTTONGAP, 0, 0, 0), 0, 0));
+    	buttonPanel.add(adminButton, new GridBagConstraints(1, 11, 1, 1, 0.0, 0.0, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, new Insets(VERT_BUTTONGAP, 0, 0, 0), 0, 0));
+    	buttonPanel.add(specialButton, new GridBagConstraints(1, 12, 1, 1, 0.0, 0.0, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, new Insets(VERT_BUTTONGAP, 0, 0, 0), 0, 0));
+    	buttonPanel.add(helpButton, new GridBagConstraints(1, 13, 1, 1, 0.0, 0.0, GridBagConstraints.SOUTH, GridBagConstraints.NONE, new Insets(VERT_BUTTONGAP, 0, 0, 0), 0, 0));
+    	buttonPanel.add(efaButton, new GridBagConstraints(1, 14, 1, 1, 0.0, 0.0, GridBagConstraints.SOUTH, GridBagConstraints.NONE, new Insets(VERT_BUTTONGAP, 0, 0, 0), 0, 0));
 
     	//add the buttonpanel, but do not let it grow with other elements in the center panel.
     	centerPanel.add(buttonPanel, new GridBagConstraints(1,centerPanelYPos++,1,1,0.0,0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE,new Insets(0,0,0,0),0,0));

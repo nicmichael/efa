@@ -450,6 +450,9 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 	public static Color standardErrorHeaderBackgroundColor = new Color(254,250,250);
 	public static Color standardErrorHeaderForegroundColor = standardErrorForegroundColor;	
 	
+	public static Color standardHeaderBackgroundColor = standardTableSelectionBackgroundColor;
+	public static Color standardHeaderForegroundColor = standardTableSelectionForegroundColor;
+	
 	
 	// private internal data
 	private HashMap<String, IItemType> configValues; // always snychronize on this object!!

@@ -121,7 +121,7 @@ public class WeatherWidgetInstance extends WidgetInstance implements IWidgetInst
 		infoLabel.setOpaque(false);
 		infoLabel.setEditable(false);
 		
-		JPanel titlePanel = WeatherRenderer.getLocationHeader(this.getCaption());
+		JPanel titlePanel = WeatherRenderer.getLocationHeader(this.getCaption(), !this.getHtmlPopupURL().isEmpty());
 		titlePanel.setBackground(Daten.efaConfig.getToolTipHeaderBackgroundColor());
 		titlePanel.setForeground(Daten.efaConfig.getToolTipHeaderForegroundColor());
 		

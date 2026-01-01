@@ -24,7 +24,7 @@ public class WeatherRendererForeCastSimple extends WeatherRenderer {
 		
 		int hourlyIndex = wdf.getHourly().getIndexForCurrentTime();
 		
-		roundPanel.add(getLocationHeader(ww.getCaption()), new GridBagConstraints(0, 0, 4, 1, 1.0, 0.0, GridBagConstraints.CENTER,
+		roundPanel.add(getLocationHeader(ww.getCaption(),!ww.getHtmlPopupURL().isEmpty()), new GridBagConstraints(0, 0, 4, 1, 1.0, 0.0, GridBagConstraints.CENTER,
 			GridBagConstraints.BOTH, new Insets(2, 2, 2, 2), 0, 0));		
 		
 		roundPanel.add(

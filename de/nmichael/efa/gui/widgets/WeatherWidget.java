@@ -190,14 +190,14 @@ public class WeatherWidget extends Widget implements IItemFactory {
             curItem.setFieldGrid(WEATHERWIDGET_GRIDWIDTH-2, -1, GridBagConstraints.HORIZONTAL);
             items[i++]=curItem;
             
-            curItem = new ItemTypeInteger(PARAM_HTMLPOPWIDTH, 400, 1, Integer.MAX_VALUE, false,
+            curItem = new ItemTypeInteger(PARAM_HTMLPOPWIDTH, 540, 1, Integer.MAX_VALUE, false,
                             IItemType.TYPE_PUBLIC, "",
                             International.getString("Breite"));
             
             curItem.setFieldSize(130, -1);
             items[i++] = curItem;
             
-            curItem= new ItemTypeInteger(PARAM_HTMLPOPHEIGHT, 200, 1, Integer.MAX_VALUE, false,
+            curItem= new ItemTypeInteger(PARAM_HTMLPOPHEIGHT, 540, 1, Integer.MAX_VALUE, false,
                             IItemType.TYPE_PUBLIC, "",
                             International.getString("Höhe"));
             curItem.setIsItemOnSameRowAsPreviousItem(true);
