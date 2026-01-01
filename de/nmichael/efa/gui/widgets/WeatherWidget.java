@@ -200,7 +200,7 @@ public class WeatherWidget extends Widget implements IItemFactory {
 		// we have a special layout here. 
 		//so we extend the fields for position and interval optically
 		super.setPosition(IWidget.POSITION_MULTIWIDGET);
-		super.setEnabled(true);
+		super.setEnabled(false);
 		
 		item = this.getParameterInternal(PARAM_ENABLED);
 		item.setFieldGrid(WEATHERWIDGET_GRIDWIDTH-2, -1, GridBagConstraints.HORIZONTAL);
