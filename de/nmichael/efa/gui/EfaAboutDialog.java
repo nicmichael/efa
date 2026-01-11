@@ -163,6 +163,7 @@ public class EfaAboutDialog extends BaseDialog {
         languagesText.setEditable(false);
         languagesText.append(International.getString("efa wurde in die folgenden Sprachen übersetzt:") + "\n\n" + translations + "\n"
                 + International.getString("Bitte unterstütze uns bei der Übersetzung in weitere Sprachen!"));
+        languagesText.setCaretPosition(0);
 	}
 
 	private void iniDanksagungenPanel() {
@@ -194,6 +195,7 @@ public class EfaAboutDialog extends BaseDialog {
                 + "* Sun Microsystems & Oracle (Java Technology)\n"
                 + "* Wolfgang Krutzke (Waters List for Germany)\n"
                 + "* World Wide Web Consortium (XML Plugin)");
+		dankeText.setCaretPosition(0);
 	}
 
 	private void iniBibliothekenPanel() {
@@ -208,6 +210,7 @@ public class EfaAboutDialog extends BaseDialog {
 		librariesText.append("JCraft jsch SSH/SFTP library\n\thttp://www.jcraft.com/jsch/\n\tLicensed under BSD-style license.\n\n");
 		librariesText.append("CompoundIcon by Tips4Java\n\thttps://github.com/tips4java/tips4java/blob/main/source/CompoundIcon.java\n\t Licensed under MIT License.\n\n");
 		librariesText.append("48 Weather Icons by Oliver Pitsch\n\thttps://www.figma.com/community/file/1290644894897835248/48-weather-icons\n\tLicensed under CC BY 4.0\n\tModified day icons for rain and night icons for more contrast.\n\n\thttps://www.figma.com/design/U8a4es1S5EIdjJYPgIPh0r/48-Weather-Icons-(Community)?node-id=4-34306&t=XnI10lh9BlalpgwH-0");
+		librariesText.setCaretPosition(0);
 	}	
 	
 	private void iniChangelogPanel() {
