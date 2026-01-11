@@ -43,7 +43,7 @@ public class ClockAndSunlightWidget extends Widget {
 
     public ClockAndSunlightWidget() {
         super(International.getString("Uhr und Tageslicht"), "MeteoAstro", International.getString("Uhr und Tageslicht"), true,false);
-
+        IItemType item;
         addParameterInternal(new ItemTypeStringList(PARAM_LAYOUT, LAYOUT_HORIZONTAL,
                 new String[] { LAYOUT_HORIZONTAL, LAYOUT_VERTICAL },
                 new String[] { International.getString("horizontal"),
@@ -52,14 +52,16 @@ public class ClockAndSunlightWidget extends Widget {
                 IItemType.TYPE_PUBLIC, "",
                 International.getString("Layout")));
         
-        addParameterInternal(new ItemTypeBoolean(PARAM_SHOWCOCK, true,
+        addParameterInternal(item = new ItemTypeBoolean(PARAM_SHOWCOCK, true,
                 IItemType.TYPE_PUBLIC, "",
                 International.getString("Uhrzeit anzeigen")));
+		((ItemTypeBoolean) item).setIndent(true);
         
-        addParameterInternal(new ItemTypeBoolean(PARAM_SHOWDATE, true,
+        addParameterInternal(item=new ItemTypeBoolean(PARAM_SHOWDATE, true,
                 IItemType.TYPE_PUBLIC, "",
                 International.getString("Datum anzeigen")));
-        
+		((ItemTypeBoolean) item).setIndent(true);
+		
         addHeader(NOT_STORED_ITEM_PREFIX+"WidgetMeteoSunrise",IItemType.TYPE_PUBLIC, "", International.getString("Sonnenaufgang/Sonnenuntergang"), 3);        
         addParameterInternal(new ItemTypeBoolean(PARAM_SHOWSUNRISE, true,
                 IItemType.TYPE_PUBLIC, "",

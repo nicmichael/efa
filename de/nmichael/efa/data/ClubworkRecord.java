@@ -410,6 +410,7 @@ public class ClubworkRecord extends DataRecord implements IItemFactory {
         if (admin != null) {
             v.add(item = new ItemTypeBoolean(APPROVED, getApproved(),
                     IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("Status")));
+            ((ItemTypeBoolean) item).setIndent(true);
         }
 
         return v;

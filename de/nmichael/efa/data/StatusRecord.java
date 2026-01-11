@@ -246,9 +246,11 @@ public class StatusRecord extends DataRecord implements IItemListener {
         if (isTypeUser()) {
             v.add(item = new ItemTypeBoolean(StatusRecord.GUIITEM_MEMBERSHIP, isMember(),
                     IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("Mitglied")));
+            ((ItemTypeBoolean) item).setIndent(true);
         }
         v.add(item = new ItemTypeBoolean(StatusRecord.AUTOSETONAGE, getAutoSetOnAge(),
                 IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("Status altersabhängig automatisch setzen")));
+        item.setPadding(0, 0, 20, 0);
         autoSetOnAge = (ItemTypeBoolean)item;
         item.registerItemListener(this);
         v.add(item = new ItemTypeInteger(StatusRecord.MINAGE, getMinAge(), 0, 100, true,

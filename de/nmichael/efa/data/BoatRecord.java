@@ -1179,6 +1179,7 @@ public class BoatRecord extends DataRecord implements IItemFactory, IItemListene
         ((ItemTypeItemList)item).setAppendPositionToEachElement(true);
         v.add(item = new ItemTypeInteger(BoatRecord.MAXNOTINGROUP, getMaxNotInGroup(), 0, Integer.MAX_VALUE, true,
                 IItemType.TYPE_PUBLIC, CAT_USAGE, International.getString("Maxmimale Personenzahl nicht aus erlaubten Gruppen")));
+        item.setPadding(0, 0, 10, 0);// optical delimiter to Groups
         v.add(item = getGuiItemTypeStringAutoComplete(BoatRecord.REQUIREDGROUPID, getRequiredGroupId(),
                 IItemType.TYPE_PUBLIC, CAT_USAGE, 
                 groups, getValidFrom(), getInvalidFrom()-1,

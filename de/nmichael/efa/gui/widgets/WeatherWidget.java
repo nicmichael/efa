@@ -134,7 +134,7 @@ public class WeatherWidget extends Widget implements IItemFactory {
 
 
 		item=addHeader(NOT_STORED_ITEM_PREFIX+"MultiWeatherWidgetColorHeader", IItemType.TYPE_PUBLIC, "",
-				International.getString(International.getString("Farben für Wetter")), WEATHERWIDGET_GRIDWIDTH);
+				International.getString("Farben für Wetter"), WEATHERWIDGET_GRIDWIDTH);
 		item.setPadding(0, 0, 10, 10);
 
 		addParameterInternal(item = new ItemTypeColor(PARAM_WEATHER_BACKGROUND,

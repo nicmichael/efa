@@ -1820,15 +1820,19 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 
 			// ============================= CRONTAB =============================
 			
-			addHint("CronTabHint", IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_CRONTAB),
-					"<html>"+International.getStringWithMnemonic("Hiermit koennen Sie regelmaessig efaCLI-Kommandos ausfuehren lassen.")+"</html>",3,0,20);
+			IItemType item = addHintWordWrap("CronTabHint", IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_CRONTAB),
+					International.getString("Hiermit koennen Sie regelmaessig efaCLI-Kommandos ausfuehren lassen."),3,0,20,550);
+			
 			
 			addParameter(crontab = new ItemTypeItemList("CronTab", new Vector<IItemType[]>(), this,
 					IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_CRONTAB),
 					International.getString("Automatische Abläufe")));
 			crontab.setFieldGrid(2, GridBagConstraints.WEST, GridBagConstraints.BOTH);
 			//crontab.setScrollPane(1000, 400);
-			crontab.setRepeatTitle(false);
+			crontab.setAppendPositionToEachElement(false);
+			crontab.setShortDescription("Task");
+			crontab.setRepeatTitle(true);
+			crontab.setShowUpDownButtons(false);
 
 			// ============================= DATA ACCESS =============================
 			addParameter(dataPreModifyRecordCallbackEnabled = new ItemTypeBoolean("DataPreModifyRecordCallbackEnabled",
@@ -1984,7 +1988,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 	}
 	private IItemType addHintWordWrap(String uniqueName, int type, String category, String caption, int gridWidth,
 			int padBefore, int padAfter, int maxWidth) {
-		IItemType item = EfaGuiUtils.createHintWordWrap(uniqueName, type, category, caption, gridWidth, padBefore, padAfter, maxWidth);
+		ItemTypeLabel item = EfaGuiUtils.createHintWordWrap(uniqueName, type, category, caption, gridWidth, padBefore, padAfter, maxWidth);
 		addParameter(item);
 		return item;
 	}
@@ -3605,7 +3609,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 		if (itemName.equals(crontab.getName())) {
 			int i = crontab.size() + 1;
 			ItemTypeCronEntry[] item = new ItemTypeCronEntry[] { new ItemTypeCronEntry(crontab.getName() + i, "",
-					crontab.getType(), crontab.getCategory(), "Task #" + i) };
+					crontab.getType(), crontab.getCategory(), null) };
 			return item;
 		}
 		return null;

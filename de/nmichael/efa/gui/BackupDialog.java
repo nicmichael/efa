@@ -138,6 +138,7 @@ public class BackupDialog extends BaseTabbedDialog implements IItemListener {
         guiItems.add(item = new ItemTypeBoolean(RESTORE_SELECT_CONFIG, false,
                 IItemType.TYPE_PUBLIC, cat, International.getMessage("{typeOfData} wiederherstellen",
                 International.getString("Konfigurationsdaten"))));
+        ((ItemTypeBoolean) item).setIndent(true);
         restoreSelectConfig = (ItemTypeBoolean)item;
         restoreSelectConfig.registerItemListener(this);
 
@@ -146,6 +147,7 @@ public class BackupDialog extends BaseTabbedDialog implements IItemListener {
                 International.getMessage("{typeOfData} wiederherstellen",
                 International.getMessage("Projekt '{name}'",
                 International.getString("unbekannt")))));
+        ((ItemTypeBoolean) item).setIndent(true);
         restoreSelectProject = (ItemTypeBoolean) item;
         restoreSelectProject.registerItemListener(this);
 

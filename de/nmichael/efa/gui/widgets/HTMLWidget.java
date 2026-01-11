@@ -245,7 +245,7 @@ public class HTMLWidget extends Widget implements IWidget, IItemFactory {
                     IItemType.TYPE_PUBLIC, "",
                     International.getString("HTML-Seite anzeigen"));
             items[i].setFieldGrid(HTMLWIDGET_GRIDWIDTH-2, -1, GridBagConstraints.HORIZONTAL);
-    		items[i++].setPadding(0,0,0,10); 
+            items[i++].setPadding(0,0,0,10); 
             
     		items[i] = new ItemTypeString(PARAM_CAPTION, "", IItemType.TYPE_PUBLIC, "",
     				International.getString("Beschriftung"));
@@ -263,6 +263,7 @@ public class HTMLWidget extends Widget implements IWidget, IItemFactory {
                     IItemType.TYPE_PUBLIC, "",
                     International.getString("HTTP-Caching verwenden"));
             items[i].setFieldGrid(HTMLWIDGET_GRIDWIDTH-2, -1, GridBagConstraints.HORIZONTAL);
+    		((ItemTypeBoolean) items[i]).setIndent(true);
     		items[i++].setPadding(0,0,0,10);    
 
             items[i] = new ItemTypeInteger(PARAM_WIDTH, 200, 1, Integer.MAX_VALUE, false,
