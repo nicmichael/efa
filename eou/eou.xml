@@ -1,6 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <efaOnlineUpdate>
  <Version>
+        <VersionID>2.5.1#5</VersionID>
+        <ReleaseDate>15.01.2026</ReleaseDate>
+        <DownloadUrl>TODO</DownloadUrl>
+        <DownloadSize>TODO</DownloadSize>
+     	<MinimumJavaVersion>1.8</MinimumJavaVersion>
+		<MinimumEfaCloudVersion>2.3.3</MinimumEfaCloudVersion>
+        <ShowNotics lang="de">Early Access für Test der Widget-Überarbeitung. Basiert auf Beta 2.5.0#21. Einsatz auf eigene Gefahr.</ShowNotics>
+        <ShowNotice lang="de">Wenn efaCloud eingesetzt wird, muss der Server mindestens Version 2.3.3 unterstützen. EfaCloud 2.4.0_12 und höher werden empfohlen.</ShowNotice>
+        <ShowNotics lang="en">Early Access for testing efa widget refactoring. Based on Beta 2.5.0#21. Use at own risk.</ShowNotics>
+        <ShowNotice lang="en">If you use efaCloud, make sure your server at least supports efaCloud Version 2.3.3. It is recommended to upgrade to EfaCloud 2.4.0_12 or above.</ShowNotice>
+        <Changes lang="de">
+            <ChangeItem>Neu: GUI Optimierung: Einige Checkboxen sind nun eingerückt, was die GUI besser verständlich macht.</ChangeItem>
+            <ChangeItem>Neu: Cron Jobs: mehr Platz auf kleinen Bildschirmen</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>New: GUI optimization - Some checkboxes are indented for better GUI readability.</ChangeItem>
+            <ChangeItem>New: Cron jobs: better usage of available screen width.</ChangeItem>
+        </Changes>
+	</Version>
+ <Version>
         <VersionID>2.5.1#4</VersionID>
         <ReleaseDate>01.01.2026</ReleaseDate>
         <DownloadUrl>TODO</DownloadUrl>
