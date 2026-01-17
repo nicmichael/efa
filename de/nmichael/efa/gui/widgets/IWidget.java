@@ -34,6 +34,7 @@ public interface IWidget {
     public String getPosition();
     public void setUpdateInterval(int seconds);
     public int getUpdateInterval();
+    public boolean isGuiWidget();
 
     public Vector <WidgetInstance> createInstances();
     

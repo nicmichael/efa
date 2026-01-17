@@ -38,6 +38,7 @@ public class ItemTypeBoolean extends ItemType {
         ItemTypeBoolean myCopy = new ItemTypeBoolean(name, value, type, category, description);
         myCopy.setPadding(padXbefore, padXafter, padYbefore, padYafter);
         myCopy.setIndent(this.indent);
+        myCopy.setVisible(this.isVisible());
         return myCopy;
     }
 

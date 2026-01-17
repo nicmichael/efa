@@ -17,56 +17,83 @@ import de.nmichael.efa.Daten;
 import de.nmichael.efa.data.LogbookRecord;
 import de.nmichael.efa.gui.ImagesAndIcons;
 import de.nmichael.efa.gui.util.RoundedPanel;
+import de.nmichael.efa.util.EfaUtil;
 
 public abstract class WidgetInstance implements IWidgetInstance {
 
 	private JPanel myPanel;
+	private String position;
 
     public WidgetInstance() {
     }
 	
-	@Override
-    public void show(JPanel panel, int x, int y) {
+	
+    private void show(JPanel panel, int x, int y, boolean verticalAlignment, int insetTop, int insetBottom, int insetLeft, int insetRight) {
         myPanel = panel;
-        construct();
         JComponent comp = getComponent();
         if (comp != null) {
-            panel.add(comp, new GridBagConstraints(x, y, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+            panel.add(comp, new GridBagConstraints(x, y, 1, 1, 
+            		1.0,
+            		1.0,
+            		GridBagConstraints.CENTER, 
+            		GridBagConstraints.BOTH, //(verticalAlignment ? GridBagConstraints.VERTICAL : GridBagConstraints.HORIZONTAL), 
+            		new Insets(insetTop, insetLeft, insetBottom, insetRight), 0, 0));
+            
         }
     }
 
 	@Override
-	public void show(JPanel panel, String orientation, boolean onMultiWidget) {
+	public void show(JPanel panel, String panelPosition, String preferredOrientation) {
+		/*
+		 * Top, left, right, bottom position use GridBagLayout, others use Borderlayout
+		 */
         myPanel = panel;
         construct();
         JComponent comp = getComponent();
         if (comp != null) {
-        	if (!onMultiWidget) {
-	        	if (orientation.equals(BorderLayout.CENTER)) {
-		            if (panel.getComponentCount()==0) {
+        	if (panelPosition.equals(IWidget.POSITION_MULTIWIDGET)) {
+        		//Multiwidget itself takes care of layout if multiple elements are put on it.
+        		panel.add(comp, preferredOrientation);        		
+        	} else if (panelPosition.equals(IWidget.POSITION_CENTER)) {
+        		if (preferredOrientation == null ||
+        				preferredOrientation.trim().isEmpty()) {
+        			// no preferred orientation of the panel? then put them on the borderlayout
+        			// first goes NORTH, then second CENTER, all the rest SOUTH
+        			if (panel.getComponentCount()==0) {
 		            	panel.add(comp, BorderLayout.NORTH);
 		            } else if (panel.getComponentCount()==1){
 		            	panel.add(comp, BorderLayout.CENTER);
 		            } else {
 		            	panel.add(comp, BorderLayout.SOUTH);
 		            }
-	        	} else {
-	        		panel.add(comp, orientation);
-	        	}
-        	} else {
-        		panel.add(comp, orientation);
+        		} else {
+        			panel.add(comp, preferredOrientation);
+        		}
+        	} else { //top,bottom,left,right position: Gridbag
+        		Boolean verticalAlignment= (panelPosition.equals(IWidget.POSITION_LEFT)|| panelPosition.equals(IWidget.POSITION_RIGHT));
+        		int compCount = panel.getComponentCount();
+        		int insetLeft = 3;
+        		int insetTop = 3;
+        		int insetRight = 3;
+        		int insetBottom = 3;
+        		
+        		this.show(panel, (verticalAlignment ? 0 : compCount), 
+		            			(verticalAlignment ? compCount : 0),
+		            			verticalAlignment, 
+		            			insetTop, insetBottom,
+		            			insetLeft, insetRight);
         	}
         }
     }
 
 	@Override
 	public void stop() {
-		// TODO Auto-generated method stub
+		EfaUtil.foo();
 	}
 
 	@Override
 	public void runWidgetWarnings(int mode, boolean actionBegin, LogbookRecord r) {
-		// TODO Auto-generated method stub
+		EfaUtil.foo();
 	}
 
 	
@@ -110,6 +137,16 @@ public abstract class WidgetInstance implements IWidgetInstance {
 		}
 		
 		return titlePanel;
+	}
+
+
+	public String getPosition() {
+		return position;
+	}
+
+
+	public void setPosition(String position) {
+		this.position = position;
 	}	
     
 }

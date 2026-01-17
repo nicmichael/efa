@@ -41,7 +41,7 @@ public class AlertWidget extends Widget implements IItemFactory {
     static final String PARAM_TEXT          = "Text";
 
     public AlertWidget() {
-        super(NAME, International.getString("Hinweis-Widget"), false, true);
+        super(NAME, International.getString("Hinweis-Widget"), false, true, false);
         ItemTypeItemList item;
         addParameterInternal(item = new ItemTypeItemList(PARAM_ALERTS, new Vector<IItemType[]>(), this,
                 IItemType.TYPE_PUBLIC, "",
@@ -182,8 +182,13 @@ public class AlertWidget extends Widget implements IItemFactory {
 		Vector <WidgetInstance> returnList = new Vector <WidgetInstance>();
 		AlertWidgetInstance wi = new AlertWidgetInstance();
 		wi.setAlertList(this.getAlertList());
+		wi.setPosition(IWidget.POSITION_CENTER);
 		returnList.add(wi);
 		return returnList;
 	}
 
+    @Override 
+    public boolean isGuiWidget() {
+    	return false;
+    }
 }

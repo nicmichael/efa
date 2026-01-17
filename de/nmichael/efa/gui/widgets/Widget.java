@@ -55,18 +55,18 @@ public abstract class Widget implements IWidget {
     Vector<IItemType> parameters = new Vector<IItemType>();
     JPanel myPanel;
     
-    public Widget(String name, String description, boolean ongui, boolean showRefreshInterval) {
-    	this(name, name, description, ongui, showRefreshInterval);
+    public Widget(String name, String description, boolean showPositionParam, boolean showVisibleParam, boolean showRefreshInterval) {
+    	this(name, name, description, showPositionParam, showVisibleParam, showRefreshInterval);
     }
-    public Widget(String name, String description, boolean ongui, boolean showRefreshInterval,int gridWidth) {
-    	this(name, name, description, ongui, showRefreshInterval,gridWidth);
-    }
-    
-    public Widget(String name, String parameterPrefix, String description, boolean ongui, boolean showRefreshInterval) {
-    	this(name, parameterPrefix, description, ongui, showRefreshInterval,DEFAULT_GRIDWIDTH);
+    public Widget(String name, String description, boolean showPositionParam, boolean showVisibleParam, boolean showRefreshInterval,int gridWidth) {
+    	this(name, name, description, showPositionParam, showVisibleParam, showRefreshInterval,gridWidth);
     }
     
-    public Widget(String name, String parameterPrefix, String description, boolean ongui, boolean showRefreshInterval, int gridWidth) {
+    public Widget(String name, String parameterPrefix, String description, boolean showPositionParam, boolean showVisibleParam, boolean showRefreshInterval) {
+    	this(name, parameterPrefix, description, showPositionParam, showVisibleParam, showRefreshInterval,DEFAULT_GRIDWIDTH);
+    }
+    
+    public Widget(String name, String parameterPrefix, String description, boolean showPositionParam, boolean showVisibleParam, boolean showRefreshInterval, int gridWidth) {
         this.name = name;
         this.parameterPrefix = parameterPrefix;
         this.description = description;
@@ -74,11 +74,11 @@ public abstract class Widget implements IWidget {
         addHeader("WidgetCommon_"+parameterPrefix,IItemType.TYPE_PUBLIC, "", International.getString("Widget Allgemein"), gridWidth);
         addParameterInternal(new ItemTypeBoolean(PARAM_ENABLED, false,
                 IItemType.TYPE_PUBLIC, "",
-                (ongui ?
+                (showVisibleParam ?
                     International.getMessage("{item} anzeigen", name) :
                     International.getMessage("{item} aktivieren", description))));
 
-        if (ongui) {
+        if (showPositionParam) {
             addParameterInternal(new ItemTypeStringList(PARAM_POSITION, POSITION_MULTIWIDGET,
                     new String[]{POSITION_TOP, POSITION_BOTTOM, POSITION_LEFT, POSITION_RIGHT, POSITION_CENTER, POSITION_MULTIWIDGET},
                     new String[]{International.getString("oben"),
@@ -90,14 +90,15 @@ public abstract class Widget implements IWidget {
                     },
                     IItemType.TYPE_PUBLIC, "",
                     International.getString("Position")));
-            
-            if (showRefreshInterval) {
-	            addParameterInternal(new ItemTypeInteger(PARAM_UPDATEINTERVAL, 3600, 1, Integer.MAX_VALUE, false,
-	                    IItemType.TYPE_PUBLIC, "",
-	                    International.getString("Aktualisierungsintervall")
-	                    + " (s)"));
-            }
         }
+        
+        if (showRefreshInterval) {
+            addParameterInternal(new ItemTypeInteger(PARAM_UPDATEINTERVAL, 3600, 1, Integer.MAX_VALUE, false,
+                    IItemType.TYPE_PUBLIC, "",
+                    International.getString("Aktualisierungsintervall")
+                    + " (s)"));
+        }
+        
     }
 
     public String getParameterName(String internalName) {
@@ -173,7 +174,7 @@ public abstract class Widget implements IWidget {
             if (parameters.get(i).getName().equals(name)) {
                 return parameters.get(i);
             }
-        }
+        } 
         return null;
     }
 

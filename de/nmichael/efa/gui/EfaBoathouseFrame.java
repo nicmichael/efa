@@ -417,11 +417,13 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
     }
 
     private void iniGuiPanels() {
-        widgetTopPanel.setLayout(new BorderLayout());
-        widgetBottomPanel.setLayout(new BorderLayout());
-        widgetLeftPanel.setLayout(new BorderLayout());
-        widgetRightPanel.setLayout(new BorderLayout());
-        widgetCenterPanel.setLayout(new BorderLayout());
+    	//Widget Top, left, right, bottom panel use gridbagLayout as they shall use multiple widgets
+        widgetTopPanel.setLayout(new GridBagLayout());
+        widgetBottomPanel.setLayout(new GridBagLayout());
+        widgetLeftPanel.setLayout(new GridBagLayout());
+        widgetRightPanel.setLayout(new GridBagLayout());
+        //Border Layout for center and multiwidget, as no GridBag necessary
+        widgetCenterPanel.setLayout(new BorderLayout()); // 
         widgetMultiWidgetCenterPanel.setLayout(new BorderLayout());
 
         northPanel.add(widgetTopPanel, BorderLayout.CENTER);
@@ -1049,53 +1051,7 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
                 }
             }
 
-            
-            // find all other enabled widget types
-            widgetTypes = new Vector<IWidget>();
-            Vector<IWidget> allWidgets = Widget.getAllWidgets(false);
-            for (int i = 0; allWidgets != null && i < allWidgets.size(); i++) {
-                IWidget w = allWidgets.get(i);
-                IItemType enabled = Daten.efaConfig.getExternalGuiItem(w.getParameterName(Widget.PARAM_ENABLED));
-                if (enabled != null && enabled instanceof ItemTypeBoolean && ((ItemTypeBoolean) enabled).getValue()) {
-                    // set parameters for this enabled widget according to configuration
-                	IItemType[] params = w.getParameters();
-                    for (int j = 0; j < params.length; j++) {
-                        params[j].parseValue(Daten.efaConfig.getExternalGuiItem(params[j].getName()).toString());
-                    }
-                    widgetTypes.add(w);
-                }
-            }
-
-            multiWidgetInstance = (MultiWidgetContainerInstance) multiWidget.createInstances().get(0); // we are sure there is exactly a single instance
-        	multiWidgetInstance.show(widgetMultiWidgetCenterPanel, BorderLayout.SOUTH, false);   
-            boolean multiWidgetUse=false;
-            
-            // show all enabled widgets
-            for (int i = 0; i < widgetTypes.size(); i++) {
-                IWidget wt = widgetTypes.get(i);
-                String position = wt.getPosition();
-                if (IWidget.POSITION_TOP.equals(position)) {
-                	showWidgetInstances(wt, widgetTopPanel, BorderLayout.CENTER, false);
-                } else if (IWidget.POSITION_BOTTOM.equals(position)) {
-                	showWidgetInstances(wt, widgetBottomPanel, BorderLayout.CENTER, false);
-                } else if (IWidget.POSITION_LEFT.equals(position)) {
-                	showWidgetInstances(wt, widgetLeftPanel, BorderLayout.CENTER, false);
-                } else if (IWidget.POSITION_RIGHT.equals(position)) {
-                	showWidgetInstances(wt, widgetRightPanel, BorderLayout.CENTER, false);
-                } else if (IWidget.POSITION_CENTER.equals(position)) {
-                	showWidgetInstances(wt, widgetCenterPanel, BorderLayout.CENTER, false);
-                } else if (IWidget.POSITION_MULTIWIDGET.equals(position)) {
-                	JPanel innerPanel = new JPanel(new BorderLayout());
-                	showWidgetInstances(wt, multiWidgetInstance, true);
-                	multiWidgetUse=true;
-                } else {
-                	//no position set. We assume it is an widget that has no gui but shall show infos and warning on certain events
-                	createNonGUIWidgetInstances(wt);
-                }
-            }
-            if (multiWidgetUse==false) {
-            	multiWidgetInstance.getComponent().setVisible(false);
-            }
+            showWidgetInstances();
             
         } catch (Exception e) {
             Logger.logdebug(e);
@@ -1103,34 +1059,102 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
 
     }
 
-    private void showWidgetInstances(IWidget wt, JPanel targetPanel, String orientation, boolean onMultiWidget) {
-    	//get Instances and put them in our cache.
-    	Vector<WidgetInstance> instances = wt.createInstances();
-    	widgetInstances.addAll(instances);
-    	
-    	for (int i = 0; i<instances.size(); i++) {
-    		IWidgetInstance wi = instances.get(i);
-    		wi.show(targetPanel, orientation, onMultiWidget);
-    	}
-    	
+	private void showWidgetInstances() {
+		// find all other enabled widget types
+		widgetTypes = new Vector<IWidget>();
+		Vector<IWidget> allWidgets = Widget.getAllWidgets(false);
+		for (int i = 0; allWidgets != null && i < allWidgets.size(); i++) {
+		    IWidget w = allWidgets.get(i);
+		    IItemType enabled = Daten.efaConfig.getExternalGuiItem(w.getParameterName(Widget.PARAM_ENABLED));
+		    if (enabled != null && enabled instanceof ItemTypeBoolean && ((ItemTypeBoolean) enabled).getValue()) {
+		        // set parameters for this enabled widget according to configuration
+		    	IItemType[] params = w.getParameters();
+		        for (int j = 0; j < params.length; j++) {
+		            params[j].parseValue(Daten.efaConfig.getExternalGuiItem(params[j].getName()).toString());
+		        }
+		        widgetTypes.add(w);
+		    }
+		}
+
+		//Multiwidget shall always be in center position, but lowest possible position (south)
+		//so that clock (Center-top) and another widget (center-center) can be shown above.
+		multiWidgetInstance = (MultiWidgetContainerInstance) multiWidget.createInstances().get(0); // we are sure there is exactly a single instance
+		multiWidgetInstance.show(widgetMultiWidgetCenterPanel, IWidget.POSITION_CENTER, BorderLayout.SOUTH);   
+		boolean multiWidgetUse=false;
+		
+		// show all enabled widgets
+		for (int i = 0; i < widgetTypes.size(); i++) {
+		    IWidget wt = widgetTypes.get(i);
+		    if (wt.isGuiWidget()) {
+		    	// showWidgetInstances returns if there had been placed any instances in the multiwidget
+		    	if (createGUIWidgetInstances(wt)) {
+		    		multiWidgetUse=true;
+		    	}
+		    } else {
+		    	createNonGUIWidgetInstances(wt);
+		    }
+		}
+		if (multiWidgetUse==false) {
+			multiWidgetInstance.getComponent().setVisible(false);
+		}
+	}
+
+	/**
+	 * Based on the param position return the actual panel where the widget shall be put.
+	 * Return null, if Multiwidget (or other unknown position) is set.
+	 * @param position
+	 * @return
+	 */
+	private JPanel getTargetPanel(String position) {
+	    if (IWidget.POSITION_CENTER.equals(position)) {
+	    	return widgetCenterPanel;
+	    } else if (IWidget.POSITION_MULTIWIDGET.equals(position)) {
+	    	return null;
+	    } else if (IWidget.POSITION_TOP.equals(position)) {
+	        	return widgetTopPanel;
+	    } else if (IWidget.POSITION_BOTTOM.equals(position)) {
+	    	return widgetBottomPanel;
+	    } else if (IWidget.POSITION_LEFT.equals(position)) {
+	    	return widgetLeftPanel;
+	    } else if (IWidget.POSITION_RIGHT.equals(position)) {
+	    	return widgetRightPanel;
+	    } else {
+	    	return null;
+	    }
     }
     
-    private void showWidgetInstances(IWidget wt, MultiWidgetContainerInstance multiInstance, boolean onMultiWidget) {
+	/**
+	 * Show all widget instances of a certain WidgetType. Position them depending on their config data.
+	 * Return true, if any widgetinstance had been placed on the multiwidget.
+	 * @param wt
+	 * @return
+	 */
+    private boolean createGUIWidgetInstances(IWidget wt) {
     	//get Instances and put them in our cache.
     	Vector<WidgetInstance> instances = wt.createInstances();
     	widgetInstances.addAll(instances);
+    	Boolean multiWidgetUse=false;
     	
     	for (int i = 0; i<instances.size(); i++) {
     		IWidgetInstance wi = instances.get(i);
-    		
-        	JPanel innerPanel = new JPanel(new BorderLayout());
-    		wi.show(innerPanel, BorderLayout.CENTER, onMultiWidget);
-    		// and add this innerpanel to the card Layout of the multiWidgetInstance
-        	multiWidgetInstance.addWidget(innerPanel);
-    		
+    		JPanel targetPanel=getTargetPanel(wi.getPosition());
+    		if (targetPanel!=null) {
+    			wi.show(targetPanel, wi.getPosition(), null);
+    		} else {
+    			multiWidgetUse=true;
+            	JPanel innerPanel = new JPanel(new BorderLayout());
+        		wi.show(innerPanel, IWidget.POSITION_MULTIWIDGET, BorderLayout.CENTER);
+        		// and add this innerpanel to the card Layout of the multiWidgetInstance
+            	multiWidgetInstance.addWidget(innerPanel);
+    		}
     	}
+    	return multiWidgetUse;
     }
 
+    /**
+     * Create all Instances of Widgets which do not show up on the efaBoothouse GUI.
+     * @param wt
+     */
     private void createNonGUIWidgetInstances(IWidget wt) {
     	//get Instances and put them in our cache.
     	Vector<WidgetInstance> instances = wt.createInstances();

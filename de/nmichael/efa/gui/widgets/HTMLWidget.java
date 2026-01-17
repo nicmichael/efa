@@ -26,6 +26,7 @@ import de.nmichael.efa.core.items.ItemTypeInteger;
 import de.nmichael.efa.core.items.ItemTypeItemList;
 import de.nmichael.efa.core.items.ItemTypeLabelTextfield;
 import de.nmichael.efa.core.items.ItemTypeString;
+import de.nmichael.efa.core.items.ItemTypeStringList;
 import de.nmichael.efa.util.EfaUtil;
 import de.nmichael.efa.util.International;
 import de.nmichael.efa.util.Logger;
@@ -47,6 +48,7 @@ public class HTMLWidget extends Widget implements IWidget, IItemFactory {
     public static final String PARAM_HEADER_COLOR_BACKGROUND = "HeaderBackgroundColor";
     public static final String PARAM_HEADER_COLOR_FOREGROUND = "HeaderForegroundColor";
     public static final String PARAM_HTMLPAGE_VISIBLE = "HTMLPageVisible";
+    public static final String PARAM_HTMLPAGE_POSITION = "HTMLPagePosition";
     
 	private static final String PARAM_HTML_PAGELIST = "MultiHtmlPageList";
 	private static final int HTMLWIDGET_GRIDWIDTH = 6;
@@ -56,13 +58,15 @@ public class HTMLWidget extends Widget implements IWidget, IItemFactory {
 
     
     public HTMLWidget() {
-        super("Html", International.getString("HTML-Widget"), true, true,HTMLWIDGET_GRIDWIDTH);
+        super("Html", International.getString("HTML-Widget"), false, false, true,HTMLWIDGET_GRIDWIDTH);
 
         IItemType item;
 
         //we break backward compatibility with the former html widget.
         //so the config data of the old html widget is no longer used,
         //and thus when updating from efa 240 to 251, the old html page is no longer shown. 
+        item = addHintWordWrap(NOT_STORED_ITEM_PREFIX+"HTMLWidgetInfo1",IItemType.TYPE_PUBLIC, "", International.getString("Die Verwendung vieler HTML-Widgets erhöht den Speicherbedarf. Gegebenenfalls muss runefa.sh/runefa.bat angepasst werden."), 3,6,6,550);
+        item.setFieldGrid(HTMLWIDGET_GRIDWIDTH-1, -1, GridBagConstraints.HORIZONTAL);
         
         addParameterInternal(htmlPageList = new ItemTypeItemList(PARAM_HTML_PAGELIST, new Vector<IItemType[]>(), this,
 				IItemType.TYPE_PUBLIC, "",	
@@ -73,12 +77,7 @@ public class HTMLWidget extends Widget implements IWidget, IItemFactory {
 		htmlPageList.setShowUpDownButtons(true);
 		htmlPageList.setXForAddDelButtons(HTMLWIDGET_GRIDWIDTH-1);
 		htmlPageList.setStorageType(ItemTypeItemList.StorageType.keyvalue);//important flag: GUI items can change in order and elements, without breaking storage
-		super.setPosition(IWidget.POSITION_MULTIWIDGET);
 		
-		item = this.getParameterInternal(PARAM_ENABLED);
-		item.setFieldGrid(HTMLWIDGET_GRIDWIDTH-2, -1, GridBagConstraints.HORIZONTAL);
-		item = this.getParameterInternal(PARAM_POSITION);
-		item.setFieldGrid(HTMLWIDGET_GRIDWIDTH-2, -1, GridBagConstraints.HORIZONTAL);
 		item = this.getParameterInternal(PARAM_UPDATEINTERVAL);
 		item.setFieldGrid(HTMLWIDGET_GRIDWIDTH-2, -1, GridBagConstraints.HORIZONTAL);
     }
@@ -131,6 +130,16 @@ public class HTMLWidget extends Widget implements IWidget, IItemFactory {
         }	
     }    
     
+    public String getHTMLPagePosition(ItemTypeItemList list, int i) {
+        try {
+            return ((ItemTypeStringList)list.getItem(i, PARAM_HTMLPAGE_POSITION)).getValue();
+        } catch(Exception e) {
+            Logger.logdebug(e);
+            return IWidget.POSITION_MULTIWIDGET;
+        }	
+    }   
+    
+    
     public String getUrl(ItemTypeItemList list, int i) {
         try {
             return ((ItemTypeString)list.getItem(i, PARAM_URL)).getValue();
@@ -153,6 +162,7 @@ public class HTMLWidget extends Widget implements IWidget, IItemFactory {
 
 			if (getHTMLPageVisible(myWList,i)) {
 				HTMLWidgetInstance wi = new HTMLWidgetInstance();
+				wi.setPosition(getHTMLPagePosition(myWList,i));
 				wi.setHeight(getHeight(myWList,i));
 				wi.setScale(getScale(myWList,i));
 				wi.setUpdateInterval(getUpdateInterval());
@@ -237,7 +247,7 @@ public class HTMLWidget extends Widget implements IWidget, IItemFactory {
 			
             // build the GUI
            
-            IItemType[] items = new IItemType[12];
+            IItemType[] items = new IItemType[13];
             i=0;
             
             
@@ -266,6 +276,20 @@ public class HTMLWidget extends Widget implements IWidget, IItemFactory {
     		((ItemTypeBoolean) items[i]).setIndent(true);
     		items[i++].setPadding(0,0,0,10);    
 
+            items [i]= new ItemTypeStringList(PARAM_HTMLPAGE_POSITION, POSITION_MULTIWIDGET,
+                    new String[]{POSITION_TOP, POSITION_BOTTOM, POSITION_LEFT, POSITION_RIGHT, POSITION_CENTER, POSITION_MULTIWIDGET},
+                    new String[]{International.getString("oben"),
+                        International.getString("unten"),
+                        International.getString("links"),
+                        International.getString("rechts"),
+                        International.getString("mitte"),
+                        International.getString("Multi-Widget")
+                    },
+                    IItemType.TYPE_PUBLIC, "",
+                    International.getString("Position"));
+            items[i].setPadding(0, 0, 20, 0);
+            items[i++].setFieldGrid(HTMLWIDGET_GRIDWIDTH-2, -1, GridBagConstraints.HORIZONTAL);
+            
             items[i] = new ItemTypeInteger(PARAM_WIDTH, 200, 1, Integer.MAX_VALUE, false,
                     IItemType.TYPE_PUBLIC, "", International.getString("Breite"));
             items[i].setFieldSize(SMALL_FIELDWIDTH, -1);
@@ -322,7 +346,12 @@ public class HTMLWidget extends Widget implements IWidget, IItemFactory {
 	
     ItemTypeItemList getHtmlPageList() {
         return (ItemTypeItemList)getParameterInternal(PARAM_HTML_PAGELIST);
-    }	
+    }
+    
+    @Override 
+    public boolean isGuiWidget() {
+    	return true;
+    }
        
 
 }

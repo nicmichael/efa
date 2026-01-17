@@ -94,12 +94,10 @@ public class HTMLWidgetInstance extends WidgetInstance implements IWidgetInstanc
         
         EfaGuiUtils.addHyperlinkAction(htmlPane);
         
-        //now the htmlPane is set up, check if user wants to use a caption.
-        if (isCaptionActive()) {
-        	createRoundPanelWithCaption();
-            addGeneralPopupAction();
-            scrollPane.setBorder(BorderFactory.createEmptyBorder());// we want no border on an inner scroll pane.
-        }
+    	//Create a rounded Panel border for better Looks
+    	createRoundPanelWithCaption();
+        addGeneralPopupAction();
+        scrollPane.setBorder(BorderFactory.createEmptyBorder());// we want no border on an inner scroll pane.
         
         if (getWidth() > 0 && getHeight() > 0) {
             scrollPane.setPreferredSize(new Dimension(getWidth(), getHeight()));
@@ -162,6 +160,7 @@ public class HTMLWidgetInstance extends WidgetInstance implements IWidgetInstanc
 		roundPanel.setLayout(new GridBagLayout());
 		
 		titlePanel= getHTMLCaptionHeader(this.getCaption(),useMaximizeButton);
+		titlePanel.setVisible(!this.getCaption().trim().isEmpty());
 		
 		roundPanel.add(titlePanel, new GridBagConstraints(0, 0, 4, 1, 1.0, 0.0, GridBagConstraints.CENTER,
 				GridBagConstraints.HORIZONTAL, new Insets(2, 2, 2, 2), 0, 0));	
@@ -173,6 +172,7 @@ public class HTMLWidgetInstance extends WidgetInstance implements IWidgetInstanc
 		
 		roundPanel.setMinimumSize(new Dimension(240, 120));
 		roundPanel.revalidate();
+
 	}
 
 	private JPanel getHTMLCaptionHeader(String caption, Boolean showMaximize) {
@@ -183,7 +183,7 @@ public class HTMLWidgetInstance extends WidgetInstance implements IWidgetInstanc
 	
 	@Override
 	public JComponent getComponent() {
-        return (isCaptionActive() ? roundPanel : scrollPane);
+        return roundPanel;
     }
 
     public void stop() {
@@ -434,6 +434,7 @@ public class HTMLWidgetInstance extends WidgetInstance implements IWidgetInstanc
 	
 	public WidgetInstance getCopy() {
 		HTMLWidgetInstance wi = new HTMLWidgetInstance();
+		wi.setPosition(this.getPosition());
 		wi.setHeight(this.getHeight());
 		wi.setScale(this.getScale());
 		wi.setUpdateInterval(this.getUpdateInterval());

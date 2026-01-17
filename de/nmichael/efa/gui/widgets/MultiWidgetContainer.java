@@ -22,7 +22,7 @@ public class MultiWidgetContainer extends Widget {
 	static final String PARAM_AUTOCHANGE = "AutomaticChangeAfterSeconds";
 
 	public MultiWidgetContainer() {
-	    super(International.getString("Multi-Widget"), "Multi-Widget", International.getString("Multi-Widget"), false, false);
+	    super(International.getString("Multi-Widget"), "Multi-Widget", International.getString("Multi-Widget"), false, false, false);
 	    
         addHintWordWrap(NOT_STORED_ITEM_PREFIX+"MultiWidgetInfo1",IItemType.TYPE_PUBLIC, "", International.getString("Das Multi-Widget kann in einem Platzbereich mehrere Widgets anzeigen.")+
         		International.getString("Wählen Sie dazu jeweils in den anderen Widgets als Position \"MultiWidget\" aus."), 3,6,6,550);
@@ -33,8 +33,14 @@ public class MultiWidgetContainer extends Widget {
         
         super.setEnabled(true);
         super.setPosition(IWidget.POSITION_CENTER);
+        setActiveParameterInvisible();
 	}
 
+	private void setActiveParameterInvisible() {
+		IItemType activeParameter = getParameterInternal(PARAM_ENABLED);
+		activeParameter.setVisible(false);
+	}
+	
     public int getUpdateInterval() {
         return ((ItemTypeInteger)getParameterInternal(PARAM_AUTOCHANGE)).getValue();
     }
@@ -43,9 +49,16 @@ public class MultiWidgetContainer extends Widget {
 	public Vector<WidgetInstance> createInstances() {
 		Vector <WidgetInstance> returnList = new Vector <WidgetInstance>();
 		MultiWidgetContainerInstance wi = new MultiWidgetContainerInstance();
+		
 		wi.setUpdateInterval(getUpdateInterval());
+		wi.setPosition(IWidget.POSITION_CENTER);
+		
 		returnList.add(wi);
 		return returnList;
 	}
 
+    @Override 
+    public boolean isGuiWidget() {
+    	return true;
+    }
 }

@@ -7,6 +7,7 @@ import java.util.Vector;
 import de.nmichael.efa.core.config.EfaConfig;
 import de.nmichael.efa.core.items.IItemFactory;
 import de.nmichael.efa.core.items.IItemType;
+import de.nmichael.efa.core.items.ItemTypeBoolean;
 import de.nmichael.efa.core.items.ItemTypeColor;
 import de.nmichael.efa.core.items.ItemTypeFile;
 import de.nmichael.efa.core.items.ItemTypeInteger;
@@ -84,6 +85,8 @@ public class WeatherWidget extends Widget implements IItemFactory {
 	public static final String WEATHER_LAYOUT_FORECASTSIMPLE  = "LayoutForecastSimple";
 	public static final String WEATHER_LAYOUT_FORECASTCOMPLEX = "LayoutForecastComplex";
 	
+	public static final String PARAM_WEATHER_POSITION = "WeatherPosition";
+    public static final String PARAM_WEATHER_VISIBLE = "WeatherVisible";
 	
 	private static final int WEATHERWIDGET_GRIDWIDTH = 6;
 	private static final int SMALL_FIELDWIDTH = 110;
@@ -98,7 +101,7 @@ public class WeatherWidget extends Widget implements IItemFactory {
 	 */
 	public WeatherWidget() {
 
-		super(International.getString("Wetter"), "MWeather", International.getString("Wetter"), true, true,WEATHERWIDGET_GRIDWIDTH);
+		super(International.getString("Wetter"), "MWeather", International.getString("Wetter"), false, false, true,WEATHERWIDGET_GRIDWIDTH);
 
 		addHeader(NOT_STORED_ITEM_PREFIX+"MultiWeatherWidgetLocationHeader", IItemType.TYPE_PUBLIC, "", 
 				International.getString("Wetter Daten"), WEATHERWIDGET_GRIDWIDTH);
@@ -196,16 +199,8 @@ public class WeatherWidget extends Widget implements IItemFactory {
 		item.setFieldGrid(WEATHERWIDGET_GRIDWIDTH-2);
 						
 		
-		
-		// we have a special layout here. 
-		//so we extend the fields for position and interval optically
-		super.setPosition(IWidget.POSITION_MULTIWIDGET);
 		super.setEnabled(false);
 		
-		item = this.getParameterInternal(PARAM_ENABLED);
-		item.setFieldGrid(WEATHERWIDGET_GRIDWIDTH-2, -1, GridBagConstraints.HORIZONTAL);
-		item = this.getParameterInternal(PARAM_POSITION);
-		item.setFieldGrid(WEATHERWIDGET_GRIDWIDTH-2, -1, GridBagConstraints.HORIZONTAL);
 		item = this.getParameterInternal(PARAM_UPDATEINTERVAL);
 		item.setFieldGrid(WEATHERWIDGET_GRIDWIDTH-2, -1, GridBagConstraints.HORIZONTAL);
 		
@@ -225,8 +220,15 @@ public class WeatherWidget extends Widget implements IItemFactory {
 			
             // build the GUI
             ItemTypeLabelTextfield curItem; 
-            IItemType[] items = new IItemType[9];
+            IItemType[] items = new IItemType[11];
             i=0;
+            
+            items[i] = new ItemTypeBoolean(PARAM_WEATHER_VISIBLE, true,
+                    IItemType.TYPE_PUBLIC, "",
+                    International.getString("Wetter anzeigen"));
+            items[i].setFieldGrid(WEATHERWIDGET_GRIDWIDTH-2, -1, GridBagConstraints.HORIZONTAL);
+            items[i++].setPadding(0,0,0,10); 
+            
             items[i] = new ItemTypeString(PARAM_CAPTION, "Berlin", IItemType.TYPE_PUBLIC, "",
             				International.getString("Beschriftung"));
             items[i].setFieldGrid(WEATHERWIDGET_GRIDWIDTH-2, -1, GridBagConstraints.HORIZONTAL);
@@ -245,6 +247,20 @@ public class WeatherWidget extends Widget implements IItemFactory {
             curItem.setFieldGrid(-1, -1, GridBagConstraints.HORIZONTAL);
             items[i++] = curItem;
            
+            items [i]= new ItemTypeStringList(PARAM_WEATHER_POSITION, POSITION_MULTIWIDGET,
+                    new String[]{POSITION_TOP, POSITION_BOTTOM, POSITION_LEFT, POSITION_RIGHT, POSITION_CENTER, POSITION_MULTIWIDGET},
+                    new String[]{International.getString("oben"),
+                        International.getString("unten"),
+                        International.getString("links"),
+                        International.getString("rechts"),
+                        International.getString("mitte"),
+                        International.getString("Multi-Widget")
+                    },
+                    IItemType.TYPE_PUBLIC, "",
+                    International.getString("Position"));
+            items[i].setFieldGrid(WEATHERWIDGET_GRIDWIDTH-2, -1, GridBagConstraints.HORIZONTAL);
+            items[i++].setPadding(0, 0, 20, 0);
+            
             items[i] = new ItemTypeStringList(PARAM_WEATHER_LAYOUT, WEATHER_LAYOUT_CURRENT_UVINDEX,
             				new String[] { WEATHER_LAYOUT_CURRENT_CLASSIC, WEATHER_LAYOUT_CURRENT_WIND, WEATHER_LAYOUT_CURRENT_UVINDEX, WEATHER_LAYOUT_FORECASTSIMPLE, WEATHER_LAYOUT_FORECASTCOMPLEX },
             				new String[] { International.getString("Aktuelles Wetter (Klassisch)"), 
@@ -254,7 +270,7 @@ public class WeatherWidget extends Widget implements IItemFactory {
             						International.getString("Vorhersage (Komplex)") },
             				IItemType.TYPE_PUBLIC, "", International.getString("Layout"));
             items[i].setFieldGrid(WEATHERWIDGET_GRIDWIDTH-2, -1, GridBagConstraints.HORIZONTAL);
-            items[i++].setPadding(0, 0, 20, 0);
+            items[i++].setPadding(0, 0, 10, 0);
 
             items[i++] = EfaGuiUtils.createDescription("WidgetMeteoHTMLPOPUP",IItemType.TYPE_PUBLIC, "", 
             		International.getString("Bei Mausklick auf das Astro/Meteo-Widget kann eine HMTL-Seite angezeigt werden."), WEATHERWIDGET_GRIDWIDTH-1,20,3);
@@ -314,34 +330,38 @@ public class WeatherWidget extends Widget implements IItemFactory {
 		}
 		
 		for (int i = 0; i < myWList.size(); i++) {
-			WeatherWidgetInstance wwi = new WeatherWidgetInstance();
-
-			wwi.setUpdateInterval(this.getUpdateInterval());
-			wwi.setSource(this.getWeatherSource());
-			wwi.setSpeedScale(this.getWeatherSpeedScale());
-			wwi.setTempScale(this.getWeatherTempScale());
-
-			wwi.setCaption(this.getWeatherCaption(myWList,i));
-			wwi.setLatitude(this.getWeatherLatitude(myWList,i));
-			wwi.setLayout(this.getWeatherLayout(myWList,i));
-			wwi.setLongitude(this.getWeatherLongitude(myWList,i));
+			if (getWeatherPageVisible(myWList, i)) {
+				WeatherWidgetInstance wwi = new WeatherWidgetInstance();
+				
+				wwi.setPosition(this.getWeatherPosition(myWList,i));
 	
-			wwi.setHtmlPopupHeight(this.getHtmlPopupHeight(myWList,i));
-			wwi.setHtmlPopupURL(this.getHtmlPopupUrl(myWList,i));
-			wwi.setHtmlPopupWidth(this.getHtmlPopupWidth(myWList,i));
-			wwi.setPopupExecCommand(this.getPopupExecCommand(myWList,i));
+				wwi.setUpdateInterval(this.getUpdateInterval());
+				wwi.setSource(this.getWeatherSource());
+				wwi.setSpeedScale(this.getWeatherSpeedScale());
+				wwi.setTempScale(this.getWeatherTempScale());
+	
+				wwi.setCaption(this.getWeatherCaption(myWList,i));
+				wwi.setLatitude(this.getWeatherLatitude(myWList,i));
+				wwi.setLayout(this.getWeatherLayout(myWList,i));
+				wwi.setLongitude(this.getWeatherLongitude(myWList,i));
 		
-			wwi.setStandardBackground(this.getStandardBackground());
-			wwi.setStandardForeground(this.getStandardForeground());
-			wwi.setStandardHeaderBackground(this.getStandardHeaderBackground());
-			wwi.setStandardHeaderForeground(this.getStandardHeaderForeground());
+				wwi.setHtmlPopupHeight(this.getHtmlPopupHeight(myWList,i));
+				wwi.setHtmlPopupURL(this.getHtmlPopupUrl(myWList,i));
+				wwi.setHtmlPopupWidth(this.getHtmlPopupWidth(myWList,i));
+				wwi.setPopupExecCommand(this.getPopupExecCommand(myWList,i));
 			
-			wwi.setErrorBackground(this.getErrorBackground());
-			wwi.setErrorForeground(this.getErrorForeground());
-			wwi.setErrorHeaderBackground(this.getErrorHeaderBackground());
-			wwi.setErrorHeaderForeground(this.getErrorHeaderForeground());		
-			
-			returnList.add(wwi);
+				wwi.setStandardBackground(this.getStandardBackground());
+				wwi.setStandardForeground(this.getStandardForeground());
+				wwi.setStandardHeaderBackground(this.getStandardHeaderBackground());
+				wwi.setStandardHeaderForeground(this.getStandardHeaderForeground());
+				
+				wwi.setErrorBackground(this.getErrorBackground());
+				wwi.setErrorForeground(this.getErrorForeground());
+				wwi.setErrorHeaderBackground(this.getErrorHeaderBackground());
+				wwi.setErrorHeaderForeground(this.getErrorHeaderForeground());		
+				
+				returnList.add(wwi);
+			}
 		}
 		
 		return returnList;
@@ -388,7 +408,25 @@ public class WeatherWidget extends Widget implements IItemFactory {
             return "";
         }
 	}
+	
+    public Boolean getWeatherPageVisible(ItemTypeItemList list, int i) {
+        try {
+            return ((ItemTypeBoolean)list.getItem(i, PARAM_WEATHER_VISIBLE)).getValue();
+        } catch(Exception e) {
+            Logger.logdebug(e);
+            return false;
+        }	
+    }    
 
+    public String getWeatherPosition(ItemTypeItemList list, int i) {
+        try {
+            return ((ItemTypeStringList)list.getItem(i, PARAM_WEATHER_POSITION)).getValue();
+        } catch(Exception e) {
+            Logger.logdebug(e);
+            return IWidget.POSITION_MULTIWIDGET;
+        }	
+    }    
+    
 	private String getWeatherLongitude(ItemTypeItemList list, int i) {
 		return getLongLatTogether(list, i).getLongitude()+"";
 	}
@@ -505,6 +543,11 @@ public class WeatherWidget extends Widget implements IItemFactory {
         }        
     }
 	
+    @Override 
+    public boolean isGuiWidget() {
+    	return true;
+    }
+    
 
 	
 

@@ -42,7 +42,7 @@ public class ClockAndSunlightWidget extends Widget {
     static final String PARAM_LAYOUT              = "Layout";
 
     public ClockAndSunlightWidget() {
-        super(International.getString("Uhr und Tageslicht"), "MeteoAstro", International.getString("Uhr und Tageslicht"), true,false);
+        super(International.getString("Uhr und Tageslicht"), "MeteoAstro", International.getString("Uhr und Tageslicht"), true, true, false);
         IItemType item;
         addParameterInternal(new ItemTypeStringList(PARAM_LAYOUT, LAYOUT_HORIZONTAL,
                 new String[] { LAYOUT_HORIZONTAL, LAYOUT_VERTICAL },
@@ -153,6 +153,7 @@ public class ClockAndSunlightWidget extends Widget {
 		Vector <WidgetInstance> returnList = new Vector <WidgetInstance>();
 		ClockAndSunlightWidgetInstance wi = new ClockAndSunlightWidgetInstance();
 		
+		wi.setPosition(this.getPosition());
 		wi.setLatitude(getLatitude());
 		wi.setLayout(this.getLayout());
 		wi.setLongitude(getLongitude());
@@ -169,5 +170,10 @@ public class ClockAndSunlightWidget extends Widget {
 		returnList.add(wi);
 		return returnList;
 	}
+	
+    @Override 
+    public boolean isGuiWidget() {
+    	return true;
+    }
 
 }
