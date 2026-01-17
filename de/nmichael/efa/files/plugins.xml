@@ -98,5 +98,16 @@
             <File size="925551">flatlaf-3.6.jar</File>
         </Files>
     </Plugin>
+    
+    <Plugin name="org.json">
+        <FullName>org.json - JSON in Java</FullName>
+        <Version>20250517.0.0</Version>
+        <Copyright>Public Domain</Copyright>
+        <Description lang="de">org.json - JSON in Java Bibliothek</Description>
+        <Description lang="en">org.json - JSON in Java Bibliothek</Description>
+        <Files baseurl="http://efa.nmichael.de/plugins/json">
+            <File size="82710">json-20250517.jar</File>
+        </Files>
+    </Plugin>
 
 </Plugins>
