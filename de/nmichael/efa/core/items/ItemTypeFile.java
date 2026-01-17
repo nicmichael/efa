@@ -105,7 +105,9 @@ public class ItemTypeFile extends ItemTypeString {
         getValueFromGui();
         String filename = toString().trim();
         if (fileOpenSave == MODE_OPEN && filename.length() > 0) {
-            if (fileOrDir == TYPE_FILE && !(new File(filename)).isFile()) {
+            if (fileOrDir == TYPE_FILE 
+            		&& !((filename.toLowerCase().startsWith("http:") || filename.toLowerCase().startsWith("https:")))
+            		&& !(new File(filename)).isFile()) {
                 Dialog.error(International.getMessage("{filedescription} '{filename}' existiert nicht",
                         International.getString("Datei"),filename)+".");
             }
