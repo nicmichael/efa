@@ -7,21 +7,23 @@
         <DownloadSize>TODO</DownloadSize>
      	<MinimumJavaVersion>1.8</MinimumJavaVersion>
 		<MinimumEfaCloudVersion>2.3.3</MinimumEfaCloudVersion>
-        <ShowNotics lang="de">Early Access für Test der Widget-Überarbeitung. Basiert auf Beta 2.5.0#21. Einsatz auf eigene Gefahr.</ShowNotics>
+        <ShowNotice lang="de">Basiert auf Beta 2.5.0#21.</ShowNotice>
         <ShowNotice lang="de">Wenn efaCloud eingesetzt wird, muss der Server mindestens Version 2.3.3 unterstützen. EfaCloud 2.4.0_12 und höher werden empfohlen.</ShowNotice>
-        <ShowNotics lang="en">Early Access for testing efa widget refactoring. Based on Beta 2.5.0#21. Use at own risk.</ShowNotics>
+        <ShowNotice lang="en">Based on Beta 2.5.0#21.</ShowNotice>
         <ShowNotice lang="en">If you use efaCloud, make sure your server at least supports efaCloud Version 2.3.3. It is recommended to upgrade to EfaCloud 2.4.0_12 or above.</ShowNotice>
         <Changes lang="de">
             <ChangeItem>Neu: Widget: Allgemein: Es können mehrere Widgets oben/unten/links/rechts positioniert werden.</ChangeItem>
             <ChangeItem>Neu: Widget: HTML-Widget: Jedes HTML-Widget kann separat positioniert werden (oben/unten/links/rechts/multiwidget).</ChangeItem>
             <ChangeItem>Neu: Widget: Wetter-Widget: Jedes Wetter-Widget kann separat positioniert werden (oben/unten/links/rechts/multiwidget).</ChangeItem>
             <ChangeItem>Neu: Widget: Wetter-Widget: Jedes Wetter-Widget kann separat sichtbar/unsichtbar gemacht werden.</ChangeItem>
+			<ChangeItem>Bugfix: Datei-Eingabefelder zeigen keinen Fehler mehr an, wenn eine HTTP/HTTPs Seite gewählt ist.</ChangeItem>
         </Changes>
         <Changes lang="en">
             <ChangeItem>New: Widget: Common: Multiple widgets can be positioned at the top/bottom/left/right.</ChangeItem>
             <ChangeItem>New: Widget: HTML-Widget: Each HTML widget can be positioned separately (top/bottom/left/right/multiwidget).</ChangeItem>
             <ChangeItem>New: Widget: Weather-Widget: Each weather widget can be positioned separately (top/bottom/left/right/multiwidget).</ChangeItem>
             <ChangeItem>New: Widget: Weather widget: Each weather widget can be made visible/invisible separately.</ChangeItem>
+			<ChangeItem>Bugfix: Filename fields don't show an error message if file name starts with HTTP/HTTPs.</ChangeItem>
         </Changes>
 	</Version>
  <Version>
@@ -31,9 +33,9 @@
         <DownloadSize>TODO</DownloadSize>
      	<MinimumJavaVersion>1.8</MinimumJavaVersion>
 		<MinimumEfaCloudVersion>2.3.3</MinimumEfaCloudVersion>
-        <ShowNotics lang="de">Early Access für Test der Widget-Überarbeitung. Basiert auf Beta 2.5.0#21. Einsatz auf eigene Gefahr.</ShowNotics>
+        <ShowNotice lang="de">Early Access für Test der Widget-Überarbeitung. Basiert auf Beta 2.5.0#21. Einsatz auf eigene Gefahr.</ShowNotice>
         <ShowNotice lang="de">Wenn efaCloud eingesetzt wird, muss der Server mindestens Version 2.3.3 unterstützen. EfaCloud 2.4.0_12 und höher werden empfohlen.</ShowNotice>
-        <ShowNotics lang="en">Early Access for testing efa widget refactoring. Based on Beta 2.5.0#21. Use at own risk.</ShowNotics>
+        <ShowNotice lang="en">Early Access for testing efa widget refactoring. Based on Beta 2.5.0#21. Use at own risk.</ShowNotice>
         <ShowNotice lang="en">If you use efaCloud, make sure your server at least supports efaCloud Version 2.3.3. It is recommended to upgrade to EfaCloud 2.4.0_12 or above.</ShowNotice>
         <Changes lang="de">
             <ChangeItem>Neu: GUI Optimierung: Einige Checkboxen sind nun eingerückt, was die GUI besser verständlich macht.</ChangeItem>
@@ -51,9 +53,9 @@
         <DownloadSize>TODO</DownloadSize>
      	<MinimumJavaVersion>1.8</MinimumJavaVersion>
 		<MinimumEfaCloudVersion>2.3.3</MinimumEfaCloudVersion>
-        <ShowNotics lang="de">Early Access für Test der Widget-Überarbeitung. Basiert auf Beta 2.5.0#21. Einsatz auf eigene Gefahr.</ShowNotics>
+        <ShowNotice lang="de">Early Access für Test der Widget-Überarbeitung. Basiert auf Beta 2.5.0#21. Einsatz auf eigene Gefahr.</ShowNotice>
         <ShowNotice lang="de">Wenn efaCloud eingesetzt wird, muss der Server mindestens Version 2.3.3 unterstützen. EfaCloud 2.4.0_12 und höher werden empfohlen.</ShowNotice>
-        <ShowNotics lang="en">Early Access for testing efa widget refactoring. Based on Beta 2.5.0#21. Use at own risk.</ShowNotics>
+        <ShowNotice lang="en">Early Access for testing efa widget refactoring. Based on Beta 2.5.0#21. Use at own risk.</ShowNotice>
         <ShowNotice lang="en">If you use efaCloud, make sure your server at least supports efaCloud Version 2.3.3. It is recommended to upgrade to EfaCloud 2.4.0_12 or above.</ShowNotice>
         <Changes lang="de">
             <ChangeItem>Neu: Widget: HTML-Widget: Klick auf die Fläche des Widgets öffnet die Inhalte in einem Popup-Fenster. Dieses schließt sich automatisch nach 90 Sekunden. </ChangeItem>
@@ -85,9 +87,9 @@
         <DownloadSize>TODO</DownloadSize>
      	<MinimumJavaVersion>1.8</MinimumJavaVersion>
 		<MinimumEfaCloudVersion>2.3.3</MinimumEfaCloudVersion>
-        <ShowNotics lang="de">Early Access für Test der Widget-Überarbeitung. Basiert auf Beta 2.5.0#21. Einsatz auf eigene Gefahr.</ShowNotics>
+        <ShowNotice lang="de">Early Access für Test der Widget-Überarbeitung. Basiert auf Beta 2.5.0#21. Einsatz auf eigene Gefahr.</ShowNotice>
         <ShowNotice lang="de">Wenn efaCloud eingesetzt wird, muss der Server mindestens Version 2.3.3 unterstützen. EfaCloud 2.4.0_12 und höher werden empfohlen.</ShowNotice>
-        <ShowNotics lang="en">Early Access for testing efa widget refactoring. Based on Beta 2.5.0#21. Use at own risk.</ShowNotics>
+        <ShowNotice lang="en">Early Access for testing efa widget refactoring. Based on Beta 2.5.0#21. Use at own risk.</ShowNotice>
         <ShowNotice lang="en">If you use efaCloud, make sure your server at least supports efaCloud Version 2.3.3. It is recommended to upgrade to EfaCloud 2.4.0_12 or above.</ShowNotice>
         <Changes lang="de">
             <ChangeItem>Neu: Widget: HTML-Widget: Überschriften und Überschriftenfarbe definierbar.</ChangeItem>
@@ -113,9 +115,9 @@
         <DownloadSize>TODO</DownloadSize>
      	<MinimumJavaVersion>1.8</MinimumJavaVersion>
 		<MinimumEfaCloudVersion>2.3.3</MinimumEfaCloudVersion>
-        <ShowNotics lang="de">Early Access für Test der Widget-Überarbeitung. Basiert auf Beta 2.5.0#21. Einsatz auf eigene Gefahr.</ShowNotics>
+        <ShowNotice lang="de">Early Access für Test der Widget-Überarbeitung. Basiert auf Beta 2.5.0#21. Einsatz auf eigene Gefahr.</ShowNotice>
         <ShowNotice lang="de">Wenn efaCloud eingesetzt wird, muss der Server mindestens Version 2.3.3 unterstützen. EfaCloud 2.4.0_12 und höher werden empfohlen.</ShowNotice>
-        <ShowNotics lang="en">Early Access for testing efa widget refactoring. Based on Beta 2.5.0#21. Use at own risk.</ShowNotics>
+        <ShowNotice lang="en">Early Access for testing efa widget refactoring. Based on Beta 2.5.0#21. Use at own risk.</ShowNotice>
         <ShowNotice lang="en">If you use efaCloud, make sure your server at least supports efaCloud Version 2.3.3. It is recommended to upgrade to EfaCloud 2.4.0_12 or above.</ShowNotice>
         <Changes lang="de">
             <ChangeItem>Neu: Widget: HTML-Widget: Download der HTML-Seite im Hintergrund. HTML-Caching. Standardfarben definierbar. </ChangeItem>
@@ -133,9 +135,9 @@
         <DownloadSize>TODO</DownloadSize>
      	<MinimumJavaVersion>1.8</MinimumJavaVersion>
 		<MinimumEfaCloudVersion>2.3.3</MinimumEfaCloudVersion>
-        <ShowNotics lang="de">Early Access für Test der Widget-Überarbeitung. Basiert auf Beta 2.5.0#21. Einsatz auf eigene Gefahr.</ShowNotics>
+        <ShowNotice lang="de">Early Access für Test der Widget-Überarbeitung. Basiert auf Beta 2.5.0#21. Einsatz auf eigene Gefahr.</ShowNotice>
         <ShowNotice lang="de">Wenn efaCloud eingesetzt wird, muss der Server mindestens Version 2.3.3 unterstützen. EfaCloud 2.4.0_12 und höher werden empfohlen.</ShowNotice>
-        <ShowNotics lang="en">Early Access for testing efa widget refactoring. Based on Beta 2.5.0#21. Use at own risk.</ShowNotics>
+        <ShowNotice lang="en">Early Access for testing efa widget refactoring. Based on Beta 2.5.0#21. Use at own risk.</ShowNotice>
         <ShowNotice lang="en">If you use efaCloud, make sure your server at least supports efaCloud Version 2.3.3. It is recommended to upgrade to EfaCloud 2.4.0_12 or above.</ShowNotice>
         <Changes lang="de">
             <ChangeItem>Neu: Widget: Das Widget-System wesentlich überarbeitet und ergänzt.</ChangeItem>
