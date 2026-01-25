@@ -230,12 +230,9 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
     JLabel statusLabel = new JLabel();
 
     // Base GUI Items
-    JPanel westPanel = new JPanel();
-    JPanel eastPanel = new JPanel();
+    JPanel leftBoatListPanel = new JPanel();
+    JPanel rightBoatListPanel = new JPanel();
     JPanel centerPanel = new JPanel();
-    JPanel northPanel = new JPanel();
-    JPanel southPanel = new JPanel();
-    
 
     // Window GUI Items
     JLabel titleLabel = new JLabel();
@@ -340,13 +337,13 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
 
     private void iniGuiBase() {
         setIconImage(EfaGuiUtils.getEfaMainIcon());
-        mainPanel.setLayout(new BorderLayout());
+        mainPanel.setLayout(new GridBagLayout());
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         //setting resizable to true would enable resizing the boathouse window.
         //but as the boatlists on the left and the right are on east and west, 
         //they do not scale horizontally with screen width.
         //so setResizable(true) would be useless.
-        setResizable(false);
+        setResizable(true);
         this.addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 this_windowClosing(e);
@@ -403,8 +400,7 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
     private void iniGuiMain() {
         iniGuiBoatLists();
         iniGuiCenterPanel();
-        iniGuiNorthPanel();
-        iniGuiSouthPanel();
+        updateGuiNews();
         iniGuiPanels();
         updateGuiWidgets();
     }
@@ -426,18 +422,26 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
         widgetCenterPanel.setLayout(new BorderLayout()); // 
         widgetMultiWidgetCenterPanel.setLayout(new BorderLayout());
 
-        northPanel.add(widgetTopPanel, BorderLayout.CENTER);
-        southPanel.add(widgetBottomPanel, BorderLayout.CENTER);
-        westPanel.add(widgetLeftPanel, BorderLayout.WEST);
-        eastPanel.add(widgetRightPanel, BorderLayout.EAST);
-        centerPanel.add(widgetCenterPanel, new GridBagConstraints(1, 100, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5, 10, 10, 10), 0, 0));
+        JPanel newsPanel = new JPanel();
+        newsPanel.setLayout(new BorderLayout());
+        newsPanel.add(news.getGuiComponent(), BorderLayout.CENTER);
+        
+        centerPanel.add(widgetCenterPanel, new GridBagConstraints(1, 100, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5, 0, 0, 0), 0, 0));
         centerPanel.add(widgetMultiWidgetCenterPanel, new GridBagConstraints(1, 200, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0,0,0,0), 0, 0));
-
-        mainPanel.add(westPanel, BorderLayout.WEST);
-        mainPanel.add(eastPanel, BorderLayout.EAST);
-        mainPanel.add(northPanel, BorderLayout.NORTH);
-        mainPanel.add(southPanel, BorderLayout.SOUTH);
-        mainPanel.add(centerPanel, BorderLayout.CENTER);
+        
+        mainPanel.add(widgetTopPanel,     new GridBagConstraints(1, 1, 5, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 2, 0), 0, 0));
+        // west, center, east on same row.
+        mainPanel.add(widgetLeftPanel,    new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+        mainPanel.add(leftBoatListPanel,  new GridBagConstraints(2, 2, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+        mainPanel.add(centerPanel,        new GridBagConstraints(3, 2, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 10, 0, 10), 0, 0));
+        mainPanel.add(rightBoatListPanel, new GridBagConstraints(4, 2, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+        mainPanel.add(widgetRightPanel,   new GridBagConstraints(5, 2, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+        mainPanel.add(statusLabel,  	  new GridBagConstraints(1, 3, 5, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(2, 0, 2, 0), 0, 0));
+        mainPanel.add(widgetBottomPanel,  new GridBagConstraints(1, 4, 5, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+        mainPanel.add(newsPanel,  		  new GridBagConstraints(1, 5, 5, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 4, 0, 4), 0, 0));
+        
+        statusLabel.setVisible(Daten.efaConfig.getValueStatusLeiste());
+        statusLabelSetText(International.getString("Status"));
     }
     
     private void openProjectLogbookClubwork() {
@@ -490,7 +494,7 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
                 Color bgColor = new Color(0, 0, 170);
 
                 EmptyBorder b = new EmptyBorder(2,2,2,2);
-                mainPanel.setBackground(bgColor);
+                //mainPanel.setBackground(bgColor);
                 mainPanel.setBorder(b);
 
                 JMenuBar menuBar = new JMenuBar();
@@ -560,31 +564,26 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
                     "Only supported as of Java 5: " +e.toString());
         }
 
+        boatsNotAvailableList.setFieldSize(0, Daten.efaConfig.getValueListSizeUnavailableBoats()); 
+        
         // Fenster maximiert
         if (Daten.efaConfig.getValueEfaDirekt_startMaximized()) {
             try {
-                //this.setSize(Dialog.screenSize);
-                this.setMinimumSize(Dialog.screenSize);
-                Dimension newsize = this.getSize();
 
-                // breite für Scrollpanes ist (Fensterbreite - 20) / 2.
-                //int width = (int) ((newsize.getWidth() - this.startSessionButton.getSize().getWidth() - 20) / 2);
-                int width = (int) (newsize.getWidth() / 3);
-                // die Höhe der Scrollpanes ist, da sie CENTER sind, irrelevant; nur für jScrollPane3
-                // ist die Höhe ausschlaggebend.
-                boatsAvailableList.setFieldSize(width, 400);
-                personsAvailableList.setFieldSize(width, 400);
-                boatsOnTheWaterList.setFieldSize(width, 200);
-                boatsNotAvailableList.setFieldSize(width, Daten.efaConfig.getValueListSizeUnavailableBoats()); //(int) (newsize.getHeight() / 4));
-                int height = (int) (20.0f * (Dialog.getFontSize() < 10 ? 12 : Dialog.getFontSize()) / Dialog.getDefaultFontSize());
-                toggleAvailableBoatsToBoats.setPreferredSize(new Dimension(width / 2, height));
-                toggleAvailableBoatsToPersons.setPreferredSize(new Dimension(width / 2, height));
-
-                validate();
+            	if (Daten.efaConfig.getValueEfaDirekt_fensterNichtVerschiebbar()) {
+            		this.setMinimumSize(Dialog.screenSize);
+            	} else {
+            		this.setPreferredSize(Dialog.screenSize);
+            	}
+                		
+                //GridbagLayout: the panels for boatlists are set to grow, the others not 
+                //so no need to calculate any widths like in former borderlayout.
             } catch (Exception e) {
                 Logger.logdebug(e);
             }
-        }
+        } 
+
+        validate();
 
         // Lock efa?
         if (Daten.efaConfig.getValueEfaDirekt_locked()) {
@@ -595,9 +594,7 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
         // Update Project Info
         updateProjectLogbookInfo();
 
-        // note: packing must happen at the very end, since it makes the frame "displayable", which then
-        // does not allow to change any window settings like setUndecorated()
-        packFrame("iniGuiRemaining()");
+
         boatsAvailableList.requestFocus();
     }
 
@@ -657,15 +654,15 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
         togglePanel.add(toggleAvailableBoatsToPersons, null);
         togglePanel.setVisible(Daten.efaConfig.getValueEfaDirekt_listAllowToggleBoatsPersons());
         boatsAvailablePanel.add(togglePanel, BorderLayout.NORTH);
-        westPanel.setLayout(new BorderLayout());
-        westPanel.add(boatsAvailablePanel, BorderLayout.CENTER);
+        leftBoatListPanel.setLayout(new BorderLayout());
+        leftBoatListPanel.add(boatsAvailablePanel, BorderLayout.CENTER);
 
         JPanel boatsNotAvailablePanel = new JPanel();
         boatsNotAvailablePanel.setLayout(new BorderLayout());
         boatsOnTheWaterList.displayOnGui(this, boatsNotAvailablePanel, BorderLayout.CENTER);
         boatsNotAvailableList.displayOnGui(this, boatsNotAvailablePanel, BorderLayout.SOUTH);
-        eastPanel.setLayout(new BorderLayout());
-        eastPanel.add(boatsNotAvailablePanel, BorderLayout.CENTER);
+        rightBoatListPanel.setLayout(new BorderLayout());
+        rightBoatListPanel.add(boatsNotAvailablePanel, BorderLayout.CENTER);
        
     }
 
@@ -997,9 +994,9 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
         this.adminButton.setText(International.getString("Admin-Modus") + (fkey ? " [Alt-F10]" : ""));
         this.specialButton.setText(Daten.efaConfig.getValueEfaDirekt_butSpezial().getValueText() + (fkey ? " [Alt-F11]" : ""));
         updateGuiButtonLAF();
-        if (!Daten.efaConfig.getValueEfaDirekt_startMaximized() && isDisplayable()) {
+       /* if (!Daten.efaConfig.getValueEfaDirekt_startMaximized() && isDisplayable()) {
             packFrame("iniButtonText()");
-        }
+        }*/
     }
 
     private void updateGuiNews() {
@@ -1009,9 +1006,9 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
         news.setText(Daten.efaConfig.getValueEfaDirekt_newsText());
         news.setScrollSpeed(Daten.efaConfig.getValueEfaDirekt_newsScrollSpeed());
         news.setVisible(Daten.efaConfig.getValueEfaDirekt_showNews());
-        if (isDisplayable()) {
-            packFrame("updateGuiNews()");
-        }
+       // if (!Daten.efaConfig.getValueEfaDirekt_startMaximized() && isDisplayable()) {
+       //     packFrame("updateGuiNews()");
+       // }
     }
 
     private void updateGuiWidgets() {
@@ -1151,6 +1148,7 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
     		}
     	}
     	return multiWidgetUse;
+    	
     }
 
     /**
@@ -1161,22 +1159,6 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
     	//get Instances and put them in our cache.
     	Vector<WidgetInstance> instances = wt.createInstances();
     	widgetInstances.addAll(instances);
-    }
-    
-    private void iniGuiNorthPanel() {
-        updateGuiNews();
-        northPanel.setLayout(new BorderLayout());
-    }
-
-    private void iniGuiSouthPanel() {
-        updateGuiNews();
-        southPanel.setLayout(new BorderLayout());
-
-        southPanel.add(statusLabel, BorderLayout.NORTH);
-        statusLabel.setVisible(Daten.efaConfig.getValueStatusLeiste());
-        southPanel.add(news.getGuiComponent(), BorderLayout.SOUTH);
-        statusLabelSetText(International.getString("Status"));
-
     }
 
     private void statusLabelSetText(String s) {
@@ -1916,12 +1898,6 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
                 }
             }
 
-            /*
-            Dimension dim = boatsAvailableScrollPane.getSize();
-            boatsAvailableScrollPane.setPreferredSize(dim); // to make sure boatsAvailableScrollPane is not resized when toggled between persons and boats
-            boatsAvailableScrollPane.setSize(dim);          // to make sure boatsAvailableScrollPane is not resized when toggled between persons and boats
-             */
-
             if (toggleAvailableBoatsToBoats.isSelected()) {
                 statusLabelSetText(International.getString("Kein Boot ausgewählt."));
             } else {
@@ -1961,7 +1937,6 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
             if (Logger.isTraceOn(Logger.TT_GUI, 8)) {
                 Logger.log(Logger.DEBUG, Logger.MSG_GUI_DEBUGGUI, "updateBoatLists(" + listChanged + ") - done");
             }
-            this.revalidate(); // refresh the whole screen
         } catch (Exception e) {
             Logger.logdebug(e);
         } finally {
@@ -2571,7 +2546,7 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
     void prepareEfaBaseFrame() {
         efaBaseFrame = new EfaBaseFrame(this, EfaBaseFrame.MODE_BOATHOUSE);
         efaBaseFrame.prepareDialog();
-        efaBaseFrame.setFixedLocationAndSize();
+        //efaBaseFrame.setFixedLocationAndSize();
     }
 
     void showEfaBaseFrame(int mode, ItemTypeBoatstatusList.BoatListItem action) {

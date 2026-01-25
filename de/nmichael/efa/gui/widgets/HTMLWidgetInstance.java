@@ -110,6 +110,7 @@ public class HTMLWidgetInstance extends WidgetInstance implements IWidgetInstanc
         htmlUpdater.setUseHttpCaching(this.useHttpCaching);
         htmlUpdater.start();
         htmlUpdater.setPage(url, updateInterval);
+        scrollPane.revalidate();
     }
 
 	private void addGeneralPopupAction() {
@@ -170,7 +171,7 @@ public class HTMLWidgetInstance extends WidgetInstance implements IWidgetInstanc
 		
 		scrollPane.setBorder(BorderFactory.createEmptyBorder(1,1,1,1));
 		
-		roundPanel.setMinimumSize(new Dimension(240, 120));
+		roundPanel.setPreferredSize(new Dimension(this.getWidth(), this.getHeight()));
 		roundPanel.revalidate();
 
 	}

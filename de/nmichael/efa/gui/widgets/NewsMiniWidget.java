@@ -11,13 +11,10 @@
 package de.nmichael.efa.gui.widgets;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.FontMetrics;
 
+import javax.swing.BorderFactory;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
 import de.nmichael.efa.data.types.DataTypeTime;
@@ -26,7 +23,7 @@ import de.nmichael.efa.util.Logger;
 
 public class NewsMiniWidget {
 
-    private JLabel label = new JLabel();
+    private NewsMiniWidgetPanel label = new NewsMiniWidgetPanel();
     private NewsUpdater newsUpdater;
 
     public NewsMiniWidget() {
@@ -34,10 +31,9 @@ public class NewsMiniWidget {
         label.setForeground(Color.white);
         label.setBackground(Color.red);
         label.setOpaque(true);
-        label.setHorizontalAlignment(SwingConstants.CENTER);
-        label.setHorizontalTextPosition(SwingConstants.CENTER);
         label.setVisible(false);
         label.setFont(label.getFont().deriveFont(Font.BOLD));
+        label.setBorder(BorderFactory.createLineBorder(label.getForeground(), 1, true));
         newsUpdater = new NewsUpdater();
         newsUpdater.start();
     }
@@ -72,12 +68,7 @@ public class NewsMiniWidget {
         volatile boolean keepRunning = true;
         volatile boolean visible=true;
         private String text;
-        private int startPosition;
-        private int length;
         private int scrollSpeed;
-        private int maxCharsToShow = 50;
-        private int maxWidth = 600;
-        private int maxCharWidth = 0;
 
         public void run() {
             try {
@@ -89,19 +80,9 @@ public class NewsMiniWidget {
                 
                 try {
                 	if (visible) {
-	                	//gets maxWidth depending on labels's width 
-	                	//and gets maxChar, depending on the "X" character's length in the current font
-	                 	getMaxCharsToShow();
-	
 	                	//Use invokelater as swing threadsafe ways
-	                    SwingUtilities.invokeLater(new MainGuiNewsUpdater(label, getText(text, startPosition, maxCharsToShow)));
-	
-	                    startPosition = (startPosition + 1) % (length + 3);
-	                    if (length <= maxCharsToShow) {
-	                        Thread.sleep(60000);
-	                    } else {
-	                        Thread.sleep(scrollSpeed);
-	                    }
+	                    SwingUtilities.invokeLater(new MainGuiNewsUpdater(label, text));
+                        Thread.sleep(scrollSpeed);
                 	} else {
                 		//not visible. sleep an hour. if someone makes us visible, we get woken up by an interruptedexception.
                 		Thread.sleep(60*60*1000);
@@ -113,58 +94,12 @@ public class NewsMiniWidget {
                 }
             }
         }
-
-        private void getMaxCharsToShow() {
-
-        	int charWidth=0;
-    		Dimension dim = label.getSize();
-
-        	if (maxCharWidth==0) {
-	            FontMetrics myFontMetrics = label.getFontMetrics(label.getFont());
-	            charWidth=dim.height; //default value: Character is as wide as the font's size
-	            if (myFontMetrics!=null) {
-	            	maxCharWidth=Math.max(8,myFontMetrics.charWidth('X')-1);
-	            	charWidth=maxCharWidth;
-	            }
-        	} else {
-        		charWidth=maxCharWidth;
-        	}
-        	//width may be zero, if label is not showing yet
-            if (dim.width > 0) {
-                maxCharsToShow = (dim.width / charWidth);
-            }
-            maxWidth = Math.max(dim.width, 600);
-        }
-
-        private String getText(String s, int pos, int max) {
-            if (max >= length) {
-                return s;
-            }
-            String t;
-            if (pos == length + 2) {
-                t = " ";
-            } else if (pos == length + 1) {
-                t = "  ";
-            } else if (pos == length) {
-                t = "   ";
-            } else {
-                t = s.substring(pos, Math.min(pos + max, length));
-            }
-            int l = t.length();
-            if (l + 3 < max) {
-                t = t + (pos < length ? "   " : "") + s.substring(0, max - l - 3);
-            }
-            return t;
-        }
         
         /* in the following functions, it is neccessary to interrupt the thread to get the settings get active.
          * because sometimes, the sleep time is very high.
          */
         public synchronized void setText(String text) {
-            this.text = text;
-            this.length = text.length();
-            this.startPosition = 0;
-            getMaxCharsToShow();
+            this.text = "   "+text+"   ";
             interrupt();
         }
 
@@ -191,16 +126,20 @@ public class NewsMiniWidget {
     private class MainGuiNewsUpdater implements Runnable {
         
     	private String text = null;
-    	private JLabel mylabel=null;
+    	private NewsMiniWidgetPanel myLabel=null;
     	
-    	public MainGuiNewsUpdater(JLabel theLabel, String theData) {
+    	public MainGuiNewsUpdater(NewsMiniWidgetPanel theLabel, String theData) {
     		text = theData;
-    		mylabel = theLabel;
+    		myLabel = theLabel;
     	}
     	
     	public void run() {
-    		mylabel.setText(text);
-	      }
+            
+    		myLabel.setText(this.text);
+    		myLabel.calcNextOffset();
+    		myLabel.repaint();
+
+		}
 	}
     
 }

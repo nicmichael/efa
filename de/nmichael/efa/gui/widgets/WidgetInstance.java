@@ -2,6 +2,7 @@ package de.nmichael.efa.gui.widgets;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -21,7 +22,7 @@ import de.nmichael.efa.util.EfaUtil;
 
 public abstract class WidgetInstance implements IWidgetInstance {
 
-	private JPanel myPanel;
+	protected JPanel myPanel;
 	private String position;
 
     public WidgetInstance() {
@@ -82,6 +83,7 @@ public abstract class WidgetInstance implements IWidgetInstance {
 		            			verticalAlignment, 
 		            			insetTop, insetBottom,
 		            			insetLeft, insetRight);
+
         	}
         }
     }
