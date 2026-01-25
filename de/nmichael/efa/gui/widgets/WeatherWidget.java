@@ -106,10 +106,11 @@ public class WeatherWidget extends Widget implements IItemFactory {
 		addHeader(NOT_STORED_ITEM_PREFIX+"MultiWeatherWidgetLocationHeader", IItemType.TYPE_PUBLIC, "", 
 				International.getString("Wetter Daten"), WEATHERWIDGET_GRIDWIDTH);
 		IItemType item;
+		//currently no weatherapi support yet for downloading weather data.
 		addParameterInternal(item=new ItemTypeStringList(PARAM_WEATHER_SOURCE, WEATHER_SOURCE_OPENMETEO,
-				new String[] { WEATHER_SOURCE_OPENMETEO, WEATHER_SOURCE_WEATHERAPI },
-				new String[] { International.getString("OpenMeteo kostenfreie API (Europa/Nord Amerika)"),
-						International.getString("WeatherAPI") },
+				new String[] { WEATHER_SOURCE_OPENMETEO/*, WEATHER_SOURCE_WEATHERAPI */},
+				new String[] { International.getString("OpenMeteo kostenfreie API (Europa/Nord Amerika)")/*,
+						International.getString("WeatherAPI")*/ },
 				IItemType.TYPE_PUBLIC, "", International.getString("Quelle für Wetterdaten")));
 		item.setFieldGrid(WEATHERWIDGET_GRIDWIDTH-2, -1, GridBagConstraints.HORIZONTAL);
 
