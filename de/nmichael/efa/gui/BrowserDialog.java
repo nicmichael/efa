@@ -813,17 +813,43 @@ public class BrowserDialog extends BaseDialog {
     }
 
     public static void openExternalBrowser(Window parent, String url) {
-        if (Daten.efaConfig.getValueBrowser().length() > 0 &&
-            !Daten.efaConfig.getValueBrowser().equals(INTERNAL_BROWSER)) {
-            try {
-                Runtime.getRuntime().exec(Daten.efaConfig.getValueBrowser() + " " + url);
-            } catch (Exception ee) {
-                LogString.logWarning_cantExecCommand(Daten.efaConfig.getValueBrowser(), International.getString("für Browser"), ee.toString());
-                openInternalBrowser(parent, url);
-            }
-        } else {
-            openInternalBrowser(parent, url);
+      
+        try {
+        	String theBrowser = Daten.efaConfig.getValueBrowser().trim();
+        	if (theBrowser!=null && theBrowser.length()>0) {
+        		// use internal browser, if browser config says "INTERN", otherwise start to run the external browser
+        		if (theBrowser.equalsIgnoreCase(BrowserDialog.INTERNAL_BROWSER)) {
+        			BrowserDialog.openInternalBrowser(parent, url);
+        		} else {
+        			BrowserDialog.openExternalBrowser(parent, url);               			
+        		}
+        	} else {
+        		//else use standard System function to run a browser.
+        		Desktop.getDesktop().browse(URI.create(url));
+        	}
+        } catch (IOException eIO) {
+    		try {
+    			BrowserDialog.openInternalBrowser(parent, url);
+    		} catch (Exception eOther){
+    			Logger.log(eOther);
+    		}
+        } catch (UnsupportedOperationException eUOP) {
+    		try {
+    			BrowserDialog.openInternalBrowser(parent, url);
+    		} catch (Exception eOther){
+    			Logger.log(eOther);
+    		}
         }
+        catch (Exception ex) {
+		    LogString.logWarning_cantExecCommand(Daten.efaConfig.getValueBrowser(), International.getString("für Browser"), url);
+			Logger.log(ex);
+    		try {
+    			BrowserDialog.openInternalBrowser(parent, url);
+    		} catch (Exception eOther){
+    			Logger.log(eOther);
+    		}			
+        }	
+    	
     }
     
 	class BthsSetUnlocked implements Runnable {

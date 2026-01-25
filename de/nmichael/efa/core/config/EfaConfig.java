@@ -313,6 +313,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 	private ItemTypeString efadirekt_adminLastOsCommand;
 	private ItemTypeLong efadirekt_lastBoatDamangeReminder;
 	private ItemTypeImage efaDirekt_vereinsLogo;
+	private ItemTypeBoolean efaDirekt_statusLeiste;
 	private ItemTypeBoolean efaBoathouseShowLastFromWaterNotification;
 	private ItemTypeString efaBoathouseShowLastFromWaterNotificationText;
 	private ItemTypeBoolean efaDirekt_showUhr;
@@ -1374,7 +1375,12 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 			addHeader("efaGuiBoathouseBoatListsCommon", IItemType.TYPE_PUBLIC,
 					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
 					International.getString("Bootslisten allgemein"), 3);
-
+			
+			addParameter(efaDirekt_statusLeiste = new ItemTypeBoolean("EfaBoathouseShowStatus", false,
+					IItemType.TYPE_PUBLIC,
+					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI ),
+					International.getString("Statusleiste mit Bootsinformationen anzeigen")));
+			
 			addParameter(efaDirekt_listAllowToggleBoatsPersons = new ItemTypeBoolean("BoatListToggleToPersons", false,
 					IItemType.TYPE_PUBLIC,
 					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI ),
@@ -3185,6 +3191,10 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 
 	public String getWeeklyReservationConflictBehaviour() {
 		return weeklyReservationConflictBehaviour.getValue();
+	}
+	
+	public Boolean getValueStatusLeiste() {
+		return efaDirekt_statusLeiste.getValue();
 	}
 
 	public Vector<IItemType> getGuiItems() {

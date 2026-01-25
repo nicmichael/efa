@@ -64,7 +64,7 @@
             <File size="601866">xmlgraphics-commons.jar</File>
         </Files>
     </Plugin>
-
+	<!-- Keep signpost for older efa versions, as plugin.xml is used for plugin update mechanism on efa.nmichael.de -->
     <Plugin name="signpost">
         <FullName>Signpost OAuth Plugin</FullName>
         <Version>1.2.1</Version>

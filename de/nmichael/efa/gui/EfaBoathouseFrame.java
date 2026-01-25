@@ -1023,6 +1023,8 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
             widgetCenterPanel.removeAll();
             widgetMultiWidgetCenterPanel.removeAll();
             
+            statusLabel.setVisible(Daten.efaConfig.getValueStatusLeiste());
+            
             if (Daten.efaConfig.getWidgets() == null) {
                 return;
             }
@@ -1171,19 +1173,22 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
         southPanel.setLayout(new BorderLayout());
 
         southPanel.add(statusLabel, BorderLayout.NORTH);
+        statusLabel.setVisible(Daten.efaConfig.getValueStatusLeiste());
         southPanel.add(news.getGuiComponent(), BorderLayout.SOUTH);
         statusLabelSetText(International.getString("Status"));
 
     }
 
     private void statusLabelSetText(String s) {
-        statusLabel.setText(" "+ s);
-        // wenn Text zu lang, dann PreferredSize verringern, damit bei pack() die zu große Label-Breite nicht
-        // zum Vergrößern des Fensters führt!
-        if (statusLabel.getPreferredSize().getWidth() > this.getSize().getWidth()) {
-            statusLabel.setPreferredSize(new Dimension((int) this.getSize().getWidth() - 20,
-                    (int) statusLabel.getPreferredSize().getHeight()));
-        }
+    	if(statusLabel.isVisible()) {
+	        statusLabel.setText(" "+ s);
+	        // wenn Text zu lang, dann PreferredSize verringern, damit bei pack() die zu große Label-Breite nicht
+	        // zum Vergrößern des Fensters führt!
+	        if (statusLabel.getPreferredSize().getWidth() > this.getSize().getWidth()) {
+	            statusLabel.setPreferredSize(new Dimension((int) this.getSize().getWidth() - 20,
+	                    (int) statusLabel.getPreferredSize().getHeight()));
+	        }
+    	}
     }
 
     public void packFrame(String source) {
