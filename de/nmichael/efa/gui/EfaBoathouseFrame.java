@@ -39,6 +39,7 @@ import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuBar;
 import javax.swing.JPanel;
@@ -339,11 +340,7 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
         setIconImage(EfaGuiUtils.getEfaMainIcon());
         mainPanel.setLayout(new GridBagLayout());
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-        //setting resizable to true would enable resizing the boathouse window.
-        //but as the boatlists on the left and the right are on east and west, 
-        //they do not scale horizontally with screen width.
-        //so setResizable(true) would be useless.
-        setResizable(true);
+        setResizable(false);
         this.addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 this_windowClosing(e);
@@ -573,9 +570,31 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
             	if (Daten.efaConfig.getValueEfaDirekt_fensterNichtVerschiebbar()) {
             		this.setMinimumSize(Dialog.screenSize);
             	} else {
+            		/* maximizing a standard jFrame in win11 is some sort of problem.
+            		 * 
+            		 * a jframe can be maximized in three flavors:
+            		 * a) use the whole screen, no border around the jframe and covering the windows task bar and not being resizable 
+            		 *    (classic and definite kiosk mode)
+            		 * b) use the whole screen, no border around the jframe, keeping windows task bar visible (but jframe needs to be set to resizable=true)
+            		 * c) use almost the whole screen, a slight border around the jframe, and task bar visible, and frame set to not resizable
+            		 * 
+            		 * how to achieve a)
+            		 * - efaboathouseframe.setresizable(false)
+            		 * - after setting the frame to visible in baseframe.java, run this only for efaBoathouseframe
+            		 *   this.setExtendedState(this.getExtendedState() | JFrame.MAXIMIZED_BOTH);
+            		 *   
+            		 * how to achieve b)
+            		 * - efaboathouseframe.setresizable(true)
+            		 * - after setting the frame to visible in baseframe.java, run this only for efaBoathouseframe
+            		 *   this.setExtendedState(this.getExtendedState() | JFrame.MAXIMIZED_BOTH);
+            		 * 
+            		 * how to achieve c)
+            		 * - efaboathouseframe.setresizable(false)
+            		 * - setting the frame size to dialog.screensize here 
+            		*/
             		this.setPreferredSize(Dialog.screenSize);
             	}
-                		
+
                 //GridbagLayout: the panels for boatlists are set to grow, the others not 
                 //so no need to calculate any widths like in former borderlayout.
             } catch (Exception e) {
