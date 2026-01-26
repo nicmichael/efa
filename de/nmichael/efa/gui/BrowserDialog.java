@@ -821,7 +821,12 @@ public class BrowserDialog extends BaseDialog {
         		if (theBrowser.equalsIgnoreCase(BrowserDialog.INTERNAL_BROWSER)) {
         			BrowserDialog.openInternalBrowser(parent, url);
         		} else {
-        			BrowserDialog.openExternalBrowser(parent, url);               			
+        			try {
+    	                Runtime.getRuntime().exec(Daten.efaConfig.getValueBrowser() + " " + url);
+    	            } catch (Exception ee) {
+    	                LogString.logWarning_cantExecCommand(Daten.efaConfig.getValueBrowser(), International.getString("für Browser"), ee.toString());
+    	                openInternalBrowser(parent, url);
+    	            }               			
         		}
         	} else {
         		//else use standard System function to run a browser.
