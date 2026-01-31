@@ -45,7 +45,9 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Map;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -80,6 +82,16 @@ public class EfaUtil {
 	private static String UMLAUTS 		= "åàáâăäāąćçčèéêęëėěēìíîįīïďđģķĺļłńňñņòóôőõöōøřŕůùúûűüųūýÿšśşťţżžź";
 	private static String REPLACEMENT 	= "aaaaaaaaccceeeeeeeeiiiiiiddgklllnnnnoooooooorruuuuuuuuyysssttzzz"; 
 
+	private static final char[] CHAR_MAP = buildCharMap(); 
+	private static char[] buildCharMap() { 
+		char[] map = new char[Character.MAX_VALUE + 1]; // 65536 
+		int len = Math.min(UMLAUTS.length(), REPLACEMENT.length()); 
+		for (int i = 0; i < len; i++) { 
+			map[UMLAUTS.charAt(i)] = REPLACEMENT.charAt(i); 
+			} 
+		return map; 
+	}
+	
     private static String UMLAUTSEXTEND = UMLAUTS + "ßæœ";// those umlauts get translated to two characters
 
     public static String escapeXml(String str) {
@@ -189,15 +201,33 @@ public class EfaUtil {
      * @param replaceList String containing all replacement characters
      * @return String containing all replacements.
      */
+    @Deprecated
     public static String replaceListByListFast(String strData, String searchList, String replaceList) {
-        if (searchList.length() != replaceList.length()) {
+       if (searchList.length() != replaceList.length()) {
             return strData;
-        }
+       }
         for (int i=0; i<searchList.length(); i++) {
         	strData = strData.replace(searchList.charAt(i),replaceList.charAt(i));
         }
         return strData;
     }
+    
+    public static String replaceListByListFast(String input) { 
+    		if (input == null || input.isEmpty()) {
+    			return input; 
+    		}
+    		StringBuilder sb = new StringBuilder(input.length()); 
+    		for (int i = 0, n = input.length(); i < n; i++) { 
+    			char c = input.charAt(i); 
+    			char mapped = CHAR_MAP[c]; 
+    			if (mapped != 0) {
+    				sb.append(mapped); 
+    			} else {
+    				sb.append(c); 
+    			} 
+    		}
+		return sb.toString(); 
+    	}
     
     /**
      * Replaces all umlauts of western character set (German, French, Spanish, Danish) to a simple latin character, e.g. "ä"->"a".
@@ -218,7 +248,7 @@ public class EfaUtil {
      */
     public static String replaceAllUmlautsLowerCaseFast(String data) {
 	    String s1 = data.toLowerCase();
-	    s1 = EfaUtil.replaceListByListFast(s1, UMLAUTS, REPLACEMENT);
+	    s1 = EfaUtil.replaceListByListFast(s1);
 	
 	    if (s1.indexOf("ß") >= 0) {
 	        s1 = EfaUtil.replace(s1, "ß", "ss", true);
@@ -231,7 +261,6 @@ public class EfaUtil {
 	    if (s1.indexOf("œ") >= 0) {
 	        s1 = EfaUtil.replace(s1, "œ", "oe", true);
 	    }
-	    
 	    
 	    return s1;
     }    

@@ -746,7 +746,8 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
 
     class BoatString implements Comparable {
 
-        public String name;
+        private String name;
+        private String normName;
         public int seats;
         public boolean sortBySeats;
         public boolean sortByRigger;
@@ -776,12 +777,20 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
             String sThis = (sortBySeats ? (seats < 10 ? "0" : "") + seats : "") + 
                     (sortByRigger ? rigger : "") + 
                     (seats == SEATS_OTHER || sortByType ? type + "#" : "") +
-                    normalizeString(name);
+                    (normName==null ? "": normName);//normalizeString(name);
             String sOther = (sortBySeats ? (other.seats < 10 ? "0" : "") + other.seats : "") + 
                     (sortByRigger ? other.rigger : "") + 
                     (other.seats == SEATS_OTHER || sortByType ? other.type + "#" : "") +
-                    normalizeString(other.name);
+                    other.getNormName();//normalizeString(other.name);
             return sThis.compareTo(sOther);
+        }
+        
+        public void setName(String value) {
+        		this.name=value;
+        		this.normName=normalizeString(value);
+        		}
+        public String getNormName() {
+        		return (normName==null ? "" : normName);
         }
     }
 
