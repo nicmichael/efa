@@ -89,12 +89,42 @@ public class WeatherDataCache {
 		} catch (Exception e) {
 			WeatherDataForeCast tmp=new WeatherDataForeCast();
 			tmp.setStatus(false);
-			tmp.setStatusMessage(International.getString("Fehler beim Abruf der Wetterdaten.")+"\n\n"+ e.getMessage());
-			Logger.log(Logger.WARNING, Logger.MSG_WARN_WEATHERUPDATEFAILED,e);
+			tmp.setStatusMessage(International.getString("Fehler beim Abruf der Wetterdaten.")+"\n\n"+
+					e.getLocalizedMessage());
+			tmp.setExceptionText(e.getLocalizedMessage());
+			Logger.log(Logger.ERROR, Logger.MSG_WARN_WEATHERUPDATEFAILED,e);
+			return tmp;
+		} catch (NoClassDefFoundError e1) {
+			WeatherDataForeCast tmp=new WeatherDataForeCast();
+			tmp.setStatus(false);
+			tmp.setStatusMessage(
+					International.getString("Fehler beim Abruf der Wetterdaten.")+"\n\n"+ 
+					International.getString("Vermutlich wird die JSON-Bibliothek im Java-Classpath nicht gefunden. Rebooten sie den PC (und nicht nur efa), und prüfen Sie ggfs. den Classpath (CP) runefa.sh/runefa.bat")+"\n\n"+
+					e1.getLocalizedMessage()
+					); 
+			tmp.setExceptionText(e1.getLocalizedMessage());
+			Logger.log(Logger.ERROR, Logger.MSG_WARN_WEATHERUPDATEFAILED,e1.getLocalizedMessage()+"\n\n"+e1.toString());
 			return tmp;
 		}
 	}
 
+	public String wrapAt200(String s) {
+	    StringBuilder sb = new StringBuilder();
+	    int count = 0;
+
+	    for (String word : s.split("&")) {
+	        if (count + word.length() > 200) {
+	            sb.append('\n');
+	            count = 0;
+	        }
+	        sb.append(word).append(' ');
+	        count += word.length() + 1;
+	    }
+
+	    return sb.toString();
+	}
+
+	
 	private String fetchJSonFromURL(String urlStr) throws Exception {
 		HttpURLConnection conn = (HttpURLConnection) new URL(urlStr).openConnection();
 		conn.setRequestMethod("GET");

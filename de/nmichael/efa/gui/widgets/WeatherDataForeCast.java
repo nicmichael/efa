@@ -12,6 +12,7 @@ public class WeatherDataForeCast {
     private WeatherDataDaily daily;
     private boolean status=false;
     private String statusMessage="";
+    private String exceptionText="";
     
     public WeatherDataForeCast() {
     	lastUpdateTimeStamp = System.currentTimeMillis();
@@ -80,6 +81,32 @@ public class WeatherDataForeCast {
 	public String getStatusMessage() {
 		return statusMessage;
 	}
+	
+	public void setExceptionText(String value) {
+		exceptionText=wrapString(value);
+	}
+	
+	private String wrapString(String s) {
+	    StringBuilder sb = new StringBuilder();
+	    int count = 0;
+
+	    for (String word : s.split("&")) {
+	        if (count + word.length() > 200) {
+	            sb.append('\n');
+	            count = 0;
+	        }
+	        sb.append(word).append(' ');
+	        count += word.length() + 1;
+	    }
+
+	    return sb.toString();
+	}
+
+	
+	public String getExceptionText() {
+		return exceptionText;
+	}
+	
 	public void setStatusMessage(String statusMessage) {
 		this.statusMessage = statusMessage;
 	}
