@@ -218,7 +218,7 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
                 bs.rigger = (r != null ? r.getTypeRigging(0) : EfaTypes.TYPE_RIGGING_OTHER);
 
                 // for BoatsOnTheWater, don't use the "real" boat name, but rather what's stored in the boat status as "BoatText"
-                bs.name = (sr.getCurrentStatus().equals(BoatStatusRecord.STATUS_ONTHEWATER) || r == null ? sr.getBoatText() : r.getQualifiedName());
+                bs.setName((sr.getCurrentStatus().equals(BoatStatusRecord.STATUS_ONTHEWATER) || r == null ? sr.getBoatText() : r.getQualifiedName()));
 
                 bs.sortBySeats = (sortByAnzahl);
                 bs.sortByRigger = (sortByRigger);
@@ -669,7 +669,7 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
             PersonRecord pr = v.get(i);
             a[i] = new BoatString();
             a[i].seats = SEATS_OTHER;
-            a[i].name = pr.getQualifiedName();
+            a[i].setName(pr.getQualifiedName());
             a[i].sortBySeats = false;
             BoatListItem item = new BoatListItem();
             item.list = this;
@@ -744,7 +744,7 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
         public PersonRecord person;
     }
 
-    class BoatString implements Comparable {
+   private class BoatString implements Comparable {
 
         private String name;
         private String normName;
@@ -786,11 +786,11 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
         }
         
         public void setName(String value) {
-        		this.name=value;
-        		this.normName=normalizeString(value);
-        		}
+       		this.name=value;
+       		this.normName=normalizeString(value);
+        }
         public String getNormName() {
-        		return (normName==null ? "" : normName);
+       		return (normName==null ? "" : normName);
         }
     }
 
