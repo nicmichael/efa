@@ -13,7 +13,8 @@
         <ShowNotice lang="en">If you use efaCloud, make sure your server at least supports efaCloud Version 2.3.3. It is recommended to upgrade to EfaCloud 2.4.0_12 or above.</ShowNotice>
         <Changes lang="de">
             <ChangeItem>Neu: Statusleiste unter der Bootsliste wird standardmäßig nicht mehr angezeigt (konfigurierbar)</ChangeItem>
-            <ChangeItem>Neu: Hauptbildschirm von efaBootshaus auf GridBagLayout umgestellt. Hierdurch lassen sich die HTML-Widgets besser an die linken und rechten Seiten positionieren.</ChangeItem>
+            <ChangeItem>Neu: Hauptbildschirm von efaBootshaus auf GridBagLayout umgestellt. Hierdurch lassen sich die HTML-Widgets besser an die auf dem Bildschirm positionieren.</ChangeItem>
+            <ChangeItem>Neu: Neue Option um den Abstand der Schaltflächen zu den Bootslisten zu definieren (efaBootshaus-&gt;Erscheinungsbild)</ChangeItem>
             <ChangeItem>Neu: Widget: Newsticker technisch überarbeitet. Keine Darstellungsprobleme mehr bei Verwendung einiger Schriftarten.</ChangeItem>
             <ChangeItem>Bugfix: Widget: Wetter-Widget: WeatherAPI aus der Liste der Datenquellen entfernt.</ChangeItem>
 			<ChangeItem>Bugfix: Plugins: Org.Json Bibliothek aufgenommen und altes Wetter-Plugin entfernt.</ChangeItem>
@@ -24,7 +25,8 @@
         </Changes>
         <Changes lang="en">
             <ChangeItem>New: The status bar below the boot list is no longer displayed by default (configurable)</ChangeItem>
-			<ChangeItem>New: The main screen of efaBootshaus has been switched to GridBagLayout. This allows for better positioning of the HTML widgets on the left and right sides.</ChangeItem>
+			<ChangeItem>New: The main screen of efaBootshaus has been switched to GridBagLayout. This allows for better positioning of the HTML widgets on the screen.</ChangeItem>
+            <ChangeItem>New: New option in efaconfig to define the distance between Buttons and Boat lists. (efaBootshaus-&gt;Appearance)</ChangeItem>
             <ChangeItem>New: Widget: News ticker technically revised. Avoids rendering problems when using certain fonts.</ChangeItem>
  			<ChangeItem>Bugfix: Widget: Weather widget: WeatherAPI removed from the list of data sources.</ChangeItem>
 			<ChangeItem>Bugfix: Plugins: Org.Json library included and old weather plugin removed.</ChangeItem>

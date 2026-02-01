@@ -67,7 +67,7 @@ public class ClockAndSunlightWidgetInstance extends WidgetInstance implements IW
 
 	mainPanel = new JPanel();
 	mainPanel.setLayout(new GridBagLayout());
-	mainPanel.setBorder(BorderFactory.createEmptyBorder(2, 0, 2, 0));
+	mainPanel.setBorder(BorderFactory.createEmptyBorder(8, 4, 8, 4));
 	sunPanel.setLayout(new GridBagLayout());
 	sunPanel.setOpaque(false);
 	Boolean isHorzLayout=getLayout().equals(ClockAndSunlightWidget.LAYOUT_HORIZONTAL);

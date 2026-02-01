@@ -1,8 +1,6 @@
 package de.nmichael.efa.gui.widgets;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -44,7 +42,7 @@ public abstract class WidgetInstance implements IWidgetInstance {
     }
 
 	@Override
-	public void show(JPanel panel, String panelPosition, String preferredOrientation) {
+	public void show(JPanel panel, String panelPosition) {
 		/*
 		 * Top, left, right, bottom position use GridBagLayout, others use Borderlayout
 		 */
@@ -54,22 +52,21 @@ public abstract class WidgetInstance implements IWidgetInstance {
         if (comp != null) {
         	if (panelPosition.equals(IWidget.POSITION_MULTIWIDGET)) {
         		//Multiwidget itself takes care of layout if multiple elements are put on it.
-        		panel.add(comp, preferredOrientation);        		
+        		panel.add(comp);        		
         	} else if (panelPosition.equals(IWidget.POSITION_CENTER)) {
-        		if (preferredOrientation == null ||
-        				preferredOrientation.trim().isEmpty()) {
-        			// no preferred orientation of the panel? then put them on the borderlayout
-        			// first goes NORTH, then second CENTER, all the rest SOUTH
-        			if (panel.getComponentCount()==0) {
-		            	panel.add(comp, BorderLayout.NORTH);
-		            } else if (panel.getComponentCount()==1){
-		            	panel.add(comp, BorderLayout.CENTER);
-		            } else {
-		            	panel.add(comp, BorderLayout.SOUTH);
-		            }
-        		} else {
-        			panel.add(comp, preferredOrientation);
-        		}
+        		Boolean verticalAlignment=true;
+        		int compCount = panel.getComponentCount();
+        		int insetLeft = 3;
+        		int insetTop = 3;
+        		int insetRight = 3;
+        		int insetBottom = 3;
+        		
+        		this.show(panel, (verticalAlignment ? 0 : compCount), 
+		            			(verticalAlignment ? compCount : 0),
+		            			verticalAlignment, 
+		            			insetTop, insetBottom,
+		            			insetLeft, insetRight);
+
         	} else { //top,bottom,left,right position: Gridbag
         		Boolean verticalAlignment= (panelPosition.equals(IWidget.POSITION_LEFT)|| panelPosition.equals(IWidget.POSITION_RIGHT));
         		int compCount = panel.getComponentCount();

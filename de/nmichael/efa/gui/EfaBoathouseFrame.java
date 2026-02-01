@@ -101,20 +101,20 @@ import de.nmichael.efa.util.International;
 import de.nmichael.efa.util.LogString;
 import de.nmichael.efa.util.Logger;
 import de.nmichael.efa.util.Mnemonics;
-/**
+/*
  * EfaBoathouseFrame layout
  * 
  * -------------------------------------------------|
  *      widgetTopPanel (within northpanel)          |
  * -------------------------------------------------|
  *       |          |           |          |        |               
- * widget| westpanel| center    | eastpanel| widget |               
+ * widget|          | center    |          | widget |               
  * left  |          | panel     |          | right  |               
  * Panel | center:  |           | center:  | panel  |               
  *       | boats    |           | boatson  |        |               
- * within| available|           | waterlist| within |               
- * west  | list     |           | +        | east   |               
- * panel |          |           | boats    | panel  |               
+ *       | available|           | waterlist| within |               
+ *       | list     |           | +        | east   |               
+ *       |          |           | boats    | panel  |               
  *       |          |           | unavail- |        |               
  *       |          |           | ablelist |        |               
  * --------------------------------------------------
@@ -124,13 +124,9 @@ import de.nmichael.efa.util.Mnemonics;
  * centerpanel:
  * contains a gridbaglayout.
  *    - row 1: logolabel
- *    - Row 2..n: buttons    (where n=99, enough space for additional buttons, empty rows are not shown in gridbaglayout)
- *    - Row 100..200: widgetcenterpanel (usually only one row used)
- *    		widgetcenter uses borderlayout --> contains a north, center, south order
- *    			first widget with position=center --> widgetCenter.North
- *    			second widget with position=center --> widgetCenter.center
- *    		    second+x widget with position= center --> widgetCenter.south
- *              (so there are at most three widgets positionable in the center)
+ *    - Row 2..n: buttons  (buttonpanel)  (where n=99, enough space for additional buttons, empty rows are not shown in gridbaglayout)
+ *    - Row 100..200: widgetcenterpanel 
+ *    		widgetcenter uses gridbaglayout
  *    - Row 200: multiwidgetCenterPanel --> contains north, center,south
  *    		this panel only contains the multiWidget widget. 
  *          it is only shown if any other widget's location is set to "MultiWidget"
@@ -186,6 +182,9 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
     String KEYACTION_altX;
     String KEYACTION_shiftF4;
 
+    // Buttons panel
+    JPanel buttonPanel = new JPanel();
+    
     // Boat List GUI Items
     JPanel boatsAvailablePanel;
     ItemTypeBoatstatusList boatsAvailableList; // booteVerfuegbar
@@ -198,6 +197,7 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
 
     // Center Panel GUI Items
     JLabel logoLabel = new JLabel();
+
     JButton startSessionButton = new JButton();
     JButton startSessionButtonMultiple = new JButton();
     JButton finishSessionButton = new JButton();
@@ -415,9 +415,8 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
         widgetBottomPanel.setLayout(new GridBagLayout());
         widgetLeftPanel.setLayout(new GridBagLayout());
         widgetRightPanel.setLayout(new GridBagLayout());
-        //Border Layout for center and multiwidget, as no GridBag necessary
-        widgetCenterPanel.setLayout(new BorderLayout()); // 
-        widgetMultiWidgetCenterPanel.setLayout(new BorderLayout());
+        widgetCenterPanel.setLayout(new GridBagLayout()); // 
+        widgetMultiWidgetCenterPanel.setLayout(new GridBagLayout());
 
         JPanel newsPanel = new JPanel();
         newsPanel.setLayout(new BorderLayout());
@@ -760,10 +759,12 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
         // so we use a buttonPanel which ensures A), but the buttonPanel is added to centerPanel 
         // as a not-growing component by using gridbagConstraints.
         
-        JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new GridBagLayout());
+        // new Gridbag-Based layout in efaBoathouse needs more border around buttons, so that the buttons
+        // are not so tight against the (larger) boatlists. 
+		int borderWidth = Daten.efaConfig.getValueEfaDirekt_showButtonBorderWidth();
+		buttonPanel.setBorder(BorderFactory.createEmptyBorder(0, borderWidth, 0, borderWidth));
         
-
         // startSessionButton and startSessionButtonMultiple shall be on the same line, 
         // and take the same width as the other buttons. So we create a panel containing
         // startSessionButton and startSessionButtonMultiple. The latter gets hidden if it shall not be used.        
@@ -1001,6 +1002,9 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
 
     public void updateGuiButtonText() {
         boolean fkey = Daten.efaConfig.getValueEfaDirekt_showButtonHotkey();
+        int borderWidth = Daten.efaConfig.getValueEfaDirekt_showButtonBorderWidth();
+        buttonPanel.setBorder(BorderFactory.createEmptyBorder(0, borderWidth, 0, borderWidth));
+        
         this.startSessionButton.setText(Daten.efaConfig.getValueEfaDirekt_butFahrtBeginnen().getValueText() + (fkey ? " [F2]" : ""));
         this.finishSessionButton.setText(Daten.efaConfig.getValueEfaDirekt_butFahrtBeenden().getValueText() + (fkey ? " [F3]" : ""));
         this.abortSessionButton.setText(International.getString("Fahrt abbrechen") + (fkey ? " [F4]" : ""));
@@ -1097,7 +1101,7 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
 		//Multiwidget shall always be in center position, but lowest possible position (south)
 		//so that clock (Center-top) and another widget (center-center) can be shown above.
 		multiWidgetInstance = (MultiWidgetContainerInstance) multiWidget.createInstances().get(0); // we are sure there is exactly a single instance
-		multiWidgetInstance.show(widgetMultiWidgetCenterPanel, IWidget.POSITION_CENTER, BorderLayout.SOUTH);   
+		multiWidgetInstance.show(widgetMultiWidgetCenterPanel, IWidget.POSITION_CENTER);   
 		boolean multiWidgetUse=false;
 		
 		// show all enabled widgets
@@ -1157,11 +1161,11 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
     		IWidgetInstance wi = instances.get(i);
     		JPanel targetPanel=getTargetPanel(wi.getPosition());
     		if (targetPanel!=null) {
-    			wi.show(targetPanel, wi.getPosition(), null);
+    			wi.show(targetPanel, wi.getPosition());
     		} else {
     			multiWidgetUse=true;
             	JPanel innerPanel = new JPanel(new BorderLayout());
-        		wi.show(innerPanel, IWidget.POSITION_MULTIWIDGET, BorderLayout.CENTER);
+        		wi.show(innerPanel, IWidget.POSITION_MULTIWIDGET);
         		// and add this innerpanel to the card Layout of the multiWidgetInstance
             	multiWidgetInstance.addWidget(innerPanel);
     		}

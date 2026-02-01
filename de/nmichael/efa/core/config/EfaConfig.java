@@ -286,6 +286,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 	private ItemTypeConfigButton efaDirekt_butHelp;
 	private ItemTypeString efaDirekt_butSpezialCmd;
 	private ItemTypeBoolean efaDirekt_showButtonHotkey;
+	private ItemTypeInteger efaDirekt_showButtonBorderWidth;
 	private ItemTypeBoolean efaDirekt_sortByAnzahl;
 	private ItemTypeBoolean efaDirekt_sortByRigger;
 	private ItemTypeBoolean efaDirekt_sortByType;
@@ -1369,6 +1370,11 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
 					International.getString("Sonstiges"), 3);
 
+			addParameter(efaDirekt_showButtonBorderWidth = new ItemTypeInteger("ButtonBorderWidth", 40, 12, 200, 
+					IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
+					International.getString("Abstand der Buttons zu den Bootslisten (Pixel)")));
+			efaDirekt_showButtonBorderWidth.setPadding(0, 0, 0, 20);
+			
 			addParameter(efaDirekt_vereinsLogo = new ItemTypeImage("ClubLogo", "", 320, 200, IItemType.TYPE_PUBLIC,
 					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI ),
 					International.getString("Vereinslogo")));
@@ -1500,6 +1506,11 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 			addHint("efaMultiSessinoSupportHintOnButtons", 
 					IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUIBUTTONS),
 					International.getString("Konfiguration der Schaltflächen hinter 'Fahrt beginnen' und 'Nachtrag' via efa-Bootshaus -> Eingabe -> Vereinfachte Anlage..."),3, 6, 6);
+
+			addParameter(efaDirekt_showButtonHotkey = new ItemTypeBoolean("ButtonShowHotkeys", false,
+					IItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUIBUTTONS),
+					International.getString("Hotkeys für Buttons anzeigen")));
+			
 			addParameter(efaDirekt_butFahrtBeginnen = new ItemTypeConfigButton("ButtonStartSession",
 					International.getString("Fahrt beginnen"), "CCFFCC", true, false, true, false,
 					IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUIBUTTONS),
@@ -1551,9 +1562,6 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 					International.getString("Hilfe-Button"), null, true, false, false, true, IItemType.TYPE_PUBLIC,
 					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUIBUTTONS),
 					International.getMessage("Button '{button}'", International.getString("Hilfe-Button"))));
-			addParameter(efaDirekt_showButtonHotkey = new ItemTypeBoolean("ButtonShowHotkeys", false,
-					IItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUIBUTTONS),
-					International.getString("Hotkeys für Buttons anzeigen")));
 
 			// ============================= BOATHOUSE:STARTSTOP
 			// =============================
@@ -2518,6 +2526,10 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 		return efaDirekt_showButtonHotkey.getValue();
 	}
 
+	public int getValueEfaDirekt_showButtonBorderWidth() {
+		return efaDirekt_showButtonBorderWidth.getValue();
+	}
+	
 	public boolean getValueEfaDirekt_sortByAnzahl() {
 		return efaDirekt_sortByAnzahl.getValue();
 	}

@@ -17,7 +17,7 @@ import de.nmichael.efa.data.LogbookRecord;
 
 public interface IWidgetInstance {
 
-    public void show(JPanel panel, String panelPosition, String preferredOrientation);
+    public void show(JPanel panel, String panelPosition);
     public void stop();
     
     public JComponent getComponent();
