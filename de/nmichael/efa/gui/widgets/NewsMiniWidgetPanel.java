@@ -12,9 +12,12 @@ import java.awt.image.BufferedImage;
 import de.nmichael.efa.gui.util.RoundedPanel;
 
 public class NewsMiniWidgetPanel extends RoundedPanel{
-    private String text = "";
+
+	private static final long serialVersionUID = 4614052035348797371L;
+	private String text = "";
     private BufferedImage textImage;
     private int offsetX;
+    private double widthPercent=0.80;
 
     public NewsMiniWidgetPanel() {
         setPreferredSize(new Dimension(400, this.getFont().getSize()+10));
@@ -33,7 +36,7 @@ public class NewsMiniWidgetPanel extends RoundedPanel{
         int panelHeight = getHeight();
 
         // --- MARQUEE-BEREICH ---
-        int marqueeWidth = (int) (panelWidth * 0.66);
+        int marqueeWidth = (int) (panelWidth * widthPercent);
         int marqueeX = (panelWidth - marqueeWidth) / 2;
 
         int imgHeight = this.getHeight();
@@ -46,7 +49,7 @@ public class NewsMiniWidgetPanel extends RoundedPanel{
         // Text so häufig zeichnen, bis der verfügbare Bereich ausgenutzt ist.
         g2.drawImage(textImage, marqueeX + offsetX, y, null);
         int repeat = (panelWidth / textImage.getWidth())+1;
-        for (int i=1; i<repeat; i++) {
+        for (int i=1; i<=repeat; i++) {
         	g2.drawImage(textImage, marqueeX + offsetX + (textImage.getWidth()*i), y, null);
         }
         g2.setClip(oldClip);
@@ -109,6 +112,14 @@ public class NewsMiniWidgetPanel extends RoundedPanel{
         if (offsetX + textImage.getWidth() < 0) {
             offsetX = 0;
         }
+	}
+
+	public int getWidthPercent() {
+		return (int)widthPercent*100;
+	}
+
+	public void setWidthPercent(int widthPercent) {
+		this.widthPercent = widthPercent/100.0;
 	}
 	
 	

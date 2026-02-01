@@ -79,9 +79,11 @@ public class EfaUtil {
     private static final int ZIP_BUFFER = 2048;
     private static java.awt.Container java_awt_Container = new java.awt.Container();
 
+    //both strings need to be of equal length.
 	private static String UMLAUTS 		= "åàáâăäāąćçčèéêęëėěēìíîįīïďđģķĺļłńňñņòóôőõöōøřŕůùúûűüųūýÿšśşťţżžź";
 	private static String REPLACEMENT 	= "aaaaaaaaccceeeeeeeeiiiiiiddgklllnnnnoooooooorruuuuuuuuyysssttzzz"; 
 
+	//static lookup table for replaceListByListFast()
 	private static final char[] CHAR_MAP = buildCharMap(); 
 	private static char[] buildCharMap() { 
 		char[] map = new char[Character.MAX_VALUE + 1]; // 65536 
@@ -196,6 +198,8 @@ public class EfaUtil {
      * The method is declarated as "fast" as it uses standard java replace function instead of old self-written code.
      * This method is like 15 times faster than the former replaceListByList function, and more suitable for sorting algorithms.
      * 
+     * see @replaceListByListFast(String input) for a faster replacement method. 
+     * 
      * @param strData	String containing characters to be replaced
      * @param searchList  String containing all characters that shall be replaced one-by-one
      * @param replaceList String containing all replacement characters
@@ -212,22 +216,32 @@ public class EfaUtil {
         return strData;
     }
     
+    /**
+     * Replace all non-ascii represenations of a,e,i,o,u,n,s,... to their ascii replacements
+     * Used for easy searching and sorting in Boatlists and tables.
+     * So "Über" equals "uber".
+     * This method is even
+     * @param input
+     * @return input with ascii-simplyfied representation
+     */
     public static String replaceListByListFast(String input) { 
-    		if (input == null || input.isEmpty()) {
-    			return input; 
-    		}
-    		StringBuilder sb = new StringBuilder(input.length()); 
-    		for (int i = 0, n = input.length(); i < n; i++) { 
-    			char c = input.charAt(i); 
-    			char mapped = CHAR_MAP[c]; 
-    			if (mapped != 0) {
-    				sb.append(mapped); 
-    			} else {
-    				sb.append(c); 
-    			} 
-    		}
+		if (input == null || input.isEmpty()) {
+			return input; 
+		}
+		StringBuilder sb = new StringBuilder(input.length()); 
+		char c;
+		char mapped;
+		for (int i = 0, n = input.length(); i < n; i++) { 
+			c = input.charAt(i); 
+			mapped = CHAR_MAP[c]; 
+			if (mapped != 0) {
+				sb.append(mapped); 
+			} else {
+				sb.append(c); 
+			} 
+		}
 		return sb.toString(); 
-    	}
+	}
     
     /**
      * Replaces all umlauts of western character set (German, French, Spanish, Danish) to a simple latin character, e.g. "ä"->"a".

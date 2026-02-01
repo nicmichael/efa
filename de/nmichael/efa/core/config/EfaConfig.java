@@ -320,6 +320,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 	private ItemTypeBoolean efaDirekt_showNews;
 	private ItemTypeString efaDirekt_newsText;
 	private ItemTypeInteger efaDirekt_newsScrollSpeed;
+	private ItemTypeInteger efaDirekt_newsWidthPercent;
 	private ItemTypeBoolean efaDirekt_startMaximized;
 	private ItemTypeBoolean efaDirekt_startMaximizedRespectTaskbar;
 	private ItemTypeBoolean efaDirekt_fensterNichtVerschiebbar;
@@ -1802,10 +1803,15 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 			addParameter(efaDirekt_newsText = new ItemTypeString("WidgetNewsText", "", IItemType.TYPE_PUBLIC,
 					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_WIDGETS, CATEGORY_WIDGET_NEWS),
 					International.getString("News-Text")));
-			addParameter(efaDirekt_newsScrollSpeed = new ItemTypeInteger("WidgetNewsScrollSpeed", 250, 100,
+			addParameter(efaDirekt_newsScrollSpeed = new ItemTypeInteger("WidgetNewsScrollSpeed", 200, 80,
 					Integer.MAX_VALUE, IItemType.TYPE_EXPERT,
 					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_WIDGETS, CATEGORY_WIDGET_NEWS),
-					"Scroll Speed"));			
+					"Scroll Speed"));		
+			addParameter(efaDirekt_newsWidthPercent = new ItemTypeInteger("WidgetNewsScrollWidth", 80, 30, 90, 
+					IItemType.TYPE_EXPERT,
+					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_WIDGETS, CATEGORY_WIDGET_NEWS),
+					International.getString("Breite")+" (%)"));			
+
 
 			widgets = Widget.getAllWidgets(true);
 			for (int i = 0; widgets != null && i < widgets.size(); i++) {
@@ -2693,6 +2699,10 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 		return efaDirekt_newsScrollSpeed.getValue();
 	}
 
+	public int getValueEfaDirekt_newsWidthPercent() {
+		return efaDirekt_newsWidthPercent.getValue();
+	}
+	
 	public boolean getValueEfaDirekt_startMaximized() {
 		return efaDirekt_startMaximized.getValue();
 	}

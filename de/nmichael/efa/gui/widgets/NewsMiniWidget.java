@@ -17,23 +17,30 @@ import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 
+import de.nmichael.efa.Daten;
 import de.nmichael.efa.data.types.DataTypeTime;
 import de.nmichael.efa.util.EfaUtil;
 import de.nmichael.efa.util.Logger;
-
+/*
+ * NewMiniwidget is not a classical widget. Its config data is set up directly in efaconfig
+ * (search for efaDirekt_showNews in efaconfig.) Also, efaBoathouseFrame knows this widget directly,
+ * and positions it directly in the lowest possible position of efaBoathouseFrame.
+ * Still, the new MiniWidget and 
+ */
 public class NewsMiniWidget {
 
-    private NewsMiniWidgetPanel label = new NewsMiniWidgetPanel();
+    private NewsMiniWidgetPanel mainNewsWidgetPanel = new NewsMiniWidgetPanel();
     private NewsUpdater newsUpdater;
 
     public NewsMiniWidget() {
-        label.setText("+++ News +++");
-        label.setForeground(Color.white);
-        label.setBackground(Color.red);
-        label.setOpaque(true);
-        label.setVisible(false);
-        label.setFont(label.getFont().deriveFont(Font.BOLD));
-        label.setBorder(BorderFactory.createLineBorder(label.getForeground(), 1, true));
+        mainNewsWidgetPanel.setText("+++ News +++");
+        mainNewsWidgetPanel.setForeground(Color.white);
+        mainNewsWidgetPanel.setBackground(Color.red);
+        mainNewsWidgetPanel.setOpaque(true);
+        mainNewsWidgetPanel.setVisible(false);
+        mainNewsWidgetPanel.setFont(mainNewsWidgetPanel.getFont().deriveFont(Font.BOLD));
+        mainNewsWidgetPanel.setBorder(BorderFactory.createLineBorder(mainNewsWidgetPanel.getForeground(), 1, true));
+        mainNewsWidgetPanel.setWidthPercent(Daten.efaConfig.getValueEfaDirekt_newsWidthPercent());
         newsUpdater = new NewsUpdater();
         newsUpdater.start();
     }
@@ -49,7 +56,7 @@ public class NewsMiniWidget {
     public void setVisible(Boolean value) {
     	SwingUtilities.invokeLater(new Runnable() {
     		public void run() {
-                label.setVisible(value);
+                mainNewsWidgetPanel.setVisible(value);
     		}
     	});    
     	// update the thread. we do not need to calculate ticket contents if we are not visible.
@@ -60,7 +67,7 @@ public class NewsMiniWidget {
     }
 
     public JComponent getGuiComponent() {
-        return label;
+        return mainNewsWidgetPanel;
     }
 
     class NewsUpdater extends Thread {
@@ -81,7 +88,7 @@ public class NewsMiniWidget {
                 try {
                 	if (visible) {
 	                	//Use invokelater as swing threadsafe ways
-	                    SwingUtilities.invokeLater(new MainGuiNewsUpdater(label, text));
+	                    SwingUtilities.invokeLater(new MainGuiNewsUpdater(mainNewsWidgetPanel, text));
                         Thread.sleep(scrollSpeed);
                 	} else {
                 		//not visible. sleep an hour. if someone makes us visible, we get woken up by an interruptedexception.
@@ -126,18 +133,19 @@ public class NewsMiniWidget {
     private class MainGuiNewsUpdater implements Runnable {
         
     	private String text = null;
-    	private NewsMiniWidgetPanel myLabel=null;
+    	private NewsMiniWidgetPanel newsPanel=null;
     	
-    	public MainGuiNewsUpdater(NewsMiniWidgetPanel theLabel, String theData) {
+    	public MainGuiNewsUpdater(NewsMiniWidgetPanel theNewsPanel, String theData) {
     		text = theData;
-    		myLabel = theLabel;
+    		newsPanel = theNewsPanel;
     	}
     	
     	public void run() {
             
-    		myLabel.setText(this.text);
-    		myLabel.calcNextOffset();
-    		myLabel.repaint();
+    		newsPanel.setText(this.text);
+    		newsPanel.setWidthPercent(Daten.efaConfig.getValueEfaDirekt_newsWidthPercent());
+    		newsPanel.calcNextOffset();
+    		newsPanel.repaint();
 
 		}
 	}
