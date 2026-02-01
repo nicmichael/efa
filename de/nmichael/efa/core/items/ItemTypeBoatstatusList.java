@@ -199,8 +199,6 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
                     }
                 }
 
-                BoatString bs = new BoatString();
-
                 // Seats
                 int seat = seats[j];
                 if (seat == 0) {
@@ -212,38 +210,28 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
                 if (seat > SEATS_OTHER) {
                     seat = SEATS_OTHER;
                 }
-                bs.seats = seat;
-                bs.variant = variant;
-                bs.type = (r != null ? r.getTypeType(0) : EfaTypes.TYPE_BOAT_OTHER);
-                bs.rigger = (r != null ? r.getTypeRigging(0) : EfaTypes.TYPE_RIGGING_OTHER);
 
-                // for BoatsOnTheWater, don't use the "real" boat name, but rather what's stored in the boat status as "BoatText"
-                bs.setName((sr.getCurrentStatus().equals(BoatStatusRecord.STATUS_ONTHEWATER) || r == null ? sr.getBoatText() : r.getQualifiedName()));
+                BoatString bs = new BoatString(seat, variant, 
+                		(r != null ? r.getTypeType(0) : EfaTypes.TYPE_BOAT_OTHER), // type
+                		(r != null ? r.getTypeRigging(0) : EfaTypes.TYPE_RIGGING_OTHER), //rigger)
+                		(sr.getCurrentStatus().equals(BoatStatusRecord.STATUS_ONTHEWATER) || r == null ? sr.getBoatText() : r.getQualifiedName()), //name
+                		sortByAnzahl,
+                		sortByRigger,
+                		sortByType);
+                
 
-                bs.sortBySeats = (sortByAnzahl);
-                bs.sortByRigger = (sortByRigger);
-                bs.sortByType = (sortByType);
-                if (!bs.sortBySeats) {
-                    bs.seats = SEATS_OTHER;
-                }
-                if (!bs.sortByRigger) {
-                    bs.rigger = RIGGER_OTHER;
-                }
-                if (!bs.sortByType) {
-                    bs.type = TYPE_OTHER;
-                }
 
                 // Colors for Groups
                 Color[] colors = (r!=null ? r.getBoatGroupsPieColors(groupColors) : null); 
 
                 BoatListItem item = new BoatListItem();
                 item.list = this;
-                item.text = bs.name;
+                item.text = bs.getName();
                 item.boat = r; //r is the current boat record 
                 item.boatStatus = sr;
-                item.boatVariant = bs.variant;
-                bs.colors = colors;
-                bs.record = item;
+                item.boatVariant = bs.getVariant();
+                bs.setColors(colors); 
+                bs.setRecord(item);
 
                 // destination is only shown for boats on the water, and if efaConfig says that destination shall be shown
                 // for boats on the water list.
@@ -257,13 +245,13 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
                     if (lr != null) {
                         String dest = lr.getDestinationAndVariantName();
                         if (dest != null && dest.length() > 0) {
-                            bs.name += STR_DESTINATION_DELIMITER  + dest;
+                            bs.setName(bs.getName()+ STR_DESTINATION_DELIMITER  + dest);
                         }
                     }
                 }
 
                 bsv.add(bs);
-                if (!bs.sortBySeats) {
+                if (!bs.isSortBySeats()) {
                     break;
                 }
             }
@@ -283,7 +271,7 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
 
             // sort by seats?
             if (sortByAnzahl) {
-                switch (a[i].seats) {
+                switch (a[i].getSeats()) {
                     case 1:
                         s = Daten.efaTypes.getValue(EfaTypes.CATEGORY_NUMSEATS, EfaTypes.TYPE_NUMSEATS_1);
                         break;
@@ -306,25 +294,25 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
                         s = Daten.efaTypes.getValue(EfaTypes.CATEGORY_NUMSEATS, EfaTypes.TYPE_NUMSEATS_8);
                         break;
                     default:
-                        if (a[i].seats < 99) {
-                            s = Daten.efaTypes.getValue(EfaTypes.CATEGORY_NUMSEATS, Integer.toString(a[i].seats));
+                        if (a[i].getSeats() < 99) {
+                            s = Daten.efaTypes.getValue(EfaTypes.CATEGORY_NUMSEATS, Integer.toString(a[i].getSeats()));
                         }
                 }
             }
 
             // sort by rigger?
-            if (sortByRigger && a[i].rigger != null) {
+            if (sortByRigger && a[i].getRigger() != null) {
                 if (sortByAnzahl) {
-                    if (EfaTypes.getSeatsKey(a[i].seats, a[i].rigger) != null) {
-                        s = Daten.efaTypes.getValue(EfaTypes.CATEGORY_NUMSEATS, EfaTypes.getSeatsKey(a[i].seats, a[i].rigger));
+                    if (EfaTypes.getSeatsKey(a[i].getSeats(), a[i].getRigger()) != null) {
+                        s = Daten.efaTypes.getValue(EfaTypes.CATEGORY_NUMSEATS, EfaTypes.getSeatsKey(a[i].getSeats(), a[i].getRigger()));
                     }
                 } else {
-                    s = (s == null ? "" : s + " ") + Daten.efaTypes.getValue(EfaTypes.CATEGORY_RIGGING, a[i].rigger);
+                    s = (s == null ? "" : s + " ") + Daten.efaTypes.getValue(EfaTypes.CATEGORY_RIGGING, a[i].getRigger());
                 }
             }
             // sort by type?
-            if (sortByType && a[i].type != null) {
-                s = (s == null ? "" : s + " ") + Daten.efaTypes.getValue(EfaTypes.CATEGORY_BOAT, a[i].type);
+            if (sortByType && a[i].getType() != null) {
+                s = (s == null ? "" : s + " ") + Daten.efaTypes.getValue(EfaTypes.CATEGORY_BOAT, a[i].getType());
             }
 
             if (s == null || s.equals(EfaTypes.getStringUnknown())) {
@@ -335,13 +323,13 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
                  } else {
                  */
                 s = Daten.efaTypes.getValue(EfaTypes.CATEGORY_NUMSEATS, EfaTypes.TYPE_NUMSEATS_OTHER);
-                if (Daten.efaConfig.getValueEfaDirekt_boatListIndividualOthers() && a[i].type != null) {
-                    s = Daten.efaTypes.getValue(EfaTypes.CATEGORY_BOAT, a[i].type);
+                if (Daten.efaConfig.getValueEfaDirekt_boatListIndividualOthers() && a[i].getType()!= null) {
+                    s = Daten.efaTypes.getValue(EfaTypes.CATEGORY_BOAT, a[i].getType());
                 }
 
                 //}
             }
-            anz = a[i].seats;
+            anz = a[i].getSeats();
             if (sortByAnzahl || sortByType) {
                 String newSep = LIST_SECTION_STRING +" "+ s  + " " + LIST_SECTION_STRING;
                 if (!newSep.equals(lastSep)) {
@@ -349,12 +337,12 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
                 }
                 lastSep = newSep;
             }
-            BoatListItem bi=(BoatListItem) a[i].record;
+            BoatListItem bi=(BoatListItem) a[i].getRecord();
 
-            vv.add(new ItemTypeListData(a[i].name, 
+            vv.add(new ItemTypeListData(a[i].getName(), 
             		(buildToolTips ? buildToolTipText(a[i],todaysReservations,showReservation) : ""), 
             		getSecondaryItem(bi.boatStatus, todaysReservations, showDestination, showReservation), 
-            		a[i].record, false, -1, null, a[i].colors));
+            		a[i].getRecord(), false, -1, null, a[i].getColors()));
         }
         return vv;
         } catch (Exception ee) {
@@ -405,11 +393,11 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
    	    	if (bs!=null) {
    	   			String boatName;
 
-   	    		BoatListItem bli = (BoatListItem) bs.record;
+   	    		BoatListItem bli = (BoatListItem) bs.getRecord();
    	    		if (bli.boat != null) {
    	    			boatName=bli.boat.getName();//.getBoatNameAsString(System.currentTimeMillis());
    	    		} else {
-   	    			boatName=bs.name;
+   	    			boatName=bs.getName();
    	    		}
    	    	
    	    		String boatDestination="";
@@ -667,31 +655,32 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
         BoatString[] a = new BoatString[v.size()];
         for (int i = 0; i < v.size(); i++) {
             PersonRecord pr = v.get(i);
-            a[i] = new BoatString();
-            a[i].seats = SEATS_OTHER;
-            a[i].setName(pr.getQualifiedName());
-            a[i].sortBySeats = false;
+
+            // new code for performance
+            a[i] = new BoatString(SEATS_OTHER, 0, TYPE_OTHER, RIGGER_OTHER, pr.getQualifiedName(),
+            		false, false, false //dont sort by seats, rigger, type)
+            		);
             BoatListItem item = new BoatListItem();
             item.list = this;
-            item.text = a[i].name;
+            item.text = a[i].getName();
             item.person = pr;
-            a[i].record = item;
+            a[i].setRecord(item);
+            
         }
         Arrays.sort(a);
 
         Vector<ItemTypeListData> vv = new Vector<ItemTypeListData>();
         char lastChar = ' ';
         for (int i = 0; i < a.length; i++) {
-            String name = a[i].name;
+            String name = a[i].getName();
             if (name.length() > 0) {
-                if (EfaUtil.replaceAllUmlautsLowerCaseFast(name).toUpperCase().charAt(0) != lastChar) {
-                    //name.toUpperCase().charAt(0) 
-                	lastChar = EfaUtil.replaceAllUmlautsLowerCaseFast(name).toUpperCase().charAt(0);
-                    vv.add(new ItemTypeListData("---------- " + lastChar + " ----------", null, null, null, true, SEATS_OTHER));
+                if (EfaUtil.replaceAllUmlautsLowerCaseFast(name).charAt(0) != lastChar) {
+                	lastChar = EfaUtil.replaceAllUmlautsLowerCaseFast(name).charAt(0);
+                    vv.add(new ItemTypeListData("---------- " + Character.toString(lastChar) .toUpperCase() + " ----------", null, null, null, true, SEATS_OTHER));
                 }
                 vv.add(new ItemTypeListData(name, 
 					    (buildToolTips ? getPersonToolTip(name, (BoatString) a[i]) : ""), 
-					    null, a[i].record,  false, SEATS_OTHER));
+					    null, a[i].getRecord(),  false, SEATS_OTHER));
             }
         }
         return vv;
@@ -702,7 +691,7 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
     	if (bs == null) {
     		return name;
     	} else {
-    		BoatListItem bli = (BoatListItem) bs.record; 
+    		BoatListItem bli = (BoatListItem) bs.getRecord(); 
     		
     		if (bli ==null) {
     			return name;
@@ -734,6 +723,31 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
         return b;
     }
 
+  //set text color of label above boathouse lists
+    public void setColor(Color c) {
+        this.color = c;
+        if (label!=null) {
+            label.setForeground(color);
+            label.repaint();
+        }
+    }
+
+    // set background color of label above boathouse lists, 
+    // set transparent if background is set to null
+    public void setBackgroundColor(Color c) {
+        this.backgroundColor = c;
+
+        if (label != null) {
+            if (backgroundColor != null) {
+            	label.setBackground(backgroundColor);
+            	label.setOpaque(true);
+            } else {
+            	label.setOpaque(false);
+            }
+            label.repaint();
+        }
+    }    
+    
     public static class BoatListItem {
         public int mode;
         public ItemTypeBoatstatusList list;
@@ -743,80 +757,5 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
         public int boatVariant = 0;
         public PersonRecord person;
     }
-
-   private class BoatString implements Comparable {
-
-        private String name;
-        private String normName;
-        public int seats;
-        public boolean sortBySeats;
-        public boolean sortByRigger;
-        public boolean sortByType;
-        public Object record;
-        public int variant;
-        public Color[] colors;
-        public String type;
-        public String rigger;
-
-        /**
-         * Turns a string to lowercase and replaces all western european special characters with simple latin characters (like à -> a).
-         * Needed for better sorting of lists.
-         * @param s
-         * @return
-         */
-        private String normalizeString(String s) {
-        	if (s == null) {
-                return "";
-            }
-            return EfaUtil.replaceAllUmlautsLowerCaseFast(s);
-  
-        }
-
-        public int compareTo(Object o) {
-            BoatString other = (BoatString) o;
-            String sThis = (sortBySeats ? (seats < 10 ? "0" : "") + seats : "") + 
-                    (sortByRigger ? rigger : "") + 
-                    (seats == SEATS_OTHER || sortByType ? type + "#" : "") +
-                    (normName==null ? "": normName);//normalizeString(name);
-            String sOther = (sortBySeats ? (other.seats < 10 ? "0" : "") + other.seats : "") + 
-                    (sortByRigger ? other.rigger : "") + 
-                    (other.seats == SEATS_OTHER || sortByType ? other.type + "#" : "") +
-                    other.getNormName();//normalizeString(other.name);
-            return sThis.compareTo(sOther);
-        }
-        
-        public void setName(String value) {
-       		this.name=value;
-       		this.normName=normalizeString(value);
-        }
-        public String getNormName() {
-       		return (normName==null ? "" : normName);
-        }
-    }
-
-    //set text color of label above boathouse lists
-    public void setColor(Color c) {
-        this.color = c;
-        if (label!=null) {
-            label.setForeground(color);
-            label.repaint();
-	    }
-    }
-    
-    // set background color of label above boathouse lists, 
-    // set transparent if background is set to null
-    public void setBackgroundColor(Color c) {
-        this.backgroundColor = c;
-
-        if (label != null) {
-	        if (backgroundColor != null) {
-	        	label.setBackground(backgroundColor);
-	        	label.setOpaque(true);
-	        } else {
-	        	label.setOpaque(false);
-	        }
-	        label.repaint();
-        }
-    }    
-
 }
+

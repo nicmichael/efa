@@ -261,8 +261,7 @@ public class EfaUtil {
      * @return
      */
     public static String replaceAllUmlautsLowerCaseFast(String data) {
-	    String s1 = data.toLowerCase();
-	    s1 = EfaUtil.replaceListByListFast(s1);
+	    String s1 = EfaUtil.replaceListByListFast(data.toLowerCase());
 	
 	    if (s1.indexOf("ß") >= 0) {
 	        s1 = EfaUtil.replace(s1, "ß", "ss", true);
