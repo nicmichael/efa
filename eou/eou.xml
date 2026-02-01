@@ -23,6 +23,7 @@
 			<ChangeItem>Bugfix: Info-Dialog zur Anzeige einer veralteten Java-Version kann Webseite öffnen.</ChangeItem>
 			<ChangeItem>Bugfix: Browserdialog nutzt beim Aufruf eines Externen Browsers auch die neue Desktop.browse() Funktion, wenn verfügbar.</ChangeItem>
         	<ChangeItem>Bugfix: Performanceverbesserung beim Filtern in Listen und beim Sortieren von Tabellen.</ChangeItem>
+        	<ChangeItem>Bugfix: Performanceverbesserung bei der Sortierung der Bootsliste/Personenliste in efaBootshaus.</ChangeItem>
         </Changes>
         <Changes lang="en">
             <ChangeItem>New: The status bar below the boot list is no longer displayed by default (configurable)</ChangeItem>
@@ -36,6 +37,7 @@
 			<ChangeItem>Bugfix: Info dialog displaying an outdated Java version may open a website.</ChangeItem>
 			<ChangeItem>Bugfix: When calling an external browser, the browser dialog now also uses the new Desktop.browse() function, if available.</ChangeItem>
 			<ChangeItem>Bugfix: Performance improvement when filtering in lists and sorting tables.</ChangeItem>
+        	<ChangeItem>Bugfix: Performance improvement when sorting the three main lists in efaBoathouse.</ChangeItem>
         </Changes>
 	</Version>
  <Version>
