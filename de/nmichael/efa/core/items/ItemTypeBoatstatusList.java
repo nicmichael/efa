@@ -203,11 +203,9 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
                 int seat = seats[j];
                 if (seat == 0) {
                     seat = SEATS_OTHER;
-                }
-                if (seat < 0) {
+                } else if (seat < 0) {
                     seat = 0;
-                }
-                if (seat > SEATS_OTHER) {
+                } else if (seat > SEATS_OTHER) {
                     seat = SEATS_OTHER;
                 }
 
@@ -218,8 +216,6 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
                 		sortByAnzahl,
                 		sortByRigger,
                 		sortByType);
-                
-
 
                 // Colors for Groups
                 Color[] colors = (r!=null ? r.getBoatGroupsPieColors(groupColors) : null); 
@@ -257,21 +253,17 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
             }
         }
 
-        BoatString[] a = new BoatString[bsv.size()];
-        for (int i=0; i<a.length; i++) {
-            a[i] = bsv.get(i);
-        }
-        Arrays.sort(a); // a is a BoatString which has its own comparator which handles umlauts etc.
-
+        Collections.sort(bsv);
+        
         Vector<ItemTypeListData> vv = new Vector<ItemTypeListData>();
         int anz = -1;
         String lastSep = null;
-        for (int i = 0; i < a.length; i++) {
+        for (BoatString curBS : bsv) {
             String s = null;
 
             // sort by seats?
             if (sortByAnzahl) {
-                switch (a[i].getSeats()) {
+                switch (curBS.getSeats()) {
                     case 1:
                         s = Daten.efaTypes.getValue(EfaTypes.CATEGORY_NUMSEATS, EfaTypes.TYPE_NUMSEATS_1);
                         break;
@@ -294,25 +286,25 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
                         s = Daten.efaTypes.getValue(EfaTypes.CATEGORY_NUMSEATS, EfaTypes.TYPE_NUMSEATS_8);
                         break;
                     default:
-                        if (a[i].getSeats() < 99) {
-                            s = Daten.efaTypes.getValue(EfaTypes.CATEGORY_NUMSEATS, Integer.toString(a[i].getSeats()));
+                        if (curBS.getSeats() < 99) {
+                            s = Daten.efaTypes.getValue(EfaTypes.CATEGORY_NUMSEATS, Integer.toString(curBS.getSeats()));
                         }
                 }
             }
 
             // sort by rigger?
-            if (sortByRigger && a[i].getRigger() != null) {
+            if (sortByRigger && curBS.getRigger() != null) {
                 if (sortByAnzahl) {
-                    if (EfaTypes.getSeatsKey(a[i].getSeats(), a[i].getRigger()) != null) {
-                        s = Daten.efaTypes.getValue(EfaTypes.CATEGORY_NUMSEATS, EfaTypes.getSeatsKey(a[i].getSeats(), a[i].getRigger()));
+                    if (EfaTypes.getSeatsKey(curBS.getSeats(), curBS.getRigger()) != null) {
+                        s = Daten.efaTypes.getValue(EfaTypes.CATEGORY_NUMSEATS, EfaTypes.getSeatsKey(curBS.getSeats(), curBS.getRigger()));
                     }
                 } else {
-                    s = (s == null ? "" : s + " ") + Daten.efaTypes.getValue(EfaTypes.CATEGORY_RIGGING, a[i].getRigger());
+                    s = (s == null ? "" : s + " ") + Daten.efaTypes.getValue(EfaTypes.CATEGORY_RIGGING, curBS.getRigger());
                 }
             }
             // sort by type?
-            if (sortByType && a[i].getType() != null) {
-                s = (s == null ? "" : s + " ") + Daten.efaTypes.getValue(EfaTypes.CATEGORY_BOAT, a[i].getType());
+            if (sortByType && curBS.getType() != null) {
+                s = (s == null ? "" : s + " ") + Daten.efaTypes.getValue(EfaTypes.CATEGORY_BOAT, curBS.getType());
             }
 
             if (s == null || s.equals(EfaTypes.getStringUnknown())) {
@@ -323,13 +315,13 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
                  } else {
                  */
                 s = Daten.efaTypes.getValue(EfaTypes.CATEGORY_NUMSEATS, EfaTypes.TYPE_NUMSEATS_OTHER);
-                if (Daten.efaConfig.getValueEfaDirekt_boatListIndividualOthers() && a[i].getType()!= null) {
-                    s = Daten.efaTypes.getValue(EfaTypes.CATEGORY_BOAT, a[i].getType());
+                if (Daten.efaConfig.getValueEfaDirekt_boatListIndividualOthers() && curBS.getType()!= null) {
+                    s = Daten.efaTypes.getValue(EfaTypes.CATEGORY_BOAT, curBS.getType());
                 }
 
                 //}
             }
-            anz = a[i].getSeats();
+            anz = curBS.getSeats();
             if (sortByAnzahl || sortByType) {
                 String newSep = LIST_SECTION_STRING +" "+ s  + " " + LIST_SECTION_STRING;
                 if (!newSep.equals(lastSep)) {
@@ -337,12 +329,12 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
                 }
                 lastSep = newSep;
             }
-            BoatListItem bi=(BoatListItem) a[i].getRecord();
+            BoatListItem bi=(BoatListItem) curBS.getRecord();
 
-            vv.add(new ItemTypeListData(a[i].getName(), 
-            		(buildToolTips ? buildToolTipText(a[i],todaysReservations,showReservation) : ""), 
+            vv.add(new ItemTypeListData(curBS.getName(), 
+            		(buildToolTips ? buildToolTipText(curBS,todaysReservations,showReservation) : ""), 
             		getSecondaryItem(bi.boatStatus, todaysReservations, showDestination, showReservation), 
-            		a[i].getRecord(), false, -1, null, a[i].getColors()));
+            		bi, false, -1, null, curBS.getColors()));
         }
         return vv;
         } catch (Exception ee) {
@@ -438,32 +430,33 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
    	    			}
    	    		}
 
+   	    		StringBuilder sbResult = new StringBuilder(100);
    	    		//concat is the fastest way to build strings
-   	    		String result = "<html><body><table border=\"0\"><tr "+this.cacheToolTipBgColorText+"><td align=\"left\"><b>"
-   	    				.concat(this.cacheToolTipFontColorOpeningTag)
-   	    				.concat(EfaUtil.escapeHtml(boatName))
-   	    				.concat(this.cacheToolTipFontColorClosingTag)
-   	    				.concat("</b></td><td align=\"right\">")
-   	    				.concat(this.cacheToolTipFontColorOpeningTag)
-   	    				.concat(EfaUtil.escapeHtml(boatTimeEntry))
-   	    				.concat(this.cacheToolTipFontColorClosingTag)
-   	    				.concat("</td></tr>"); 
-//   				.concat("</td></tr><tr><td colspan=2><hr></td></tr>");
+   	    		sbResult.append("<html><body><table border=\"0\"><tr ");
+   	    		sbResult.append(this.cacheToolTipBgColorText);
+   	    		sbResult.append("><td align=\"left\"><b>");
+   	    		sbResult.append(this.cacheToolTipFontColorOpeningTag);
+   	    		sbResult.append(EfaUtil.escapeHtml(boatName));
+   	    		sbResult.append(this.cacheToolTipFontColorClosingTag);
+   	    		sbResult.append(this.cacheToolTipFontColorOpeningTag);
+   	    		sbResult.append(EfaUtil.escapeHtml(boatTimeEntry));
+   	    		sbResult.append(this.cacheToolTipFontColorClosingTag);
+   	    		sbResult.append("</td></tr>"); 
 
    	    		if (!boatReservation.isEmpty()) {
-   	    			result=result.concat("<tr><td align=\"left\" colspan=2>")
-   	    				.concat(EfaUtil.escapeHtml(boatReservation))
-   	    				.concat("</td></tr>");
+   	    			sbResult.append("<tr><td align=\"left\" colspan=2>");
+   	    			sbResult.append(EfaUtil.escapeHtml(boatReservation));
+   	    			sbResult.append("</td></tr>");
    	    		}
    	    		if (!boatVariant.isEmpty()) {
-   	    			result=result.concat("<tr><td align=\"left\" colspan=2>")
-   	    				.concat(EfaUtil.escapeHtml(boatVariant))
-   	    				.concat("</td></tr>");
+   	    			sbResult.append("<tr><td align=\"left\" colspan=2>");
+   	    			sbResult.append(EfaUtil.escapeHtml(boatVariant));
+   	    			sbResult.append("</td></tr>");
    	    		}
    	    		if (!boatRuderErlaubnis.isEmpty()) {
-   	    			result=result.concat("<tr><td align=\"left\" colspan=2>")
-   	    				.concat(EfaUtil.escapeHtml(boatRuderErlaubnis))
-   	    				.concat("</td></tr>");
+   	    			sbResult.append("<tr><td align=\"left\" colspan=2>");
+   	    			sbResult.append(EfaUtil.escapeHtml(boatRuderErlaubnis));
+   	    			sbResult.append("</td></tr>");
    	    		}
    	    		
    	    		if (!boatDestination.isEmpty()) {
@@ -482,11 +475,11 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
    	    				}
    	    				
    	    			}
-   	    			result=result.concat("<tr><td colspan=2>")
-   	    				.concat(EfaUtil.escapeHtml(boatDestination))
-   	    				.concat("</td></tr><tr><td align=\"left\" colspan=2>")
-   	    				.concat(EfaUtil.escapeHtmlWithLinefeed(boatComment))
-   	    				.concat("</td></tr>");
+   	    			sbResult.append("<tr><td colspan=2>");
+   	    			sbResult.append(EfaUtil.escapeHtml(boatDestination));
+   	    			sbResult.append("</td></tr><tr><td align=\"left\" colspan=2>");
+   	    			sbResult.append(EfaUtil.escapeHtmlWithLinefeed(boatComment));
+   	    			sbResult.append("</td></tr>");
    	    		} else {
    		    		if (boatComment!=null) {
    		    			String boatStatusText="";
@@ -496,13 +489,14 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
     					boatComment=boatComment.replace(boatName, "").replace(boatStatusText,"")
    	    							.replaceAll(";", ";\n");
    		    			
-   		    			result=result.concat("<tr><td align=\"left\" colspan=2>")
-   	   	    				.concat(EfaUtil.escapeHtmlWithLinefeed(boatComment))
-   	   	    				.concat("</td></tr>");
+    					sbResult.append("<tr><td align=\"left\" colspan=2>");
+    					sbResult.append(EfaUtil.escapeHtmlWithLinefeed(boatComment));
+    					sbResult.append("</td></tr>");
    		    		}
    	    		}
    	    	
-   	    		return result.concat("</table></body></html>");
+   	    		sbResult.append("</table></body></html>");
+   	    		return sbResult.toString();
    	    		
    	    	} else {//BoatString is null
    	    		return null;
@@ -653,16 +647,17 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
         }
         Boolean buildToolTips = Daten.efaConfig.getValueEfaBoathouseExtdToolTips();
         BoatString[] a = new BoatString[v.size()];
+        String name;
         for (int i = 0; i < v.size(); i++) {
             PersonRecord pr = v.get(i);
-
+            name=pr.getQualifiedName();
             // new code for performance
-            a[i] = new BoatString(SEATS_OTHER, 0, TYPE_OTHER, RIGGER_OTHER, pr.getQualifiedName(),
+            a[i] = new BoatString(SEATS_OTHER, 0, TYPE_OTHER, RIGGER_OTHER, name,
             		false, false, false //dont sort by seats, rigger, type)
             		);
             BoatListItem item = new BoatListItem();
             item.list = this;
-            item.text = a[i].getName();
+            item.text = name;
             item.person = pr;
             a[i].setRecord(item);
             
@@ -671,11 +666,13 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
 
         Vector<ItemTypeListData> vv = new Vector<ItemTypeListData>();
         char lastChar = ' ';
+        char firstChar= ' ';
         for (int i = 0; i < a.length; i++) {
-            String name = a[i].getName();
+            name = a[i].getName();
             if (name.length() > 0) {
-                if (EfaUtil.replaceAllUmlautsLowerCaseFast(name).charAt(0) != lastChar) {
-                	lastChar = EfaUtil.replaceAllUmlautsLowerCaseFast(name).charAt(0);
+            	firstChar=EfaUtil.replaceAllUmlautsLowerCaseFast(name.substring(0, 1)).charAt(0);
+                if (firstChar != lastChar) {
+                	lastChar = firstChar;
                     vv.add(new ItemTypeListData("---------- " + Character.toString(lastChar) .toUpperCase() + " ----------", null, null, null, true, SEATS_OTHER));
                 }
                 vv.add(new ItemTypeListData(name, 

@@ -37,7 +37,7 @@ import de.nmichael.efa.util.Logger;
 
 public class HTMLWidgetInstance extends WidgetInstance implements IWidgetInstance {
 
-	private static String TEXT_PLAIN = "text/plain";
+	//private static String TEXT_PLAIN = "text/plain";
 	private static String TEXT_HTML = "text/html";
 	
     private JScrollPane scrollPane = new JScrollPane();
