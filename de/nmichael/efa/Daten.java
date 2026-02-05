@@ -77,13 +77,13 @@ public class Daten {
 	private static final String KEY_VALUE_DELIMITER = " = ";
 	public final static String VERSION = "2.5.0"; // Version für die Ausgabe (z.B. 2.1.0, kann aber
 																	// auch Zusätze wie "alpha" o.ä. enthalten)
-	public final static String VERSIONID = "2.5.0_#21"; // VersionsID: Format: "X.Y.Z_MM"; final-Version z.B. 1.4.0_00;
+	public final static String VERSIONID = "2.5.0"; // VersionsID: Format: "X.Y.Z_MM"; final-Version z.B. 1.4.0_00;
 														// beta-Version z.B. 1.4.0_#1  //# is not good, is used in efa.data.Waters 
-	public final static String VERSIONRELEASEDATE = "03.11.2025"; // Release Date: TT.MM.JJJJ
+	public final static String VERSIONRELEASEDATE = "05.02.2026"; // Release Date: TT.MM.JJJJ
 	public final static String MAJORVERSION = "2";
 	public final static String PROGRAMMID = "EFA.250"; // Versions-ID für Wettbewerbsmeldungen
 	public final static String PROGRAMMID_DRV = "EFADRV.250"; // Versions-ID für Wettbewerbsmeldungen
-	public final static String COPYRIGHTYEAR = "25"; // aktuelles Jahr (Copyright (c) 2001-COPYRIGHTYEAR)
+	public final static String COPYRIGHTYEAR = "26"; // aktuelles Jahr (Copyright (c) 2001-COPYRIGHTYEAR)
 	public final static int REQUIRED_JAVA_VERSION = 8;
 
 	// enable/disable development functions for next version
