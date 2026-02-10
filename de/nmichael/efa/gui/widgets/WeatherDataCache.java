@@ -92,9 +92,10 @@ public class WeatherDataCache {
 			tmp.setStatusMessage(International.getString("Fehler beim Abruf der Wetterdaten.")+"\n\n"+
 					e.getLocalizedMessage());
 			tmp.setExceptionText(e.getLocalizedMessage());
-			Logger.log(Logger.ERROR, Logger.MSG_WARN_WEATHERUPDATEFAILED,e);
+			Logger.log(Logger.WARNING, Logger.MSG_WARN_WEATHERUPDATEFAILED,e);
 			return tmp;
-		} catch (NoClassDefFoundError e1) {
+		} 
+		catch (NoClassDefFoundError e1) {
 			WeatherDataForeCast tmp=new WeatherDataForeCast();
 			tmp.setStatus(false);
 			tmp.setStatusMessage(
@@ -103,7 +104,7 @@ public class WeatherDataCache {
 					e1.getLocalizedMessage()
 					); 
 			tmp.setExceptionText(e1.getLocalizedMessage());
-			Logger.log(Logger.ERROR, Logger.MSG_WARN_WEATHERUPDATEFAILED,e1.getLocalizedMessage()+"\n\n"+e1.toString());
+			Logger.log(Logger.WARNING, Logger.MSG_WARN_WEATHERUPDATEFAILED,e1.getLocalizedMessage()+"\n\n"+e1.toString());
 			return tmp;
 		}
 	}
