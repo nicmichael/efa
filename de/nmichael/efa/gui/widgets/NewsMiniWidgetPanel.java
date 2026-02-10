@@ -20,7 +20,7 @@ public class NewsMiniWidgetPanel extends RoundedPanel{
     private double widthPercent=0.80;
 
     public NewsMiniWidgetPanel() {
-        setPreferredSize(new Dimension(400, this.getFont().getSize()+10));
+        setPreferredSize(new Dimension(400, this.getFont().getSize()+8));
         // Startposition rechts außerhalb des Panels
         setOffsetX(0);
     }
@@ -84,7 +84,7 @@ public class NewsMiniWidgetPanel extends RoundedPanel{
         int h = fm.getHeight();
         g.dispose();
 
-        textImage = new BufferedImage(w + 20, h, BufferedImage.TYPE_INT_ARGB);
+        textImage = new BufferedImage(w + 20, h+2, BufferedImage.TYPE_INT_ARGB);
         g = textImage.createGraphics();
         g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
@@ -108,7 +108,6 @@ public class NewsMiniWidgetPanel extends RoundedPanel{
 
 	public void calcNextOffset() {
         offsetX -= 4;
-
         if (offsetX + textImage.getWidth() < 0) {
             offsetX = 0;
         }
@@ -121,9 +120,5 @@ public class NewsMiniWidgetPanel extends RoundedPanel{
 	public void setWidthPercent(int widthPercent) {
 		this.widthPercent = widthPercent/100.0;
 	}
-	
-	
-	
-	
 	
 }

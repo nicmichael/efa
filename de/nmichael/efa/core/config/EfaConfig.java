@@ -1811,10 +1811,10 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 			addParameter(efaDirekt_newsText = new ItemTypeString("WidgetNewsText", "", IItemType.TYPE_PUBLIC,
 					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_WIDGETS, CATEGORY_WIDGET_NEWS),
 					International.getString("News-Text")));
-			addParameter(efaDirekt_newsScrollSpeed = new ItemTypeInteger("WidgetNewsScrollSpeed", 200, 80,
-					Integer.MAX_VALUE, IItemType.TYPE_EXPERT,
+			addParameter(efaDirekt_newsScrollSpeed = new ItemTypeInteger("WidgetNewsWaitTimeTimer", 350, 50,
+					Integer.MAX_VALUE, IItemType.TYPE_PUBLIC,
 					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_WIDGETS, CATEGORY_WIDGET_NEWS),
-					"Scroll Speed"));		
+					International.getString("Zeit (msec) zwischen Aktualisierungen")));		
 			addParameter(efaDirekt_newsWidthPercent = new ItemTypeInteger("WidgetNewsScrollWidth", 80, 30, 90, 
 					IItemType.TYPE_EXPERT,
 					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_WIDGETS, CATEGORY_WIDGET_NEWS),

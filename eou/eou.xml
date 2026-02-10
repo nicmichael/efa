@@ -15,7 +15,7 @@
             <ChangeItem>Neu: Statusleiste unter der Bootsliste wird standardmäßig nicht mehr angezeigt (konfigurierbar)</ChangeItem>
             <ChangeItem>Neu: Hauptbildschirm von efaBootshaus auf GridBagLayout umgestellt. Hierdurch lassen sich die HTML-Widgets besser an die auf dem Bildschirm positionieren.</ChangeItem>
             <ChangeItem>Neu: Neue Option um den Abstand der Schaltflächen zu den Bootslisten zu definieren (efaBootshaus-&gt;Erscheinungsbild)</ChangeItem>
-            <ChangeItem>Neu: Widget: Newsticker technisch überarbeitet. Keine Darstellungsprobleme mehr bei Verwendung einiger Schriftarten.</ChangeItem>
+            <ChangeItem>Neu: Widget: Newsticker technisch überarbeitet. Keine Darstellungsprobleme mehr bei Verwendung einiger Schriftarten. Auch auf RASPI3b mit gleichmäßiger Tickerrate.</ChangeItem>
             <ChangeItem>Bugfix: Widget: Wetter-Widget: WeatherAPI aus der Liste der Datenquellen entfernt.</ChangeItem>
             <ChangeItem>Bugfix: Widget: Wetter-Widget: Besseres Fehlerhandling, wenn JSON-Bibliothek nicht gefunden wird.</ChangeItem>
 			<ChangeItem>Bugfix: Plugins: Org.Json Bibliothek aufgenommen und altes Wetter-Plugin entfernt.</ChangeItem>
@@ -29,7 +29,7 @@
             <ChangeItem>New: The status bar below the boot list is no longer displayed by default (configurable)</ChangeItem>
 			<ChangeItem>New: The main screen of efaBootshaus has been switched to GridBagLayout. This allows for better positioning of the HTML widgets on the screen.</ChangeItem>
             <ChangeItem>New: New option in efaconfig to define the distance between Buttons and Boat lists. (efaBootshaus-&gt;Appearance)</ChangeItem>
-            <ChangeItem>New: Widget: News ticker technically revised. Avoids rendering problems when using certain fonts.</ChangeItem>
+            <ChangeItem>New: Widget: News ticker technically revised. Avoids rendering problems when using certain fonts. Smooth ticker also on RASPI 3b.</ChangeItem>
  			<ChangeItem>Bugfix: Widget: Weather-Widget: WeatherAPI removed from the list of data sources.</ChangeItem>
             <ChangeItem>Bugfix: Widget: Weather-Widget: Better error handling if JSON library is not found.</ChangeItem>
 			<ChangeItem>Bugfix: Plugins: Org.Json library included and old weather plugin removed.</ChangeItem>

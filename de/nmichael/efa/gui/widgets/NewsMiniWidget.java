@@ -16,10 +16,9 @@ import java.awt.Font;
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 
 import de.nmichael.efa.Daten;
-import de.nmichael.efa.data.types.DataTypeTime;
-import de.nmichael.efa.util.EfaUtil;
 import de.nmichael.efa.util.Logger;
 /*
  * NewMiniwidget is not a classical widget. Its config data is set up directly in efaconfig
@@ -41,7 +40,7 @@ public class NewsMiniWidget {
         mainNewsWidgetPanel.setFont(mainNewsWidgetPanel.getFont().deriveFont(Font.BOLD));
         mainNewsWidgetPanel.setBorder(BorderFactory.createLineBorder(mainNewsWidgetPanel.getForeground(), 1, true));
         mainNewsWidgetPanel.setWidthPercent(Daten.efaConfig.getValueEfaDirekt_newsWidthPercent());
-        newsUpdater = new NewsUpdater();
+        newsUpdater = new NewsUpdater(mainNewsWidgetPanel,mainNewsWidgetPanel.getText(), 100);
         newsUpdater.start();
     }
 
@@ -70,67 +69,104 @@ public class NewsMiniWidget {
         return mainNewsWidgetPanel;
     }
 
-    class NewsUpdater extends Thread {
+    public final class NewsUpdater {
 
-        volatile boolean keepRunning = true;
-        volatile boolean visible=true;
-        private String text;
-        private int scrollSpeed;
+        private final NewsMiniWidgetPanel mainNewsWidgetPanel;
 
-        public void run() {
+        private volatile boolean keepRunning = true;
+        private volatile boolean visible = true;
+        private volatile String text = "";
+        private volatile int scrollSpeed = 1000;
+
+        private Timer timer;
+
+        // 1 Stunde in Millisekunden
+        private static final int INVISIBLE_DELAY = 60 * 60 * 1000;
+
+        public NewsUpdater(NewsMiniWidgetPanel panel, String initialText, int initialSpeed) {
+            this.mainNewsWidgetPanel = panel;
+            this.text = "   " + initialText + "   ";
+            this.scrollSpeed = initialSpeed;
+        }
+
+        public synchronized void start() {
+            if (timer != null) {
+                return; // bereits gestartet
+            }
+
+            // Startverzögerung wie im Original (1 Sekunde)
+            timer = new Timer(1000, e -> tick());
+            timer.setRepeats(false);      // wir planen jede Periode neu
+            timer.setCoalesce(true);      // verhindert Event-Flut
+            timer.start();
+        }
+
+        private void tick() {
+            if (!keepRunning) {
+                return;
+            }
+
             try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-            }
-            this.setName("NewsUpdater"+" "+DataTypeTime.now().toString());
-            while (keepRunning) {
-                
-                try {
-                	if (visible) {
-	                	//Use invokelater as swing threadsafe ways
-	                    SwingUtilities.invokeLater(new MainGuiNewsUpdater(mainNewsWidgetPanel, text));
-                        Thread.sleep(scrollSpeed);
-                	} else {
-                		//not visible. sleep an hour. if someone makes us visible, we get woken up by an interruptedexception.
-                		Thread.sleep(60*60*1000);
-                	}
-                } catch (InterruptedException e) {
-                	EfaUtil.foo();
-                } catch (Exception e) {
-                    Logger.logdebug(e);
+                if (visible) {
+                    SwingUtilities.invokeLater(
+                            new MainGuiNewsUpdater(mainNewsWidgetPanel, text)
+                    );
+                    schedule(scrollSpeed);
+                } else {
+                    schedule(INVISIBLE_DELAY);
                 }
+
+            } catch (Exception ex) {
+                Logger.logdebug(ex);
+                schedule(scrollSpeed);
             }
-        }
-        
-        /* in the following functions, it is neccessary to interrupt the thread to get the settings get active.
-         * because sometimes, the sleep time is very high.
-         */
-        public synchronized void setText(String text) {
-            this.text = "   "+text+"   ";
-            interrupt();
         }
 
-        public synchronized void setScrollSpeed(int scrollSpeed) {
-            this.scrollSpeed = scrollSpeed;
-            interrupt();
+        private synchronized void schedule(int delayMs) {
+            if (!keepRunning || timer == null) {
+                return;
+            }
+            timer.setInitialDelay(delayMs);
+            timer.restart();
+        }
+
+        // --- API ---
+
+        public synchronized void setText(String newText) {
+            this.text = "   " + newText + "   ";
+            if (timer != null) {
+                timer.restart(); // sofortige Wirkung
+            }
+        }
+
+        public synchronized void setScrollSpeed(int speed) {
+            this.scrollSpeed = speed;
+            if (timer != null) {
+                timer.restart();
+            }
+        }
+
+        public synchronized void setVisible(boolean value) {
+            this.visible = value;
+            if (timer != null) {
+                timer.restart();
+            }
         }
 
         public synchronized void stopNews() {
             keepRunning = false;
-            interrupt();
+            if (timer != null) {
+                timer.stop();
+                timer = null;
+            }
         }
-        
-        public synchronized void setVisible(boolean value) {
-        	visible=value;
-        	interrupt();
-        }
-
     }
+
 
     /**
      * Update clock label on efaBths main GUI. Called via SwingUtilities.invokeLater()
      */
-    private class MainGuiNewsUpdater implements Runnable {
+     class MainGuiNewsUpdater implements Runnable {
         
     	private String text = null;
     	private NewsMiniWidgetPanel newsPanel=null;
