@@ -10,15 +10,35 @@
 
 package de.nmichael.efa.data.storage;
 
+import java.awt.GridBagConstraints;
+import java.util.HashMap;
+import java.util.UUID;
+import java.util.Vector;
+
+import javax.swing.SwingConstants;
+
 import de.nmichael.efa.Daten;
 import de.nmichael.efa.core.config.AdminRecord;
-
-import java.awt.GridBagConstraints;
-import java.util.*;
-import de.nmichael.efa.data.types.*;
-import de.nmichael.efa.core.items.*;
-import de.nmichael.efa.gui.util.*;
-import de.nmichael.efa.util.*;
+import de.nmichael.efa.core.config.EfaConfig;
+import de.nmichael.efa.core.items.IItemType;
+import de.nmichael.efa.core.items.ItemTypeLabel;
+import de.nmichael.efa.core.items.ItemTypeStringAutoComplete;
+import de.nmichael.efa.data.types.DataTypeDate;
+import de.nmichael.efa.data.types.DataTypeDecimal;
+import de.nmichael.efa.data.types.DataTypeDistance;
+import de.nmichael.efa.data.types.DataTypeIntString;
+import de.nmichael.efa.data.types.DataTypeList;
+import de.nmichael.efa.data.types.DataTypePasswordCrypted;
+import de.nmichael.efa.data.types.DataTypePasswordHashed;
+import de.nmichael.efa.data.types.DataTypeTime;
+import de.nmichael.efa.gui.ImagesAndIcons;
+import de.nmichael.efa.gui.util.AutoCompleteList;
+import de.nmichael.efa.gui.util.RoundedBorder;
+import de.nmichael.efa.gui.util.TableItem;
+import de.nmichael.efa.gui.util.TableItemHeader;
+import de.nmichael.efa.util.EfaUtil;
+import de.nmichael.efa.util.International;
+import de.nmichael.efa.util.Logger;
 
 // @i18n complete
 
@@ -178,6 +198,15 @@ public abstract class DataRecord implements Cloneable, Comparable {
 
     public String[] getFields() {
         return metaData.getFields();
+    }
+    
+    /**
+     * Returns true if a specified field name exists in the data record.
+     * @param fieldName Name (case-sensitive) of the field
+     * @return
+     */
+    public boolean isField(String fieldName) {
+    	return metaData.isField(fieldName);
     }
 
     public int getFieldCount() {
@@ -402,7 +431,7 @@ public abstract class DataRecord implements Cloneable, Comparable {
         } else {
             set(fieldName, value);
         }
-        return (value.equals(getAsText(fieldName)));
+        return (value == null) ? (getAsText(fieldName) == null) : value.equals(getAsText(fieldName));
     }
 
     public String addTextItemToList(String fieldName, String value) {

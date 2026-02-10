@@ -55,6 +55,7 @@ public class FahrtenabzeichenRecord extends DataRecord implements IItemListener 
     public static final String GUI_SCHLUESSEL = "GUI_SCHLUESSEL";
     public static final String GUI_SIGNATUR = "GUI_SIGNATUR";
     public static final String GUI_STATUS = "GUI_STATUS";
+    public static final String ECRID = "ecrid";
 
     private Vector<IItemType> myItems;
     private DRVSignatur cachedSignature;
@@ -84,6 +85,7 @@ public class FahrtenabzeichenRecord extends DataRecord implements IItemListener 
         f.add(GUI_SCHLUESSEL);                    t.add(IDataAccess.DATA_VIRTUAL);
         f.add(GUI_SIGNATUR);                      t.add(IDataAccess.DATA_VIRTUAL);
         f.add(GUI_STATUS);                        t.add(IDataAccess.DATA_VIRTUAL);
+        f.add(ECRID);                             t.add(IDataAccess.DATA_STRING);
         MetaData metaData = constructMetaData(Fahrtenabzeichen.DATATYPE, f, t, false);
         metaData.setKey(new String[] { PERSONID });
     }

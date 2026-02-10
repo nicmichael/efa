@@ -19,7 +19,6 @@ import de.nmichael.efa.core.config.AdminRecord;
 import de.nmichael.efa.core.items.IItemListener;
 import de.nmichael.efa.core.items.IItemType;
 import de.nmichael.efa.core.items.ItemTypeString;
-import de.nmichael.efa.data.PersonRecord;
 import de.nmichael.efa.data.Project;
 import de.nmichael.efa.data.ProjectRecord;
 import de.nmichael.efa.data.efawett.WettDefs;

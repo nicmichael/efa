@@ -275,5 +275,9 @@ public class UnversionizedDataEditDialog extends DataEditDialog {
             }
         }
     }
+    
+    public void setAdmin(AdminRecord theAdmin) {
+    	this.admin=theAdmin;
+    }
 
 }

@@ -13,6 +13,7 @@ package de.nmichael.efa.gui.dataedit;
 import java.awt.AWTEvent;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Frame;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -318,6 +319,7 @@ public abstract class DataListDialog extends BaseDialog implements IItemListener
             filterName.setOpaque(true);
             filterName.setForeground(Daten.efaConfig.getHeaderForegroundColor());
             filterName.setText(filterFieldDescription);
+            filterName.setFont(filterName.getFont().deriveFont(Font.BOLD));
             filterName.setHorizontalAlignment(SwingConstants.CENTER);
             mainTablePanel.add(filterName, BorderLayout.NORTH);
             mainTablePanel.setBorder(new EmptyBorder(10,0,0,0));
@@ -338,8 +340,9 @@ public abstract class DataListDialog extends BaseDialog implements IItemListener
             table.setMinColumnWidths(minColumnWidths);
         }
         table.setButtonPanelPosition(buttonPanelPosition);
-        table.setFieldSize(600, 500);
-        table.setPadding(0, 0, 10, 0);
+        table.setFieldSize(Math.max((buttonPanelPosition==BorderLayout.NORTH ? 850 : 600), getSumColumnWidths()), 500);
+        //table shall not have a huge distance from a toolbar above (NORTH position)
+        table.setPadding(0, 0, (buttonPanelPosition.equals(BorderLayout.NORTH) ? 0 : 10), 0);
         table.displayOnGui(this, mainTablePanel, BorderLayout.CENTER);
 
         boolean hasEditAction = false;
@@ -359,6 +362,19 @@ public abstract class DataListDialog extends BaseDialog implements IItemListener
         this.validate();
     }
 
+    private int getSumColumnWidths() {
+    	int resValue=0;
+    	if (minColumnWidths != null && minColumnWidths.length>0)
+    		for (int i=0; i<minColumnWidths.length;i++) {
+    			if (minColumnWidths[i]>0) {
+    				resValue+=minColumnWidths[i];
+    			} else if (minColumnWidths[i]<0){
+    				resValue+=50;
+    			}
+    		}
+    	return resValue;
+    }
+    
     /**
      * Instanciates the table variable to the specific subtype of ItemTypeDataRecord that is needed
      * by the subclass of DataListDialog.
@@ -552,7 +568,7 @@ public abstract class DataListDialog extends BaseDialog implements IItemListener
     }
 
     // @Override
-    public boolean deleteCallback(DataRecord[] records) {
+    public boolean deleteCallback(JDialog parent,IItemListenerDataRecordTable caller, AdminRecord admin, DataRecord[] records) {
         return true;
     }
 

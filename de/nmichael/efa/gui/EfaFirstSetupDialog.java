@@ -126,7 +126,7 @@ public class EfaFirstSetupDialog extends StepwiseDialog {
         items.add(item = new ItemTypeLabel("EFA", IItemType.TYPE_PUBLIC, "0", Daten.EFA_LONGNAME));
         ((ItemTypeLabel)item).setHorizontalAlignment(SwingConstants.CENTER);
         ((ItemTypeLabel)item).setFieldGrid(-1, GridBagConstants.CENTER, GridBagConstants.HORIZONTAL);
-        items.add(item = new ItemTypeLabel("VERSION", IItemType.TYPE_PUBLIC, "0", International.getString("Version") + " " + Daten.VERSION));
+        items.add(item = new ItemTypeLabel("VERSION", IItemType.TYPE_PUBLIC, "0", International.getString("Version") + " " + Daten.VERSIONID+ " (" + Daten.VERSIONRELEASEDATE +")"));
         ((ItemTypeLabel)item).setHorizontalAlignment(SwingConstants.CENTER);
         ((ItemTypeLabel)item).setFieldGrid(-1, GridBagConstants.CENTER, GridBagConstants.HORIZONTAL);
 

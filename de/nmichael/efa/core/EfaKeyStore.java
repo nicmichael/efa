@@ -12,7 +12,6 @@ package de.nmichael.efa.core;
 import de.nmichael.efa.util.EfaUtil;
 import java.security.*;
 import java.security.cert.*;
-import java.security.cert.Certificate;
 import java.io.*;
 import java.util.*;
 

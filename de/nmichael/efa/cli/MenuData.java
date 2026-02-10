@@ -10,21 +10,45 @@
 
 package de.nmichael.efa.cli;
 
-import de.nmichael.efa.Daten;
-import de.nmichael.efa.core.items.IItemType;
-import de.nmichael.efa.data.storage.*;
-import de.nmichael.efa.gui.ProgressDialog;
-import de.nmichael.efa.util.EfaUtil;
-import de.nmichael.efa.util.Logger;
-import java.lang.String;
+import java.io.File;
 import java.nio.charset.Charset;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Hashtable;
+import java.util.Locale;
 import java.util.Stack;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import de.nmichael.efa.Daten;
+import de.nmichael.efa.core.items.IItemType;
+import de.nmichael.efa.data.storage.Audit;
+import de.nmichael.efa.data.storage.DataExport;
+import de.nmichael.efa.data.storage.DataImport;
+import de.nmichael.efa.data.storage.DataKey;
+import de.nmichael.efa.data.storage.DataKeyIterator;
+import de.nmichael.efa.data.storage.DataRecord;
+import de.nmichael.efa.data.storage.MetaData;
+import de.nmichael.efa.data.storage.StorageObject;
+import de.nmichael.efa.gui.ProgressDialog;
+import de.nmichael.efa.util.EfaUtil;
+import de.nmichael.efa.util.Email;
+import de.nmichael.efa.util.LogString;
+import de.nmichael.efa.util.Logger;
+
 public class MenuData extends MenuBase {
 
+    private static final String EXPORT_OPTION_EMAIL = "email";
+    private static final String EXPORT_OPTION_EMAILSUBJECT = "emailsubject";
+	private static final String EXPORT_OPTION_FORMAT = "format";
+	private static final String EXPORT_OPTION_CSV_SEPARATOR="csvsep";
+	private static final String EXPORT_OPTION_CSV_QUOTE = "csvquote";
+	private static final String EXPORT_OPTION_ENCODING = "encoding";
+	private static final String EXPORT_OPTION_LOCALE = "csvlocale";
+	
+	private static final String CSV_DEFAULT_COLUMN_SEPARATOR = "|";
+	private static final String CSV_DEFAULT_QUOTE = "\"";
+	
     public static final String CMD_LIST   = "list";
     public static final String CMD_SHOW   = "show";
     public static final String CMD_EXPORT = "export";
@@ -41,8 +65,32 @@ public class MenuData extends MenuBase {
     public void printHelpContext() {
         printUsage(CMD_LIST,        "[all|invisible|deleted]", "list " + storageObjectDescription);
         printUsage(CMD_SHOW,        "[name|index]", "show record");
-        printUsage(CMD_EXPORT,      "[-format=xml|csv] <filename>", "export records");
+        printUsage(CMD_EXPORT,      "[-format=xml|csv|csv_bom_utf8] [-encoding=ENCODING] [-csvlocale=LOCALE] [-csvsep=X] [-csvquote=X] [-email=emailadress] [-emailsubject=value] <filename>", "export records to a file and to an email adress");
         printUsage(CMD_IMPORT,      "[-encoding=ENCODING] [-csvsep=X] [-csvquote=X] [-impmode=add|update|addupdate] [-updversion=update|new] [-entryno=dupskip|dupadd|alwaysadd] <filename>", "import records");
+        cli.loginfo("");
+        cli.loginfo("ENCODING   - Any encoding, e.g. ISO-8859-1 or UTF-8. UTF-8 is default.");
+        cli.loginfo("LOCALE     - Any ISO-Code for a country, e.g. DE or EN" );
+        cli.loginfo("");
+        cli.loginfo("Format	    - csv_bom_utf8 is neccessary for some spreadsheet programs to read UTF8-based CSV files.");
+        cli.loginfo("");
+        cli.loginfo("csvsep     - CSV field separator. A single character.");
+        cli.loginfo("             Default for import and export: "+CSV_DEFAULT_COLUMN_SEPARATOR);
+        cli.loginfo("csvquote   - CSV quote for text fields.");
+        cli.loginfo("             Default for import and export: "+CSV_DEFAULT_QUOTE);
+        cli.loginfo("");
+        cli.loginfo("             If you want to set csvquote to empty, specify csvquote=  ");
+        cli.loginfo("");
+        cli.loginfo("<filename> - filename.ext        -> "+Daten.efaTmpDirectory+"filename.ext");
+        cli.loginfo("             path/filename.ext   -> "+Daten.efaConfig.getValueEfaUserDirectory()+"path"+File.separator+"filename.ext");
+        cli.loginfo("             ./path/filename.ext -> "+Daten.efaConfig.getValueEfaUserDirectory()+"path"+File.separator+"filename.ext");
+        cli.loginfo("             ~/path/filename.ext -> "+Daten.userHomeDir+"path"+File.separator+"filename.ext");
+        cli.loginfo("             You can also use absolute paths for the filename. The directories in the path must exist.");
+        cli.loginfo("");
+        if (File.separator.equals("\\")) {//show hint only on windows systems
+        	cli.loginfo("             Windows: In efaCLI INTERACTIVE mode, use double \\\\ as path separators (like c:\\\\temp\\\\filename.ext)");
+        	cli.loginfo("");
+        }
+        	
     }
 
     public void list(String args) {
@@ -117,11 +165,57 @@ public class MenuData extends MenuBase {
         }
         Hashtable<String,String> options = getOptionsFromArgs(args);
         args = removeOptionsFromArgs(args);
+
+        String csvSeparator=CSV_DEFAULT_COLUMN_SEPARATOR;
+        String csvQuote=CSV_DEFAULT_QUOTE;
+        Locale csvLocale = null;  // if no locale is specified, the standard of the system is used.
+        String emailSubj="";
+        String filename = args;
+
+        //if user forgets to specify a filename, we cannot proceed.
+        if (filename == null || filename.trim().isEmpty()) {
+            cli.loginfo("No filename specified. Cannot export data.");
+            return;
+        }
+        
+        filename = extendAndCorrectFilePath(filename);
+
+        //------ get file format. xml is standard, if no other is set.
         DataExport.Format format = DataExport.Format.xml;
-        if (options.get("format") != null && options.get("format").equalsIgnoreCase("csv")) {
+        if (options.get(EXPORT_OPTION_FORMAT) != null && options.get(EXPORT_OPTION_FORMAT).equalsIgnoreCase("csv")) {
             format = DataExport.Format.csv;
         }
-        String filename = args;
+        
+        if (options.get(EXPORT_OPTION_FORMAT) != null && options.get(EXPORT_OPTION_FORMAT).equalsIgnoreCase("csv_bom_utf8")) {
+            format = DataExport.Format.csv_bom_utf8;
+        }
+        
+        //------ get csv export options
+        //default values of csvSeparator and csvQuote have both been set earlier.
+        //now check if the user has specified these parameters.
+
+        if (options.get(EXPORT_OPTION_CSV_SEPARATOR)!=null) {
+        	csvSeparator=options.get(EXPORT_OPTION_CSV_SEPARATOR);
+        }
+        
+        if (options.get(EXPORT_OPTION_CSV_QUOTE)!=null) {
+        	csvQuote=options.get(EXPORT_OPTION_CSV_QUOTE);
+        }
+
+        if (options.get(EXPORT_OPTION_LOCALE)!=null) {
+        	csvLocale=Locale.forLanguageTag(options.get(EXPORT_OPTION_LOCALE));
+        }
+
+        //------ get Email subject, default and user specified 
+        emailSubj="EfaCLI "+EfaUtil.getFilenameWithoutPath(filename)+" export " + ZonedDateTime.now().truncatedTo(ChronoUnit.SECONDS).toOffsetDateTime().toString();
+        if (options.get(EXPORT_OPTION_EMAILSUBJECT)!=null) {
+        	emailSubj=options.get(EXPORT_OPTION_EMAILSUBJECT);
+        	if (emailSubj.isEmpty()) {
+        		emailSubj="EfaCLI Export " + ZonedDateTime.now().truncatedTo(ChronoUnit.SECONDS).toOffsetDateTime().toString();
+        	}
+        }
+
+        //set encoding
         String encoding = Daten.ENCODING_UTF;
         if (format == DataExport.Format.csv) {
             String charset = Charset.defaultCharset().toString();
@@ -129,13 +223,58 @@ public class MenuData extends MenuBase {
                 encoding = Daten.ENCODING_ISO;
             }
         }
+        
+        //override encoding, if user set an explicit option
+        if (options.get(EXPORT_OPTION_ENCODING)!=null) {
+        	encoding=options.get(EXPORT_OPTION_ENCODING);
+        	if (encoding.isEmpty()) {
+        		encoding = Charset.defaultCharset().toString();
+        	}
+        }        
+
+
+        
+       //------ export the data         
        cli.loginfo("Exporting data ...");
        DataExport export = new DataExport(storageObject, System.currentTimeMillis(), null,
                 storageObject.createNewRecord().getFields(), format,
-                encoding, filename, DataExport.EXPORT_TYPE_TEXT);
+                encoding, filename, DataExport.EXPORT_TYPE_TEXT, csvSeparator, csvQuote, csvLocale);
         int count = export.runExport();
         cli.loginfo(count + " records exported to " + filename);
+        
+        //------ check whether we want to send this export via email...
+
+        if (options.get(EXPORT_OPTION_EMAIL) != null) {
+        	String addr=options.get(EXPORT_OPTION_EMAIL);
+
+        	if (Email.sendMessage(addr, emailSubj, "",
+                    new String[]{ filename }, true)) {
+        		cli.loginfo(LogString.emailSuccessfullySend(emailSubj));
+            } else {
+                cli.logerr(LogString.emailSendFailed(emailSubj, "Error"));
+            }
+
+        }        
     }
+
+	private String extendAndCorrectFilePath(String filename) {
+
+		if (filename!=null) {
+			String newFilename=EfaUtil.extendFilenameWithRelativePath(filename);
+			
+	        if (!newFilename.equals(filename)) {
+	            cli.loginfo("Filename '"+filename+ "' extended to '"+newFilename+"'");
+	            filename=newFilename;
+	        }
+	
+	        newFilename=EfaUtil.correctFilePath(filename);
+	        if (!newFilename.equals(filename)) {
+	            cli.loginfo("Filename '"+filename+ "' corrected to '"+newFilename+"'");
+	            filename=newFilename;
+	        }
+		}
+		return filename;
+	}
 
     public void importData(String args) {
         if (storageObject == null) {
@@ -150,8 +289,28 @@ public class MenuData extends MenuBase {
         }
         String csvSeparator = options.get("csvsep");
         String csvQuotes = options.get("csvquote");
-        char csep = (csvSeparator != null && csvSeparator.length() > 0 ? csvSeparator.charAt(0) : '\0');
-        char cquo = (csvQuotes != null && csvQuotes.length() > 0 ? csvQuotes.charAt(0) : '\0');
+        char csep = '\0';
+        char cquo = '\0';
+        
+        //handle default setting for csvseparator. 
+        if (csvSeparator != null) {
+        	//-csvsep has been specified by user (as it is not null), but may be empty. 
+        	//if empty, set to '\0' so it won't affect the later import; otherwise use first char.
+        	csep = (csvSeparator.length() > 0 ? csvSeparator.charAt(0) : '\0'); 
+        } else {
+        	//-csvsep has not been specified, so default to ;
+        	csep = ';';
+        }
+        
+        if (csvQuotes != null) {
+        	cquo = (csvQuotes.length() > 0 ? csvQuotes.charAt(0) : '\0'); 
+        } else {
+        	cquo='"'; //default to " if empty
+        }
+        
+        // we don't have to check for xml or csv format, efa does it on it's own.
+        // also, the import routine automatically removes a BOM which may prefix the csv's first line.
+        
         String importMode = options.get("impmode");
         if (importMode != null && importMode.equalsIgnoreCase("add")) {
             importMode = DataImport.IMPORTMODE_ADD;
@@ -181,6 +340,8 @@ public class MenuData extends MenuBase {
             entryNo = DataImport.ENTRYNO_DUPLICATE_SKIP;
         }
 
+        filename = extendAndCorrectFilePath(filename);
+        
         cli.loginfo("Importing data ...");
         DataImport imp = new DataImport(storageObject, filename, encoding, csep, cquo,
                 importMode, updMode, entryNo,
@@ -244,31 +405,11 @@ public class MenuData extends MenuBase {
         return r;
     }
 
-    protected Hashtable<String, String> getOptionsFromArgs(String args) {
-        Hashtable<String, String> options = new Hashtable<String, String>();
-        try {
-            StringTokenizer tok = new StringTokenizer(args, " ");
-            while (tok.hasMoreTokens()) {
-                String s = tok.nextToken().trim();
-                if (s.startsWith("-")) {
-                    int pos = s.indexOf("=");
-                    String name = s.substring(1).toLowerCase();
-                    String value = "";
-                    if (pos > 0) {
-                        name = s.substring(1, pos).toLowerCase();
-                        value = s.substring(pos + 1);
-                    }
-                    options.put(name, value);
-                }
-            }
-        } catch (Exception e) {
-            Logger.logdebug(e);
-        }
-        return options;
-    }
-
     protected String removeOptionsFromArgs(String args) {
-        StringBuilder sb = new StringBuilder();
+    	if (args == null || args.isEmpty()) {
+    		return null;
+    	}
+    	StringBuilder sb = new StringBuilder();
         StringTokenizer tok = new StringTokenizer(args, " ");
         if (tok.countTokens() == 0) {
             return args;

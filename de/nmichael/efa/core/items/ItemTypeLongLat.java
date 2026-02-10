@@ -10,8 +10,6 @@
 
 package de.nmichael.efa.core.items;
 
-import de.nmichael.efa.core.items.ItemTypeLabelValue;
-import de.nmichael.efa.*;
 import de.nmichael.efa.util.*;
 
 // @i18n complete
@@ -48,8 +46,11 @@ public class ItemTypeLongLat extends ItemTypeLabelTextfield {
         }
     }
 
-    public IItemType copyOf() {
-        return new ItemTypeLongLat(name, orientation, coordinates[0], coordinates[1], coordinates[2], type, category, description);
+    public IItemType copyOf() {        
+        ItemTypeLongLat copy = new ItemTypeLongLat(name, orientation, coordinates[0], coordinates[1], coordinates[2], type, category, description);
+        copy.setPadding(padXbefore, padXafter, padYbefore, padYafter);
+        copy.setIcon((label == null ? null : label.getIcon()));
+        return copy;
     }
 
     private void iniValue(int orientation, int c1, int c2, int c3) throws Exception {

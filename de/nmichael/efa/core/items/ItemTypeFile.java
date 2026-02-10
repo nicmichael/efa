@@ -47,7 +47,10 @@ public class ItemTypeFile extends ItemTypeString {
     }
 
     public IItemType copyOf() {
-        return new ItemTypeFile(name, value, fileItem, fileTypes, fileExtensions, fileOpenSave, fileOrDir, type, category, description);
+        ItemTypeFile newItem = new ItemTypeFile(name, value, fileItem, fileTypes, fileExtensions, fileOpenSave, fileOrDir, type, category, description);
+        newItem.setPadding(padXbefore, padXafter, padYbefore, padYafter);
+        newItem.setIcon((label == null ? null : label.getIcon()));
+        return newItem;
     }
 
     public int displayOnGui(Window dlg, JPanel panel, int x, int y) {

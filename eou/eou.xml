@@ -1,6 +1,353 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <efaOnlineUpdate>
     <Version>
+        <VersionID>2.5.0</VersionID>
+        <ReleaseDate>03.11.2025</ReleaseDate>
+        <DownloadUrl>TODO</DownloadUrl>
+        <DownloadSize>TODO</DownloadSize>
+     	<MinimumJavaVersion>1.8</MinimumJavaVersion>
+		<MinimumEfaCloudVersion>2.3.3</MinimumEfaCloudVersion>
+        <ShowNotice lang="de">Wenn efaCloud eingesetzt wird, muss der Server mindestens Version 2.3.3 unterstützen. EfaCloud 2.4.0_12 und höher werden empfohlen.</ShowNotice>
+        <ShowNotice lang="en">If you use efaCloud, make sure your server at least supports efaCloud Version 2.3.3. It is recommended to upgrade to EfaCloud 2.4.0_12 or above.</ShowNotice>
+        <Changes lang="de">
+            <ChangeItem>Neu: Veröffentlichung efa 2.5.0 auf unveränderter Basis von efa 2.5.0#21</ChangeItem>         
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Neu: Publishing efa 2.5.0 based on unmodified efa 2.5.0#21</ChangeItem>          
+        </Changes>
+    </Version>
+    <Version>
+        <VersionID>2.5.0#21</VersionID>
+        <ReleaseDate>03.11.2025</ReleaseDate>
+        <DownloadUrl>TODO</DownloadUrl>
+        <DownloadSize>TODO</DownloadSize>
+     	<MinimumJavaVersion>1.8</MinimumJavaVersion>
+		<MinimumEfaCloudVersion>2.3.3</MinimumEfaCloudVersion>
+        <ShowNotice lang="de">Wenn efaCloud eingesetzt wird, muss der Server mindestens Version 2.3.3 unterstützen. EfaCloud 2.4.0_12 und höher werden empfohlen.</ShowNotice>
+        <ShowNotice lang="en">If you use efaCloud, make sure your server at least supports efaCloud Version 2.3.3. It is recommended to upgrade to EfaCloud 2.4.0_12 or above.</ShowNotice>
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Fahrten aus einem anderen Fahrtenbuch als dem aktuell geladenen können nicht verändert werden.</ChangeItem>
+            <ChangeItem>Bugfix: Neuzeichnen der Bootsliste nach Veränderung Listeninhalte verbessert.</ChangeItem>            
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>BugFix: Sessions from a logbook differing from the currently loaded one cannot be modified.</ChangeItem>
+            <ChangeItem>Bugfix: Repainting of boat lists improved when boat lists get updated.</ChangeItem>            
+        </Changes>
+    </Version>
+    <Version>
+        <VersionID>2.5.0#20</VersionID>
+        <ReleaseDate>25.10.2025</ReleaseDate>
+        <DownloadUrl>TODO</DownloadUrl>
+        <DownloadSize>TODO</DownloadSize>
+		<MinimumJavaVersion>1.8</MinimumJavaVersion>
+		<MinimumEfaCloudVersion>2.3.3</MinimumEfaCloudVersion>  
+		<ShowNotice lang="de">Wenn efaCloud eingesetzt wird, muss der Server mindestens Version 2.3.3 unterstützen. EfaCloud 2.4.0_12 und höher werden empfohlen.</ShowNotice>
+        <ShowNotice lang="en">If you use efaCloud, make sure your server at least supports efaCloud Version 2.3.3. It is recommended to upgrade to EfaCloud 2.4.0_12 or above.</ShowNotice>
+        <Changes lang="de">
+            <ChangeItem>Neu: Aktualisierte Wettbewerbsbedingungen fuer LRV Brandenburg</ChangeItem>
+            <ChangeItem>Bugfix: Kleine Fehlerkorrekturen</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>BugFix: Minor Bugfixes</ChangeItem>
+        </Changes>
+    </Version>
+	<Version>
+  		<VersionID>2.5.0#19</VersionID>
+  		<ReleaseDate>05.10.2025</ReleaseDate>
+        <DownloadUrl>TODO</DownloadUrl>
+        <DownloadSize>TODO</DownloadSize>
+		<MinimumJavaVersion>1.8</MinimumJavaVersion>
+		<MinimumEfaCloudVersion>2.3.3</MinimumEfaCloudVersion>
+        <ShowNotice lang="de">Wenn efaCloud eingesetzt wird, muss der Server mindestens Version 2.3.3 unterstützen. EfaCloud 2.4.0_12 und höher werden empfohlen.</ShowNotice>
+        <ShowNotice lang="en">If you use efaCloud, make sure your server at least supports efaCloud Version 2.3.3. It is recommended to upgrade to EfaCloud 2.4.0_12 or above.</ShowNotice>
+        <Changes lang="de">
+        	<ChangeItem>Neu: Adminmodus/Fahrtenbuch: Bei Anlage eines neuen Fahrtenbuchs wird der Fahrtenbuchname auf allen Folgeseiten des Dialogs wiederholt.</ChangeItem>
+        	<ChangeItem>Neu: [efaCloud] Wenn eine efaCloud-Synchronisation im Hintergrund läuft, wird das benutzerseitige Wechseln von Projekten, Fahrtenbüchern und Vereinsarbeit unterbunden, und der Anwender mit einer Meldung informiert.</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+        	<ChangeItem>New: Admin mode/Logbook: When creating a new logbook, the logbook name gets shown on all pages of the 'new logbook' dialog.</ChangeItem>
+        	<ChangeItem>New: [efaCloud] If an efaCloud synchronisation is currently running in background, the user cannot open the dialogs for choosing projects, logbooks and clubwork. The user is informed with a message.</ChangeItem>
+        </Changes>	
+	</Version>
+	<Version>
+  		<VersionID>2.5.0#18</VersionID>
+  		<ReleaseDate>03.08.2025</ReleaseDate>
+        <DownloadUrl>TODO</DownloadUrl>
+        <DownloadSize>TODO</DownloadSize>
+		<MinimumJavaVersion>1.8</MinimumJavaVersion>
+		<MinimumEfaCloudVersion>2.3.3</MinimumEfaCloudVersion>
+        <ShowNotice lang="de">Wenn efaCloud eingesetzt wird, muss der Server mindestens Version 2.3.3 unterstützen. EfaCloud 2.4.0_12 und höher werden empfohlen.</ShowNotice>
+        <ShowNotice lang="en">If you use efaCloud, make sure your server at least supports efaCloud Version 2.3.3. It is recommended to upgrade to EfaCloud 2.4.0_10 or above.</ShowNotice>
+        <Changes lang="de">
+        	<ChangeItem>Neu: Adminmodus/Fahrtenbuch: Bei Anlage eines neuen Fahrtenbuchs wird der Startzeitraum des aktuell geöffneten Fahrtenbuchs als Grundlage genommen - statt wie bisher der 01.01. Der Endezeitpunkt der Periode wird automatisch berechnet. Dies vereinfacht die Anlage neuer Fahrtenbücher bei abweichender Startperiode (z.B. Kanufahren in Deutschland).</ChangeItem>
+        	<ChangeItem>Neu: Changelog im "Über Efa" Dialog ist besser strukturiert.</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+        	<ChangeItem>New: Admin mode/Logbook: When creating a new logbook, the start date of the currently opened logbook is used as the basis, instead of January 1st as before. The end date is calculated automatically. This simplifies the creation of new logbooks with a different start date (e.g., canoeing in Germany).</ChangeItem>
+        	<ChangeItem>New: Changelog in "About Efa" dialog has been optimized for readability.</ChangeItem>
+        </Changes>	
+	</Version>
+	<Version>
+  		<VersionID>2.5.0#17</VersionID>
+  		<ReleaseDate>08.06.2025</ReleaseDate>
+        <DownloadUrl>TODO</DownloadUrl>
+        <DownloadSize>TODO</DownloadSize>
+		<MinimumJavaVersion>1.8</MinimumJavaVersion>
+		<MinimumEfaCloudVersion>2.3.3</MinimumEfaCloudVersion>
+        <ShowNotice lang="de">Wenn efaCloud eingesetzt wird, muss der Server mindestens Version 2.3.3 unterstützen. EfaCloud 2.4.0_10 und höher werden empfohlen.</ShowNotice>
+        <ShowNotice lang="en">If you use efaCloud, make sure your server at least supports efaCloud Version 2.3.3. It is recommended to upgrade to EfaCloud 2.4.0_10 or above.</ShowNotice>
+        <Changes lang="de">
+        	<ChangeItem>Neu: update runEfa.bat/.sh - 192MB RAM statt 160MB für efa JavaVM, wegen Speicher-Mehrbedarf für efaCloud.</ChangeItem>
+			<ChangeItem>Neu: Boote, die in anderen Logbüchern 'auf Fahrt' sind, können als 'nicht verfügbare Boote' angezeigt werden.</ChangeItem>
+        	<ChangeItem>Bugfix: Auswahlliste für Personen wird aktualisiert, wenn bei Neuanlage einer Fahrt das Boot oder die Bootsvariante geändert wird.</ChangeItem>
+        	<ChangeItem>Bugfix: Efa-Neustart unter Windows funktioniert zuverlässiger, es gibt keine Meldungen mehr 'efa läuft bereits im Hintergrund'.</ChangeItem>        	
+        	<ChangeItem>Bugfix: [efaCloud] Ecrid Index Handling verbessert: keine Probleme mehr nach dem Aufsetzen neuer efaCloud Systeme</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+        	<ChangeItem>New: update runEfa.bat/.sh - 192MB RAM instead of 160MB for efa JavaVM, due to higher demands for efaCloud.</ChangeItem>
+			<ChangeItem>New: Boats which are 'on the water' in other logbooks, can be shown as 'not available boats'</ChangeItem>
+        	<ChangeItem>Bugfix: When changing the boat or boatvariant while creating a new session, the autocomplete list for persons get a refresh.</ChangeItem>        	
+        	<ChangeItem>Bugfix: A restart of efa works better on Windows(r) systems. There are no longer messages like 'efa is already running in background'.</ChangeItem>        	
+        	<ChangeItem>Bugfix: [efaCloud] Ecrid index handling optimized: no more issues when setting up new efaCloud systems.</ChangeItem>
+        </Changes>	
+	</Version>
+	<Version>
+  		<VersionID>2.5.0#16</VersionID>
+  		<ReleaseDate>21.04.2025</ReleaseDate>
+        <DownloadUrl>TODO</DownloadUrl>
+        <DownloadSize>TODO</DownloadSize>
+		<MinimumJavaVersion>1.8</MinimumJavaVersion>
+		<MinimumEfaCloudVersion>2.3.3</MinimumEfaCloudVersion>
+        <ShowNotice lang="de">Wenn efaCloud eingesetzt wird, muss der Server mindestens Version 2.3.3 unterstützen. EfaCloud 2.4.0_10 und höher werden empfohlen.</ShowNotice>
+        <ShowNotice lang="en">If you use efaCloud, make sure your server at least supports efaCloud Version 2.3.3. It is recommended to upgrade to EfaCloud 2.4.0_10 or above.</ShowNotice>
+        <Changes lang="de">
+        	<ChangeItem>Neu: Bootsstatus-Dialog im Querformat und zeigt die zugeordnete Fahrt-Nr und Fahrtenbuchname zum Bootsstatus.</ChangeItem>
+        	<ChangeItem>Neu: EfaBase/Admin-Modus: Bei der Bearbeitung von Fahrtenbucheinträgen werden bestimmte leere Felder mit einem roten Warnicon hervorgehoben.</ChangeItem>
+        	<ChangeItem>Neu: EfaBase/Admin-Modus: Eine Fahrt wird nicht mehr _grundsätzlich_ bei der Bearbeitung in efaBase/Adminmodus auf "geschlossen" gesetzt. D.h. die "Fahrt offen - jetzt beenden" bleibt häufiger sichtbar, wenn die Fahrt tatsächlich noch offen ist.</ChangeItem>
+        	<ChangeItem>Bugfix: Bootstatus: Wird der Bootstatus auf einen Wert != Unterwegs gesetzt, werden im Bootsstatus die Angaben von Fahrtnummer und Fahrtenbuchnamen geleert.</ChangeItem>
+        	<ChangeItem>Bugfix: Fahrt anlegen/Nacherfassen: Ist eine Fahrt&gt;30km, und ist nur eine Fahrtart zur Auswahl möglich, unterbleibt die Abfrage der Fahrtart.</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+        	<ChangeItem>New: Dialog for editing BoatStatus in landscape mode; shows a new column for Trip number and Logbook-Date.</ChangeItem>
+        	<ChangeItem>New: EfaBase/Admin mode: When editing logbook entries, some fields are highlighted with a red warning icon when they are (unexpectedly) empty.</ChangeItem>
+        	<ChangeItem>New: EfaBase/Admin mode: A Session does not gets set to "closed" by default if a session gets edited in efaBase/Admin mode. This means that the button "Session open - finish now" is visible more often if the session is actually open.</ChangeItem>
+        	<ChangeItem>Bugfix: Boatstatus: If the BoatStatus gets set to a value != OnTheWater, the attributes for TripNo and Logbookname get cleared as well.</ChangeItem>
+        	<ChangeItem>Bugfix: Session start: if a trip is &gt;30km, and only a single trip type is available, no dialog for confirming the trip type is shown.</ChangeItem>
+        </Changes>	
+	</Version>
+	<Version>
+  		<VersionID>2.5.0#15</VersionID>
+  		<ReleaseDate>13.04.2025</ReleaseDate>
+        <DownloadUrl>TODO</DownloadUrl>
+        <DownloadSize>TODO</DownloadSize>
+		<MinimumJavaVersion>1.8</MinimumJavaVersion>
+		<MinimumEfaCloudVersion>2.3.3</MinimumEfaCloudVersion>
+        <ShowNotice lang="de">Wenn efaCloud eingesetzt wird, muss der Server mindestens Version 2.3.3 unterstützen. EfaCloud 2.4.0_10 und höher werden empfohlen.</ShowNotice>
+        <ShowNotice lang="en">If you use efaCloud, make sure your server at least supports efaCloud Version 2.3.3. It is recommended to upgrade to EfaCloud 2.4.0_10 or above.</ShowNotice>
+        <Changes lang="de">
+        	<ChangeItem>BugFix:'Über efa' Dialog zeigt das Build-Datum an</ChangeItem>
+        	<ChangeItem>BugFix: Wechsel zwischen den Projekten: Admin-Dialog zeigt zuverlässig an, wenn kein Vereinsarbeitsbuch geöffnet ist.</ChangeItem>
+        	<ChangeItem>BugFix: [efaCloud] Anlage neuer Projekte und Fahrtenbücher mit mehr Hinweisen zur korrekten Konfiguration.</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+        	<ChangeItem>BugFix:'About efa' dialogue shows the build date.</ChangeItem>
+        	<ChangeItem>BugFix: Changing the current project: Admin-Dialog shows if there is no currently loaded clubwork book.</ChangeItem>
+        	<ChangeItem>BugFix: [efaCloud] Dialogs for creating new projects or logbooks show hints for correct usage.</ChangeItem>
+        </Changes>	
+	</Version>
+	<Version>
+        <VersionID>2.5.0#14</VersionID>
+        <ReleaseDate>16.03.2025</ReleaseDate>
+        <DownloadUrl>TODO</DownloadUrl>
+        <DownloadSize>TODO</DownloadSize>
+		<MinimumJavaVersion>1.8</MinimumJavaVersion>
+		<MinimumEfaCloudVersion>2.3.3</MinimumEfaCloudVersion>
+        <ShowNotice lang="de">Wenn efaCloud eingesetzt wird, muss der Server mindestens Version 2.3.3 unterstützen.</ShowNotice>
+        <ShowNotice lang="en">If you use efaCloud, make sure your server at least supports efaCloud Version 2.3.3.</ShowNotice>
+        <Changes lang="de">
+        	<ChangeItem>BugFix: efaBase ließ sich nicht vollständig über Datei-&gt;Beenden schließen.</ChangeItem>
+        	<ChangeItem>BugFix: LookAndFeel: im maximierten Modus von efa wird die Titelzeile in allen Looks gleich angezeigt - mit einem blauen Hintergrund.</ChangeItem>
+        	<ChangeItem>BugFix: Beim Email-Versand auftretende Fehler verursachen keine vollaufenden efa.log Dateien mehr.</ChangeItem>
+        	<ChangeItem>BugFix: Admin-Dialog: Anzahl der Nachrichten wird bei geschlossenen Projekten auf der Schaltfläche korrekt dargestellt.</ChangeItem>
+        	<ChangeItem>BugFix: [efaCloud] efaCloud Logdateien sind wieder auf max. 200kb Größe limitiert.</ChangeItem>
+        	<ChangeItem>BugFix: [efaCloud] Löschen von efaCloud Projekten verwirrt nicht mehr die efaCloud TX-Synchronisation.</ChangeItem>
+        	<ChangeItem>BugFix: [efaCloud] Bug in efa 2.5.0#12 bei Migration von Projekten nach efaCloud behoben.</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+        	<ChangeItem>BugFix: efaBase could not be closed via File-&gt;Quit, some fragments kept running in backround.</ChangeItem>
+        	<ChangeItem>BugFix: LookAndFeel: if efa is maximized, the window title bar will look the same in all LookAndFeels - with a blue background.</ChangeItem>
+        	<ChangeItem>BugFix: Avoid big efa.log protocols when errors occurr while sending email notifications.</ChangeItem>
+        	<ChangeItem>BugFix: Admin-Dialog: Number of unread messages is shown correctly on the button, when project has been closed.</ChangeItem>
+        	<ChangeItem>BugFix: [efaCloud]: efaCloud log files are again limited to 200kb size max.</ChangeItem>
+        	<ChangeItem>BugFix: [efaCloud] Deleting efaCloud projects no longer disturbs efaCloud TX-Synchronisation.</ChangeItem>
+        	<ChangeItem>BugFix: [efaCloud] Bug in efa 2.5.0#12 fixed which avoided migration of local projects to efaCloud.</ChangeItem>
+        </Changes>
+	</Version>
+	<Version>
+        <VersionID>2.5.0#12</VersionID>
+        <ReleaseDate>09.03.2025</ReleaseDate>
+        <DownloadUrl>TODO</DownloadUrl>
+        <DownloadSize>TODO</DownloadSize>
+		<MinimumJavaVersion>1.8</MinimumJavaVersion>
+		<MinimumEfaCloudVersion>2.3.3</MinimumEfaCloudVersion>
+        <ShowNotice lang="de">Wenn efaCloud eingesetzt wird, muss der Server mindestens Version 2.3.3 unterstützen.</ShowNotice>
+        <ShowNotice lang="en">If you use efaCloud, make sure your server at least supports efaCloud Version 2.3.3.</ShowNotice>
+        <Changes lang="de">
+			<ChangeItem>Neu: Mehrere Bootshäuser: Wenn man im Verein mehr als ein Bootshaus konfiguriert hat, werden bei 'Boote auf Fahrt' nur noch die Boote angezeigt, die eine Fahrt im Fahrtenbuch zum Bootshaus haben. Siehe auch Dokumentation: http://efa.nmichael.de/dokuwiki/doku.php?id=config_mehrere_bootshaeuser</ChangeItem>
+			<ChangeItem>Neu: Mehrere Bootshäuser: Werden in einem Projekt mehrere Bootshäuser verwaltet, zeigt die Bootsliste in einer zusätzlichen Spalte an, welches Boot exklusiv in welchem Bootshaus angezeigt werden soll.</ChangeItem>
+			<ChangeItem>Neu: Konfiguration von Bootstypen: Wenn 'Kanufahren in Deutschland' aktiviert ist, wird ein Hinweis mit Verweis auf die Kanu-EFB-Synchronisation mit den dort konfigurierten Bootstypen angezeigt.</ChangeItem>
+			<ChangeItem>Neu: Dialog für Auswahl von Projekt/Fahrtenbuch/Vereinsarbeit zeigt Informationen zum aktuell geladenen Projekt etc. an.</ChangeItem>
+			<ChangeItem>Neu: Dialog für Auswahl von Projekt zeigt Projekttyp (Lokal, efaCloud, efaRemote) und die Namen der Bootshäuser an.</ChangeItem>
+			<ChangeItem>Neu: Dialog für Auswahl von Projekt zeigt das aktuell geöffnete Projekt/Fahrtenbuch/Vereinsarbeit mit grüner Hinterlegung, und es ist beim Öffnen des Dialogs standardmäßig ausgewählt.</ChangeItem>
+			<ChangeItem>Neu: Im 'Über efa2' Dialog wird die Versionshistorie angezeigt.</ChangeItem>
+       	 	<ChangeItem>Neu: [efaCloud] Bei Einsatz von efaCloud: Auf dem Server muss MINDESTENS VERSION 2.3.3 oder höher installiert sein.</ChangeItem>
+			<ChangeItem>Neu: [efaCloud] Erstellung von Projekten: Ergänzende Hinweise; Option zum Verhindern der Anlage von Status und Gewässern.</ChangeItem>
+			<ChangeItem>Neu: [efaCloud] Bei Aktualisierung von Gewässern nach Update: Hinweis darauf, dass das Gewässerupdate nur bei einer Instanz im efaCloud-System erfolgen sollte.</ChangeItem>
+			<ChangeItem>Neu: [efaCloud] Bei Aktualisierung von Gewässern (manueller Aufruf): Hinweis darauf, dass das Gewässerupdate nur bei einer Instanz im efaCloud-System erfolgen sollte.</ChangeItem>
+			<ChangeItem>Neu: [efaCloud] Bei Anlage neuer Fahrtenbücher werden Hinweise zur Benennung der Fahrtenbücher gegeben.</ChangeItem>
+			<ChangeItem>New: [efaCloud] Wenn das aktuelle Projekt ein efaCloud Projekt ist, wird ein Hinweis angezeigt.</ChangeItem>
+			<ChangeItem>BugFix: efaBase schließt sich nicht mehr bei Betätigung von ESC im Hauptfenster.</ChangeItem>
+			<ChangeItem>BugFix: Admin Modus: Boote bearbeiten: Register 'Bootsreservierungen' und 'Bootsschäden' wachsen mit der Größe des Dialogs.</ChangeItem>
+			<ChangeItem>BugFix: Admin Modus: Projekt/Fahrtenbuch/Vereinsarbeit/Plugin Liste: Listen wachsen mit der Dialoggröße.</ChangeItem>
+			<ChangeItem>BugFix: EfaBackgroundtask führt keine Aktionen mehr durch, wenn Admin-Modus aktiv ist. Dadurch weniger Probleme bei Neuanlage von Projekten, wenn bereits ein Projekt offen ist.</ChangeItem>
+			<ChangeItem>BugFix: [efaCloud] Bei Anlage neuer efaCloud-Projekte muss der Admin explizit angeben, dass neue Status + Gewässer angelegt werden sollen.</ChangeItem>
+			<ChangeItem>BugFix: [efaCloud] Logrotate für efacloud.log und synchErrors.log korrigiert. Logrotate bei einer Dateigröße von 5 MB.</ChangeItem>
+			<ChangeItem>BugFix: [efaCloud] Bei der Projekt-Neuanlage werden nicht mehr automatisch Gewässer angelegt (da dies bei Integration in eine bestehende efaCloud-Instanz zu Problemen führen kann).</ChangeItem>
+			<ChangeItem>BugFix: [efaCloud] Für efaCloud wurde die Synchronisation der Daten zwischen Bootshaus und Server optimiert. Die Verwendung des eindeutigen Datensatzschlüssels des Servers in efa löst Konflikte, die etwa bei temporärem Internetausfall oder Parallelität von Fahrteinträgen in zwei angebundenen Bootshäusern auftreten.</ChangeItem>
+			<ChangeItem>BugFix: [efaCloud] Nullpointer-Fehlermeldung behoben, wenn efaCloud den Status im Fenstertitel aktualisiert.</ChangeItem>
+			<ChangeItem>BugFix: [efaCloud] Direkt nach dem Start wartet EFA 15 Sekunden statt 5 Sekunden, bis der erste Upload in efaCloud gestartet wird.</ChangeItem>
+		</Changes>
+        <Changes lang="en">
+       	 	<ChangeItem>New: Multiple Boathouses: If you have configured more than one boathouse in the club, the Boat list in admin modes provides an additional colum which shows for which boathouse a boat is shown exclusively.</ChangeItem>
+       	 	<ChangeItem>New: Multiple Boathouses: If you have configured more than one boathouse in the club, only the boats that have a trip to the boathouse in the logbook are displayed under 'Boats on the water'. See also documentation: http://efa.nmichael.de/dokuwiki/doku.php?id=config_mehrere_bootshaeuser</ChangeItem>
+			<ChangeItem>New: Dialog for choosing Project/Logbook/Clubwork shows info about the currently loaded Project, Logbook, Clubwork.</ChangeItem>
+			<ChangeItem>New: Dialog for choosing the Project shows project type (local, efaCloud, efaRemote) and the names of the Boathouses in multi-Boathouse configurations.</ChangeItem>			
+			<ChangeItem>New: Dialog for choosing the Project/Logbook/Clubwork highlights and autoselects the currently loaded item.</ChangeItem>
+			<ChangeItem>New: Efa2's version history is shown in efa 'About' dialog.</ChangeItem>
+       	 	<ChangeItem>New: [efaCloud] When using efaCloud, the server MUST HAVE INSTALLED AT LEAST efaCloud 2.3.3 or newer.</ChangeItem>
+			<ChangeItem>New: [efaCloud] Creating new Projects: Added hints and an option to avoid creation of Statuses and Waters.</ChangeItem>
+			<ChangeItem>New: [efaCloud] Update of Waters after an update: Added hint to inform that waters update should only be done on a single efa client of efaCloud system.</ChangeItem>
+			<ChangeItem>New: [efaCloud] Update of Waters (manually): Added hint to inform that waters update should only be done on a single efa client of efaCloud system.</ChangeItem>
+			<ChangeItem>New: [efaCloud] When creating new logbooks, a hint is shown stating how the logbooks name should look like.</ChangeItem>
+			<ChangeItem>New: [efaCloud] When the current Project uses efaCloud, the Admin list dialog now shows an hint.</ChangeItem>
+       	 	<ChangeItem>BugFix: efaBase does not close anymore when hitting ESC key in the main window.</ChangeItem>
+			<ChangeItem>BugFix: Admin mode: Edit boats: Tabs 'Boat reservations' and 'Boat damages' grow their size according to the dialog size.</ChangeItem>
+			<ChangeItem>BugFix: Admin mode: Project/Logbook/Clubwork/Plugin list: List grow according to the dialog size.</ChangeItem>
+			<ChangeItem>BugFix: EfaBackgroundtask no longer runs actions when Admin mode is active. Less problems when creating new projects when a project is currently open.</ChangeItem>
+			<ChangeItem>BugFix: [efaCloud] When creating new efaCloud projects in efa, the admin now needs to manually enable the creation of Statuses and Waters.</ChangeItem>
+			<ChangeItem>BugFix: [efaCloud] Logrotate works now for efacloud.log und synchErrors.log. Logrotate if filesize &gt; 5 MB.</ChangeItem>
+			<ChangeItem>BugFix: [efaCloud] When creating a new efaCloud project, the option to automatically create a waters list has been removed (as it may lead to duplicate waters if the new project is used to add a new efa instance to an existing efaCloud server).</ChangeItem>
+       	 	<ChangeItem>BugFix: [efaCloud] For efaCloud, the synchronization of data between the boathouse and the server has been optimized. The use of the server's unique data record key in efa resolves conflicts that arise, for example, in the event of a temporary Internet outage or parallel trip entries in two connected boathouses.</ChangeItem>
+			<ChangeItem>BugFix: [efaCloud] Fixed nullpointer exception when efaCloud updated its status the window title.</ChangeItem>
+			<ChangeItem>BugFix: [efaCloud]: After startup efa waits 15 seconds instead of 5 before the first attempt to upload data starts.</ChangeItem>
+		</Changes>
+	</Version>
+	<Version>
+        <VersionID>2.5.0#11</VersionID>
+        <ReleaseDate>27.10.2024</ReleaseDate>
+        <DownloadUrl>TODO</DownloadUrl>
+        <DownloadSize>TODO</DownloadSize>
+		<MinimumJavaVersion>1.8</MinimumJavaVersion>
+		<MinimumEfaCloudVersion>2.3.3</MinimumEfaCloudVersion>        
+        <Changes lang="de">
+            <ChangeItem>Neu: efaBths Listen: Farbicons für Bootslisten werden geglättet dargestellt.</ChangeItem>
+            <ChangeItem>Neu: Hinweise in EfaConfig usw. werden passend zum efaFlatlaf mit abgerundeten Ecken dargestellt.</ChangeItem>
+			<ChangeItem>Neu: Neuer Dialog für Erfassung von Wanderfahrten (Multisession), wenn mehrere Leute im eigenen Boot zu einer gemeinsamen Fahrt aufbrechen. Konfigurierbar in efaConfig.</ChangeItem>
+            <ChangeItem>Neu: Autovervollständigungs-Listen: bei der Suche nach Teilbegriff wird immer der Eintrag vorselektiert, der mit dem Suchbegriff beginnt.</ChangeItem>
+            <ChangeItem>Neu: Dialog für Bootsreservierungen in efaBths ist breiter und hat die Schaltflächen über der Tabelle (Aktualisierte Version).</ChangeItem>
+            <ChangeItem>Neu: Dialog für Vereinsarbeit in efaBths ist breiter und hat die Schaltflächen über der Tabelle (Aktualisierte Version).</ChangeItem>
+            <ChangeItem>Neu: Neue Option in Konfiguration-&gt;Allgemein-&gt;Eingabe-&gt;Besatzung: bei Einsitzer-Fahrten die Person als Crew statt als Steuermann eintragen.</ChangeItem>
+            <ChangeItem>Neu: Adminmodus/Personen: Personen, die in einer oder mehreren Gruppen sind, haben das zugehörige Icon, und der Tooltip stellt die Gruppen dar.</ChangeItem>
+            <ChangeItem>Neu: Adminmodus/Personen: Personen, die eine Kanu-eFB-ID haben, erhalten ein passendes Icon, und der Tooltip beinhaltet die eFB-ID.</ChangeItem>
+            <ChangeItem>Neu: Adminmodus/Boote: Boote, die in einer oder mehreren Gruppen sind, haben das zugehörige Icon, und der Tooltip stellt die Gruppen dar.</ChangeItem>
+            <ChangeItem>Neu: Adminmodus/Boote: Registerkarte Bootsschäden: Bei Eintragung neuer Bootsschäden wird eine Benachrichtigung erstellt (Deaktivierbar in Konfiguration).</ChangeItem>
+            <ChangeItem>Neu: Adminmodus/Boote: Registerkarte Bootsschäden: Bei Löschung von Bootsschäden wird gefragt, ob diese nicht besser als behoben markiert werden sollen. Dann wird ggfs. auch eine Benachrichtigung erstellt.</ChangeItem>
+            <ChangeItem>Neu: Adminmodus/Boote: Boot Bearbeiten-Dialog: breitere Darstellung für Bootsreservierungen und Bootsschäden.</ChangeItem>
+            <ChangeItem>Neu: Adminmodus/Bootsschäden: Layout des Dialogs zur Erfassung von Bootsschäden wurde überarbeitet.</ChangeItem>
+            <ChangeItem>Neu: Adminmodus/Bootsstatus: Zum Boot werden Basis-Status, aktueller Status und Eigentümer angezeigt.</ChangeItem>
+            <ChangeItem>Neu: Adminmodus/Bootsreservierungen: Filterfeld erhält automatisch den Fokus.</ChangeItem>
+            <ChangeItem>Neu: Adminmodus/Vereinsarbeit: Filterfeld erhält automatisch den Fokus.</ChangeItem>
+            <ChangeItem>Neu: Adminmodus/Gruppen: In der Tabelle dargestellte Gruppen zeigen ihre Farbe an.</ChangeItem>
+            <ChangeItem>Neu: Adminmodus/Dialoge: Das Filter-Textfeld erhält einen gelben Hintergrund, wenn es den Fokus erhält.</ChangeItem>
+            <ChangeItem>Neu: Adminmodus/Statistiken: Statistiken mit Dateiexport können relative Pfadnamen verwenden.</ChangeItem>
+            <ChangeItem>Neu: CSV DatenExport: Erzeugte CSV-Dateien lassen sich besser mit aktuellen Tabellenkalkulationen verarbeiten, wenn Format 'CSV (mit BOM)' gewählt wird.</ChangeItem>
+            <ChangeItem>Neu: CSV DatenExport: efaCLI Standards für Spaltentrennzeichen (|) und Text-Trennzeichen (") bleiben unverändert für Abwärtskompatibilität</ChangeItem>
+            <ChangeItem>Neu: CSV DatenExport: efaCLI mit erweiterten Parametern für Datenexport.</ChangeItem>
+            <ChangeItem>Neu: CSV DatenExport: efaCLI mit Export für Vereinsarbeit.</ChangeItem>
+			<ChangeItem>Neu: CSV Datenexport: efaCLI Export mit relativen Dateinamen für ./ = Efa Datenverzeichnis und ~/ = Home-Verzeichnis des aktuellen Benutzers.</ChangeItem>
+            <ChangeItem>Neu: CSV DatenImport: CSV-Dateien in UTF-8 mit BOM (aus Tabellenkalkulationen) lassen sich importieren.</ChangeItem>
+			<ChangeItem>Neu: Bessere Sortierung in den Tabellen für die Bearbeitung von Bootsreservierungen, Personen, Booten... etc. wenn nach einer anderen Spalte sortiert wird.</ChangeItem>
+            <ChangeItem>Neu: Backup: efa.log Datei kann mit gesichert werden (wird aber nicht wiederhergestellt)</ChangeItem>
+            <ChangeItem>Neu: EFB-Sync: Fahrtart kann dem EFB-Kommentartext vorangestellt werden.</ChangeItem>
+            <ChangeItem>Neu: EFB-Sync: Schlägt das DB-Update einer Fahrt fehl, werden trotzdem alle weiteren Fahrten synchronisiert.</ChangeItem>
+            <ChangeItem>Neu: EFB-Sync: Option in EfaConfig-&gt;Sync um die KanuEFB-ID Felder für Personen, Boote, Gewässer immer anzeigen zu lassen.</ChangeItem>         
+			<ChangeItem>Neu: Maximale Schriftgröße für Tabellen auf 24pix erhöht.</ChangeItem>
+			<ChangeItem>BugFix: In efaBootshaus funktioniert im Admin-Bereich: Fahrtenbuch wieder die Suche mit F3.</ChangeItem>           
+            <ChangeItem>BugFix: Abgelaufene Bootsreservierungen von "versteckten" Booten werden gelöscht.</ChangeItem>
+            <ChangeItem>BugFix: In Beta-Versionen wird im Admin-Modus nicht mehr beständig die Aktualisierung der Gewässerliste angeboten.</ChangeItem>
+            <ChangeItem>BugFix: Versteckte Option für "efa immer im Vordergrund" wird wieder angezeigt.</ChangeItem>
+            <ChangeItem>BugFix: Wenn ein Backup efa-Konfigurationsdaten wiederherstellt, dann wird zum Neustart von EFA aufgefordert. Hierdurch wird verhindert, dass der Audit Task beim Öffnen des Projekts Daten korrigiert, weil er ggfs. nicht geladene TYPEN oder andere Konfigurationsdaten (noch) nicht findet.</ChangeItem>
+            <ChangeItem>BugFix: Nullpointer im Audit Task behoben, wenn Reservierungen zu nicht sichtbaren Booten gelöscht werden sollen.</ChangeItem>
+			<ChangeItem>BugFix: Wenn ein Restore auch Konfigurationsdaten wiederherstellt, wird das Projekt nicht neu geladen und der Anwender zum Neustart von efa aufgefordert. Dies sorgt dafür, dass die wiederhergestellten Konfigurationsdaten, Bootstypen etc. direkt zum Einsatz kommen.</ChangeItem>
+			<ChangeItem>BugFix: Admin Dialog: Besseres Layout, wenn ein anstehender Fahrtenbuch- oder Vereinsarbeitswechsel dargestellt wird.</ChangeItem>			
+            <ChangeItem>BugFix: EFA#102: EFA2.5.0#8 Beta: efaCLI Export: bisherige Standards für Feld- und Text-Trennzeichen sollen bestehen bleiben (für Abwärtskompatiblität)</ChangeItem>
+            <ChangeItem>BugFix: EFA#106: EFA2.5.0#8 Beta: efaCLI Export: Betreff der versandten Mail beinhaltet unnötige Zeitzonen-Angabe</ChangeItem>
+            <ChangeItem>BugFix: EFA#107: EFA2.5.0#8 Beta: efaCLI Export: CSV-Exporte ohne absolute Pfadangabe landen im Efa-Hauptverzeichnis</ChangeItem>
+            <ChangeItem>BugFix: EFA#103: EFA2.5.0#8 Beta: efaCLI Statistiken: lassen sich über efaCLI nicht mehr erstellen.</ChangeItem>
+            <ChangeItem>BugFix: EFA#104: EFA2.5.0#8 Beta: Rechtschreibfehler in DE, efaConfig: Bootshaus -&gt; Benachrichtigungen</ChangeItem>
+            <ChangeItem>BugFix: [efaCloud] Kein Nullpointer-Fehler mehr beim Betreten des Admin-Modus, wenn kein Projekt geöffnet ist.</ChangeItem>
+            <ChangeItem>BugFix: [efaCloud] Im Debug Modus werden keine unnötigen Nullpointer-Exceptions mehr ins Log geschrieben. https://github.com/nicmichael/efa/issues/138</ChangeItem>
+            <ChangeItem>Code: Refactoring: Unnötige Imports entfernt.</ChangeItem>          
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>New: efaBths boatlists: Icons for boat groups are rendered aliased.</ChangeItem>
+            <ChangeItem>New: Hints in efaconfig now have round borders, fitting to the new efaFlatLaf look.</ChangeItem>
+			<ChangeItem>New: New dialog for input of multiple similar sessions (multiple persons go on the same trip with their own boat)</ChangeItem>
+            <ChangeItem>New: Popup-Lists: when searching in partial text mode, the preselected entry is now the first of the result set that BEGINS with the search text.</ChangeItem>
+            <ChangeItem>New: EfaBths: Boat reservations dialog in landscape mode: Buttons above the table, dialog has a bigger width.</ChangeItem>
+            <ChangeItem>New: EfaBths: Clubwork dialog in landscape mode: Buttons above the table, dialog has a bigger width.</ChangeItem>
+            <ChangeItem>New: New option in Configuration-&gt;Common-&gt;Input-&gt;Crew: when creating single person sessions, set the person as crew instead of as cox.</ChangeItem>
+            <ChangeItem>New: Admin mode/Persons: Persons who are in one or more groups get the respecive group color icon, and the group names are visible in the tooltip.</ChangeItem>
+            <ChangeItem>New: Admin mode/Persons (German Kanoers only): Persons who have a Kanu-eFB-ID assigned get the respective EFB icon and the tooltip shows the eFB-ID.</ChangeItem>
+            <ChangeItem>New: Admin mode/Boats: Boats which are in one or more groups get the respecive group color icon, and the group names are visible in the tooltip.</ChangeItem>
+            <ChangeItem>Neu: Admin mode/Boats: Boat edit dialog: Tabs for Boat reservations and Boat damages provide more space for the table data.</ChangeItem>
+            <ChangeItem>New: Admin mode/Boats: Tab Boatdamages: When adding new boat damages, a notification will be sent (can be deactivated in Configuration).</ChangeItem>
+            <ChangeItem>New: Admin mode/Boats: Tab Boatdamages: When attemting to delete a boat damage, admin gets asks if the damage should not be marked as fixed instead. If so, a notification is sent.</ChangeItem>
+            <ChangeItem>New: Admin mode/Boat damages: Layout of the dialog is updated.</ChangeItem>            
+            <ChangeItem>New: Admin mode/Boat status: shows additional rows for base status, current status and owner</ChangeItem>            
+            <ChangeItem>New: Admin mode/Boat reservations: Filter text field automatically gets focused.</ChangeItem>
+            <ChangeItem>New: Admin mode/Clubwork: Filter text field automatically gets focused.</ChangeItem>
+            <ChangeItem>New: Admin mode/Dialogs: Filter text field gets yellow background if focused..</ChangeItem>
+            <ChangeItem>New: Admin mode/Groups: Groups show their respective color in the table.</ChangeItem>
+			<ChangeItem>New: Admin mode/Statistics: Support for relative file paths when exporting into files.</ChangeItem>
+            <ChangeItem>New: CSV export: Created files are more suitable for processing in spreadsheet programs, especially in localized variants.</ChangeItem>
+            <ChangeItem>Neu: CSV export: efaCLI former standards for CSV column delimiter (|) and CSV-quote(") stay unchanged due to backwards compatiblity for existing export batches.</ChangeItem>            
+            <ChangeItem>New: CSV export: efaCLI has extended parameters for data export.</ChangeItem>
+            <ChangeItem>New: CSV export: efaCLI can export clubwork.</ChangeItem>
+            <ChangeItem>New: CSV export: efaCLI Export allows specification of relative paths for exports and imports ./ = Efa data directory,  ~/ = home directory of current user.</ChangeItem>
+            <ChangeItem>New: CSV import: UTF-8 CSV files with BOM (created by spreadsheets programs) can be used for import.</ChangeItem>
+			<ChangeItem>New: Better sorting of items in the tables for editing boat reservations, persons, boats... when sorting by another column.</ChangeItem>
+            <ChangeItem>New: Backup: efa.log file can be added to the items which are included in the backup.</ChangeItem>
+			<ChangeItem>New: Maximum font size for tables is 24pix.</ChangeItem>
+            <ChangeItem>BugFix: in efaBths the loogbook dialog supports the F3 key again.</ChangeItem>
+            <ChangeItem>BugFix: Outdated boatreservations of "hidden" boats are deleted.</ChangeItem>
+            <ChangeItem>BugFix: In beta versions there are no more questions for updateing the waters list in admin mode.</ChangeItem>
+            <ChangeItem>BugFix: Hidden option for "efa always on top" gets shown again.</ChangeItem>
+            <ChangeItem>BugFix: If efa configuration data gets restored from a backup, the user is informed to restart efa. By this accidental changes by audit task are avoided (which may take place as the audit task may not find restored config data before efa gets restarted.)</ChangeItem>
+            <ChangeItem>BugFix: Fixed nullpointer in audit task when deleting reservations for invisible boats.</ChangeItem>
+			<ChangeItem>BugFix: If a restore of a backup restores config items, the project will NOT be reloaded, but the user gets a request to restart efa. This ensures that config data is loaded before the audit task starts up and performs unwanted changes.</ChangeItem>
+			<ChangeItem>BugFix: Admin Dialog: Better layout for showing upcoming automatic logbook or clubwork switch.</ChangeItem>
+            <ChangeItem>BugFix: EFA#102: EFA2.5.0#8 Beta: efaCLI Export: current standards for CSV delimiter and CSV quote shall remain for backwards compatibility</ChangeItem>
+            <ChangeItem>BugFix: EFA#106: EFA2.5.0#8 Beta: efaCLI Export: Topic of mails contain unneccesary timezone descriptions</ChangeItem>
+            <ChangeItem>BugFix: EFA#107: EFA2.5.0#8 Beta: efaCLI Export: CSV export without absolute paths create files in efa main directory</ChangeItem>
+            <ChangeItem>BugFix: EFA#103: EFA2.5.0#8 Beta: efaCLI Statistics: Statistics could not be created any more.</ChangeItem>
+            <ChangeItem>BugFix: EFA#104: EFA2.5.0#8 Beta: typo in DE, efaConfig: Boathouse-&gt; Notifications</ChangeItem>
+            <ChangeItem>BugFix: [efaCloud] No more nullpointer exception when entering admin mode and no open project.</ChangeItem>
+            <ChangeItem>BugFix: [efaCloud] No more exceptions logged in debug mode. https://github.com/nicmichael/efa/issues/138 </ChangeItem>
+            <ChangeItem>Code: Refactoring: Removed unused import statemens.</ChangeItem>          
+        </Changes>
+    </Version>
+    <Version>
         <VersionID>2.4.0_01</VersionID>
         <ReleaseDate>10.10.2025</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa240.zip</DownloadUrl>
@@ -13,12 +360,14 @@
             <ChangeItem>BugFix: Minor Bugfixes</ChangeItem>
         </Changes>
     </Version>
-
 	<Version>
         <VersionID>2.4.0_00</VersionID>
         <ReleaseDate>05.04.2024</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa240.zip</DownloadUrl>
         <DownloadSize>6547777</DownloadSize>
+		<MinimumJavaVersion>1.8</MinimumJavaVersion>^
+		<ShowNotice lang="de">Nach dem Update auf 2.4.0 ist ein Neustart des Rechners erforderlich. Ein Neustart von efa selbst reicht nicht aus.</ShowNotice>
+        <ShowNotice lang="en">After updating to 2.4.0, you must restart your computer. Restarting efa itself is not sufficient.</ShowNotice>
         <Changes lang="de">
 			<ChangeItem>Neu: EfaFlatLight LookAndFeel bietet eine klare, modernere Darstellung. In weiten Bereichen konfigurierbar.</ChangeItem>
 			<ChangeItem>Neu: EfaFlatLight Standard-Look nach Update oder Installation. Bei Update ist ein Neustart des Rechners erforderlich, damit efaFlatLight aktiv wird.</ChangeItem>
@@ -79,9 +428,9 @@
 			<ChangeItem>Bugfix: Admin Modus: Dialoge zur Auswahl von Projekten, Fahrtenbüchern, Vereinsarbeit, Plugins werden besser dargestellt in allen LookAndFeels.</ChangeItem>
 			<ChangeItem>Bugfix: efaBths: Blaue Titelleiste verändert ihre Größe nicht mehr, wenn efaFlatLaf aktiv ist, und die efa-Konfiguration geändert wurde.</ChangeItem>
 			<ChangeItem>Bugfix: Tabellen: Wenn alternierende Zeilen aktiv sind, zeigt das efaFlatLaf zumindest horizontale Linien in den Tabellen an.</ChangeItem>        
-            <ChangeItem>BugFix: efaCloud: Verbesserungen der Synchronisation: bei Re-Synchronisation 'kürzlich' geänderter/neuer Datensätze berücksichtigt nur noch Datensätze der letzten 5 Tage statt 30 Tage.</ChangeItem>
-            <ChangeItem>BugFix: efaCloud: Verbesserungen der Synchronisation: Besserer Umgang mit der Situation, wenn die Klartext-Namen durch UUIDs ersetzt werden (durch Aufräumarbeiten am Jahresende).</ChangeItem>
-            <ChangeItem>BugFix: efaCloud: Projekt kann nicht mehr mit leeren Feldern zu efaCloud-Credentials in ein efaCloud-Projekt umgestellt werden.</ChangeItem>
+            <ChangeItem>BugFix: [efaCloud] Verbesserungen der Synchronisation: bei Re-Synchronisation 'kürzlich' geänderter/neuer Datensätze berücksichtigt nur noch Datensätze der letzten 5 Tage statt 30 Tage.</ChangeItem>
+            <ChangeItem>BugFix: [efaCloud] Verbesserungen der Synchronisation: Besserer Umgang mit der Situation, wenn die Klartext-Namen durch UUIDs ersetzt werden (durch Aufräumarbeiten am Jahresende).</ChangeItem>
+            <ChangeItem>BugFix: [efaCloud] Projekt kann nicht mehr mit leeren Feldern zu efaCloud-Credentials in ein efaCloud-Projekt umgestellt werden.</ChangeItem>
         </Changes>
         <Changes lang="en">
 			<ChangeItem>New: EfaFlatLight LookAndFeel provides a clear, modern look of efa. Customizable in wide ranges.</ChangeItem>
@@ -143,9 +492,9 @@
 			<ChangeItem>Bugfix: Admin mode: Dialogs for selecting Projects, Logbooks, Clubwork, Plugins are better readable in any LookAndFeels.</ChangeItem>
 			<ChangeItem>Bugfix: efaBths: Blue title bar does not change it's size when efaFlatLaf is active and config items get saved in admin mode.</ChangeItem>
 			<ChangeItem>Bugfix: Tables: when alternating row colors are deactivated, flatlaf shows horizontal lines for better readability in tables.</ChangeItem>        
-			<ChangeItem>BugFix: efaCloud: Sync improvements: when resyncing 'recently' changed/created records only records of the last 5 days are considered, instead of the last 30 days.</ChangeItem>
-            <ChangeItem>BugFix: efaCloud: Sync improvements: better handling when names of boats and other items get replaced by uuids (by cleaning actions at the end of the year).</ChangeItem>
-            <ChangeItem>BugFix: efaCloud: Cannot convert an existing project to efaCloud then efaCloud credential fields are empty</ChangeItem>
+			<ChangeItem>BugFix: [efaCloud] Sync improvements: when resyncing 'recently' changed/created records only records of the last 5 days are considered, instead of the last 30 days.</ChangeItem>
+            <ChangeItem>BugFix: [efaCloud] Sync improvements: better handling when names of boats and other items get replaced by uuids (by cleaning actions at the end of the year).</ChangeItem>
+            <ChangeItem>BugFix: [efaCloud] Cannot convert an existing project to efaCloud then efaCloud credential fields are empty</ChangeItem>
         </Changes>
 	</Version>	
 	<Version>
@@ -153,6 +502,7 @@
         <ReleaseDate>26.11.2023</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa233.zip</DownloadUrl>
         <DownloadSize>4546237</DownloadSize>
+		<MinimumJavaVersion>1.8</MinimumJavaVersion>
         <Changes lang="de">
             <ChangeItem>BugFix: Unerwuenschtes Dialogfenster bei Automatischen Ablauefen angezeigt</ChangeItem>
         </Changes>
@@ -165,6 +515,7 @@
         <ReleaseDate>01.01.2024</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa233.zip</DownloadUrl>
         <DownloadSize>TODO</DownloadSize>
+		<MinimumJavaVersion>1.8</MinimumJavaVersion>
         <Changes lang="de">
             <ChangeItem>BugFix: Datenimport von Fahrtenbucheinträgen funktioniert nicht, wegen ArrayIndexOutOfBounds Exception</ChangeItem>
         </Changes>
@@ -177,6 +528,7 @@
         <ReleaseDate>26.11.2023</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa233.zip</DownloadUrl>
         <DownloadSize>4546237</DownloadSize>
+		<MinimumJavaVersion>1.8</MinimumJavaVersion>
         <Changes lang="de">
             <ChangeItem>BugFix: Unerwuenschtes Dialogfenster bei Automatischen Ablauefen angezeigt</ChangeItem>
         </Changes>
@@ -189,6 +541,7 @@
         <ReleaseDate>05.11.2023</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa233.zip</DownloadUrl>
         <DownloadSize>4545206</DownloadSize>
+		<MinimumJavaVersion>1.8</MinimumJavaVersion>
         <Changes lang="de">
             <ChangeItem>BugFix: Widgets multithreading-sicher: weniger Rendering-Exceptions im efa.log</ChangeItem>
             <ChangeItem>BugFix: Teilbegriffsuche für Eingabefelder mit Vervollständigung suchen nun auf kompletter Liste</ChangeItem>
@@ -200,7 +553,7 @@
             <ChangeItem>BugFix: Mehr Konfigurationselemente, die einen Neustart von EFA benötigen, melden dieses beim Speichern der Konfigurationsdaten.</ChangeItem>
             <ChangeItem>BugFix: Der Dialog für die Auswahl unklar eingegebener Werte zeigt keine doppelten Einträge mehr an.</ChangeItem>      
             <ChangeItem>Neu: Bootsreservierungen: Ändern von Bootsnamen und Erstellen von Reservierungs-Kopien</ChangeItem>
-			<ChangeItem>BugFix: efaCloud: Synchronisation in efaBase erlaubt Übernahme von Datensätzen mit vielen Änderungen.</ChangeItem>
+			<ChangeItem>BugFix: [efaCloud] Synchronisation in efaBase erlaubt Übernahme von Datensätzen mit vielen Änderungen.</ChangeItem>
         </Changes>
         <Changes lang="en">
             <ChangeItem>BugFix: Widgets are safe for multithreading: Less exceptions for rendering in efa.log</ChangeItem>
@@ -213,7 +566,7 @@
             <ChangeItem>BugFix: Some more configuration elements requiring a restart of efaBths to activate produce a corresponding message when saving configuration changes.</ChangeItem>
             <ChangeItem>BugFix: No more duplicates in the spellchecking dialogue (which comes up when a item with a lookup list has not fully been set by the user).</ChangeItem>
             <ChangeItem>New: Boat reservations: Boat can be changed after saving, and also copies of boat reservations can be created.</ChangeItem>
-  			<ChangeItem>BugFix: efaCloud: Synchronisation in efaBase allows download of records with many changes.</ChangeItem>
+  			<ChangeItem>BugFix: [efaCloud] Synchronisation in efaBase allows download of records with many changes.</ChangeItem>
         </Changes>
     </Version>
 
@@ -222,6 +575,7 @@
         <ReleaseDate>29.09.2023</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa233.zip</DownloadUrl>
         <DownloadSize>4523987</DownloadSize>
+		<MinimumJavaVersion>1.8</MinimumJavaVersion>
         <Changes lang="de">
             <ChangeItem>Neu: efa 2.3.3 erfordert mindestens Java Version 8</ChangeItem>
             <ChangeItem>Neu: Bootsreservierungen (sowohl einmalige als auch wöchentliche) lassen sich jetzt nach Datum filtern</ChangeItem>
@@ -237,8 +591,8 @@
             <ChangeItem>Neu: Bootsreservierungen mit zeitlich beschränkten wöchentlichen Reservierungen</ChangeItem>
 			<ChangeItem>Neu: Verhalten von efa bei Überschneidungen von Reservierungen unterschiedlichen Typs kann eingestellt werden</ChangeItem>
             <ChangeItem>Bugfix: Logrotate efa.log verursacht mit efaCLI keine fehlenden Logeinträge mehr (https://github.com/nicmichael/efa/issues/22) </ChangeItem>
-            <ChangeItem>Bugfix: efaCloud Überschreiben von Fahrten in efaCloud bei Fahrtenbuchwechsel</ChangeItem>
-            <ChangeItem>Bugfix: efaCloud Synchronisationsabweichungstoleranz zu eng</ChangeItem>
+            <ChangeItem>Bugfix: [efaCloud] Überschreiben von Fahrten in efaCloud bei Fahrtenbuchwechsel</ChangeItem>
+            <ChangeItem>Bugfix: [efaCloud] Synchronisationsabweichungstoleranz zu eng</ChangeItem>
             <ChangeItem>Neu: efaCloud Eigenes Logging für Synchronisationsfehler</ChangeItem>
             <ChangeItem>Bugfix: plugin.xml verweist auf korrekte JavaMail-Version 1.6.2</ChangeItem>
             <ChangeItem>Bugfix: Französische Übersetzung hat keine Fehler mehr bei Texten mit Apostrophen</ChangeItem>
@@ -258,8 +612,8 @@
             <ChangeItem>New: Overlapping boat reservations of diffrent types: behaviour of efa can be set</ChangeItem>
             <ChangeItem>New: Autocomplete fields (e.g. boat name) filter by partial word</ChangeItem>
             <ChangeItem>Bugfix: Logrotate efa.log avoids missing log entries when running efaCLI(https://github.com/nicmichael/efa/issues/22) </ChangeItem>            
-            <ChangeItem>Bugfix: efaCloud overwriting of sessions when switching logbook</ChangeItem>
-            <ChangeItem>Bugfix: efaCloud too little tolerance for data synchronization</ChangeItem>
+            <ChangeItem>Bugfix: [efaCloud] overwriting of sessions when switching logbook</ChangeItem>
+            <ChangeItem>Bugfix: [efaCloud] too little tolerance for data synchronization</ChangeItem>
             <ChangeItem>New: efaCloud logging of synchronization errors</ChangeItem>
             <ChangeItem>Bugfix: plugin.xml now correctly reports current version 1.6.2 of JavaMail</ChangeItem>
             <ChangeItem>Bugfix: Fixed errors in french locale concerning apostrophes.</ChangeItem>
@@ -271,6 +625,7 @@
         <ReleaseDate>21.01.2023</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa232.zip</DownloadUrl>
         <DownloadSize>4379916</DownloadSize>
+		<MinimumJavaVersion>1.6</MinimumJavaVersion>
         <Changes lang="de">
             <ChangeItem>Bugfix: Standard Lock Timeout auf 30 Sekunden erhoeht</ChangeItem>
         </Changes>
@@ -284,11 +639,12 @@
         <ReleaseDate>21.01.2023</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa232.zip</DownloadUrl>
         <DownloadSize>4380077</DownloadSize>
+		<MinimumJavaVersion>1.6</MinimumJavaVersion>
         <Changes lang="de">
             <ChangeItem>Bugfix: Erweiterte Lock Timeout Diagnostics</ChangeItem>
         </Changes>
         <Changes lang="en">
-            <ChangeItem>Bugfix: Additional log timeout diagnostics</ChangeItem>
+            <ChangeItem>Bugfix: Additional lock timeout diagnostics</ChangeItem>
         </Changes>
     </Version>
 
@@ -297,13 +653,14 @@
         <ReleaseDate>28.10.2022</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa232.zip</DownloadUrl>
         <DownloadSize>4380228</DownloadSize>
+		<MinimumJavaVersion>1.6</MinimumJavaVersion>
         <Changes lang="de">
             <ChangeItem>Neu: JavaMail Update auf Version 1.6.2</ChangeItem>
             <ChangeItem>Bugfix: Ungueltige Personen in Personen-Auswahlliste (https://github.com/nicmichael/efa/issues/62)</ChangeItem>
             <ChangeItem>Bugfix: Personen-Auswwahlliste schrumpft in efaBasis (https://github.com/nicmichael/efa/issues/67)</ChangeItem>
         </Changes>
         <Changes lang="en">
-            <ChangeItem>Neu: JavaMail Update to Version 1.6.2</ChangeItem>
+            <ChangeItem>New: JavaMail Update to Version 1.6.2</ChangeItem>
             <ChangeItem>Bugfix: Invalid persons in person selection list (https://github.com/nicmichael/efa/issues/62)</ChangeItem>
             <ChangeItem>Bugfix: Person selection list loses entries in efaBase (https://github.com/nicmichael/efa/issues/67)</ChangeItem>
         </Changes>
@@ -314,6 +671,7 @@
         <ReleaseDate>04.06.2022</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa232.zip</DownloadUrl>
         <DownloadSize>4269537</DownloadSize>
+		<MinimumJavaVersion>1.6</MinimumJavaVersion>
         <Changes lang="de">
             <ChangeItem>Neu: Filter fuer Liste der verfuegbaren Boote und Boote auf Fahrt</ChangeItem>
             <ChangeItem>Neu: Verbesserte Darstellung von Tabellen</ChangeItem>
@@ -322,9 +680,9 @@
             <ChangeItem>Bugfix: Verbesserung der Synchronisierung mit efaCloud</ChangeItem>
         </Changes>
         <Changes lang="en">
-            <ChangeItem>Neu: Filter for lists with available boats and boats on the water</ChangeItem>
-            <ChangeItem>Neu: Improved display of tables</ChangeItem>
-            <ChangeItem>Neu: Improved handling of club work in efaCloud</ChangeItem>
+            <ChangeItem>New: Filter for lists with available boats and boats on the water</ChangeItem>
+            <ChangeItem>New: Improved display of tables</ChangeItem>
+            <ChangeItem>New: Improved handling of club work in efaCloud</ChangeItem>
             <ChangeItem>Bugfix: efaCloud bugfixes on Windows</ChangeItem>
             <ChangeItem>Bugfix: Improved efaCloud synchronization</ChangeItem>
         </Changes>
@@ -335,6 +693,7 @@
         <ReleaseDate>22.03.2022</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa231.zip</DownloadUrl>
         <DownloadSize>4270829</DownloadSize>
+		<MinimumJavaVersion>1.6</MinimumJavaVersion>
         <Changes lang="de">
             <ChangeItem>Bugfix: Korrektur fuer fehlendes Dezimalkomma in Darstellung von Entfernungen und anderen Dezimalwerten</ChangeItem>
         </Changes>
@@ -348,14 +707,15 @@
         <ReleaseDate>06.03.2022</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa231.zip</DownloadUrl>
         <DownloadSize>4270666</DownloadSize>
+		<MinimumJavaVersion>1.6</MinimumJavaVersion>
         <Changes lang="de">
             <ChangeItem>Neu: Verbesserte Uebersetzung nach Franzoesisch</ChangeItem>
-            <ChangeItem>Bugfix: efaCloud Synchronisationsfehler unter Windows behoben</ChangeItem>
+            <ChangeItem>Bugfix: [efaCloud] Synchronisationsfehler unter Windows behoben</ChangeItem>
             <ChangeItem>Bugfix: Fehler bei Handhabung von Dezimalzahlen im Import behoben</ChangeItem>
         </Changes>
         <Changes lang="en">
             <ChangeItem>New: Improved transation to French</ChangeItem>
-            <ChangeItem>Bugfix: efaCloud synchronization problem under Windows fixed</ChangeItem>
+            <ChangeItem>Bugfix: [efaCloud] synchronization problem under Windows fixed</ChangeItem>
             <ChangeItem>Bugfix: Bug for import of decimal numbers fixed</ChangeItem>
         </Changes>
     </Version>
@@ -365,13 +725,14 @@
         <ReleaseDate>08.02.2022</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa231.zip</DownloadUrl>
         <DownloadSize>4256352</DownloadSize>
+		<MinimumJavaVersion>1.6</MinimumJavaVersion>
         <Changes lang="de">
             <ChangeItem>Neu: Wettbewerbsbedingungen fuer Fahrtenabzeichen 2022 angepasst</ChangeItem>
-            <ChangeItem>Bugfix: efaCloud Bugfix bei Fahrtenbuchwechsel</ChangeItem>
+            <ChangeItem>Bugfix: [efaCloud] Bugfix bei Fahrtenbuchwechsel</ChangeItem>
             <ChangeItem>Bugfix: Fehler bei Handhabung von Dezimalzahlen im Import behoben</ChangeItem>
         </Changes>
         <Changes lang="en">
-            <ChangeItem>Bugfix: efaCloud Bugfix for logbook change</ChangeItem>
+            <ChangeItem>Bugfix: [efaCloud] Bugfix for logbook change</ChangeItem>
             <ChangeItem>Bugfix: Bug for import of decimal numbers fixed</ChangeItem>
         </Changes>
     </Version>
@@ -381,6 +742,7 @@
         <ReleaseDate>24.01.2022</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa231.zip</DownloadUrl>
         <DownloadSize>4256121</DownloadSize>
+		<MinimumJavaVersion>1.6</MinimumJavaVersion>
         <Changes lang="de">
             <ChangeItem>Neu: Verbesserte Auto-Complete Listen schlagen nur Personen vor, die noch nicht fuer das Boot ausgewaehlt sind</ChangeItem>
         </Changes>
@@ -394,11 +756,12 @@
         <ReleaseDate>22.12.2021</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa231.zip</DownloadUrl>
         <DownloadSize>4255809</DownloadSize>
+		<MinimumJavaVersion>1.6</MinimumJavaVersion>
         <Changes lang="de">
-            <ChangeItem>efaCloud-Optimierungen mit zentraler Admin-Verwaltung</ChangeItem>
+            <ChangeItem>[efaCloud] Optimierungen mit zentraler Admin-Verwaltung</ChangeItem>
         </Changes>
         <Changes lang="en">
-            <ChangeItem>efaCloud optimizations with centralized admin management</ChangeItem>
+            <ChangeItem>[efaCloud] optimizations with centralized admin management</ChangeItem>
         </Changes>
     </Version>
 
@@ -407,6 +770,7 @@
         <ReleaseDate>19.11.2021</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa230.zip</DownloadUrl>
         <DownloadSize>4246634</DownloadSize>
+		<MinimumJavaVersion>1.6</MinimumJavaVersion>
         <Changes lang="de">
             <ChangeItem>Bugfix: Fehlende Berechnung der Zielbereiche bei Wettbebwerbsauswertung fuer LRV Sommer-Wettbewerb 2021 behoben</ChangeItem>
         </Changes>
@@ -417,13 +781,14 @@
         <ReleaseDate>26.09.2021</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa230.zip</DownloadUrl>
         <DownloadSize>4246168</DownloadSize>
+		<MinimumJavaVersion>1.6</MinimumJavaVersion>
         <Changes lang="de">
-            <ChangeItem>Bugfix: efaCloud: Wenn die Internetverbindung beim Start des Programms noch nicht steht, wird der Retry der Autorisierung nun korrekt angestoßen.</ChangeItem>
+            <ChangeItem>Bugfix: [efaCloud] Wenn die Internetverbindung beim Start des Programms noch nicht steht, wird der Retry der Autorisierung nun korrekt angestoßen.</ChangeItem>
             <ChangeItem>Bugfix: Behebung des Referenzfehlers in der Logdatei-Prüfung beim Raspberry Systemzeitfehler-Effekt.</ChangeItem>
         </Changes>
         <Changes lang="en">
-            <ChangeItem>Bugfix: efaCloud: Authorization retry if internet connection interrupted during program start</ChangeItem>
-            <ChangeItem>Bugfix:fixed reference count in logfile check for Raspberry</ChangeItem>
+            <ChangeItem>Bugfix: [efaCloud]: Authorization retry if internet connection interrupted during program start</ChangeItem>
+            <ChangeItem>Bugfix: fixed reference count in logfile check for Raspberry</ChangeItem>
         </Changes>
     </Version>
 
@@ -432,9 +797,13 @@
         <ReleaseDate>19.06.2021</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa230.zip</DownloadUrl>
         <DownloadSize>4246311</DownloadSize>
+		<MinimumJavaVersion>1.6</MinimumJavaVersion>
         <Changes lang="de">
             <ChangeItem>Neu: Wettbewerbsbedingungen fuer LRV-Sommer-Wettbewerb 2021 aktualisiert</ChangeItem>
         </Changes>
+        <Changes lang="en">
+            <ChangeItem>Change: Update only for German rowing functions.</ChangeItem>
+        </Changes>        
     </Version>
 
     <Version>
@@ -442,19 +811,34 @@
         <ReleaseDate>10.06.2021</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa230.zip</DownloadUrl>
         <DownloadSize>4245993</DownloadSize>
+		<MinimumJavaVersion>1.6</MinimumJavaVersion>
         <Changes lang="de">
-            <ChangeItem>Bugfix [efaCloud]: Gruppen mit mehr als 27 Mitgliedern nun möglich</ChangeItem>
-            <ChangeItem>Bugfix [efaCloud]: efaCloud und efaCLI nun kompatibel. Allerdings keine efaCloud Kommandos über efaCLI</ChangeItem>
-            <ChangeItem>Bugfix [efaCloud]: efaRemote + efaCloud getestet</ChangeItem>
-            <ChangeItem>Bugfix [efaCloud]: Toleranz der Fehlerprüfung optimiert</ChangeItem>
-            <ChangeItem>Bugfix [efaCloud]: Hinweisdialog bei fehlschlagen der Authentifizierung am Server</ChangeItem>
-            <ChangeItem>Bugfix [efaCloud]: verwaiste Konfigurationsreste in Konfigurationsmenü "Daten" durch Hinweis uf den richtigen Ort ersetzt.</ChangeItem>
-            <ChangeItem>Bugfix [efaCloud]: Bei Datensatzinkonsistenz enthält die Fehlermeldung nun den nicht aktualisierten Datensatz</ChangeItem>
-            <ChangeItem>Bugfix [efaCloud]: efa2fahrtenabzeichen wird mit bis zu 4 Abweichungen noch aktualisiert</ChangeItem>
-            <ChangeItem>Bugfix [efaCloud]: Eine Info über den Stand des Servers (server_welcome_message) wird nun im efaCloud Konfigurationsdialog mit angezeigt (braucht Serverversion 2.3.0_12)</ChangeItem>
-            <ChangeItem>Bugfix [efaCloud]: Server => client Konfigurationsinformation wird nun mit jeder Synchronisation neu übertragen, nicht nur bei Neustart. Resume nach Pausieren Fehler behoben.</ChangeItem>
-            <ChangeItem>Bugfix [efaCloud]: Verbesserte Dartsellung des Fehlers bei der initialen Verbindung zur Vereinfachung der Fehlerbehebung bei der ersten efaCloud Konfiguration</ChangeItem>
+            <ChangeItem>Bugfix: [efaCloud] Gruppen mit mehr als 27 Mitgliedern nun möglich</ChangeItem>
+            <ChangeItem>Bugfix: [efaCloud] efaCloud und efaCLI nun kompatibel. Allerdings keine efaCloud Kommandos über efaCLI</ChangeItem>
+            <ChangeItem>Bugfix: [efaCloud] efaRemote + efaCloud getestet</ChangeItem>
+            <ChangeItem>Bugfix: [efaCloud] Toleranz der Fehlerprüfung optimiert</ChangeItem>
+            <ChangeItem>Bugfix: [efaCloud] Hinweisdialog bei fehlschlagen der Authentifizierung am Server</ChangeItem>
+            <ChangeItem>Bugfix: [efaCloud] verwaiste Konfigurationsreste in Konfigurationsmenü "Daten" durch Hinweis uf den richtigen Ort ersetzt.</ChangeItem>
+            <ChangeItem>Bugfix: [efaCloud] Bei Datensatzinkonsistenz enthält die Fehlermeldung nun den nicht aktualisierten Datensatz</ChangeItem>
+            <ChangeItem>Bugfix: [efaCloud] efa2fahrtenabzeichen wird mit bis zu 4 Abweichungen noch aktualisiert</ChangeItem>
+            <ChangeItem>Bugfix: [efaCloud] Eine Info über den Stand des Servers (server_welcome_message) wird nun im efaCloud Konfigurationsdialog mit angezeigt (braucht Serverversion 2.3.0_12)</ChangeItem>
+            <ChangeItem>Bugfix: [efaCloud] Server => client Konfigurationsinformation wird nun mit jeder Synchronisation neu übertragen, nicht nur bei Neustart. Resume nach Pausieren Fehler behoben.</ChangeItem>
+            <ChangeItem>Bugfix: [efaCloud] Verbesserte Dartsellung des Fehlers bei der initialen Verbindung zur Vereinfachung der Fehlerbehebung bei der ersten efaCloud Konfiguration</ChangeItem>
         </Changes>
+        <Changes lang="en">
+            <ChangeItem>Bugfix: [efaCloud] Groups with more than 27 members allowed.</ChangeItem>
+            <ChangeItem>Bugfix: [efaCloud] efaCloud und efaCLI are compatible. No efaCloud commands via efaCli.</ChangeItem>
+            <ChangeItem>Bugfix: [efaCloud] efaRemote + efaCloud is tested.</ChangeItem>
+            <ChangeItem>Bugfix: [efaCloud] Optimized error tolerance.</ChangeItem>
+            <ChangeItem>Bugfix: [efaCloud] Shows an error dialog if authentification at efaCloud server fails</ChangeItem>
+            <ChangeItem>Bugfix: [efaCloud] Corrected config menu "Data"</ChangeItem>
+            <ChangeItem>Bugfix: [efaCloud] If a data inconsistency is detected, the error message contains the non-uploaded record</ChangeItem>
+            <ChangeItem>Bugfix: [efaCloud] efa2fahrtenabzeichen will be uploaded with up to 4 differences</ChangeItem>
+            <ChangeItem>Bugfix: [efaCloud] shows a server_welcome_message in the efaCloud configuration dialog (needs Server version 2.3.0_12)</ChangeItem>
+            <ChangeItem>Bugfix: [efaCloud] Server => client configuration information is transferred with every synchronisation, instead of doing so only after a restart of efa. Fixed an error with resume after pausing sync</ChangeItem>
+            <ChangeItem>Bugfix: [efaCloud] Optimized error message during initial connection to efaCloud.</ChangeItem>
+        </Changes>
+
     </Version>
 
     <Version>
@@ -462,9 +846,13 @@
         <ReleaseDate>11.04.2021</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa230.zip</DownloadUrl>
         <DownloadSize>4244761</DownloadSize>
+		<MinimumJavaVersion>1.6</MinimumJavaVersion>
         <Changes lang="de">
             <ChangeItem>Change: Bedingungen fuer DRV-Fahrtenabzeichen 2021 angepasst</ChangeItem>
         </Changes>
+        <Changes lang="en">
+            <ChangeItem>Change: Update only for German rowing functions.</ChangeItem>
+        </Changes>        
     </Version>
 
     <Version>
@@ -472,6 +860,7 @@
         <ReleaseDate>30.03.2021</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa230.zip</DownloadUrl>
         <DownloadSize>4250040</DownloadSize>
+		<MinimumJavaVersion>1.6</MinimumJavaVersion>
         <Changes lang="de">
             <ChangeItem>Bugfix: efaCloud Fast-Sync alle 30 Sekunden (Verringerung der Latenz der Sichtbarkeit von Aenderungen verschiedener Clients)</ChangeItem>
         </Changes>
@@ -485,6 +874,7 @@
         <ReleaseDate>23.03.2021</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa230.zip</DownloadUrl>
         <DownloadSize>4249529</DownloadSize>
+		<MinimumJavaVersion>1.6</MinimumJavaVersion>
         <Changes lang="de">
             <ChangeItem>Bugfix: NullPointerException in efaCloud beim Beenden einer Fahrt mit unbekanntem Boot oder Doppeleintrag korrigiert</ChangeItem>
         </Changes>
@@ -497,6 +887,7 @@
         <VersionID>2.3.0_05</VersionID>
         <ReleaseDate>22.03.2021</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa230.zip</DownloadUrl>
+		<MinimumJavaVersion>1.6</MinimumJavaVersion>
         <DownloadSize>4249632</DownloadSize>
         <Changes lang="de">
             <ChangeItem>Bugfix: efaCloud Upload-Fehler (manueller Upload) korrigiert</ChangeItem>
@@ -513,6 +904,7 @@
         <ReleaseDate>20.03.2021</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa230.zip</DownloadUrl>
         <DownloadSize>4249556</DownloadSize>
+		<MinimumJavaVersion>1.6</MinimumJavaVersion>
         <Changes lang="de">
             <ChangeItem>New: Erweiterte User Statistics bei remote Online-Update</ChangeItem>
         </Changes>
@@ -526,7 +918,7 @@
         <ReleaseDate>20.03.2021</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa230.zip</DownloadUrl>
         <DownloadSize>4249549</DownloadSize>
-
+		<MinimumJavaVersion>1.6</MinimumJavaVersion>
         <Changes lang="de">
             <ChangeItem>Bugfix: NullPointerException beim Beenden einer Fahrt korrigiert</ChangeItem>
             <ChangeItem>New: User Statistics bei remote Online-Update</ChangeItem>
@@ -542,6 +934,7 @@
         <ReleaseDate>18.03.2021</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa230.zip</DownloadUrl>
         <DownloadSize>4249302</DownloadSize>
+		<MinimumJavaVersion>1.6</MinimumJavaVersion>
 
         <Changes lang="de">
             <ChangeItem>Bugfix: Lizenztext aktualisiert</ChangeItem>
@@ -553,6 +946,7 @@
         <ReleaseDate>16.03.2021</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa230.zip</DownloadUrl>
         <DownloadSize>4249267</DownloadSize>
+		<MinimumJavaVersion>1.6</MinimumJavaVersion>
 
         <Changes lang="de">
             <ChangeItem>Neu: efaCloud - efa in der Cloud (experimentell)</ChangeItem>

@@ -91,7 +91,7 @@ public class AdminLoginDialog extends BaseDialog {
             projects.put(NO_PROJECT, "foobar");
             if (projects != null && projects.size() > 0) {
                 String[] projectArray = projects.keySet().toArray(new String[0]);
-                Arrays.sort(projectArray);
+                Arrays.sort(projectArray, new EfaSortStringComparator());
                 projectList = new ItemTypeStringList("PROJECT",
                         (project != null && project.length() > 0 ? project : NO_PROJECT),
                         projectArray, projectArray,

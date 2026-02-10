@@ -18,6 +18,8 @@ import de.nmichael.efa.data.storage.*;
 import de.nmichael.efa.ex.EfaException;
 import de.nmichael.efa.*;
 import de.nmichael.efa.core.config.AdminRecord;
+import de.nmichael.efa.core.config.EfaConfig;
+
 import java.util.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -25,9 +27,19 @@ import javax.swing.*;
 
 public class NewProjectDialog extends StepwiseDialog implements IItemListener {
 
-    private final static String GUIITEM_CREATE_WATERS_LIST = "GUIITEM_CREATE_WATERS_LIST";
+	private static final long serialVersionUID = 1601307709992220701L;
+	private final static String GUIITEM_CREATE_WATERS_LIST = "GUIITEM_CREATE_WATERS_LIST";
     private final static String GUIITEM_NODATA_LABEL1 = "GUIITEM_NODATA_LABEL1";
     private final static String GUIITEM_NODATA_LABEL2 = "GUIITEM_NODATA_LABEL2";
+    private final static String GUIITEM_CREATE_STATUS_LIST = "GUIITEM_CREATE_PERSON_STATUS_LIST";
+    private final static String GUIITEM_CREATE_STATUS_LIST_HINT = "GUIITEM_CREATE_PERSON_STATUS_LIST_HINT";
+    
+    private final static String CATEGORY_STEP_0 = "0";
+    private final static String CATEGORY_STEP_1 = "1";
+    private final static String CATEGORY_STEP_2 = "2";
+    private final static String CATEGORY_STEP_3 = "3";
+    private final static String CATEGORY_STEP_4 = "4";
+    
 
     private AdminRecord admin;
 
@@ -81,20 +93,19 @@ public class NewProjectDialog extends StepwiseDialog implements IItemListener {
 
     void initializeItems() {
         items = new ArrayList<IItemType>();
-        IItemType item;
 
         ProjectRecord r;
 
         r = Project.createNewRecordFromStatic(ProjectRecord.TYPE_PROJECT);
-        items.addAll(r.getGuiItems(admin, 1, "0", true));
-        items.addAll(r.getGuiItems(admin, 2, "1", true));
-        items.addAll(r.getGuiItems(admin, 3, "2", true));
+        items.addAll(r.getGuiItems(admin, 1, CATEGORY_STEP_0, true));
+        items.addAll(r.getGuiItems(admin, 2, CATEGORY_STEP_1, true));
+        items.addAll(r.getGuiItems(admin, 3, CATEGORY_STEP_2, true));
         r = Project.createNewRecordFromStatic(ProjectRecord.TYPE_CLUB);
-        items.addAll(r.getGuiItems(admin, 1, "3", true));
-        items.addAll(r.getGuiItems(admin, 2, "4", true));
+        items.addAll(r.getGuiItems(admin, 1, CATEGORY_STEP_3, true));
+        items.addAll(r.getGuiItems(admin, 2, CATEGORY_STEP_4, true));
         if (Waters.getResourceTemplate(International.getLanguageID()) != null) {
             items.add(new ItemTypeBoolean(GUIITEM_CREATE_WATERS_LIST, true,
-                    IItemType.TYPE_PUBLIC, "3",
+                    IItemType.TYPE_PUBLIC, CATEGORY_STEP_3,
                     International.getString("Gewässerliste mit Standardgewässern erstellen")));
         }
     }
@@ -127,19 +138,22 @@ public class NewProjectDialog extends StepwiseDialog implements IItemListener {
             ProjectRecord rPrj = Project.createNewRecordFromStatic(ProjectRecord.TYPE_PROJECT);
             ProjectRecord rClb = Project.createNewRecordFromStatic(ProjectRecord.TYPE_CLUB);
             Vector<IItemType> itemsToBeDeleted = new Vector<IItemType>();
-            itemsToBeDeleted.addAll(rPrj.getGuiItems(admin, 3, "2", true));
+            itemsToBeDeleted.addAll(rPrj.getGuiItems(admin, 3, CATEGORY_STEP_2, true));
             rPrj.setStorageType(IDataAccess.TYPE_EFA_REMOTE);
-            itemsToBeDeleted.addAll(rPrj.getGuiItems(admin, 3, "2", true));
+            itemsToBeDeleted.addAll(rPrj.getGuiItems(admin, 3, CATEGORY_STEP_2, true));
             rPrj.setStorageType(IDataAccess.TYPE_EFA_CLOUD);
-            itemsToBeDeleted.addAll(rPrj.getGuiItems(admin, 3, "2", true));
-
+            itemsToBeDeleted.addAll(rPrj.getGuiItems(admin, 3, CATEGORY_STEP_2, true));
+            
+            itemsToBeDeleted.add(new ItemTypeBoolean(GUIITEM_CREATE_STATUS_LIST, false,IItemType.TYPE_PUBLIC, CATEGORY_STEP_3, ""));
+            itemsToBeDeleted.add(new ItemTypeLabel(EfaConfig.NOT_STORED_ITEM_PREFIX+GUIITEM_CREATE_STATUS_LIST_HINT, IItemType.TYPE_PUBLIC, CATEGORY_STEP_3, ""));
+            
             // delete all Club items
-            itemsToBeDeleted.addAll(rClb.getGuiItems(admin, 1, "3", true));
-            itemsToBeDeleted.addAll(rClb.getGuiItems(admin, 2, "4", true));
-            itemsToBeDeleted.add(new ItemTypeBoolean(GUIITEM_CREATE_WATERS_LIST, true,
-                    IItemType.TYPE_PUBLIC, "3", ""));
-            itemsToBeDeleted.add(new ItemTypeLabel(GUIITEM_NODATA_LABEL1,  IItemType.TYPE_PUBLIC, "3", ""));
-            itemsToBeDeleted.add(new ItemTypeLabel(GUIITEM_NODATA_LABEL2,  IItemType.TYPE_PUBLIC, "4", ""));
+            itemsToBeDeleted.addAll(rClb.getGuiItems(admin, 1, CATEGORY_STEP_3, true));
+            itemsToBeDeleted.addAll(rClb.getGuiItems(admin, 2, CATEGORY_STEP_4, true));
+            itemsToBeDeleted.add(new ItemTypeBoolean(GUIITEM_CREATE_WATERS_LIST, true, IItemType.TYPE_PUBLIC, CATEGORY_STEP_3, ""));
+            itemsToBeDeleted.add(new ItemTypeLabel(GUIITEM_NODATA_LABEL1,  IItemType.TYPE_PUBLIC, CATEGORY_STEP_3, ""));
+            itemsToBeDeleted.add(new ItemTypeLabel(GUIITEM_NODATA_LABEL2,  IItemType.TYPE_PUBLIC, CATEGORY_STEP_4, ""));
+            
 
             // delete items we don't want
             for (int i=0; i<items.size(); i++) {
@@ -159,23 +173,38 @@ public class NewProjectDialog extends StepwiseDialog implements IItemListener {
             if (item.getValue().equals(IDataAccess.TYPESTRING_EFA_CLOUD)) {
                 rPrj.setStorageType(IDataAccess.TYPE_EFA_CLOUD);
             }
-            items.addAll(rPrj.getGuiItems(admin, 3, "2", true));
+            items.addAll(rPrj.getGuiItems(admin, 3, CATEGORY_STEP_2, true));
 
             if (item.getValue().equals(IDataAccess.TYPESTRING_FILE_XML) ||
                 item.getValue().equals(IDataAccess.TYPESTRING_EFA_CLOUD)) {
-                items.addAll(rClb.getGuiItems(admin, 1, "3", true));
-                items.addAll(rClb.getGuiItems(admin, 2, "4", true));
-                if (Waters.getResourceTemplate(International.getLanguageID()) != null) {
-                    items.add(new ItemTypeBoolean(GUIITEM_CREATE_WATERS_LIST, true,
-                            IItemType.TYPE_PUBLIC, "3",
-                            International.getString("Gewässerliste mit Standardgewässern erstellen")));
+                items.addAll(rClb.getGuiItems(admin, 1, CATEGORY_STEP_3, true));
+                items.addAll(rClb.getGuiItems(admin, 2, CATEGORY_STEP_4, true));
+                
+                if (item.getValue().equals(IDataAccess.TYPESTRING_EFA_CLOUD)) {
+                	String hint1 = International.getString("Folgende Optionen nur dann aktivieren, wenn der efaCloud-Server noch keine Daten hat.");
+                	items.add(EfaGuiUtils.createHintWordWrap(GUIITEM_CREATE_STATUS_LIST_HINT, IItemType.TYPE_PUBLIC, CATEGORY_STEP_3,
+                			hint1,3,10,5,630));
+                	items.add(new ItemTypeBoolean(GUIITEM_CREATE_STATUS_LIST, false,
+                            IItemType.TYPE_PUBLIC, CATEGORY_STEP_3,
+                            International.getString("Status-Einträge für Personen (Gast, Mitglied) erstellen")));
                 }
+
+                // Only provide the checkbox to create new waters in efa, 
+                // if there is an Waters_xx.txt file in efa jar file (de.nmichael.efa.data.templates)
+                // AND if project is neither EFA_REMOTE nor EFA_CLOUD.
+                // Adding waters to efacloud project automatically MAY lead to problems with duplicate waters in efacloud server,
+                // if we are adding the new project to an existing efaCloud installation.
+                if (Waters.getResourceTemplate(International.getLanguageID()) != null) {
+                	items.add(new ItemTypeBoolean(GUIITEM_CREATE_WATERS_LIST, item.getValue().equals(IDataAccess.TYPESTRING_FILE_XML) /*default true for local projects*/,
+                            IItemType.TYPE_PUBLIC, CATEGORY_STEP_3,
+                            International.getString("Gewässerliste mit Standardgewässern erstellen")));
+                }                
             } else {
                 items.add(new ItemTypeLabel(GUIITEM_NODATA_LABEL1,
-                        IItemType.TYPE_PUBLIC, "3",
+                        IItemType.TYPE_PUBLIC, CATEGORY_STEP_3,
                             International.getString("Keine Angaben erforderlich")));
                 items.add(new ItemTypeLabel(GUIITEM_NODATA_LABEL2,
-                        IItemType.TYPE_PUBLIC, "4",
+                        IItemType.TYPE_PUBLIC, CATEGORY_STEP_4,
                             International.getString("Keine Angaben erforderlich")));
             }
             if (item.getValue().equals(IDataAccess.TYPESTRING_EFA_REMOTE)) {
@@ -229,6 +258,15 @@ public class NewProjectDialog extends StepwiseDialog implements IItemListener {
         }
         if (storType.getValue().equals(IDataAccess.TYPESTRING_EFA_CLOUD)) {
             storageType = IDataAccess.TYPE_EFA_CLOUD;
+        }
+        
+        if (Daten.project != null && Daten.project.isOpen()) {
+			try {
+				Daten.project.closeAllStorageObjects();
+			} catch (Exception e1) {
+				Logger.logdebug(e1);
+			}
+        	Daten.project = null;
         }
         // Note: The storageType of the project file itself is always TYPE_FILE_XML.
         // The storageType of the project's content (set through prj.setProjectStorageType(storageType)) may differ.
@@ -310,9 +348,21 @@ public class NewProjectDialog extends StepwiseDialog implements IItemListener {
                         ItemTypeBoolean createWatersList = (ItemTypeBoolean)getItemByName(GUIITEM_CREATE_WATERS_LIST);
                         if (createWatersList != null && createWatersList.getValue() &&
                             storageType != IDataAccess.TYPE_EFA_REMOTE) {
+                        	//no waters list for efaRemote (as not necessary) 
+                        	//for efaCloud projects, user can specify if waters should be added.
+                        	//for efaCloud projects, and efaCloud project (may be faulty if new project is added to an existing efaCloud server with existing Waters...)
                             Daten.project.getWaters(false).addAllWatersFromTemplate(International.getLanguageID());
                         }
                     }
+                    
+                    // if efaCloud mode AND user chose to create the person statuses, do so. 
+                    // for efaRemote this shall not be done; for local projects, this is done in Status.Java when opening the file.
+                    ItemTypeBoolean createStatuses = (ItemTypeBoolean)getItemByName(GUIITEM_CREATE_STATUS_LIST);
+                    if (createStatuses != null && createStatuses.getValue() && storageType == IDataAccess.TYPE_EFA_CLOUD) {
+                    	Status myStatus = Daten.project.getStatus(false);
+                    	myStatus.createPredefinedStatuses();
+                    }
+                    
                 } catch(Exception eignore) {
                     Logger.logdebug(eignore);
                 }

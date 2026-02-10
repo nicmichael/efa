@@ -335,8 +335,8 @@ public class ShowLogbookDialog extends BaseDialog implements IItemListener {
                     break;
                 case 1:
                     widths[i] = 10 * width / 100; // Datum
-                    if (widths[i] > 110) {
-                        widths[i] = 110;
+                    if (widths[i] > 120) {
+                        widths[i] = 120;
                     }
                     break;
                 case 5:

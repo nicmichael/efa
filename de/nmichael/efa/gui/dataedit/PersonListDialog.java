@@ -57,4 +57,15 @@ public class PersonListDialog extends DataListDialog {
         return persons.getMergePersonsProgressTask(mainKey, mergeKeys);
     }
 
+	protected void createSpecificItemTypeRecordTable() {
+		
+		super.createSpecificItemTypeRecordTable();
+
+		table.addPermanentSecondarySortingColumn(PersonRecord.COLUMN_ID_LAST_NAME);        
+		table.addPermanentSecondarySortingColumn(PersonRecord.COLUMN_ID_FIRST_NAME);
+		table.addPermanentSecondarySortingColumn(PersonRecord.COLUMN_ID_BIRTHDATE);
+		
+	}    
+    
+    
 }

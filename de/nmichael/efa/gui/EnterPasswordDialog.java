@@ -10,11 +10,8 @@
 
 package de.nmichael.efa.gui;
 
-import de.nmichael.efa.Daten;
-import de.nmichael.efa.core.config.Admins;
 import de.nmichael.efa.core.items.IItemType;
 import de.nmichael.efa.core.items.ItemTypePassword;
-import de.nmichael.efa.data.storage.IDataAccess;
 import de.nmichael.efa.util.*;
 import de.nmichael.efa.util.Dialog;
 import java.awt.*;

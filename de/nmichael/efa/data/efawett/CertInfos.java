@@ -10,7 +10,6 @@
 
 package de.nmichael.efa.data.efawett;
 
-import de.nmichael.efa.*;
 import de.nmichael.efa.util.EfaUtil;
 import de.nmichael.efa.util.TMJ;
 import java.io.*;

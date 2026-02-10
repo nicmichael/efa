@@ -10,18 +10,8 @@
 
 package de.nmichael.efa.cli;
 
-import de.nmichael.efa.efa1.Fahrtenbuch;
-import de.nmichael.efa.efa1.DatenFelder;
 import de.nmichael.efa.*;
-import de.nmichael.efa.core.*;
-import de.nmichael.efa.core.config.*;
-import de.nmichael.efa.statistics.*;
 import de.nmichael.efa.util.*;
-import de.nmichael.efa.util.Dialog;
-import java.io.PrintStream;
-import java.io.FileOutputStream;
-import java.io.FileNotFoundException;
-import java.io.File;
 
 // @i18n complete
 

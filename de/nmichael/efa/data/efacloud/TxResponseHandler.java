@@ -11,12 +11,16 @@
 package de.nmichael.efa.data.efacloud;
 
 import de.nmichael.efa.Daten;
+import de.nmichael.efa.data.*;
+import de.nmichael.efa.data.storage.*;
+import de.nmichael.efa.ex.EfaException;
 import de.nmichael.efa.util.Dialog;
 import de.nmichael.efa.util.International;
 import de.nmichael.efa.util.Logger;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 
 import static de.nmichael.efa.data.efacloud.TxRequestQueue.TX_BUSY_QUEUE_INDEX;
 
@@ -40,6 +44,9 @@ public class TxResponseHandler {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String transactionString = tx.type + "_RESP [" + tx.tablename + "]: " + tx.getResultCode() + " - " +
                 Transaction.TX_RESULT_CODES.get(tx.getResultCode());
+        if (tx.getResultCode() > 300)
+            transactionString += ". " + ((tx.getResultMessage().length() > 100) ?
+                    tx.getResultMessage().substring(0, 100) + " ..." : tx.getResultMessage());
         String dateString = format.format(new Date()) + " INFO tx" + tx.ID + ", ";
         TextResource
                 .writeContents(TxRequestQueue.logFilePath, dateString + transactionString,
@@ -93,12 +100,6 @@ public class TxResponseHandler {
                 String.format(": cresult_code = %s, cresult_message = %s, errorMessage = %s.",
                         txrc.cresultCode, txrc.cresultMessage, errorMessage) +
                         International.getMessage("Betroffene (gescheiterte) Transaktionen: {droppedCount}", droppedTxCnt), 1);
-        // Any error shall force a fallback to normal, because the synchronization process relies on the answers and
-        // if they don't come it will not end and continue to block the normal communication
-        if (txq.getState() == TxRequestQueue.QUEUE_IS_SYNCHRONIZING) {
-            txq.registerStateChangeRequest(TxRequestQueue.RQ_QUEUE_RESUME);
-            txq.logApiMessage(International.getString("Die Synchronisation wird beendet."), 1);
-        }
         txq.registerContainerResult(txrc.cresultCode, txrc.cresultMessage);
         if (txq.getState() == TxRequestQueue.QUEUE_IS_AUTHENTICATING) {
             handleAuthenticationError(txrc.cresultCode);
@@ -110,21 +111,21 @@ public class TxResponseHandler {
                     handleAuthenticationError(txrc.cresultCode);
                     // do never remove a failed authentication transaction
                     break;
+                case 404:  // "Server side busy"
+                case 406:  // "Overload detected"
+                case 407:  // "No database connection"
+                case 506:  // "Internet connection aborted"
+                    txq.shiftTx(TX_BUSY_QUEUE_INDEX, TX_BUSY_QUEUE_INDEX, TxRequestQueue.ACTION_TX_RETRY, 0, 0);
+                    if (txq.getState() == TxRequestQueue.QUEUE_IS_SYNCHRONIZING)
+                        txq.registerStateChangeRequest(TxRequestQueue.RQ_QUEUE_STOP_SYNCH);
+                    break;
                 case 401:  // "Syntax error"
                 case 500:  // "Internal server error"
                 case 505:  // "Server response empty"
-                case 506:  // "Internet connection aborted"
                 case 507:  // "Could not decode server response"
                 default:
                     txq.shiftTx(TX_BUSY_QUEUE_INDEX, TxRequestQueue.TX_FAILED_QUEUE_INDEX,
                             TxRequestQueue.ACTION_TX_CONTAINER_FAILED, 0, 0);
-                    if (txq.getState() == TxRequestQueue.QUEUE_IS_SYNCHRONIZING)
-                        txq.registerStateChangeRequest(TxRequestQueue.RQ_QUEUE_STOP_SYNCH);
-                    break;
-                case 404:  // "Server side busy"
-                case 406:  // "Overload detected"
-                case 407:  // "No data base connection"
-                    txq.shiftTx(TX_BUSY_QUEUE_INDEX, TX_BUSY_QUEUE_INDEX, TxRequestQueue.ACTION_TX_RETRY, 0, 0);
                     if (txq.getState() == TxRequestQueue.QUEUE_IS_SYNCHRONIZING)
                         txq.registerStateChangeRequest(TxRequestQueue.RQ_QUEUE_STOP_SYNCH);
                     break;
@@ -147,12 +148,6 @@ public class TxResponseHandler {
                 "Transaktions-Fehler bei der Behandlung einer Serverantwort: result_code = {resultCode}, " +
                         "result_message = {resultMessage}, Transaktion: {transaction}", "" + tx.getResultCode(),
                 tx.getResultMessage(), txString.toString()), 1);
-        // Any error shall force a fallback to normal, because the synchronization process relies on the answers and
-        // if they don't come it will not end and continue to block the normal communication
-        if (txq.getState() == TxRequestQueue.QUEUE_IS_SYNCHRONIZING) {
-            txq.registerStateChangeRequest(TxRequestQueue.RQ_QUEUE_STOP_SYNCH);
-            txq.logApiMessage(International.getString("Die Synchronisation wird beendet."), 1);
-        }
         switch (tx.getResultCode()) {
             case 401:  // "Syntax error"
             case 501:  // "Transaction invalid"
@@ -193,12 +188,7 @@ public class TxResponseHandler {
             // handle synchronization responses
             if (txq.getState() == TxRequestQueue.QUEUE_IS_SYNCHRONIZING) {
                 try {
-                    if (tx.type == Transaction.TX_TYPE.KEYFIXING) {
-                        if (tx.getResultCode() == 303)   // result 303 indicates the key change
-                            txq.synchControl.fixOneKeyForTable(tx, "");
-                        else  // after all keys of one table are fixed, move to next or trigger next step
-                            txq.synchControl.fixKeysForNextTable();
-                    } else if (tx.type == Transaction.TX_TYPE.SYNCH) {
+                    if (tx.type == Transaction.TX_TYPE.SYNCH) {
                         if (tx.tablename.equalsIgnoreCase("@all"))
                             // the response statement on the @all request is the starting point for both
                             // synchronization directions
@@ -262,6 +252,8 @@ public class TxResponseHandler {
                                         TxRequestQueue.synch_period = 1000 * val;
                                     else if (name.equalsIgnoreCase("group_memberidlist_size"))
                                         Daten.tableBuilder.adjustGroupMemberIdListSize(val);
+                                    else if (name.equalsIgnoreCase("logs_to_return"))
+                                        TxRequestQueue.logs_to_return = val;
                                 }
                                 if (val == 0) {
                                     if (name.equalsIgnoreCase("synch_check_period"))
@@ -269,6 +261,8 @@ public class TxResponseHandler {
                                     else if (name.equalsIgnoreCase("synch_period"))
                                         TxRequestQueue.synch_period = TxRequestQueue.SYNCH_PERIOD_DEFAULT;
                                     // if group_memberidlist_size is 0 do nothing, the default is already set.
+                                    else if (name.equalsIgnoreCase("logs_to_return"))
+                                        TxRequestQueue.logs_to_return = val;
                                 }
                             }
                         }
@@ -276,13 +270,70 @@ public class TxResponseHandler {
                     txq.saveAuditInformation();
                 }
             }
-            // also in normal operation a key change can happen and must trigger a key fixing transaction
-            if ((txq.getState() != TxRequestQueue.QUEUE_IS_SYNCHRONIZING) && (tx.getResultCode() == 303))
-                txq.synchControl.fixOneKeyForTable(tx, tx.tablename);
+            // key change now handled differently, not based on the responce code, but the response message
+            // if ((txq.getState() != TxRequestQueue.QUEUE_IS_SYNCHRONIZING) && (tx.getResultCode() == 303))
+            //    txq.synchControl.fixOneKeyForTable(tx, tx.tablename);
+            // adjust auto-incremented key
+            this.adjustIncrmentedKey(tx);
             // no specific handling for other ok-type responses.
             // move transaction to the done queue
             txq.shiftTx(TX_BUSY_QUEUE_INDEX, TxRequestQueue.TX_DONE_QUEUE_INDEX, TxRequestQueue.ACTION_TX_CLOSE, tx.ID,
                     1);
+        }
+    }
+
+    /**
+     * parse the transaction response for a new numeric, auto-incremented key. If a key change ist detected,
+     * propagated the change to the local data record including the adjustment of the EntryNo in the boatStatus
+     * record for open session.
+     * @param tx the transaction after parsing the response message
+     */
+    private void adjustIncrmentedKey(Transaction tx) {
+        // only
+        if (((tx.type == Transaction.TX_TYPE.INSERT) || (tx.type == Transaction.TX_TYPE.UPDATE))
+                && (tx.tablename.equals(Logbook.DATATYPE) || tx.tablename.equals(Messages.DATATYPE) ||
+                tx.tablename.equals(BoatDamages.DATATYPE)||
+                tx.tablename.equals(BoatReservations.DATATYPE))) {
+            // Declare the key field names for the four possible data types
+            HashMap<String, String> keyFields = new HashMap<>();
+            keyFields.put(Logbook.DATATYPE, LogbookRecord.ENTRYID);
+            keyFields.put(Messages.DATATYPE, MessageRecord.MESSAGEID);
+            keyFields.put(BoatDamages.DATATYPE, BoatDamageRecord.DAMAGE);
+            keyFields.put(BoatReservations.DATATYPE, BoatReservationRecord.RESERVATION);
+            // parse returned keys
+            String[] returnedKeys = tx.getResultMessage().split(";");
+            HashMap<String, String> returnedMap = new HashMap<>();
+            for (String returnedKey : returnedKeys)
+                if (returnedKey.contains("="))
+                    returnedMap.put(returnedKey.split("=")[0], returnedKey.split("=")[1]);
+            // update the current record
+            if (Ecrid.iEcrids.get(returnedMap.get(Ecrid.ECRID_FIELDNAME)) != null) {
+                DataRecord current = Ecrid.iEcrids.get(returnedMap.get(Ecrid.ECRID_FIELDNAME));
+                DataRecord updated = current.cloneRecord();
+                // only update for a incrementing key field change
+                boolean keyFieldCchanged = false;
+                for (String dataType : keyFields.keySet()) {
+                    String keyField = keyFields.get(dataType);
+                    if ((tx.tablename.equals(dataType) && (returnedMap.get(keyField) != null) &&
+                            ! returnedMap.get(keyField).equalsIgnoreCase(current.getAsString(keyField)))) {
+                        updated.setFromText(keyField, returnedMap.get(keyField));
+                        keyFieldCchanged = true;
+                    }
+                }
+                if (keyFieldCchanged) {
+                    EfaCloudStorage efaCloudStorage = Daten.tableBuilder.getPersistence(tx.tablename);
+                    try {
+                        efaCloudStorage.modifyLocalRecord(updated, false, true, false);
+                        // check and update the boat status record, if the current trip is open
+                        // you will have to use a new lock, because the old one uses the wrong table
+                        if (tx.tablename.equals(Logbook.DATATYPE) && (((LogbookRecord) current).getSessionIsOpen()))
+                            txq.synchControl.adjustBoatStatus(((LogbookRecord) current).getBoatId(),
+                                    ((LogbookRecord) updated).getEntryId().intValue());
+                    } catch (EfaException e) {
+                        // if immediate update does not work, synchronisation will care for it
+                    }
+                }
+            }
         }
     }
 
@@ -333,7 +384,7 @@ public class TxResponseHandler {
                 } catch (Exception ignored) {
                     // just drop invalid responses to a synch check
                 }
-                if (lowa > txq.synchControl.timeOfLastSynch)
+                if (lowa > txq.synchControl.lastSynchStartedMillis)
                     txq.registerStateChangeRequest(TxRequestQueue.RQ_QUEUE_START_SYNCH_DOWNLOAD);
             } else {
                 // handle all transactions contained

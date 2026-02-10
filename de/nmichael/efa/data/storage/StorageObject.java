@@ -40,7 +40,7 @@ public abstract class StorageObject {
 
     public void open(boolean createNewIfNotExists) throws EfaException {
         try {
-            if (Logger.isTraceOn(Logger.TT_CORE, 5)) {
+            if (Logger.isTraceOn(Logger.TT_CORE, 5) || Logger.isTraceOn(Logger.TT_CLOUD,1)) {
                 Logger.log(Logger.DEBUG, Logger.MSG_DEBUG_DATA, "Opening StorageObject "
                         + getUID() + " ...");
             }
@@ -75,7 +75,7 @@ public abstract class StorageObject {
     }
 
     public void close() throws EfaException {
-        if (Logger.isTraceOn(Logger.TT_CORE, 5)) {
+        if (Logger.isTraceOn(Logger.TT_CORE, 5) || Logger.isTraceOn(Logger.TT_CLOUD,1)) {
             Logger.log(Logger.DEBUG, Logger.MSG_DEBUG_DATA, "Closing StorageObject "
                     + getUID() + " ...");
         }

@@ -13,8 +13,6 @@ package de.nmichael.efa.elwiz;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import javax.swing.border.*;
-import java.io.*;
 import de.nmichael.efa.util.*;
 import de.nmichael.efa.util.Dialog;
 import de.nmichael.efa.Daten;

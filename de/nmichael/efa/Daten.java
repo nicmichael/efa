@@ -17,6 +17,10 @@ import static de.nmichael.efa.core.config.EfaTypes.TYPE_SESSION_TRAINING;
 
 import java.awt.Color;
 import java.awt.Frame;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.Rectangle;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -70,15 +74,18 @@ import de.nmichael.efa.util.Logger;
 // @i18n complete
 public class Daten {
 
-	public final static String VERSION = "2.4.0"; // Version für die Ausgabe (z.B. 2.1.0, kann aber
+	private static final String KEY_VALUE_DELIMITER = " = ";
+	public final static String VERSION = "2.5.0"; // Version für die Ausgabe (z.B. 2.1.0, kann aber
 																	// auch Zusätze wie "alpha" o.ä. enthalten)
-	public final static String VERSIONID = "2.4.0_01"; // VersionsID: Format: "X.Y.Z_MM"; final-Version z.B. 1.4.0_00;
+
+	public final static String VERSIONID = "2.5.0"; // VersionsID: Format: "X.Y.Z_MM"; final-Version z.B. 1.4.0_00;
 														// beta-Version z.B. 1.4.0_#1  //# is not good, is used in efa.data.Waters 
-	public final static String VERSIONRELEASEDATE = "10.10.2025"; // Release Date: TT.MM.JJJJ
+	public final static String VERSIONRELEASEDATE = "05.02.2026"; // Release Date: TT.MM.JJJJ
 	public final static String MAJORVERSION = "2";
-	public final static String PROGRAMMID = "EFA.240"; // Versions-ID für Wettbewerbsmeldungen
-	public final static String PROGRAMMID_DRV = "EFADRV.240"; // Versions-ID für Wettbewerbsmeldungen
-	public final static String COPYRIGHTYEAR = "25"; // aktuelles Jahr (Copyright (c) 2001-COPYRIGHTYEAR)
+	public final static String PROGRAMMID = "EFA.250"; // Versions-ID für Wettbewerbsmeldungen
+	public final static String PROGRAMMID_DRV = "EFADRV.250"; // Versions-ID für Wettbewerbsmeldungen
+	public final static String COPYRIGHTYEAR = "26"; // aktuelles Jahr (Copyright (c) 2001-COPYRIGHTYEAR)
+
 	public final static int REQUIRED_JAVA_VERSION = 8;
 
 	// enable/disable development functions for next version
@@ -281,6 +288,8 @@ public class Daten {
 	// at all.
 	// if not, flatLaf-3.2.5.jar may be missing in classpath.
 	public static Boolean flatLafInitializationOK = false;
+	
+	public static Boolean isShutdownRequested=false;
 
 	// Applikations- PID
 	public static String applPID = "XXXXX"; // will be set in iniBase(...)
@@ -372,6 +381,30 @@ public class Daten {
 			}
 		}
 
+		// On Windows systems, efa relies on java restart. So we need to take care of the java-based restart
+		// AFTER running the haltProgram code. Otherwise, the new efa instance may be run faster than the current one has shut down.
+		if (exitCode == Daten.HALT_JAVARESTART ) {
+            String restartargs = (Daten.efa_java_arguments != null ? Daten.efa_java_arguments
+                    : "-cp " + System.getProperty("java.class.path")
+                    + " " + Daten.EFADIREKT_MAINCLASS + de.nmichael.efa.boathouse.Main.STARTARGS);
+            String[] cmdargs = restartargs.split(" ");
+            String[] cmd = new String[cmdargs.length + 1];
+            cmd[0] = System.getProperty("java.home") + Daten.fileSep + "bin" + Daten.fileSep + "java";
+            for (int i=0; i<cmdargs.length; i++) {
+                cmd[i+1] = cmdargs[i];
+            }
+            Logger.log(Logger.INFO, Logger.MSG_EVT_EFARESTART,
+                    International.getMessage("Neustart mit Kommando: {cmd}", EfaUtil.arr2string(cmd)));
+            try {
+                Runtime.getRuntime().exec(cmd);
+            } catch (Exception ee) {
+                Logger.log(Logger.ERROR, Logger.MSG_ERR_EFARESTARTEXEC_FAILED,
+                        LogString.cantExecCommand(EfaUtil.arr2string(cmd), International.getString("Kommando")));
+            }
+        }		
+		
+		// PROGRAMMENDE log entry must be the last to be shown on efa shutdown/restart,
+		// as efa looks for this line on startup and will state efa has not been shut down correctly if it is missing.
 		if (exitCode != 0) {
 			if (exitCode == Daten.HALT_SHELLRESTART || exitCode == Daten.HALT_JAVARESTART) {
 				Logger.log(Logger.INFO, Logger.MSG_CORE_HALT,
@@ -386,6 +419,7 @@ public class Daten {
 		} else {
 			Logger.log(Logger.INFO, Logger.MSG_CORE_HALT, International.getString("PROGRAMMENDE"));
 		}
+		
 		if (program != null) {
 			program.exit(exitCode);
 		} else {
@@ -1376,7 +1410,7 @@ public class Daten {
 			Object value = uid.get(key);
 
 			if (value != null) {
-				infos.add(key + " = " + value.toString().replaceAll("\n", " "));
+				infos.add(key + KEY_VALUE_DELIMITER + value.toString().replaceAll("\n", " "));
 			} else {
 				infos.add(key + " = <null>");
 			}
@@ -1384,6 +1418,42 @@ public class Daten {
 
 		infos.sort(new EfaSortStringComparator());
 		return infos;
+	}
+	
+	public static Vector <String>getDisplayInfos() {
+
+		Vector<String> infos = new Vector<String>();
+		int curDevice=0;
+		try {
+			
+			GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+			GraphicsDevice[] gs = ge.getScreenDevices();
+			infos.add("Number of Displays" + KEY_VALUE_DELIMITER+ gs.length);
+			infos.add("");
+			for(GraphicsDevice curGs : gs)
+			{
+			      GraphicsConfiguration gc = curGs.getDefaultConfiguration();
+			      Rectangle bounds = gc.getBounds();
+			      
+			      infos.add("Display "+curDevice+" Name"+KEY_VALUE_DELIMITER+curGs.getIDstring());
+			      infos.add("Display "+curDevice+" Offset (X/Y)"+KEY_VALUE_DELIMITER+bounds.getX()+" / " +bounds.getY());
+			      infos.add("Display "+curDevice+" Dimensions (Width/Height)"+KEY_VALUE_DELIMITER+bounds.getWidth()+" / "+bounds.getHeight());
+			      infos.add("Display "+curDevice+" Scaling factor" +KEY_VALUE_DELIMITER+ gc.getDefaultTransform().getScaleY());      
+			      infos.add("");
+			      curDevice++;
+			}			
+		} catch (Exception e) {
+			infos.add("Error during getting display infos.\n"+e.getLocalizedMessage());
+		}
+	
+		if (curDevice==0) {infos.add("");}
+		infos.add("sun.java2d.uiScale.enabled" +KEY_VALUE_DELIMITER+  System.getProperty("sun.java2d.uiScale.enabled"));
+		infos.add("sun.java2d.uiScale" +KEY_VALUE_DELIMITER+  System.getProperty("sun.java2d.uiScale"));
+		infos.add("flatlaf.uiScale.enabled" +KEY_VALUE_DELIMITER+  System.getProperty("flatlaf.uiScale.enabled"));	
+		infos.add("flatlaf.uiScale" +KEY_VALUE_DELIMITER+  System.getProperty("flatlaf.uiScale"));	
+		infos.add("laf.scaleFactor" +KEY_VALUE_DELIMITER+ Dialog.getUiDefaults().get("laf.scaleFactor"));
+		return infos;
+		
 	}
 
 	public static Vector <String>getCSSInfo() {

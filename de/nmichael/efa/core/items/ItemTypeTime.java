@@ -39,8 +39,11 @@ public class ItemTypeTime extends ItemTypeLabelTextfield {
         this.referenceTime = (isSet() ? new DataTypeTime(value) : DataTypeTime.time000000());
     }
 
-    public IItemType copyOf() {
-        return new ItemTypeTime(name, new DataTypeTime(value), type, category, description);
+    public IItemType copyOf() {        
+        ItemTypeTime copy = new ItemTypeTime(name, new DataTypeTime(value), type, category, description);
+        copy.setPadding(padXbefore, padXafter, padYbefore, padYafter);
+        copy.setIcon((label == null ? null : label.getIcon()));
+        return copy;
     }
 
     public void enableSeconds(boolean withSeconds) {

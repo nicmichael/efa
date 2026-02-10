@@ -61,6 +61,8 @@ public class ItemTypeCronEntry extends ItemTypeLabelValue {
     public IItemType copyOf() {
         ItemTypeCronEntry copy = new ItemTypeCronEntry(name, toString(), type, category, description);
         copy.fieldWidth = fieldWidth;
+        copy.setPadding(padXbefore, padXafter, padYbefore, padYafter);        
+        copy.setIcon((label == null ? null : label.getIcon()));
         return copy;
     }
 

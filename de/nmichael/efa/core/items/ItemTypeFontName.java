@@ -52,7 +52,10 @@ public class ItemTypeFontName extends ItemTypeLabelValue implements IItemListene
 	}
 
 	public IItemType copyOf() {
-		return new ItemTypeFontName(name, fontName, defaultFontName, type, category, description, canBeNull);
+		ItemTypeFontName copy = new ItemTypeFontName(name, fontName, defaultFontName, type, category, description, canBeNull);
+		copy.setPadding(padXbefore, padXafter, padYbefore, padYafter);
+		copy.setIcon((label == null ? null : label.getIcon()));
+		return copy;
 	}
 
 	public void parseValue(String value) {

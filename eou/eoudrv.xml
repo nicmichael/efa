@@ -2,16 +2,6 @@
 <efaOnlineUpdate>
 
     <Version>
-        <VersionID>2.3.3_00</VersionID>
-        <ReleaseDate>TO.DO.2023</ReleaseDate>
-        <DownloadUrl>http://efa.nmichael.de/download/efa233.zip</DownloadUrl>
-        <DownloadSize></DownloadSize>
-        <Changes lang="de">
-            <ChangeItem>Neu: efa 2.3.3 erfordert mindestens Java Version 8</ChangeItem>
-        </Changes>
-    </Version>
-
-    <Version>
         <VersionID>2.3.1_04</VersionID>
         <ReleaseDate>22.03.2022</ReleaseDate>
         <DownloadUrl>http://efa.nmichael.de/download/efa2drv.zip</DownloadUrl>

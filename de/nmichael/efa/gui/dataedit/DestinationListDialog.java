@@ -61,4 +61,23 @@ public class DestinationListDialog extends DataListDialog {
         return destinations.getMergeDestinationsProgressTask(mainKey, mergeKeys);
     }
 
+	protected void createSpecificItemTypeRecordTable() {
+		
+		super.createSpecificItemTypeRecordTable();
+
+        boolean multipleBoathouses = false;
+        try {
+            multipleBoathouses = (getPersistence().getProject().getNumberOfBoathouses() > 1);
+        } catch(Exception eingore) {
+            //project could be null, ignore.
+        	EfaUtil.foo();
+        }
+		
+		table.addPermanentSecondarySortingColumn(DestinationRecord.COLUMN_ID_NAME);     
+		//when multiple boat houses are available, the second colum is a special column for the boathouse name. 
+		table.addPermanentSecondarySortingColumn(DestinationRecord.COLUMN_ID_WATER + (multipleBoathouses==true ? 1 : 0 )) ;
+		table.addPermanentSecondarySortingColumn(DestinationRecord.COLUMN_ID_DISTANCE + (multipleBoathouses==true ? 1 : 0 ));
+		
+	}    
+	
 }

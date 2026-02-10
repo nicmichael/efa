@@ -17,13 +17,12 @@ import de.nmichael.efa.core.items.*;
 import de.nmichael.efa.data.*;
 import de.nmichael.efa.data.types.*;
 import de.nmichael.efa.data.storage.*;
-import de.nmichael.efa.ex.EfaException;
 import de.nmichael.efa.*;
 import java.util.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import javax.swing.border.*;
+
 
 public class SearchLogbookDialog extends BaseTabbedDialog implements IItemListener {
 

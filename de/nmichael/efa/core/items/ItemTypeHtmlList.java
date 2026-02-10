@@ -134,12 +134,18 @@ public class ItemTypeHtmlList extends ItemType implements ActionListener {
     }
 
     public int displayOnGui(Window dlg, JPanel panel, int x, int y) {
+        return displayOnGui(dlg, panel, x, y, 0.0, 0.0);
+    }
+    
+    public int displayOnGui(Window dlg, JPanel panel, int x, int y, double xWeight, double yWeight) {
         this.dlg = dlg;
         iniDisplay();
-        panel.add(scrollPane, new GridBagConstraints(x, y, fieldGridWidth, fieldGridHeight, 0.0, 0.0,
+        panel.add(scrollPane, new GridBagConstraints(x, y, fieldGridWidth, fieldGridHeight, xWeight, yWeight,
                 fieldGridAnchor, fieldGridFill, new Insets(padYbefore, padXbefore, padYafter, 0), 0, 0));
-        return 1;
+        return 1;    	
     }
+        
+    
 
     public int displayOnGui(Window dlg, JPanel panel, String borderLayoutPosition) {
         this.dlg = dlg;

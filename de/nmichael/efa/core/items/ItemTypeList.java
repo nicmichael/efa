@@ -21,6 +21,7 @@ import java.awt.GridBagConstraints;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -70,6 +71,7 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
     JScrollPane scrollPane;
     JList list = new JList();
     JTextField filterTextField;
+    EfaMouseListener popupListener; 
     JPopupMenu popup;
     Long lastFilterChange=0l;
     DefaultListModel<ItemTypeListData> data; // no longer Vector as we need a DefaultListModel for filtering
@@ -184,24 +186,7 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
         }
         if (icon == null) {
             if (item.colors != null && item.colors.length > 0) {
-                BufferedImage image = new BufferedImage(iconWidth, iconHeight,
-                        BufferedImage.TYPE_INT_ARGB);
-                Graphics2D g = image.createGraphics();
-            	if (item.colors.length == 1) {
-                    g.setColor(item.colors[0]);
-                    g.fillOval(0, 0, iconWidth, iconHeight);
-                } else {
-                    int currentAngle = 90;
-                    int anglePerColor = 360 / item.colors.length;
-                    for (int i=0; i<item.colors.length; i++) {
-                        g.setColor(item.colors[i]);
-                        g.fillArc(0, 0, iconWidth, iconHeight,
-                                currentAngle % 360, anglePerColor);
-                        currentAngle += anglePerColor;
-                    }
-                }
-                icon = new ImageIcon(image);
-            	
+            	icon = EfaUtil.createColorPieIcon(item.colors, iconWidth, iconHeight);
             } else {
                 if (!item.separator) {
 
@@ -224,10 +209,10 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
     
     private synchronized ImageIcon buildDefaultIcon(int iconWidth, int iconHeight) {
     	if (defaultIconForCellRenderer==null) {
-            ImageIcon icon = null;
             BufferedImage image = new BufferedImage(iconWidth, iconHeight, BufferedImage.TYPE_INT_ARGB);
 
             Graphics2D g = image.createGraphics();
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             g.setColor(new Color (230,230,230));
     	    g.fillOval(0, 0, iconWidth, iconHeight);
             defaultIconForCellRenderer= new ImageIcon(image);    		
@@ -241,7 +226,7 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
      * - right row gets remaining space and is truncated on the right side, if contents do not fit.
      *   also, right row contents are rendered in grey text color.
      */
-private String getHTMLTableFor(String firstPart, String secondPart, boolean isSelected) {
+    private String getHTMLTableFor(String firstPart, String secondPart, boolean isSelected) {
     	
 		// we only build an HTML table, if there is a secondPart to be displayed.
 	    // building html tables takes a lot of time on a raspberry pi 3b with a boat list
@@ -497,6 +482,20 @@ private String getHTMLTableFor(String firstPart, String secondPart, boolean isSe
 
     public void setPopupActions(String[] actions) {
         this.actions = actions;
+        // if a popup menu already exists, remove all elements and rebuild the popup menu.
+        if (popup!=null) {
+	        popup.removeAll();
+	        for (int i = 0; actions != null && i < actions.length; i++) {
+	            JMenuItem menuItem = new JMenuItem(actions[i].substring(1));
+	            menuItem.setActionCommand(EfaMouseListener.EVENT_POPUP_CLICKED + "_" + actions[i].substring(0, 1));
+	            menuItem.addActionListener(this);
+	            popup.add(menuItem);
+	            menuItem.setIcon(getIconFromActionID(actions[i].substring(0, 1)));
+	        }
+	        if (popupListener!=null) {
+	        	popupListener.setPopupMenu(popup);
+	        }
+        }
     }
 
     protected void iniDisplay() {
@@ -601,8 +600,8 @@ private String getHTMLTableFor(String firstPart, String secondPart, boolean isSe
 	            	}}});
         }
 
-        EfaMouseListener listener = new EfaMouseListener(list, popup, this, Daten.efaConfig.getValueEfaDirekt_autoPopupOnBoatLists());
-        list.addMouseListener(listener);
+        popupListener = new EfaMouseListener(list, popup, this, Daten.efaConfig.getValueEfaDirekt_autoPopupOnBoatLists());
+        list.addMouseListener(popupListener);
 
         list.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(FocusEvent e) {

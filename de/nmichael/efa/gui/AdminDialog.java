@@ -28,7 +28,9 @@ import java.util.*;
 
 public class AdminDialog extends BaseDialog implements IItemListener {
 
-    private EfaBoathouseFrame efaBoathouseFrame;
+
+	private static final long serialVersionUID = -4629950422212915082L;
+	private EfaBoathouseFrame efaBoathouseFrame;
     private AdminRecord admin;
     private JLabel projectName;
     private JLabel logbookName;
@@ -190,21 +192,21 @@ public class AdminDialog extends BaseDialog implements IItemListener {
         projectName = new JLabel();
         northPanel.add(projectName,
                 new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
-                        GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
-                        new Insets(10, 10, 10, 10), 0, 0));
+                        GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,
+                        new Insets(4, 10, 4, 10), 0, 0));
         projectName.setFont(projectName.getFont().deriveFont(Font.BOLD));
         logbookName = new JLabel();
         northPanel.add(logbookName,
                 new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0,
-                        GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
-                        new Insets(10, 10, 10, 10), 0, 0));
+                        GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,
+                        new Insets(4, 10, 4, 10), 0, 0));
         logbookName.setFont(logbookName.getFont().deriveFont(Font.BOLD));
 
         clubworkName = new JLabel();
         northPanel.add(clubworkName,
                 new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0,
-                        GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
-                        new Insets(10, 10, 10, 10), 0, 0));
+                        GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,
+                        new Insets(4, 10, 4, 10), 0, 0));
         clubworkName.setFont(clubworkName.getFont().deriveFont(Font.BOLD));
 
         updateInfos();
@@ -223,22 +225,29 @@ public class AdminDialog extends BaseDialog implements IItemListener {
                 ? efaBoathouseFrame.getLogbook().getName() : "- " + International.getString("Kein Fahrtenbuch geöffnet.") + " -"));
         if (efaBoathouseFrame.getClubwork() != null && efaBoathouseFrame.getClubwork().isOpen()) {
             clubworkName.setText(International.getString("Vereinsarbeitsbuch") + ": " + efaBoathouseFrame.getClubwork().getName());
+        } else {
+        	clubworkName.setText(International.getString("Kein Vereinsarbeitsbuch geöffnet."));
         }
 
         try {
-            ProjectRecord r = Daten.project.getBoathouseRecord();
-            if (r.getAutoNewLogbookName() != null && r.getAutoNewLogbookName().length() > 0
-                    && r.getAutoNewLogbookDate() != null && r.getAutoNewLogbookDate().isSet()) {
-                logbookName.setText(logbookName.getText() + " ["
-                        + International.getMessage("ab {timestamp}", r.getAutoNewLogbookDate().toString()) + ": "
-                        + r.getAutoNewLogbookName() + "]");
-            }
-            if (r.getAutoNewClubworkName() != null && r.getAutoNewClubworkName().length() > 0
-                    && r.getAutoNewClubworkDate() != null && r.getAutoNewClubworkDate().isSet()) {
-                clubworkName.setText(clubworkName.getText() + " ["
-                        + International.getMessage("ab {timestamp}", r.getAutoNewClubworkDate().toString()) + ": "
-                        + r.getAutoNewClubworkName() + "]");
-            }
+        	if (Daten.project != null) {
+        		//only update further information if we have an open project.
+        		//use a second line when an automatic logbook or clubwork change is set up.        	
+	            ProjectRecord r = Daten.project.getBoathouseRecord();
+	            if (r.getAutoNewLogbookName() != null && r.getAutoNewLogbookName().length() > 0
+	                    && r.getAutoNewLogbookDate() != null && r.getAutoNewLogbookDate().isSet()) {
+	                logbookName.setText("<html><body><center>"+ EfaUtil.escapeHtml(logbookName.getText()) + "<br>"+EfaUtil.escapeHtml("["
+	                        + International.getMessage("ab {timestamp}", r.getAutoNewLogbookDate().toString()) + ": "
+	                        + r.getAutoNewLogbookName() + "]")+"</center></body></html>");
+	            }
+	            
+	            if (r.getAutoNewClubworkName() != null && r.getAutoNewClubworkName().length() > 0
+	                    && r.getAutoNewClubworkDate() != null && r.getAutoNewClubworkDate().isSet()) {
+	                clubworkName.setText("<html><body><center>"+ EfaUtil.escapeHtml(clubworkName.getText()) + "<br>"+EfaUtil.escapeHtml("["
+	                        + International.getMessage("ab {timestamp}", r.getAutoNewClubworkDate().toString()) + ": "
+	                        + r.getAutoNewClubworkName() + "]")+"</center></body></html>");
+	            }
+        	}
         } catch (Exception eignore) {
             Logger.logdebug(eignore);
         }
@@ -250,14 +259,16 @@ public class AdminDialog extends BaseDialog implements IItemListener {
             messageButton.saveColor();
         }
         try {
-            long msg = (Daten.project != null ? Daten.project.getMessages(false).countUnreadMessages() : 0);
-            if (msg > 0) {
-                messageButton.setDescription(International.getString("Nachrichten") + " (" + msg + ")");
-                messageButton.setColor(Color.red);
-            } else {
-                messageButton.setDescription(International.getString("Nachrichten"));
-                messageButton.restoreColor();
-            }
+        	long msg = 0;
+            messageButton.setDescription(International.getString("Nachrichten"));
+            messageButton.restoreColor();
+        	if (Daten.project != null && Daten.project.isOpen()) {
+        		msg = Daten.project.getMessages(false).countUnreadMessages();
+	            if (msg > 0) {
+	                messageButton.setDescription(International.getString("Nachrichten") + " (" + msg + ")");
+	                messageButton.setColor(Color.red);
+	            }
+        	}
         } catch (Exception eignore) {
         }
     }
@@ -268,9 +279,12 @@ public class AdminDialog extends BaseDialog implements IItemListener {
 
     @Override
     public void closeButton_actionPerformed(ActionEvent e) {
-        if ((Daten.project.getProjectStorageType() == IDataAccess.TYPE_EFA_CLOUD)
-                && (TxRequestQueue.getInstance() != null))
-            TxRequestQueue.getInstance().clearAdminCredentials();
+    	if (Daten.project != null) {//project may be null, after restoring config data items from a backup file.
+	        if ((Daten.project.getProjectStorageType() == IDataAccess.TYPE_EFA_CLOUD)
+	                && (TxRequestQueue.getInstance() != null)) {
+	            TxRequestQueue.getInstance().clearAdminCredentials();
+	        }
+    	}
         super.closeButton_actionPerformed(e);
     }
 
@@ -326,6 +340,7 @@ public class AdminDialog extends BaseDialog implements IItemListener {
                 updateInfos();
             }
             updateMessageButton(null);
+            updateInfos();            
         }
 
     }

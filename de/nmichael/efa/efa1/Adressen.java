@@ -11,8 +11,6 @@
 package de.nmichael.efa.efa1;
 
 import java.io.*;
-import java.util.Hashtable;
-import de.nmichael.efa.*;
 import de.nmichael.efa.util.*;
 
 // @i18n complete

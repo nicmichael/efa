@@ -11,7 +11,6 @@
 package de.nmichael.efa.core.items;
 
 import de.nmichael.efa.util.*;
-import de.nmichael.efa.util.Dialog;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -39,7 +38,10 @@ public class ItemTypeRadioButtons extends ItemTypeLabelValue {
     }
 
     public IItemType copyOf() {
-        return new ItemTypeRadioButtons(name, value, valueList.clone(), displayList.clone(), type, category, description);
+        ItemTypeRadioButtons copy = new ItemTypeRadioButtons(name, value, valueList.clone(), displayList.clone(), type, category, description);
+        copy.setPadding(padXbefore, padXafter, padYbefore, padYafter);
+        copy.setIcon((label == null ? null : label.getIcon()));
+        return copy;
     }
 
     protected JComponent initializeField() {

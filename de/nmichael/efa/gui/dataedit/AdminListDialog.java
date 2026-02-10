@@ -10,23 +10,37 @@
 
 package de.nmichael.efa.gui.dataedit;
 
+import java.awt.BorderLayout;
+import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.event.ActionEvent;
+
+import javax.swing.JDialog;
+import javax.swing.JPanel;
+
+import com.formdev.flatlaf.util.SwingUtils;
+
 import de.nmichael.efa.Daten;
 import de.nmichael.efa.core.config.AdminRecord;
 import de.nmichael.efa.core.config.Admins;
+import de.nmichael.efa.core.items.IItemType;
+import de.nmichael.efa.core.items.ItemTypeBoolean;
 import de.nmichael.efa.core.items.ItemTypeDataRecordTable;
-import de.nmichael.efa.data.storage.*;
-import de.nmichael.efa.util.*;
+import de.nmichael.efa.core.items.ItemTypeLabel;
+import de.nmichael.efa.data.storage.DataRecord;
+import de.nmichael.efa.data.storage.IDataAccess;
+import de.nmichael.efa.data.storage.StorageObject;
+import de.nmichael.efa.gui.EfaGuiUtils;
 import de.nmichael.efa.util.Dialog;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
+import de.nmichael.efa.util.International;
+import de.nmichael.efa.util.LogString;
 
 
 // @i18n complete
 public class AdminListDialog extends DataListDialog {
 
     public static final int ACTION_EFALIVE_ADMIN = 901; // negative actions will not be shown as popup actions
-
+    public static final String EFACLOUD_HINT = "EFACLOUD_HINT";
     private Admins admins;
     private boolean efaLiveRepair = false;
 
@@ -48,7 +62,8 @@ public class AdminListDialog extends DataListDialog {
             actionType = null; // only ADD, EDIT, DELETE (no IMPORT, EXPORT)
         } else {
             efaLiveRepair = Daten.admins.isEfaLiveAdminExists();
-            if (Daten.project.getProjectStorageType() == IDataAccess.TYPE_EFA_CLOUD) {
+            //EFA#78/Issue#142: If no project is open, we should not check if the project is efaCloud based.
+            if ((Daten.project != null) && (Daten.project.getProjectStorageType() == IDataAccess.TYPE_EFA_CLOUD)) {
                 actionText = new String[]{
                         ItemTypeDataRecordTable.ACTIONTEXT_EDIT,
                         ItemTypeDataRecordTable.ACTIONTEXT_DELETE,
@@ -118,4 +133,27 @@ public class AdminListDialog extends DataListDialog {
         return new AdminEditDialog(parent, (AdminRecord)record, newRecord, admin);
     }
 
+    protected void iniControlPanel() {
+    	// we want to put an additional element after the control panel
+    	super.iniControlPanel();
+    	this.iniEfaCloudHints();
+    }
+    
+	private void iniEfaCloudHints() {
+
+		if (Daten.project != null && Daten.project.isOpen() && Daten.project.getIsProjectStorageTypeEfaCloud()) {
+			JPanel myControlPanel= new JPanel();
+	    	
+	    	ItemTypeLabel item = EfaGuiUtils.createHintWordWrap(EFACLOUD_HINT, IItemType.TYPE_PUBLIC, "",
+	    			International.getString("In efaCloud Instanzen werden die Administratoren auf dem efaCloud Server verwaltet. Daher wird hier nur der Superadmin 'admin' angezeigt. Siehe efa Dokuwiki für mehr Informationen.")
+	    			,5,10,10,700);
+
+	    	item.setPadding(10, 10, 10, 10);
+	    	item.setFieldGrid(3,1,GridBagConstraints.EAST, GridBagConstraints.BOTH);
+	    	item.displayOnGui(this, myControlPanel, 0, 0);
+	        mainPanel.add(myControlPanel, BorderLayout.NORTH);
+			
+		}
+	}    
+    
 }

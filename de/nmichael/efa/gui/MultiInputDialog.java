@@ -10,19 +10,13 @@
 
 package de.nmichael.efa.gui;
 
-import de.nmichael.efa.*;
 import de.nmichael.efa.util.*;
 import de.nmichael.efa.util.Dialog;
 import de.nmichael.efa.core.items.*;
-import de.nmichael.efa.data.storage.*;
-import de.nmichael.efa.data.types.*;
-import de.nmichael.efa.gui.BaseDialog;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import javax.swing.border.*;
-import java.util.*;
-import javax.swing.event.ChangeEvent;
+
 
 // @i18n complete
 public class MultiInputDialog extends BaseDialog {

@@ -14,7 +14,9 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
+import java.awt.RenderingHints;
 import java.awt.Window;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
@@ -50,6 +52,7 @@ import java.util.zip.ZipOutputStream;
 
 import javax.mail.internet.InternetAddress;
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
@@ -64,7 +67,6 @@ import de.nmichael.efa.core.config.EfaTypes;
 import de.nmichael.efa.data.types.DataTypeTime;
 import de.nmichael.efa.efa1.DatenFelder;
 import de.nmichael.efa.efa1.Synonyme;
-import javax.swing.SwingUtilities;
 
 // @i18n complete
 public class EfaUtil {
@@ -637,11 +639,11 @@ public class EfaUtil {
         if (s == null) {
             return null;
         }
-        Vector v;
+        Vector <String> v;
         if (s.length() > 0) {
             v = split(s, sep);
         } else {
-            v = new Vector();
+            v = new Vector<String>();
         }
         String[] aa = new String[v.size()];
         for (int ii = 0; ii < v.size(); ii++) {
@@ -682,11 +684,11 @@ public class EfaUtil {
         if (s == null) {
             return null;
         }
-        Vector v;
+        Vector <String> v;
         if (s.length() > 0) {
             v = split(s, sep);
         } else {
-            v = new Vector();
+            v = new Vector <String>();
         }
         int[] aa = new int[v.size()];
         for (int ii = 0; ii < v.size(); ii++) {
@@ -1144,7 +1146,7 @@ public class EfaUtil {
     }
 
     // zu einem gegebenen OriginalNamen s aus einer Datenliste l alle passenden Synonymnamen heraussuchen
-    public static Vector org2syn(Synonyme l, String s) {
+    public static Vector <String> org2syn(Synonyme l, String s) {
         if (l == null || s == null) {
             return null;
         }
@@ -2289,7 +2291,35 @@ public class EfaUtil {
     	Collections.sort(fontFamilies,new EfaSortStringComparator());
     	return fontFamilies;
 	}
-    
+
+	/**
+	 * Creates a colored pie chart icon. Each specified color takes 1/nth of the pie
+	 * @param colors Array of Colors to be used. Any color item must not be null.
+	 * @param iconWidth Width of the icon. Must not be 0.
+	 * @param iconHeight Height of the icon. Must not be 0. 
+	 * @return Icon 
+	 */
+	public static ImageIcon createColorPieIcon(Color[] colors, int iconWidth, int iconHeight) {
+	    BufferedImage image = new BufferedImage(iconWidth, iconHeight,
+	            BufferedImage.TYPE_INT_ARGB);
+	    Graphics2D g = image.createGraphics();
+	    g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		if (colors.length == 1) {
+	        g.setColor(colors[0]);
+	        g.fillOval(0, 0, iconWidth, iconHeight);
+	    } else {
+	        int currentAngle = 90;
+	        int anglePerColor = 360 / colors.length;
+	        for (int i=0; i<colors.length; i++) {
+	            g.setColor(colors[i]);
+	            g.fillArc(0, 0, iconWidth, iconHeight,
+	                    currentAngle % 360, anglePerColor);
+	            currentAngle += anglePerColor;
+	        }
+	    }
+		return new ImageIcon(image);
+	}	
+	
     /**
      * Helper class to display a notification message.
      * If this is a GUI application, we asynchronously display a dialog through
@@ -2313,6 +2343,76 @@ public class EfaUtil {
         }
 
     }	
+    public static Color lighter(Color theColor, float percent) {
+    	int red=Math.round(theColor.getRed()*(1+(percent/100)));
+    	int green=Math.round(theColor.getGreen()*(1+(percent/100)));
+    	int blue=Math.round(theColor.getBlue()*(1+(percent/100)));
+        return new Color(red, green, blue);	
+    }
+
+    public static Color darker(Color theColor, float percent) {
+    	int red=theColor.getRed();
+    	red = Math.max(0, red-(int)Math.round(red*percent/100));
+    	int green=theColor.getGreen();
+    	green=Math.max(0, green-(int)Math.round(green*percent/100));
+    	int blue=theColor.getBlue();
+    	blue=Math.max(0, blue-(int)Math.round(green*percent/100));
+        return new Color(red, green, blue);	
+    }
+
+    /**
+     * If a filename starts with a symbolic item, this function extends the filename's path
+     * to the absolute path of the corresponding directory.
+     * 
+     * ./   --> efaDataDirectory
+     * ~/   --> user home direcotry
+     * 
+     * @param filename
+     * @return filename with symbolic links replaced by absolute paths. If no symbolic link is at the start of the filename, the filename is returned unchanged. 
+     */
+    public static String extendFilenameWithRelativePath(String filename) {
+    	if (filename!=null) {
+		    if (filename.startsWith("./") || filename.startsWith(".\\")) {
+		    	// ./ or .\ specify relative path to data directory.
+		    	filename=Daten.efaConfig.getValueEfaUserDirectory()+filename.substring(2);
+		    }
+		    
+		    if (filename.startsWith("~/") || filename.startsWith("~\\")) {
+		    	filename=Daten.userHomeDir + filename.substring(2);
+		    }
+    	}
+	    return filename;
+    }
+    
+    /**
+     * Repairs filenames. 
+     * If a filename does not contain a path element, the efa tmp directory path is added as prefix.
+     * If the filename points to a windows d:filename.txt, the path is corrected to d:\filename.txt.
+     * @param filename
+     * @return
+     */
+	public static String correctFilePath(String filename) {
+		if (filename!=null) {
+
+			String filePath=EfaUtil.getPathOfFile(filename);
+			if (filePath == null || filePath.trim().isEmpty()){
+	        	//filename does not contain a path element? use efa temp dir as path.
+	        	return Daten.efaTmpDirectory+filename; //efaTmpDirecory always has a path separator char as suffix. so we don't need one here.
+			}	
+
+			if (!new File(filePath).isAbsolute()) {
+				//relative Pfade zum efa-Datenverzeichnis erstellen.
+				return Daten.efaConfig.getValueEfaUserDirectory()+filePath+File.separator+getNameOfFile(filename);
+			} 
+			
+			if (!filePath.endsWith(File.separator)) {
+        		filePath = filePath+File.separator;
+        		return filePath +new File(filename).getName();
+			}
+    	}
+       
+		return filename;
+	}    
     
     public static void main(String args[]) {
         String text = "abc & def";

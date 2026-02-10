@@ -10,7 +10,6 @@
 
 package de.nmichael.efa.data;
 
-import de.nmichael.efa.data.GroupRecord;
 import de.nmichael.efa.util.*;
 import de.nmichael.efa.data.storage.*;
 import de.nmichael.efa.data.types.DataTypeList;

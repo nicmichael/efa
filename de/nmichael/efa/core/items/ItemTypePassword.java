@@ -29,7 +29,10 @@ public class ItemTypePassword extends ItemTypeString {
     }
 
     public IItemType copyOf() {
-        return new ItemTypePassword(name, value, encrypted, type, category, description);
+        ItemTypePassword copy = new ItemTypePassword(name, value, encrypted, type, category, description);
+        copy.setPadding(padXbefore, padXafter, padYbefore, padYafter);
+        copy.setIcon((label == null ? null : label.getIcon()));
+        return copy;
     }
 
     protected JComponent initializeField() {

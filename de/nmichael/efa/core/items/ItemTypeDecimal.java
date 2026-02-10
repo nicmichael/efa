@@ -10,7 +10,9 @@
 
 package de.nmichael.efa.core.items;
 
+import de.nmichael.efa.data.types.DataTypeDate;
 import de.nmichael.efa.data.types.DataTypeDecimal;
+import de.nmichael.efa.data.types.DataTypeTime;
 import de.nmichael.efa.util.*;
 import javax.swing.JTextField;
 
@@ -34,7 +36,10 @@ public class ItemTypeDecimal extends ItemTypeLabelTextfield {
     }
 
     public IItemType copyOf() {
-        return new ItemTypeDecimal(name, new DataTypeDecimal(value), decimalPlaces, onlyPositiveOrNull, type, category, description);
+        ItemTypeDecimal copy = new ItemTypeDecimal(name, new DataTypeDecimal(value), decimalPlaces, onlyPositiveOrNull, type, category, description);
+        copy.setPadding(padXbefore, padXafter, padYbefore, padYafter);
+        copy.setIcon((label == null ? null : label.getIcon()));
+        return copy;        
     }
 
     public void parseValue(String value) {

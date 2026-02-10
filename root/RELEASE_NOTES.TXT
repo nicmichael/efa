@@ -5,6 +5,82 @@
                            RELEASE NOTES
 
 
+Version 2.5.0+ (Deutsche Releasenotes)
+--------------------------------------------------------------------------------
+Ab Version 2.5.0 gibt es ein Changelog in doc/changelog_de.html.
+Dieses umfasst alle Änderungen aller bisherigen Releases im Detail.
+
+ACHTUNG - bei Nutzung von EFACLOUD-Projekten muss auf dem efaCloud-Server
+mindestens Version 2.3.3 aktiv sein. Empfohlen wird efaCloud 2.4.0_12 oder höher.
+
+
+
+Zusammenfassung der Neuerungen in 2.5.0
+- Bootsliste "Boote auf Fahrt": Es werden nur noch Einträge aus dem aktuell geöffneten
+  Logbuch angezeigt. Offene Fahrten aus anderen Logbüchern (z.B. wenn man mehrere Bootshäuser hat,
+  und diese wie empfohlen jeweils eigene Fahrtenbücher haben) werden in der Liste
+  "Nicht verfügbare Boote" angezeigt, zusammen mit dem betroffenen Fahrtenbuch.
+- Projektadministration im Kontext von efaCloud und efaRemote verbessert
+- efaCloud Betrieb: mehr Hinweise in efa zu efaCloud spezifischen Eigenheiten
+- efaCloud: Synchronisation der Daten zwischen Bootshaus und Server optimiert.
+  Besseres Handling von temporären Internet-Ausfällen
+- Vereinfachung der Fahrterfassung von Wanderfahren, wenn mehrere Personen
+  mit Einzelbooten zum gleichen Ziel aufbrechen
+- Autovervollständigungs-Listen mit Teilbegriffsuche verbessert
+  (Elemente mit Treffern am Wortanfang werden selektiert)
+- Bootsreservierungs- und Vereinsarbeit-Dialog im Kiosk-Modus überarbeitet
+- Verbesserung des Anwendungsfalls "Boote nur für bestimmte Nutzergruppen"
+- Verbesserungen beim Handling von Bootsschäden im Administrationsmodus
+- Bessere Sortierung von vielen Tabellen
+- Verbesserungen bei der Kanu-EFB-Synchronisation
+- CSV-Import und Export besser geeignet für Tabellenkalkulationen
+- viele weitere Verbesserungen (siehe changelog im Ordner "doc")
+
+- Deutlich erweiterte Dokumentation im Dokuwiki 
+  http://efa.nmichael.de/dokuwiki/doku.php
+  - EfaCloud
+  - Betrieb mehrerer Bootshäuser
+  - Installation und Konfiguration
+
+
+Version 2.5.0+ (English Releasenotes)
+--------------------------------------------------------------------------------
+
+As of version 2.5.0 there is a changelog in doc/changelog_en.html.
+This includes all changes of all prior Releases in full detail.
+
+ATTENTION - when using EFACLOUD projects, at least version 2.3.3 must be active 
+on the efaCloud server. efaCloud 2.4.0_12 or higher is recommended.
+
+Summary of the new features in 2.5.0
+- Boats on the water list: efa only shows boats on the water in the CURRENT Logbook.
+  If there are boats on the water in other logbooks (e.g. if you have multiple boathouses
+  with separate logbooks), they show up in the "Boats unavailable" list and show the respective
+  Logbook name and session.
+- Project administration in the context of efaCloud and efaRemote improved
+- efaCloud operation: more information in efa about efaCloud-specific features
+- efaCloud: Synchronization of data between Bootshaus and server optimized.
+Better handling of temporary internet outages
+- Simplification of trip recording for hiking trips when several people
+are setting off for the same destination
+- Auto-completion lists with partial term search improved
+(elements with hits at the beginning of the word are selected)
+- Boat reservation and club work dialog revised in kiosk mode
+- Improvement of the use case "Boats only for certain user groups"
+- Improvements in the handling of boat damage in administration mode
+- Better sorting of many tables
+- Improvements in canoe EFB synchronization
+- CSV import and export better suited for spreadsheets
+- lots of improvements (see changelog in the "doc" folder.)
+
+- Significantly extended documentation in Dokuwiki (in German)
+  http://efa.nmichael.de/dokuwiki/doku.php
+  - EfaCloud
+  - Operation of several boathouses
+  - Installation and configuration
+
+
+
 
 Version 2
 --------------------------------------------------------------------------------

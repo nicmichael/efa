@@ -9,5 +9,7 @@
         <mapID target="configure" url="main/configure_de.html" />
         <mapID target="cli" url="main/efacli_de.html" />
         <mapID target="de.nmichael.efa.gui.EfaConfigDialog" url="gui/EfaConfigDialog_de.html" />
+        <mapID target="de.nmichael.efa.gui.NewLogbookDialog" url="gui/NewLogbookDialog_de.html" />
+        <mapID target="de.nmichael.efa.gui.NewProjectDialog" url="gui/NewProjectDialog_de.html" />
         <mapID target="efaflatlaf" url="main/efaflatlaf_de.html" />
 </map>

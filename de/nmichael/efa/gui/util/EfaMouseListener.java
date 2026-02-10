@@ -21,6 +21,7 @@ public class EfaMouseListener extends MouseAdapter {
     public static final String EVENT_MOUSECLICKED_1x = "efa_mouseClicked1x";
     public static final String EVENT_MOUSECLICKED_2x = "efa_mouseClicked2x";
     public static final String EVENT_POPUP           = "efa_Popup";
+    public static final String EVENT_BUILD_POPUP_MENU= "efa_BuildPopupMenu";
     public static final String EVENT_POPUP_CLICKED   = "efa_PopupClicked";
 
     private Component myComponent;
@@ -81,6 +82,9 @@ public class EfaMouseListener extends MouseAdapter {
         if (e != null && e.getButton() == 1) {
             if (e.getClickCount() == 1) {
                 if (showPopupOnLeftMouseClick) {
+                    if (actionListener != null) {
+                        actionListener.actionPerformed(new ActionEvent(e.getSource(), ActionEvent.ACTION_PERFORMED, EVENT_BUILD_POPUP_MENU));
+                    }                 	
                     showPopup(e);
                 }
                 actionListener.actionPerformed(new ActionEvent(e.getSource(), ActionEvent.ACTION_PERFORMED, EVENT_MOUSECLICKED_1x));
@@ -96,12 +100,19 @@ public class EfaMouseListener extends MouseAdapter {
     private void maybeShowPopup(MouseEvent e) {
         try {
             if (popupsEnabled && e.isPopupTrigger()) {
+                if (actionListener != null) {
+                    actionListener.actionPerformed(new ActionEvent(e.getSource(), ActionEvent.ACTION_PERFORMED, EVENT_BUILD_POPUP_MENU));
+                } 
                 showPopup(e);
                 if (actionListener != null) {
                     actionListener.actionPerformed(new ActionEvent(e.getSource(), ActionEvent.ACTION_PERFORMED, EVENT_POPUP));
-                } 
+                }                 
             }
         } catch(Exception eignore) {
         }
+    }
+    
+    public void setPopupMenu(JPopupMenu value) {
+    	popup = value;
     }
 }

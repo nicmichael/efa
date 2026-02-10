@@ -28,8 +28,6 @@ import de.nmichael.efa.gui.BrowserDialog;
 import de.nmichael.efa.util.*;
 import de.nmichael.efa.util.Dialog;
 import java.net.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 // @i18n complete (needs no internationalization -- only relevant for Germany)
 public class MeldungenIndexFrame extends JDialog implements ActionListener {

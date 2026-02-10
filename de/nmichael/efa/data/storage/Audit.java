@@ -439,7 +439,7 @@ public class Audit extends Thread {
                                         + International.getMessage("Bootsstatus '{status}' korrigiert nach '{status}'.",
                                         status.getStatusDescription(BoatStatusRecord.STATUS_ONTHEWATER),
                                         status.getStatusDescription(status.getBaseStatus()))
-                                        + " (Entry #" + entryNo.toString() + " in Logbook '" + logbookName + "' does not exist)");
+                                        + " (Entry #" + (entryNo != null ? entryNo.toString() : " null") + " in Logbook '" + logbookName + "' does not exist)");
                             }
                         }
                     }

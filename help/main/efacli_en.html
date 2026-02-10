@@ -1,0 +1,172 @@
+<html>
+<head>
+<style>
+body {
+  font-family: helvetica, sans serif;
+}
+</style>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>efa - electronic Logbook Version 2</title>
+</head>
+<body bgcolor="#ffffff">
+
+<h2 align="center">efaCLI - Command Line Interface</h2>
+
+<p>efaCLI is a command-line interface for efa that allows you to automate common tasks, such as creating backups or statistics. The commands supported by efaCLI can also be used in the efa configuration to execute automated processes (cron jobs).</p>
+
+<h3 align="center">Using efaCLI</h3>
+
+<p>Syntax: <tt>efaCLI [username[:password]@][host[:port]][/project] [-cmd command]</tt></p>
+
+<p>efaCLI does not access locally stored data itself, but connects to efa-Bootshaus and retrieves its data from there. For efaCLI to work, efa-Bootshaus must be running concurrently on the same or a different computer.</p>
+<p>To access efa-Bootshaus, efaCLI requires the username and password of an administrator who has <i>remote access permissions via efaRemote</i>. 
+	If no administrator is explicitly specified, efaCLI uses the <i>admin</i> username. If no password is specified when calling the 
+	efaCLI, the query is processed interactively.</p> 
+<p>For increased security, instead of specifying the password on the command line as described <a href="http://forum.nmichael.de/viewtopic.php?f=24&t=298">here</a>, a file named <i>.efacred</i> is
+hould be created in the operating system user's home directory. This file contains the admin username and password on one line, e.g., <tt>admin secret</tt>.</p>
+<p>Furthermore, efaCLI requires the hostname (or IP address) and port of the computer running efa-Bootshaus. If this information is missing, efaCLI attempts to connect to the local computer on port 3834.</p>
+<p>The third required entry is the name of the project efaCLI should access. This project must be open in efa-Bootshaus. After the first successful launch of efaCLI, efaCLI remembers the last opened project and uses it the next time it is started.</p>
+<p>An example call to efaCLI under Windows could look like this:<br>
+   <tt>efaCLI.bat admin@localhost/meinprojekt</tt><br><br>
+   UUnder Linux, the corresponding call has the form:<br>
+   <tt>./efaCLI.sh admin@localhost/meinprojekt</tt></p>
+<p>Without specifying a command, efaCLI starts an interactive shell where commands can be entered. efaCLI has several menu levels, displayed at the prompt. The <i>help</i> command displays help for the current menu. <i>exit</i> exits the menu, and <i>quit</i> terminates efaCLI:<br>
+   <tt>./efaCLI.sh admin@localhost/meinprojekt<br>
+INPUT   - CLI003 - efaCLI:main> help<br>
+INFO    - CLI001 - Help for Menu: main<br>
+INFO    - CLI001 - ==========================================================================<br>
+INFO    - CLI001 - boats                                            boat administration<br>
+INFO    - CLI001 - persons                                          person administration<br>
+INFO    - CLI001 - destinations                                     destination administration<br>
+...<br>
+INPUT   - CLI003 - efaCLI:main> boats<br>
+INPUT   - CLI003 - efaCLI:boats> help<br>
+INFO    - CLI001 - Help for Menu: boats<br>
+INFO    - CLI001 - ==========================================================================<br>
+INFO    - CLI001 - list         [all|invisible|deleted]             list boats<br>
+INFO    - CLI001 - show         [name|index]                        show record<br>
+...<br>
+INPUT   - CLI003 - efaCLI:boats> exit<br>
+INPUT   - CLI003 - efaCLI:main> quit
+</tt></p>
+
+<p>Interactive use of efaCLI is not useful for automating tasks. Instead, efaCLI should be started with a command. If the password is stored in a file as described above, efaCLI will execute the command when called and then exit. The command to be executed is passed to efaCLI using the <tt>-cmd command</tt> option. The command must be passed from the shell to efaCLI as a single parameter and therefore must be enclosed in commas if it contains spaces.</p>
+<p>For example, to create a backup of all data, efaCLI can be called as follows:<br>
+    <tt>./efaCLI.sh admin@localhost/meinprojekt -cmd "backup create all"</tt><br>
+Statistics for a saved mileage list (HTML) can be called up in efaCLI as follows:<br>
+    <tt>./efaCLI.sh admin@localhost/meinprojekt -cmd "statistics create Kilometerliste (HTML)"</tt>
+</p>
+
+<h3 align="center">Use of commands for automatic processes (crontab)</h3>
+
+<p>efa v2.1 introduces a new mechanism that allows any task to be automated at configured times directly from efa-Bootshaus. Any number of <i>tasks</i> can be configured in the configuration under <i>efa-Bootshaus - Automatic Processes</i>.</p>
+
+<p>The fields <i>Minute, Hour, Day, Month</i>, and <i>Day of the Week</i> specify when the command should be executed. For a command to be executed at a specific time, the values ​​in all five fields must match the current time. Individual values ​​can be separated by commas, and ranges can be defined by hyphens. An * represents all possible values.</p>
+
+<p>For example, to execute a command every hour on the hour, the following values ​​must be entered: Minute=0 (only at minute 0), Hour=* (every hour), Day=* (every day), Month=* (every month), Day=* (every weekday).<br/><br/>
+A command will be executed once a week on Sunday at 11:00 PM if the values ​​Minute=0, Hour=23, Day=*, Month=*, Day=7 (1 is Monday, 2 is Tuesday, ..., 7 is Sunday) are entered.<br/><br/>
+To execute a command four times an hour between 8:00 AM and 8:00 PM, the values ​​Minute=0, 15, 30, 45, Hour=8-20, Day=*, Month=*, Day=* can be entered.</p>
+
+<p>The command to be executed can be any command supported by efaCLI, such as <tt>backup create all</tt> to create a backup, or <tt>statistics create Kilometerliste</tt> (HTML) to create a mileage list. Note that additional quotation marks are not required here.</p>
+
+<p>Configured commands are, of course, only executed if efa-Bootshaus is actually running at the specified time. For example, if a command is configured for 10:00 a.m., but efa is not started until 10:03 a.m., this command will <i>not be</i> executed.</p>
+
+<p>The execution of commands is logged in the log file.</p>
+
+<h3 align="center">Command overview</h3>
+
+<h4 align="center">Viewing and editing data</h4>
+
+<p>The following commands allow access to the respective data:</p>
+
+<table align="center" border>
+    <tr><th>Kommando</th><th>Daten</th></tr>
+    <tr><td>boats</td><td>Boats</td></tr>
+    <tr><td>persons</td><td>Persons</td></tr>
+    <tr><td>destinations</td><td>Destinations</td></tr>
+    <tr><td>damages</td><td>Boat damages</td></tr>
+    <tr><td>reservations</td><td>Boat reservations</td></tr>
+    <tr><td>boatstatus</td><td>Boat status</td></tr>
+    <tr><td>crews</td><td>Crews</td></tr>
+    <tr><td>groups</td><td>Groups</td></tr>
+    <tr><td>status</td><td>Status</td></tr>
+    <tr><td>waters</td><td>Waters</td></tr>
+    <tr><td>fahrtenabzeichen</td><td>travel badge (for rowing in Germany only)</td></tr>
+    <tr><td>messages</td><td>Messages</td></tr>
+    <tr><td>statistics</td><td>Statistics</td></tr>
+</table>
+
+<p>The above commands support the following subcommands and options:</p>
+
+<table align="center" border>
+    <tr><th>Subcommand</th><th>Options</th><th>Description</th></tr>
+    <tr><td>list</td><td>[all|invisible|deleted]</td><td>List records (optionally all records, invisible, or deleted)</td></tr>
+    <tr><td>show</td><td>[name|index]</td><td>Display a specific record, identified by its name (as returned by <i>list</i>, or an index (after previously calling <i>list</i>)</td></tr>
+    <tr><td>export</td><td>[-format=xml|csv] &lt;filename&gt;</td><td>Export all records to a file named <i>filename</i>, optionally in XML or CSV format</td></tr>
+    <tr><td>import</td><td>[-encoding=ENCODING] [-csvsep=X] [-csvquote=X] [-impmode=add|update|addupdate] [-updversion=update|new] [-entryno=dupskip|dupadd|alwaysadd] &lt;filename&gt;</td><td>Import records from a file <i>filename</i>.<br/><br/> The additional options specify the character set of the file to be imported (encoding, either UTF-8 or ISO-8859-1), the field separator (csvsep) and text separator (csvquote) for CSV imports, the import mode (impmode - add and/or update), the behavior when updating existing versioned records (updversion - create a new version or update an existing one), and the behavior when importing logbook entries (entryno - do not import duplicate entries, add duplicate entries with a new serial number, or add all entries with a new serial number).</td></tr>
+</table>
+
+<p>Examples:<br>
+To export a person list in CSV format to the file <i>/tmp/persons.csv</i>:
+<tt>persons export -format=csv /tmp/persons.csv</tt><br>
+To import a boat list from the file <i>/tmp/boats.xml</i> and update only entries:
+<tt>boats import -impmode=update /tmp/boats.xml</tt></p>
+
+<h4 align="center">Creating Statistics</h4>
+
+<p>Statistics are created using the command <tt>statistics create</tt>:</p>
+
+<table align="center" border>
+    <tr><th>Command</th><th>Subcommand</th><th>Options</th><th>Description</th></tr>
+    <tr><td>statistics</td><td>create</td><td>[-all|-status=name|-name=name] [name|index]</td><td>Create statistics with name <i>name</i> (name as output by the <tt>list</tt> command). Instead of a name, the index of the statistics can also be specified, as previously output by the <tt>list</tt> command. For individual statistics, you can also specify whether they should be generated for all people/boats (<tt>-all</tt>), only for people with status <i>name</i> (<tt>-status=name</tt>), or only for a single person/boat with name <i>name</i> (<tt>-name=name</tt>).</td></tr>
+</table>
+
+<p>Note: These commands only allow you to create statistics that can be output to files, sent via email, or uploaded via FTP. Interactive statistics (for graphical display) cannot be created using these commands.</p>
+
+<p>Examples:<br>
+To create a mileage list saved as a statistics setting under the name <i>mileage list</i>:
+<tt>statistics create mileage list</tt><br>
+To create an individual logbook for <i>Manfred Mustermann</i>, using the previously created statistics setting <i>Individual Logbook</i>:
+<tt>statistics create -name=Mustermann,_Manfred Individual Logbook</tt> (note the underscore!)
+<br>
+To create an individual logbook for all people, using the previously created statistics setting <i>Individual Logbook</i>:
+<tt>statistics create -all Individual Logbook</tt> (this creates a separate file or sends a separate email for each person).</p>
+
+<h4 align="center">Create and restore data backups</h4>
+
+<p>Data backups are created using the <tt>backup</tt> command:</p>
+
+<table align="center" border>
+    <tr><th>Command</th><th>Subcommand</th><th>Options</th><th>Description</th></tr>
+    <tr><td>backup</td><td>create</td><td>[project|config|all] [directory/file]</td><td>Creates a backup of the currently open project (<tt>project</tt>), the configuration (<tt>config</tt>), or both the project and configuration (<tt>all</tt>). If no file name is specified, efa creates a backup in the backup directory. If directory and/or file names are specified, efa uses these. To send the backup as an email, an email address in the form <tt>mailto:<i>name@domain.com</i> can be specified instead of a file.</tt></td></tr>
+    <tr><td>backup</td><td>restore</td><td>&lt;zipfile&gt; [objects...]</td><td>Restores all or selected objects from a backup <i>zipfile</i>.</td></tr>
+    <tr><td>backup</td><td>show</td><td>&lt;zipfile&gt;</td><td>Displays the contents of the backup file <i>zipfile</i>.</td></tr>
+</table>
+
+<p>Examples:<br>
+To create a backup of the current project and configuration:
+
+<tt>backup create all</tt><br>
+To send a backup of the current project to the email address name@domain.com:
+<tt>backup create project mailto:name@domain.com</tt><br>
+To restore a complete backup from the file efaBackup_20130513_223131.zip:
+<tt>backup restore efaBackup_20130513_223131.zip</tt><br>
+To restore only the 2013 logbook (named <i>2013</i>) from a backup from the file efaBackup_20130513_223131.zip:
+<tt>backup restore efaBackup_20130513_223131.zip 2013.efa2logbook</tt></p>
+
+<h4 align="center">Execute external commands</h4>
+
+<p>External commands can be executed from within efa using the CLI command <tt>command</tt>.</p>
+
+<table align="center" border>
+    <tr><th>Command</th><th>Subcommand</th><th>Options</th><th>Description</th></tr>
+    <tr><td>command</td><td>run</td><td>[options...] [>file]</td><td>Starts an external command <i>command</i> with the options <i>options</i>. Using <tt>&gt;file</tt>, the output can be redirected to a file. Note: The command is started in the background. efa does not wait for the command to complete.</td></tr>
+</table>
+
+<p>Examples:<br>
+To run xclock on Linux:<br>
+<tt>command run /usr/bin/xclock</tt>
+</p>
+
+</body>
+</html>

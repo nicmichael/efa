@@ -10,7 +10,6 @@
 
 package de.nmichael.efa.util;
 
-import java.awt.*;
 import javax.swing.*;
 
 // @i18n complete

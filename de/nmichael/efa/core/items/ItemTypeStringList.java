@@ -44,6 +44,7 @@ public class ItemTypeStringList extends ItemTypeLabelValue {
     	if (this.cellRenderer!=null) {
     		((ItemTypeStringList) retValue).setCellRenderer(this.cellRenderer);
     	}
+    	retValue.setIcon((label == null ? null : label.getIcon()));
     	return retValue;
     }
 

@@ -28,7 +28,6 @@
 package de.nmichael.efa.gui.util;
 
 import de.nmichael.efa.util.EfaUtil;
-import de.nmichael.efa.util.International;
 import de.nmichael.efa.util.TMJ;
 import de.nmichael.efa.util.TableMap;
 import java.util.Date;
@@ -49,10 +48,11 @@ import javax.swing.table.TableColumnModel;
 public class TableSorter extends TableMap {
 
     int indexes[];
-    Vector sortingColumns = new Vector();
+    Vector <Integer>sortingColumns = new Vector<Integer>();
     boolean ascending = true;
     int compares;
-
+    Vector <Integer> permanentSecondarySortColumns=new Vector<Integer>();
+    
     public TableSorter() {
         indexes = new int[0]; // for consistency
     }
@@ -74,6 +74,18 @@ public class TableSorter extends TableMap {
         reallocateIndexes();
     }
 
+    public Vector <Integer> getPermanentSecondarySortColumn() {
+    	return this.permanentSecondarySortColumns;
+    }
+    
+    public void addPermanentSecondarySortcolumn(int value) {
+    	this.permanentSecondarySortColumns.add(new Integer(value));
+    }
+    
+    public void clearPermanentSecondarySortColumns() {
+    	this.permanentSecondarySortColumns.clear();
+    }
+    
     private int compareStringDates(String s1, String s2) {
         // added by Nicolas Michael, to compare Strings containing dates
         TMJ t1 = EfaUtil.string2date(s1, 0, 0, 0);
@@ -240,6 +252,29 @@ public class TableSorter extends TableMap {
             Object v2 = data.getValueAt(row2, column);
             String s2 = v2.toString();
 
+            // check if TableItem tells us which Datatype we have.
+            // need to check for numbers as they can be negative and do not sort well with string sorter
+            if (v1.getClass() == TableItem.class) {
+            	TableItem t1 = (TableItem)v1;
+            	
+            	if (t1 != null && t1.getType()!=null && t1.getType().getSuperclass() == java.lang.Number.class) {
+                    Number n1 = (Number) EfaUtil.string2long(s1, 0);
+                    double d1 = n1.doubleValue();
+                    Number n2 = (Number) EfaUtil.string2long(s2, 0);
+                    double d2 = n2.doubleValue();
+
+                    if (d1 < d2) {
+                        return -1;
+                    } else if (d1 > d2) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+            	}
+            } 
+            
+            // not TableItem with Numbers installed...
+            
             int ret = compareStringDates(s1, s2);
             if (ret != 99) {
                 return ret;
@@ -437,6 +472,7 @@ public class TableSorter extends TableMap {
         this.ascending = ascending;
         sortingColumns.removeAllElements();
         sortingColumns.addElement(new Integer(column));
+        permanentSecondarySortColumns.forEach((n) -> sortingColumns.addElement(n));
         sort(this);
         super.tableChanged(new TableModelEvent(this));
     }

@@ -79,7 +79,7 @@ REM # ##########################################
 REM Java Heap
 REM A higher Java Heaps helps to speed up efa on slower computers
 REM As garbage collection needs to run at lower frequencies
-SET EFA_JAVA_HEAP=160m
+SET EFA_JAVA_HEAP=192m
 SET EFA_NEW_SIZE=32m
 IF EXIST javaheap.bat CALL javaheap.bat
 

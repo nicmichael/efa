@@ -10,11 +10,9 @@
 
 package de.nmichael.efa.gui.dataedit;
 
-import de.nmichael.efa.*;
 import de.nmichael.efa.util.*;
 import de.nmichael.efa.util.Dialog;
 import de.nmichael.efa.core.items.*;
-import de.nmichael.efa.data.Logbook;
 import de.nmichael.efa.data.storage.*;
 import de.nmichael.efa.data.types.*;
 import de.nmichael.efa.gui.BaseDialog;

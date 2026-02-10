@@ -21,6 +21,7 @@ import de.nmichael.efa.data.storage.*;
 import de.nmichael.efa.data.types.*;
 import de.nmichael.efa.gui.BaseDialog;
 import de.nmichael.efa.gui.BaseTabbedDialog;
+import de.nmichael.efa.gui.EfaGuiUtils;
 import de.nmichael.efa.gui.EnterPasswordDialog;
 import de.nmichael.efa.gui.SimpleInputDialog;
 import de.nmichael.efa.gui.util.TableItem;
@@ -261,9 +262,14 @@ public class StatisticsRecord extends DataRecord implements IItemListener {
     
     public static final String SHOWDATAVALID_STATENDTIME = "StatEndTime";
     public static final String SHOWDATAVALID_LASTTRIPTIME = "LastTripTime";
+    public static final String ECRID = "ecrid";
+
 
     private static final int ARRAY_STRINGLIST_VALUES = 1;
     private static final int ARRAY_STRINGLIST_DISPLAY = 2;
+    
+    private static final String DEFAULT_GUI_CSV_COLUMN_SEPARATOR = "|";
+    private static final String DEFAULT_GUI_CSV_QUOTE = "";
 
     public enum StatisticCategory {
         UNKNOWN,
@@ -360,6 +366,7 @@ public class StatisticsRecord extends DataRecord implements IItemListener {
     private ItemTypeMultiSelectList<String> itemShowOtherFields;
     private ItemTypeMultiSelectList<String> itemAggrFields;
     private ItemTypeFile itemOutputFile;
+    private ItemTypeLabel itemOutputFileHINT;
     private ItemTypeStringList itemOutputEncoding;
     private ItemTypeBoolean itemOutputHtmlUpdateTable;
     private ItemTypeString itemOutputCsvSeparator;
@@ -648,6 +655,7 @@ public class StatisticsRecord extends DataRecord implements IItemListener {
         f.add(OPTIONSUMGUESTSANDOTHERS);          t.add(IDataAccess.DATA_BOOLEAN);
         f.add(OPTIONSUMGUESTSBYCLUB);             t.add(IDataAccess.DATA_BOOLEAN);
         f.add(OPTIONSHOWVALIDLASTTRIP);           t.add(IDataAccess.DATA_STRING);
+        f.add(ECRID);                             t.add(IDataAccess.DATA_STRING);
         MetaData metaData = constructMetaData(Statistics.DATATYPE, f, t, false);
         metaData.setKey(new String[] { ID });
         metaData.addIndex(IDX_NAME);
@@ -824,6 +832,8 @@ public class StatisticsRecord extends DataRecord implements IItemListener {
                 return International.getString("Wettbewerb");
             case other:
                 return International.getString("Weitere");
+            case UNKNOWN:
+            	return EfaTypes.TEXT_UNKNOWN;
         }
         return EfaTypes.TEXT_UNKNOWN;
     }
@@ -1231,6 +1241,8 @@ public class StatisticsRecord extends DataRecord implements IItemListener {
                 return "PDF";
             case efawett:
                 return International.onlyFor("Meldedatei", "de") + " (" + Daten.EFA_WETT + ")";
+            case UNKNOWN:
+            	return EfaTypes.TEXT_UNKNOWN;
         }
         return EfaTypes.TEXT_UNKNOWN;
     }
@@ -1251,6 +1263,8 @@ public class StatisticsRecord extends DataRecord implements IItemListener {
                 return "pdf";
             case efawett:
                 return "efw";
+            case UNKNOWN:
+            	return "out";
         }
         return "out";
     }
@@ -2273,6 +2287,17 @@ public class StatisticsRecord extends DataRecord implements IItemListener {
                         International.getString("Schaden");
             case clubwork:
                 return International.getString("Vereinsarbeit");
+            
+            // obviously non-supported sort orders
+            case memberNo:
+            	return EfaTypes.TEXT_UNKNOWN;
+            case gender:
+            	return EfaTypes.TEXT_UNKNOWN;
+            case days:
+            	return EfaTypes.TEXT_UNKNOWN;
+            case UNKNOWN:
+            	return EfaTypes.TEXT_UNKNOWN;
+            
         }
         return EfaTypes.TEXT_UNKNOWN;
     }
@@ -2401,7 +2426,7 @@ public class StatisticsRecord extends DataRecord implements IItemListener {
     public String getOutputCsvSeparator() {
         String separator = getString(OUTPUTCSVSEPARATOR);
         if (separator == null || separator.length() == 0) {
-            return "|";
+            return DEFAULT_GUI_CSV_COLUMN_SEPARATOR;
         }
         return separator;
     }
@@ -2412,7 +2437,7 @@ public class StatisticsRecord extends DataRecord implements IItemListener {
     public String getOutputCsvQuotes() {
         String quotes = getString(OUTPUTCSVQUOTES);
         if (quotes == null) {
-            return "";
+            return DEFAULT_GUI_CSV_QUOTE;
         }
         return quotes;
     }
@@ -2852,6 +2877,8 @@ public class StatisticsRecord extends DataRecord implements IItemListener {
                 International.onlyFor("Alle Zielbereiche ausgeben", "de")));
 
         // CAT_OUTPUT
+        v.add(item = EfaGuiUtils.createHint("HINT_"+StatisticsRecord.OUTPUTFILE, IItemType.TYPE_PUBLIC, CAT_OUTPUT, "<html>"+International.getStringWithMnemonic("STATISTICS_RELATIVE_PATHS_HINT")+"</html>", 3, 0, 10));
+        this.itemOutputFileHINT = (ItemTypeLabel) item;
         v.add(item = new ItemTypeStringList(StatisticsRecord.OUTPUTTYPE, getOutputType(),
                 getOutputTypes(ARRAY_STRINGLIST_VALUES), getOutputTypes(ARRAY_STRINGLIST_DISPLAY),
                 IItemType.TYPE_PUBLIC, CAT_OUTPUT,
@@ -3558,19 +3585,28 @@ public class StatisticsRecord extends DataRecord implements IItemListener {
         } else {
             sOutputFile = getOutputFile();
         }
-        if (FTPClient.isFTP(sOutputFile)) {
-            try {
+        try {
+            if (FTPClient.isFTP(sOutputFile)) {
                 sOutputFtpClient = new FTPClient(sOutputFile, Daten.efaTmpDirectory + "output.ftp");
-            } catch (NoClassDefFoundError e) {
-                Dialog.error(International.getString("Fehlendes Plugin") + ": " + Plugins.PLUGIN_FTP);
-                return false;
+                sOutputFile = Daten.efaTmpDirectory + "output.ftp";
             }
-            sOutputFile = Daten.efaTmpDirectory + "output.ftp";
+        } catch (NoClassDefFoundError e) {
+            Dialog.error(International.getString("Fehlendes Plugin") + ": " + Plugins.PLUGIN_FTP);
+            return false;
         }
         if (Email.getEmailAddressFromMailtoString(sOutputFile.toLowerCase()) != null) {
             sEmailAddresses = Email.getEmailAddressFromMailtoString(sOutputFile.toLowerCase());
             sOutputFile = Daten.efaTmpDirectory + "output_" + System.currentTimeMillis() + getOutputExtension();
         }
+        
+        // if the filename is present, check for symbolic links at the beginning of the path
+        // ~/output.txt    ->/home/username/output.txt 
+        // ./output.txt    -> efa_data_directory/output.txt
+        // just like in efaCLI data import/export function (MenuData.java)
+        
+        sOutputFile = EfaUtil.extendFilenameWithRelativePath(sOutputFile);
+        sOutputFile = EfaUtil.correctFilePath(sOutputFile);
+        
         sOutputDir = (new File(sOutputFile)).getParent();
         if (sOutputDir == null || sOutputDir.length() == 0) { // shouldn't happen, just in case...
             sOutputDir = Daten.efaTmpDirectory;
@@ -3607,6 +3643,8 @@ public class StatisticsRecord extends DataRecord implements IItemListener {
                 return ".pdf";
             case efawett:
                 return ".efw";
+            case UNKNOWN:
+            	return ".out";
         }
         return ".out";
     }
@@ -3796,7 +3834,8 @@ public class StatisticsRecord extends DataRecord implements IItemListener {
                                 pMatrixColumns.put("*** " + International.getString("ungültiger Eintrag") + " ***", mk);
                             }
                         } else if (mk instanceof Hashtable) {
-                            Hashtable<Object,Long> hash = (Hashtable<Object,Long>) mk;
+                            @SuppressWarnings("unchecked")
+							Hashtable<Object,Long> hash = (Hashtable<Object,Long>) mk;
                             Object[] hkeys = hash.keySet().toArray();
                             for (Object hk : hkeys) {
                                 pMatrixColumns.put(hk.toString(), mk);
@@ -4092,6 +4131,7 @@ public class StatisticsRecord extends DataRecord implements IItemListener {
             itemOutputFile.setVisible(output != OutputTypes.internal &&
                     output != OutputTypes.internaltxt &&
                     output != OutputTypes.efawett);
+            itemOutputFileHINT.setVisible(itemOutputFile.isVisible());
         }
         if (itemOutputFtpButton != null) {
             itemOutputFtpButton.setVisible(output != OutputTypes.internal &&

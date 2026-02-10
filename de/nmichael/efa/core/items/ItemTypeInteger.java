@@ -49,6 +49,7 @@ public class ItemTypeInteger extends ItemTypeLabelTextfield {
     public IItemType copyOf() {
         ItemTypeInteger newItem = new ItemTypeInteger(name, value, min, max, !isNotNullSet(), type, category, description);
         newItem.setPadding(padXbefore, padXafter, padYbefore, padYafter);
+        newItem.setIcon((label == null ? null : label.getIcon()));
         return newItem;
     }
 

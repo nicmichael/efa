@@ -158,18 +158,26 @@ public class Table extends JTable {
 
         int[] widths = new int[header.length];
         for (int i = 0; i < widths.length; i++) {
-            widths[i] = (int) Math.floor((((float)header[i].getMaxColumnWidth()) / ((float)absoluteWidth)) * ((float)width));
-            if (widths[i] < minColumnWidth) {
-                widths[i] = minColumnWidth;
-            }
-            if (minColumnWidths != null && i < minColumnWidths.length &&
-                widths[i] < minColumnWidths[i]) {
-                widths[i] = minColumnWidths[i];
-            }
+            if (header[i].getVisible()) {
+	        	widths[i] = (int) Math.floor((((float)header[i].getMaxColumnWidth()) / ((float)absoluteWidth)) * ((float)width));
+	            if (widths[i] < minColumnWidth) {
+	                widths[i] = minColumnWidth;
+	            }
+	            if (minColumnWidths != null && i < minColumnWidths.length &&
+	                widths[i] < minColumnWidths[i]) {
+	                widths[i] = minColumnWidths[i];
+	            }
+            }             	
         }
 
         for (int i = 0; i < widths.length; i++) {
-            getColumnModel().getColumn(i).setPreferredWidth(widths[i]);
+            if (header[i].getVisible()) {
+                getColumnModel().getColumn(i).setPreferredWidth(widths[i]);
+            } else {
+                getColumnModel().getColumn(i).setPreferredWidth(0);
+                getColumnModel().getColumn(i).setMaxWidth(0);
+                getColumnModel().getColumn(i).setMinWidth(0);
+            }
         }
     }
 
@@ -247,7 +255,11 @@ public class Table extends JTable {
     public boolean getSortingAscending() {
         return sorter.getSortingAscending();
     }
-
+    
+    public void addPermanentSecondarySortingColumn(int sortColumn) {
+    	sorter.addPermanentSecondarySortcolumn(sortColumn);
+    }
+    
     public EfaTableCellRenderer getRenderer() {
         return renderer;
     }

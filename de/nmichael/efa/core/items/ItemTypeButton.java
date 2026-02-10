@@ -12,7 +12,6 @@ package de.nmichael.efa.core.items;
 
 import de.nmichael.efa.util.*;
 import de.nmichael.efa.util.Dialog;
-import java.util.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -24,7 +23,7 @@ public class ItemTypeButton extends ItemType {
     protected JButton button;
     protected ImageIcon icon;
     protected Insets margin;
-    protected boolean boldfont;
+    protected boolean boldfont=true;
     
     public ItemTypeButton(String name, 
             int type, String category, String description) {

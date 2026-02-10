@@ -10,17 +10,37 @@
 
 package de.nmichael.efa.data;
 
+import java.awt.AWTEvent;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.util.UUID;
+import java.util.Vector;
+
 import de.nmichael.efa.Daten;
 import de.nmichael.efa.core.config.AdminRecord;
 import de.nmichael.efa.core.config.EfaTypes;
-import de.nmichael.efa.data.storage.*;
-import de.nmichael.efa.data.types.*;
-import de.nmichael.efa.core.items.*;
-import de.nmichael.efa.gui.util.*;
-import de.nmichael.efa.util.*;
-
-import java.awt.GridBagConstraints;
-import java.util.*;
+import de.nmichael.efa.core.items.IItemListener;
+import de.nmichael.efa.core.items.IItemType;
+import de.nmichael.efa.core.items.ItemTypeBoolean;
+import de.nmichael.efa.core.items.ItemTypeButton;
+import de.nmichael.efa.core.items.ItemTypeLabelHeader;
+import de.nmichael.efa.core.items.ItemTypeString;
+import de.nmichael.efa.core.items.ItemTypeStringList;
+import de.nmichael.efa.data.storage.DataKey;
+import de.nmichael.efa.data.storage.DataRecord;
+import de.nmichael.efa.data.storage.IDataAccess;
+import de.nmichael.efa.data.storage.MetaData;
+import de.nmichael.efa.data.types.DataTypeDate;
+import de.nmichael.efa.data.types.DataTypeIntString;
+import de.nmichael.efa.data.types.DataTypeTime;
+import de.nmichael.efa.ex.EfaModifyException;
+import de.nmichael.efa.gui.EfaGuiUtils;
+import de.nmichael.efa.gui.ImagesAndIcons;
+import de.nmichael.efa.gui.util.TableItem;
+import de.nmichael.efa.gui.util.TableItemHeader;
+import de.nmichael.efa.util.EfaUtil;
+import de.nmichael.efa.util.International;
+import de.nmichael.efa.util.Logger;
 
 // @i18n complete
 
@@ -49,7 +69,14 @@ public class BoatStatusRecord extends DataRecord {
     public static final String LOGBOOK             = "Logbook";       // the name of the logbook EntryNo is pointing to
     public static final String ENTRYNO             = "EntryNo";       // the EntryNo if this boat in ONTHEWATER
     public static final String COMMENT             = "Comment";
+    public static final String ECRID               = "ecrid";
 
+    public static final int COLUMN_ID_BOAT_NAME = 0;
+    public static final int COLUMN_ID_BOAT_BASE_STATUS = 1;
+    public static final int COLUMN_ID_BOAT_CURRENT_STATUS = 2;
+    public static final int COLUMN_ID_BOAT_SESSION_LOGBOOK = 3;
+    public static final int COLUMN_ID_BOAT_COMMENT = 4;
+    
     protected static String CAT_STATUS       = "%06%" + International.getString("Bootsstatus");
     
     public static void initialize() {
@@ -66,6 +93,7 @@ public class BoatStatusRecord extends DataRecord {
         f.add(LOGBOOK);                  t.add(IDataAccess.DATA_STRING);
         f.add(ENTRYNO);                  t.add(IDataAccess.DATA_INTSTRING);
         f.add(COMMENT);                  t.add(IDataAccess.DATA_STRING);
+        f.add(ECRID);                    t.add(IDataAccess.DATA_STRING);
         MetaData metaData = constructMetaData(BoatStatus.DATATYPE, f, t, false);
         metaData.setKey(new String[] { BOATID });
         metaData.addIndex(new String[] { CURRENTSTATUS });
@@ -112,6 +140,11 @@ public class BoatStatusRecord extends DataRecord {
         return getUUID(BOATID);
     }
 
+    /**
+     * Return the qualified name of the boat identified by the boatstatus record's boat id, valid at the given timestamp.
+     * @param validAt timestamp (System.currentTimeMillis)
+     * @return Qualified name of the boat, null if no boatrecord can be found for the BoatID.
+     */
     public String getBoatNameAsString(long validAt) {
         Boats b = getPersistence().getProject().getBoats(false);
         if (b != null) {
@@ -208,13 +241,19 @@ public class BoatStatusRecord extends DataRecord {
      * @return Destination and DestinationVariant name
      */
     public String getDestination() {
-    	
-        LogbookRecord r = getLogbookRecord(); 	
-        if (r==null) {
-        	return International.getString("Fehler: kein Fahrtenbucheintrag zu Boot auf Fahrt");
-        } else {
-        	return r.getDestinationAndVariantName();
-        }
+   	
+    	if (getLogbook().equalsIgnoreCase(Daten.project.getCurrentLogbook().getName())) {
+    		LogbookRecord r = getLogbookRecord(); 	
+	    	if (r==null) {
+	        	return International.getString("Fehler: kein Fahrtenbucheintrag zu Boot auf Fahrt");
+	        } else {
+	        	return r.getDestinationAndVariantName();
+	        }
+    	} else {
+    		// boatstatus not in the current logbook, so only display sessionno and logbookname.
+    		// this is safe, as this data is in the boatstatus, and we do not load a "foreign" logbook on the fly
+    		return "#"+getEntryNoAndLogbook();
+    	}
     }    
     
     public void setOnlyInBoathouseId(int boathouseId) {
@@ -263,7 +302,27 @@ public class BoatStatusRecord extends DataRecord {
     public String getComment() {
         return getString(COMMENT);
     }
+    
+    /**
+     * Get the name of the boat owner of the current boatstatusrecord's boat.
+     * @return Boat owner's name, or empty string if boat cannot be found for this BoatStatusRecord.
+     */
+    public String getBoatOwner() {
+    	  Boats boats = getPersistence().getProject().getBoats(false);
+          String boatOwner = "";
+          if (boats != null && getBoatId() != null) {
+              BoatRecord r = boats.getBoat(getBoatId(), System.currentTimeMillis());
+              if (r != null) {
+                  boatOwner = r.getOwner();
+              }
+          } 
+          return boatOwner;    	
+    }
 
+    /**
+     * Get the name of the boat of the current boatstatusrecord.
+     * @return Boat's qualified name, or user-entered name of a foreign boat, with suffix "(unknown boat)".
+     */
     private String getBoatName() {
         Boats boats = getPersistence().getProject().getBoats(false);
         String boatName = "?";
@@ -356,36 +415,102 @@ public class BoatStatusRecord extends DataRecord {
                     IItemType.TYPE_PUBLIC, CAT_STATUS,
                     International.getString("nur anzeigen in Bootshaus")));
         }
-        if (getCurrentStatus() != null && getCurrentStatus().equals(STATUS_ONTHEWATER)) {
-            v.add(item = new ItemTypeLabel(BoatStatusRecord.ENTRYNO,
-                    IItemType.TYPE_PUBLIC, CAT_STATUS,
+        if ((getCurrentStatus() != null && getCurrentStatus().equals(STATUS_ONTHEWATER))
+        		|| (getEntryNo()!=null || (getLogbook() != null && getLogbook().trim().length()>0))){
+            v.add(item = EfaGuiUtils.createHintWordWrap(BoatStatusRecord.ENTRYNO, IItemType.TYPE_PUBLIC, CAT_STATUS,
                     International.getMessage("Eintrag in Lfd. Nr. {entryNo} in Fahrtenbuch {logbook}", 
-                    (getEntryNo() != null ? getEntryNo().toString() : "NOENTRYNO"), getLogbook())));
+                            (getEntryNo() != null ? getEntryNo().toString() : "("+International.getString("leer")+")"), getLogbook()),3,5,5,600));
+            item.setFieldGrid(2, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL);
+
         }
         v.add(item = new ItemTypeString(BoatStatusRecord.COMMENT, getComment(),
                 IItemType.TYPE_PUBLIC, CAT_STATUS, International.getString("Bemerkung")));
         
         return v;
     }
-
+    
     public TableItemHeader[] getGuiTableHeader() {
-        TableItemHeader[] header = new TableItemHeader[4];
-        header[0] = new TableItemHeader(International.getString("Boot"));
-        header[1] = new TableItemHeader(International.getString("Basis-Status"));
-        header[2] = new TableItemHeader(International.getString("aktueller Status"));
-        header[3] = new TableItemHeader(International.getString("Bemerkung"));
+    	boolean multipleBoathouses = false;
+        try {
+            multipleBoathouses = (getPersistence().getProject().getNumberOfBoathouses() > 1);
+        } catch(Exception eingore) {
+            EfaUtil.foo();
+        }
+
+        int cols = 6;
+        if (multipleBoathouses) {cols++;}
+
+        TableItemHeader[] header = new TableItemHeader[cols];
+        int col=0;
+        header[col++] = new TableItemHeader(International.getString("Boot"));
+        if (multipleBoathouses) {
+            header[col++] = new TableItemHeader(International.getString("Bootshaus"));
+        }
+        header[col++] = new TableItemHeader(International.getString("Basis-Status"));
+        header[col++] = new TableItemHeader(International.getString("aktueller Status"));
+        header[col++] = new TableItemHeader(International.getString("Fahrt")+"/"+International.getString("Fahrtenbuch"));
+        header[col++] = new TableItemHeader(International.getString("Bemerkung"));
+        header[col++] = new TableItemHeader(International.getString("Eigentümer"));
         return header;
     }
 
     public TableItem[] getGuiTableItems() {
-        TableItem[] items = new TableItem[4];
-        items[0] = new TableItem(getBoatName());
-        items[1] = new TableItem(getStatusDescription(getBaseStatus()));
-        items[2] = new TableItem(getStatusDescription(getCurrentStatus()));
-        items[3] = new TableItem(getComment());
+        boolean multipleBoathouses = false;
+        try {
+            multipleBoathouses = (getPersistence().getProject().getNumberOfBoathouses() > 1);
+        } catch(Exception eingore) {
+            EfaUtil.foo();
+        }
+        int cols = 6;
+        if (multipleBoathouses) {
+            cols++;
+        }
+        int col=0;
+        TableItem[] items = new TableItem[cols];
+        items[col++] = new TableItem(getBoatName());
+        if (multipleBoathouses) {
+            items[col++] = new TableItem(getOnlyInBoathouseName());
+        }        
+        items[col++] = new TableItem(getStatusDescription(getBaseStatus()));
+        items[col++] = new TableItem(getStatusDescription(getCurrentStatus()));
+        items[col++] = new TableItem(getEntryNoAndLogbook());
+        items[col++] = new TableItem(getComment());
+        items[col++] = new TableItem(getBoatOwner());
         return items;
     }
 
+    
+    private String getEntryNoAndLogbook() {
+        String retVal="";
+        if (getEntryNo() != null) { 
+        	retVal+=getEntryNo().toString().trim();
+        } 
+        if (getLogbook() != null) {
+        	if (retVal.length()>0) {
+        		retVal+= " / ";
+        	}
+        	retVal+=getLogbook();
+        }
+        
+        return retVal;    	
+    }
+    
+    /**
+     * @return Empty if boat is not to be shown exclusively in a single boathouse, else it retruns the respective name of the boathouse.
+     */
+    public String getOnlyInBoathouseName() {
+        int id = getOnlyInBoathouseIdAsInt();
+        if (id <= 0) {
+            return null;
+        }
+        try {
+            return getPersistence().getProject().getBoathouseName(id);
+        } catch(Exception e) {
+            Logger.logdebug(e);
+        }
+        return International.getString("Bootshaus") + " " + id;
+    }    
+    
     public static String getStatusDescription(String stype) {
         if (stype == null) {
             return null;
@@ -478,6 +603,5 @@ public class BoatStatusRecord extends DataRecord {
                 + (enddate != null && enddate.length() > 0 ? " " + International.getMessage("bis {timestamp}", enddate) : "")
                 + " " + International.getMessage("mit {crew}", person);
     }
-
 
 }

@@ -10,17 +10,20 @@
 
 package de.nmichael.efa.core.items;
 
-// @i18n complete
+import javax.swing.JDialog;
 
 import de.nmichael.efa.core.config.AdminRecord;
+import de.nmichael.efa.data.storage.DataRecord;
+import de.nmichael.efa.data.storage.StorageObject;
+
+// @i18n complete
+
 import de.nmichael.efa.gui.dataedit.DataEditDialog;
-import de.nmichael.efa.data.storage.*;
-import javax.swing.*;
 
 public interface IItemListenerDataRecordTable {
 
     public void itemListenerActionTable(int actionId, DataRecord[] records);
-    public boolean deleteCallback(DataRecord[] records);
+    public boolean deleteCallback(JDialog parent,IItemListenerDataRecordTable caller, AdminRecord admin, DataRecord[] records);
     public DataEditDialog createNewDataEditDialog(JDialog parent, StorageObject persistence, DataRecord record);
 
 }

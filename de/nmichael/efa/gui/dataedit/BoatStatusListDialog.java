@@ -19,6 +19,8 @@ import de.nmichael.efa.gui.BaseDialog;
 import de.nmichael.efa.util.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.UUID;
+
 import javax.swing.*;
 
 
@@ -32,6 +34,7 @@ public class BoatStatusListDialog extends DataListDialog {
         actionType = new int[] { ItemTypeDataRecordTable.ACTION_EDIT };
         actionImage = new String[] { BaseDialog.IMAGE_EDIT };
         intelligentColumnWidth = false;
+        iniValues();
     }
 
     public BoatStatusListDialog(JDialog parent, AdminRecord admin) {
@@ -41,6 +44,7 @@ public class BoatStatusListDialog extends DataListDialog {
         actionType = new int[] { ItemTypeDataRecordTable.ACTION_EDIT };
         actionImage = new String[] { BaseDialog.IMAGE_EDIT };
         intelligentColumnWidth = false;
+        iniValues();
     }
 
     public void keyAction(ActionEvent evt) {
@@ -53,4 +57,23 @@ public class BoatStatusListDialog extends DataListDialog {
         }
         return new BoatStatusEditDialog(parent, (BoatStatusRecord)record, false, admin);
     }
+    
+	protected void createSpecificItemTypeRecordTable() {
+		
+		super.createSpecificItemTypeRecordTable();
+
+		table.addPermanentSecondarySortingColumn(BoatStatusRecord.COLUMN_ID_BOAT_BASE_STATUS);
+		table.addPermanentSecondarySortingColumn(BoatStatusRecord.COLUMN_ID_BOAT_CURRENT_STATUS);
+		table.addPermanentSecondarySortingColumn(BoatStatusRecord.COLUMN_ID_BOAT_NAME);        
+		table.addPermanentSecondarySortingColumn(BoatStatusRecord.COLUMN_ID_BOAT_SESSION_LOGBOOK);
+
+	}    
+	
+    private void iniValues() {
+    	//From and to columns should be wider than default
+		//Buttons on north, if boat reservations are called from efaBths main screen.
+		this.buttonPanelPosition =  BorderLayout.NORTH;
+		this.minColumnWidths = new int[] {150,150,150,120,120,120,-1};   
+    }
+    
 }

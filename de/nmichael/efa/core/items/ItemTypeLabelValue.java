@@ -12,7 +12,6 @@ package de.nmichael.efa.core.items;
 
 import de.nmichael.efa.util.*;
 import de.nmichael.efa.util.Dialog;
-import de.nmichael.efa.gui.BaseDialog;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -372,4 +371,11 @@ public abstract class ItemTypeLabelValue extends ItemType {
         this.yOffset = y;
     }
     
+    public void setIcon(Icon iValue) {
+    	if (label!=null) {
+	    	label.setIcon(iValue);
+	    	label.setIconTextGap(1);
+	    	label.setHorizontalTextPosition(SwingConstants.LEFT);
+    	}
+    }
 }

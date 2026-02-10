@@ -40,7 +40,10 @@ public class ItemTypeHours extends ItemTypeLabelTextfield {
     }
 
     public IItemType copyOf() {
-        return new ItemTypeHours(name, new DataTypeHours(value), type, category, description);
+    	ItemTypeHours copy = new ItemTypeHours(name, new DataTypeHours(value), type, category, description);
+    	copy.setPadding(padXbefore, padXafter, padYbefore, padYafter);
+    	copy.setIcon((label == null ? null : label.getIcon()));
+    	return copy;
     }
 
     public void enableSeconds(boolean withSeconds) {

@@ -2,7 +2,16 @@ INSTALLATION NOTES
 ==================
 
 Bitte folge den Anweisungen in "install_de.html" im Unterverzeichnis "doc"
-dieser Installation
+dieser Installation.
 
-Please follow the instruction in "install_en.html" in the subdirectory "doc"
+Eine umfangreichere Information zur Installation ist online im Dokuwiki verfügbar:
+http://efa.nmichael.de/dokuwiki/doku.php?id=quick_install
+
+----
+
+Please follow the instructions in "install_en.html" in the subdirectory "doc"
 of this installation.
+
+An extended version of the Installation instructions is available in the 
+Dokuwiki (online, in German).
+http://efa.nmichael.de/dokuwiki/doku.php?id=quick_install

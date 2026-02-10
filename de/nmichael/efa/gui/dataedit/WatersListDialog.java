@@ -59,6 +59,17 @@ public class WatersListDialog extends DataListDialog {
         super.itemListenerActionTable(actionId, records);
         switch(actionId) {
             case ACTION_CREATEFROMTEMPLATE:
+            	
+            	if (Daten.project != null && Daten.project.isOpen() && Daten.project.getIsProjectStorageTypeEfaCloud()) {
+            		if (Dialog.yesNoDialog(International.getString("Gewässer aktualisieren"), 
+            				International.getString("ACHTUNG")+"!\n\n"
+            				+International.getString("Das aktuell geladene Projekt basiert auf efaCloud. In efaCloud Umgebungen sollte die Aktualisierung der Gewässer nur auf einer Station erfolgen. Die anderen Stationen erhalten die Aktualisierung über die efaCloud-Synchronisation.")
+            				+"\n\n" +International.getString("Gewässer aktualisieren")+"?") !=  Dialog.YES) {
+            			// nothing todo when user said no
+            			return;
+            		}
+            	}
+            	
                 int count = Daten.project.getWaters(false).addAllWatersFromTemplate(International.getLanguageID());
                 if (count > 0) {
                     Dialog.infoDialog(International.getMessage("{count} Gewässer aus Gewässerkatalog erfolgreich hinzugefügt oder aktualisiert.",

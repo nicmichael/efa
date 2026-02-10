@@ -12,7 +12,6 @@ package de.nmichael.efa.core.items;
 
 // @i18n complete
 
-import javax.swing.*;
 import java.awt.*;
 
 public interface IItemListener {

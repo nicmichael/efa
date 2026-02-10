@@ -12,9 +12,7 @@ package de.nmichael.efa.data.sync;
 
 import de.nmichael.efa.util.*;
 import java.util.*;
-import java.io.*;
 import org.xml.sax.*;
-import org.xml.sax.helpers.*;
 
 // @i18n complete
 

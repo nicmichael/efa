@@ -11,7 +11,6 @@
 package de.nmichael.efa.statistics;
 
 import de.nmichael.efa.data.*;
-import de.nmichael.efa.util.Dialog;
 
 public abstract class StatisticWriter {
 

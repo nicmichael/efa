@@ -29,10 +29,12 @@ import de.nmichael.efa.util.EfaUtil;
 
 public class ItemTypeLabel extends ItemType {
 
-    private JLabel[] labels;
+    private JLabel[] labels = null;
     private ImageIcon icon;
     private boolean mouseClickListener = false;
     private boolean roundShape=false;
+    private int iconPosition=-1;
+    private boolean boldFont = false;
     		
     public ItemTypeLabel(String name, int type,
             String category, String description) {
@@ -54,6 +56,8 @@ public class ItemTypeLabel extends ItemType {
         thisCopy.setHorizontalAlignment(hAlignment);
         thisCopy.setRoundShape(roundShape);
         thisCopy.setBorder(border);
+        thisCopy.setImagePosition(iconPosition);
+        thisCopy.setBoldFont(boldFont);
         return thisCopy;
 
     }
@@ -71,8 +75,10 @@ public class ItemTypeLabel extends ItemType {
         if (v.size() == 0) {
             v.add("");
         }
-        for (int i=0; i<v.size() && i<labels.length; i++) {
-            labels[i].setText((String)v.get(i));
+        if (labels!=null) {
+	        for (int i=0; i<v.size() && i<labels.length; i++) {
+	            labels[i].setText((String)v.get(i));
+	        }
         }
     }
 
@@ -93,7 +99,11 @@ public class ItemTypeLabel extends ItemType {
             }
             if (hAlignment != -1) {
                 l.setHorizontalAlignment(hAlignment);
-                l.setHorizontalTextPosition(hAlignment);
+                if (iconPosition==-1) {
+                	l.setHorizontalTextPosition(hAlignment);
+                } else {
+                	l.setHorizontalTextPosition(iconPosition);
+                }
             }
             if (this.getColor() != null) {
                 l.setForeground(this.getColor());
@@ -175,7 +185,11 @@ public class ItemTypeLabel extends ItemType {
     }
     
     protected boolean isBoldFont() {
-    	return false;
+    	return boldFont;
+    }
+    
+    public void setBoldFont(boolean value) {
+    	boldFont=value;
     }
     
     protected Border getBorder() {
@@ -197,6 +211,10 @@ public class ItemTypeLabel extends ItemType {
         }
     }
 
+    public void setImagePosition(int pos) {
+    	this.iconPosition = pos;
+    }
+    
     public void activateMouseClickListener() {
         mouseClickListener = true;
     }

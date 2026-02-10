@@ -15,10 +15,8 @@ import de.nmichael.efa.gui.EfaConfigDialog;
 import de.nmichael.efa.util.*;
 import de.nmichael.efa.util.Dialog;
 import de.nmichael.efa.Daten;
-import java.util.*;
 import java.awt.*;
 import java.awt.event.*;
-import javax.swing.*;
 
 // @i18n complete
 

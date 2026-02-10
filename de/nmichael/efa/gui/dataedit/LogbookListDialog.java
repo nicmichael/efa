@@ -10,7 +10,6 @@
 
 package de.nmichael.efa.gui.dataedit;
 
-import de.nmichael.efa.*;
 import de.nmichael.efa.core.config.AdminRecord;
 import de.nmichael.efa.core.items.*;
 import de.nmichael.efa.data.*;

@@ -248,36 +248,48 @@ public class Status extends StorageObject {
 
     public void open(boolean createNewIfNotExists) throws EfaException {
         super.open(createNewIfNotExists);
-        if (isOpen() && data().getStorageType() != IDataAccess.TYPE_EFA_REMOTE) {
-            if (data().getNumberOfRecords() == 0) {
-                UUID junior = addStatus(International.getString("Junior(in)"), StatusRecord.TYPE_USER);
-                UUID senior = addStatus(International.getString("Senior(in)"), StatusRecord.TYPE_USER);
-                updateStatusAge(junior, ItemTypeInteger.UNSET, 18);
-                updateStatusAge(senior, 19, ItemTypeInteger.UNSET);
-            }
-
-            // make sure GUEST and OTHER status types are always present
-            addStatus(International.getString("Gast"), StatusRecord.TYPE_GUEST);
-            addStatus(International.getString("andere"), StatusRecord.TYPE_OTHER);
-
-            // fix membership status, if necessary
-            try {
-                DataKeyIterator it = data().getStaticIterator();
-                for (DataKey k = it.getFirst(); k != null; k = it.getNext()) {
-                    StatusRecord r = (StatusRecord) data().get(k);
-                    if (r.getMembership() < 0) {
-                        r.setMembership( (r.isTypeUser() ?
-                            StatusRecord.MEMBERSHIP_MEMBER :
-                            StatusRecord.MEMBERSHIP_NOMEMBER) );
-                        data().update(r);
-                    }
-                }
-            } catch (Exception e) {
-                Logger.logdebug(e);
-            }
+        if (isOpen() && data().getStorageType() != IDataAccess.TYPE_EFA_REMOTE && data().getStorageType() != IDataAccess.TYPE_EFA_CLOUD) {
+            // Status for persons is a necessary element in efa as Statistics won't work if they are missing.
+        	// in efaRemote projects, the statuses already exist in the remote project.
+        	// in efaCloud projects, statuses MAY already exist, if the new project is added to an EXISTING efaCloud server (which has statuses).
+        	// the fact that a user may want to create a new project to an totally empty efaCloud server is handled in NewProjectDialog.java 
+        	// as the user can select to create statuses if needed.
+        	createPredefinedStatuses();
         }
     }
 
+    public void createPredefinedStatuses() throws EfaException {
+        if (isOpen() && data().getStorageType() != IDataAccess.TYPE_EFA_REMOTE) {
+        	// we don't check for efaCloud here, as this method may be called from NewProjectDialog.java for efaCloud instances
+	    	if (data().getNumberOfRecords() == 0) {
+	            UUID junior = addStatus(International.getString("Junior(in)"), StatusRecord.TYPE_USER);
+	            UUID senior = addStatus(International.getString("Senior(in)"), StatusRecord.TYPE_USER);
+	            updateStatusAge(junior, ItemTypeInteger.UNSET, 18);
+	            updateStatusAge(senior, 19, ItemTypeInteger.UNSET);
+	        }
+	
+	        // make sure GUEST and OTHER status types are always present
+	        addStatus(International.getString("Gast"), StatusRecord.TYPE_GUEST);
+	        addStatus(International.getString("andere"), StatusRecord.TYPE_OTHER);
+	
+	        // fix membership status, if necessary
+	        try {
+	            DataKeyIterator it = data().getStaticIterator();
+	            for (DataKey k = it.getFirst(); k != null; k = it.getNext()) {
+	                StatusRecord r = (StatusRecord) data().get(k);
+	                if (r.getMembership() < 0) {
+	                    r.setMembership( (r.isTypeUser() ?
+	                        StatusRecord.MEMBERSHIP_MEMBER :
+	                        StatusRecord.MEMBERSHIP_NOMEMBER) );
+	                    data().update(r);
+	                }
+	            }
+	        } catch (Exception e) {
+	            Logger.logdebug(e);
+	        }
+        }
+    }
+    
     public void preModifyRecordCallback(DataRecord record, boolean add, boolean update, boolean delete) throws EfaModifyException {
         if (add || update) {
             assertFieldNotEmpty(record, StatusRecord.ID);

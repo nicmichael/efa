@@ -182,7 +182,7 @@ public class BatchEditDialog extends BaseTabbedDialog implements IItemFactory, I
                 IItemType.TYPE_PUBLIC, makeCategory(null), "... " + International.getString("die folgende Bedingungen erfüllen"));
         editConditions.setPadYbetween(0);
         editConditions.setRepeatTitle(false);
-        editConditions.setXForAddDelButtons(3);
+        editConditions.setXForAddDelButtons(5);
         editConditions.setItemsOrientation(ItemTypeItemList.Orientation.horizontal);
         editConditions.setPadding(0, 0, 20, 0);
         guiItems.add(editConditions);
@@ -194,7 +194,7 @@ public class BatchEditDialog extends BaseTabbedDialog implements IItemFactory, I
         editFields.setMinNumberOfItems(1);
         editFields.setPadYbetween(0);
         editFields.setRepeatTitle(false);
-        editFields.setXForAddDelButtons(3);
+        editFields.setXForAddDelButtons(5);
         editFields.setItemsOrientation(ItemTypeItemList.Orientation.horizontal);
         editFields.setPadding(0, 0, 20, 0);
         guiItems.add(editFields);
@@ -210,13 +210,13 @@ public class BatchEditDialog extends BaseTabbedDialog implements IItemFactory, I
                     International.getString("Änderungsmodus"));
             versionAction.registerItemListener(this);
             versionAction.setPadding(0, 0, 20, 0);
-            versionAction.setFieldGrid(2, -1, GridBagConstraints.HORIZONTAL);
+            versionAction.setFieldGrid(4, -1, GridBagConstraints.HORIZONTAL);
             guiItems.add(versionAction);
             versionValidFrom = new ItemTypeDateTime(GUIITEM_VERSIONVALID,
                     DataTypeDate.today(), DataTypeTime.now(),
                     IItemType.TYPE_PUBLIC, makeCategory(null),
                     International.getString("Neue Version gültig ab"));
-            versionValidFrom.setFieldGrid(2, -1, GridBagConstraints.HORIZONTAL);
+            versionValidFrom.setFieldGrid(4, -1, GridBagConstraints.HORIZONTAL);
             guiItems.add(versionValidFrom);
         }
         super.setItems(guiItems);
@@ -242,7 +242,7 @@ public class BatchEditDialog extends BaseTabbedDialog implements IItemFactory, I
             items[1] = new ItemTypeStringList("OPERATOR", OP_EQUAL,
                     OPERATOR_VALUES, OPERATOR_DISPLAY,
                     IItemType.TYPE_PUBLIC, "", null);
-            items[1].setFieldSize(200, -1);
+            items[1].setFieldSize(120, -1);
             items[2] = //new ItemTypeString("VALUE", "", IItemType.TYPE_PUBLIC, "", null);
                     new ItemTypeStringAutoComplete("VALUE", "", IItemType.TYPE_PUBLIC, "", null, false);
             return items;
@@ -261,7 +261,7 @@ public class BatchEditDialog extends BaseTabbedDialog implements IItemFactory, I
                             International.getString("Wert in Liste löschen") + ":"
                     },
                     IItemType.TYPE_PUBLIC, "", null);
-            items[1].setFieldSize(200, -1);
+            items[1].setFieldSize(120, -1);
             items[2] = //new ItemTypeString("VALUE", "", IItemType.TYPE_PUBLIC, "", null);
                     new ItemTypeStringAutoComplete("VALUE", "", IItemType.TYPE_PUBLIC, "", null, false);
             return items;

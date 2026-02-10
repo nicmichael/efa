@@ -10,7 +10,6 @@
 
 package de.nmichael.efa.core.items;
 
-import de.nmichael.efa.*;
 import de.nmichael.efa.data.types.DataTypeDistance;
 import de.nmichael.efa.util.*;
 import javax.swing.*;
@@ -31,7 +30,10 @@ public class ItemTypeDistance extends ItemTypeLabelTextfield {
     }
 
     public IItemType copyOf() {
-        return new ItemTypeDistance(name, new  DataTypeDistance(value), type, category, description);
+    	ItemTypeDistance copy = new ItemTypeDistance(name, new  DataTypeDistance(value), type, category, description);
+        copy.setPadding(padXbefore, padXafter, padYbefore, padYafter);
+        copy.setIcon((label == null ? null : label.getIcon()));
+    	return copy;
     }
 
     public void parseValue(String value) {

@@ -87,7 +87,7 @@ public class BoatDamageEditDialog extends UnversionizedDataEditDialog implements
                 r.getCompleteDamageInfo() +
                 (r.getLogbookText() != null && r.getLogbookText().length() > 0 ?
                     "\n" + International.getString("Fahrt") + ": " + r.getLogbookText() :
-                    "")
+                    (this.admin!=null ? International.getString("Admin-Name")+": "+this.admin.getQualifiedName() : ""))
                 );
     }
 
@@ -113,6 +113,9 @@ public class BoatDamageEditDialog extends UnversionizedDataEditDialog implements
                         International.getString("nein") ) + "\n" +
                     International.getString("Bemerkungen") + ": " + (r.getNotes() != null ? r.getNotes() : "")
                     );
+        } else if (success && admin != null && dataRecord != null && this.newRecord
+        	&& Daten.efaConfig.getValueNotificationNewBoatDamageByAdmin()) {
+        	this.sendNotification();
         }
         return success;
     }
@@ -146,7 +149,7 @@ public class BoatDamageEditDialog extends UnversionizedDataEditDialog implements
         }
     }
 
-    void setFixedWasChanged() {
+    public void setFixedWasChanged() {
         fixedWasChanged = true;
     }
 

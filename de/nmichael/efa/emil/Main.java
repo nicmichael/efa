@@ -11,11 +11,9 @@
 package de.nmichael.efa.emil;
 
 import de.nmichael.efa.*;
-import de.nmichael.efa.util.*;
 import de.nmichael.efa.util.Dialog;
-import javax.swing.UIManager;
-import java.awt.*;
-import java.io.*;
+import java.awt.Dimension;
+
 
 // @i18n complete (needs no internationalization -- only relevant for Germany)
 

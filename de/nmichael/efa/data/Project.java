@@ -9,15 +9,18 @@
 package de.nmichael.efa.data;
 
 import java.io.File;
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Set;
+import java.util.UUID;
 import java.util.Vector;
 
 import de.nmichael.efa.Daten;
 import de.nmichael.efa.core.config.AdminRecord;
 import de.nmichael.efa.core.config.EfaCloudUsers;
 import de.nmichael.efa.core.config.EfaTypes;
+import de.nmichael.efa.data.efacloud.Ecrid;
 import de.nmichael.efa.data.efacloud.TxRequestQueue;
 import de.nmichael.efa.data.storage.Audit;
 import de.nmichael.efa.data.storage.DataAccess;
@@ -34,12 +37,12 @@ import de.nmichael.efa.data.types.DataTypeDate;
 import de.nmichael.efa.ex.EfaException;
 import de.nmichael.efa.ex.EfaModifyException;
 import de.nmichael.efa.util.Dialog;
+import de.nmichael.efa.util.EfaSortStringComparator;
+import de.nmichael.efa.util.EfaSortStringDescComparator;
 import de.nmichael.efa.util.EfaUtil;
 import de.nmichael.efa.util.International;
 import de.nmichael.efa.util.LogString;
 import de.nmichael.efa.util.Logger;
-import java.net.InetAddress;
-import java.util.UUID;
 
 // @i18n complete
 public class Project extends StorageObject {
@@ -359,7 +362,8 @@ public class Project extends StorageObject {
             return true;
         }
         if (getProjectStorageType() == IDataAccess.TYPE_EFA_CLOUD) {
-            TxRequestQueue.getInstance(getProjectRecord().getEfaCoudURL(), getProjectStorageUsername(),
+        	//only start TxQueue if we surely want to open this project for further usage
+            TxRequestQueue.getInstance(getProjectRecord().getEfaCloudURL(), getProjectStorageUsername(),
                     getProjectStoragePassword(), getProjectStorageLocation());
         }
         try {
@@ -412,39 +416,56 @@ public class Project extends StorageObject {
             // we might get lots of exceptions, don't log them
             Logger.setLogExceptions(false);
 
-            // make sure that persistenceCache is filled properly
-            try {
-                openAllData();
-                String[] logbookNames = getAllLogbookNames();
-                for (String logbookName : logbookNames) {
-                    getLogbook(logbookName, false);
-                }
-                String[] clubworkNames = getAllClubworkNames();
-                for (String clubworkName : clubworkNames) {
-                    getClubwork(clubworkName, false);
-                }
-            } catch (Exception eignore) {
-                Logger.logdebug(eignore);
+        	/*   
+	     	   READ ME!!
+	     	   we don't need to load all open data for efaCloud (and, in peticular, SHOULD NOT):
+	     	   - first, efaCloud project data files remain on disk. only the project file itself gets deleted.
+	     	     so, no need to load all data to be able to delete it for efaCloud projects.
+	     	   - second, opening the efaCloud project with openAllData() initiates the singleton TXQueue instance
+	     	     with the data of the project to delete. This OVERWRITES ANY TXQueue elements for a currently active efaCloud project,
+	     	     leading to very unreasonable behaviour of efa. Also the overwritten TXQueue stays active and creates efaCloud logs
+	     	     even for non-efaCloud projects. 
+	     	   So, openAllData is only used for non-efaCloud projects 
+        	*/ 
+            if (getProjectStorageType() == IDataAccess.TYPE_FILE_XML ||
+            		getProjectStorageType() == IDataAccess.TYPE_EFA_REMOTE) {
+	            //make sure that persistenceCache is filled properly
+	            try {
+	                this.openAllData();
+	                String[] logbookNames = getAllLogbookNames();
+	                for (String logbookName : logbookNames) {
+	                    getLogbook(logbookName, false);
+	                }
+	                String[] clubworkNames = getAllClubworkNames();
+	                for (String clubworkName : clubworkNames) {
+	                    getClubwork(clubworkName, false);
+	                }
+	            } catch (Exception eignore) {
+	                Logger.logdebug(eignore);
+	            }
+	
+	            setPreModifyRecordCallbackEnabled(false);
+	            _inDeleteProject = true;
+	            if (getProjectStorageType() == IDataAccess.TYPE_FILE_XML) {
+	                String[] keys = persistenceCache.keySet().toArray(new String[0]);
+	                for (String key : keys) {
+	                    StorageObject p = persistenceCache.get(key);
+	                    try {
+	                        p.data().deleteStorageObject();
+	                    } catch (Exception eignore) {
+	                        Logger.logdebug(eignore);
+	                        try {
+	                            (new File(((DataFile) p.data()).getFilename())).delete();
+	                        } catch (Exception eignore2) {
+	                        }
+	                    }
+	                }
+	            }
+            } else if (getProjectStorageType() == IDataAccess.TYPE_EFA_CLOUD) {
+            	// ensure that the data file for the project is loaded
+            	this.open(false);
             }
-
-            setPreModifyRecordCallbackEnabled(false);
-            _inDeleteProject = true;
-            if (getProjectStorageType() == IDataAccess.TYPE_FILE_XML) {
-                String[] keys = persistenceCache.keySet().toArray(new String[0]);
-                for (String key : keys) {
-                    StorageObject p = persistenceCache.get(key);
-                    try {
-                        p.data().deleteStorageObject();
-                    } catch (Exception eignore) {
-                        Logger.logdebug(eignore);
-                        try {
-                            (new File(((DataFile) p.data()).getFilename())).delete();
-                        } catch (Exception eignore2) {
-                        }
-                    }
-                }
-            }
-
+            
             data().deleteStorageObject();
             if (projectDir != null) {
                 (new File(projectDir)).delete(); // delete project directory
@@ -509,26 +530,57 @@ public class Project extends StorageObject {
                             Project p = new Project(name);
                             p.open(false);
                             StringBuffer description = new StringBuffer();
-                            description.append("<b>" + International.getString("Projekt") + ":</b> <b style=\"color:blue\">" + name + "</b><br>");
+                            description.append("<b>" + International.getString("Projekt") + ":</b> <b style=\"color:blue\">" + name + " </b><b> "+getProjectDataType(p)+"</b><br>");
+                            
                             if (p.getProjectDescription() != null) {
-                                description.append(p.getProjectDescription() + "<br>");
+                                description.append("<i>"+p.getProjectDescription() + "</i><br>");
                             }
-                            String[] logbooks = p.getAllLogbookNames();
-                            if (logbooks != null) {
-                                description.append(International.getString("Fahrtenbücher") + ": ");
-                                for (int j = 0; j < logbooks.length; j++) {
-                                    description.append((j > 0 ? ", " : "") + logbooks[j]);
-                                }
+                            
+                            if (p.getProjectStorageType() == IDataAccess.TYPE_EFA_CLOUD) {
+                            	description.append("efaCloud-"+International.getString("Benutzername")+": "+p.getProjectStorageUsername() + "<br>");
                             }
-                            String[] clubworkNames = p.getAllClubworkNames();
-                            if (clubworkNames != null) {
+                            if (p.getProjectStorageType() == IDataAccess.TYPE_EFA_REMOTE) {
+                                description.append(International.getString("Remote-Projektname") + ": "+p.getProjectRemoteProjectName()+"<br>");
+                            } else {
+
+	                            String[] logbooks = p.getAllLogbookNames();
+	                            if (logbooks != null) {
+	                                description.append(International.getString("Fahrtenbücher") + ": ");
+	                                for (int j = 0; j < logbooks.length; j++) {
+	                                    description.append((j > 0 ? ", " : "") + logbooks[j]);
+	                                }
+	                            }
+	                            String[] clubworkNames = p.getAllClubworkNames();
+	                            if (clubworkNames != null) {
+	                                description.append("<br>" +
+	                                        International.getString("Vereinsarbeit") + ": ");
+	                                for (int j = 0; j < clubworkNames.length; j++) {
+	                                    description.append((j > 0 ? ", " : "") + clubworkNames[j]);
+	                                }
+	                            }
+                            }
+                            String[] boatHouseNames = p.getAllBoathouseNames();
+                            if (boatHouseNames != null && boatHouseNames.length>1) {
                                 description.append("<br>" +
-                                        International.getString("Vereinsarbeit") + ": ");
-                                for (int j = 0; j < clubworkNames.length; j++) {
-                                    description.append((j > 0 ? ", " : "") + clubworkNames[j]);
+                                        International.getString("Bootshäuser") + ": ");
+                                for (int j = 0; j < boatHouseNames.length; j++) {
+                                    description.append((j > 0 ? ", " : "") + boatHouseNames[j]);
                                 }
                             }
-                            items.put(name, "<html>"+description.toString()+"</html>");
+                            
+                            Boolean currentProject=(Daten.project != null ? p.getName().equals(Daten.project.getName()) : false);
+                            
+                            //items.put(name, "<html>"+description.toString()+"</html>");
+                            //highlight currently loaded project with green background
+                            items.put(name, "<html><table width=\"100%\" " 
+                            		+ (currentProject ? " bgcolor=\"#ccffcc\"" : "") + "><tr><td>"
+                            		+ (currentProject ? "<font color=black>" : "")
+                            		+ description.toString()
+                            		+ (currentProject ? "</font>" : "")
+                            		+"</td></tr></table></html>");
+                            if ((p!=null) && (p.isOpen())) {
+                            	p.close();// it's a good idea to close a project which has been opened before - just for filehandling issues
+                            }
                         } catch (Exception e1) {
                         }
                     }
@@ -539,6 +591,28 @@ public class Project extends StorageObject {
         return items;
     }
 
+    private static String getProjectDataType(Project p) {
+    	if (p!=null) {
+    		switch (p.getProjectStorageType()) {
+
+    		case IDataAccess.TYPE_FILE_XML:
+				return "";
+
+    		case IDataAccess.TYPE_EFA_CLOUD:
+   				return "("+International.getString("efaCloud")+": "+p.getProjectEfaCloudURL()+")";
+
+    		case IDataAccess.TYPE_EFA_REMOTE:
+   				return (p.getProjectEfaOnlineConnect() ? "(efaRemote + efaOnline: " : "(efaRemote: ")+  p.getProjectStorageLocation() +")";
+
+    		default:
+  	    		return "";
+    		}
+    	} else {
+    		return "";
+    	}
+
+    }
+    
     public Hashtable<String, String> getLogbooks() {
         Hashtable<String, String> items = new Hashtable<String, String>();
         String[] logbooks = getAllLogbookNames();
@@ -546,9 +620,21 @@ public class Project extends StorageObject {
             ProjectRecord r = getLoogbookRecord(logbooks[i]);
             if (r != null) {
                 String name = "<b>" + International.getString("Fahrtenbuch") + ":</b> <b><font color=blue>" + logbooks[i] + "</font></b><br>";
-                String description = (r.getDescription() != null && r.getDescription().length() > 0 ? r.getDescription() + " " : "");
+                String description = (r.getDescription() != null && r.getDescription().length() > 0 ? "<i>"+r.getDescription() + "</i><br> " : "");
                 description += "(" + r.getStartDate().toString() + " - " + r.getEndDate() + ")";
-                items.put(logbooks[i], "<html>"+name + description+"</html>");
+                
+                Boolean currentLogbook=(Daten.project != null && Daten.project.getCurrentLogbook() != null 
+                		? logbooks[i].equals(Daten.project.getCurrentLogbook().getName() ) 
+                		: false);
+                
+                //items.put(name, "<html>"+description.toString()+"</html>");
+                //highlight currently loaded project with green background
+                items.put(logbooks[i], "<html><table width=\"100%\" " 
+                		+ (currentLogbook ? " bgcolor=\"#ccffcc\"" : "") + "><tr><td>"
+                		+ (currentLogbook ? "<font color=black>" : "")
+                		+ name + description
+                		+ (currentLogbook ? "</font>" : "")
+                		+"</td></tr></table></html>");
             }
         }
         return items;
@@ -563,7 +649,20 @@ public class Project extends StorageObject {
                 String name = "<b>" + International.getString("Vereinsarbeit") + ":</b> <b><font color=blue>" + clubworks[i] + "</font></b><br>";
                 String description = (r.getDescription() != null && r.getDescription().length() > 0 ? r.getDescription() + " " : "");
                 description += "(" + r.getStartDate().toString() + " - " + r.getEndDate() + ")";
-                items.put(clubworks[i], "<html>"+name + description+"</html>");
+                
+                Boolean currentClubwork=(Daten.project != null && Daten.project.getCurrentClubwork() != null 
+                		? clubworks[i].equals(Daten.project.getCurrentClubwork().getName() ) 
+                		: false);
+                
+                //items.put(name, "<html>"+description.toString()+"</html>");
+                //highlight currently loaded project with green background
+                items.put(clubworks[i], "<html><table width=\"100%\" " 
+                		+ (currentClubwork ? " bgcolor=\"#ccffcc\"" : "") + "><tr><td>"
+                		+ (currentClubwork ? "<font color=black>" : "")
+                		+ name + description
+                		+ (currentClubwork ? "</font>" : "")
+                		+"</td></tr></table></html>");                
+
             }
         }
         return items;
@@ -898,15 +997,38 @@ public class Project extends StorageObject {
     }
 
     public void closeAllStorageObjects() throws Exception {
+
+        Logger.log(Logger.INFO, Logger.MSG_EVT_PROJECTCLOSED,
+                LogString.fileClosing(this.getProjectName(), International.getString("Projekt")));    	
+
+        // Close the message queue to the efacloud server
+        // this is neccessary at this point as we close the persistence files next.
+        // no efacloud action shall take place when files are getting closed.
+        if ((getProjectStorageType() == IDataAccess.TYPE_EFA_CLOUD) && (TxRequestQueue.getInstance() != null)) {
+            TxRequestQueue.getInstance().cancel();
+        }        
+        
+        if (Logger.isTraceOn(Logger.TT_CLOUD, 1)) {
+	        //for debug purposes:show number of Ecrids before closing the files.
+	        Logger.log(Logger.DEBUG, Logger.MSG_DEBUG_EFACLOUD, "EcridIndex size before closing persistence:"+Ecrid.iEcrids.size());
+        }        
         // close all of this project's storage objects
         Set<String> keys = persistenceCache.keySet();
         for (String key : keys) {
             closePersistence(persistenceCache.get(key));
         }
-        // Close the message queue to the efacloud server
-        if ((getProjectStorageType() == IDataAccess.TYPE_EFA_CLOUD) && (TxRequestQueue.getInstance() != null)) {
-            TxRequestQueue.getInstance().cancel();
+
+        if (Logger.isTraceOn(Logger.TT_CLOUD, 1)) {
+        	Logger.log(Logger.DEBUG, Logger.MSG_DEBUG_EFACLOUD, "EcridIndex size after closing persistence:"+Ecrid.iEcrids.size());
+        	if (Ecrid.iEcrids.size()>0) {
+	        	Logger.log(Logger.DEBUG, Logger.MSG_DEBUG_EFACLOUD, "EcridIndex contents:");
+	            Set<String> myStringSet =Ecrid.iEcrids.keySet();
+	            for (String id : myStringSet) {
+	                Logger.log(Logger.DEBUG, Logger.MSG_DEBUG_EFACLOUD, id + " " + Ecrid.iEcrids.get(id).getKeyAsTextDescription() +" " + Ecrid.iEcrids.get(id).getClass().getName());
+	            }
+        	}
         }
+
         // close the project storage object itself
         closePersistence(this);
     }
@@ -1145,11 +1267,18 @@ public class Project extends StorageObject {
                 if (r != null && r.getType() != null
                         && r.getType().equals(ProjectRecord.TYPE_LOGBOOK)
                         && r.getName() != null && r.getName().length() > 0) {
-                    a.add(r.getName());
+                	DataTypeDate dat=r.getStartDate();
+                	String datString=dat.getYear()+EfaUtil.int2String(dat.getMonth(),2)+EfaUtil.int2String(dat.getDay(),2);
+                    a.add(datString+r.getName()); // add a YMD-Date of the startDate as prefix
                 }
                 k = it.getNext();
             }
-            return a.toArray(new String[0]);
+            a.sort(new EfaSortStringDescComparator());
+            String[] retVal=a.toArray(new String[0]);
+            for (int i=0;i<retVal.length;i++) {
+            	retVal[i]=retVal[i].substring(8); // cut the date which is prefix
+            }
+            return retVal;
         } catch (Exception e) {
             Logger.logdebug(e);
             return null;
@@ -1170,11 +1299,18 @@ public class Project extends StorageObject {
                 if (r != null && r.getType() != null
                         && r.getType().equals(ProjectRecord.TYPE_CLUBWORK)
                         && r.getName() != null && r.getName().length() > 0) {
-                    a.add(r.getName());
+                   	DataTypeDate dat=r.getStartDate();
+                	String datString=dat.getYear()+EfaUtil.int2String(dat.getMonth(),2)+EfaUtil.int2String(dat.getDay(),2);
+                    a.add(datString+r.getName()); // add a YMD-Date of the startDate as prefix
                 }
                 k = it.getNext();
             }
-            return a.toArray(new String[0]);
+            a.sort(new EfaSortStringDescComparator());
+            String[] retVal=a.toArray(new String[0]);
+            for (int i=0;i<retVal.length;i++) {
+            	retVal[i]=retVal[i].substring(8); // cut the date which is prefix
+            }
+            return retVal;
         } catch (Exception e) {
             Logger.logdebug(e);
             return null;
@@ -1221,6 +1357,7 @@ public class Project extends StorageObject {
                 }
                 k = it.getNext();
             }
+            a.sort(new EfaSortStringComparator());
             return a.toArray(new String[0]);
         } catch (Exception e) {
             Logger.logdebug(e);
@@ -1942,6 +2079,10 @@ public class Project extends StorageObject {
         }
     }
 
+    public String getProjectEfaCloudURL() {
+    	return getProjectRecord().getEfaCloudURL();
+    }
+    
     public void setProjectEfaOnlineConnect(boolean connectThroughEfaOnline) {
         long l = 0;
         try {
@@ -2000,6 +2141,10 @@ public class Project extends StorageObject {
     // get the storageType for this project's content
     public int getProjectStorageType() {
         return getProjectRecord().getStorageType();
+    }
+    
+    public boolean getIsProjectStorageTypeEfaCloud() {
+    	return getProjectStorageType() == IDataAccess.TYPE_EFA_CLOUD;
     }
 
     public String getProjectStorageTypeTypeString() {
@@ -2125,7 +2270,24 @@ public class Project extends StorageObject {
         }
         return null;
     }
+    
+    // If EFACLI wants to get data for clubwork, we have to define wether to use clubwork defined in efabase
+    // or in efaboathouse. Although I do not know why there is a difference yet.
 
+    public Clubwork getCurrentClubworkForCLI(boolean useClubworkFromBoathouse) {
+        String name = null;
+        if (useClubworkFromBoathouse ) {
+            name = getCurrentClubworkEfaBoathouse();
+        } else {
+            name = getCurrentClubworkEfaBase();
+        }        
+
+        if (name != null && name.length() > 0) {
+            return getClubwork(name, false);
+        }
+        return null;
+
+    }
     public String getClubName() {
         return getClubRecord().getClubName();
     }

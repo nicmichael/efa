@@ -123,6 +123,7 @@ public class LogbookRecord extends DataRecord {
     public static final String EXP_DESTINATION  = "Destination";
     public static final String EXP_WATERSLIST   = "WatersList";
     public static final String EXP_SESSIONGROUP = "SessionGroup";
+    public static final String ECRID            = "ecrid";
 
     // =========================================================================
     // Supplementary Constants
@@ -226,6 +227,7 @@ public class LogbookRecord extends DataRecord {
         f.add(SESSIONGROUPID);      t.add(IDataAccess.DATA_UUID);
         f.add(EFBSYNCTIME);         t.add(IDataAccess.DATA_LONGINT);
         f.add(OPEN);                t.add(IDataAccess.DATA_BOOLEAN);
+        f.add(ECRID);               t.add(IDataAccess.DATA_STRING);
         MetaData metaData = constructMetaData(Logbook.DATATYPE, f, t, false);
         metaData.setKey(new String[] { ENTRYID });
     }

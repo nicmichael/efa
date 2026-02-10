@@ -144,7 +144,22 @@ public class EfaBoathouseBackgroundTask extends Thread {
                 if (Logger.isTraceOn(Logger.TT_BACKGROUND, 5)) {
                     Logger.log(Logger.DEBUG, Logger.MSG_DEBUG_EFABACKGROUNDTASK, "EfaBoathouseBackgroundTask: alive!");
                 }
-
+                
+                //Daten.isAdminMode is true if Application is efaBths AND Admin mode is true.
+                //if efaBths is in admin mode, stop the efaBthsBackgroundTask actions, as in admin mode some
+                //critical changes can take place like changing the current project, closing the project due to backup/restore functions
+                //and more.
+                //so, in isAdminMode=true mode we only sleep for a while...
+                if (Daten.isAdminMode()) {
+                     if (Logger.isTraceOn(Logger.TT_BACKGROUND, 5)) {
+                         Logger.log(Logger.DEBUG, Logger.MSG_DEBUG_EFABACKGROUNDTASK, "EfaBoathouseBackgroundTask: doing nothing as admin mode is active.");
+                     }
+                } else if (Daten.isShutdownRequested) {
+                    if (Logger.isTraceOn(Logger.TT_BACKGROUND, 5)) {
+                        Logger.log(Logger.DEBUG, Logger.MSG_DEBUG_EFABACKGROUNDTASK, "EfaBoathouseBackgroundTask: doing nothing as shutdown is requested.");
+                    }
+                } else {
+                	
                 // find out whether a project is open, and whether it's local or remote
                 updateProjectInfo();
 
@@ -192,6 +207,7 @@ public class EfaBoathouseBackgroundTask extends Thread {
 
                     remindAdminOfLogbookSwitch();
                 }
+                }
                 
                 sleepForAWhile();
 
@@ -233,7 +249,10 @@ public class EfaBoathouseBackgroundTask extends Thread {
             Logger.log(Logger.DEBUG, Logger.MSG_DEBUG_EFABACKGROUNDTASK,
                     "EfaBoathouseBackgroundTask: sleepForAWhile()");
         }
-        if (!isProjectOpen) {
+        // Don't run Backround operations in Admin mode, or if no project is open. 
+        // SleepForAWhile DOES make some checks like getting Boatstatuses and Boatreservations, 
+        // and this is not good when creating new projects, in special efaCloud projects.
+        if (!isProjectOpen || Daten.isAdminMode()) {
             // sleep 60 seconds
             if (Logger.isTraceOn(Logger.TT_BACKGROUND, 9)) {
                 Logger.log(Logger.DEBUG, Logger.MSG_DEBUG_EFABACKGROUNDTASK,
@@ -384,6 +403,16 @@ public class EfaBoathouseBackgroundTask extends Thread {
             }
             return;
         }
+        
+
+        if (!isProjectOpen) {
+	        SwingUtilities.invokeLater(new BthsUpdateBoatLists(listChanged,false));
+            if (Logger.isTraceOn(Logger.TT_BACKGROUND, 8)) {
+                Logger.log(Logger.DEBUG, Logger.MSG_DEBUG_EFABACKGROUNDTASK,
+                        "EfaBoathouseBackgroundTask: checkBoatStatus() - done for closed project");
+            }	        
+            return;
+        }
 
         BoatStatus boatStatus = (Daten.project != null ? Daten.project.getBoatStatus(false) : null);
         BoatReservations boatReservations = (Daten.project != null ? Daten.project.getBoatReservations(false) : null);
@@ -396,6 +425,19 @@ public class EfaBoathouseBackgroundTask extends Thread {
         try {
             DataKeyIterator it = boatStatus.data().getStaticIterator();
             for (DataKey k = it.getFirst(); k != null; k = it.getNext()) {
+            	//check for admin mode or shutdown request - and stop the iteration
+                if (Daten.isAdminMode()) {
+                    if (Logger.isTraceOn(Logger.TT_BACKGROUND, 5)) {
+                        Logger.log(Logger.DEBUG, Logger.MSG_DEBUG_EFABACKGROUNDTASK, "EfaBoathouseBackgroundTask: stopping update of boatstatus as admin mode is active.");
+                    }
+                    break;
+               } else if (Daten.isShutdownRequested) {
+                   if (Logger.isTraceOn(Logger.TT_BACKGROUND, 5)) {
+                       Logger.log(Logger.DEBUG, Logger.MSG_DEBUG_EFABACKGROUNDTASK, "EfaBoathouseBackgroundTask: stopping update of boatstatus as shutdown is requested.");
+                   }
+                   break;
+               }
+            	
                 BoatStatusRecord boatStatusRecord = (BoatStatusRecord) boatStatus.data().get(k);
                 if (boatStatusRecord == null) {
                     continue;
@@ -417,7 +459,9 @@ public class EfaBoathouseBackgroundTask extends Thread {
                             boatStatus.data().update(boatStatusRecord);
                             listChanged = true;
                         }
-                        continue;
+                        // do not move to the next boatStatusRecord for hidden Boats. 
+                        // reservations and damages for hidden boats shall be taken care of as well.
+                        //continue; 
                     }
                     if (boatStatusRecord.getUnknownBoat()) {
                         if (!boatStatusRecord.getCurrentStatus().equals(BoatStatusRecord.STATUS_ONTHEWATER)) {
@@ -435,7 +479,7 @@ public class EfaBoathouseBackgroundTask extends Thread {
                     if (reservations == null || reservations.length == 0) {
                         // no reservations at the moment - nothing to do
                         if (!boatStatusRecord.getCurrentStatus().equals(BoatStatusRecord.STATUS_ONTHEWATER)
-                                && !boatStatusRecord.getShowInList().equals(boatStatusRecord.getCurrentStatus())) {
+                                && boatStatusRecord.getShowInList() != null && !boatStatusRecord.getShowInList().equals(boatStatusRecord.getCurrentStatus())) {
                             boatStatusRecord.setShowInList(null);
                         }
 
@@ -461,11 +505,16 @@ public class EfaBoathouseBackgroundTask extends Thread {
                         // reservations found
                         if (!boatStatusRecord.getCurrentStatus().equals(BoatStatusRecord.STATUS_ONTHEWATER)) {
                             if (Daten.efaConfig.getValueEfaDirekt_resBooteNichtVerfuegbar()) {
-                                if (!boatStatusRecord.getShowInList().equals(BoatStatusRecord.STATUS_NOTAVAILABLE)) {
+                                //Show reserved boats in the "not available" list if configured
+                            	//"Hidden" Boats have no list they are shown by default, and thus return NULL as getShowInList.
+                            	// but also hidden boats may move to the "not available" list if there is a reservation.
+                            	if ((boatStatusRecord.getShowInList()==null) || 
+                            			!boatStatusRecord.getShowInList().equals(BoatStatusRecord.STATUS_NOTAVAILABLE)) {
                                     boatStatusRecord.setShowInList(BoatStatusRecord.STATUS_NOTAVAILABLE);
                                 }
                             } else {
-                                if (!boatStatusRecord.getShowInList().equals(boatStatusRecord.getBaseStatus())) {
+                                if ((boatStatusRecord.getShowInList()==null) || 
+                                		!boatStatusRecord.getShowInList().equals(boatStatusRecord.getBaseStatus())) {
                                     boatStatusRecord.setShowInList(boatStatusRecord.getBaseStatus());
                                 }
                             }
@@ -510,8 +559,12 @@ public class EfaBoathouseBackgroundTask extends Thread {
                             || !oldCurrentStatus.equals(boatStatusRecord.getCurrentStatus())) {
                         statusRecordChanged = true;
                     }
-                    if (oldShowInList == null
-                            || !oldShowInList.equals(boatStatusRecord.getShowInList())) {
+                    if ((!boatStatusRecord.getCurrentStatus().equals(BoatStatusRecord.STATUS_HIDE)) 
+                    	&& (oldShowInList == null || !oldShowInList.equals(boatStatusRecord.getShowInList()))) {
+                    	//if the boat is hidden, oldShowInList is always null. 
+                    	//if we would not check again for a hidden boat in this location, 
+                    	//efa would always update a boat status, leading to updates for the record every 10 Seconds or so.
+                    	//as a consequence, the focus would be set to the availableBoatList in efaBoatHouse also every 10 seconds.
                         statusRecordChanged = true;
                     }
                     if ((oldComment == null && boatStatusRecord.getComment() != null && boatStatusRecord.getComment().length() > 0)
@@ -566,6 +619,7 @@ public class EfaBoathouseBackgroundTask extends Thread {
             Logger.logdebug(e);
         }
     }
+    
     private void checkForUnreadMessages() {
         if (Logger.isTraceOn(Logger.TT_BACKGROUND, 8)) {
             Logger.log(Logger.DEBUG, Logger.MSG_DEBUG_EFABACKGROUNDTASK,

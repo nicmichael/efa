@@ -10,6 +10,7 @@
 
 package de.nmichael.efa.data;
 
+import de.nmichael.efa.Daten;
 import de.nmichael.efa.util.*;
 import de.nmichael.efa.data.storage.*;
 import de.nmichael.efa.data.types.DataTypeIntString;
@@ -72,7 +73,7 @@ public class BoatStatus extends StorageObject {
         return getBoats(status, false);
     }
 
-    /*
+    /**
      * @param getBoatsForLists - if true, this will return boats not necessarily according
      * to their status, but rather which *list* they should appear in. It might be that
      * some boats which have status ONTHEWATER are supposed to be displayed as NOTAVAILABLE
@@ -88,8 +89,17 @@ public class BoatStatus extends StorageObject {
             Vector<BoatStatusRecord> v = new Vector<BoatStatusRecord>();
             DataKeyIterator it = data().getStaticIterator();
             DataKey k = it.getFirst();
+            String currentLogBookEfaBoatHouse = Daten.project.getCurrentLogbookEfaBoathouse();
+            Boolean showForeignLogbookEntries = Daten.efaConfig.getValueEfaDirekt_boatListShowForeignLogbookSessionsAsNotAvailable();
+            Boolean statusIsOnTheWater = status.equalsIgnoreCase(BoatStatusRecord.STATUS_ONTHEWATER);
+            Boolean statusIsNotAvailableBoats = status.equalsIgnoreCase(BoatStatusRecord.STATUS_NOTAVAILABLE);
+            
+            // take care for null values. null should not happen here, but anyway
+            if (currentLogBookEfaBoatHouse == null)
+                currentLogBookEfaBoatHouse = "";
             while (k != null) {
                 BoatStatusRecord r = (BoatStatusRecord) data().get(k);
+
                 if (r != null && !r.getDeletedOrInvisible()) {
                     if (Logger.isTraceOn(Logger.TT_GUI, 9)) {
                         Logger.log(Logger.DEBUG, Logger.MSG_DEBUG_BOATLISTS,
@@ -97,11 +107,30 @@ public class BoatStatus extends StorageObject {
                                 " (boathouse " + r.getOnlyInBoathouseIdAsInt() + ": " +
                                 r.getOnlyInBoathouseId() + ")");
                     }
-                    if (r.getOnlyInBoathouseIdAsInt() < 0
-                            || r.getOnlyInBoathouseIdAsInt() == boathouseId) {
-                        String s = (getBoatsForLists ? r.getShowInList() : r.getCurrentStatus());
-                        if (s != null && s.equals(status)) {
+                    //  for boats on the water show only those which have sessions in the current logbook
+                    if (statusIsOnTheWater) {
+                        String rLogbook = r.getLogbook();
+                        if ((rLogbook != null) && rLogbook.equalsIgnoreCase(currentLogBookEfaBoatHouse)) {
                             v.add(r);
+                        } 
+                    } else {
+                        // for all other show only the boats which are in this boathouse, if they are restricted.
+                        if (r.getOnlyInBoathouseIdAsInt() < 0
+                                || r.getOnlyInBoathouseIdAsInt() == boathouseId) {
+                            String s = (getBoatsForLists ? r.getShowInList() : r.getCurrentStatus());
+                            if (s != null && s.equals(status)) {
+                                v.add(r);
+                            } else {
+                            	if (statusIsNotAvailableBoats && showForeignLogbookEntries && r.getCurrentStatus().equalsIgnoreCase(BoatStatusRecord.STATUS_ONTHEWATER)){
+
+                            		String rLogbook = r.getLogbook(); // r.getLogbook needs a lot of time, so determine this value late 
+                                    if ((rLogbook != null) && !rLogbook.equalsIgnoreCase(currentLogBookEfaBoatHouse)) {
+                                    	//boats which are on the water, but not in the current logbook, 
+                                    	//shall be shown as "not available". 
+                                    	v.add(r);
+                                    }
+                            	}
+                            }
                         }
                     }
                 }
@@ -122,6 +151,20 @@ public class BoatStatus extends StorageObject {
     public void preModifyRecordCallback(DataRecord record, boolean add, boolean update, boolean delete) throws EfaModifyException {
         if (add || update) {
             assertFieldNotEmpty(record, BoatStatusRecord.BOATID);
+
+            BoatStatusRecord r = ((BoatStatusRecord)record);
+            // if the current state of the Boat is not ON_THE_WATER, we should clear
+            // logbook and EntryNo, as they should point to an logbookentry only when the
+            // boat is on the water.
+            String curState = r.getCurrentStatus();
+            if (curState != null && ! curState.equals(BoatStatusRecord.STATUS_ONTHEWATER)) {
+            	if (r.getLogbook()!=null) {
+            		r.setLogbook(null);
+            	}
+            	if (r.getEntryNo()!=null) {
+            		r.setEntryNo(null);
+            	}
+            }
         }
     }
 

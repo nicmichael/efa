@@ -40,7 +40,9 @@ public class ItemTypeDateTime extends ItemTypeLabelTextfield {
     }
 
     public IItemType copyOf() {
-        return new ItemTypeDateTime(name, new DataTypeDate(dateValue), new DataTypeTime(timeValue), type, category, description);
+        ItemTypeDateTime copy = new ItemTypeDateTime(name, new DataTypeDate(dateValue), new DataTypeTime(timeValue), type, category, description);
+        copy.setIcon((label == null ? null : label.getIcon()));
+        return copy;        
     }
 
     public void setReferenceDate(DataTypeDate date, DataTypeTime time) {

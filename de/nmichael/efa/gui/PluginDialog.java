@@ -53,9 +53,9 @@ public class PluginDialog extends BaseDialog implements IItemListener {
         };
         list.setPopupActions(actions);
         list.registerItemListener(this);
-        list.setFieldGrid(1, 5, GridBagConstraints.CENTER, GridBagConstraints.NONE);
+        list.setFieldGrid(1, 5, GridBagConstraints.CENTER, GridBagConstraints.BOTH);
         list.setPadding(10, 10, 0, 10);
-        list.displayOnGui(_parent, mainPanel, 0, 0);
+        list.displayOnGui(_parent, mainPanel, 0, 0,1.0,1.0);
 
         JButton installButton = new JButton();
         Mnemonics.setButton(this, installButton, International.getString("Installieren"),

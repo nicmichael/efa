@@ -10,11 +10,7 @@
 
 package de.nmichael.efa.data.storage;
 
-import de.nmichael.efa.*;
-import de.nmichael.efa.util.*;
-import de.nmichael.efa.ex.EfaException;
 import java.util.*;
-import java.io.*;
 
 // @i18n complete
 

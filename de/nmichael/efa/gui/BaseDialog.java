@@ -11,21 +11,21 @@
 package de.nmichael.efa.gui;
 
 import de.nmichael.efa.*;
-import de.nmichael.efa.data.efacloud.TxRequestQueue;
-import de.nmichael.efa.data.storage.IDataAccess;
 import de.nmichael.efa.util.*;
 import de.nmichael.efa.util.Dialog;
+import de.nmichael.efa.core.config.EfaConfig;
 import de.nmichael.efa.core.items.*;
-import de.nmichael.efa.gui.ImagesAndIcons;
 import de.nmichael.efa.gui.util.AutoCompletePopupWindow;
+import de.nmichael.efa.gui.util.RoundedBorder;
 
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import javax.swing.border.*;
 
 // @i18n complete
 public abstract class BaseDialog extends JDialog implements ActionListener {
+	
+	private static final String NOT_STORED_ITEM_PREFIX = "_";
 
     public static final String IMAGE_ACCEPT    = ImagesAndIcons.IMAGE_BUTTON_ACCEPT;
     public static final String IMAGE_ADD       = ImagesAndIcons.IMAGE_BUTTON_ADD;
@@ -220,7 +220,7 @@ public abstract class BaseDialog extends JDialog implements ActionListener {
         		}
         	}
     		// otherwise, hide basewindow.
-        	cancel();
+        	cancel(true);
         }
 
         if (evt.getActionCommand().equals(KEYACTION_F1)) {
@@ -314,7 +314,8 @@ public abstract class BaseDialog extends JDialog implements ActionListener {
         mainScrollPane.setPreferredSize(Dialog.getMaxSize(dim));
 
         mainScrollPane.getViewport().add(mainPanel, null);
-        mainScrollPane.setBorder(BorderFactory.createEmptyBorder(4,4,4,4));        
+        mainScrollPane.setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
+        mainScrollPane.getVerticalScrollBar().setUnitIncrement(12); // faster scrolling with the mouse
     }
 
     protected abstract void iniDialog() throws Exception;
@@ -338,6 +339,14 @@ public abstract class BaseDialog extends JDialog implements ActionListener {
     }
 
     public boolean cancel() {
+    	return internalCancel();
+    }
+    
+    public boolean cancel(Boolean keyESCAction) {
+    	return internalCancel();
+    }
+    
+    private boolean internalCancel() {
         _inCancel = true;
         if (doWindowStackChecks) {
             Dialog.frameClosed(this);

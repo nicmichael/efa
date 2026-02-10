@@ -82,7 +82,7 @@ fi
 if [ "$EFA_JAVA_HEAP" = "" ] ; then
 # A higher Java Heaps helps to speed up efa on slower computers
 # As garbage collection needs to run at lower frequencies
-  EFA_JAVA_HEAP=160m
+  EFA_JAVA_HEAP=192m
 fi
 if [ "$EFA_NEW_SIZE" = "" ] ; then
   EFA_NEW_SIZE=32m

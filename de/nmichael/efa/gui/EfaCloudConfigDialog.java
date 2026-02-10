@@ -21,6 +21,7 @@ import de.nmichael.efa.ex.EfaException;
 import de.nmichael.efa.gui.util.EfaMenuButton;
 import de.nmichael.efa.util.International;
 import de.nmichael.efa.util.LogString;
+import de.nmichael.efa.util.Logger;
 
 import javax.swing.*;
 import java.awt.*;
@@ -109,7 +110,7 @@ public class EfaCloudConfigDialog extends BaseTabbedDialog implements IItemListe
                 item.setName("efaCloudPassword");
                 item.setNotNull(true);
                 guiItems.add(
-                        item = new ItemTypeString(ProjectRecord.EFACLOUDURL, p.getEfaCoudURL(), IItemType.TYPE_PUBLIC,
+                        item = new ItemTypeString(ProjectRecord.EFACLOUDURL, p.getEfaCloudURL(), IItemType.TYPE_PUBLIC,
                                 category, International.getString("URL des efaCloud Servers")));
                 item.setPadding(0, 0, 0, 0);
                 item.setFieldGrid(2, GridBagConstraints.CENTER, GridBagConstraints.NONE);
@@ -144,6 +145,10 @@ public class EfaCloudConfigDialog extends BaseTabbedDialog implements IItemListe
                     item.setPadding(0, 0, 20, 20);
                     item.registerItemListener(this);
                     item.setFieldGrid(2, GridBagConstraints.CENTER, GridBagConstraints.NONE);
+                    
+                    guiItems.add(EfaGuiUtils.createHintWordWrap(BUTTON_EFACLOUD_SYNCH_UPLOAD+"HINT",IItemType.TYPE_PUBLIC, category, 
+                    		International.getString("Werden mehrere Fahrtenbücher hintereinander in efaCloud hochgeladen, dann muss nach jedem Wechsel des Fahrtenbuchs ein Neustart von efa durchgeführt werden."),
+                    				1,10,10,600));
                 }
                 // If the queue is paused the options are resume or deactivate
                 else if (state == TxRequestQueue.QUEUE_IS_PAUSED) {
@@ -264,7 +269,14 @@ public class EfaCloudConfigDialog extends BaseTabbedDialog implements IItemListe
                     String prjName = pr.getName();
                     try {
                         // close the project
+                        try {
+							pr.closeAllStorageObjects();
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							Logger.logdebug(e);
+						}
                         pr.close();
+                        Daten.project=null;
                         // if an efaCloud configuration was mistyped, the user will deactivate efaCloud and
                         // reactivate it afterwards. Then the queue is running and must be closed to load the new
                         // confiuguration.

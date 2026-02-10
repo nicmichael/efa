@@ -11,7 +11,6 @@ package de.nmichael.efa.gui;
 
 import de.nmichael.efa.*;
 import de.nmichael.efa.core.config.AdminRecord;
-import de.nmichael.efa.core.config.Admins;
 import de.nmichael.efa.util.*;
 import de.nmichael.efa.util.Dialog;
 import de.nmichael.efa.data.types.*;

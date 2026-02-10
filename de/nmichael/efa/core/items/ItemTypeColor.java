@@ -10,7 +10,6 @@
 
 package de.nmichael.efa.core.items;
 
-import de.nmichael.efa.Daten;
 import de.nmichael.efa.gui.BaseDialog;
 import de.nmichael.efa.util.*;
 import de.nmichael.efa.util.Dialog;
@@ -57,7 +56,10 @@ public class ItemTypeColor extends ItemTypeLabelValue {
     }
 
     public IItemType copyOf() {
-        return new ItemTypeColor(name, color, defaultColor, type, category, description, canBeNull);
+         ItemTypeColor copy = new ItemTypeColor(name, color, defaultColor, type, category, description, canBeNull);
+         copy.setPadding(padXbefore, padXafter, padYbefore, padYafter);
+         copy.setIcon((label == null ? null : label.getIcon()));
+         return copy;
     }
 
     public void parseValue(String value) {

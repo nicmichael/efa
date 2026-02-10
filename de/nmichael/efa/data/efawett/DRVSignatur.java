@@ -11,14 +11,12 @@ package de.nmichael.efa.data.efawett;
 
 import de.nmichael.efa.*;
 import de.nmichael.efa.util.Base64;
-import de.nmichael.efa.util.Base64;
 import de.nmichael.efa.core.EfaKeyStore;
 import de.nmichael.efa.util.EfaUtil;
 import de.nmichael.efa.util.Logger;
 import java.util.*;
 import java.security.*;
 import java.security.cert.*;
-import java.security.cert.Certificate;
 
 // @i18n complete (needs no internationalization -- only relevant for Germany)
 public class DRVSignatur {

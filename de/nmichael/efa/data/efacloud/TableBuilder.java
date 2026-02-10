@@ -17,10 +17,7 @@ import de.nmichael.efa.data.storage.MetaData;
 import de.nmichael.efa.data.storage.StorageObject;
 import de.nmichael.efa.util.International;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Locale;
+import java.util.*;
 
 public class TableBuilder {
 
@@ -215,6 +212,27 @@ public class TableBuilder {
         allowedMismatches.put("efa2statistics", 0);  // All may change
     }
     public static final String fixid_allowed = "efa2logbook efa2messages efa2boatdamages efa2boatreservations";
+    
+    public static final HashSet<String> tablenamesWithEcrids = new HashSet<String>();
+    static {
+    	tablenamesWithEcrids.add("efa2autoincrement");
+    	tablenamesWithEcrids.add("efa2boatdamages");
+    	tablenamesWithEcrids.add("efa2boatreservations");
+    	tablenamesWithEcrids.add("efa2boats");
+    	tablenamesWithEcrids.add("efa2boatstatus");
+    	tablenamesWithEcrids.add("efa2clubwork");
+    	tablenamesWithEcrids.add("efa2crews");
+    	tablenamesWithEcrids.add("efa2destinations");
+    	tablenamesWithEcrids.add("efa2fahrtenabzeichen");
+    	tablenamesWithEcrids.add("efa2groups");
+    	tablenamesWithEcrids.add("efa2logbook");
+    	tablenamesWithEcrids.add("efa2messages");
+    	tablenamesWithEcrids.add("efa2persons");
+    	tablenamesWithEcrids.add("efa2sessiongroups");
+    	tablenamesWithEcrids.add("efa2statistics");
+    	tablenamesWithEcrids.add("efa2status");
+    	tablenamesWithEcrids.add("efa2waters");
+    }
 
     // cache to hold all special fields for checking when building the tables
     private final HashMap<String, RecordFieldDefinition> specialFields = new HashMap<String, RecordFieldDefinition>();
@@ -316,8 +334,8 @@ public class TableBuilder {
         // do not cut numbers, Ids or similar. That will create illegalArgument exceptions when reading back.
         if (((rtf.datatypeIndex == IDataAccess.DATA_STRING) || (rtf.datatypeIndex == IDataAccess.DATA_TEXT)
                 || (rtf.datatypeIndex == IDataAccess.DATA_LIST_STRING) || (rtf.datatypeIndex == IDataAccess.DATA_VIRTUAL))
-                && (value.length() >= rtf.maxLength))
-            return value.substring(0, rtf.maxLength - 4) + " ...";
+                && (value.length() > rtf.maxLength))     // Do not use >= because ecrids have the exact length of 12 characters set in the server db layout
+            return value.substring(0, (int) (rtf.maxLength * 0.9 - 6) ) + " ..."; // cut length to max bytes for UTF-8 String.
         else
             return value;
     }

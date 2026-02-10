@@ -30,8 +30,7 @@ public class Transaction {
 
     public enum TX_TYPE {
         INSERT("insert", true, false,true, false, true), UPDATE("update", true, false,true, false,
-                true), DELETE("delete", false, false,true, false, true), KEYFIXING("keyfixing", false, false,false, true,
-                true), SELECT("select", false, false,false, false, true), SYNCH("synch", false, false,false, true, true), LIST(
+                true), DELETE("delete", false, false,true, false, true), SELECT("select", false, false,false, false, true), SYNCH("synch", false, false,false, true, true), LIST(
                 "list", false, false,false, false, false), NOP("nop", false, false,false, true, false),
                  VERIFY("verify", false, false,false, false, false), BACKUP("backup", false,
                 false,false, false, false), UPLOAD("upload", false, false,false, false, false), CRONJOBS("cronjobs", false, false,false,
@@ -54,12 +53,6 @@ public class Transaction {
             this.addBookName = addBookName;
         }
 
-        static TX_TYPE getType(String typeString) {
-            for (TX_TYPE type : TX_TYPE.values())
-                if (type.typeString.equalsIgnoreCase(typeString))
-                    return type;
-            return NOP;
-        }
     }
 
     // The transaction response codes as text
@@ -245,8 +238,7 @@ public class Transaction {
                     extendedRecord[record.length] = "ClubworkbookName;" + clubworkbookname;
                 }
                 this.record = extendedRecord;
-        } else
-            this.record = record;
+        } else this.record = record;
     }
 
     /**
@@ -411,10 +403,6 @@ public class Transaction {
         return retries;
     }
 
-    long getClosedAt() {
-        return closedAt;
-    }
-
     void setRetries(long retries) {
         this.retries = retries;
     }
@@ -427,16 +415,8 @@ public class Transaction {
         this.closedAt = closedAt;
     }
 
-    int getCresultCode() {
-        return cresultCode;
-    }
-
     void setCresultCode(int cresultCode) {
         this.cresultCode = cresultCode;
-    }
-
-    String getCresultMessage() {
-        return cresultMessage;
     }
 
     void setCresultMessage(String cresultMessage) {

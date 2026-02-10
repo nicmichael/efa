@@ -61,7 +61,8 @@ public class BoatDamageListDialog extends DataListDialog {
         
         // Table update: Minimum column widths of 95 pix for the timestamp colums 
         // so they show at least the date part fully readable. 
-        this.minColumnWidths = new int[] {110,0,150,150,20};        
+        this.minColumnWidths = new int[] {150,0,150,150,20};         
+
     }
 
     public void keyAction(ActionEvent evt) {
@@ -99,43 +100,8 @@ public class BoatDamageListDialog extends DataListDialog {
     }
 
     // @Override
-    public boolean deleteCallback(DataRecord[] records) {
-        BoatDamageRecord unfixedDamage = null;
-        for (int i=0; records != null && i<records.length; i++) {
-            if (records[i] != null && !((BoatDamageRecord)records[i]).getFixed()) {
-                unfixedDamage = (BoatDamageRecord)records[i];
-                break;
-            }
-        }
-        if (unfixedDamage == null) {
-            return true;
-        }
-
-        switch(Dialog.auswahlDialog(International.getString("Bootsschaden löschen"),
-                International.getString("Möchtest du den Bootsschaden als behoben markieren, oder " +
-                                        "einen irrtümlich gemeldeten Schaden komplett löschen?"),
-                International.getString("als behoben markieren"),
-                International.getString("irrtümlich gemeldeten Schaden löschen"))) {
-            case 0:
-                BoatDamageEditDialog dlg = (BoatDamageEditDialog)createNewDataEditDialog(this, persistence, unfixedDamage);
-                ItemTypeBoolean fixed = (ItemTypeBoolean)dlg.getItem(BoatDamageRecord.FIXED);
-                if (fixed != null) {
-                    fixed.setValue(true);
-                    fixed.setChanged();
-                    dlg.itemListenerAction(fixed, null);
-                    dlg.setFixedWasChanged();
-                }
-                IItemType focus = dlg.getItem(BoatDamageRecord.FIXEDBYPERSONID);
-                if (focus != null) {
-                    dlg.setRequestFocus(focus);
-                }
-                dlg.showDialog();
-                return false;
-            case 1:
-                return true;
-            default:
-                return false;
-        }
+    public boolean deleteCallback(JDialog parent,IItemListenerDataRecordTable caller, AdminRecord admin, DataRecord[] records) {
+    	return BoatDamageRecord.deleteCallbackForGUIs(this, this, this.admin,persistence, records);
     }
     
 	protected void createSpecificItemTypeRecordTable() {
@@ -146,6 +112,10 @@ public class BoatDamageListDialog extends DataListDialog {
                 actionText, actionType, actionImage, // default actions: new, edit, delete
                 this,
                 IItemType.TYPE_PUBLIC, "BASE_CAT", getTitle());
+
+		table.addPermanentSecondarySortingColumn(BoatDamageRecord.COLUMN_ID_BOAT_NAME);        
+		table.addPermanentSecondarySortingColumn(BoatDamageRecord.COLUMN_ID_REPORTDATE);
+		table.addPermanentSecondarySortingColumn(BoatDamageRecord.COLUMN_ID_DAMAGE);	
 	}
 	
 	protected void iniDialog() throws Exception {

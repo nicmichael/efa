@@ -53,6 +53,7 @@ public class CrewRecord extends DataRecord {
     public static final String CREW23ID         = "Crew23Id";
     public static final String CREW24ID         = "Crew24Id";
     public static final String BOATCAPTAIN      = "BoatCaptain";
+   public static final String ECRID             = "ecrid";
 
     public static final String[] IDX_NAME = new String[] { NAME };
 
@@ -88,6 +89,7 @@ public class CrewRecord extends DataRecord {
         f.add(CREW23ID);            t.add(IDataAccess.DATA_UUID);
         f.add(CREW24ID);            t.add(IDataAccess.DATA_UUID);
         f.add(BOATCAPTAIN);         t.add(IDataAccess.DATA_INTEGER);
+        f.add(ECRID);               t.add(IDataAccess.DATA_STRING);
         MetaData metaData = constructMetaData(Crews.DATATYPE, f, t, false);
         metaData.setKey(new String[] { ID });
         metaData.addIndex(IDX_NAME);

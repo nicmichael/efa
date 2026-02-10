@@ -10,7 +10,6 @@
 
 package de.nmichael.efa.core.config;
 
-import de.nmichael.efa.core.config.*;
 
 // @i18n complete
 

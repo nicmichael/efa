@@ -14,8 +14,10 @@ import java.awt.GridBagConstraints;
 import java.util.UUID;
 import java.util.Vector;
 
-import de.nmichael.efa.Daten;
+import javax.swing.JDialog;
+
 import de.nmichael.efa.core.config.AdminRecord;
+import de.nmichael.efa.core.items.IItemListenerDataRecordTable;
 import de.nmichael.efa.core.items.IItemType;
 import de.nmichael.efa.core.items.ItemTypeBoolean;
 import de.nmichael.efa.core.items.ItemTypeDateTime;
@@ -28,11 +30,14 @@ import de.nmichael.efa.data.storage.DataKey;
 import de.nmichael.efa.data.storage.DataRecord;
 import de.nmichael.efa.data.storage.IDataAccess;
 import de.nmichael.efa.data.storage.MetaData;
+import de.nmichael.efa.data.storage.StorageObject;
 import de.nmichael.efa.data.types.DataTypeDate;
 import de.nmichael.efa.data.types.DataTypeDecimal;
 import de.nmichael.efa.data.types.DataTypeTime;
+import de.nmichael.efa.gui.dataedit.BoatDamageEditDialog;
 import de.nmichael.efa.gui.util.TableItem;
 import de.nmichael.efa.gui.util.TableItemHeader;
+import de.nmichael.efa.util.Dialog;
 import de.nmichael.efa.util.International;
 import de.nmichael.efa.util.Logger;
 
@@ -65,12 +70,17 @@ public class BoatDamageRecord extends DataRecord {
     public static final String CLAIM                = "Claim";
     public static final String NOTES                = "Notes";
     public static final String LOGBOOKTEXT          = "LogbookText";
+    public static final String ECRID                = "ecrid";
 
     public static final String[] IDX_BOATID = new String[] { BOATID };
 
     public static final String GUIITEM_REPORTDATETIME = "GUIITEM_REPORTDATETIME";
     public static final String GUIITEM_FIXDATETIME    = "GUIITEM_FIXDATETIME";
-
+    
+	public static final int COLUMN_ID_BOAT_NAME=0;        
+	public static final int COLUMN_ID_DAMAGE=1;  
+	public static final int COLUMN_ID_REPORTDATE=2;
+	
     private boolean showOnlyAddDamageFields = false;
 
     public static void initialize() {
@@ -94,6 +104,7 @@ public class BoatDamageRecord extends DataRecord {
         f.add(CLAIM);                    t.add(IDataAccess.DATA_BOOLEAN);
         f.add(NOTES);                    t.add(IDataAccess.DATA_STRING);
         f.add(LOGBOOKTEXT);              t.add(IDataAccess.DATA_STRING);
+        f.add(ECRID);                    t.add(IDataAccess.DATA_STRING);
         MetaData metaData = constructMetaData(BoatDamages.DATATYPE, f, t, false);
         metaData.setKey(new String[] { BOATID, DAMAGE });
         metaData.addIndex(IDX_BOATID);
@@ -405,12 +416,12 @@ public class BoatDamageRecord extends DataRecord {
         v.add(item = new ItemTypeLabelHeader("GUI_BOAT_NAME",
                 IItemType.TYPE_PUBLIC, CAT_BASEDATA, " "+International.getMessage("Bootsschaden für {boat}", getBoatAsName())));
         item.setPadding(0, 0, 0, 10);
-        item.setFieldGrid(4,GridBagConstraints.EAST, GridBagConstraints.BOTH);
+        item.setFieldGrid(6,GridBagConstraints.EAST, GridBagConstraints.BOTH);
 
         v.add(item = new ItemTypeString(BoatDamageRecord.DESCRIPTION, getDescription(),
                 IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("Beschreibung")));
         item.setNotNull(true);
-        item.setFieldGrid(3,GridBagConstraints.EAST, GridBagConstraints.BOTH);
+        item.setFieldGrid(4,GridBagConstraints.EAST, GridBagConstraints.BOTH);
         v.add(item = new ItemTypeStringList(SEVERITY, getSeverity(),
                 new String[] { "", SEVERITY_NOTUSEABLE, SEVERITY_LIMITEDUSEABLE, SEVERITY_FULLYUSEABLE },
                 new String[] { "--- " + International.getString("bitte wählen") + " ---",
@@ -421,17 +432,22 @@ public class BoatDamageRecord extends DataRecord {
                 IItemType.TYPE_PUBLIC, CAT_BASEDATA,
                 International.getString("Schwere des Schadens")));
         item.setNotNull(true);
-        item.setFieldGrid(3,GridBagConstraints.EAST, GridBagConstraints.BOTH);
+        item.setFieldGrid(4,GridBagConstraints.EAST, GridBagConstraints.BOTH);
+       
         v.add(item = new ItemTypeDateTime(GUIITEM_REPORTDATETIME, getReportDate(), getReportTime(),
                 IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("gemeldet am")));
-        item.setFieldGrid(3,GridBagConstraints.EAST, GridBagConstraints.BOTH);
+        item.setFieldGrid(1,GridBagConstraints.EAST, GridBagConstraints.BOTH);
+        item.setPadding(0, 0, 10, 0);
+        item.setFieldSize(150, 0);
         if (showOnlyAddDamageFields) {
             item.setEnabled(false);
         }
+        
         v.add(item = getGuiItemTypeStringAutoComplete(BoatDamageRecord.REPORTEDBYPERSONID, null,
                     IItemType.TYPE_PUBLIC, CAT_BASEDATA,
                     getPersistence().getProject().getPersons(false), System.currentTimeMillis(), System.currentTimeMillis(),
                     International.getString("gemeldet von")));
+        item.setFieldGrid(4, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL);
 
         if (getReportedByPersonId() != null) {
             ((ItemTypeStringAutoComplete)item).setId(getReportedByPersonId());
@@ -440,29 +456,47 @@ public class BoatDamageRecord extends DataRecord {
         }        
         ((ItemTypeStringAutoComplete)item).setNotNull(true);
         ((ItemTypeStringAutoComplete)item).setAlternateFieldNameForPlainText(BoatDamageRecord.REPORTEDBYPERSONNAME);
+
         if (!showOnlyAddDamageFields) {
+            v.add(item = new ItemTypeString(BoatDamageRecord.LOGBOOKTEXT, getLogbookText(),
+                    IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("Fahrt")));
+            item.setPadding(0, 0, 10, 0);
+            item.setFieldGrid(4,GridBagConstraints.EAST, GridBagConstraints.BOTH);
+
+            v.add(item = new ItemTypeString(BoatDamageRecord.NOTES, getNotes(),
+                    IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("Bemerkungen")));
+            item.setFieldGrid(4,GridBagConstraints.EAST, GridBagConstraints.BOTH);
+
+            
+            
+            v.add(item = new ItemTypeBoolean(BoatDamageRecord.FIXED, getFixed(),
+                    IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("Schaden wurde behoben")));
+            item.setPadding(0, 0, 10, 0);
             v.add(item = new ItemTypeDateTime(GUIITEM_FIXDATETIME, getFixDate(), getFixTime(),
                     IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("behoben am")));
+            item.setFieldGrid(1,GridBagConstraints.EAST, GridBagConstraints.BOTH);
+            item.setFieldSize(150, 0);
+            
             v.add(item = getGuiItemTypeStringAutoComplete(BoatDamageRecord.FIXEDBYPERSONID, null,
                     IItemType.TYPE_PUBLIC, CAT_BASEDATA,
                     getPersistence().getProject().getPersons(false), System.currentTimeMillis(), System.currentTimeMillis(),
                     International.getString("behoben von")));
+            item.setFieldGrid(4, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL);
             if (getFixedByPersonId() != null) {
                 ((ItemTypeStringAutoComplete) item).setId(getFixedByPersonId());
             } else {
                 ((ItemTypeStringAutoComplete) item).parseAndShowValue(getFixedByPersonName());
             }
             ((ItemTypeStringAutoComplete) item).setAlternateFieldNameForPlainText(BoatDamageRecord.FIXEDBYPERSONNAME);
+
+            
             v.add(item = new ItemTypeDecimal(BoatDamageRecord.REPAIRCOSTS, getRepairCosts(), 2, true,
                     IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("Reparaturkosten")));
+            item.setFieldGrid(1,GridBagConstraints.EAST, GridBagConstraints.BOTH);
+            item.setFieldSize(150, 0);
+
             v.add(item = new ItemTypeBoolean(BoatDamageRecord.CLAIM, getClaim(),
                     IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("Versicherungsfall")));
-            v.add(item = new ItemTypeString(BoatDamageRecord.LOGBOOKTEXT, getLogbookText(),
-                    IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("Fahrt")));
-            v.add(item = new ItemTypeString(BoatDamageRecord.NOTES, getNotes(),
-                    IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("Bemerkungen")));
-            v.add(item = new ItemTypeBoolean(BoatDamageRecord.FIXED, getFixed(),
-                    IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("Schaden wurde behoben")));
         }
         return v;
     }
@@ -518,6 +552,46 @@ public class BoatDamageRecord extends DataRecord {
 
     public void setShowOnlyAddDamageFields(boolean showOnlyAddDamageFields) {
         this.showOnlyAddDamageFields = showOnlyAddDamageFields;
+    }
+    
+    public static boolean deleteCallbackForGUIs(JDialog parent, IItemListenerDataRecordTable caller, AdminRecord admin, StorageObject persistence,DataRecord[] records) {
+        BoatDamageRecord unfixedDamage = null;
+        for (int i=0; records != null && i<records.length; i++) {
+            if (records[i] != null && !((BoatDamageRecord)records[i]).getFixed()) {
+                unfixedDamage = (BoatDamageRecord)records[i];
+                break;
+            }
+        }
+        if (unfixedDamage == null) {
+            return true;
+        }
+
+        switch(Dialog.auswahlDialog(International.getString("Bootsschaden löschen"),
+                International.getString("Möchtest du den Bootsschaden als behoben markieren, oder " +
+                                        "einen irrtümlich gemeldeten Schaden komplett löschen?"),
+                International.getString("als behoben markieren"),
+                International.getString("irrtümlich gemeldeten Schaden löschen"))) {
+            case 0:
+                BoatDamageEditDialog dlg = (BoatDamageEditDialog)caller.createNewDataEditDialog(parent, persistence, unfixedDamage);
+                dlg.setAdmin(admin);
+                ItemTypeBoolean fixed = (ItemTypeBoolean)dlg.getItem(BoatDamageRecord.FIXED);
+                if (fixed != null) {
+                    fixed.setValue(true);
+                    fixed.setChanged();
+                    dlg.itemListenerAction(fixed, null);
+                    dlg.setFixedWasChanged();
+                }
+                IItemType focus = dlg.getItem(BoatDamageRecord.FIXEDBYPERSONID);
+                if (focus != null) {
+                    dlg.setRequestFocus(focus);
+                }
+                dlg.showDialog();
+                return false;
+            case 1:
+                return true;
+            default:
+                return false;
+        }
     }
 
 }

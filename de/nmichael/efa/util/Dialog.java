@@ -716,8 +716,8 @@ public class Dialog {
     }
     
     public static void setGlobalTableFontSize(String fontName, int size) {
-		UIManager.put("Table.font", new FontUIResource(fontName,Font.PLAIN,Math.max(8, Math.min(18, size))));
-		UIManager.put("TableHeader.font", new FontUIResource(fontName,Font.BOLD,Math.max(8, Math.min(18, size))));
+		UIManager.put("Table.font", new FontUIResource(fontName,Font.PLAIN,Math.max(8, Math.min(24, size))));
+		UIManager.put("TableHeader.font", new FontUIResource(fontName,Font.BOLD,Math.max(8, Math.min(24, size))));
     }
 
     public static void setGlobalFontSize(String fontName, int size, String style) {

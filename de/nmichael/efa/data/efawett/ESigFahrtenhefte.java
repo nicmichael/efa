@@ -10,7 +10,6 @@
 package de.nmichael.efa.data.efawett;
 
 import de.nmichael.efa.*;
-import de.nmichael.efa.data.efawett.DRVSignatur;
 import java.io.*;
 import java.util.*;
 

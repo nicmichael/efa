@@ -11,10 +11,8 @@
 package de.nmichael.efa.core.items;
 
 import de.nmichael.efa.data.storage.IDataAccess;
-import de.nmichael.efa.util.International;
+import de.nmichael.efa.data.types.DataTypeDistance;
 import de.nmichael.efa.util.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 // @i18n complete
 
@@ -53,7 +51,10 @@ public class ItemTypeDouble extends ItemTypeLabelTextfield {
     }
 
     public IItemType copyOf() {
-        return new ItemTypeDouble(name, value, min, max, !isNotNullSet(), type, category, description);
+    	ItemTypeDouble copy = new ItemTypeDouble(name, value, min, max, !isNotNullSet(), type, category, description);
+        copy.setPadding(padXbefore, padXafter, padYbefore, padYafter);
+        copy.setIcon((label == null ? null : label.getIcon()));
+    	return copy;
     }
 
     public void parseValue(String value) {
