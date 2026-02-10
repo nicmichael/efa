@@ -75,10 +75,6 @@ public class HTMLWidgetInstance extends WidgetInstance implements IWidgetInstanc
             }
         };
 
-        if (colorsActive) {
-        	htmlPane.setBackground(backgroundColor);
-        	htmlPane.setForeground(foregroundColor);
-        }
         
         htmlPane.setContentType(TEXT_HTML);
         
@@ -87,6 +83,17 @@ public class HTMLWidgetInstance extends WidgetInstance implements IWidgetInstanc
         	htmlPane.setFont(htmlPane.getFont().deriveFont(Font.PLAIN,14));
         }
         htmlPane.setEditable(false);
+        htmlPane.setOpaque(false);
+        
+        
+        if (colorsActive) {
+        	htmlPane.setBackground(backgroundColor);
+        	htmlPane.setForeground(foregroundColor);
+            HTMLDocument doc = (HTMLDocument) htmlPane.getDocument();
+            doc.getStyleSheet().addRule("body { background-color: transparent; }");
+            scrollPane.getViewport().setOpaque(false);
+        }
+        
         // following hyperlinks is automatically "disabled" (if no HyperlinkListener is taking care of it)
         // But we also need to disable submiting of form data:
         HTMLEditorKit kit = (HTMLEditorKit)htmlPane.getEditorKit();
@@ -154,8 +161,8 @@ public class HTMLWidgetInstance extends WidgetInstance implements IWidgetInstanc
 		roundPanel = new RoundedPanel();
 		
 		roundPanel.setLayout(new GridBagLayout());
-		roundPanel.setBackground(this.getBackgroundColor());
-		roundPanel.setForeground(this.getForegroundColor());
+		roundPanel.setBackground((colorsActive ? this.getBackgroundColor() : roundPanel.getBackground()));
+		roundPanel.setForeground((colorsActive ? this.getForegroundColor() : roundPanel.getForeground()));
 		roundPanel.setBorder(new RoundedBorder(this.getForegroundColor()));
 		roundPanel.setName("HTMLWidget-RoundPanel");
 		roundPanel.setLayout(new GridBagLayout());

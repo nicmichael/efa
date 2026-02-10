@@ -211,7 +211,7 @@ public class EfaAboutDialog extends BaseDialog {
 		librariesText.append("Apache FOP XML Graphics\n\thttps://xmlgraphics.apache.org/fop/\n\tLicensed under Apache 2.0 license.\n\n");
 		librariesText.append("JCraft jsch SSH/SFTP library\n\thttp://www.jcraft.com/jsch/\n\tLicensed under BSD-style license.\n\n");
 		librariesText.append("CompoundIcon by Tips4Java\n\thttps://github.com/tips4java/tips4java/blob/main/source/CompoundIcon.java\n\t Licensed under MIT License.\n\n");
-		librariesText.append("48 Weather Icons by Oliver Pitsch\n\thttps://www.figma.com/community/file/1290644894897835248/48-weather-icons\n\tLicensed under CC BY 4.0\n\tModified day icons for rain and night icons for more contrast.\n\n\thttps://www.figma.com/design/U8a4es1S5EIdjJYPgIPh0r/48-Weather-Icons-(Community)?node-id=4-34306&t=XnI10lh9BlalpgwH-0");
+		librariesText.append("48 Weather Icons by Oliver Pitsch\n\thttps://www.figma.com/community/file/1290644894897835248/48-weather-icons\n\tLicensed under CC BY 4.0\n\tModified day icons for rain and night icons for more contrast.\n\n\thttps://www.figma.com/design/U8a4es1S5EIdjJYPgIPh0r/48-Weather-Icons-(Community)?node-id=4-34306&t=XnI10lh9BlalpgwH-0\n\n");
 		librariesText.append("org.json / JSON in Java\n\thttps://github.com/stleary/JSON-java\n\tPublic Domain\n\n");
 		librariesText.setCaretPosition(0);
 	}	

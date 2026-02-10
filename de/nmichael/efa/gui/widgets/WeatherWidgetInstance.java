@@ -414,6 +414,7 @@ public class WeatherWidgetInstance extends WidgetInstance implements IWidgetInst
 			uwrInnerPanel.setForeground(uwrWW.getStandardForeground());
 			uwrInnerPanel.setBorder(BorderFactory.createEmptyBorder());
 			uwrInnerPanel.setName("WeatherWidget-InnerPanel");
+			uwrInnerPanel.setOpaque(false);
 			
     		if (uwrWdf != null && uwrWdf.getStatus() == true) {
         		if (getLayout().equalsIgnoreCase(WeatherWidget.WEATHER_LAYOUT_CURRENT_CLASSIC)) {
