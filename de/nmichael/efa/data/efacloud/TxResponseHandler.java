@@ -48,9 +48,10 @@ public class TxResponseHandler {
             transactionString += ". " + ((tx.getResultMessage().length() > 100) ?
                     tx.getResultMessage().substring(0, 100) + " ..." : tx.getResultMessage());
         String dateString = format.format(new Date()) + " INFO tx" + tx.ID + ", ";
-        TextResource
-                .writeContents(TxRequestQueue.logFilePath, dateString + transactionString,
-                        true);
+        if (txq.isExtendedDebug && (tx.type.typeString.equals("insert")||tx.type.typeString.equals("update")||tx.type.typeString.equals("delete"))) {
+        	transactionString += "   -   " + tx.getResultMessage();
+        }
+        TextResource.writeContents(TxRequestQueue.logFilePath, dateString + transactionString, true);
     }
 
     /**
@@ -326,9 +327,13 @@ public class TxResponseHandler {
                         efaCloudStorage.modifyLocalRecord(updated, false, true, false);
                         // check and update the boat status record, if the current trip is open
                         // you will have to use a new lock, because the old one uses the wrong table
-                        if (tx.tablename.equals(Logbook.DATATYPE) && (((LogbookRecord) current).getSessionIsOpen()))
-                            txq.synchControl.adjustBoatStatus(((LogbookRecord) current).getBoatId(),
-                                    ((LogbookRecord) updated).getEntryId().intValue());
+                        if (tx.tablename.equals(Logbook.DATATYPE) && (((LogbookRecord) current).getSessionIsOpen())) {
+                            txq.synchControl.adjustBoatStatus(
+                            		((LogbookRecord) current).getBoatId(),
+                            		((LogbookRecord) current).getEntryId().intValue(),
+                            		((LogbookRecord) current).getLogbookName(),
+                            		((LogbookRecord) updated).getEntryId().intValue());
+                        }
                     } catch (EfaException e) {
                         // if immediate update does not work, synchronisation will care for it
                     }

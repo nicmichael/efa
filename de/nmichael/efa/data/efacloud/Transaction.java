@@ -10,18 +10,19 @@
  */
 package de.nmichael.efa.data.efacloud;
 
-import de.nmichael.efa.Daten;
-import de.nmichael.efa.data.storage.EfaCloudStorage;
-
 import java.io.File;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 // import java.nio.charset.StandardCharsets;  Java 8 only
 // import java.util.Base64;  Java 8 only
 
 import java.util.HashMap;
-import java.util.ArrayList;
 import java.util.Vector;
+
+import de.nmichael.efa.Daten;
+import de.nmichael.efa.data.storage.EfaCloudStorage;
 
 /**
  * A container class for data modifications passed to the efaClod Server.
@@ -130,7 +131,8 @@ public class Transaction {
         for (Transaction tx : txs) {
             tx.appendTxPostString(txContainer);
             txq.logApiMessage("tx" + tx.ID + ", " + tx.type + " [" + tx.tablename + "]: Transaction sent. Record length: "
-                    + ((tx.record == null) ? "null" : "" + tx.record.length), 0);
+                        + ((tx.record == null) ? "null" : "" + tx.record.length)
+                        + (txq.isExtendedDebug ? "   -   " + Arrays.toString(tx.record) : "" ), 0);
             txContainer.append(MESSAGE_SEPARATOR_STRING);
         }
         String txContainerStr = txContainer.toString();
