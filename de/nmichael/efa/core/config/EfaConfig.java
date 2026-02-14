@@ -1805,7 +1805,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 			
 			// ============================= WIDGETS =============================
 
-			addParameter(efaDirekt_showNews = new ItemTypeBoolean("WidgetNewsEnabled", true, IItemType.TYPE_PUBLIC,
+			addParameter(efaDirekt_showNews = new ItemTypeBoolean("WidgetNewsEnabled", false, IItemType.TYPE_PUBLIC,
 					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_WIDGETS, CATEGORY_WIDGET_NEWS),
 					International.getMessage("{item} anzeigen", International.getString("News"))));
 			addParameter(efaDirekt_newsText = new ItemTypeString("WidgetNewsText", "", IItemType.TYPE_PUBLIC,
