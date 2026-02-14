@@ -81,7 +81,7 @@ public class NewsMiniWidget {
         private Timer timer;
 
         // 1 Stunde in Millisekunden
-        private static final int INVISIBLE_DELAY = 60 * 60 * 1000;
+        private static final int INVISIBLE_DELAY = 60 * 1000;
 
         public NewsUpdater(NewsMiniWidgetPanel panel, String initialText, int initialSpeed) {
             this.mainNewsWidgetPanel = panel;
@@ -127,6 +127,7 @@ public class NewsMiniWidget {
                 return;
             }
             timer.setInitialDelay(delayMs);
+            timer.setDelay(delayMs);
             timer.restart();
         }
 
@@ -135,6 +136,8 @@ public class NewsMiniWidget {
         public synchronized void setText(String newText) {
             this.text = "   " + newText + "   ";
             if (timer != null) {
+                timer.setInitialDelay(this.scrollSpeed);
+                timer.setDelay(this.scrollSpeed);
                 timer.restart(); // sofortige Wirkung
             }
         }
@@ -142,6 +145,8 @@ public class NewsMiniWidget {
         public synchronized void setScrollSpeed(int speed) {
             this.scrollSpeed = speed;
             if (timer != null) {
+                timer.setInitialDelay(this.scrollSpeed);
+                timer.setDelay(this.scrollSpeed);
                 timer.restart();
             }
         }
@@ -149,6 +154,8 @@ public class NewsMiniWidget {
         public synchronized void setVisible(boolean value) {
             this.visible = value;
             if (timer != null) {
+                timer.setInitialDelay(this.scrollSpeed);
+                timer.setDelay(this.scrollSpeed);
                 timer.restart();
             }
         }
