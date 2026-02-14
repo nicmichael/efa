@@ -224,11 +224,21 @@ public class AutoCompleteList {
                 Logger.logdebug(e1);
             }
             _foundValue = null;
+            
+            //cache some often used efaConfig data
+            boolean flagPrefixDestinationWaters = Daten.efaConfig.getValuePrefixDestinationWithWaters();
+            boolean flagPostfixPersonsClubname = Daten.efaConfig.getValuePostfixPersonsWithClubName();
+            
             if (dataAccess != null &&
                 dataAccess.isStorageObjectOpen() &&
                 Daten.efaConfig != null && Daten.efaConfig.data() != null &&
                 (dataAccess.getSCN() != dataAccessSCN ||
                  Daten.efaConfig.data().getSCN() != efaConfigSCN)) {
+            	// @FIXME
+            	// 2026-02-01 I think the preceeding two lines are for performance reasons,
+            	// that the update mechanism only runs when the data has changed.
+            	// unfortunately, only the first run of getValueForID() succeeds.
+            	
                 dataAccessSCN = dataAccess.getSCN();
                 efaConfigSCN = Daten.efaConfig.data().getSCN();
                 dataVisible = new Vector<String>();
@@ -237,7 +247,7 @@ public class AutoCompleteList {
                 lower2realInvisible = new Hashtable<String,String>();
                 aliases2realVisible = new Hashtable<String,String>();
                 DataKeyIterator it = dataAccess.getStaticIterator();
-                ;
+                
                 for (DataKey k = it.getFirst(); k != null; k = it.getNext()) {
                     DataRecord r = dataAccess.get(k);
                     if (r != null) {
@@ -251,7 +261,7 @@ public class AutoCompleteList {
                                 myBoathouseId != ((DestinationRecord)r).getOnlyInBoathouseIdAsInt()) {
                                 continue;
                             }
-                            if (Daten.efaConfig.getValuePrefixDestinationWithWaters()) {
+                            if (flagPrefixDestinationWaters) {
                                 s = ((DestinationRecord)r).getWatersNamesStringListPrefix() + s;
                             }
                             if (!postfixNamesWithBoathouseName && myBoathouseName != null) {
@@ -266,7 +276,7 @@ public class AutoCompleteList {
                         String alias = null;
                         if (r instanceof PersonRecord) {
                             alias = ((PersonRecord)r).getInputShortcut();
-                            if (Daten.efaConfig.getValuePostfixPersonsWithClubName()) {
+                            if (flagPostfixPersonsClubname) {
                                 s = s + ((PersonRecord)r).getAssociationPostfix();
                             }
                         }

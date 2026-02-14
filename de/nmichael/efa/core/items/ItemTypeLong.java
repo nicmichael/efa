@@ -36,8 +36,12 @@ public class ItemTypeLong extends ItemTypeLabelTextfield {
 
     public IItemType copyOf() {
         ItemTypeLong copy = new ItemTypeLong(name, value, min, max, type, category, description);
+        copy.setFieldSize(fieldWidth, fieldHeight);
         copy.setPadding(padXbefore, padXafter, padYbefore, padYafter);
         copy.setIcon((label == null ? null : label.getIcon()));
+        copy.setIsItemOnSameRowAsPreviousItem(itemOnSameRowAsPreviousItem);
+        copy.setItemOnNewRow(itemOnNewRow);
+        copy.setFieldGrid(fieldGridWidth,fieldGridHeight,fieldGridAnchor,fieldGridFill);
         return copy;
     }
 

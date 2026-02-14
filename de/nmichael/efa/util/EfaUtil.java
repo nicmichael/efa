@@ -35,6 +35,9 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.security.MessageDigest;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -42,7 +45,9 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Map;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -74,9 +79,21 @@ public class EfaUtil {
     private static final int ZIP_BUFFER = 2048;
     private static java.awt.Container java_awt_Container = new java.awt.Container();
 
+    //both strings need to be of equal length.
 	private static String UMLAUTS 		= "åàáâăäāąćçčèéêęëėěēìíîįīïďđģķĺļłńňñņòóôőõöōøřŕůùúûűüųūýÿšśşťţżžź";
 	private static String REPLACEMENT 	= "aaaaaaaaccceeeeeeeeiiiiiiddgklllnnnnoooooooorruuuuuuuuyysssttzzz"; 
 
+	//static lookup table for replaceListByListFast()
+	private static final char[] CHAR_MAP = buildCharMap(); 
+	private static char[] buildCharMap() { 
+		char[] map = new char[Character.MAX_VALUE + 1]; // 65536 
+		int len = Math.min(UMLAUTS.length(), REPLACEMENT.length()); 
+		for (int i = 0; i < len; i++) { 
+			map[UMLAUTS.charAt(i)] = REPLACEMENT.charAt(i); 
+			} 
+		return map; 
+	}
+	
     private static String UMLAUTSEXTEND = UMLAUTS + "ßæœ";// those umlauts get translated to two characters
 
     public static String escapeXml(String str) {
@@ -181,20 +198,50 @@ public class EfaUtil {
      * The method is declarated as "fast" as it uses standard java replace function instead of old self-written code.
      * This method is like 15 times faster than the former replaceListByList function, and more suitable for sorting algorithms.
      * 
+     * see @replaceListByListFast(String input) for a faster replacement method. 
+     * 
      * @param strData	String containing characters to be replaced
      * @param searchList  String containing all characters that shall be replaced one-by-one
      * @param replaceList String containing all replacement characters
      * @return String containing all replacements.
      */
+    @Deprecated
     public static String replaceListByListFast(String strData, String searchList, String replaceList) {
-        if (searchList.length() != replaceList.length()) {
+       if (searchList.length() != replaceList.length()) {
             return strData;
-        }
+       }
         for (int i=0; i<searchList.length(); i++) {
         	strData = strData.replace(searchList.charAt(i),replaceList.charAt(i));
         }
         return strData;
     }
+    
+    /**
+     * Replace all non-ascii represenations of a,e,i,o,u,n,s,... to their ascii replacements
+     * Used for easy searching and sorting in Boatlists and tables.
+     * So "Über" equals "uber".
+     * This method is even
+     * @param input
+     * @return input with ascii-simplyfied representation
+     */
+    public static String replaceListByListFast(String input) { 
+		if (input == null || input.isEmpty()) {
+			return input; 
+		}
+		StringBuilder sb = new StringBuilder(input.length()); 
+		char c;
+		char mapped;
+		for (int i = 0, n = input.length(); i < n; i++) { 
+			c = input.charAt(i); 
+			mapped = CHAR_MAP[c]; 
+			if (mapped != 0) {
+				sb.append(mapped); 
+			} else {
+				sb.append(c); 
+			} 
+		}
+		return sb.toString(); 
+	}
     
     /**
      * Replaces all umlauts of western character set (German, French, Spanish, Danish) to a simple latin character, e.g. "ä"->"a".
@@ -214,8 +261,7 @@ public class EfaUtil {
      * @return
      */
     public static String replaceAllUmlautsLowerCaseFast(String data) {
-	    String s1 = data.toLowerCase();
-	    s1 = EfaUtil.replaceListByListFast(s1, UMLAUTS, REPLACEMENT);
+	    String s1 = EfaUtil.replaceListByListFast(data.toLowerCase());
 	
 	    if (s1.indexOf("ß") >= 0) {
 	        s1 = EfaUtil.replace(s1, "ß", "ss", true);
@@ -228,7 +274,6 @@ public class EfaUtil {
 	    if (s1.indexOf("œ") >= 0) {
 	        s1 = EfaUtil.replace(s1, "œ", "oe", true);
 	    }
-	    
 	    
 	    return s1;
     }    
@@ -1419,6 +1464,21 @@ public class EfaUtil {
         return makeTimeString(cal.get(Calendar.YEAR), 4);
     }
 
+    /*
+     * Gets the remaining seconds until the next full minute.
+     * This sets the update interval.
+     */
+    public static long getMilliSecondsToFullMinute() {
+        LocalDateTime start = LocalDateTime.now();
+        // Hour + 1, set Minute and Second to 00
+        LocalDateTime end = start.plusMinutes(1).truncatedTo(ChronoUnit.MINUTES);
+
+        // Get Duration
+        Duration duration = Duration.between(start, end);
+        long millis = duration.toMillis();
+        return millis;
+    };    
+    
     public static String date2String(Date date) {
         return date2String(date, true);
     }

@@ -10,202 +10,348 @@
 
 package de.nmichael.efa.gui.widgets;
 
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
-import java.io.IOException;
-
-import javax.swing.JComponent;
-import javax.swing.JEditorPane;
-import javax.swing.JScrollPane;
-import javax.swing.SwingUtilities;
-import javax.swing.text.Document;
-import javax.swing.text.html.HTMLDocument;
-import javax.swing.text.html.HTMLEditorKit;
+import java.awt.Color;
+import java.awt.GridBagConstraints;
+import java.util.Vector;
 
 import de.nmichael.efa.Daten;
+import de.nmichael.efa.core.config.EfaConfig;
+import de.nmichael.efa.core.items.IItemFactory;
 import de.nmichael.efa.core.items.IItemType;
+import de.nmichael.efa.core.items.ItemTypeBoolean;
+import de.nmichael.efa.core.items.ItemTypeColor;
 import de.nmichael.efa.core.items.ItemTypeDouble;
 import de.nmichael.efa.core.items.ItemTypeFile;
 import de.nmichael.efa.core.items.ItemTypeInteger;
-import de.nmichael.efa.data.LogbookRecord;
+import de.nmichael.efa.core.items.ItemTypeItemList;
+import de.nmichael.efa.core.items.ItemTypeLabelTextfield;
+import de.nmichael.efa.core.items.ItemTypeString;
+import de.nmichael.efa.core.items.ItemTypeStringList;
 import de.nmichael.efa.util.EfaUtil;
 import de.nmichael.efa.util.International;
 import de.nmichael.efa.util.Logger;
 
-public class HTMLWidget extends Widget {
+public class HTMLWidget extends Widget implements IWidget, IItemFactory {
 
     public static final String PARAM_WIDTH          = "Width";
     public static final String PARAM_HEIGHT         = "Height";
     public static final String PARAM_SCALE          = "Scale";
     public static final String PARAM_URL            = "Url";
+    public static final String PARAM_USE_HTTP_CACHE = "UseHttpCache";
+    public static final String HEADER_FIRST_HTML	= NOT_STORED_ITEM_PREFIX+"FirstHTMLHeader";
+    
+    public static final String PARAM_CAPTION		= "Caption";
+    
+    public static final String PARAM_COLORSACTIVE   = "ColorsActive";
+    public static final String PARAM_COLORBACKGROUND= "BackgroundColor";
+    public static final String PARAM_COLORFORECROUND= "ForegroundColor";
+    public static final String PARAM_HEADER_COLOR_BACKGROUND = "HeaderBackgroundColor";
+    public static final String PARAM_HEADER_COLOR_FOREGROUND = "HeaderForegroundColor";
+    public static final String PARAM_HTMLPAGE_VISIBLE = "HTMLPageVisible";
+    public static final String PARAM_HTMLPAGE_POSITION = "HTMLPagePosition";
+    
+	private static final String PARAM_HTML_PAGELIST = "MultiHtmlPageList";
+	private static final int HTMLWIDGET_GRIDWIDTH = 6;
+	private static final int SMALL_FIELDWIDTH = 110;
+	
+	private ItemTypeItemList htmlPageList;
 
-    private JScrollPane scrollPane = new JScrollPane();
-    private JEditorPane htmlPane;
-    private HTMLUpdater htmlUpdater;
-
+    
     public HTMLWidget() {
-        super("Html", International.getString("HTML-Widget"), true);
+        super("Html", International.getString("HTML-Widget"), false, false, true,HTMLWIDGET_GRIDWIDTH);
 
-        addParameterInternal(new ItemTypeInteger(PARAM_WIDTH, 200, 1, Integer.MAX_VALUE, false,
-                IItemType.TYPE_PUBLIC, "",
-                International.getString("Breite")));
+        IItemType item;
 
-        addParameterInternal(new ItemTypeInteger(PARAM_HEIGHT, 50, 1, Integer.MAX_VALUE, false,
-                IItemType.TYPE_PUBLIC, "",
-                International.getString("Höhe")));
-
-        addParameterInternal(new ItemTypeDouble(PARAM_SCALE, 1, 0.1, 10, false,
-                IItemType.TYPE_PUBLIC, "",
-                International.getString("Skalierung")));
-
-        addParameterInternal(new ItemTypeFile(PARAM_URL, "",
-                International.getString("HTML-Seite"),
-                International.getString("HTML-Seite"),
-                null,ItemTypeFile.MODE_OPEN,ItemTypeFile.TYPE_FILE,
-                IItemType.TYPE_PUBLIC, "",
-                "URL"));
+        //we break backward compatibility with the former html widget.
+        //so the config data of the old html widget is no longer used,
+        //and thus when updating from efa 240 to 251, the old html page is no longer shown. 
+        item = addHintWordWrap(NOT_STORED_ITEM_PREFIX+"HTMLWidgetInfo1",IItemType.TYPE_PUBLIC, "", International.getString("Die Verwendung vieler HTML-Widgets erhöht den Speicherbedarf. Gegebenenfalls muss runefa.sh/runefa.bat angepasst werden."), 3,6,6,550);
+        item.setFieldGrid(HTMLWIDGET_GRIDWIDTH-1, -1, GridBagConstraints.HORIZONTAL);
+        
+        addParameterInternal(htmlPageList = new ItemTypeItemList(PARAM_HTML_PAGELIST, new Vector<IItemType[]>(), this,
+				IItemType.TYPE_PUBLIC, "",	
+				International.getString("HTML-Seiten")));
+		htmlPageList.setPadding(0, 0, 10, 10);
+		htmlPageList.setShortDescription(International.getString("HTML-Seite"));		
+		htmlPageList.setRepeatTitle(true);
+		htmlPageList.setShowUpDownButtons(true);
+		htmlPageList.setXForAddDelButtons(HTMLWIDGET_GRIDWIDTH-1);
+		htmlPageList.setStorageType(ItemTypeItemList.StorageType.keyvalue);//important flag: GUI items can change in order and elements, without breaking storage
+		
+		item = this.getParameterInternal(PARAM_UPDATEINTERVAL);
+		item.setFieldGrid(HTMLWIDGET_GRIDWIDTH-2, -1, GridBagConstraints.HORIZONTAL);
     }
 
-    void construct() {
-        IItemType iscale = getParameterInternal(PARAM_SCALE);
-        final double scale = (iscale != null ? ((ItemTypeDouble)iscale).getValue() : 1.0);
-        htmlPane = new JEditorPane() {
-            public void paint(Graphics g) {
-                Graphics2D g2d = (Graphics2D) g;
-                AffineTransform old = g2d.getTransform();
-                g2d.scale(scale, scale);
-                super.paint(g2d);
-                g2d.setTransform(old);
-            }
-        };
-
-        htmlPane.setContentType("text/html");
-        if (Daten.isEfaFlatLafActive()) {
-            htmlPane.putClientProperty("html.disable", Boolean.TRUE); 
-        	htmlPane.setFont(htmlPane.getFont().deriveFont(Font.PLAIN,14));
+   
+    public String getCaption(ItemTypeItemList list, int i) {
+        try {
+            return ((ItemTypeString)list.getItem(i, PARAM_CAPTION)).getValue();
+        } catch(Exception e) {
+            Logger.logdebug(e);
+            return "";
         }
-        htmlPane.setEditable(false);
-        // following hyperlinks is automatically "disabled" (if no HyperlinkListener is taking care of it)
-        // But we also need to disable submiting of form data:
-        HTMLEditorKit kit = (HTMLEditorKit)htmlPane.getEditorKit();
-        kit.setAutoFormSubmission(false);
-
-        if (getWidth() > 0 && getHeight() > 0) {
-            scrollPane.setPreferredSize(new Dimension(getWidth(), getHeight()));
-        }
-        scrollPane.getViewport().add(htmlPane, null);
-        if (htmlUpdater == null) {
-            htmlUpdater = new HTMLUpdater();
-        }
-        htmlUpdater.start();
-        htmlUpdater.setPage(getParameterInternal(PARAM_URL).toString(), getUpdateInterval());
     }
-
-    public void setSize(int width, int height) {
-        ((ItemTypeInteger)getParameterInternal(PARAM_WIDTH)).setValue(width);
-        ((ItemTypeInteger)getParameterInternal(PARAM_HEIGHT)).setValue(height);
-    }
-
-    public int getWidth() {
-        return ((ItemTypeInteger)getParameterInternal(PARAM_WIDTH)).getValue();
-    }
-
-    public int getHeight() {
-        return ((ItemTypeInteger)getParameterInternal(PARAM_HEIGHT)).getValue();
-    }
-
-    public JComponent getComponent() {
-        return scrollPane;
-    }
-
-    public void stop() {
-        if (htmlUpdater != null) {
-            htmlUpdater.stopHTML();
+          
+    public int getWidth(ItemTypeItemList list, int i) {
+        try {
+            return ((ItemTypeInteger)list.getItem(i, PARAM_WIDTH)).getValue();
+        } catch(Exception e) {
+            Logger.logdebug(e);
+            return 50;
         }
     }
 
-    public void runWidgetWarnings(int mode, boolean actionBegin, LogbookRecord r) {
-        // nothing to do
+    public int getHeight(ItemTypeItemList list, int i) {
+        try {
+            return ((ItemTypeInteger)list.getItem(i, PARAM_HEIGHT)).getValue();
+        } catch(Exception e) {
+            Logger.logdebug(e);
+            return 50;
+        }
+    }
+    
+    public double getScale(ItemTypeItemList list, int i) {
+        try {
+        	IItemType iscale = ((IItemType)list.getItem(i, PARAM_SCALE));
+            final double scale = (iscale != null ? ((ItemTypeDouble)iscale).getValue() : 1.0);
+            return scale;
+        } catch(Exception e) {
+            Logger.logdebug(e);
+            return 1.0;
+        }    	
     }
 
-    private class HTMLUpdater extends Thread {
-
-        volatile boolean keepRunning = true;
-        private volatile String url = null;
-        private volatile int updateIntervalInSeconds = 24*3600;
-
-        public void run() {
-        	this.setName("HTMLWidget.HtmlUpdater");
-            while (keepRunning) {
-                try {
-                    try {
-                        if (url != null && url.length() > 0) {
-                            url = EfaUtil.correctUrl(url);
-                            Document doc = new HTMLDocument();
-                            doc.putProperty("javax.swing.JEditorPane.postdata", "foobar"); // property must match JEditorPane.PostDataProperty
-                            
-                            // not thread safe
-                            // htmlPane.setDocument(doc);
-                            // htmlPane.setPage(url);
-                            
-                            // this is thread safe
-                        	SwingUtilities.invokeLater(new Runnable() {
-                        	      public void run() {
-                                      try {
-                                          htmlPane.setDocument(doc);                                    	  
-                                    	  htmlPane.setPage(url);
-                                      } catch (IOException ee) {
-                                          htmlPane.setText(International.getString("FEHLER") + ": "
-                                                  + International.getMessage("Kann Adresse '{url}' nicht öffnen: {message}", url, ee.toString()));
-                                      }
-                        	      }
-                          	});
-                            
-                        }
-                    } catch (Exception ee) {
-                        //htmlPane.setText(International.getString("FEHLER") + ": "
-                        //        + International.getMessage("Kann Adresse '{url}' nicht öffnen: {message}", url, ee.toString()));
-                    	
-                    	SwingUtilities.invokeLater(new Runnable() {
-                  	      public void run() {
-                              htmlPane.setText(International.getString("FEHLER") + ": "
-                                      + International.getMessage("Kann Adresse '{url}' nicht öffnen: {message}", url, ee.toString()));   
-                  	      }
-                    	});                    	
-                    }
-                    Thread.sleep(updateIntervalInSeconds*1000);
-                } catch (InterruptedException e) {
-                	//This is when the thread gets interrupted when it is sleeping.
-                	EfaUtil.foo();            
-                } catch (Exception e) {
-                	Throwable t = e.getCause();
-                	if (t.getClass().getName().equalsIgnoreCase("java.lang.InterruptedException")) {
-                		EfaUtil.foo();
-                	} else {
-                		Logger.logdebug(e);
-                	}
-                }
-            }
-        }
-
-        public void setPage(String url, int updateIntervalInSeconds) {
-            this.url = url;
-            if (updateIntervalInSeconds <= 0) {
-                updateIntervalInSeconds = 24*3600;
-            }
-            this.updateIntervalInSeconds = updateIntervalInSeconds;
-            this.interrupt();
-        }
-
-        public synchronized void stopHTML() {
-            keepRunning = false;
-            interrupt(); // wake up thread
-        }
-
+    public Boolean getHTMLPageVisible(ItemTypeItemList list, int i) {
+        try {
+            return ((ItemTypeBoolean)list.getItem(i, PARAM_HTMLPAGE_VISIBLE)).getValue();
+        } catch(Exception e) {
+            Logger.logdebug(e);
+            return false;
+        }	
+    }    
+    
+    public String getHTMLPagePosition(ItemTypeItemList list, int i) {
+        try {
+            return ((ItemTypeStringList)list.getItem(i, PARAM_HTMLPAGE_POSITION)).getValue();
+        } catch(Exception e) {
+            Logger.logdebug(e);
+            return IWidget.POSITION_MULTIWIDGET;
+        }	
+    }   
+    
+    
+    public String getUrl(ItemTypeItemList list, int i) {
+        try {
+            return ((ItemTypeString)list.getItem(i, PARAM_URL)).getValue();
+        } catch(Exception e) {
+            Logger.logdebug(e);
+            return "";
+        }	
     }
 
+	@Override
+	public Vector<WidgetInstance> createInstances() {
+		Vector <WidgetInstance> returnList = new Vector <WidgetInstance>();
+		
+		ItemTypeItemList myWList=this.getHtmlPageList();
+		if (myWList==null) {
+			return returnList;
+		}		
+		
+		for (int i = 0; i < myWList.size(); i++) {
+
+			if (getHTMLPageVisible(myWList,i)) {
+				HTMLWidgetInstance wi = new HTMLWidgetInstance();
+				wi.setPosition(getHTMLPagePosition(myWList,i));
+				wi.setHeight(getHeight(myWList,i));
+				wi.setScale(getScale(myWList,i));
+				wi.setUpdateInterval(getUpdateInterval());
+				wi.setUrl(this.getUrl(myWList,i));
+				wi.setWidth(getWidth(myWList,i));
+				wi.setColorsActive(this.getColorsActive(myWList,i));
+				wi.setBackgroundColor(this.getBackgroundColor(myWList, i));
+				wi.setForegroundColor(this.getForegroundColor(myWList, i));
+				wi.setHeaderBackgroundColor(this.getHeaderBackgroundColor(myWList,i));
+				wi.setHeaderForegroundColor(this.getHeaderForegroundColor(myWList,i));
+				wi.setUseHttpCaching(this.getHttpCacheActive(myWList, i));
+				wi.setCaption(this.getCaption(myWList, i));
+				returnList.add(wi);
+			}
+		}
+		
+		return returnList;
+	}
+    
+	private Color getBackgroundColor(ItemTypeItemList list, int i) {
+        try {
+            return ((ItemTypeColor)list.getItem(i, PARAM_COLORBACKGROUND)).getColor();
+        } catch(Exception e) {
+            Logger.logdebug(e);
+            return null;
+        }	
+	}
+
+	private Color getForegroundColor(ItemTypeItemList list, int i) {
+        try {
+            return ((ItemTypeColor)list.getItem(i, PARAM_COLORFORECROUND)).getColor();
+        } catch(Exception e) {
+            Logger.logdebug(e);
+            return null;
+        }	
+	}
+
+	private Color getHeaderBackgroundColor(ItemTypeItemList list, int i) {
+        try {
+            return ((ItemTypeColor)list.getItem(i, PARAM_HEADER_COLOR_BACKGROUND)).getColor();
+        } catch(Exception e) {
+            Logger.logdebug(e);
+            return null;
+        }	
+	}
+
+	private Color getHeaderForegroundColor(ItemTypeItemList list, int i) {
+        try {
+            return ((ItemTypeColor)list.getItem(i, PARAM_HEADER_COLOR_FOREGROUND)).getColor();
+        } catch(Exception e) {
+            Logger.logdebug(e);
+            return null;
+        }	
+	}
+	private boolean getColorsActive(ItemTypeItemList list, int i) {
+        try {
+            return ((ItemTypeBoolean)list.getItem(i, PARAM_COLORSACTIVE)).getValue();
+        } catch(Exception e) {
+            Logger.logdebug(e);
+            return false;
+        }	
+	}
+	    
+	private boolean getHttpCacheActive(ItemTypeItemList list, int i) {
+        try {
+            return ((ItemTypeBoolean)list.getItem(i, PARAM_USE_HTTP_CACHE)).getValue();
+        } catch(Exception e) {
+            Logger.logdebug(e);
+            return false;
+        }	
+	}
+
+	/*
+	 * getDefaultItems is the factory for all location elements
+	 */
+	public IItemType[] getDefaultItems(String itemName) {
+		//which Item do we want to get the elements from?
+		if (itemName.endsWith(PARAM_HTML_PAGELIST)) {
+			
+            ItemTypeItemList item = (ItemTypeItemList)getParameterInternal(PARAM_HTML_PAGELIST);
+            int i = item.size()+1;
+			
+            // build the GUI
+           
+            IItemType[] items = new IItemType[13];
+            i=0;
+            
+            
+            items[i] = new ItemTypeBoolean(PARAM_HTMLPAGE_VISIBLE, true,
+                    IItemType.TYPE_PUBLIC, "",
+                    International.getString("HTML-Seite anzeigen"));
+            items[i].setFieldGrid(HTMLWIDGET_GRIDWIDTH-2, -1, GridBagConstraints.HORIZONTAL);
+            items[i++].setPadding(0,0,0,10); 
+            
+    		items[i] = new ItemTypeString(PARAM_CAPTION, "", IItemType.TYPE_PUBLIC, "",
+    				International.getString("Beschriftung"));
+            items[i++].setFieldGrid(HTMLWIDGET_GRIDWIDTH-2, -1, GridBagConstraints.HORIZONTAL);
+            
+            items[i] = new ItemTypeFile(PARAM_URL, "",
+                    International.getString("HTML-Seite"),
+                    International.getString("HTML-Seite"),
+                    null,ItemTypeFile.MODE_OPEN,ItemTypeFile.TYPE_FILE,
+                    IItemType.TYPE_PUBLIC, "",
+                    "URL");
+            items[i++].setFieldGrid(HTMLWIDGET_GRIDWIDTH-2, -1, GridBagConstraints.HORIZONTAL);
+            
+            items[i] = new ItemTypeBoolean(PARAM_USE_HTTP_CACHE, true,
+                    IItemType.TYPE_PUBLIC, "",
+                    International.getString("HTTP-Caching verwenden"));
+            items[i].setFieldGrid(HTMLWIDGET_GRIDWIDTH-2, -1, GridBagConstraints.HORIZONTAL);
+    		((ItemTypeBoolean) items[i]).setIndent(true);
+    		items[i++].setPadding(0,0,0,10);    
+
+            items [i]= new ItemTypeStringList(PARAM_HTMLPAGE_POSITION, POSITION_MULTIWIDGET,
+                    new String[]{POSITION_TOP, POSITION_BOTTOM, POSITION_LEFT, POSITION_RIGHT, POSITION_CENTER, POSITION_MULTIWIDGET},
+                    new String[]{International.getString("oben"),
+                        International.getString("unten"),
+                        International.getString("links"),
+                        International.getString("rechts"),
+                        International.getString("mitte"),
+                        International.getString("Multi-Widget")
+                    },
+                    IItemType.TYPE_PUBLIC, "",
+                    International.getString("Position"));
+            items[i].setPadding(0, 0, 20, 0);
+            items[i++].setFieldGrid(HTMLWIDGET_GRIDWIDTH-2, -1, GridBagConstraints.HORIZONTAL);
+            
+            items[i] = new ItemTypeInteger(PARAM_WIDTH, 200, 1, Integer.MAX_VALUE, false,
+                    IItemType.TYPE_PUBLIC, "", International.getString("Breite"));
+            items[i].setFieldSize(SMALL_FIELDWIDTH, -1);
+            items[i].setFieldGrid(-1, -1, GridBagConstraints.HORIZONTAL);
+            items[i++].setPadding(10,0,0,0);
+
+            items[i] = new ItemTypeInteger(PARAM_HEIGHT, 50, 1, Integer.MAX_VALUE, false,
+                    IItemType.TYPE_PUBLIC, "", International.getString("Höhe"));
+            ((ItemTypeLabelTextfield) items[i]).setIsItemOnSameRowAsPreviousItem(true);
+            items[i].setFieldGrid(-1, -1, GridBagConstraints.HORIZONTAL);
+            items[i++].setFieldSize(SMALL_FIELDWIDTH, -1);
+            
+            items[i] = new ItemTypeDouble(PARAM_SCALE, 1, 0.1, 10, false,
+                    IItemType.TYPE_PUBLIC, "", International.getString("Skalierung"));
+            items[i++].setFieldGrid(HTMLWIDGET_GRIDWIDTH-2, -1, GridBagConstraints.HORIZONTAL);
+            
+            items[i] = new ItemTypeBoolean(PARAM_COLORSACTIVE, true,
+					IItemType.TYPE_PUBLIC, "",
+					International.getString("Eigene Farben verwenden"));
+            items[i++].setFieldGrid(HTMLWIDGET_GRIDWIDTH-2, -1, GridBagConstraints.HORIZONTAL);
+            
+			items[i] = new ItemTypeColor(PARAM_COLORBACKGROUND,
+							EfaUtil.getColor(Daten.efaConfig.getToolTipBackgroundColor()),
+							EfaUtil.getColor(Daten.efaConfig.getToolTipBackgroundColor()), IItemType.TYPE_PUBLIC,
+							"",
+							International.getString("Hintergrundfarbe"), false);
+            items[i++].setFieldGrid(HTMLWIDGET_GRIDWIDTH-2, -1, GridBagConstraints.HORIZONTAL);
+            
+            items[i] =  new ItemTypeColor(PARAM_COLORFORECROUND,
+					EfaUtil.getColor(Daten.efaConfig.getToolTipForegroundColor()),
+					EfaUtil.getColor(Daten.efaConfig.getToolTipForegroundColor()), IItemType.TYPE_PUBLIC,
+							"",
+							International.getString("Textfarbe"), false);							
+            items[i++].setFieldGrid(HTMLWIDGET_GRIDWIDTH-2, -1, GridBagConstraints.HORIZONTAL);
+            
+			items[i] = new ItemTypeColor(PARAM_HEADER_COLOR_BACKGROUND,
+					EfaUtil.getColor(EfaConfig.standardToolTipHeaderBackgroundColor),
+					EfaUtil.getColor(EfaConfig.standardToolTipHeaderBackgroundColor), IItemType.TYPE_PUBLIC,
+					"",
+					International.getString("Überschriften Hintergrundfarbe"), false);
+            items[i++].setFieldGrid(HTMLWIDGET_GRIDWIDTH-2, -1, GridBagConstraints.HORIZONTAL);
+            
+			items[i] =new ItemTypeColor(PARAM_HEADER_COLOR_FOREGROUND,
+					EfaUtil.getColor(EfaConfig.standardToolTipHeaderForegroundColor),
+					EfaUtil.getColor(EfaConfig.standardToolTipHeaderForegroundColor), IItemType.TYPE_PUBLIC,
+					"",
+					International.getString("Überschriften Textfarbe"), false);
+            items[i++].setFieldGrid(HTMLWIDGET_GRIDWIDTH-2, -1, GridBagConstraints.HORIZONTAL);
+            
+            return items;
+		}
+		return null;
+	}	
+	
+    ItemTypeItemList getHtmlPageList() {
+        return (ItemTypeItemList)getParameterInternal(PARAM_HTML_PAGELIST);
+    }
+    
+    @Override 
+    public boolean isGuiWidget() {
+    	return true;
+    }
+       
 
 }

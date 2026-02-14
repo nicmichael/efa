@@ -7,11 +7,19 @@
     <h1><b>EFA Versionshistorie</b></h1>
     <table border="0">
     <xsl:for-each select="efaOnlineUpdate/Version">
+	<!--only create changelog for version 2.2.2 and above -->
+	<xsl:if test="not(VersionID[(starts-with(translate(.,'ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜ','abcdefghijklmnopqrstuvwxyzäöü'),'2.2.1'))] 
+	    or VersionID[(starts-with(translate(.,'ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜ','abcdefghijklmnopqrstuvwxyzäöü'),'2.1'))]
+	    or VersionID[(starts-with(translate(.,'ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜ','abcdefghijklmnopqrstuvwxyzäöü'),'2.0'))]
+	    or VersionID[(starts-with(translate(.,'ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜ','abcdefghijklmnopqrstuvwxyzäöü'),'1.'))])">
+	<!-- create a circle with current version number in the left column -->
         <tr height="134"><td valign="top" align="center" width="128" background="line.png">
             <table width="132" height="130" border="0"><tr height="128"><td background="circle.png" valign="middle" align="center" height="128" width="132">
-        	<font color="white"><b><xsl:value-of select="VersionID"/></b><br/><br/><xsl:value-of select="ReleaseDate"/></font>
+		<font color="yellow"><b><xsl:value-of select="VersionID"/></b><br/><br/></font>
+		<font color="yellow"><xsl:value-of select="ReleaseDate"/></font>
             </td></tr></table>
         </td><td valign="top">
+        <!--add the version info for 'de' in the right column, and group them by "new" and "bugfix" categories -->
         <b><br/><br/><xsl:if test="not(count(MinimumJavaVersion) = 0)">Minimale Java Version: <xsl:value-of select="MinimumJavaVersion"/><br/></xsl:if>
             <xsl:if test="not(count(MinimumEfaCloudVersion) = 0)">Minimale efaCloud Version: <xsl:value-of select="MinimumEfaCloudVersion"/><br/></xsl:if></b>
 	<xsl:if test="not(count(ShowNotice) = 0)">
@@ -67,6 +75,7 @@
 	    </xsl:if>
 	</xsl:for-each>
 	</td></tr>
+    </xsl:if>
     </xsl:for-each>
     </table>
     </body>

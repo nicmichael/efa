@@ -46,8 +46,12 @@ public class ItemTypeDate extends ItemTypeLabelTextfield {
 
     public IItemType copyOf() {
         ItemTypeDate copy = new ItemTypeDate(name, new DataTypeDate(value), type, category, description);
+        copy.setFieldSize(fieldWidth, fieldHeight);
         copy.setPadding(padXbefore, padXafter, padYbefore, padYafter);
         copy.setIcon((label == null ? null : label.getIcon()));
+        copy.setIsItemOnSameRowAsPreviousItem(itemOnSameRowAsPreviousItem);
+        copy.setItemOnNewRow(itemOnNewRow);
+        copy.setFieldGrid(fieldGridWidth,fieldGridHeight,fieldGridAnchor,fieldGridFill);
         return copy;
     }
 

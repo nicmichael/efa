@@ -47,10 +47,14 @@ public class ItemTypeFile extends ItemTypeString {
     }
 
     public IItemType copyOf() {
-        ItemTypeFile newItem = new ItemTypeFile(name, value, fileItem, fileTypes, fileExtensions, fileOpenSave, fileOrDir, type, category, description);
-        newItem.setPadding(padXbefore, padXafter, padYbefore, padYafter);
-        newItem.setIcon((label == null ? null : label.getIcon()));
-        return newItem;
+        ItemTypeFile copy = new ItemTypeFile(name, value, fileItem, fileTypes, fileExtensions, fileOpenSave, fileOrDir, type, category, description);
+        copy.setFieldSize(fieldWidth, fieldHeight);
+        copy.setPadding(padXbefore, padXafter, padYbefore, padYafter);
+        copy.setIcon((label == null ? null : label.getIcon()));
+        copy.setIsItemOnSameRowAsPreviousItem(itemOnSameRowAsPreviousItem);
+        copy.setItemOnNewRow(itemOnNewRow);
+        copy.setFieldGrid(fieldGridWidth,fieldGridHeight,fieldGridAnchor,fieldGridFill);
+        return copy;
     }
 
     public int displayOnGui(Window dlg, JPanel panel, int x, int y) {
@@ -101,7 +105,9 @@ public class ItemTypeFile extends ItemTypeString {
         getValueFromGui();
         String filename = toString().trim();
         if (fileOpenSave == MODE_OPEN && filename.length() > 0) {
-            if (fileOrDir == TYPE_FILE && !(new File(filename)).isFile()) {
+            if (fileOrDir == TYPE_FILE 
+            		&& !((filename.toLowerCase().startsWith("http:") || filename.toLowerCase().startsWith("https:")))
+            		&& !(new File(filename)).isFile()) {
                 Dialog.error(International.getMessage("{filedescription} '{filename}' existiert nicht",
                         International.getString("Datei"),filename)+".");
             }

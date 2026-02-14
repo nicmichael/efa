@@ -15,7 +15,9 @@ import de.nmichael.efa.data.ProjectRecord;
 import de.nmichael.efa.data.Waters;
 import de.nmichael.efa.data.types.DataTypeDate;
 import de.nmichael.efa.gui.AdminDialog;
+import de.nmichael.efa.gui.BrowserDialog;
 import de.nmichael.efa.util.Dialog;
+import de.nmichael.efa.util.EfaUtil;
 import de.nmichael.efa.util.International;
 import de.nmichael.efa.util.Logger;
 import javax.swing.JDialog;
@@ -96,17 +98,23 @@ public class AdminTask extends Thread {
     }
 
     private void checkForJavaVersion() {
+    	long ONCE_A_WEEK= 7 * 24 * 60 * 60 * 1000;
         int javaVersionInt = Integer.parseInt(Daten.javaVersion.split("\\.")[0]);
         if ((javaVersionInt == 1) && (Daten.javaVersion.split("\\.").length > 2))   // Windows calls java 8 java 1.8_xxx
             javaVersionInt = Integer.parseInt(Daten.javaVersion.split("\\.")[1]);
         if (javaVersionInt < Daten.REQUIRED_JAVA_VERSION) {
             long lastCheck = System.currentTimeMillis() - Daten.efaConfig.getValueJavaVersionLastCheck();
-            if (lastCheck > 7 * 24 * 60 * 60 * 1000) {
-                Dialog.infoDialog(International.getString("Java Update erforderlich"),
+            if (lastCheck > ONCE_A_WEEK) {// einmal pro Woche prüfen
+                int option=Dialog.auswahlDialog(International.getString("Java Update erforderlich"),
                     International.getMessage("Die verwendete Java Version {version} ist zu alt und wird demnächst nicht mehr unterstützt.", Daten.javaVersion) + "\n" +
                     International.getMessage("Um efa auch in Zukunft weiter verwenden zu können, installiere bitte Java Version {version} oder neuer.", Daten.REQUIRED_JAVA_VERSION) + "\n" +
-                    International.getMessage("Weitere Informationen auf {url}", "http://efa.nmichael.de/download.html"));
+                    International.getMessage("Weitere Informationen auf {url}", Daten.EFACLASSICDOWNLOADURL)+" "+
+                    International.getString("oder")+" "+Daten.EFAJAVAUPDATEURL,
+                    International.getString("Webseite öffnen"), International.getString("OK"),false);
                 Daten.efaConfig.setValueJavaVersionLastCheck(System.currentTimeMillis());
+                if (option==0) {
+                	BrowserDialog.openExternalBrowser(null, Daten.EFAJAVAUPDATEURL);
+                }
             }
         }
     }

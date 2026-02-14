@@ -100,8 +100,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 	public final String CATEGORY_KANUEFB = "%16%" + International.onlyFor("Kanu-eFB", "de");
 	public final String CATEGORY_LOCALE = "%17%" + International.getStringWithoutAnyEscaping("Sprache & Region");
 	public final String CATEGORY_WIDGETS = "%18%" + International.getString("Widgets");
-	public final String CATEGORY_WIDGET_CLOCK = "%181%" + International.getString("Uhr");
-	public final String CATEGORY_WIDGET_NEWS = "%182%" + International.getString("Ticker");
+	public final String CATEGORY_WIDGET_NEWS = "%9%" + International.getString("Ticker");
 	public final String CATEGORY_DATAACCESS = "%19%" + International.getString("Daten");
 	public final String CATEGORY_DATAXML = "%191%" + International.getString("lokale Dateien");
 	public final String CATEGORY_DATAREMOTE = "%192%" + Daten.EFA_REMOTE;
@@ -287,6 +286,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 	private ItemTypeConfigButton efaDirekt_butHelp;
 	private ItemTypeString efaDirekt_butSpezialCmd;
 	private ItemTypeBoolean efaDirekt_showButtonHotkey;
+	private ItemTypeInteger efaDirekt_showButtonBorderWidth;
 	private ItemTypeBoolean efaDirekt_sortByAnzahl;
 	private ItemTypeBoolean efaDirekt_sortByRigger;
 	private ItemTypeBoolean efaDirekt_sortByType;
@@ -314,12 +314,14 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 	private ItemTypeString efadirekt_adminLastOsCommand;
 	private ItemTypeLong efadirekt_lastBoatDamangeReminder;
 	private ItemTypeImage efaDirekt_vereinsLogo;
+	private ItemTypeBoolean efaDirekt_statusLeiste;
 	private ItemTypeBoolean efaBoathouseShowLastFromWaterNotification;
 	private ItemTypeString efaBoathouseShowLastFromWaterNotificationText;
 	private ItemTypeBoolean efaDirekt_showUhr;
 	private ItemTypeBoolean efaDirekt_showNews;
 	private ItemTypeString efaDirekt_newsText;
 	private ItemTypeInteger efaDirekt_newsScrollSpeed;
+	private ItemTypeInteger efaDirekt_newsWidthPercent;
 	private ItemTypeBoolean efaDirekt_startMaximized;
 	private ItemTypeBoolean efaDirekt_startMaximizedRespectTaskbar;
 	private ItemTypeBoolean efaDirekt_fensterNichtVerschiebbar;
@@ -339,6 +341,11 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 	private ItemTypeColor efaGuiToolTipForeground;
 	private ItemTypeColor efaGuiToolTipHeaderBackground; 
 	private ItemTypeColor efaGuiToolTipHeaderForeground;
+	
+	private ItemTypeColor efaGuiErrorBackground; 
+	private ItemTypeColor efaGuiErrorForeground;
+	private ItemTypeColor efaGuiErrorHeaderBackground; 
+	private ItemTypeColor efaGuiErrorHeaderForeground;
 	
 	private ItemTypeStringList efaDirekt_bnrMsgToAdminDefaultRecipient;
 	private ItemTypeBoolean efaDirekt_bnrError_admin;
@@ -434,11 +441,20 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 	public static Color hintBackgroundColor = new Color(210,225,239);
 	public static Color hintBorderColor = new Color(120,166,213);
 
-	private static Color standardToolTipBackgroundColor = new Color(224,237,249);
-	private static Color standardToolTipForegroundColor = new Color(21,65,106);
+	public static Color standardToolTipBackgroundColor = new Color(224,237,249);
+	public static Color standardToolTipForegroundColor = new Color(21,65,106);
+	
+	public static Color standardToolTipHeaderBackgroundColor = new Color(250,252,254);
+	public static Color standardToolTipHeaderForegroundColor = standardToolTipForegroundColor;	
 
-	private static Color standardToolTipHeaderBackgroundColor = new Color(250,252,254);
-	private static Color standardToolTipHeaderForegroundColor = standardToolTipForegroundColor;	
+	public static Color standardErrorBackgroundColor = new Color(249,224,224);
+	public static Color standardErrorForegroundColor = new Color(148,29,29);
+	
+	public static Color standardErrorHeaderBackgroundColor = new Color(254,250,250);
+	public static Color standardErrorHeaderForegroundColor = standardErrorForegroundColor;	
+	
+	public static Color standardHeaderBackgroundColor = standardTableSelectionBackgroundColor;
+	public static Color standardHeaderForegroundColor = standardTableSelectionForegroundColor;
 	
 	
 	// private internal data
@@ -554,7 +570,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 		synchronized (configValues) {
 			for (int i = 0; i < configValueNames.size(); i++) {
 				String name = configValueNames.get(i);
-				if (!name.startsWith("_") && getValue(name) == null) {
+				if (!name.startsWith(NOT_STORED_ITEM_PREFIX) && getValue(name) == null) {
 					addValue(name, configValues.get(name).toString());
 				}
 			}
@@ -1354,6 +1370,11 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
 					International.getString("Sonstiges"), 3);
 
+			addParameter(efaDirekt_showButtonBorderWidth = new ItemTypeInteger("ButtonBorderWidth", 40, 12, 200, 
+					IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
+					International.getString("Abstand der Buttons zu den Bootslisten (Pixel)")));
+			efaDirekt_showButtonBorderWidth.setPadding(0, 0, 0, 20);
+			
 			addParameter(efaDirekt_vereinsLogo = new ItemTypeImage("ClubLogo", "", 320, 200, IItemType.TYPE_PUBLIC,
 					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI ),
 					International.getString("Vereinslogo")));
@@ -1361,7 +1382,12 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 			addHeader("efaGuiBoathouseBoatListsCommon", IItemType.TYPE_PUBLIC,
 					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
 					International.getString("Bootslisten allgemein"), 3);
-
+			
+			addParameter(efaDirekt_statusLeiste = new ItemTypeBoolean("EfaBoathouseShowStatus", false,
+					IItemType.TYPE_PUBLIC,
+					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI ),
+					International.getString("Statusleiste mit Bootsinformationen anzeigen")));
+			
 			addParameter(efaDirekt_listAllowToggleBoatsPersons = new ItemTypeBoolean("BoatListToggleToPersons", false,
 					IItemType.TYPE_PUBLIC,
 					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI ),
@@ -1480,6 +1506,11 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 			addHint("efaMultiSessinoSupportHintOnButtons", 
 					IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUIBUTTONS),
 					International.getString("Konfiguration der Schaltflächen hinter 'Fahrt beginnen' und 'Nachtrag' via efa-Bootshaus -> Eingabe -> Vereinfachte Anlage..."),3, 6, 6);
+
+			addParameter(efaDirekt_showButtonHotkey = new ItemTypeBoolean("ButtonShowHotkeys", false,
+					IItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUIBUTTONS),
+					International.getString("Hotkeys für Buttons anzeigen")));
+			
 			addParameter(efaDirekt_butFahrtBeginnen = new ItemTypeConfigButton("ButtonStartSession",
 					International.getString("Fahrt beginnen"), "CCFFCC", true, false, true, false,
 					IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUIBUTTONS),
@@ -1531,9 +1562,6 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 					International.getString("Hilfe-Button"), null, true, false, false, true, IItemType.TYPE_PUBLIC,
 					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUIBUTTONS),
 					International.getMessage("Button '{button}'", International.getString("Hilfe-Button"))));
-			addParameter(efaDirekt_showButtonHotkey = new ItemTypeBoolean("ButtonShowHotkeys", false,
-					IItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUIBUTTONS),
-					International.getString("Hotkeys für Buttons anzeigen")));
 
 			// ============================= BOATHOUSE:STARTSTOP
 			// =============================
@@ -1776,21 +1804,24 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 					"Fahrtbeschreibung für EFB um Fahrtart erweitern"));
 			
 			// ============================= WIDGETS =============================
-			addParameter(efaDirekt_showUhr = new ItemTypeBoolean("WidgetClockEnabled", true, IItemType.TYPE_PUBLIC,
-					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_WIDGETS, CATEGORY_WIDGET_CLOCK),
-					International.getMessage("{item} anzeigen", International.getString("Uhr"))));
+
 			addParameter(efaDirekt_showNews = new ItemTypeBoolean("WidgetNewsEnabled", true, IItemType.TYPE_PUBLIC,
 					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_WIDGETS, CATEGORY_WIDGET_NEWS),
 					International.getMessage("{item} anzeigen", International.getString("News"))));
 			addParameter(efaDirekt_newsText = new ItemTypeString("WidgetNewsText", "", IItemType.TYPE_PUBLIC,
 					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_WIDGETS, CATEGORY_WIDGET_NEWS),
 					International.getString("News-Text")));
-			addParameter(efaDirekt_newsScrollSpeed = new ItemTypeInteger("WidgetNewsScrollSpeed", 250, 100,
-					Integer.MAX_VALUE, IItemType.TYPE_EXPERT,
+			addParameter(efaDirekt_newsScrollSpeed = new ItemTypeInteger("WidgetNewsWaitTimeTimer", 350, 50,
+					Integer.MAX_VALUE, IItemType.TYPE_PUBLIC,
 					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_WIDGETS, CATEGORY_WIDGET_NEWS),
-					"Scroll Speed"));
+					International.getString("Zeit (msec) zwischen Aktualisierungen")));		
+			addParameter(efaDirekt_newsWidthPercent = new ItemTypeInteger("WidgetNewsScrollWidth", 80, 30, 90, 
+					IItemType.TYPE_EXPERT,
+					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_WIDGETS, CATEGORY_WIDGET_NEWS),
+					International.getString("Breite")+" (%)"));			
 
-			widgets = Widget.getAllWidgets();
+
+			widgets = Widget.getAllWidgets(true);
 			for (int i = 0; widgets != null && i < widgets.size(); i++) {
 				IWidget w = widgets.get(i);
 				IItemType[] params = w.getParameters();
@@ -1809,15 +1840,19 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 
 			// ============================= CRONTAB =============================
 			
-			addHint("CronTabHint", IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_CRONTAB),
-					"<html>"+International.getStringWithMnemonic("Hiermit koennen Sie regelmaessig efaCLI-Kommandos ausfuehren lassen.")+"</html>",3,0,20);
+			IItemType item = addHintWordWrap("CronTabHint", IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_CRONTAB),
+					International.getString("Hiermit koennen Sie regelmaessig efaCLI-Kommandos ausfuehren lassen."),3,0,20,550);
+			
 			
 			addParameter(crontab = new ItemTypeItemList("CronTab", new Vector<IItemType[]>(), this,
 					IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_CRONTAB),
 					International.getString("Automatische Abläufe")));
 			crontab.setFieldGrid(2, GridBagConstraints.WEST, GridBagConstraints.BOTH);
 			//crontab.setScrollPane(1000, 400);
-			crontab.setRepeatTitle(false);
+			crontab.setAppendPositionToEachElement(false);
+			crontab.setShortDescription("Task");
+			crontab.setRepeatTitle(true);
+			crontab.setShowUpDownButtons(false);
 
 			// ============================= DATA ACCESS =============================
 			addParameter(dataPreModifyRecordCallbackEnabled = new ItemTypeBoolean("DataPreModifyRecordCallbackEnabled",
@@ -1973,7 +2008,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 	}
 	private IItemType addHintWordWrap(String uniqueName, int type, String category, String caption, int gridWidth,
 			int padBefore, int padAfter, int maxWidth) {
-		IItemType item = EfaGuiUtils.createHintWordWrap(uniqueName, type, category, caption, gridWidth, padBefore, padAfter, maxWidth);
+		ItemTypeLabel item = EfaGuiUtils.createHintWordWrap(uniqueName, type, category, caption, gridWidth, padBefore, padAfter, maxWidth);
 		addParameter(item);
 		return item;
 	}
@@ -2491,6 +2526,10 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 		return efaDirekt_showButtonHotkey.getValue();
 	}
 
+	public int getValueEfaDirekt_showButtonBorderWidth() {
+		return efaDirekt_showButtonBorderWidth.getValue();
+	}
+	
 	public boolean getValueEfaDirekt_sortByAnzahl() {
 		return efaDirekt_sortByAnzahl.getValue();
 	}
@@ -2672,6 +2711,10 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 		return efaDirekt_newsScrollSpeed.getValue();
 	}
 
+	public int getValueEfaDirekt_newsWidthPercent() {
+		return efaDirekt_newsWidthPercent.getValue();
+	}
+	
 	public boolean getValueEfaDirekt_startMaximized() {
 		return efaDirekt_startMaximized.getValue();
 	}
@@ -3129,6 +3172,26 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 		Color myColor = efaGuiToolTipHeaderForeground.getColor();
 		return (myColor != null ? myColor : standardToolTipHeaderForegroundColor);
 	}
+
+	public Color getErrorBackgroundColor() {
+		Color myColor = efaGuiErrorBackground.getColor();
+		return (myColor != null ? myColor : standardErrorBackgroundColor);
+	}
+
+	public Color getErrorForegroundColor() {
+		Color myColor = efaGuiErrorForeground.getColor();
+		return (myColor != null ? myColor : standardErrorForegroundColor);
+	}
+
+	public Color getErrorHeaderBackgroundColor() {
+		Color myColor = efaGuiErrorHeaderBackground.getColor();
+		return (myColor != null ? myColor : standardErrorHeaderBackgroundColor);
+	}
+
+	public Color getErrorHeaderForegroundColor() {
+		Color myColor = efaGuiErrorHeaderForeground.getColor();
+		return (myColor != null ? myColor : standardErrorHeaderForegroundColor);
+	}	
 	
 	public Boolean getHeaderUseHighlightColor() {
 		return efaHeaderUseHighlightColor.getValue();
@@ -3150,6 +3213,10 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 
 	public String getWeeklyReservationConflictBehaviour() {
 		return weeklyReservationConflictBehaviour.getValue();
+	}
+	
+	public Boolean getValueStatusLeiste() {
+		return efaDirekt_statusLeiste.getValue();
 	}
 
 	public Vector<IItemType> getGuiItems() {
@@ -3574,7 +3641,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 		if (itemName.equals(crontab.getName())) {
 			int i = crontab.size() + 1;
 			ItemTypeCronEntry[] item = new ItemTypeCronEntry[] { new ItemTypeCronEntry(crontab.getName() + i, "",
-					crontab.getType(), crontab.getCategory(), "Task #" + i) };
+					crontab.getType(), crontab.getCategory(), null) };
 			return item;
 		}
 		return null;

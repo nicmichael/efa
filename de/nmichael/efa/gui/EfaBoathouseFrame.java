@@ -19,7 +19,6 @@ import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -40,6 +39,7 @@ import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuBar;
 import javax.swing.JPanel;
@@ -87,10 +87,13 @@ import de.nmichael.efa.gui.dataedit.StatisticsListDialog;
 import de.nmichael.efa.gui.util.EfaBoathouseBackgroundTask;
 import de.nmichael.efa.gui.util.EfaMenuButton;
 import de.nmichael.efa.gui.util.EfaMouseListener;
-import de.nmichael.efa.gui.widgets.ClockMiniWidget;
 import de.nmichael.efa.gui.widgets.IWidget;
+import de.nmichael.efa.gui.widgets.IWidgetInstance;
+import de.nmichael.efa.gui.widgets.MultiWidgetContainer;
+import de.nmichael.efa.gui.widgets.MultiWidgetContainerInstance;
 import de.nmichael.efa.gui.widgets.NewsMiniWidget;
 import de.nmichael.efa.gui.widgets.Widget;
+import de.nmichael.efa.gui.widgets.WidgetInstance;
 import de.nmichael.efa.util.Dialog;
 import de.nmichael.efa.util.EfaUtil;
 import de.nmichael.efa.util.Help;
@@ -98,7 +101,45 @@ import de.nmichael.efa.util.International;
 import de.nmichael.efa.util.LogString;
 import de.nmichael.efa.util.Logger;
 import de.nmichael.efa.util.Mnemonics;
-
+/*
+ * EfaBoathouseFrame layout
+ * 
+ * -------------------------------------------------|
+ *      widgetTopPanel (within northpanel)          |
+ * -------------------------------------------------|
+ *       |          |           |          |        |               
+ * widget|          | center    |          | widget |               
+ * left  |          | panel     |          | right  |               
+ * Panel | center:  |           | center:  | panel  |               
+ *       | boats    |           | boatson  |        |               
+ *       | available|           | waterlist| within |               
+ *       | list     |           | +        | east   |               
+ *       |          |           | boats    | panel  |               
+ *       |          |           | unavail- |        |               
+ *       |          |           | ablelist |        |               
+ * --------------------------------------------------
+ *     widgetBottomPanel (within southpanel)        |
+ * --------------------------------------------------
+ * 
+ * centerpanel:
+ * contains a gridbaglayout.
+ *    - row 1: logolabel
+ *    - Row 2..n: buttons  (buttonpanel)  (where n=99, enough space for additional buttons, empty rows are not shown in gridbaglayout)
+ *    - Row 100..200: widgetcenterpanel 
+ *    		widgetcenter uses gridbaglayout
+ *    - Row 200: multiwidgetCenterPanel --> contains north, center,south
+ *    		this panel only contains the multiWidget widget. 
+ *          it is only shown if any other widget's location is set to "MultiWidget"
+ *          and it is positioned on row 200, as multiwidget should always be bottommost widget,
+ *          e.g. below the clock.
+ *          
+ * southpanel:
+ *     - Center: WidgetBottomPanel
+ *     - South: 
+ *     	  - statusLabel (for Boat info)
+ *        - news label (for red ticker info) 
+ *          
+ */
 public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
 
 	private static final long serialVersionUID = -382107679365085355L;
@@ -121,6 +162,8 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
     public static final int ACTIONID_BOATDAMAGES         = 7;
     public static final int ACTIONID_BOATINFOS           = 8;
     public static final int ACTIONID_LASTBOATUSAGE       = 9;
+    
+    private static final int VERT_BUTTONGAP = 8;
 
     String KEYACTION_F2;
     String KEYACTION_F3;
@@ -139,6 +182,9 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
     String KEYACTION_altX;
     String KEYACTION_shiftF4;
 
+    // Buttons panel
+    JPanel buttonPanel = new JPanel();
+    
     // Boat List GUI Items
     JPanel boatsAvailablePanel;
     ItemTypeBoatstatusList boatsAvailableList; // booteVerfuegbar
@@ -151,6 +197,7 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
 
     // Center Panel GUI Items
     JLabel logoLabel = new JLabel();
+
     JButton startSessionButton = new JButton();
     JButton startSessionButtonMultiple = new JButton();
     JButton finishSessionButton = new JButton();
@@ -168,25 +215,25 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
     JButton clubworkButton = new JButton();
 
     // Widgets
-    ClockMiniWidget clock;
     NewsMiniWidget news;
-    Vector<IWidget> widgets;
+    Vector<IWidget> widgetTypes = new Vector<IWidget>();
+    Vector<IWidgetInstance> widgetInstances = new Vector<IWidgetInstance>();
+    MultiWidgetContainer multiWidget;
+    MultiWidgetContainerInstance multiWidgetInstance;
     JPanel widgetTopPanel = new JPanel();
     JPanel widgetBottomPanel = new JPanel();
     JPanel widgetLeftPanel = new JPanel();
     JPanel widgetRightPanel = new JPanel();
     JPanel widgetCenterPanel = new JPanel();
+    JPanel widgetMultiWidgetCenterPanel= new JPanel();
 
     // South Panel GUI Items
     JLabel statusLabel = new JLabel();
 
     // Base GUI Items
-    JPanel westPanel = new JPanel();
-    JPanel eastPanel = new JPanel();
+    JPanel leftBoatListPanel = new JPanel();
+    JPanel rightBoatListPanel = new JPanel();
     JPanel centerPanel = new JPanel();
-    JPanel northPanel = new JPanel();
-    JPanel southPanel = new JPanel();
-    
 
     // Window GUI Items
     JLabel titleLabel = new JLabel();
@@ -290,13 +337,9 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
     }
 
     private void iniGuiBase() {
-        setIconImage(Toolkit.getDefaultToolkit().createImage(EfaBaseFrame.class.getResource("/de/nmichael/efa/img/efa_icon.png")));
-        mainPanel.setLayout(new BorderLayout());
+        setIconImage(EfaGuiUtils.getEfaMainIcon());
+        mainPanel.setLayout(new GridBagLayout());
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-        //setting resizable to true would enable resizing the boathouse window.
-        //but as the boatlists on the left and the right are on east and west, 
-        //they do not scale horizontally with screen width.
-        //so setResizable(true) would be useless.
         setResizable(false);
         this.addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(WindowEvent e) {
@@ -354,38 +397,47 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
     private void iniGuiMain() {
         iniGuiBoatLists();
         iniGuiCenterPanel();
-        iniGuiNorthPanel();
-        iniGuiSouthPanel();
+        updateGuiNews();
         iniGuiPanels();
         updateGuiWidgets();
     }
 
     public void updateGuiElements() {
         updateGuiWidgets();
-        updateGuiClock();
         updateGuiNews();
         updateGuiButtonText();
         updateGuiLogo();
     }
 
     private void iniGuiPanels() {
-        widgetTopPanel.setLayout(new BorderLayout());
-        widgetBottomPanel.setLayout(new BorderLayout());
-        widgetLeftPanel.setLayout(new BorderLayout());
-        widgetRightPanel.setLayout(new BorderLayout());
-        widgetCenterPanel.setLayout(new BorderLayout());
+    	//Widget Top, left, right, bottom panel use gridbagLayout as they shall use multiple widgets
+        widgetTopPanel.setLayout(new GridBagLayout());
+        widgetBottomPanel.setLayout(new GridBagLayout());
+        widgetLeftPanel.setLayout(new GridBagLayout());
+        widgetRightPanel.setLayout(new GridBagLayout());
+        widgetCenterPanel.setLayout(new GridBagLayout()); // 
+        widgetMultiWidgetCenterPanel.setLayout(new GridBagLayout());
 
-        northPanel.add(widgetTopPanel, BorderLayout.CENTER);
-        southPanel.add(widgetBottomPanel, BorderLayout.CENTER);
-        westPanel.add(widgetLeftPanel, BorderLayout.WEST);
-        eastPanel.add(widgetRightPanel, BorderLayout.EAST);
-        centerPanel.add(widgetCenterPanel, new GridBagConstraints(1, 100, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5, 10, 10, 10), 0, 0));
-
-        mainPanel.add(westPanel, BorderLayout.WEST);
-        mainPanel.add(eastPanel, BorderLayout.EAST);
-        mainPanel.add(northPanel, BorderLayout.NORTH);
-        mainPanel.add(southPanel, BorderLayout.SOUTH);
-        mainPanel.add(centerPanel, BorderLayout.CENTER);
+        JPanel newsPanel = new JPanel();
+        newsPanel.setLayout(new BorderLayout());
+        newsPanel.add(news.getGuiComponent(), BorderLayout.CENTER);
+        
+        centerPanel.add(widgetCenterPanel, new GridBagConstraints(1, 100, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5, 0, 0, 0), 0, 0));
+        centerPanel.add(widgetMultiWidgetCenterPanel, new GridBagConstraints(1, 200, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0,0,0,0), 0, 0));
+        
+        mainPanel.add(widgetTopPanel,     new GridBagConstraints(1, 1, 5, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 2, 0), 0, 0));
+        // west, center, east on same row.
+        mainPanel.add(widgetLeftPanel,    new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+        mainPanel.add(leftBoatListPanel,  new GridBagConstraints(2, 2, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+        mainPanel.add(centerPanel,        new GridBagConstraints(3, 2, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 10, 0, 10), 0, 0));
+        mainPanel.add(rightBoatListPanel, new GridBagConstraints(4, 2, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+        mainPanel.add(widgetRightPanel,   new GridBagConstraints(5, 2, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+        mainPanel.add(statusLabel,  	  new GridBagConstraints(1, 3, 5, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(2, 0, 2, 0), 0, 0));
+        mainPanel.add(widgetBottomPanel,  new GridBagConstraints(1, 4, 5, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+        mainPanel.add(newsPanel,  		  new GridBagConstraints(1, 5, 5, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 4, 0, 4), 0, 0));
+        
+        statusLabel.setVisible(Daten.efaConfig.getValueStatusLeiste());
+        statusLabelSetText(International.getString("Status"));
     }
     
     private void openProjectLogbookClubwork() {
@@ -438,7 +490,7 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
                 Color bgColor = new Color(0, 0, 170);
 
                 EmptyBorder b = new EmptyBorder(2,2,2,2);
-                mainPanel.setBackground(bgColor);
+                //mainPanel.setBackground(bgColor);
                 mainPanel.setBorder(b);
 
                 JMenuBar menuBar = new JMenuBar();
@@ -508,31 +560,48 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
                     "Only supported as of Java 5: " +e.toString());
         }
 
+        boatsNotAvailableList.setFieldSize(0, Daten.efaConfig.getValueListSizeUnavailableBoats()); 
+        
         // Fenster maximiert
         if (Daten.efaConfig.getValueEfaDirekt_startMaximized()) {
             try {
-                //this.setSize(Dialog.screenSize);
-                this.setMinimumSize(Dialog.screenSize);
-                Dimension newsize = this.getSize();
 
-                // breite für Scrollpanes ist (Fensterbreite - 20) / 2.
-                //int width = (int) ((newsize.getWidth() - this.startSessionButton.getSize().getWidth() - 20) / 2);
-                int width = (int) (newsize.getWidth() / 3);
-                // die Höhe der Scrollpanes ist, da sie CENTER sind, irrelevant; nur für jScrollPane3
-                // ist die Höhe ausschlaggebend.
-                boatsAvailableList.setFieldSize(width, 400);
-                personsAvailableList.setFieldSize(width, 400);
-                boatsOnTheWaterList.setFieldSize(width, 200);
-                boatsNotAvailableList.setFieldSize(width, Daten.efaConfig.getValueListSizeUnavailableBoats()); //(int) (newsize.getHeight() / 4));
-                int height = (int) (20.0f * (Dialog.getFontSize() < 10 ? 12 : Dialog.getFontSize()) / Dialog.getDefaultFontSize());
-                toggleAvailableBoatsToBoats.setPreferredSize(new Dimension(width / 2, height));
-                toggleAvailableBoatsToPersons.setPreferredSize(new Dimension(width / 2, height));
+            	if (Daten.efaConfig.getValueEfaDirekt_fensterNichtVerschiebbar()) {
+            		this.setMinimumSize(Dialog.screenSize);
+            	} else {
+            		/* maximizing a standard jFrame in win11 is some sort of problem.
+            		 * 
+            		 * a jframe can be maximized in three flavors:
+            		 * a) use the whole screen, no border around the jframe and covering the windows task bar and not being resizable 
+            		 *    (classic and definite kiosk mode)
+            		 * b) use the whole screen, no border around the jframe, keeping windows task bar visible (but jframe needs to be set to resizable=true)
+            		 * c) use almost the whole screen, a slight border around the jframe, and task bar visible, and frame set to not resizable
+            		 * 
+            		 * how to achieve a)
+            		 * - efaboathouseframe.setresizable(false)
+            		 * - after setting the frame to visible in baseframe.java, run this only for efaBoathouseframe
+            		 *   this.setExtendedState(this.getExtendedState() | JFrame.MAXIMIZED_BOTH);
+            		 *   
+            		 * how to achieve b)
+            		 * - efaboathouseframe.setresizable(true)
+            		 * - after setting the frame to visible in baseframe.java, run this only for efaBoathouseframe
+            		 *   this.setExtendedState(this.getExtendedState() | JFrame.MAXIMIZED_BOTH);
+            		 * 
+            		 * how to achieve c)
+            		 * - efaboathouseframe.setresizable(false)
+            		 * - setting the frame size to dialog.screensize here 
+            		*/
+            		this.setPreferredSize(Dialog.screenSize);
+            	}
 
-                validate();
+                //GridbagLayout: the panels for boatlists are set to grow, the others not 
+                //so no need to calculate any widths like in former borderlayout.
             } catch (Exception e) {
                 Logger.logdebug(e);
             }
-        }
+        } 
+
+        validate();
 
         // Lock efa?
         if (Daten.efaConfig.getValueEfaDirekt_locked()) {
@@ -543,9 +612,7 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
         // Update Project Info
         updateProjectLogbookInfo();
 
-        // note: packing must happen at the very end, since it makes the frame "displayable", which then
-        // does not allow to change any window settings like setUndecorated()
-        packFrame("iniGuiRemaining()");
+
         boatsAvailableList.requestFocus();
     }
 
@@ -605,15 +672,16 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
         togglePanel.add(toggleAvailableBoatsToPersons, null);
         togglePanel.setVisible(Daten.efaConfig.getValueEfaDirekt_listAllowToggleBoatsPersons());
         boatsAvailablePanel.add(togglePanel, BorderLayout.NORTH);
-        westPanel.setLayout(new BorderLayout());
-        westPanel.add(boatsAvailablePanel, BorderLayout.CENTER);
+        leftBoatListPanel.setLayout(new BorderLayout());
+        leftBoatListPanel.add(boatsAvailablePanel, BorderLayout.CENTER);
 
         JPanel boatsNotAvailablePanel = new JPanel();
         boatsNotAvailablePanel.setLayout(new BorderLayout());
         boatsOnTheWaterList.displayOnGui(this, boatsNotAvailablePanel, BorderLayout.CENTER);
         boatsNotAvailableList.displayOnGui(this, boatsNotAvailablePanel, BorderLayout.SOUTH);
-        eastPanel.setLayout(new BorderLayout());
-        eastPanel.add(boatsNotAvailablePanel, BorderLayout.CENTER);
+        rightBoatListPanel.setLayout(new BorderLayout());
+        rightBoatListPanel.add(boatsNotAvailablePanel, BorderLayout.CENTER);
+       
     }
 
 	private void iniGuiHeaderColors() {
@@ -669,24 +737,37 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
     private void iniGuiCenterPanel() {
         updateGuiLogo();
         iniGuiButtons();
-        updateGuiClock();
 
         centerPanel.setLayout(new GridBagLayout());
+        int centerPanelYPos=0;
         int logoTop = (int) (10.0f * (Dialog.getFontSize() < 10 ? 12 : Dialog.getFontSize()) / Dialog.getDefaultFontSize());
-        int logoBottom = 5;
-        if (Daten.efaConfig.getValueEfaDirekt_startMaximized() && Daten.efaConfig.getValueEfaDirekt_vereinsLogo().length() > 0) {
-            logoBottom += (int) ((Dialog.screenSize.getHeight() - 825) / 5);
+        int logoBottom = logoTop;
+        /*if (Daten.efaConfig.getValueEfaDirekt_startMaximized() && Daten.efaConfig.getValueEfaDirekt_vereinsLogo().length() > 0) {
+            logoBottom += (int) ((Dialog.screenSize.getHeight() - 825) / 6);
             if (logoBottom < 0) {
                 logoBottom = 0;
             }
-        }
-        centerPanel.add(logoLabel, new GridBagConstraints(1, 0, 1, 2, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(logoTop, 0, logoBottom, 0), 0, 0));
+        }*/
+        centerPanel.add(logoLabel, new GridBagConstraints(1, centerPanelYPos++, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(logoTop, 0, logoBottom, 0), 0, 0));
         int fahrtbeginnTop = (int) (10.0f * (Dialog.getFontSize() < 10 ? 12 : Dialog.getFontSize()) / Dialog.getDefaultFontSize());
+        
+        // we introduce a new buttonpanel. this is neccessary as we have some requirements for the buttons
+        // A)buttons shall all have the same width
+        //    - so that the button with the longest text = longest width defines the width of the buttons in the center
+        // B) but the buttons' width shall not be defined by the multiWidgetWidth.
+        //
+        // so we use a buttonPanel which ensures A), but the buttonPanel is added to centerPanel 
+        // as a not-growing component by using gridbagConstraints.
+        
+        buttonPanel.setLayout(new GridBagLayout());
+        // new Gridbag-Based layout in efaBoathouse needs more border around buttons, so that the buttons
+        // are not so tight against the (larger) boatlists. 
+		int borderWidth = Daten.efaConfig.getValueEfaDirekt_showButtonBorderWidth();
+		buttonPanel.setBorder(BorderFactory.createEmptyBorder(0, borderWidth, 0, borderWidth));
         
         // startSessionButton and startSessionButtonMultiple shall be on the same line, 
         // and take the same width as the other buttons. So we create a panel containing
-        // startSessionButton and startSessionButtonMultiple. The latter gets hidden if it shall not be used.
-        
+        // startSessionButton and startSessionButtonMultiple. The latter gets hidden if it shall not be used.        
         JPanel myPanel=new JPanel();
     	myPanel.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
     	myPanel.setLayout(new GridBagLayout());
@@ -695,9 +776,9 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
     	myPanel.add(startSessionButtonMultiple, new GridBagConstraints(9, 1, 1, 1, 0.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.VERTICAL, new Insets(0, 2, 0, 0), 0, 0));
     	startSessionButtonMultiple.setVisible(Daten.efaConfig.getValueEfaDirekt_MultisessionSupportLateEntry());    
 
-    	centerPanel.add(myPanel, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(fahrtbeginnTop, 0, 0, 0), 0, 0));        
-        centerPanel.add(finishSessionButton, new GridBagConstraints(1, 3, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-        centerPanel.add(abortSessionButton, new GridBagConstraints(1, 4, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(10, 0, 0, 0), 0, 0));
+    	buttonPanel.add(myPanel, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(fahrtbeginnTop, 0, 0, 0), 0, 0));        
+    	buttonPanel.add(finishSessionButton, new GridBagConstraints(1, 3, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+    	buttonPanel.add(abortSessionButton, new GridBagConstraints(1, 4, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(VERT_BUTTONGAP, 0, 0, 0), 0, 0));
 
         // same for lateEntryButton and lateEntryButtonMultiple
     	myPanel=new JPanel();
@@ -708,19 +789,21 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
     	myPanel.add(lateEntryButtonMultiple, new GridBagConstraints(9, 1, 1, 1, 0.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.VERTICAL, new Insets(0, 2, 0, 0), 0, 0));
     	lateEntryButtonMultiple.setVisible(Daten.efaConfig.getValueEfaDirekt_MultisessionSupportLateEntry());    
 
-    	centerPanel.add(myPanel, new GridBagConstraints(1, 5, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(10, 0, 0, 0), 0, 0));        
+    	buttonPanel.add(myPanel, new GridBagConstraints(1, 5, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(VERT_BUTTONGAP, 0, 0, 0), 0, 0));        
         
-        centerPanel.add(clubworkButton, new GridBagConstraints(1, 6, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(10, 0, 0, 0), 0, 0));
-        centerPanel.add(boatReservationButton, new GridBagConstraints(1, 7, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(10, 0, 0, 0), 0, 0));
-        centerPanel.add(showLogbookButton, new GridBagConstraints(1, 8, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(10, 0, 0, 0), 0, 0));
-        centerPanel.add(statisticsButton, new GridBagConstraints(1, 9, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-        centerPanel.add(messageToAdminButton, new GridBagConstraints(1, 10, 1, 1, 0.0, 0.0, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, new Insets(10, 0, 0, 0), 0, 0));
-        centerPanel.add(adminButton, new GridBagConstraints(1, 11, 1, 1, 0.0, 0.0, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, new Insets(10, 0, 0, 0), 0, 0));
-        centerPanel.add(specialButton, new GridBagConstraints(1, 12, 1, 1, 0.0, 0.0, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, new Insets(10, 0, 0, 0), 0, 0));
-        centerPanel.add(helpButton, new GridBagConstraints(1, 13, 1, 1, 0.0, 0.0, GridBagConstraints.SOUTH, GridBagConstraints.NONE, new Insets(10, 0, 0, 0), 0, 0));
-        centerPanel.add(efaButton, new GridBagConstraints(1, 14, 1, 1, 0.0, 0.0, GridBagConstraints.SOUTH, GridBagConstraints.NONE, new Insets(10, 0, 0, 0), 0, 0));
-        centerPanel.add(clock.getGuiComponent(), new GridBagConstraints(1, 15, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(10, 10, 10, 10), 0, 0));
-        
+    	buttonPanel.add(clubworkButton, new GridBagConstraints(1, 6, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(VERT_BUTTONGAP, 0, 0, 0), 0, 0));
+    	buttonPanel.add(boatReservationButton, new GridBagConstraints(1, 7, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(VERT_BUTTONGAP, 0, 0, 0), 0, 0));
+    	buttonPanel.add(showLogbookButton, new GridBagConstraints(1, 8, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(VERT_BUTTONGAP, 0, 0, 0), 0, 0));
+    	buttonPanel.add(statisticsButton, new GridBagConstraints(1, 9, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+    	buttonPanel.add(messageToAdminButton, new GridBagConstraints(1, 10, 1, 1, 0.0, 0.0, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, new Insets(VERT_BUTTONGAP, 0, 0, 0), 0, 0));
+    	buttonPanel.add(adminButton, new GridBagConstraints(1, 11, 1, 1, 0.0, 0.0, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, new Insets(VERT_BUTTONGAP, 0, 0, 0), 0, 0));
+    	buttonPanel.add(specialButton, new GridBagConstraints(1, 12, 1, 1, 0.0, 0.0, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, new Insets(VERT_BUTTONGAP, 0, 0, 0), 0, 0));
+    	buttonPanel.add(helpButton, new GridBagConstraints(1, 13, 1, 1, 0.0, 0.0, GridBagConstraints.SOUTH, GridBagConstraints.NONE, new Insets(VERT_BUTTONGAP, 0, 0, 0), 0, 0));
+    	buttonPanel.add(efaButton, new GridBagConstraints(1, 14, 1, 1, 0.0, 0.0, GridBagConstraints.SOUTH, GridBagConstraints.NONE, new Insets(VERT_BUTTONGAP, 0, 0, 0), 0, 0));
+
+    	//add the buttonpanel, but do not let it grow with other elements in the center panel.
+    	centerPanel.add(buttonPanel, new GridBagConstraints(1,centerPanelYPos++,1,1,0.0,0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE,new Insets(0,0,0,0),0,0));
+    	
         EfaUtil.handleButtonOpaqueForLookAndFeels(startSessionButton);
         EfaUtil.handleButtonOpaqueForLookAndFeels(startSessionButtonMultiple);
         EfaUtil.handleButtonOpaqueForLookAndFeels(finishSessionButton);
@@ -754,11 +837,13 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
                 logoLabel.setMaximumSize(new Dimension(logoLabel.getWidth(),logoLabel.getHeight()));
                 logoLabel.setHorizontalAlignment(SwingConstants.CENTER);
                 logoLabel.setHorizontalTextPosition(SwingConstants.CENTER);
+                logoLabel.setVisible(true);
             } catch (Exception e) {
                 Logger.logdebug(e);
             }
         } else {
             logoLabel.setIcon(null);
+            logoLabel.setVisible(false);
         }
     }
 
@@ -917,6 +1002,9 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
 
     public void updateGuiButtonText() {
         boolean fkey = Daten.efaConfig.getValueEfaDirekt_showButtonHotkey();
+        int borderWidth = Daten.efaConfig.getValueEfaDirekt_showButtonBorderWidth();
+        buttonPanel.setBorder(BorderFactory.createEmptyBorder(0, borderWidth, 0, borderWidth));
+        
         this.startSessionButton.setText(Daten.efaConfig.getValueEfaDirekt_butFahrtBeginnen().getValueText() + (fkey ? " [F2]" : ""));
         this.finishSessionButton.setText(Daten.efaConfig.getValueEfaDirekt_butFahrtBeenden().getValueText() + (fkey ? " [F3]" : ""));
         this.abortSessionButton.setText(International.getString("Fahrt abbrechen") + (fkey ? " [F4]" : ""));
@@ -929,16 +1017,9 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
         this.adminButton.setText(International.getString("Admin-Modus") + (fkey ? " [Alt-F10]" : ""));
         this.specialButton.setText(Daten.efaConfig.getValueEfaDirekt_butSpezial().getValueText() + (fkey ? " [Alt-F11]" : ""));
         updateGuiButtonLAF();
-        if (!Daten.efaConfig.getValueEfaDirekt_startMaximized() && isDisplayable()) {
+       /* if (!Daten.efaConfig.getValueEfaDirekt_startMaximized() && isDisplayable()) {
             packFrame("iniButtonText()");
-        }
-    }
-
-    private void updateGuiClock() {
-        if (clock == null) {
-            clock = new ClockMiniWidget();
-        }
-        clock.setVisible(Daten.efaConfig.getValueEfaDirekt_showUhr());
+        }*/
     }
 
     private void updateGuiNews() {
@@ -948,9 +1029,9 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
         news.setText(Daten.efaConfig.getValueEfaDirekt_newsText());
         news.setScrollSpeed(Daten.efaConfig.getValueEfaDirekt_newsScrollSpeed());
         news.setVisible(Daten.efaConfig.getValueEfaDirekt_showNews());
-        if (isDisplayable()) {
-            packFrame("updateGuiNews()");
-        }
+       // if (!Daten.efaConfig.getValueEfaDirekt_startMaximized() && isDisplayable()) {
+       //     packFrame("updateGuiNews()");
+       // }
     }
 
     private void updateGuiWidgets() {
@@ -960,6 +1041,9 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
             widgetLeftPanel.removeAll();
             widgetRightPanel.removeAll();
             widgetCenterPanel.removeAll();
+            widgetMultiWidgetCenterPanel.removeAll();
+            
+            statusLabel.setVisible(Daten.efaConfig.getValueStatusLeiste());
             
             if (Daten.efaConfig.getWidgets() == null) {
                 return;
@@ -967,78 +1051,149 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
 
             // stop all previously started widgets
             try {
-                for (int i = 0; widgets != null && i < widgets.size(); i++) {
-                    IWidget w = widgets.get(i);
+                for (int i = 0; widgetInstances != null && i < widgetInstances.size(); i++) {
+                    IWidgetInstance w = widgetInstances.get(i);
                     w.stop();
                 }
+                if (multiWidgetInstance!=null) {
+                	multiWidgetInstance.stop();
+                }
+                widgetInstances.clear();
             } catch (Exception e) {
                 Logger.logdebug(e);
             }
-            widgets = new Vector<IWidget>();
 
-            // find all enabled widgets
-            Vector<IWidget> allWidgets = Widget.getAllWidgets();
-            for (int i = 0; allWidgets != null && i < allWidgets.size(); i++) {
-                IWidget w = allWidgets.get(i);
-                IItemType enabled = Daten.efaConfig.getExternalGuiItem(w.getParameterName(Widget.PARAM_ENABLED));
-                if (enabled != null && enabled instanceof ItemTypeBoolean && ((ItemTypeBoolean) enabled).getValue()) {
-                    // set parameters for this enabled widget according to configuration
-                    IItemType[] params = w.getParameters();
-                    for (int j = 0; j < params.length; j++) {
-                        params[j].parseValue(Daten.efaConfig.getExternalGuiItem(params[j].getName()).toString());
-                    }
-                    widgets.add(w);
+            // Initialize MultiWidget
+            multiWidget = new MultiWidgetContainer();
+            IItemType multiEnabled = Daten.efaConfig.getExternalGuiItem(multiWidget.getParameterName(Widget.PARAM_ENABLED));
+            if (multiEnabled != null && multiEnabled instanceof ItemTypeBoolean && ((ItemTypeBoolean) multiEnabled).getValue()) {
+                IItemType[] params = multiWidget.getParameters();
+                for (int j = 0; j < params.length; j++) {
+                    params[j].parseValue(Daten.efaConfig.getExternalGuiItem(params[j].getName()).toString());
                 }
             }
 
-            // show all enabled widgets
-            for (int i = 0; i < widgets.size(); i++) {
-                IWidget w = widgets.get(i);
-                String position = w.getPosition();
-                if (IWidget.POSITION_TOP.equals(position)) {
-                    w.show(widgetTopPanel, BorderLayout.CENTER);
-                }
-                if (IWidget.POSITION_BOTTOM.equals(position)) {
-                    w.show(widgetBottomPanel, BorderLayout.CENTER);
-                }
-                if (IWidget.POSITION_LEFT.equals(position)) {
-                    w.show(widgetLeftPanel, BorderLayout.CENTER);
-                }
-                if (IWidget.POSITION_RIGHT.equals(position)) {
-                    w.show(widgetRightPanel, BorderLayout.CENTER);
-                }
-                if (IWidget.POSITION_CENTER.equals(position)) {
-                    w.show(widgetCenterPanel, BorderLayout.CENTER);
-                }
-            }
+            showWidgetInstances();
+            
         } catch (Exception e) {
             Logger.logdebug(e);
         }
+
     }
 
-    private void iniGuiNorthPanel() {
-        updateGuiNews();
-        northPanel.setLayout(new BorderLayout());
+	private void showWidgetInstances() {
+		// find all other enabled widget types
+		widgetTypes = new Vector<IWidget>();
+		Vector<IWidget> allWidgets = Widget.getAllWidgets(false);
+		for (int i = 0; allWidgets != null && i < allWidgets.size(); i++) {
+		    IWidget w = allWidgets.get(i);
+		    IItemType enabled = Daten.efaConfig.getExternalGuiItem(w.getParameterName(Widget.PARAM_ENABLED));
+		    if (enabled != null && enabled instanceof ItemTypeBoolean && ((ItemTypeBoolean) enabled).getValue()) {
+		        // set parameters for this enabled widget according to configuration
+		    	IItemType[] params = w.getParameters();
+		        for (int j = 0; j < params.length; j++) {
+		            params[j].parseValue(Daten.efaConfig.getExternalGuiItem(params[j].getName()).toString());
+		        }
+		        widgetTypes.add(w);
+		    }
+		}
+
+		//Multiwidget shall always be in center position, but lowest possible position (south)
+		//so that clock (Center-top) and another widget (center-center) can be shown above.
+		multiWidgetInstance = (MultiWidgetContainerInstance) multiWidget.createInstances().get(0); // we are sure there is exactly a single instance
+		multiWidgetInstance.show(widgetMultiWidgetCenterPanel, IWidget.POSITION_CENTER);   
+		boolean multiWidgetUse=false;
+		
+		// show all enabled widgets
+		for (int i = 0; i < widgetTypes.size(); i++) {
+		    IWidget wt = widgetTypes.get(i);
+		    if (wt.isGuiWidget()) {
+		    	// showWidgetInstances returns if there had been placed any instances in the multiwidget
+		    	if (createGUIWidgetInstances(wt)) {
+		    		multiWidgetUse=true;
+		    	}
+		    } else {
+		    	createNonGUIWidgetInstances(wt);
+		    }
+		}
+		if (multiWidgetUse==false) {
+			multiWidgetInstance.getComponent().setVisible(false);
+		}
+	}
+
+	/**
+	 * Based on the param position return the actual panel where the widget shall be put.
+	 * Return null, if Multiwidget (or other unknown position) is set.
+	 * @param position
+	 * @return
+	 */
+	private JPanel getTargetPanel(String position) {
+	    if (IWidget.POSITION_CENTER.equals(position)) {
+	    	return widgetCenterPanel;
+	    } else if (IWidget.POSITION_MULTIWIDGET.equals(position)) {
+	    	return null;
+	    } else if (IWidget.POSITION_TOP.equals(position)) {
+	        	return widgetTopPanel;
+	    } else if (IWidget.POSITION_BOTTOM.equals(position)) {
+	    	return widgetBottomPanel;
+	    } else if (IWidget.POSITION_LEFT.equals(position)) {
+	    	return widgetLeftPanel;
+	    } else if (IWidget.POSITION_RIGHT.equals(position)) {
+	    	return widgetRightPanel;
+	    } else {
+	    	return null;
+	    }
+    }
+    
+	/**
+	 * Show all widget instances of a certain WidgetType. Position them depending on their config data.
+	 * Return true, if any widgetinstance had been placed on the multiwidget.
+	 * @param wt
+	 * @return
+	 */
+    private boolean createGUIWidgetInstances(IWidget wt) {
+    	//get Instances and put them in our cache.
+    	Vector<WidgetInstance> instances = wt.createInstances();
+    	widgetInstances.addAll(instances);
+    	Boolean multiWidgetUse=false;
+    	
+    	for (int i = 0; i<instances.size(); i++) {
+    		IWidgetInstance wi = instances.get(i);
+    		JPanel targetPanel=getTargetPanel(wi.getPosition());
+    		if (targetPanel!=null) {
+    			wi.show(targetPanel, wi.getPosition());
+    		} else {
+    			multiWidgetUse=true;
+            	JPanel innerPanel = new JPanel(new BorderLayout());
+        		wi.show(innerPanel, IWidget.POSITION_MULTIWIDGET);
+        		// and add this innerpanel to the card Layout of the multiWidgetInstance
+            	multiWidgetInstance.addWidget(innerPanel);
+    		}
+    	}
+    	return multiWidgetUse;
+    	
     }
 
-    private void iniGuiSouthPanel() {
-        updateGuiNews();
-        southPanel.setLayout(new BorderLayout());
-
-        southPanel.add(statusLabel, BorderLayout.NORTH);
-        southPanel.add(news.getGuiComponent(), BorderLayout.SOUTH);
-        statusLabelSetText(International.getString("Status"));
-
+    /**
+     * Create all Instances of Widgets which do not show up on the efaBoothouse GUI.
+     * @param wt
+     */
+    private void createNonGUIWidgetInstances(IWidget wt) {
+    	//get Instances and put them in our cache.
+    	Vector<WidgetInstance> instances = wt.createInstances();
+    	widgetInstances.addAll(instances);
     }
 
     private void statusLabelSetText(String s) {
-        statusLabel.setText(" "+ s);
-        // wenn Text zu lang, dann PreferredSize verringern, damit bei pack() die zu große Label-Breite nicht
-        // zum Vergrößern des Fensters führt!
-        if (statusLabel.getPreferredSize().getWidth() > this.getSize().getWidth()) {
-            statusLabel.setPreferredSize(new Dimension((int) this.getSize().getWidth() - 20,
-                    (int) statusLabel.getPreferredSize().getHeight()));
-        }
+    	if(statusLabel.isVisible()) {
+	        statusLabel.setText(" "+ s);
+	        // wenn Text zu lang, dann PreferredSize verringern, damit bei pack() die zu große Label-Breite nicht
+	        // zum Vergrößern des Fensters führt!
+	        if (statusLabel.getPreferredSize().getWidth() > this.getSize().getWidth()) {
+	            statusLabel.setPreferredSize(new Dimension((int) this.getSize().getWidth() - 20,
+	                    (int) statusLabel.getPreferredSize().getHeight()));
+	        }
+    	}
     }
 
     public void packFrame(String source) {
@@ -1766,12 +1921,6 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
                 }
             }
 
-            /*
-            Dimension dim = boatsAvailableScrollPane.getSize();
-            boatsAvailableScrollPane.setPreferredSize(dim); // to make sure boatsAvailableScrollPane is not resized when toggled between persons and boats
-            boatsAvailableScrollPane.setSize(dim);          // to make sure boatsAvailableScrollPane is not resized when toggled between persons and boats
-             */
-
             if (toggleAvailableBoatsToBoats.isSelected()) {
                 statusLabelSetText(International.getString("Kein Boot ausgewählt."));
             } else {
@@ -2218,7 +2367,7 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
               personsAvailableList.displayOnGui(this, boatsAvailablePanel, BorderLayout.CENTER);
             }
             boatsAvailablePanel.setPreferredSize(size);
-            this.validate();
+            this.revalidate();
             this.repaint(); // ist erforderlich, damit auch mnemonics richtig geschrieben werden.
             
             updateBoatLists(true,true);
@@ -2420,12 +2569,12 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
     void prepareEfaBaseFrame() {
         efaBaseFrame = new EfaBaseFrame(this, EfaBaseFrame.MODE_BOATHOUSE);
         efaBaseFrame.prepareDialog();
-        efaBaseFrame.setFixedLocationAndSize();
+        //efaBaseFrame.setFixedLocationAndSize();
     }
 
     void showEfaBaseFrame(int mode, ItemTypeBoatstatusList.BoatListItem action) {
-        for (IWidget w : widgets) {
-            w.runWidgetWarnings(mode, true, null);
+        for (IWidgetInstance wi : widgetInstances) {
+            wi.runWidgetWarnings(mode, true, null);
         }
         if (efaBaseFrame == null) {
             prepareEfaBaseFrame();
@@ -2481,8 +2630,8 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
             }
         }
         if (efaBoathouseAction != null) {
-            for (IWidget w : widgets) {
-                w.runWidgetWarnings(efaBoathouseAction.mode, false, r);
+            for (IWidgetInstance wi : widgetInstances) {
+                wi.runWidgetWarnings(efaBoathouseAction.mode, false, r);
             }
         }
     }

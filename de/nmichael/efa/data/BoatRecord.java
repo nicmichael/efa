@@ -1179,6 +1179,7 @@ public class BoatRecord extends DataRecord implements IItemFactory, IItemListene
         ((ItemTypeItemList)item).setAppendPositionToEachElement(true);
         v.add(item = new ItemTypeInteger(BoatRecord.MAXNOTINGROUP, getMaxNotInGroup(), 0, Integer.MAX_VALUE, true,
                 IItemType.TYPE_PUBLIC, CAT_USAGE, International.getString("Maxmimale Personenzahl nicht aus erlaubten Gruppen")));
+        item.setPadding(0, 0, 10, 0);// optical delimiter to Groups
         v.add(item = getGuiItemTypeStringAutoComplete(BoatRecord.REQUIREDGROUPID, getRequiredGroupId(),
                 IItemType.TYPE_PUBLIC, CAT_USAGE, 
                 groups, getValidFrom(), getInvalidFrom()-1,
@@ -1472,11 +1473,11 @@ public class BoatRecord extends DataRecord implements IItemFactory, IItemListene
     }
     
 	/**
-	 * Adds a header item in an efa GUI. This header value is not safed within
+	 * Adds a header item in an efa GUI. This header value is not saved within
 	 * efaConfig. There is no word-wrap for the caption.
 	 * 
 	 * The header automatically gets a blue background and white text color; this
-	 * cannot be configured as efaConfig cannot refer to its own settings whenn
+	 * cannot be configured as efaConfig cannot refer to its own settings when
 	 * calling the constructor.
 	 * 
 	 * @param uniqueName Unique name of the element (as for all of efaConfig

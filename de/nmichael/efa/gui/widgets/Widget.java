@@ -10,68 +10,111 @@
 
 package de.nmichael.efa.gui.widgets;
 
-import de.nmichael.efa.core.items.*;
+import java.util.Vector;
+
+import javax.swing.JPanel;
+
+import de.nmichael.efa.core.items.IItemType;
+import de.nmichael.efa.core.items.ItemTypeBoolean;
+import de.nmichael.efa.core.items.ItemTypeInteger;
+import de.nmichael.efa.core.items.ItemTypeStringList;
 import de.nmichael.efa.gui.EfaGuiUtils;
-import de.nmichael.efa.util.*;
-import java.util.*;
-import java.awt.*;
+import de.nmichael.efa.util.International;
+import de.nmichael.efa.util.Logger;
 
-import javax.swing.*;
-
-
+/*
+ * Widget Class
+ * 
+ * After a refactoring in efa 2.5.1, there are several classes defining the Widget system.
+ * 
+ * First, efa differs between a Widget (as of "Widget Type") and a WidgetInstance.
+ * This is necessary as a Widget can create more than one instance of itself. Like, the HTML widget
+ * can have multiple instances which run autonomously with a different configuration.
+ * 
+ * The Widget defines the type and the configuration data. 
+ * 	   It is used by efaBoathouseFrame to detect the available widget types and to instantiate all Widget Instances to this Widget.
+ *     It defines standard code which is used to define the configuration GUI items (addItem, addHint, ...).
+ *     
+ *     If a new widget is defined, it's class needs to be included in the method getAllWidgetClassNames(). 
+ *     
+ * The WidgetInstance is the actual Widget Instance which fits to a set of configuration which is defined by the Widget.
+ * 
+ */
 public abstract class Widget implements IWidget {
 
     public static final String PARAM_ENABLED        = "Enabled";
     public static final String PARAM_POSITION       = "Position";
     public static final String PARAM_UPDATEINTERVAL = "UpdateInterval";
     public static final String NOT_STORED_ITEM_PREFIX ="_";
-    private static Color hintBackgroundColor= new Color(171,206,241);
+    private static final int DEFAULT_GRIDWIDTH = 3;
     
     String name;
     String description;
-    boolean ongui;
+    String parameterPrefix;
+
     Vector<IItemType> parameters = new Vector<IItemType>();
     JPanel myPanel;
     
-    public Widget(String name, String description, boolean ongui) {
+    public Widget(String name, String description, boolean showPositionParam, boolean showVisibleParam, boolean showRefreshInterval) {
+    	this(name, name, description, showPositionParam, showVisibleParam, showRefreshInterval);
+    }
+    public Widget(String name, String description, boolean showPositionParam, boolean showVisibleParam, boolean showRefreshInterval,int gridWidth) {
+    	this(name, name, description, showPositionParam, showVisibleParam, showRefreshInterval,gridWidth);
+    }
+    
+    public Widget(String name, String parameterPrefix, String description, boolean showPositionParam, boolean showVisibleParam, boolean showRefreshInterval) {
+    	this(name, parameterPrefix, description, showPositionParam, showVisibleParam, showRefreshInterval,DEFAULT_GRIDWIDTH);
+    }
+    
+    public Widget(String name, String parameterPrefix, String description, boolean showPositionParam, boolean showVisibleParam, boolean showRefreshInterval, int gridWidth) {
         this.name = name;
+        this.parameterPrefix = parameterPrefix;
         this.description = description;
-        this.ongui = ongui;
-
         
-        addHeader("WidgetCommon_"+name,IItemType.TYPE_PUBLIC, "", International.getString("Widget Allgemein"), 3);
+        addHeader("WidgetCommon_"+parameterPrefix,IItemType.TYPE_PUBLIC, "", International.getString("Widget Allgemein"), gridWidth);
         addParameterInternal(new ItemTypeBoolean(PARAM_ENABLED, false,
                 IItemType.TYPE_PUBLIC, "",
-                (ongui ?
+                (showVisibleParam ?
                     International.getMessage("{item} anzeigen", name) :
                     International.getMessage("{item} aktivieren", description))));
 
-        if (ongui) {
-            addParameterInternal(new ItemTypeStringList(PARAM_POSITION, POSITION_BOTTOM,
-                    new String[]{POSITION_TOP, POSITION_BOTTOM, POSITION_LEFT, POSITION_RIGHT, POSITION_CENTER},
+        if (showPositionParam) {
+            addParameterInternal(new ItemTypeStringList(PARAM_POSITION, POSITION_MULTIWIDGET,
+                    new String[]{POSITION_TOP, POSITION_BOTTOM, POSITION_LEFT, POSITION_RIGHT, POSITION_CENTER, POSITION_MULTIWIDGET},
                     new String[]{International.getString("oben"),
                         International.getString("unten"),
                         International.getString("links"),
                         International.getString("rechts"),
-                        International.getString("mitte")
+                        International.getString("mitte"),
+                        International.getString("Multi-Widget")
                     },
                     IItemType.TYPE_PUBLIC, "",
                     International.getString("Position")));
-
+        }
+        
+        if (showRefreshInterval) {
             addParameterInternal(new ItemTypeInteger(PARAM_UPDATEINTERVAL, 3600, 1, Integer.MAX_VALUE, false,
                     IItemType.TYPE_PUBLIC, "",
                     International.getString("Aktualisierungsintervall")
                     + " (s)"));
         }
+        
     }
 
     public String getParameterName(String internalName) {
-        return "Widget" + this.name + internalName;
+        return "Widget" + this.parameterPrefix + internalName;
     }
 
-    void addParameterInternal(IItemType p) {
+    IItemType addParameterInternal(IItemType p) {
         p.setName(getParameterName(p.getName()));
         parameters.add(p);
+        return p;
+    }
+    
+    IItemType addParameterInternal(IItemType p, int padYBefore, int padYAfter) {
+        p.setPadding(0, 0, padYBefore, padYAfter);        
+        addParameterInternal(p);
+        return p;
     }
     
     /**
@@ -116,15 +159,22 @@ public abstract class Widget implements IWidget {
         addParameterInternal(item);
 		return item;
     }
+
+    protected IItemType addHintWordWrap(String uniqueName, int type, String category, String caption, int gridWidth, int padBefore, int padAfter, int maxWidth) {
+    	IItemType item = EfaGuiUtils.createHintWordWrap(uniqueName, type, category, caption, gridWidth, padBefore, padAfter, maxWidth);
+        addParameterInternal(item);
+		return item;
+    }
+
     
 
-    IItemType getParameterInternal(String internalName) {
+    protected IItemType getParameterInternal(String internalName) {
         String name = getParameterName(internalName);
         for (int i=0; i<parameters.size(); i++) {
             if (parameters.get(i).getName().equals(name)) {
                 return parameters.get(i);
             }
-        }
+        } 
         return null;
     }
 
@@ -183,47 +233,36 @@ public abstract class Widget implements IWidget {
         return ((ItemTypeInteger)getParameterInternal(PARAM_UPDATEINTERVAL)).getValue();
     }
 
-    abstract void construct();
-    public abstract JComponent getComponent();
-
-    public void show(JPanel panel, int x, int y) {
-        if (!ongui) {
-            return;
-        }
-        myPanel = panel;
-        construct();
-        JComponent comp = getComponent();
-        if (comp != null) {
-            panel.add(comp, new GridBagConstraints(x, y, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-        }
+    public static Vector <String> getAllWidgetClassNames() {
+        Vector <String>result = new Vector<String>();
+        result.add(ClockAndSunlightWidget.class.getCanonicalName());
+        result.add(WeatherWidget.class.getCanonicalName());
+        result.add(HTMLWidget.class.getCanonicalName());
+        result.add(AlertWidget.class.getCanonicalName());
+        return result;
     }
-
-    public void show(JPanel panel, String orientation) {
-        if (!ongui) {
-            return;
-        }
-        myPanel = panel;
-        construct();
-        JComponent comp = getComponent();
-        if (comp != null) {
-            panel.add(comp, orientation);
-        }
+    
+    public static Vector <String> getMultiWidgetClassNames(){
+        Vector <String>result = new Vector<String>();
+        result.add(MultiWidgetContainer.class.getCanonicalName());
+        return result;
     }
-
-    public static String[] getAllWidgetClassNames() {
-        return new String[] {
-            HTMLWidget.class.getCanonicalName(),
-            MeteoAstroWidget.class.getCanonicalName(),
-            AlertWidget.class.getCanonicalName()
-        };
+    
+    public static String getMultiWidgetClassName() {
+    	return MultiWidgetContainer.class.getCanonicalName();
     }
-
-    public static Vector<IWidget> getAllWidgets() {
-        String[] classNames = getAllWidgetClassNames();
+    
+    public static Vector<IWidget> getAllWidgets(boolean withMultiWidget) {
+        Vector <String> classNames = getAllWidgetClassNames();
+        
+        if (withMultiWidget) {
+        	classNames.add(0,getMultiWidgetClassName());
+        }
+        
         Vector<IWidget> widgets = new Vector<IWidget>();
-        for (int i=0; i<classNames.length; i++) {
+        for (int i=0; i<classNames.size(); i++) {
             try {
-                IWidget w = (IWidget)Widget.class.forName(classNames[i]).newInstance();
+                IWidget w = (IWidget)Widget.class.forName(classNames.get(i)).newInstance();
                 if (w != null) {
                     widgets.add(w);
                 }
@@ -233,4 +272,21 @@ public abstract class Widget implements IWidget {
         }
         return widgets;
     }
+    
+    public static Vector <IWidget> getMultiWidget(){
+    	Vector <String> classNames = getMultiWidgetClassNames();
+        Vector<IWidget> widgets = new Vector<IWidget>();
+        for (int i=0; i<classNames.size(); i++) {
+            try {
+                IWidget w = (IWidget)Widget.class.forName(classNames.get(i)).newInstance();
+                if (w != null) {
+                    widgets.add(w);
+                }
+            } catch(Exception e) {
+                Logger.logdebug(e);
+            }
+        }
+        return widgets;    	
+    }
+    
 }

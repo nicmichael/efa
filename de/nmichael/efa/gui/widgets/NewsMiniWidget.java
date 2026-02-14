@@ -11,31 +11,36 @@
 package de.nmichael.efa.gui.widgets;
 
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FontMetrics;
+import java.awt.Font;
 
+import javax.swing.BorderFactory;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 
-import de.nmichael.efa.util.EfaUtil;
+import de.nmichael.efa.Daten;
 import de.nmichael.efa.util.Logger;
-
+/*
+ * NewMiniwidget is not a classical widget. Its config data is set up directly in efaconfig
+ * (search for efaDirekt_showNews in efaconfig.) Also, efaBoathouseFrame knows this widget directly,
+ * and positions it directly in the lowest possible position of efaBoathouseFrame.
+ * Still, the new MiniWidget and 
+ */
 public class NewsMiniWidget {
 
-    private JLabel label = new JLabel();
+    private NewsMiniWidgetPanel mainNewsWidgetPanel = new NewsMiniWidgetPanel();
     private NewsUpdater newsUpdater;
 
     public NewsMiniWidget() {
-        label.setText("+++ News +++");
-        label.setForeground(Color.white);
-        label.setBackground(Color.red);
-        label.setOpaque(true);
-        label.setHorizontalAlignment(SwingConstants.CENTER);
-        label.setHorizontalTextPosition(SwingConstants.CENTER);
-        label.setVisible(false);
-        newsUpdater = new NewsUpdater();
+        mainNewsWidgetPanel.setText("+++ News +++");
+        mainNewsWidgetPanel.setForeground(Color.white);
+        mainNewsWidgetPanel.setBackground(Color.red);
+        mainNewsWidgetPanel.setOpaque(true);
+        mainNewsWidgetPanel.setVisible(false);
+        mainNewsWidgetPanel.setFont(mainNewsWidgetPanel.getFont().deriveFont(Font.BOLD));
+        mainNewsWidgetPanel.setBorder(BorderFactory.createLineBorder(mainNewsWidgetPanel.getForeground(), 1, true));
+        mainNewsWidgetPanel.setWidthPercent(Daten.efaConfig.getValueEfaDirekt_newsWidthPercent());
+        newsUpdater = new NewsUpdater(mainNewsWidgetPanel,mainNewsWidgetPanel.getText(), 100);
         newsUpdater.start();
     }
 
@@ -50,7 +55,7 @@ public class NewsMiniWidget {
     public void setVisible(Boolean value) {
     	SwingUtilities.invokeLater(new Runnable() {
     		public void run() {
-                label.setVisible(value);
+                mainNewsWidgetPanel.setVisible(value);
     		}
     	});    
     	// update the thread. we do not need to calculate ticket contents if we are not visible.
@@ -61,143 +66,124 @@ public class NewsMiniWidget {
     }
 
     public JComponent getGuiComponent() {
-        return label;
+        return mainNewsWidgetPanel;
     }
 
-    class NewsUpdater extends Thread {
+    public final class NewsUpdater {
 
-        volatile boolean keepRunning = true;
-        volatile boolean visible=true;
-        private String text;
-        private int startPosition;
-        private int length;
-        private int scrollSpeed;
-        private int maxCharsToShow = 50;
-        private int maxWidth = 600;
-        private int maxCharWidth = 0;
+        private final NewsMiniWidgetPanel mainNewsWidgetPanel;
 
-        public void run() {
+        private volatile boolean keepRunning = true;
+        private volatile boolean visible = true;
+        private volatile String text = "";
+        private volatile int scrollSpeed = 1000;
+
+        private Timer timer;
+
+        // 1 Stunde in Millisekunden
+        private static final int INVISIBLE_DELAY = 60 * 60 * 1000;
+
+        public NewsUpdater(NewsMiniWidgetPanel panel, String initialText, int initialSpeed) {
+            this.mainNewsWidgetPanel = panel;
+            this.text = "   " + initialText + "   ";
+            this.scrollSpeed = initialSpeed;
+        }
+
+        public synchronized void start() {
+            if (timer != null) {
+                return; // bereits gestartet
+            }
+
+            // Startverzögerung wie im Original (1 Sekunde)
+            timer = new Timer(1000, e -> tick());
+            timer.setRepeats(false);      // wir planen jede Periode neu
+            timer.setCoalesce(true);      // verhindert Event-Flut
+            timer.start();
+        }
+
+        private void tick() {
+            if (!keepRunning) {
+                return;
+            }
+
             try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-            }
-            this.setName("NewsUpdater");
-            while (keepRunning) {
-                
-                try {
-                	if (visible) {
-	                	//gets maxWidth depending on labels's width 
-	                	//and gets maxChar, depending on the "X" character's length in the current font
-	                 	getMaxCharsToShow();
-	
-	                	//Use invokelater as swing threadsafe ways
-	                    SwingUtilities.invokeLater(new MainGuiNewsUpdater(label, getText(text, startPosition, maxCharsToShow)));
-	
-	                    startPosition = (startPosition + 1) % (length + 3);
-	                    if (length <= maxCharsToShow) {
-	                        Thread.sleep(60000);
-	                    } else {
-	                        Thread.sleep(scrollSpeed);
-	                    }
-                	} else {
-                		//not visible. sleep an hour. if someone makes us visible, we get woken up by an interruptedexception.
-                		Thread.sleep(60*60*1000);
-                	}
-                } catch (InterruptedException e) {
-                	EfaUtil.foo();
-                } catch (Exception e) {
-                    Logger.logdebug(e);
+                if (visible) {
+                    SwingUtilities.invokeLater(
+                            new MainGuiNewsUpdater(mainNewsWidgetPanel, text)
+                    );
+                    schedule(scrollSpeed);
+                } else {
+                    schedule(INVISIBLE_DELAY);
                 }
+
+            } catch (Exception ex) {
+                Logger.logdebug(ex);
+                schedule(scrollSpeed);
             }
         }
 
-        private void getMaxCharsToShow() {
-
-        	int charWidth=0;
-    		Dimension dim = label.getSize();
-
-        	if (maxCharWidth==0) {
-	            FontMetrics myFontMetrics = label.getFontMetrics(label.getFont());
-	            charWidth=dim.height; //default value: Character is as wide as the font's size
-	            if (myFontMetrics!=null) {
-	            	maxCharWidth=Math.max(8,myFontMetrics.charWidth('X')-1);
-	            	charWidth=maxCharWidth;
-	            }
-        	} else {
-        		charWidth=maxCharWidth;
-        	}
-        	//width may be zero, if label is not showing yet
-            if (dim.width > 0) {
-                maxCharsToShow = (dim.width / charWidth);
+        private synchronized void schedule(int delayMs) {
+            if (!keepRunning || timer == null) {
+                return;
             }
-            maxWidth = Math.max(dim.width, 600);
+            timer.setInitialDelay(delayMs);
+            timer.restart();
         }
 
-        private String getText(String s, int pos, int max) {
-            if (max >= length) {
-                return s;
+        // --- API ---
+
+        public synchronized void setText(String newText) {
+            this.text = "   " + newText + "   ";
+            if (timer != null) {
+                timer.restart(); // sofortige Wirkung
             }
-            String t;
-            if (pos == length + 2) {
-                t = " ";
-            } else if (pos == length + 1) {
-                t = "  ";
-            } else if (pos == length) {
-                t = "   ";
-            } else {
-                t = s.substring(pos, Math.min(pos + max, length));
-            }
-            int l = t.length();
-            if (l + 3 < max) {
-                t = t + (pos < length ? "   " : "") + s.substring(0, max - l - 3);
-            }
-            return t;
-        }
-        
-        /* in the following functions, it is neccessary to interrupt the thread to get the settings get active.
-         * because sometimes, the sleep time is very high.
-         */
-        public synchronized void setText(String text) {
-            this.text = text;
-            this.length = text.length();
-            this.startPosition = 0;
-            getMaxCharsToShow();
-            interrupt();
         }
 
-        public synchronized void setScrollSpeed(int scrollSpeed) {
-            this.scrollSpeed = scrollSpeed;
-            interrupt();
+        public synchronized void setScrollSpeed(int speed) {
+            this.scrollSpeed = speed;
+            if (timer != null) {
+                timer.restart();
+            }
+        }
+
+        public synchronized void setVisible(boolean value) {
+            this.visible = value;
+            if (timer != null) {
+                timer.restart();
+            }
         }
 
         public synchronized void stopNews() {
             keepRunning = false;
-            interrupt();
+            if (timer != null) {
+                timer.stop();
+                timer = null;
+            }
         }
-        
-        public synchronized void setVisible(boolean value) {
-        	visible=value;
-        	interrupt();
-        }
-
     }
+
 
     /**
      * Update clock label on efaBths main GUI. Called via SwingUtilities.invokeLater()
      */
-    private class MainGuiNewsUpdater implements Runnable {
+     class MainGuiNewsUpdater implements Runnable {
         
     	private String text = null;
-    	private JLabel mylabel=null;
+    	private NewsMiniWidgetPanel newsPanel=null;
     	
-    	public MainGuiNewsUpdater(JLabel theLabel, String theData) {
+    	public MainGuiNewsUpdater(NewsMiniWidgetPanel theNewsPanel, String theData) {
     		text = theData;
-    		mylabel = theLabel;
+    		newsPanel = theNewsPanel;
     	}
     	
     	public void run() {
-    		mylabel.setText(text);
-	      }
+            
+    		newsPanel.setText(this.text);
+    		newsPanel.setWidthPercent(Daten.efaConfig.getValueEfaDirekt_newsWidthPercent());
+    		newsPanel.calcNextOffset();
+    		newsPanel.repaint();
+
+		}
 	}
     
 }

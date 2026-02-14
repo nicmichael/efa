@@ -759,16 +759,22 @@ public class PersonRecord extends DataRecord implements IItemFactory {
                     IItemType.TYPE_EXPERT, CAT_MOREDATA, International.getString("Paßwort")));
             v.add(item = new ItemTypeBoolean(PersonRecord.DISABILITY, getDisability(),
                     IItemType.TYPE_PUBLIC, CAT_MOREDATA, International.getString("50% oder mehr Behinderung")));
+            ((ItemTypeBoolean) item).setIndent(true);
             v.add(item = new ItemTypeBoolean(PersonRecord.EXCLUDEFROMSTATISTIC, getExcludeFromPublicStatistics(),
                     IItemType.TYPE_PUBLIC, CAT_MOREDATA, International.getString("von allgemein verfügbaren Statistiken ausnehmen")));
+            ((ItemTypeBoolean) item).setIndent(true);
             v.add(item = new ItemTypeBoolean(PersonRecord.EXCLUDEFROMCOMPETE, getExcludeFromCompetition(),
                     IItemType.TYPE_PUBLIC, CAT_MOREDATA, International.getString("von Wettbewerbsmeldungen ausnehmen")));
+            ((ItemTypeBoolean) item).setIndent(true);
             v.add(item = new ItemTypeBoolean(PersonRecord.EXCLUDEFROMCLUBWORK, getExcludeFromClubwork(),
                     IItemType.TYPE_PUBLIC, CAT_MOREDATA, International.getString("von Vereinsarbeit ausnehmen")));
+            ((ItemTypeBoolean) item).setIndent(true);
             v.add(item = new ItemTypeBoolean(PersonRecord.BOATUSAGEBAN, getBoatUsageBan(),
                     IItemType.TYPE_PUBLIC, CAT_MOREDATA, International.getString("Bootsbenutzungs-Sperre")));
+            ((ItemTypeBoolean) item).setIndent(true);
             v.add(item = new ItemTypeString(PersonRecord.INPUTSHORTCUT, getInputShortcut(),
                     IItemType.TYPE_PUBLIC, CAT_MOREDATA, International.getString("Eingabekürzel")));
+            item.setPadding(0, 0, 10, 0);
             v.add(item = getGuiItemTypeStringAutoComplete(PersonRecord.DEFAULTBOATID, getDefaultBoatId(),
                     IItemType.TYPE_PUBLIC, CAT_MOREDATA,
                     boats, getValidFrom(), getInvalidFrom() - 1,
