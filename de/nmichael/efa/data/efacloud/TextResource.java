@@ -20,6 +20,8 @@ import java.util.ArrayList;
  */
 public class TextResource {
 
+    private final static int TAIL_SIZE = 200 * 1024; // 200 KB
+    
     /**
      * <p>
      * Fetch the entire contents of a text file, and return it in a String. This style of implementation does not throw
@@ -74,13 +76,112 @@ public class TextResource {
                 contents.append("\n");
             }
         } catch (IOException ex) {
-            return null;
+            return "";
         }
         if (contents.length() == 0)
             return "";
         // remove last "\n" character.
         return contents.substring(0, contents.length() - 1);
     }
+    
+    /**
+     * <p>
+     * Fetch the last TAIL_SIZE bytes of contents of a text file, and return it in a String. 
+     * This style of implementation does not throw exceptions to the caller, 
+     * but returns a null String, when hitting an IOException.
+     * 
+     * This method is intended to be used for log file uploads to efaCloud,
+     * so that big logfiles do not affect upload size or upload times.
+     * 
+     * </p>
+     *
+     * <pre>
+     * Charset     Description
+     * US-ASCII    Seven-bit ASCII, a.k.a. ISO646-US, a.k.a. the Basic Latin block of
+     *             the Unicode character set
+     * ISO-8859-1  ISO Latin Alphabet No. 1, a.k.a. ISO-LATIN-1
+     * UTF-8       Eight-bit UCS Transformation Format
+     * UTF-16BE    Sixteen-bit UCS Transformation Format, big-endian byte order
+     * UTF-16LE    Sixteen-bit UCS Transformation Format, little-endian byte order
+     * UTF-16      Sixteen-bit UCS Transformation Format, byte order identified by
+     * an optional byte-order mark
+     *
+     * <pre>
+     *
+     * @param aFile File to be read
+     * @param charSetName character set to be used. Set null for default character set
+     * @return empty string, if not successful.
+     */    
+    public static String getTailContents(File file, String charSetName) {
+        if (file == null || !file.exists() || !file.isFile() || !file.canRead()) {
+            return "";
+        }
+
+        Charset charset;
+
+        try {
+            if (charSetName == null || charSetName.trim().isEmpty()) {
+                charset = Charset.defaultCharset();
+            } else {
+                charset = Charset.forName(charSetName);
+            }
+        } catch (Exception e) {
+            return ""; // invalid charset
+        }
+
+        long fileLength = file.length();
+        // just get the last TAIL_SIZE bytes of the file.
+        long startPos = Math.max(0, fileLength - TAIL_SIZE);
+
+        try (RandomAccessFile raf = new RandomAccessFile(file, "r")) {
+
+            // Jump to start position
+            raf.seek(startPos);
+
+            // Supposed logfiles - we don't want to start in the middle of a line,
+            // but directly after a newline. 
+            if (startPos > 0) {
+                int b;
+                while ((b = raf.read()) != -1) {
+                    if (b == '\n') {
+                        break;
+                    }
+                }
+            }
+
+            long extractStart = raf.getFilePointer();
+
+            // if file <TAIL_SIZE or no newline has been found
+            if (extractStart < 0 || extractStart > fileLength) {
+                extractStart = 0;
+                raf.seek(0);
+            }
+
+            // Now use the standard reader to read the log file into a single string
+            try (InputStreamReader isr = new InputStreamReader(new FileInputStream(raf.getFD()), charset);
+                 BufferedReader br = new BufferedReader(isr)) {
+
+                StringBuilder sb = new StringBuilder(64 * 1024);
+                String line;
+
+                while ((line = br.readLine()) != null) {
+                    sb.append(line).append('\n');
+                }
+
+                if (sb.length() == 0) {
+                    return "";
+                }
+
+                // remove last \n 
+                sb.setLength(sb.length() - 1);
+                return sb.toString();
+            }
+
+        } catch (IOException e) {
+            return "";
+        }
+    }
+
 
     /**
      * <p>

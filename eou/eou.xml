@@ -2,7 +2,7 @@
 <efaOnlineUpdate>
     <Version>
         <VersionID>2.5.0</VersionID>
-        <ReleaseDate>10.02.2025</ReleaseDate>
+        <ReleaseDate>14.02.2025</ReleaseDate>
         <DownloadUrl>TODO</DownloadUrl>
         <DownloadSize>TODO</DownloadSize>
      	<MinimumJavaVersion>1.8</MinimumJavaVersion>
@@ -10,10 +10,16 @@
         <ShowNotice lang="de">Wenn efaCloud eingesetzt wird, muss der Server mindestens Version 2.3.3 unterstützen. EfaCloud 2.4.0_12 und höher werden empfohlen.</ShowNotice>
         <ShowNotice lang="en">If you use efaCloud, make sure your server at least supports efaCloud Version 2.3.3. It is recommended to upgrade to EfaCloud 2.4.0_12 or above.</ShowNotice>
         <Changes lang="de">
-            <ChangeItem>Neu: Veröffentlichung efa 2.5.0 auf unveränderter Basis von efa 2.5.0#21</ChangeItem>         
+            <ChangeItem>Neu: Veröffentlichung efa 2.5.0 auf Basis von efa 2.5.0#21</ChangeItem>         
+            <ChangeItem>Neu: efaCloud: Lokale efaCloud-Log-Dateien werden bis zu 10 MByte groß; bei Upload-Sync werden nur die letzten 200kb der efaCloud-Log-Dateien hochgeladen.</ChangeItem>
+            <ChangeItem>Neu: efaCloud: Erweitertes Logging in efaCloud.log zur besseren Nachvollziehbarkeit in Bezug auf die transferierten Daten.</ChangeItem>
+            <ChangeItem>Bugfix: efaCloud: Aktualisierung von Boatstatusrecord bei Veränderung der Fahrtnummer im Fahrtenbuch erfolgt nur noch, wenn sich beide auf das gleiche Fahrtenbuch beziehen.</ChangeItem>
         </Changes>
         <Changes lang="en">
-            <ChangeItem>Neu: Publishing efa 2.5.0 based on unmodified efa 2.5.0#21</ChangeItem>          
+            <ChangeItem>Neu: Publishing efa 2.5.0 based on efa 2.5.0#21</ChangeItem>
+			<ChangeItem>New: efaCloud: Local efaCloud log files can be up to 10 MB in size; during upload sync, only the last 200 KB of the efaCloud log files are uploaded.</ChangeItem>
+			<ChangeItem>New: efaCloud: Enhanced logging in efaCloud.log for improved traceability of transferred data.</ChangeItem>
+			<ChangeItem>Bugfix: efaCloud: Boat status records are now only updated when the trip number in the logbook changes if both entries refer to the same logbook.</ChangeItem>            
         </Changes>
     </Version>
     <Version>

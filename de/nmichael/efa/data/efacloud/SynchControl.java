@@ -39,7 +39,7 @@ class SynchControl {
     static final long synch_upload_look_back_ms = 15 * 24 * 3600000L; // period in past to check for upload
     static final long surely_newer_after_ms = 60000L; // one-minute time difference accepted for timestamps server <-> client
     
-    private static final int SYNCHERRORS_LOG_MAX_SIZE = 200000; //200 kb. 
+    private static final int SYNCHERRORS_LOG_MAX_SIZE = 10 * 1024 * 1024; // During upload sync only last 200kb are transferred, see TextResource
     private static final String FILENAME_PREVIOUS_SUFFIX = ".previous.log";
 
     long lastSynchStartedMillis;
@@ -96,20 +96,22 @@ class SynchControl {
         File synchErrorsFile = new File(path);
         
         Boolean appendLine=true;
-        
-        //synchErrors.log rotation: if >5 Mb, delete old synchErrors.previous.log file and rename synchErrors.log to synchErrors.log.previous.log
-        if (synchErrorsFile.length() > SYNCHERRORS_LOG_MAX_SIZE) {
-        	File oldPreviousLogfile=new File(path + FILENAME_PREVIOUS_SUFFIX);
-        	
-        	// rotate existing efacloud.log to efacloud.log.previous and delete the existing file if necessary.
-        	if ((oldPreviousLogfile.exists() && oldPreviousLogfile.delete()) 
-        			|| (!oldPreviousLogfile.exists())) {
-        		if (synchErrorsFile.renameTo(new File(path + FILENAME_PREVIOUS_SUFFIX))) {
-        			appendLine=false;
-        		}
-        	}
+        if (isError) {
+        	//log rotation only if we write to synchError.log
+	        //synchErrors.log rotation: if >5 Mb, delete old synchErrors.previous.log file and rename synchErrors.log to synchErrors.log.previous.log
+	        if (synchErrorsFile.length() > SYNCHERRORS_LOG_MAX_SIZE) {
+	        	File oldPreviousLogfile=new File(path + FILENAME_PREVIOUS_SUFFIX);
+	        	
+	        	// rotate existing efacloud.log to efacloud.log.previous and delete the existing file if necessary.
+	        	if ((oldPreviousLogfile.exists() && oldPreviousLogfile.delete()) 
+	        			|| (!oldPreviousLogfile.exists())) {
+	        		if (synchErrorsFile.renameTo(new File(path + FILENAME_PREVIOUS_SUFFIX))) {
+	        			appendLine=false;
+	        		}
+	        	}
+	        }
         }
-        
+        // write to logfile, either synchError or efacloud.log
         TextResource.writeContents(path, dateString, appendLine);
     }
 
@@ -154,13 +156,16 @@ class SynchControl {
     }
 
     /**
-     * In case an EntryId of a logbook entry is corrected, ensure that also the boat status is updated. Only by that
-     * update it is ensured the trip can be closed later.
+     * In case an EntryId of a logbook entry is corrected, ensure that also the boat status is updated. 
+     * Only by that update it is ensured the trip can be closed later.
+     * 
+     * The boat status only gets updated if the boat status points to the same logbook as the logbookrecord
+     * which got a new entryID.
      *
      * @param boatId The UUID of the boat in the boat status
      * @param fixedEntryNo   new EntryId for this boat status
      */
-    protected void adjustBoatStatus(UUID boatId, int fixedEntryNo) {
+    protected void adjustBoatStatus(UUID boatId, int oldEntryNo, String oldLogbookName, int fixedEntryNo) {
         EfaCloudStorage boatstatus = Daten.tableBuilder.getPersistence("efa2boatstatus");
         DataKeyIterator it;
         try {
@@ -170,12 +175,17 @@ class SynchControl {
                 BoatStatusRecord bsr = (BoatStatusRecord) boatstatus.get(boatstatuskey);
                 if (bsr.getBoatId() != null) {
                     if (bsr.getBoatId().compareTo(boatId) == 0) {
-                        bsr.setEntryNo(new DataTypeIntString("" + fixedEntryNo));
-                        long globalLock = boatstatus.acquireGlobalLock();
-                        boatstatus.update(bsr, globalLock);
-                        boatstatus.releaseGlobalLock(globalLock);
-                        logSynchMessage(International.getString("Korrigiere EntryNo in BoatStatus"), "efa2boatstatus",
-                                boatstatuskey, false);
+                    	//Only update the boatstatusrecord if it points to the same logbook as 
+                    	//the record which got a new entryID.
+                    	if (bsr.getLogbook().equalsIgnoreCase(oldLogbookName)) {
+	                        bsr.setEntryNo(new DataTypeIntString("" + fixedEntryNo));
+	                        long globalLock = boatstatus.acquireGlobalLock();
+	                        boatstatus.update(bsr, globalLock);
+	                        boatstatus.releaseGlobalLock(globalLock);
+	                        logSynchMessage(International.getString("Korrigiere EntryNo in BoatStatus"), "efa2boatstatus",
+	                                boatstatuskey, false);
+                    	}
+                    		
                     }
                 }
                 boatstatuskey = it.getNext();
@@ -450,16 +460,20 @@ class SynchControl {
                             if (localLastModified > LastModifiedLimit)
                                 localRecordsToInsertAtServer.add(localRecord);
                         } else if (localLastModified > serverRecord.getLastModified()) {
-                            String preUpdateRecordsCompareResult = ""; // removed August 2024: preUpdateRecordsCompare(localRecord, serverRecord, tx.tablename);
-                            if (!preUpdateRecordsCompareResult.isEmpty())
-                                localRecordsToUpdateAtServer.add(localRecord);
-                            else {
+                        	// removed August 2024: String preUpdateRecordsCompare(localRecord, serverRecord, tx.tablename);
+                        	/* String preUpdateRecordsCompareResult = "";  
+                             * if (!preUpdateRecordsCompareResult.isEmpty()) {
+                             *   localRecordsToUpdateAtServer.add(localRecord);
+                             * } else { 
+                             */ 
+                        		// just get a comparison of the records so that we can log them and the user can actually have a hint what has changed.
+                            	String preUpdateRecordsCompareResult = preUpdateRecordsCompare(localRecord, serverRecord, tx.tablename);
                                 logSynchMessage(International.getMessage(
                                         "Update-Konflikt bei Datensatz in der {type}-Synchronisation. Unterschiedlich sind: {fields}",
                                         "Upload", preUpdateRecordsCompareResult) +
                                         " " + International.getString("Bitte bereinige den Datensatz manuell."), tx.tablename,
                                         toCheck, false);
-                            }
+                            //}
                         }
                         toCheck = it.getNext();
                     }
@@ -497,6 +511,51 @@ class SynchControl {
                     "Transaktionen für Synchronisation vollständig angestoßen. Warte auf Fertigstellung."), "",
                     null, false);
         }
+    }
+    
+    /**
+     * Compares two records and points out which fields differ from another.
+     *
+     * @param dr1 DataRecord one to compare
+     * @param dr2 DataRecord two to compare
+     * @param tablename the table name to look up how many fields may be different.
+     * @return empty String, if the records are of the same type and differ in only a tolerable amount of data fields
+     */
+    private String preUpdateRecordsCompare(DataRecord dr1, DataRecord dr2, String tablename) {
+        if (!efaCloudRolleBths && !isBoathouseApp)
+            return "";
+        if ((dr1 == null) || (dr2 == null) || (dr1.getClass() != dr2.getClass()))
+            return "type mismatch";
+        // if archiving is executed or an archived record is restored, do not check for mismatches
+        // because the archived record stub will have all fields changed.
+
+        int diff = 0;
+        StringBuilder fieldList = new StringBuilder();
+        for (String field : dr1.getFields()) {
+            if (!field.equalsIgnoreCase("ChangeCount")
+                    && !field.equalsIgnoreCase("LastModified")
+                    && !field.equalsIgnoreCase("LastModification")) {
+            	
+            	String f1Value = dr1.getAsString(field);
+            	String f2Value = dr2.getAsString(field);
+            	
+                if (f1Value == null) {
+                    if (f2Value != null) {
+                        fieldList.append(field).append("(null").append("/").append(f2Value).append(")").append(", ");
+                        diff ++;
+                    }
+                } else if (f2Value == null) {
+                    fieldList.append(field).append("(").append(f1Value).append("/null)").append(", ");
+                    diff++;
+                    // Use String comparison as the compareTo() implementation throws to many different exceptions.
+                } else if (!dr1.getAsString(field).equalsIgnoreCase(dr2.getAsString(field))) {
+                    fieldList.append(field).append("(").append(f1Value).append("/").append(f2Value).append(", ");
+                    diff++;
+                }
+            }
+        }
+
+        return fieldList.toString();
     }
 
 }

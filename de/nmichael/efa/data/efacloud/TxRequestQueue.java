@@ -101,7 +101,7 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
     private static final int DONE_QUEUE_MAX_TXS = 50;
     private static final int DROPPED_QUEUE_MAX_TXS = 50;
     
-    private static final int EFACLOUD_LOG_MAX_SIZE = 200000; //200 kb. 
+    private static final int EFACLOUD_LOG_MAX_SIZE = 10 * 1024 *1024; // 25 MBytes, during upload sync only last 200kb are transferred.
     private static final String FILENAME_PREVIOUS_SUFFIX = ".previous.log";    
 
     // Transaction queue indices and names.
@@ -233,6 +233,8 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
     public String adminSessionMessage;
     private Container efaGUIroot;
     private long lastStatsUpload = 0L;
+    
+    public Boolean isExtendedDebug = true; //intentionally set to true so that the sync log provides better data traceability.
 
     /**
      * Get a new transaction ID and increment the counter.
@@ -607,10 +609,10 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
                     fa.putContent(fa.getInstance(cfgFname, false), cfgFile);
                 }
                 // add the log and synchronisation errors file
-                String errorsFile = TextResource.getContents(new File(synchErrorFilePath), "UTF-8");
+                String errorsFile = TextResource.getTailContents(new File(synchErrorFilePath), "UTF-8");
                 if (TxRequestQueue.logs_to_return >= 1)
                     fa.putContent(fa.getInstance("synchErrors.log", false), errorsFile);
-                String logFile = TextResource.getContents(new File(logFilePath), "UTF-8");
+                String logFile = TextResource.getTailContents(new File(logFilePath), "UTF-8");
                 if (TxRequestQueue.logs_to_return >= 2)
                     fa.putContent(fa.getInstance("efacloud.log", false), logFile);
                 // Java8: return Base64.getEncoder().encodeToString(fa.getZipAsBytes());

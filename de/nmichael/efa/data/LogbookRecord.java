@@ -133,6 +133,11 @@ public class LogbookRecord extends DataRecord {
     public static final int CREW_MAX = 24;
     public static final String WATERS_SEPARATORS = ",;+";
 
+    public static final String EMPTY="";
+    //This is the name of the logbook the logbookrecord got created in.
+    //
+    private String logbookName = EMPTY;
+    
     // =========================================================================
     // Temporary Fields for Evaluation (not stored in the persistent record!)
     // =========================================================================
@@ -234,12 +239,23 @@ public class LogbookRecord extends DataRecord {
 
     public LogbookRecord(Logbook logbook, MetaData metaData) {
         super(logbook, metaData);
+        this.logbookName = logbook.getName();
     }
 
     public DataRecord createDataRecord() { // used for cloning
-        return getPersistence().createNewRecord();
+        //we do not need to take care for setting logbookname property
+    	//as this function automatically calls the constructor of logbookrecord.
+    	return getPersistence().createNewRecord();
     }
 
+    /**
+     * Get the name of the logbook that has been set while constructing this logbookrecord.
+     * @return
+     */
+    public String getLogbookName() {
+    	return logbookName;
+    }
+    
     public DataKey getKey() {
         return new DataKey<DataTypeIntString,String,String>(getEntryId(),null,null);
     }
