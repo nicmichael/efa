@@ -42,7 +42,7 @@ public class ClockAndSunlightWidget extends Widget {
     static final String PARAM_LAYOUT              = "Layout";
 
     public ClockAndSunlightWidget() {
-        super(International.getString("Uhr und Tageslicht"), "MeteoAstro", International.getString("Uhr und Tageslicht"), true, true, false);
+        super(International.getString("Uhr und Tageslicht"), "MeteoAstro", International.getString("Uhr und Tageslicht"), true, true, false, true);
         IItemType item;
         addParameterInternal(new ItemTypeStringList(PARAM_LAYOUT, LAYOUT_HORIZONTAL,
                 new String[] { LAYOUT_HORIZONTAL, LAYOUT_VERTICAL },

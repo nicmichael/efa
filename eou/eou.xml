@@ -1,6 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <efaOnlineUpdate>
-<Version>
+	<Version>
+        <VersionID>2.5.1#9</VersionID>
+        <ReleaseDate>17.02.2026</ReleaseDate>
+        <DownloadUrl>TODO</DownloadUrl>
+        <DownloadSize>TODO</DownloadSize>
+     	<MinimumJavaVersion>1.8</MinimumJavaVersion>
+		<MinimumEfaCloudVersion>2.3.3</MinimumEfaCloudVersion>
+        <ShowNotice lang="de">Basiert auf 2.5.0_01.</ShowNotice>
+        <ShowNotice lang="de">Wenn efaCloud eingesetzt wird, muss der Server mindestens Version 2.3.3 unterstützen. EfaCloud 2.4.0_12 und höher werden empfohlen.</ShowNotice>
+        <ShowNotice lang="en">Based on 2.5.0_01.</ShowNotice>
+        <ShowNotice lang="en">If you use efaCloud, make sure your server at least supports efaCloud Version 2.3.3. It is recommended to upgrade to EfaCloud 2.4.0_12 or above.</ShowNotice>
+        <Changes lang="de">
+            <ChangeItem>Bugfix: Widget: Wetter-Widget: Ist standardmäßig aktiviert, aber ohne voreingestellte Wetter-Orte.</ChangeItem>
+			<ChangeItem>Bugfix: Widget: HTML Widget: Ist standardmäßig aktiviert, aber ohne voreingestellte HTML-Seiten.</ChangeItem>
+			<ChangeItem>Bugfix: Widget: HTML Widget: Hintergrund war in Metal- und Nimbus-Look nicht mit der richtigen Farbe gefüllt.</ChangeItem>
+			<ChangeItem>Bugfix: Widget: Newsticker: Ist standardmäßig deaktiviert.</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>Bugfix: Widget: Weather-Widget: Enabled by default, but no locations are set up.</ChangeItem>
+			<ChangeItem>Bugfix: Widget: HTML Widget: Enabled by default, but no HTML pages are set up.</ChangeItem>
+			<ChangeItem>Bugfix: Widget: HTML Widget:Background did not have the correct color when using Metal or Nimbus look.</ChangeItem>
+			<ChangeItem>Bugfix: Widget: Newsticker: Disabled by default.</ChangeItem>
+        </Changes>
+	</Version>
+	<Version>
         <VersionID>2.5.1#8</VersionID>
         <ReleaseDate>14.02.2026</ReleaseDate>
         <DownloadUrl>TODO</DownloadUrl>

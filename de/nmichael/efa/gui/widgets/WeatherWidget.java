@@ -101,7 +101,7 @@ public class WeatherWidget extends Widget implements IItemFactory {
 	 */
 	public WeatherWidget() {
 
-		super(International.getString("Wetter"), "MWeather", International.getString("Wetter"), false, false, true,WEATHERWIDGET_GRIDWIDTH);
+		super(International.getString("Wetter"), "MWeather", International.getString("Wetter"), false, false, true, true, WEATHERWIDGET_GRIDWIDTH);
 
 		addHeader(NOT_STORED_ITEM_PREFIX+"MultiWeatherWidgetLocationHeader", IItemType.TYPE_PUBLIC, "", 
 				International.getString("Wetter Daten"), WEATHERWIDGET_GRIDWIDTH);
@@ -198,9 +198,6 @@ public class WeatherWidget extends Widget implements IItemFactory {
 				"",
 				International.getString("Fehler-Überschriften Textfarbe"), false));				
 		item.setFieldGrid(WEATHERWIDGET_GRIDWIDTH-2);
-						
-		
-		super.setEnabled(false);
 		
 		item = this.getParameterInternal(PARAM_UPDATEINTERVAL);
 		item.setFieldGrid(WEATHERWIDGET_GRIDWIDTH-2, -1, GridBagConstraints.HORIZONTAL);

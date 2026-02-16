@@ -77,14 +77,10 @@ public class HTMLWidgetInstance extends WidgetInstance implements IWidgetInstanc
 
         
         htmlPane.setContentType(TEXT_HTML);
-        
-        if (Daten.isEfaFlatLafActive()) {
-            htmlPane.putClientProperty("html.disable", Boolean.TRUE); 
-        	htmlPane.setFont(htmlPane.getFont().deriveFont(Font.PLAIN,14));
-        }
+        htmlPane.putClientProperty("html.disable", Boolean.TRUE); 
+      	htmlPane.setFont(htmlPane.getFont().deriveFont(Font.PLAIN,14));
         htmlPane.setEditable(false);
-        htmlPane.setOpaque(false);
-        
+        htmlPane.setOpaque(true);
         
         if (colorsActive) {
         	htmlPane.setBackground(backgroundColor);
