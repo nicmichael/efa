@@ -55,24 +55,24 @@ public abstract class Widget implements IWidget {
     Vector<IItemType> parameters = new Vector<IItemType>();
     JPanel myPanel;
     
-    public Widget(String name, String description, boolean showPositionParam, boolean showVisibleParam, boolean showRefreshInterval) {
-    	this(name, name, description, showPositionParam, showVisibleParam, showRefreshInterval);
+    public Widget(String name, String description, boolean showPositionParam, boolean showVisibleParam, boolean showRefreshInterval, boolean isWidgetActiveByDefault) {
+    	this(name, name, description, showPositionParam, showVisibleParam, showRefreshInterval, isWidgetActiveByDefault);
     }
-    public Widget(String name, String description, boolean showPositionParam, boolean showVisibleParam, boolean showRefreshInterval,int gridWidth) {
-    	this(name, name, description, showPositionParam, showVisibleParam, showRefreshInterval,gridWidth);
-    }
-    
-    public Widget(String name, String parameterPrefix, String description, boolean showPositionParam, boolean showVisibleParam, boolean showRefreshInterval) {
-    	this(name, parameterPrefix, description, showPositionParam, showVisibleParam, showRefreshInterval,DEFAULT_GRIDWIDTH);
+    public Widget(String name, String description, boolean showPositionParam, boolean showVisibleParam, boolean showRefreshInterval, boolean isWidgetActiveByDefault, int gridWidth) {
+    	this(name, name, description, showPositionParam, showVisibleParam, showRefreshInterval, isWidgetActiveByDefault, gridWidth);
     }
     
-    public Widget(String name, String parameterPrefix, String description, boolean showPositionParam, boolean showVisibleParam, boolean showRefreshInterval, int gridWidth) {
+    public Widget(String name, String parameterPrefix, String description, boolean showPositionParam, boolean showVisibleParam, boolean showRefreshInterval, boolean isWidgetActiveByDefault) {
+    	this(name, parameterPrefix, description, showPositionParam, showVisibleParam, showRefreshInterval, isWidgetActiveByDefault, DEFAULT_GRIDWIDTH);
+    }
+    
+    public Widget(String name, String parameterPrefix, String description, boolean showPositionParam, boolean showVisibleParam, boolean showRefreshInterval, boolean isWidgetActiveByDefault, int gridWidth) {
         this.name = name;
         this.parameterPrefix = parameterPrefix;
         this.description = description;
         
         addHeader("WidgetCommon_"+parameterPrefix,IItemType.TYPE_PUBLIC, "", International.getString("Widget Allgemein"), gridWidth);
-        addParameterInternal(new ItemTypeBoolean(PARAM_ENABLED, false,
+        addParameterInternal(new ItemTypeBoolean(PARAM_ENABLED, isWidgetActiveByDefault,
                 IItemType.TYPE_PUBLIC, "",
                 (showVisibleParam ?
                     International.getMessage("{item} anzeigen", name) :

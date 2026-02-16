@@ -58,7 +58,7 @@ public class HTMLWidget extends Widget implements IWidget, IItemFactory {
 
     
     public HTMLWidget() {
-        super("Html", International.getString("HTML-Widget"), false, false, true,HTMLWIDGET_GRIDWIDTH);
+        super("Html", International.getString("HTML-Widget"), false, false, true, true, HTMLWIDGET_GRIDWIDTH);
 
         IItemType item;
 

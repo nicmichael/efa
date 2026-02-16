@@ -84,11 +84,11 @@ public class HtmlPopupDialog extends BaseDialog {
         JScrollPane scrollPane = new JScrollPane();
         JEditorPane htmlPane = new JEditorPane();
         mainPanel.setLayout(new BorderLayout());
+        
         htmlPane.setContentType("text/html");
-        if (Daten.isEfaFlatLafActive()) {
-            htmlPane.putClientProperty("html.disable", Boolean.TRUE); 
-        	htmlPane.setFont(htmlPane.getFont().deriveFont(Font.PLAIN,14));
-        }
+        htmlPane.putClientProperty("html.disable", Boolean.TRUE); 
+        htmlPane.setFont(htmlPane.getFont().deriveFont(Font.PLAIN,14));
+
 
         htmlPane.setEditable(false);
         EfaGuiUtils.addHyperlinkAction(htmlPane);
