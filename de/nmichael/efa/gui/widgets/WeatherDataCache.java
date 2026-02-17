@@ -198,15 +198,13 @@ public class WeatherDataCache {
         	    	nextUpdateInSeconds = Math.min(nextUpdateInSeconds, current.getNextUpdateInSeconds());
         	    }
         	}
-        	Logger.logdebug(Logger.TT_WIDGETS, 5, Logger.MSG_DEBUG_METEOWIDGET, "WDCUpdate: next update in seconds: "+nextUpdateInSeconds);
 
-        	this.scheduleNext(nextUpdateInSeconds);
+        	this.scheduleNext(nextUpdateInSeconds+1);//+1 means that we surely have the next update event AFTER at least one of the items is due.
         	
         }        
         
     	/**
     	 * Handles getting the actual Weather Data from the configured data source.
-    	 * 
     	 * 
     	 * @param source
     	 * @param longitude
