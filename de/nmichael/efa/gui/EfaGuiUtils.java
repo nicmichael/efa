@@ -9,18 +9,29 @@
  */
 package de.nmichael.efa.gui;
 
+import java.awt.Component;
+import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Desktop;
 import java.awt.FontMetrics;
 import java.awt.GridBagConstraints;
 import java.awt.Image;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JViewport;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.event.HyperlinkEvent;
 
 import de.nmichael.efa.Daten;
@@ -208,6 +219,72 @@ public class EfaGuiUtils {
                 htmlPane.setCursor(old);
             }
         });
+	}
+
+	/**
+	 * Adds a focusGained event listener on any component on the component and all it's children.
+	 * Which scrolls the focused element into view, if it is on a Scrollpane.
+	 * @param root Root component
+	 */
+	public static void enableAutoScrollOnFocus(Component root) {
+	    if (root instanceof JComponent) {
+	        final JComponent jc = (JComponent) root;
+
+	        jc.addFocusListener(new FocusAdapter() {
+	            @Override
+	            public void focusGained(FocusEvent e) {
+	                SwingUtilities.invokeLater(new Runnable() {
+	                    @Override
+	                    public void run() {
+	                    	scrollToVisible(jc);
+	                    }
+	                });
+	            }
+	        });
+	    }
+
+	    if (root instanceof Container) {
+	        Container container = (Container) root;
+	        for (Component child : container.getComponents()) {
+	            enableAutoScrollOnFocus(child);
+	        }
+	    }
+	}
+	
+	/**
+	 * If the component is on a ScrollPane, scroll the component into the visible view.
+	 * Also works on nested Tabbedpanes and Scrollpanes like in efaConfigDialog.
+	 * @param comp
+	 */
+	public static void scrollToVisible(JComponent comp) {
+	    JScrollPane scrollPane = findScrollPane(comp);
+	    if (scrollPane == null) return;
+
+	    JViewport viewport = scrollPane.getViewport();
+
+	    // Convert rect to the coordinates of the viewport
+	    Rectangle rect = SwingUtilities.convertRectangle(
+	            comp.getParent(),
+	            comp.getBounds(),
+	            viewport // viewport.getView() will not work correctly.
+	            );
+
+	    viewport.scrollRectToVisible(rect);
+	}
+	
+	/**
+	 * Get the parent ScrollPane the component is placed on. Searches for it recursively, parent by parent.
+	 * @param c component
+	 * @return Returns the parent Scrollpane, if one exists. Null otherwise
+	 */
+	private static JScrollPane findScrollPane(Component c) {
+	    while (c != null) {
+	        if (c instanceof JScrollPane) {
+	        	return (JScrollPane) c;
+	        } 
+	        c = c.getParent();
+	    }
+	    return null;
 	}
 
 }

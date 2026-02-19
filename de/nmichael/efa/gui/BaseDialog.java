@@ -10,17 +10,36 @@
 
 package de.nmichael.efa.gui;
 
-import de.nmichael.efa.*;
-import de.nmichael.efa.util.*;
-import de.nmichael.efa.util.Dialog;
-import de.nmichael.efa.core.config.EfaConfig;
-import de.nmichael.efa.core.items.*;
-import de.nmichael.efa.gui.util.AutoCompletePopupWindow;
-import de.nmichael.efa.gui.util.RoundedBorder;
+import java.awt.AWTEvent;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
 
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
+import javax.swing.AbstractButton;
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+
+import de.nmichael.efa.Daten;
+import de.nmichael.efa.core.items.IItemType;
+import de.nmichael.efa.gui.util.AutoCompletePopupWindow;
+import de.nmichael.efa.util.ActionHandler;
+import de.nmichael.efa.util.Dialog;
+import de.nmichael.efa.util.EfaUtil;
+import de.nmichael.efa.util.Help;
+import de.nmichael.efa.util.International;
+import de.nmichael.efa.util.Logger;
+import de.nmichael.efa.util.Mnemonics;
 
 // @i18n complete
 public abstract class BaseDialog extends JDialog implements ActionListener {
@@ -144,6 +163,7 @@ public abstract class BaseDialog extends JDialog implements ActionListener {
             iniDialogCommonFinish();
             EfaUtil.pack(this);
             _prepared = true;
+            EfaGuiUtils.enableAutoScrollOnFocus(this);
             return true;
         } catch (Exception e) {
             Logger.log(e);

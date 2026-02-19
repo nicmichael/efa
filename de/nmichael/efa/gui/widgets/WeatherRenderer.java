@@ -32,7 +32,7 @@ public abstract class WeatherRenderer {
 	}
 	
 	protected static JPanel getLocationHeader(String caption, Boolean showMaximize, WeatherWidgetInstance ww) {
-		return WidgetInstance.getLocationHeader(caption, false, showMaximize, ww.getStandardHeaderBackground(), ww.getStandardHeaderForeground());
+		return WidgetInstance.getLocationHeader(caption, showMaximize, ww.getStandardHeaderBackground(), ww.getStandardHeaderForeground());
 	}
 	
 	protected static ImageIcon getHourlyWeatherIcon(WeatherDataForeCast wdf, int hourlyIndex) {
