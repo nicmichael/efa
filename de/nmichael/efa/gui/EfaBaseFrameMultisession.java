@@ -1568,7 +1568,10 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
     				}
     			}
         	}
-        	return false;
+        	//if we are here, the user specified at least one unknown boat, but none of the uncertain boats could be mapped to a boat in our database.
+        	//
+        	//we cannot check if it's config is "Single/Skiff", so we return true, so that we can proceed.
+        	return true; // The 
         }
         return true; // no boat specified, so no problem with the boats
     }
