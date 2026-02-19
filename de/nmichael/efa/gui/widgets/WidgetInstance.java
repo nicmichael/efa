@@ -104,15 +104,15 @@ public abstract class WidgetInstance implements IWidgetInstance {
 		return returnList;
 	}
 
-	protected static JPanel getLocationHeader(String caption, Boolean isError, Boolean showMaximize) {
-		return getLocationHeader(caption, isError, showMaximize, null, null);
+	protected static JPanel getLocationHeader(String caption, Boolean showMaximize) {
+		return getLocationHeader(caption, showMaximize, null, null);
 	}	
 
-	protected static JPanel getLocationHeader(String caption, Boolean isError, Boolean showMaximize, Color bg, Color fg) {
+	protected static JPanel getLocationHeader(String caption, Boolean showMaximize, Color bg, Color fg) {
 		RoundedPanel titlePanel = new RoundedPanel();
 		titlePanel.setLayout(new GridBagLayout());
-		titlePanel.setBackground(isError ? Daten.efaConfig.getErrorBackgroundColor() : (bg == null ? Daten.efaConfig.getToolTipHeaderBackgroundColor() : bg));
-		titlePanel.setForeground(isError ? Daten.efaConfig.getErrorForegroundColor() : (fg == null ? Daten.efaConfig.getToolTipHeaderForegroundColor() : fg));
+		titlePanel.setBackground((bg == null ? Daten.efaConfig.getToolTipHeaderBackgroundColor() : bg));
+		titlePanel.setForeground((fg == null ? Daten.efaConfig.getToolTipHeaderForegroundColor() : fg));
 	
 		JLabel titleLabel = new JLabel();
 		titleLabel.setText(caption);

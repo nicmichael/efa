@@ -180,7 +180,7 @@ public class HTMLWidgetInstance extends WidgetInstance implements IWidgetInstanc
 	}
 
 	private JPanel getHTMLCaptionHeader(String caption, Boolean showMaximize) {
-		return WidgetInstance.getLocationHeader(caption, false, showMaximize, 
+		return WidgetInstance.getLocationHeader(caption, showMaximize, 
 				(this.isColorsActive() ? this.getHeaderBackgroundColor() : null), 
 				(this.isColorsActive() ? this.getHeaderForegroundColor() : null));
 	}	

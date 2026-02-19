@@ -10,6 +10,7 @@ import javax.swing.ImageIcon;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import de.nmichael.efa.gui.widgets.WeatherDataForeCast.WDFStatus;
 import de.nmichael.efa.util.International;
 import de.nmichael.efa.util.Logger;
 
@@ -99,11 +100,12 @@ public class OpenMeteoApiParser {
     	weatherApiCodeToWeatherApiIconMap.put(1282, 395);
     }
 
-    public static WeatherDataForeCast parseFromOpenMeteo(JSONObject json) {
+    public static WeatherDataForeCast parseFromOpenMeteo(JSONObject json, String longitude, String latitude, int interval) {
     	
         JSONObject root = json;
         // main object with coordinates, current_weather and hourly_data
-        WeatherDataForeCast wdf = new WeatherDataForeCast();
+        WeatherDataForeCast wdf = new WeatherDataForeCast(longitude,latitude, interval);
+        wdf.setSource(WeatherWidget.WEATHER_SOURCE_OPENMETEO);
         
         try {
 
@@ -179,11 +181,11 @@ public class OpenMeteoApiParser {
 	        calculateHourlyWeatherCodeAndIcons(hourly);
 	        wdf.setHourly(hourly);
 	        
-	        wdf.setStatus(true);
+	        wdf.setStatus(WDFStatus.OK); // Download and parsing successful.
 	        wdf.setStatusMessage("");
         } catch (Exception e) {
-        	wdf.setStatus(false);
-        	wdf.setStatusMessage(e.getLocalizedMessage());
+        	wdf.setStatus(WDFStatus.Error);
+        	wdf.setStatusMessage(e.toString());
         	Logger.logdebug(e);
         }
 	    

@@ -1,5 +1,6 @@
 package de.nmichael.efa.gui.widgets;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -11,7 +12,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import de.nmichael.efa.Daten;
-import de.nmichael.efa.gui.util.RoundedBorder;
+import de.nmichael.efa.gui.widgets.WeatherDataForeCast.WDFStatus;
 import de.nmichael.efa.util.International;
 
 public class WeatherRendererError extends WeatherRenderer {
@@ -22,13 +23,39 @@ public class WeatherRendererError extends WeatherRenderer {
 		JTextArea errorTextArea= new JTextArea();
 		JScrollPane scrollPane = new JScrollPane();
 		
-		errorTextArea.setBackground(ww.getErrorBackground());
-		errorTextArea.setForeground(ww.getErrorForeground());
+		Color bg = null;
+		Color fg = null;
+		Color bgH = null;
+		Color fgH = null;
+		if (wdf.getStatus() == WDFStatus.Error) {
+			bg = ww.getErrorBackground();
+			fg = ww.getErrorForeground();
+			bgH = ww.getErrorHeaderBackground();
+			fgH = ww.getErrorHeaderForeground();
+		} else {
+			bg = ww.getStandardBackground();
+			fg = ww.getStandardForeground();
+			bgH = ww.getStandardHeaderBackground();
+			fgH = ww.getStandardHeaderForeground();
+		}
+
+		errorTextArea.setBackground(bg);
+		errorTextArea.setForeground(fg);
+		roundPanel.setBackground(bg);
+		roundPanel.setForeground(fg);
+		
+		roundPanel.setOpaque(true);
+
 		errorTextArea.setFont(
 				roundPanel.getFont().deriveFont((float) (Daten.efaConfig.getValueEfaDirekt_BthsFontSize())));
 		errorTextArea.setFont(errorTextArea.getFont().deriveFont(Font.BOLD));
-		errorTextArea.setText(wdf.getStatusMessage());
-		errorTextArea.setPreferredSize(new Dimension(250,400));
+		String textToDisplay=wdf.getStatusMessage();
+		if (wdf.getStatus()==WDFStatus.Initializing) {
+			textToDisplay = "\n"+textToDisplay;
+		}
+		errorTextArea.setText(textToDisplay);
+		
+		errorTextArea.setPreferredSize(new Dimension(250,(wdf.getStatus()==WDFStatus.Error ? 400 : 100)));
 		errorTextArea.setToolTipText((wdf==null ? 
 				International.getString("Ein Protokoll ist in der Logdatei (Admin-Modus: Logdatei anzeigen) zu finden.") : wdf.getExceptionText()));
 		errorTextArea.setLineWrap(true);
@@ -37,18 +64,15 @@ public class WeatherRendererError extends WeatherRenderer {
 		errorTextArea.setEditable(false);
 		errorTextArea.setCaretPosition(0);
 		
-		roundPanel.setBackground(ww.getErrorBackground());
-		roundPanel.setForeground(ww.getErrorForeground());
-		roundPanel.setBorder(new RoundedBorder(ww.getErrorForeground()));
 		
 		JPanel titlePanel = WeatherRenderer.getLocationHeader(ww.getCaption(), true, ww);
-		titlePanel.setBackground(ww.getErrorHeaderBackground());
-		titlePanel.setForeground(ww.getErrorHeaderForeground());
+		titlePanel.setBackground(bgH);
+		titlePanel.setForeground(fgH);
 		
 		errorTextArea.setBorder(BorderFactory.createEmptyBorder());
         scrollPane.setBorder(BorderFactory.createEmptyBorder());// we want no border on an inner scroll pane.
         
-        scrollPane.setPreferredSize(new Dimension(250,150));
+        scrollPane.setPreferredSize(new Dimension(250,(wdf.getStatus()==WDFStatus.Error ? 150 : 100)));
         scrollPane.getViewport().add(errorTextArea, null);	
         scrollPane.setOpaque(true);
 		

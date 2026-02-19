@@ -342,11 +342,6 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 	private ItemTypeColor efaGuiToolTipHeaderBackground; 
 	private ItemTypeColor efaGuiToolTipHeaderForeground;
 	
-	private ItemTypeColor efaGuiErrorBackground; 
-	private ItemTypeColor efaGuiErrorForeground;
-	private ItemTypeColor efaGuiErrorHeaderBackground; 
-	private ItemTypeColor efaGuiErrorHeaderForeground;
-	
 	private ItemTypeStringList efaDirekt_bnrMsgToAdminDefaultRecipient;
 	private ItemTypeBoolean efaDirekt_bnrError_admin;
 	private ItemTypeBoolean efaDirekt_bnrError_bootswart;
@@ -1852,7 +1847,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 			crontab.setAppendPositionToEachElement(false);
 			crontab.setShortDescription("Task");
 			crontab.setRepeatTitle(true);
-			crontab.setShowUpDownButtons(false);
+			crontab.setShowUpDownButtons(true);
 
 			// ============================= DATA ACCESS =============================
 			addParameter(dataPreModifyRecordCallbackEnabled = new ItemTypeBoolean("DataPreModifyRecordCallbackEnabled",
@@ -3172,26 +3167,6 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 		Color myColor = efaGuiToolTipHeaderForeground.getColor();
 		return (myColor != null ? myColor : standardToolTipHeaderForegroundColor);
 	}
-
-	public Color getErrorBackgroundColor() {
-		Color myColor = efaGuiErrorBackground.getColor();
-		return (myColor != null ? myColor : standardErrorBackgroundColor);
-	}
-
-	public Color getErrorForegroundColor() {
-		Color myColor = efaGuiErrorForeground.getColor();
-		return (myColor != null ? myColor : standardErrorForegroundColor);
-	}
-
-	public Color getErrorHeaderBackgroundColor() {
-		Color myColor = efaGuiErrorHeaderBackground.getColor();
-		return (myColor != null ? myColor : standardErrorHeaderBackgroundColor);
-	}
-
-	public Color getErrorHeaderForegroundColor() {
-		Color myColor = efaGuiErrorHeaderForeground.getColor();
-		return (myColor != null ? myColor : standardErrorHeaderForegroundColor);
-	}	
 	
 	public Boolean getHeaderUseHighlightColor() {
 		return efaHeaderUseHighlightColor.getValue();

@@ -21,6 +21,7 @@ import de.nmichael.efa.data.LogbookRecord;
 import de.nmichael.efa.data.types.DataTypeTime;
 import de.nmichael.efa.gui.util.RoundedBorder;
 import de.nmichael.efa.gui.util.RoundedPanel;
+import de.nmichael.efa.gui.widgets.WeatherDataForeCast.WDFStatus;
 import de.nmichael.efa.util.EfaUtil;
 import de.nmichael.efa.util.International;
 import de.nmichael.efa.util.Logger;
@@ -28,7 +29,7 @@ import de.nmichael.efa.util.Logger;
 public class WeatherWidgetInstance extends WidgetInstance implements IWidgetInstance {
 	private volatile JPanel mainPanel = new JPanel();
 	private RoundedPanel roundPanel = new RoundedPanel();
-	private WeatherUpdater weatherUpdater;
+	private WeatherWidgetInstanceUpdater weatherUpdater;
 	
 	private String caption;
 	private String longitude;
@@ -113,7 +114,7 @@ public class WeatherWidgetInstance extends WidgetInstance implements IWidgetInst
         });
 
 	   	try {
-	   		weatherUpdater = new WeatherUpdater(roundPanel, this, this.getCaption());
+	   		weatherUpdater = new WeatherWidgetInstanceUpdater(roundPanel, this, this.getCaption());
 	   		weatherUpdater.start();
             
         } catch(Exception e) {
@@ -314,45 +315,53 @@ public class WeatherWidgetInstance extends WidgetInstance implements IWidgetInst
 	}
 
 	/**
-	 * The WeatherUpdate obtains Weather Data in a separate thread, so that
-	 * the time for getting weather data does not affect the main thread,
-	 * and efaBoathouse is still ready for interaction with the user.
+	 * There are two independent thread types for updating weather.
+	 * WeatherWidgetInstanceUpdater: 
+	 * 		Update the rendering of the weather data for this WidgetInstance.
+	 * 		There is one thread for each WidgetInstance.
+	 * WeatherDataCache->Updater: 
+	 * 		Holds all weather data, and updates the weather forecast data regularily. 
+	 * 		There is one thread for the whole WeatherDataCache.
 	 */
-   class WeatherUpdater extends Thread {
+   class WeatherWidgetInstanceUpdater extends Thread {
 
         volatile boolean keepRunning = true;
         private JPanel panel;
         private WeatherWidgetInstance ww = null;
         private WeatherDataForeCast wdf = null;
-        private long lastWeatherUpdate = 0;
         private String theName="";
         
-        public WeatherUpdater(JPanel thePanel, WeatherWidgetInstance ww, String theName) {
+        public WeatherWidgetInstanceUpdater(JPanel thePanel, WeatherWidgetInstance ww, String theName) {
         	this.panel=thePanel;
         	this.ww = ww;
         	this.theName=theName;
         }
-
-        private boolean needsToUpdateWeather() {
-        	return (this.wdf == null || (System.currentTimeMillis() >= lastWeatherUpdate+(ww.getUpdateInterval()*1000)));
-        }
         
         public void run() {
-        	this.setName("WeatherWidget.WeatherUpdater"+" "+theName+" "+DataTypeTime.now().toString());
+        	this.setName("WeatherWidget.WeatherWidgetInstanceUpdater"+" "+theName+" "+DataTypeTime.now().toString());
             
             while (keepRunning) {
             	
             	try {
-            		//WeatherDataCache handles itself if the interval for loading new weather data is exceeded.
+            		//we just get the current weather data for the location. when it is updated, depending on its state,
+            		//is up to the WeatherDataCache. In this thread, we just update the widget contents once a minute
+            		//depending on the current state of the weatherdata.
            			wdf = WeatherDataCache.getInstance().getWeatherData(ww.getSource(), ww.getLongitude(), ww.getLatitude());
 	            	
 	            	//Use invokelater as swing threadsafe ways
 	            	SwingUtilities.invokeLater(new UpdateWeatherRunner(this.panel, wdf, ww));
 	
-	            	// check every minute if we need to update Weather data.
-	            	// this also implements that the panel gets a refresh with the already downloaded WeatherData 
-	            	// every minute. This is possibly neccessary when using weather forecast which has data for multiple timecodes a day.
-	                Thread.sleep(EfaUtil.getMilliSecondsToFullMinute()+1000);
+	                if (wdf.getStatus() == WDFStatus.OK){
+	                	Thread.sleep(EfaUtil.getMilliSecondsToFullMinute()+1000);
+	                } else {
+	                	//especially at startup time, the weather data is not yet available. 
+	                	//weatherdata itself knows depending on its errorstate, when a next update of the weatherdata is valid.
+	                	//in initial state, the next update is immediate, so we just wait for the minimum of a second.
+	                	//otherwise, we wait for a maximum of a minute to update the widget's content.
+	                	long waitTime= Math.min(EfaUtil.getMilliSecondsToFullMinute(),
+	                							1000+wdf.getNextUpdateInSeconds()*1000);
+	                	Thread.sleep(waitTime);
+	                }
 
             	} catch (InterruptedException e) {
                 	//This is when the thread gets interrupted when it is sleeping.
@@ -416,7 +425,7 @@ public class WeatherWidgetInstance extends WidgetInstance implements IWidgetInst
 			uwrInnerPanel.setName("WeatherWidget-InnerPanel");
 			uwrInnerPanel.setOpaque(false);
 			
-    		if (uwrWdf != null && uwrWdf.getStatus() == true) {
+    		if (uwrWdf != null && uwrWdf.getStatus() == WDFStatus.OK) {
         		if (getLayout().equalsIgnoreCase(WeatherWidget.WEATHER_LAYOUT_CURRENT_CLASSIC)) {
 					WeatherRendererCurrentClassic.renderWeather(uwrWdf, uwrInnerPanel, uwrWW);
 				} else if (getLayout().equalsIgnoreCase(WeatherWidget.WEATHER_LAYOUT_CURRENT_WIND)) {

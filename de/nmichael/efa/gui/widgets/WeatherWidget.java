@@ -317,7 +317,7 @@ public class WeatherWidget extends Widget implements IItemFactory {
 		//initialize Weather Data Cache for current widget
 		WeatherDataCache.getInstance().setSpeedScale(getWeatherSpeedScale());
 		WeatherDataCache.getInstance().setTempScale(getWeatherTempScale());
-		WeatherDataCache.getInstance().setUpdateIntervalSeconds(getUpdateInterval());
+		WeatherDataCache.getInstance().setRegularUpdateIntervalSeconds(getUpdateInterval());
 		
 		//now initialize Instances
 		Vector <WidgetInstance> returnList = new Vector <WidgetInstance>();

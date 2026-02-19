@@ -10,9 +10,6 @@
 
 package de.nmichael.efa.core.items;
 
-import de.nmichael.efa.util.Dialog;
-import de.nmichael.efa.util.EfaUtil;
-import de.nmichael.efa.util.International;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -25,10 +22,15 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.StringTokenizer;
+
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+
+import de.nmichael.efa.util.Dialog;
+import de.nmichael.efa.util.EfaUtil;
+import de.nmichael.efa.util.International;
 
 public class ItemTypeCronEntry extends ItemTypeLabelValue {
 
@@ -232,8 +234,8 @@ public class ItemTypeCronEntry extends ItemTypeLabelValue {
                 GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 2), 0, 0));
         fFrequency.setForeground(Color.blue);
         Dimension dim = p.getPreferredSize();
-        p.validate();
-        setFieldSize(Math.min(dim.width, 670), Math.min(dim.height, 7*24));
+        p.revalidate();
+        setFieldSize(Math.min(dim.width, 500), Math.min(dim.height, 7*23));
         return p;
     }
 

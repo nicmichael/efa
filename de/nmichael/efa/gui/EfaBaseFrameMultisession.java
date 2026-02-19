@@ -396,6 +396,9 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
     	iniGuiBase();
         iniGuiMain();
         iniGuiFieldDefaultValues();
+        //we only enable autoscroll on the multisession baseframe,
+        //as this frame has elements which are added at runtime and may cause the scrollbars to appear.
+        EfaGuiUtils.enableAutoScrollOnFocus(this);
     }    
     
     private void iniGuiFieldDefaultValues() {
@@ -661,7 +664,6 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
 			row[0].removeFromVisible(row[0].getValue());
 			row[1].removeFromVisible(row[1].getValue());
 		}
-
     }
 	
 

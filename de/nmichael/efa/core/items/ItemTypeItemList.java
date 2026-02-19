@@ -36,6 +36,7 @@ import javax.swing.SwingConstants;
 import de.nmichael.efa.Daten;
 import de.nmichael.efa.gui.BaseDialog;
 import de.nmichael.efa.gui.BaseFrame;
+import de.nmichael.efa.gui.EfaGuiUtils;
 import de.nmichael.efa.gui.ImagesAndIcons;
 import de.nmichael.efa.gui.util.RoundedBorder;
 import de.nmichael.efa.gui.util.RoundedLabel;
@@ -124,6 +125,7 @@ public class ItemTypeItemList extends ItemType {
     private JScrollPane scrollPane;
     private JLabel titlelabel;
     private JButton addButton;
+    private Hashtable<JButton,Integer> addButtons;
     private Hashtable<JButton,Integer> delButtons;
     private Hashtable<JButton,Integer> upButtons;
     private Hashtable<JButton,Integer> downButtons;
@@ -182,8 +184,21 @@ public class ItemTypeItemList extends ItemType {
         return copy;
     }
 
+    /**
+     * Add items at the end of the list.
+     * @param items Items to be added.
+     */
     public void addItems(IItemType[] items) {
-        int idx = this.items.size();
+    	addItems(items, this.items.size());
+    }
+    
+    /** 
+     * Add Items below an item on the list.
+     * @param items Items to be added.
+     * @param afterIndex
+     */
+    public void addItems(IItemType[] items, int afterIndex) {
+        int idxForName = this.items.size();
         lastItemFocus = null;
         for (IItemType item : items) {
         	// check if the subitem's name already consists of the prefixes of the CURRENT itemlist.
@@ -191,7 +206,7 @@ public class ItemTypeItemList extends ItemType {
         	// in the context of copyOf method.
         	String internalName = item.getName();
             if (!item.getName().startsWith(this.getName())){
-            	internalName = getName() + "_" + idx + "_" + item.getName();
+            	internalName = getName() + "_" + idxForName + "_" + item.getName();
             }
             itemNameMapping.put(internalName, item.getName());
             item.setName(internalName);
@@ -201,7 +216,11 @@ public class ItemTypeItemList extends ItemType {
                 }
             }
         }
-        this.items.add(items);
+        if (afterIndex==0 || afterIndex>idxForName) {
+        	this.items.add(items);
+        } else {
+        	this.items.add(afterIndex,items);
+        }
     }
 
     public void removeItems(int idx) {
@@ -293,7 +312,6 @@ public class ItemTypeItemList extends ItemType {
         // not used, everything done in displayOnGui(...)
     }
     
-    
     public int displayOnGui(Window dlg, JPanel panel, int x, int y) {
         this.dlg = dlg;
         
@@ -316,7 +334,7 @@ public class ItemTypeItemList extends ItemType {
         titlelabel.setOpaque(true);
         titlelabel.setFont(titlelabel.getFont().deriveFont(Font.BOLD));
         titlelabel.setText(" " + getDescription());
-    
+        
         // we use a roundedPanel as base element so that we can add the caption on the left,
         // and highlight the add button on the right with some prominent text "new" and an extra arrow icon.
         int curYPos = 0;
@@ -358,6 +376,7 @@ public class ItemTypeItemList extends ItemType {
         addButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(ActionEvent e) { addButtonHit(e); }
         });
+        EfaGuiUtils.enableAutoScrollOnFocus(addButton);
 
         panel.add(addButton, new GridBagConstraints(x+xForAddDelButtons, y, 2, 1, 0.0, 0.0,
                 GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(padYbefore, 2, padYafter, padXafter), 0, 0));
@@ -368,6 +387,7 @@ public class ItemTypeItemList extends ItemType {
             curYPos++;
         }        
         
+        addButtons = new Hashtable<JButton, Integer>();
         delButtons = new Hashtable<JButton,Integer>();
         upButtons = new Hashtable<JButton,Integer>();
         downButtons = new Hashtable<JButton,Integer>();
@@ -395,6 +415,16 @@ public class ItemTypeItemList extends ItemType {
             delButton.addActionListener(new java.awt.event.ActionListener() {
                 public void actionPerformed(ActionEvent e) { delButtonHit(e); }
             });
+            EfaGuiUtils.enableAutoScrollOnFocus(delButton);
+            
+            JButton addButtonAtItem = new JButton();
+            addButtonAtItem.setIcon(BaseFrame.getIcon("menu_plus.gif"));
+            addButtonAtItem.setMargin(new Insets(0,0,0,0));
+            Dialog.setPreferredSize(addButtonAtItem, 19, 19);
+            addButtonAtItem.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(ActionEvent e) { addButtonAfterPositionHit(e); }
+            });
+            EfaGuiUtils.enableAutoScrollOnFocus(addButtonAtItem);
 
             JButton upButton =null;
             JButton downButton = null;
@@ -407,6 +437,8 @@ public class ItemTypeItemList extends ItemType {
                 upButton.addActionListener(new java.awt.event.ActionListener() {
                     public void actionPerformed(ActionEvent e) { upButtonHit(e); }
                 });
+                EfaGuiUtils.enableAutoScrollOnFocus(upButton);
+
                 downButton = new JButton();
                 downButton.setIcon(ImagesAndIcons.getIcon(ImagesAndIcons.ARROW_DOWN));
                 downButton.setMargin(new Insets(0,0,0,0));
@@ -414,6 +446,8 @@ public class ItemTypeItemList extends ItemType {
                 downButton.addActionListener(new java.awt.event.ActionListener() {
                     public void actionPerformed(ActionEvent e) { downButtonHit(e); }
                 });                
+                EfaGuiUtils.enableAutoScrollOnFocus(downButton);
+
                 /*
                  * [label] [upbutton][downbutton] [delete]
                  */
@@ -425,15 +459,19 @@ public class ItemTypeItemList extends ItemType {
 
 	            panel.add(delButton, new GridBagConstraints(x+xForAddDelButtons, y+curYPos, 1, 1, 0.0, 0.0,
 	                    GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets((label==null ? 0 : padYbetween), 2, (label==null ? 0 : padYbetween), 0), 0, 0));
+
+	            panel.add(addButtonAtItem, new GridBagConstraints(x+(xForAddDelButtons*2), y+curYPos, 1, 1, 0.0, 0.0,
+	                    GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets((label==null ? 0 : padYbetween), 2, (label==null ? 0 : padYbetween), 0), 0, 0));
 	            
-	            panel.add(upButton, new GridBagConstraints(x+xForAddDelButtons+xForAddDelButtons, y+curYPos, 1, 1, 0.0, 0.0,
+	            panel.add(upButton, new GridBagConstraints(x+(xForAddDelButtons*3), y+curYPos, 1, 1, 0.0, 0.0,
 	                    GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets((label==null ? 0 : padYbetween), 2, (label==null ? 0 : padYbetween), 0), 0, 0));
 
-	            panel.add(downButton, new GridBagConstraints(x+xForAddDelButtons+xForAddDelButtons+xForAddDelButtons, y+curYPos, 1, 1, 0.0, 0.0,
+	            panel.add(downButton, new GridBagConstraints(x+(xForAddDelButtons*4), y+curYPos, 1, 1, 0.0, 0.0,
 	                    GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets((label==null ? 0 : padYbetween), 2, (label==null ? 0 : padYbetween), 0), 0, 0));
 	            
 
 	            delButtons.put(delButton, iCurrentItemListIndex);
+	            addButtons.put(addButtonAtItem, iCurrentItemListIndex);
 	            upButtons.put(upButton,  iCurrentItemListIndex);
 	            downButtons.put(downButton, iCurrentItemListIndex);
                 
@@ -448,6 +486,11 @@ public class ItemTypeItemList extends ItemType {
 	            panel.add(delButton, new GridBagConstraints(x+xForAddDelButtons, y+curYPos, 1, 1, 0.0, 0.0,
 	                    GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets((label==null ? 0 : padYbetween), 2, (label==null ? 0 : padYbetween), 0), 0, 0));
 	            delButtons.put(delButton, iCurrentItemListIndex);
+
+	            panel.add(addButtonAtItem, new GridBagConstraints(x+(xForAddDelButtons*2), y+curYPos, 1, 1, 0.0, 0.0,
+	                    GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets((label==null ? 0 : padYbetween), 2, (label==null ? 0 : padYbetween), 0), 0, 0));
+	            addButtons.put(addButtonAtItem, iCurrentItemListIndex);
+	            
             }
 
             lastItemStart = (label != null ? label : delButton);
@@ -468,6 +511,7 @@ public class ItemTypeItemList extends ItemType {
                         item.setDescription(descr + " " + (iCurrentItemListIndex+1));
                     }
                     int plusY = item.displayOnGui(dlg, panel, myX, y+curYPos);
+                    EfaGuiUtils.enableAutoScrollOnFocus(item.getComponent());
                     if (item instanceof ItemTypeLabelTextfield) { //neccessary for efaBaseFrameMultisession
                     	((ItemTypeLabelTextfield) item).restoreBackgroundColor();
                     }
@@ -502,11 +546,12 @@ public class ItemTypeItemList extends ItemType {
             ((BaseDialog)dlg).updateGui();
             if (lastItemStart != null) {
                 ((BaseDialog)dlg).getScrollPane().scrollRectToVisible(lastItemStart.getBounds());
-            }
-            if (lastItemFocus != null) {
-                lastItemFocus.requestFocus();
+                if (lastItemFocus != null) {
+                	lastItemFocus.requestFocus();
+                }
             }
         }
+        
     }
 
     private void delButtonHit(ActionEvent e) {
@@ -530,6 +575,34 @@ public class ItemTypeItemList extends ItemType {
         }
     }
 
+    private void addButtonAfterPositionHit(ActionEvent e) {
+    	//no up action neccessary if there is no element
+    	if (items.size()<1) {return;}
+    	
+        int idx = addButtons.get(e.getSource());
+        if (idx < 0 || idx >= items.size()) {
+            return;
+        }
+        
+        getValueFromGui(); //save the current element status
+    	
+        //add the new item at the bottom
+        IItemType[] newitems = itemFactory.getDefaultItems(getName());
+        addItems(newitems,idx+1);
+
+        changed = true;
+        if (dlg instanceof BaseDialog) {
+            ((BaseDialog)dlg).updateGui();
+            if (lastItemStart != null) {
+                ((BaseDialog)dlg).getScrollPane().scrollRectToVisible(lastItemStart.getBounds());
+                if (lastItemFocus != null) {
+                	lastItemFocus.requestFocus();
+                }
+            }
+        }        
+    }
+    
+    
     private void upButtonHit(ActionEvent e) {
     	//no up action neccessary if there is only one element
     	if (items.size()<=1) {return;}
@@ -547,6 +620,12 @@ public class ItemTypeItemList extends ItemType {
             ((BaseDialog)dlg).updateGui();
         }
         
+        try {
+        	lastItemFocus = ((IItemType[])items.get(idx))[0];
+        } catch (Exception e1) {
+        	Logger.logdebug(e1);
+        	lastItemFocus = null;
+        } 
         if (lastItemFocus != null) {
         	lastItemFocus.requestFocus();
         }   

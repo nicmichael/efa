@@ -2,7 +2,7 @@
 <efaOnlineUpdate>
 	<Version>
         <VersionID>2.5.1#9</VersionID>
-        <ReleaseDate>17.02.2026</ReleaseDate>
+        <ReleaseDate>19.02.2026</ReleaseDate>
         <DownloadUrl>TODO</DownloadUrl>
         <DownloadSize>TODO</DownloadSize>
      	<MinimumJavaVersion>1.8</MinimumJavaVersion>
@@ -12,13 +12,19 @@
         <ShowNotice lang="en">Based on 2.5.0_01.</ShowNotice>
         <ShowNotice lang="en">If you use efaCloud, make sure your server at least supports efaCloud Version 2.3.3. It is recommended to upgrade to EfaCloud 2.4.0_12 or above.</ShowNotice>
         <Changes lang="de">
+        	<ChangeItem>Bugfix: Durchtabben durch Dialoge mit vielen Elementen (z.B. in der Konfiguration oder bei Widgets) holt immer das fokussierte Element in den Sichtbereich. Es entfällt das manuelle Scrollen.</ChangeItem>
+        	<ChangeItem>Bugfix: Bei variablen Elementen (z.B. Wetter-Orten, HTML-Seiten, Bootstypen, Crontab-Elementen) können neue Elemente an eine bestimmte Stelle eingefügt werden, statt bisher nur am Ende.</ChangeItem>
             <ChangeItem>Bugfix: Widget: Wetter-Widget: Ist standardmäßig aktiviert, aber ohne voreingestellte Wetter-Orte.</ChangeItem>
+            <ChangeItem>Bugfix: Widget: Wetter-Widget: Wenn Wetterdaten z.B. direkt beim Start nicht geladen werden, findet in kürzeren Zeitintervallen eine Aktualisierung statt.</ChangeItem>
 			<ChangeItem>Bugfix: Widget: HTML Widget: Ist standardmäßig aktiviert, aber ohne voreingestellte HTML-Seiten.</ChangeItem>
 			<ChangeItem>Bugfix: Widget: HTML Widget: Hintergrund war in Metal- und Nimbus-Look nicht mit der richtigen Farbe gefüllt.</ChangeItem>
 			<ChangeItem>Bugfix: Widget: Newsticker: Ist standardmäßig deaktiviert.</ChangeItem>
         </Changes>
         <Changes lang="en">
+        	<ChangeItem>Bugfix: Tab navigation through dialogs with many items (e.g., in configuration or widgets) now always brings the focused element into view. Manual scrolling is no longer required.</ChangeItem>
+			<ChangeItem>Bugfix: For variable elements (e.g., weather locations, HTML pages, boattypes, crontab entries), new items can now be inserted at a specific position instead of only at the end.</ChangeItem>
             <ChangeItem>Bugfix: Widget: Weather-Widget: Enabled by default, but no locations are set up.</ChangeItem>
+            <ChangeItem>Bugfix: Widget: Weather-Widget: If weather data cannot be loaded, a retry is performed in intervals of several minutes.</ChangeItem>
 			<ChangeItem>Bugfix: Widget: HTML Widget: Enabled by default, but no HTML pages are set up.</ChangeItem>
 			<ChangeItem>Bugfix: Widget: HTML Widget:Background did not have the correct color when using Metal or Nimbus look.</ChangeItem>
 			<ChangeItem>Bugfix: Widget: Newsticker: Disabled by default.</ChangeItem>
