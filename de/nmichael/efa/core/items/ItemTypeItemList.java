@@ -620,6 +620,12 @@ public class ItemTypeItemList extends ItemType {
             ((BaseDialog)dlg).updateGui();
         }
         
+        try {
+        	lastItemFocus = ((IItemType[])items.get(idx))[0];
+        } catch (Exception e1) {
+        	Logger.logdebug(e1);
+        	lastItemFocus = null;
+        } 
         if (lastItemFocus != null) {
         	lastItemFocus.requestFocus();
         }   
