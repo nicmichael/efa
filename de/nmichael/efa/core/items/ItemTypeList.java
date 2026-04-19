@@ -142,9 +142,8 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
 		                    this.setHorizontalAlignment(JLabel.CENTER);
 		                    this.setFont(this.getFont().deriveFont(Font.BOLD)); 
 			            } else { // not a separator
-			            	if (item.secondaryElement!=null) {
-			            		//only build the p
-			            		this.setText(getHTMLTableFor(item.text, item.secondaryElement, isSelected));
+			            	if (item.secondaryElement!=null || item.tertiaryElement != null){
+			            		this.setText(getHTMLTableFor(item.text, item.secondaryElement, item.tertiaryElement, isSelected));
 			            	} 
 		            		setHorizontalAlignment(JLabel.LEFT);
 		            
@@ -227,28 +226,33 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
      * - right row gets remaining space and is truncated on the right side, if contents do not fit.
      *   also, right row contents are rendered in grey text color.
      */
-    private String getHTMLTableFor(String firstPart, String secondPart, boolean isSelected) {
+    private String getHTMLTableFor(String firstPart, String secondPart, String thirdPart, boolean isSelected) {
     	
 		// we only build an HTML table, if there is a secondPart to be displayed.
 	    // building html tables takes a lot of time on a raspberry pi 3b with a boat list
 		// of around 200 Boats. So skipping html tables saves a lot of performance.
     	
-    	if (secondPart== null) {
-    		return firstPart;
-    	} else if ((secondPart.trim().isEmpty())) {
+    	Boolean hasThirdPart = thirdPart != null && !thirdPart.trim().isEmpty();
+    	Boolean hasSecondPart = secondPart != null && !secondPart.trim().isEmpty();
+    	if (!hasSecondPart && !hasThirdPart) {
     		return firstPart;
     	}
 
     	try {
-    	//es gibt einen Secondpart, jetzt lohnt sich eine HTML-Tabelle
+    	//es gibt einen Secondpart oder thirdpart, jetzt lohnt sich eine HTML-Tabelle
     	
 			long listWidth=Math.max(80,list.getParent().getWidth()-2*HORZ_SINGLE_BORDER-2);
 			FontMetrics myFontMetrics = label.getFontMetrics(label.getFont());
 			
-			long firstPartLength= myFontMetrics.stringWidth(firstPart);
+			long firstPartLength = myFontMetrics.stringWidth(firstPart);
+			
 			long maxStringWidth = listWidth-SPACING_BOATNAME_SECONDPART-(iconWidth)-firstPartLength-4;
 	
-			if (maxStringWidth>0) {
+			if (hasThirdPart) {
+				maxStringWidth = maxStringWidth - myFontMetrics.stringWidth(thirdPart);
+			}
+			
+			if (maxStringWidth>0 && hasSecondPart) {
 				// determine the maximum string length of the secondPart to be displayed...
 		        int stringWidth = 0;
 		        char[] readText = secondPart.toCharArray();
@@ -270,20 +274,7 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
 			} else {
 				secondPart="";
 				}	        
-	       /* old code
-	        //listWidth can be zero directly after start of efaBoatHouse, so we stop under this condition.
-	        while (listWidth>0 &&(stringWidth>maxStringWidth) && (secondPart.length()>0)) {
-	        	// Performance: Strings which are very much longer than maxStringWitdh must be reduced faster than just
-	        	//one character per iteration.
-	        	int cutChars=(int)Math.abs((int)(maxStringWidth-stringWidth)/characterWidth); 
-	        	cutChars=(int)Math.min(secondPart.length(), cutChars); // limit cut items to length of second part
-	        	
-	        	secondPart=secondPart.substring(0,secondPart.length()-(int)Math.max(((cutChars)),1)).trim();
-	        	stringWidth = myFontMetrics.stringWidth(secondPart);
-	        	cutText=true;
-	        }
-	        
-	*/
+
 	        Integer tableWidth =new Integer((int)listWidth-Math.max(iconWidth,0)-6);
 	       
 	        // font color only shall apply if the item is not selected.
@@ -294,7 +285,11 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
 	        		.concat(tableWidth.toString())
 	        		.concat("'><tr><td align=left>")
 	        		.concat(EfaUtil.escapeHtml(firstPart))
-	        		.concat("</td><td align=right><font ").concat(fontColorTag)
+	        		.concat(((thirdPart!=null && !thirdPart.trim().isEmpty()) ? 
+	        				"<font ".concat(fontColorTag).concat("&nbsp;&nbsp;")
+	        				.concat(EfaUtil.escapeHtml(thirdPart)).concat("</font>")
+	        				: ""))
+    				.concat("</td><td align=right><font ").concat(fontColorTag)	 
 	        		.concat(EfaUtil.escapeHtml(secondPart))
 	        		.concat("</font></td></tr></table></html>");
     	} catch (Exception e) {
@@ -310,19 +305,20 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
         String toolTipText;
         String toolTipFilterText;
         String secondaryElement;
+        String tertiaryElement;
         Object object;
         boolean separator;
         int section;
         String image;
         Color[] colors;
-        public ItemTypeListData(String text, String toolTipText, String secondaryElement, Object object, boolean separator, int section) {
-            ini(text, toolTipText, secondaryElement, object, separator, section, null, null);
+        public ItemTypeListData(String text, String toolTipText, String secondaryElement, String tertiaryElement, Object object, boolean separator, int section) {
+            ini(text, toolTipText, secondaryElement, tertiaryElement, object, separator, section, null, null);
         }
-        public ItemTypeListData(String text, String toolTipText, String secondaryElement, Object object, boolean separator, int section, 
+        public ItemTypeListData(String text, String toolTipText, String secondaryElement, String tertiaryElement, Object object, boolean separator, int section, 
                 String image, Color[] colors) {
-            ini(text, toolTipText, secondaryElement, object, separator, section, image, colors);
+            ini(text, toolTipText, secondaryElement, tertiaryElement, object, separator, section, image, colors);
         }
-        private void ini(String text, String toolTipText, String secondaryElement, Object object, boolean separator, int section, 
+        private void ini(String text, String toolTipText, String secondaryElement, String tertiaryElement, Object object, boolean separator, int section, 
                 String image, Color[] colors) {
             this.text = text;
             this.toolTipText = toolTipText;
@@ -342,6 +338,7 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
             this.image = image;
             this.colors = colors;
             this.secondaryElement = secondaryElement;
+            this.tertiaryElement = tertiaryElement;
         }
         public String toString() {
             return text;
@@ -385,14 +382,14 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
         return new ItemTypeList(name, type, category, description, this.showFilterField, this.showTwoColumnList);
     }
 
-    public void addItem(String text, String toolTipText, String secondaryItem, Object object, boolean separator, char separatorHotkey) {
-        data.addElement(new ItemTypeListData(text, toolTipText, secondaryItem, object, separator, separatorHotkey));
+    public void addItem(String text, String toolTipText, String secondaryItem, String tertiaryItem, Object object, boolean separator, char separatorHotkey) {
+        data.addElement(new ItemTypeListData(text, toolTipText, secondaryItem, tertiaryItem, object, separator, separatorHotkey));
         filter();
     }
 
-    public void addItem(String text, String toolTipText, String secondaryItem, Object object, boolean separator, char separatorHotkey,
+    public void addItem(String text, String toolTipText, String secondaryItem, String tertiaryItem, Object object, boolean separator, char separatorHotkey,
             String image, Color[] colors) {
-        data.addElement(new ItemTypeListData(text, toolTipText, secondaryItem, object, separator, separatorHotkey, image, colors));
+        data.addElement(new ItemTypeListData(text, toolTipText, secondaryItem, tertiaryItem, object, separator, separatorHotkey, image, colors));
         filter();
     }
 

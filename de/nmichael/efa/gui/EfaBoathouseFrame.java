@@ -340,7 +340,7 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
         setIconImage(EfaGuiUtils.getEfaMainIcon());
         mainPanel.setLayout(new GridBagLayout());
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-        setResizable(false);
+        setResizable(true);
         this.addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 this_windowClosing(e);
@@ -1853,8 +1853,8 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
                 boatsOnTheWaterList.setItems(null);
                 boatsNotAvailableList.setItems(null);
                 if (Daten.project == null) {
-                    boatsAvailableList.addItem("*** " + International.getString("Kein Projekt geöffnet.") + " ***", null, null, null, false, '\0');
-                    personsAvailableList.addItem("*** " + International.getString("Kein Projekt geöffnet.") + " ***", null, null, null, false, '\0'); 
+                    boatsAvailableList.addItem("*** " + International.getString("Kein Projekt geöffnet.") + " ***", null, null, null, null, false, '\0');
+                    personsAvailableList.addItem("*** " + International.getString("Kein Projekt geöffnet.") + " ***", null, null, null, null, false, '\0'); 
                 }
                 boatsAvailableList.showValue();
                 personsAvailableList.showValue();

@@ -829,11 +829,11 @@ public class PersonRecord extends DataRecord implements IItemFactory {
             }
 
             v.add(item = new ItemTypeString(PersonRecord.FREEUSE1, getFreeUse1(),
-                    IItemType.TYPE_PUBLIC, CAT_FREEUSE, International.getString("Freie Verwendung") + " 1"));
+                    IItemType.TYPE_PUBLIC, CAT_FREEUSE, International.getString("Freie Verwendung 1")));
             v.add(item = new ItemTypeString(PersonRecord.FREEUSE2, getFreeUse2(),
-                    IItemType.TYPE_PUBLIC, CAT_FREEUSE, International.getString("Freie Verwendung") + " 2"));
+                    IItemType.TYPE_PUBLIC, CAT_FREEUSE, International.getString("Freie Verwendung 2")));
             v.add(item = new ItemTypeString(PersonRecord.FREEUSE3, getFreeUse3(),
-                    IItemType.TYPE_PUBLIC, CAT_FREEUSE, International.getString("Freie Verwendung") + " 3"));
+                    IItemType.TYPE_PUBLIC, CAT_FREEUSE, International.getString("Freie Verwendung 3")));
         }
 
         // hidden parameter, just for BatchEditDialog

@@ -10,22 +10,35 @@
 
 package de.nmichael.efa.core.items;
 
-import java.util.*;
-import de.nmichael.efa.*;
-import de.nmichael.efa.core.config.*;
-import de.nmichael.efa.util.*;
-import de.nmichael.efa.util.EfaUtil;
-import de.nmichael.efa.gui.*;
-import de.nmichael.efa.data.*;
-import de.nmichael.efa.data.storage.DataKey;
-import de.nmichael.efa.data.storage.DataKeyIterator;
-import de.nmichael.efa.data.types.DataTypeIntString;
-import de.nmichael.efa.data.types.DataTypeList;
-import de.nmichael.efa.data.types.DataTypeDate;
 import java.awt.Color;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.UUID;
+import java.util.Vector;
 
 import javax.swing.SwingUtilities;
+
+import de.nmichael.efa.Daten;
+import de.nmichael.efa.core.config.EfaTypes;
+import de.nmichael.efa.data.BoatRecord;
+import de.nmichael.efa.data.BoatReservationRecord;
+import de.nmichael.efa.data.BoatStatusRecord;
+import de.nmichael.efa.data.Boats;
+import de.nmichael.efa.data.GroupRecord;
+import de.nmichael.efa.data.Groups;
+import de.nmichael.efa.data.Logbook;
+import de.nmichael.efa.data.LogbookRecord;
+import de.nmichael.efa.data.PersonRecord;
+import de.nmichael.efa.data.storage.DataKey;
+import de.nmichael.efa.data.storage.DataKeyIterator;
+import de.nmichael.efa.data.types.DataTypeDate;
+import de.nmichael.efa.data.types.DataTypeIntString;
+import de.nmichael.efa.gui.EfaBoathouseFrame;
+import de.nmichael.efa.util.EfaUtil;
+import de.nmichael.efa.util.International;
+import de.nmichael.efa.util.Logger;
 
 public class ItemTypeBoatstatusList extends ItemTypeList {
 
@@ -62,7 +75,7 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
         if (other != null) {
             BoatListItem item = new BoatListItem();
             item.text = other;
-            vdata.add(0, new ItemTypeListData(other, null, null, item, false, -1));//tooltip can be set to null as this function is only called but updateBoatLists for <anderes boot>
+            vdata.add(0, new ItemTypeListData(other, null, null, null, item, false, -1));//tooltip can be set to null as this function is only called but updateBoatLists for <anderes boot>
             this.other_item_text=other;
         }
         clearIncrementalSearch();
@@ -111,11 +124,17 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
 
         Groups groups = Daten.project.getGroups(false);
         boolean buildToolTips = Daten.efaConfig.getValueEfaBoathouseExtdToolTips();
+        boolean buildExtraInfo = true;
         boolean showDestination = Daten.efaConfig.getValueEfaDirekt_showZielnameFuerBooteUnterwegs();
         boolean showReservation = Daten.efaConfig.getValueEfaBoathouseBoatListReservationInfo();
         boolean sortByAnzahl =  Daten.efaConfig.getValueEfaDirekt_sortByAnzahl();
         boolean sortByRigger = Daten.efaConfig.getValueEfaDirekt_sortByRigger();
         boolean sortByType = Daten.efaConfig.getValueEfaDirekt_sortByType();
+        
+        String boatListField1 = Daten.efaConfig.getValueEfaDirektBoathouseExtBoatField1();
+        String boatListField2 = Daten.efaConfig.getValueEfaDirektBoathouseExtBoatField2();
+        String personListField1 = Daten.efaConfig.getValueEfaDirektBoathouseExtPersonField1();
+        String personListField2 = Daten.efaConfig.getValueEfaDirektBoathouseExtPersonField2();
         
         //Determine whether or not to show the colored icons in front of a boat
         //which visualize which group of persons can use a boat.
@@ -325,7 +344,7 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
             if (sortByAnzahl || sortByType) {
                 String newSep = LIST_SECTION_STRING +" "+ s  + " " + LIST_SECTION_STRING;
                 if (!newSep.equals(lastSep)) {
-                    vv.add(new ItemTypeListData(newSep, null, null, null, true, anz));
+                    vv.add(new ItemTypeListData(newSep, null, null, null, null, true, anz));
                 }
                 lastSep = newSep;
             }
@@ -333,7 +352,8 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
 
             vv.add(new ItemTypeListData(curBS.getName(), 
             		(buildToolTips ? buildToolTipText(curBS,todaysReservations,showReservation) : ""), 
-            		getSecondaryItem(bi.boatStatus, todaysReservations, showDestination, showReservation), 
+            		getSecondaryItem(bi.boatStatus, todaysReservations, showDestination, showReservation),
+            		(buildExtraInfo ? getBoatNameExtension(curBS, bi, boatListField1,boatListField2) : null),
             		bi, false, -1, null, curBS.getColors()));
         }
         return vv;
@@ -345,6 +365,90 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
     
     
 
+    /**
+     * Returns some additional information on the current Boatstring / Boatrecord.
+     * which Boatrecord may point to a boat, but also to a person record.
+     * 
+     * @param bs Boat String with already some determined strings
+     * @param bi the BoatListItem where we can get the boatRecord and personRecord from.
+     * @return
+     */
+    private String getBoatNameExtension(BoatString bs, BoatListItem bi, String boatListField1, String boatListField2) {
+    	try {
+        	String showInList = bi.boatStatus.getShowInList();//boatstatus is always set 
+			String ext1=null;
+			String ext2=null; 
+			
+    		if (showInList.equals(BoatStatusRecord.STATUS_AVAILABLE)){
+
+				
+    			if (bi.boat != null) {// is it a boatrecord?
+
+    				if (boatListField1!=null && !boatListField1.isEmpty()) {
+    					ext1 = bi.boat.getStringValueFromField(boatListField1);
+    					if (ext1 !=null && boatListField1.equals(BoatRecord.MAXCREWWEIGHT)) {
+    						ext1=ext1.concat(Daten.efaConfig.getValueDefaultWeightUnit());
+    					}
+    				}
+    				if (boatListField2!=null && !boatListField2.isEmpty()) {
+    					ext2 = bi.boat.getStringValueFromField(boatListField2);
+    					if (ext2 !=null	&& boatListField2.equals(BoatRecord.MAXCREWWEIGHT)) {
+    						ext2=ext2.concat(Daten.efaConfig.getValueDefaultWeightUnit());
+    					}
+    				}
+    			}
+    		} else if (bi.person != null){//no, must be a person record, as we only have these two options for the boat list items.
+
+				if (boatListField1!=null && !boatListField1.isEmpty()) {
+					ext1 = bi.person.getStringValueFromField(boatListField1);
+				}
+				if (boatListField2!=null && !boatListField2.isEmpty()) {
+					ext2 = bi.person.getStringValueFromField(boatListField1);
+				}
+			}
+					
+			if ((ext1!=null && !ext1.isEmpty()) || (ext2!=null && !ext2.isEmpty())) {
+				return ((ext1!=null 
+						? ext1.concat((ext2!=null ? ", " + ext2 : "")) 
+						: (ext2!=null ? ext2 : "")));
+				} 
+
+    		return null;
+				
+    	} catch (Exception e) {
+    		return "mäh";
+    	}
+    }
+    
+    private String getPersonNameExtension(BoatString bs, String personListField1, String personListField2) {
+    	try {
+
+			String ext1=null;
+			String ext2=null; 
+			BoatListItem bi=(BoatListItem) bs.getRecord();
+
+    		if (bi.person != null){//no, must be a person record, as we only have these two options for the boat list items.
+
+				if (personListField1!=null && !personListField1.isEmpty()) {
+					ext1 = bi.person.getStringValueFromField(personListField1);
+				}
+				if (personListField2!=null && !personListField2.isEmpty()) {
+					ext2 = bi.person.getStringValueFromField(personListField2);
+				}
+			}
+					
+			if ((ext1!=null && !ext1.isEmpty()) || (ext2!=null && !ext2.isEmpty())) {
+				return ((ext1!=null 
+						? ext1.concat((ext2!=null ? ", " + ext2 : "")) 
+						: (ext2!=null ? ext2 : "")));
+				} 
+
+    		return null;
+				
+    	} catch (Exception e) {
+    		return "mäh";
+    	}
+    }  
     
 /*
  * Creates a tooltip for either
@@ -467,7 +571,7 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
    	    					boatComment=boatComment.substring(iPos);
    	    				}
    	    				try {
-   	    	   	    		String boatStatusText=bli.boatStatus.getStatusDescription(boatStatus);   	    					
+   	    	   	    		String boatStatusText=BoatStatusRecord.getStatusDescription(boatStatus);   	    					
    	    					boatComment=boatComment.replace(boatName, "").replace(boatStatusText,"")
    	    							.replace(boatDestination, "").replaceAll(";", ";\n");
    	    				} catch (Exception e){
@@ -484,7 +588,7 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
    		    		if (boatComment!=null) {
    		    			String boatStatusText="";
    		    			if (bli.boatStatus!=null) {
-   		    					boatStatusText=bli.boatStatus.getStatusDescription(boatStatus);
+   		    					boatStatusText=BoatStatusRecord.getStatusDescription(boatStatus);
    		    			}
     					boatComment=boatComment.replace(boatName, "").replace(boatStatusText,"")
    	    							.replaceAll(";", ";\n");
@@ -632,7 +736,7 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
     public void setPersonStatusData(Vector<PersonRecord> v, String other) {
         Vector<ItemTypeListData> vdata = sortMemberList(v);
         if (other != null) {
-            vdata.add(0, new ItemTypeListData(other, other, null, null, false, -1));
+            vdata.add(0, new ItemTypeListData(other, other, null, null, null, false, -1));
             this.other_item_text=other;
         }
         clearIncrementalSearch();
@@ -663,6 +767,9 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
             
         }
         Arrays.sort(a);
+        
+        String personListField1 = Daten.efaConfig.getValueEfaDirektBoathouseExtPersonField1();
+        String personListField2 = Daten.efaConfig.getValueEfaDirektBoathouseExtPersonField2();
 
         Vector<ItemTypeListData> vv = new Vector<ItemTypeListData>();
         char lastChar = ' ';
@@ -673,11 +780,12 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
             	firstChar=EfaUtil.replaceAllUmlautsLowerCaseFast(name.substring(0, 1)).charAt(0);
                 if (firstChar != lastChar) {
                 	lastChar = firstChar;
-                    vv.add(new ItemTypeListData("---------- " + Character.toString(lastChar) .toUpperCase() + " ----------", null, null, null, true, SEATS_OTHER));
+                    vv.add(new ItemTypeListData("---------- " + Character.toString(lastChar) .toUpperCase() + " ----------", null, null, null, null, true, SEATS_OTHER));
                 }
                 vv.add(new ItemTypeListData(name, 
 					    (buildToolTips ? getPersonToolTip(name, (BoatString) a[i]) : ""), 
-					    null, a[i].getRecord(),  false, SEATS_OTHER));
+	            		(true ? getPersonNameExtension((BoatString) a[i],  personListField1, personListField2) : null),
+	            		null, a[i].getRecord(),  false, SEATS_OTHER));
             }
         }
         return vv;

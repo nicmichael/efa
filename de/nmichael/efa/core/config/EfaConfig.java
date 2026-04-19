@@ -42,7 +42,9 @@ import de.nmichael.efa.core.items.ItemTypeRadioButtons;
 import de.nmichael.efa.core.items.ItemTypeString;
 import de.nmichael.efa.core.items.ItemTypeStringList;
 import de.nmichael.efa.core.items.ItemTypeTime;
+import de.nmichael.efa.data.BoatRecord;
 import de.nmichael.efa.data.MessageRecord;
+import de.nmichael.efa.data.PersonRecord;
 import de.nmichael.efa.data.storage.DataKey;
 import de.nmichael.efa.data.storage.DataKeyIterator;
 import de.nmichael.efa.data.storage.DataLocks;
@@ -54,6 +56,7 @@ import de.nmichael.efa.data.types.DataTypeDate;
 import de.nmichael.efa.data.types.DataTypeDistance;
 import de.nmichael.efa.data.types.DataTypeList;
 import de.nmichael.efa.data.types.DataTypeTime;
+import de.nmichael.efa.data.types.DataTypeWeight;
 import de.nmichael.efa.ex.EfaException;
 import de.nmichael.efa.gui.BaseTabbedDialog;
 import de.nmichael.efa.gui.EfaGuiUtils;
@@ -209,6 +212,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 	
 	private ItemTypeStringList standardFahrtart;
 	private ItemTypeStringList defaultDistanceUnit;
+	private ItemTypeStringList defaultWeightUnit;
 	private ItemTypeStringList dateFormat;
 	private ItemTypeBoolean debugLogging;
 	private ItemTypeString traceTopic;
@@ -247,6 +251,11 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 	private ItemTypeBoolean efaBoathouseBoatListWithReservationInfo;
 	private ItemTypeString efaBoathouseNonAllowedUnknownPersonNames;
 	private ItemTypeBoolean efaDirekt_eintragHideUnnecessaryInputFields;
+	
+	private ItemTypeStringList efaDirekt_BoathouseExtBoatField1;
+	private ItemTypeStringList efaDirekt_BoathouseExtBoatField2;
+	private ItemTypeStringList efaDirekt_BoathouseExtPersonField1;
+	private ItemTypeStringList efaDirekt_BoathouseExtPersonField2;
 	
 	private ItemTypeBoolean efaDirekt_eintragPresentLastTripOnNewEntry;
 	private ItemTypeBoolean efaDirekt_eintragPresentLastTripOnLateEntry;
@@ -1413,8 +1422,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
 					International.getString("Listengröße") + " '" + International.getString("nicht verfügbare Boote")
 							+ "'"));
-			// ===================== BOATHOUSE: Contents and Look of Boat Lists
-			// ============================
+			// ===================== BOATHOUSE: Contents and Look of Boat Lists ============================
 
 			addHeader("efaGuiBoathouseBoatListsFilter", IItemType.TYPE_EXPERT,
 					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
@@ -1474,6 +1482,37 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
 					International.getString("Verzögerung, bis Tooltip ausgeblendet wird (msec)")));
 
+			// additional fields in boatlist
+			addHeader("efaGuiBoathouseBoatListsAddFieldsHeader", IItemType.TYPE_EXPERT,
+					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
+					International.getString("Zusätzliche Felder in der Bootsliste"), 3);
+			
+			addHintWordWrap("efaGuiBoathouseBoatListsAddFieldsHint", IItemType.TYPE_EXPERT, 
+					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
+					International.getString("Dies ist ein sauber ausformulierter Hinweistext, der noch nicht fertig ist, aber mehrzeilig wird."), 3, 10,10,700);
+			
+			addParameter(efaDirekt_BoathouseExtBoatField1 = new ItemTypeStringList("efaGuiBoathouseBoatListsAddFieldsBoat1", BoatRecord.MAXCREWWEIGHT,
+					makeExtdBoatFieldsArray(STRINGLIST_VALUES), makeExtdBoatFieldsArray(STRINGLIST_DISPLAY), IItemType.TYPE_EXPERT,
+					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
+					International.getString("Bootsliste - Zusatzfeld 1")));
+			
+			addParameter(efaDirekt_BoathouseExtBoatField2 = new ItemTypeStringList("efaGuiBoathouseBoatListsAddFieldsBoat2", "",
+					makeExtdBoatFieldsArray(STRINGLIST_VALUES), makeExtdBoatFieldsArray(STRINGLIST_DISPLAY), IItemType.TYPE_EXPERT,
+					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
+					International.getString("Bootsliste - Zusatzfeld 2")));
+			efaDirekt_BoathouseExtBoatField2.setPadding(0, 0, 0, 20);
+			
+			addParameter(efaDirekt_BoathouseExtPersonField1 =  new ItemTypeStringList("efaGuiBoathouseBoatListsAddFieldsPerson1",PersonRecord.ASSOCIATION,
+					makeExtdPersonFieldsArray(STRINGLIST_VALUES), makeExtdPersonFieldsArray(STRINGLIST_DISPLAY), IItemType.TYPE_EXPERT,
+					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
+					International.getString("Personenliste - Zusatzfeld 1")));
+			
+			addParameter(efaDirekt_BoathouseExtPersonField2=  new ItemTypeStringList("efaGuiBoathouseBoatListsAddFieldsPerson2", "",
+					makeExtdPersonFieldsArray(STRINGLIST_VALUES), makeExtdPersonFieldsArray(STRINGLIST_DISPLAY), IItemType.TYPE_EXPERT,
+					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
+					International.getString("Personenliste - Zusatzfeld 2")));
+
+			
 			addHeader("efaGuiBoathouseBoatListsSortorder", IItemType.TYPE_EXPERT,
 					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
 					International.getString("Bootslisten Sortierung"), 3);
@@ -1733,6 +1772,13 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 					DataTypeDistance.makeDistanceUnitNamesArray(), IItemType.TYPE_PUBLIC,
 					BaseTabbedDialog.makeCategory(CATEGORY_LOCALE),
 					International.getString("Standardeinheit für Entfernungen")));
+			
+			addParameter(defaultWeightUnit = new ItemTypeStringList("LocaleDefaultWeightUnit",
+					DataTypeWeight.KILOGRAMS, DataTypeWeight.makeWeightUnitValueArray(),
+					DataTypeWeight.makeWeightUnitValueArray(), IItemType.TYPE_PUBLIC,
+					BaseTabbedDialog.makeCategory(CATEGORY_LOCALE),
+					International.getString("Standardeinheit für Gewicht")));
+			
 			addParameter(dateFormat = new ItemTypeStringList("LocaleDateFormat", DataTypeDate.DAY_MONTH_YEAR,
 					DataTypeDate.makeDistanceUnitValueArray(), DataTypeDate.makeDistanceUnitNamesArray(),
 					IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CATEGORY_LOCALE),
@@ -2265,7 +2311,27 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 	public String getValueDefaultDistanceUnit() {
 		return defaultDistanceUnit.getValue();
 	}
+	
+	public String getValueDefaultWeightUnit() {
+		return defaultWeightUnit.getValue();
+	}
 
+	public String getValueEfaDirektBoathouseExtBoatField1() {
+		return efaDirekt_BoathouseExtBoatField1.getValue();
+	}
+	
+	public String getValueEfaDirektBoathouseExtBoatField2() {
+		return efaDirekt_BoathouseExtBoatField2.getValue();
+	}
+	
+	public String getValueEfaDirektBoathouseExtPersonField1() {
+		return efaDirekt_BoathouseExtPersonField1.getValue();
+	}
+	
+	public String getValueEfaDirektBoathouseExtPersonField2() {
+		return efaDirekt_BoathouseExtPersonField2.getValue();
+	}
+	
 	public String getValueDateFormat() {
 		return dateFormat.getValue();
 	}
@@ -3505,6 +3571,30 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 		return obmann;
 	}
 
+	private String[] makeExtdBoatFieldsArray(int type) {
+		Vector <String> boatFields = new Vector <String>(); 
+		boatFields.add("");
+		boatFields.add((type == STRINGLIST_VALUES ? BoatRecord.OWNER : International.getString("Eigentümer") ));
+		boatFields.add((type == STRINGLIST_VALUES ? BoatRecord.FREEUSE1 : International.getString("Freie Verwendung 1")));
+		boatFields.add((type == STRINGLIST_VALUES ? BoatRecord.FREEUSE2 : International.getString("Freie Verwendung 2")));
+		boatFields.add((type == STRINGLIST_VALUES ? BoatRecord.FREEUSE3 : International.getString("Freie Verwendung 3")));
+		boatFields.add((type == STRINGLIST_VALUES ? BoatRecord.MAXCREWWEIGHT : International.getString("Maximales Mannschaftsgewicht")));
+		return  boatFields.toArray(new String[boatFields.size()]);	
+	}
+	
+	private String[] makeExtdPersonFieldsArray(int type) {
+		Vector <String> personFields = new Vector <String>(); 
+		personFields.add("");
+		personFields.add((type == STRINGLIST_VALUES ? PersonRecord.ASSOCIATION : International.getString("Verein") ));
+		personFields.add((type == STRINGLIST_VALUES ? PersonRecord.FREEUSE1 : International.getString("Freie Verwendung 1")));
+		personFields.add((type == STRINGLIST_VALUES ? PersonRecord.FREEUSE2 : International.getString("Freie Verwendung 2")));
+		personFields.add((type == STRINGLIST_VALUES ? PersonRecord.FREEUSE3 : International.getString("Freie Verwendung 3")));
+		personFields.add((type == STRINGLIST_VALUES ? PersonRecord.INPUTSHORTCUT : International.getString("Eingabekürzel")));
+		personFields.add((type == STRINGLIST_VALUES ? PersonRecord.STATUSID : International.getString("Status")));
+
+		return  personFields.toArray(new String[personFields.size()]);	
+	}
+	
 	public void buildTypes() {
 		myEfaTypes = getMyEfaTypes();
 		if (myEfaTypes == null) {

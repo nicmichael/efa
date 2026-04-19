@@ -1244,11 +1244,11 @@ public class BoatRecord extends DataRecord implements IItemFactory, IItemListene
 
         // CAT_FREEUSE
         v.add(item = new ItemTypeString(BoatRecord.FREEUSE1, getFreeUse1(),
-                IItemType.TYPE_PUBLIC, CAT_FREEUSE, International.getString("Freie Verwendung") + " 1"));
+                IItemType.TYPE_PUBLIC, CAT_FREEUSE, International.getString("Freie Verwendung 1")));
         v.add(item = new ItemTypeString(BoatRecord.FREEUSE2, getFreeUse2(),
-                IItemType.TYPE_PUBLIC, CAT_FREEUSE, International.getString("Freie Verwendung") + " 2"));
+                IItemType.TYPE_PUBLIC, CAT_FREEUSE, International.getString("Freie Verwendung 2")));
         v.add(item = new ItemTypeString(BoatRecord.FREEUSE3, getFreeUse3(),
-                IItemType.TYPE_PUBLIC, CAT_FREEUSE, International.getString("Freie Verwendung") + " 3"));
+                IItemType.TYPE_PUBLIC, CAT_FREEUSE, International.getString("Freie Verwendung 3")));
   
         return v;
     }
