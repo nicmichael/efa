@@ -752,7 +752,7 @@ public class PersonRecord extends DataRecord implements IItemFactory {
                     IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("Status")));
 
             v.add(item = new ItemTypeString(PersonRecord.ASSOCIATION, getAssocitation(),
-                    IItemType.TYPE_PUBLIC, CAT_MOREDATA, International.getString("Verein")));
+                    IItemType.TYPE_PUBLIC, getCategoryForExtField(PersonRecord.ASSOCIATION, CAT_MOREDATA), International.getString("Verein")));
             v.add(item = new ItemTypeString(PersonRecord.MEMBERSHIPNO, getMembershipNo(),
                     IItemType.TYPE_PUBLIC, CAT_MOREDATA, International.getString("Mitgliedsnummer")));
             v.add(item = new ItemTypeString(PersonRecord.PASSWORD, getPassword(),
@@ -773,7 +773,7 @@ public class PersonRecord extends DataRecord implements IItemFactory {
                     IItemType.TYPE_PUBLIC, CAT_MOREDATA, International.getString("Bootsbenutzungs-Sperre")));
             ((ItemTypeBoolean) item).setIndent(true);
             v.add(item = new ItemTypeString(PersonRecord.INPUTSHORTCUT, getInputShortcut(),
-                    IItemType.TYPE_PUBLIC, CAT_MOREDATA, International.getString("Eingabekürzel")));
+                    IItemType.TYPE_PUBLIC, getCategoryForExtField(PersonRecord.INPUTSHORTCUT, CAT_MOREDATA), International.getString("Eingabekürzel")));
             item.setPadding(0, 0, 10, 0);
             v.add(item = getGuiItemTypeStringAutoComplete(PersonRecord.DEFAULTBOATID, getDefaultBoatId(),
                     IItemType.TYPE_PUBLIC, CAT_MOREDATA,
@@ -829,11 +829,11 @@ public class PersonRecord extends DataRecord implements IItemFactory {
             }
 
             v.add(item = new ItemTypeString(PersonRecord.FREEUSE1, getFreeUse1(),
-                    IItemType.TYPE_PUBLIC, CAT_FREEUSE, International.getString("Freie Verwendung 1")));
+                    IItemType.TYPE_PUBLIC, getCategoryForExtField(PersonRecord.FREEUSE1, CAT_MOREDATA), International.getString("Person Freie Verwendung 1")));
             v.add(item = new ItemTypeString(PersonRecord.FREEUSE2, getFreeUse2(),
-                    IItemType.TYPE_PUBLIC, CAT_FREEUSE, International.getString("Freie Verwendung 2")));
+                    IItemType.TYPE_PUBLIC, getCategoryForExtField(PersonRecord.FREEUSE2, CAT_MOREDATA), International.getString("Person Freie Verwendung 2")));
             v.add(item = new ItemTypeString(PersonRecord.FREEUSE3, getFreeUse3(),
-                    IItemType.TYPE_PUBLIC, CAT_FREEUSE, International.getString("Freie Verwendung 3")));
+                    IItemType.TYPE_PUBLIC, getCategoryForExtField(PersonRecord.FREEUSE3, CAT_MOREDATA), International.getString("Person Freie Verwendung 3")));
         }
 
         // hidden parameter, just for BatchEditDialog
@@ -867,6 +867,24 @@ public class PersonRecord extends DataRecord implements IItemFactory {
         super.saveGuiItems(items);
     }
 
+    /**
+	 * Determines the category for an extended field. 
+	 * Depending on the configuration, some extended fields can be shown in the first page of the edit dialog, 
+	 * so they should be assigned to the same category as the base data.
+	 * @param fieldName name of the field
+	 * @param defaultCategory default category for this field (if not assigned to base data)
+	 * @return category for this field
+	 */
+    private String getCategoryForExtField(String fieldName, String defaultCategory) {
+    	if (Daten.efaConfig.getValueEfaDirekt_ExtendedFieldsOnFirstPageInEditDialog() ) {
+    		if (Daten.efaConfig.getValueEfaDirektBoathouseExtPersonField1().equals(fieldName) ||
+    				Daten.efaConfig.getValueEfaDirektBoathouseExtPersonField2().equals(fieldName)) {
+				return CAT_BASEDATA;
+			}
+		} 
+    	return defaultCategory;
+    }    
+    
     public TableItemHeader[] getGuiTableHeader() {
         TableItemHeader[] header = new TableItemHeader[4];
         if (Daten.efaConfig.getValueNameFormatIsFirstNameFirst()) {

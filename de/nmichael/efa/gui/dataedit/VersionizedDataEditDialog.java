@@ -36,6 +36,7 @@ public class VersionizedDataEditDialog extends UnversionizedDataEditDialog imple
     private boolean showVersionPanel = true;
     private boolean promptToEnterValidity = true;
     protected int thisVersion;
+    private JPanel versionPanel =null;
 
     public VersionizedDataEditDialog(Frame parent, String title, DataRecord dataRecord, boolean newRecord, AdminRecord admin) {
         super(parent, title, dataRecord, newRecord, admin);
@@ -48,7 +49,7 @@ public class VersionizedDataEditDialog extends UnversionizedDataEditDialog imple
     protected void iniDialog() throws Exception {
         super.iniDialog();
 
-        JPanel versionPanel = new JPanel();
+        versionPanel = new JPanel();
         versionPanel.setLayout(new GridBagLayout());
 
         /* Panel layout
@@ -198,6 +199,83 @@ public class VersionizedDataEditDialog extends UnversionizedDataEditDialog imple
         versionList.parseAndShowValue(curValue);
         setSelectedVersionLabel();
     }
+    
+    protected int recursiveBuildGui(Hashtable<String,Hashtable> categories,
+            Hashtable<String,Vector<IItemType>> items,
+            String catKey,
+            JComponent currentPane,
+            String selectedPanel, int otherPanelHeight) {
+		int itmcnt = 0;
+		int pos = (selectedPanel != null && selectedPanel.length() > 0 ? selectedPanel.indexOf(CATEGORY_SEPARATOR) : -1);
+		String selectThisCat = (pos < 0 ? selectedPanel : selectedPanel.substring(0,pos));
+		String selectNextCat = (pos < 0 ? null : selectedPanel.substring(pos+1));
+		
+		Object[] cats = categories.keySet().toArray();
+		Arrays.sort(cats);
+		for (int i=0; i<cats.length; i++) {
+			String key = (String)cats[i];
+			String thisCatKey = (catKey.length() == 0 ? key : makeCategory(catKey, key));
+			String catName = getCatName(thisCatKey);
+			Hashtable<String,Hashtable> subCat = categories.get(key);
+			
+			if (subCat.size() != 0) {
+				JTabbedPane subTabbedPane = new JTabbedPane();
+					if (recursiveBuildGui(subCat, items, thisCatKey, subTabbedPane, selectNextCat, otherPanelHeight) > 0) {
+						if (currentPane instanceof JTabbedPane) {
+						 currentPane.add(subTabbedPane, catName);
+						} else {
+						 currentPane.add(subTabbedPane, BorderLayout.CENTER);
+						}
+						if (key.equals(selectThisCat) && currentPane instanceof JTabbedPane) {
+						 ((JTabbedPane)currentPane).setSelectedComponent(subTabbedPane);
+						}
+				}
+			} else {
+			JPanel panel = new JPanel();
+			panels.put(panel, thisCatKey);
+			
+			Boolean needsInnerPanel = (cats.length > 1 || subCat.size() > 0);
+			JPanel innerPanel = new JPanel();
+			
+			if (needsInnerPanel) {
+				//This puts the scrollbar INSIDE the tabbedPane, so that config panes can have more elements
+				//than the current screen size allows.
+				JScrollPane scrollPane = new JScrollPane(innerPanel);
+				scrollPane.setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
+				scrollPane.setPreferredSize(EfaGuiUtils.getTabPanelPreferredSize(otherPanelHeight ,  this));
+				scrollPane.getVerticalScrollBar().setUnitIncrement(12);
+				innerPanel.setLayout(new GridBagLayout());
+				panel.setLayout(new BorderLayout());
+				panel.add(scrollPane,BorderLayout.CENTER);
+			} else {
+				panel.setLayout(new GridBagLayout());
+			}
+			
+			Vector<IItemType> v = items.get(thisCatKey);
+			int y = 0;
+			for (int j=0; v != null && j<v.size(); j++) {
+				IItemType itm = v.get(j);
+				if (itm.getType() == IItemType.TYPE_PUBLIC ||
+				 (itm.getType() == IItemType.TYPE_EXPERT && expertModeEnabled)) {
+					 y += itm.displayOnGui(this,(needsInnerPanel ? innerPanel: panel),y);
+					 displayedGuiItems.add(itm);
+					 itmcnt++;
+				}
+			}
+			if (y > 0) {
+				if (currentPane instanceof JTabbedPane) {
+				 currentPane.add(panel, catName);
+				} else {
+				 currentPane.add(panel, BorderLayout.CENTER);
+				}
+				if (key.equals(selectThisCat) && currentPane instanceof JTabbedPane) {
+				 ((JTabbedPane)currentPane).setSelectedComponent(panel);
+				}
+			}
+		}
+	}
+	return itmcnt;
+	}
 
     protected void setShowVersionPanel(boolean showVersionPanel) {
         this.showVersionPanel = showVersionPanel;
@@ -504,4 +582,12 @@ public class VersionizedDataEditDialog extends UnversionizedDataEditDialog imple
         this.promptToEnterValidity = promptToEnterValidity;
     }
 
+    
+    protected int reduceInnerScrollPaneHeight() {
+		int height = super.reduceInnerScrollPaneHeight();
+		if (versionPanel != null && versionPanel.isVisible()) {
+			height += versionPanel.getPreferredSize().height;
+		}
+		return height+22; // add some extra space, reduces ammout of outer scrollbars shown. 22 pix is the height of an JEditField
+	}
 }

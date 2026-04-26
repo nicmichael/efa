@@ -82,6 +82,8 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
     int iconHeight = 0;
 
     protected static final String LIST_SECTION_STRING = "----";
+    protected static final String LIST_SECTION_STRING_START = LIST_SECTION_STRING + "  ";
+    protected static final String LIST_SECTION_STRING_END = "  " + LIST_SECTION_STRING;
     //Spacings for pretty rendering
     private static final int SPACING_BOATNAME_SECONDPART  = 60; //60 pixels
 	private static final int HORZ_SINGLE_BORDER=5;

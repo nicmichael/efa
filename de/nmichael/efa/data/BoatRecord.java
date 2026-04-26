@@ -15,6 +15,7 @@ import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.UUID;
 import java.util.Vector;
@@ -114,6 +115,13 @@ public class BoatRecord extends DataRecord implements IItemFactory, IItemListene
     private static String GUIITEM_DAMAGES            = "GUIITEM_DAMAGES";
     private static String GUIITEM_DEFAULTBOATTYPE    = "GUIITEM_DEFAULTBOATTYPE";
     private ButtonGroup buttonGroup = new ButtonGroup();
+    
+    private static String CAT_BASEDATA     = "%01%" + International.getString("Basisdaten");
+    private static String CAT_MOREDATA     = "%02%" + International.getString("Weitere Daten");
+    private static String CAT_USAGE        = "%03%" + International.getString("Benutzung");
+    private static String CAT_RESERVATIONS = "%04%" + International.getString("Reservierungen");
+    private static String CAT_DAMAGES      = "%05%" + International.getString("Bootsschäden");
+    private static String CAT_FREEUSE      = "%07%" + International.getString("Freie Verwendung");
 
     public static final int COLUMN_ID_BOAT_NAME = 0;
     public static final int COLUMN_ID_BOAT_TYPE = 1;
@@ -1083,12 +1091,7 @@ public class BoatRecord extends DataRecord implements IItemFactory, IItemListene
     }
 
     public Vector<IItemType> getGuiItems(AdminRecord admin) {
-        String CAT_BASEDATA     = "%01%" + International.getString("Basisdaten");
-        String CAT_MOREDATA     = "%02%" + International.getString("Weitere Daten");
-        String CAT_USAGE        = "%03%" + International.getString("Benutzung");
-        String CAT_RESERVATIONS = "%04%" + International.getString("Reservierungen");
-        String CAT_DAMAGES      = "%05%" + International.getString("Bootsschäden");
-        String CAT_FREEUSE      = "%07%" + International.getString("Freie Verwendung");
+
 
         Groups groups = getPersistence().getProject().getGroups(false);
         Crews crews = getPersistence().getProject().getCrews(false);
@@ -1111,23 +1114,9 @@ public class BoatRecord extends DataRecord implements IItemFactory, IItemListene
                 IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("Eigentümer") +
                  " (" + International.getString("Fremdboot") + ")"));
         ((ItemTypeString)item).setNotAllowedCharacters("()");
+        item.setPadding(0, 0, 0, 20);
 
-        itemList = new Vector<IItemType[]>();
-        for (int i=0; i<getNumberOfVariants(); i++) {
-            IItemType[] items = getDefaultItems(GUIITEM_BOATTYPES);
-            items[0].parseValue(Integer.toString(getTypeVariant(i)));
-            items[1].parseValue(getTypeDescription(i));
-            items[2].parseValue(getTypeType(i));
-            items[3].parseValue(getTypeSeats(i));
-            items[4].parseValue(getTypeRigging(i));
-            items[5].parseValue(getTypeCoxing(i));
-            items[6].parseValue(Boolean.toString(getTypeVariant(i) == getDefaultVariant()));
-            itemList.add(items);
-        }
-        v.add(item = new ItemTypeItemList(GUIITEM_BOATTYPES, itemList, this,
-                IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("Bootstyp")));
-        ((ItemTypeItemList)item).setMinNumberOfItems(1);
-        item.setPadding(0, 0, 20, 0);
+
 
         // CAT_MOREDATA
         v.add(item = new ItemTypeString(BoatRecord.MANUFACTURER, getManufacturer(),
@@ -1135,7 +1124,8 @@ public class BoatRecord extends DataRecord implements IItemFactory, IItemListene
         v.add(item = new ItemTypeString(BoatRecord.MODEL, getModel(),
                 IItemType.TYPE_PUBLIC, CAT_MOREDATA, International.getString("Modell")));
         v.add(item = new ItemTypeInteger(BoatRecord.MAXCREWWEIGHT, getMaxCrewWeight(), 0, Integer.MAX_VALUE, true,
-                IItemType.TYPE_PUBLIC, CAT_MOREDATA, International.getString("Maximales Mannschaftsgewicht")));
+                IItemType.TYPE_PUBLIC, getCategoryForExtField(BoatRecord.MAXCREWWEIGHT, CAT_MOREDATA), 
+                International.getString("Maximales Mannschaftsgewicht")));
         v.add(item = new ItemTypeDate(BoatRecord.MANUFACTIONDATE, getManufactionDate(),
                 IItemType.TYPE_PUBLIC, CAT_MOREDATA, International.getString("Herstellungsdatum")));
         ((ItemTypeDate)item).setAllowYearOnly(true);
@@ -1244,14 +1234,50 @@ public class BoatRecord extends DataRecord implements IItemFactory, IItemListene
 
         // CAT_FREEUSE
         v.add(item = new ItemTypeString(BoatRecord.FREEUSE1, getFreeUse1(),
-                IItemType.TYPE_PUBLIC, CAT_FREEUSE, International.getString("Freie Verwendung 1")));
+                IItemType.TYPE_PUBLIC, getCategoryForExtField(BoatRecord.FREEUSE1, CAT_FREEUSE), International.getString("Boot Freie Verwendung 1")));
         v.add(item = new ItemTypeString(BoatRecord.FREEUSE2, getFreeUse2(),
-                IItemType.TYPE_PUBLIC, CAT_FREEUSE, International.getString("Freie Verwendung 2")));
+                IItemType.TYPE_PUBLIC, getCategoryForExtField(BoatRecord.FREEUSE2, CAT_FREEUSE), International.getString("Boot Freie Verwendung 2")));
         v.add(item = new ItemTypeString(BoatRecord.FREEUSE3, getFreeUse3(),
-                IItemType.TYPE_PUBLIC, CAT_FREEUSE, International.getString("Freie Verwendung 3")));
+                IItemType.TYPE_PUBLIC, getCategoryForExtField(BoatRecord.FREEUSE3, CAT_FREEUSE), International.getString("Boot Freie Verwendung 3")));
   
+        itemList = new Vector<IItemType[]>();
+        for (int i=0; i<getNumberOfVariants(); i++) {
+            IItemType[] items = getDefaultItems(GUIITEM_BOATTYPES);
+            items[0].parseValue(Integer.toString(getTypeVariant(i)));
+            items[1].parseValue(getTypeDescription(i));
+            items[2].parseValue(getTypeType(i));
+            items[3].parseValue(getTypeSeats(i));
+            items[4].parseValue(getTypeRigging(i));
+            items[5].parseValue(getTypeCoxing(i));
+            items[6].parseValue(Boolean.toString(getTypeVariant(i) == getDefaultVariant()));
+            itemList.add(items);
+        }
+        
+        v.add(item = new ItemTypeItemList(GUIITEM_BOATTYPES, itemList, this,
+                IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("Bootstyp")));
+        ((ItemTypeItemList)item).setMinNumberOfItems(1);
+        item.setPadding(0, 0, 20, 0);        
+        
         return v;
     }
+
+    /**
+	 * Determines the category for an extended field. 
+	 * Depending on the configuration, some extended fields can be shown in the first page of the edit dialog, 
+	 * so they should be assigned to the same category as the base data.
+	 * @param fieldName name of the field
+	 * @param defaultCategory default category for this field (if not assigned to base data)
+	 * @return category for this field
+	 */
+    private String getCategoryForExtField(String fieldName, String defaultCategory) {
+    	if (Daten.efaConfig.getValueEfaDirekt_ExtendedFieldsOnFirstPageInEditDialog() ) {
+    		if (Daten.efaConfig.getValueEfaDirektBoathouseExtBoatField1().equals(fieldName) ||
+    				Daten.efaConfig.getValueEfaDirektBoathouseExtBoatField2().equals(fieldName)) {
+				return CAT_BASEDATA;
+			}
+		} 
+    	return defaultCategory;
+    }    
 
     public TableItemHeader[] getGuiTableHeader() {
         TableItemHeader[] header = new TableItemHeader[3];
@@ -1301,7 +1327,7 @@ public class BoatRecord extends DataRecord implements IItemFactory, IItemListene
      * @param groupColors
      * @return array of colors, or null, if boat is assigned to no group
      */
-    public Color[] getBoatGroupsPieColors(Hashtable<UUID, Color> groupColors) {
+    public Color[] getBoatGroupsPieColors(HashMap<UUID, Color> groupColors) {
     
 	    // Colors for Groups
 	    ArrayList<Color> aColors = new ArrayList<Color>();

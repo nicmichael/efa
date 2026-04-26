@@ -233,7 +233,7 @@ public abstract class BaseTabbedDialog extends BaseDialog {
         }
         panels = new Hashtable<JPanel,String>();
         expertModeEnabled = expertMode.isSelected();
-        recursiveBuildGui(categoryHierarchy,itemsPerCategory,"",topLevelPane, selectedPanel);
+        recursiveBuildGui(categoryHierarchy,itemsPerCategory,"",topLevelPane, selectedPanel, this.reduceInnerScrollPaneHeight());
         dataPanel.add(topLevelPane, BorderLayout.CENTER);
         this.validate();
 
@@ -263,7 +263,7 @@ public abstract class BaseTabbedDialog extends BaseDialog {
                                    Hashtable<String,Vector<IItemType>> items,
                                    String catKey,
                                    JComponent currentPane,
-                                   String selectedPanel) {
+                                   String selectedPanel, int otherPanelHeight) {
         int itmcnt = 0;
         int pos = (selectedPanel != null && selectedPanel.length() > 0 ? selectedPanel.indexOf(CATEGORY_SEPARATOR) : -1);
         String selectThisCat = (pos < 0 ? selectedPanel : selectedPanel.substring(0,pos));
@@ -278,7 +278,7 @@ public abstract class BaseTabbedDialog extends BaseDialog {
             Hashtable<String,Hashtable> subCat = categories.get(key);
             if (subCat.size() != 0) {
                 JTabbedPane subTabbedPane = new JTabbedPane();
-                if (recursiveBuildGui(subCat, items, thisCatKey, subTabbedPane, selectNextCat) > 0) {
+                if (recursiveBuildGui(subCat, items, thisCatKey, subTabbedPane, selectNextCat, otherPanelHeight ) > 0) {
                     if (currentPane instanceof JTabbedPane) {
                         currentPane.add(subTabbedPane, catName);
                     } else {
@@ -383,5 +383,26 @@ public abstract class BaseTabbedDialog extends BaseDialog {
         }
         return null;
     }
+    
+    /** 
+     * In case there are additional components in the dataNorthPanel, or toplevelPane
+     * we need to reduce the height of the inner scroll pane in order to avoid a too large overall height of the dialog.
+     * 
+     * This affects versionizedDataEditDialog, as it can have big components in the tabbedpanes which require 
+     * an additional scroll pane. To avoid optical issues in a lot of dialogs, the corresponding scroll pane
+     * is introduced in VersionizedDataEditDialog only
+     * @return
+     */
+    protected int reduceInnerScrollPaneHeight() { 
+    	int height = 0;
+		if (dataNorthPanel != null && dataNorthPanel.isVisible()) {
+			height = dataNorthPanel.getPreferredSize().height;
+		}
+		if (topLevelPane != null && topLevelPane.isVisible() ) {
+			height += topLevelPane.getPreferredSize().height;
+		}
+		return height;
+	}
+
 
 }

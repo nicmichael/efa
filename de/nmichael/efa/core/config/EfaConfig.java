@@ -11,6 +11,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Locale;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Vector;
 
@@ -296,6 +297,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 	private ItemTypeString efaDirekt_butSpezialCmd;
 	private ItemTypeBoolean efaDirekt_showButtonHotkey;
 	private ItemTypeInteger efaDirekt_showButtonBorderWidth;
+	private ItemTypeBoolean efaDirekt_ExtendedFieldsOnFirstPageInEditDialog;
 	private ItemTypeBoolean efaDirekt_sortByAnzahl;
 	private ItemTypeBoolean efaDirekt_sortByRigger;
 	private ItemTypeBoolean efaDirekt_sortByType;
@@ -460,13 +462,15 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 	public static Color standardHeaderBackgroundColor = standardTableSelectionBackgroundColor;
 	public static Color standardHeaderForegroundColor = standardTableSelectionForegroundColor;
 	
+	public static HashMap<String, String> boatExtFields = createBoatExtFieldsMap();
+	public static HashMap<String, String> personExtFields = createPersonExtFieldsMap();
 	
 	// private internal data
 	private HashMap<String, IItemType> configValues; // always snychronize on this object!!
 	private Vector<String> configValueNames;
 	private ConfigValueUpdateThread configValueUpdateThread;
 	private EfaTypes myEfaTypes;
-
+	
 	public EfaConfig(int storageType, String storageLocation, String storageUsername, String storagePassword) {
 		super(storageType, storageLocation, storageUsername, storagePassword, "configuration", DATATYPE,
 				International.getString("Konfiguration"));
@@ -1491,27 +1495,39 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
 					International.getString("Dies ist ein sauber ausformulierter Hinweistext, der noch nicht fertig ist, aber mehrzeilig wird."), 3, 10,10,700);
 			
-			addParameter(efaDirekt_BoathouseExtBoatField1 = new ItemTypeStringList("efaGuiBoathouseBoatListsAddFieldsBoat1", BoatRecord.MAXCREWWEIGHT,
-					makeExtdBoatFieldsArray(STRINGLIST_VALUES), makeExtdBoatFieldsArray(STRINGLIST_DISPLAY), IItemType.TYPE_EXPERT,
+			addParameter(efaDirekt_BoathouseExtBoatField1 = new ItemTypeStringList("efaGuiBoathouseBoatListsAddFieldsBoat1",
+					BoatRecord.MAXCREWWEIGHT, 
+					makeExtdFieldsArray(STRINGLIST_VALUES, boatExtFields),
+					makeExtdFieldsArray(STRINGLIST_DISPLAY, boatExtFields), IItemType.TYPE_EXPERT,
 					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
 					International.getString("Bootsliste - Zusatzfeld 1")));
-			
-			addParameter(efaDirekt_BoathouseExtBoatField2 = new ItemTypeStringList("efaGuiBoathouseBoatListsAddFieldsBoat2", "",
-					makeExtdBoatFieldsArray(STRINGLIST_VALUES), makeExtdBoatFieldsArray(STRINGLIST_DISPLAY), IItemType.TYPE_EXPERT,
+
+			addParameter(efaDirekt_BoathouseExtBoatField2 = new ItemTypeStringList("efaGuiBoathouseBoatListsAddFieldsBoat2", 
+					"", 
+					makeExtdFieldsArray(STRINGLIST_VALUES, boatExtFields),
+					makeExtdFieldsArray(STRINGLIST_DISPLAY, boatExtFields), IItemType.TYPE_EXPERT,
 					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
 					International.getString("Bootsliste - Zusatzfeld 2")));
 			efaDirekt_BoathouseExtBoatField2.setPadding(0, 0, 0, 20);
-			
-			addParameter(efaDirekt_BoathouseExtPersonField1 =  new ItemTypeStringList("efaGuiBoathouseBoatListsAddFieldsPerson1",PersonRecord.ASSOCIATION,
-					makeExtdPersonFieldsArray(STRINGLIST_VALUES), makeExtdPersonFieldsArray(STRINGLIST_DISPLAY), IItemType.TYPE_EXPERT,
+
+			addParameter(efaDirekt_BoathouseExtPersonField1 = new ItemTypeStringList("efaGuiBoathouseBoatListsAddFieldsPerson1", 
+					PersonRecord.ASSOCIATION,
+					makeExtdFieldsArray(STRINGLIST_VALUES, personExtFields),
+					makeExtdFieldsArray(STRINGLIST_DISPLAY, personExtFields), IItemType.TYPE_EXPERT,
 					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
 					International.getString("Personenliste - Zusatzfeld 1")));
-			
-			addParameter(efaDirekt_BoathouseExtPersonField2=  new ItemTypeStringList("efaGuiBoathouseBoatListsAddFieldsPerson2", "",
-					makeExtdPersonFieldsArray(STRINGLIST_VALUES), makeExtdPersonFieldsArray(STRINGLIST_DISPLAY), IItemType.TYPE_EXPERT,
+
+			addParameter(efaDirekt_BoathouseExtPersonField2 = new ItemTypeStringList("efaGuiBoathouseBoatListsAddFieldsPerson2", 
+					"",
+					makeExtdFieldsArray(STRINGLIST_VALUES, personExtFields),
+					makeExtdFieldsArray(STRINGLIST_DISPLAY, personExtFields), IItemType.TYPE_EXPERT,
 					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
 					International.getString("Personenliste - Zusatzfeld 2")));
 
+			addParameter(efaDirekt_ExtendedFieldsOnFirstPageInEditDialog = new ItemTypeBoolean(
+					"efaGuiBoathouseBoatListsExtdFieldsOnFirstPageInEditDialog", true, IItemType.TYPE_EXPERT,
+					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI), International.getString(
+							"In Bearbeitungsdialogen die ausgewählten Felder auf der ersten Seite darstellen")));			
 			
 			addHeader("efaGuiBoathouseBoatListsSortorder", IItemType.TYPE_EXPERT,
 					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
@@ -2591,6 +2607,10 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 		return efaDirekt_showButtonBorderWidth.getValue();
 	}
 	
+	public boolean getValueEfaDirekt_ExtendedFieldsOnFirstPageInEditDialog() {
+		return efaDirekt_ExtendedFieldsOnFirstPageInEditDialog.getValue();
+	}
+	
 	public boolean getValueEfaDirekt_sortByAnzahl() {
 		return efaDirekt_sortByAnzahl.getValue();
 	}
@@ -3571,28 +3591,42 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 		return obmann;
 	}
 
-	private String[] makeExtdBoatFieldsArray(int type) {
-		Vector <String> boatFields = new Vector <String>(); 
-		boatFields.add("");
-		boatFields.add((type == STRINGLIST_VALUES ? BoatRecord.OWNER : International.getString("Eigentümer") ));
-		boatFields.add((type == STRINGLIST_VALUES ? BoatRecord.FREEUSE1 : International.getString("Freie Verwendung 1")));
-		boatFields.add((type == STRINGLIST_VALUES ? BoatRecord.FREEUSE2 : International.getString("Freie Verwendung 2")));
-		boatFields.add((type == STRINGLIST_VALUES ? BoatRecord.FREEUSE3 : International.getString("Freie Verwendung 3")));
-		boatFields.add((type == STRINGLIST_VALUES ? BoatRecord.MAXCREWWEIGHT : International.getString("Maximales Mannschaftsgewicht")));
-		return  boatFields.toArray(new String[boatFields.size()]);	
+	/**
+	 * Creates an array of boat/person fields for extended boatFields. Used for both
+	 * internal names and display names, depending on type.
+	 * 
+	 * @param type (STRINGLIST_VALUES or STRINGLIST_DISPLAY)
+	 * @return Array of boat/person fields for extended boat/person types, depending
+	 *         on type either with internal names or display names.
+	 */
+	private String[] makeExtdFieldsArray(int type, Map<String, String> extFields) {
+		Vector<String> extFieldVector = new Vector<String>();
+		extFieldVector.add("");
+		for (Map.Entry<String, String> entry : extFields.entrySet()) {
+			extFieldVector.add((type == STRINGLIST_VALUES ? entry.getKey() : entry.getValue()));
+		}
+		return extFieldVector.toArray(new String[extFieldVector.size()]);
 	}
 	
-	private String[] makeExtdPersonFieldsArray(int type) {
-		Vector <String> personFields = new Vector <String>(); 
-		personFields.add("");
-		personFields.add((type == STRINGLIST_VALUES ? PersonRecord.ASSOCIATION : International.getString("Verein") ));
-		personFields.add((type == STRINGLIST_VALUES ? PersonRecord.FREEUSE1 : International.getString("Freie Verwendung 1")));
-		personFields.add((type == STRINGLIST_VALUES ? PersonRecord.FREEUSE2 : International.getString("Freie Verwendung 2")));
-		personFields.add((type == STRINGLIST_VALUES ? PersonRecord.FREEUSE3 : International.getString("Freie Verwendung 3")));
-		personFields.add((type == STRINGLIST_VALUES ? PersonRecord.INPUTSHORTCUT : International.getString("Eingabekürzel")));
-		personFields.add((type == STRINGLIST_VALUES ? PersonRecord.STATUSID : International.getString("Status")));
-
-		return  personFields.toArray(new String[personFields.size()]);	
+	private static HashMap<String, String> createBoatExtFieldsMap(){
+		HashMap<String, String>  result = new HashMap<String, String>();
+		result.put(BoatRecord.OWNER, International.getString("Eigentümer"));
+		result.put(BoatRecord.FREEUSE1, International.getString("Boot Freie Verwendung 1"));
+		result.put(BoatRecord.FREEUSE2, International.getString("Boot Freie Verwendung 2"));
+		result.put(BoatRecord.FREEUSE3, International.getString("Boot Freie Verwendung 3"));
+		result.put(BoatRecord.MAXCREWWEIGHT, International.getString("Maximales Mannschaftsgewicht"));
+		return result;
+	}	
+	
+	private static HashMap<String, String> createPersonExtFieldsMap(){
+		HashMap<String, String>  result = new HashMap<String, String>();
+		result.put(PersonRecord.ASSOCIATION, International.getString("Verein"));
+		result.put(PersonRecord.FREEUSE1, International.getString("Person Freie Verwendung 1"));
+		result.put(PersonRecord.FREEUSE2, International.getString("Person Freie Verwendung 2"));
+		result.put(PersonRecord.FREEUSE3, International.getString("Person Freie Verwendung 3"));
+		result.put(PersonRecord.INPUTSHORTCUT, International.getString("Eingabekürzel"));
+		result.put(PersonRecord.STATUSID, International.getString("Status"));
+		return result;
 	}
 	
 	public void buildTypes() {
