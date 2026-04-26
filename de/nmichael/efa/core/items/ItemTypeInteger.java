@@ -47,10 +47,14 @@ public class ItemTypeInteger extends ItemTypeLabelTextfield {
     }
 
     public IItemType copyOf() {
-        ItemTypeInteger newItem = new ItemTypeInteger(name, value, min, max, !isNotNullSet(), type, category, description);
-        newItem.setPadding(padXbefore, padXafter, padYbefore, padYafter);
-        newItem.setIcon((label == null ? null : label.getIcon()));
-        return newItem;
+        ItemTypeInteger copy = new ItemTypeInteger(name, value, min, max, !isNotNullSet(), type, category, description);
+        copy.setFieldSize(fieldWidth, fieldHeight);
+        copy.setPadding(padXbefore, padXafter, padYbefore, padYafter);
+        copy.setIcon((label == null ? null : label.getIcon()));
+        copy.setIsItemOnSameRowAsPreviousItem(itemOnSameRowAsPreviousItem);
+        copy.setItemOnNewRow(itemOnNewRow);
+        copy.setFieldGrid(fieldGridWidth,fieldGridHeight,fieldGridAnchor,fieldGridFill);
+        return copy;
     }
 
     public void parseValue(String value) {

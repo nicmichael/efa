@@ -53,8 +53,12 @@ public class ItemTypeFontName extends ItemTypeLabelValue implements IItemListene
 
 	public IItemType copyOf() {
 		ItemTypeFontName copy = new ItemTypeFontName(name, fontName, defaultFontName, type, category, description, canBeNull);
-		copy.setPadding(padXbefore, padXafter, padYbefore, padYafter);
-		copy.setIcon((label == null ? null : label.getIcon()));
+        copy.setFieldSize(fieldWidth, fieldHeight);
+        copy.setPadding(padXbefore, padXafter, padYbefore, padYafter);
+        copy.setIcon((label == null ? null : label.getIcon()));
+        copy.setIsItemOnSameRowAsPreviousItem(itemOnSameRowAsPreviousItem);
+        copy.setItemOnNewRow(itemOnNewRow);
+        copy.setFieldGrid(fieldGridWidth,fieldGridHeight,fieldGridAnchor,fieldGridFill);
 		return copy;
 	}
 

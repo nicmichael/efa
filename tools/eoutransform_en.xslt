@@ -7,9 +7,13 @@
     <h1><b>EFA History of Versions</b></h1>
     <table border="0">
     <xsl:for-each select="efaOnlineUpdate/Version">
+	<xsl:if test="not(VersionID[(starts-with(translate(.,'ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜ','abcdefghijklmnopqrstuvwxyzäöü'),'2.2.1'))] 
+	    or VersionID[(starts-with(translate(.,'ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜ','abcdefghijklmnopqrstuvwxyzäöü'),'2.1'))]
+	    or VersionID[(starts-with(translate(.,'ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜ','abcdefghijklmnopqrstuvwxyzäöü'),'2.0'))]
+	    or VersionID[(starts-with(translate(.,'ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜ','abcdefghijklmnopqrstuvwxyzäöü'),'1.'))])">
         <tr height="134"><td valign="top" align="center" width="128" background="line.png">
             <table width="132" height="130" border="0"><tr height="128"><td background="circle.png" valign="middle" align="center" height="128" width="132">
-        	<font color="white"><b><xsl:value-of select="VersionID"/></b><br/><br/><xsl:value-of select="ReleaseDate"/></font>
+        	<font color="yellow"><b><xsl:value-of select="VersionID"/></b><br/><br/><xsl:value-of select="ReleaseDate"/></font>
             </td></tr></table>
         </td><td valign="top">
         <b><br/><br/><xsl:if test="not(count(MinimumJavaVersion) = 0)">Minimum Java Version: <xsl:value-of select="MinimumJavaVersion"/><br/></xsl:if>
@@ -67,6 +71,7 @@
 	    </xsl:if>
 	</xsl:for-each>
 	</td></tr>
+    </xsl:if>
     </xsl:for-each>
     </table>
     </body>

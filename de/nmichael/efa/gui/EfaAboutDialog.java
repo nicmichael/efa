@@ -49,10 +49,14 @@ public class EfaAboutDialog extends BaseDialog {
     JLabel versionLabel = new JLabel();
     JLabel languageLabel = new JLabel();
     JLabel copyLabel = new JLabel();
-    JLabel urlLabel0 = new JLabel();
+    JLabel urlHomepageLabel = new JLabel();
     JLabel urlLabel = new JLabel();
+    JLabel urlGithubLabel0 = new JLabel();
+    JLabel urlGithubLabel = new JLabel();
     JLabel supportLabel0 = new JLabel();
     JLabel supportLabel = new JLabel();
+    JLabel dokuLabel0 = new JLabel();
+    JLabel dokuLabel = new JLabel();
     JLabel emailLabel0 = new JLabel();
     JLabel emailLabel = new JLabel();
     JLabel gpl1Label = new JLabel();
@@ -163,6 +167,7 @@ public class EfaAboutDialog extends BaseDialog {
         languagesText.setEditable(false);
         languagesText.append(International.getString("efa wurde in die folgenden Sprachen übersetzt:") + "\n\n" + translations + "\n"
                 + International.getString("Bitte unterstütze uns bei der Übersetzung in weitere Sprachen!"));
+        languagesText.setCaretPosition(0);
 	}
 
 	private void iniDanksagungenPanel() {
@@ -187,13 +192,13 @@ public class EfaAboutDialog extends BaseDialog {
                 + "* Jonathan Stott (JSunrise Plugin)\n"
                 + "* KDE-Team (Icons)\n"
                 + "* Landesruderverband Berlin (Fahrtenwettbewerbe)\n"
-                + "* Matthias Käppler (Signpost OAuth)\n"
                 + "* Open Icon Library (Icons)\n"
                 + "* Ralf Ludwig (efa Evangelist)\n"
                 + "* Robert Harder (Base64 Implementation)\n"
                 + "* Sun Microsystems & Oracle (Java Technology)\n"
                 + "* Wolfgang Krutzke (Waters List for Germany)\n"
                 + "* World Wide Web Consortium (XML Plugin)");
+		dankeText.setCaretPosition(0);
 	}
 
 	private void iniBibliothekenPanel() {
@@ -202,11 +207,13 @@ public class EfaAboutDialog extends BaseDialog {
 		librariesText.append("Open Icons Library\n\thttps://sourceforge.net/projects/openiconlibrary/\n\n");
 		librariesText.append("FlatLaf Look&Feel\n\thttps://www.formdev.com/flatlaf/\n\tFlatLaf is open source licensed under Apache 2.0 license.\n\n");
 		librariesText.append("edtFTPj/Free\n\thttps://enterprisedt.com/products/edtftpj/\n\tLicensed under lgpl-2.1 license.\n\n");
-		librariesText.append("SignPost OAuth\n\thttps://github.com/mttkay/signpost\n\tLicensed under Apache 2.0 license.\n\n");
 		librariesText.append("JavaX Mail\n\thttps://github.com/javaee/javamail\n\tLicensed under COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.1\n\n");
 		librariesText.append("Apache FOP XML Graphics\n\thttps://xmlgraphics.apache.org/fop/\n\tLicensed under Apache 2.0 license.\n\n");
 		librariesText.append("JCraft jsch SSH/SFTP library\n\thttp://www.jcraft.com/jsch/\n\tLicensed under BSD-style license.\n\n");
 		librariesText.append("CompoundIcon by Tips4Java\n\thttps://github.com/tips4java/tips4java/blob/main/source/CompoundIcon.java\n\t Licensed under MIT License.\n\n");
+		librariesText.append("48 Weather Icons by Oliver Pitsch\n\thttps://www.figma.com/community/file/1290644894897835248/48-weather-icons\n\tLicensed under CC BY 4.0\n\tModified day icons for rain and night icons for more contrast.\n\n\thttps://www.figma.com/design/U8a4es1S5EIdjJYPgIPh0r/48-Weather-Icons-(Community)?node-id=4-34306&t=XnI10lh9BlalpgwH-0\n\n");
+		librariesText.append("org.json / JSON in Java\n\thttps://github.com/stleary/JSON-java\n\tPublic Domain\n\n");
+		librariesText.setCaretPosition(0);
 	}	
 	
 	private void iniChangelogPanel() {
@@ -293,8 +300,8 @@ public class EfaAboutDialog extends BaseDialog {
         copyLabel.setText("Copyright (c) 2001-" + Daten.COPYRIGHTYEAR + " by Nicolas Michael"); // do not internationalize
 
         
-        urlLabel0.setText(International.getString("Homepage") + ": ");
-        urlLabel.setForeground(Color.blue);
+        urlHomepageLabel.setText(International.getString("Homepage") + ": ");
+        urlLabel.setForeground(getUrlLabelColor());
         urlLabel.setText(Daten.EFAURL);
         urlLabel.addMouseListener(new java.awt.event.MouseAdapter() {
 
@@ -311,14 +318,51 @@ public class EfaAboutDialog extends BaseDialog {
             }
         });
         
+        urlGithubLabel0.setText(International.getString("Github: Releases & Source") + ": ");
+        urlGithubLabel.setForeground(getUrlLabelColor());
+        urlGithubLabel.setText(Daten.EFAGITHUBURL);
+        urlGithubLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+
+            public void mouseClicked(MouseEvent e) {
+                githubLabel_mouseClicked(e);
+            }
+
+            public void mouseEntered(MouseEvent e) {
+                label_mouseEntered(e);
+            }
+
+            public void mouseExited(MouseEvent e) {
+                label_mouseExited(e);
+            }
+        });
+        
+        
         
         supportLabel0.setText(International.getString("Hilfe und Support") + ": ");
-        supportLabel.setForeground(Color.blue);
+        supportLabel.setForeground(getUrlLabelColor());
         supportLabel.setText(Daten.EFASUPPORTURL);
         supportLabel.addMouseListener(new java.awt.event.MouseAdapter() {
 
             public void mouseClicked(MouseEvent e) {
                 supportLabel_mouseClicked(e);
+            }
+
+            public void mouseEntered(MouseEvent e) {
+                label_mouseEntered(e);
+            }
+
+            public void mouseExited(MouseEvent e) {
+                label_mouseExited(e);
+            }
+        });
+        
+        dokuLabel0.setText(International.getString("Dokumentation") + ": ");
+        dokuLabel.setForeground(getUrlLabelColor());
+        dokuLabel.setText(Daten.EFADOCUMENTATIONURL);
+        dokuLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+
+            public void mouseClicked(MouseEvent e) {
+                dokuLabel_mouseClicked(e);
             }
 
             public void mouseEntered(MouseEvent e) {
@@ -336,7 +380,7 @@ public class EfaAboutDialog extends BaseDialog {
         logoLabel.setHorizontalTextPosition(SwingConstants.CENTER);
         logoLabel.setIcon(getIcon(Daten.getEfaImage(2)));
         gpl1Label.setText(International.getString("efa unterliegt den") + " ");
-        gplLabel.setForeground(Color.blue);
+        gplLabel.setForeground(getUrlLabelColor());
         gplLabel.setText(International.getMessage("Lizenzbestimmungen der {license}", "GPL v2"));
         gplLabel.addMouseListener(new java.awt.event.MouseAdapter() {
 
@@ -352,11 +396,12 @@ public class EfaAboutDialog extends BaseDialog {
                 label_mouseExited(e);
             }
         });
-        devNoteLabel.setText(International.getMessage("Diese Version ist eine Entwicklerversion in {status}-Qualität!",
-                "Beta"));
-        devNoteLabel.setForeground(Color.red);
-        devNoteLabel.setVisible(false);
-
+        if (Daten.VERSIONID.contains("#")){
+	        devNoteLabel.setText(International.getMessage("Diese Version ist eine Entwicklerversion in {status}-Qualität!",
+	                "Beta"));
+	        devNoteLabel.setForeground(Color.red);
+	        devNoteLabel.setVisible(true);
+        }
         efaBirthdayLabel.setForeground(Color.red);
         efaBirthdayLabel.setText("efaBirthdayLabel"); // do not internationalize      
         if (EfaUtil.getEfaBirthday() > -1) {
@@ -372,21 +417,34 @@ public class EfaAboutDialog extends BaseDialog {
         aboutEfaPanel.add(versionLabel, new GridBagConstraints(1, 1, 4, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 5, 0), 230, 0));
         aboutEfaPanel.add(languageLabel, new GridBagConstraints(1, 2, 4, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 20, 0), 230, 0));
         aboutEfaPanel.add(copyLabel, new GridBagConstraints(1, 3, 4, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 20, 0), 65, 0));
-        aboutEfaPanel.add(urlLabel0, new GridBagConstraints(1, 4, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 1, 0));
-        aboutEfaPanel.add(urlLabel, new GridBagConstraints(2, 4, 3, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 1, 0));
+        aboutEfaPanel.add(urlHomepageLabel, new GridBagConstraints(1, 4, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 00, 0), 1, 0));
+        aboutEfaPanel.add(urlLabel, new GridBagConstraints(2, 4, 3, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 00, 0), 1, 0));
+        
         aboutEfaPanel.add(supportLabel0, new GridBagConstraints(1, 5, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 1, 0));
         aboutEfaPanel.add(supportLabel, new GridBagConstraints(2, 5, 3, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 1, 0));
+        aboutEfaPanel.add(dokuLabel0, new GridBagConstraints(1, 6, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 20, 0), 1, 0));
+        aboutEfaPanel.add(dokuLabel, new GridBagConstraints(2, 6, 3, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 20, 0), 1, 0));
         //infoPanel.add(emailLabel0, new GridBagConstraints(1, 6, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 20, 0), 0, 0));
         //infoPanel.add(emailLabel, new GridBagConstraints(2, 6, 3, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 20, 0), 0, 0));
-        aboutEfaPanel.add(gpl1Label, new GridBagConstraints(1, 7, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 20, 0), 0, 0));
-        aboutEfaPanel.add(gplLabel, new GridBagConstraints(3, 7, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 20, 20), 0, 0));
-        aboutEfaPanel.add(devNoteLabel, new GridBagConstraints(1, 8, 4, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 20), 0, 0));
-        aboutEfaPanel.add(efaBirthdayLabel, new GridBagConstraints(0, 11, 4, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+        aboutEfaPanel.add(urlGithubLabel0, new GridBagConstraints(1, 7, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 20, 0), 1, 0));
+        aboutEfaPanel.add(urlGithubLabel, new GridBagConstraints(2, 7, 3, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 20, 0), 1, 0));
+        
+        aboutEfaPanel.add(gpl1Label, new GridBagConstraints(1, 8, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 20, 0), 0, 0));
+        aboutEfaPanel.add(gplLabel, new GridBagConstraints(3, 8, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 20, 20), 0, 0));
+        aboutEfaPanel.add(devNoteLabel, new GridBagConstraints(1, 9, 4, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 20), 0, 0));
+        aboutEfaPanel.add(efaBirthdayLabel, new GridBagConstraints(0, 12, 4, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
         
         versionLabel.setText(International.getString("Version") + " " + Daten.VERSION 
         		+ "   (" + Daten.VERSIONID + " / " + Daten.VERSIONRELEASEDATE + ")");
 	}
 
+	private Color getUrlLabelColor() {
+		if (Daten.applID == Daten.APPL_EFABH && !Daten.isAdminMode()) {
+			return nameLabel.getForeground();
+		}
+		return Color.BLUE;
+	}
+	
     void label_mouseEntered(MouseEvent e) {
         try {
             JLabel label = (JLabel) e.getSource();
@@ -398,27 +456,41 @@ public class EfaAboutDialog extends BaseDialog {
     void label_mouseExited(MouseEvent e) {
         try {
             JLabel label = (JLabel) e.getSource();
-            label.setForeground(Color.blue);
+            label.setForeground(getUrlLabelColor());
         } catch (Exception eignore) {
         }
     }
 
     void urlLabel_mouseClicked(MouseEvent e) {
-        if (Daten.applID == Daten.APPL_EFABH) {
+        if (Daten.applID == Daten.APPL_EFABH && !Daten.isAdminMode()) {
             return;
         }
         BrowserDialog.openExternalBrowser(this, Daten.EFAURL);
     }
 
     void supportLabel_mouseClicked(MouseEvent e) {
-        if (Daten.applID == Daten.APPL_EFABH) {
+        if (Daten.applID == Daten.APPL_EFABH && !Daten.isAdminMode()) {
             return;
         }
         BrowserDialog.openExternalBrowser(this, Daten.EFASUPPORTURL);
     }
+    
+    void dokuLabel_mouseClicked(MouseEvent e) {
+        if (Daten.applID == Daten.APPL_EFABH && !Daten.isAdminMode()) {
+            return;
+        }
+        BrowserDialog.openExternalBrowser(this, Daten.EFADOCUMENTATIONURL);
+    }
+    
+    void githubLabel_mouseClicked(MouseEvent e) {
+        if (Daten.applID == Daten.APPL_EFABH && !Daten.isAdminMode()) {
+            return;
+        }
+        BrowserDialog.openExternalBrowser(this, Daten.EFAGITHUBURL);
+    }
 
     void emailLabel_mouseClicked(MouseEvent e) {
-        if (Daten.applID == Daten.APPL_EFABH) {
+        if (Daten.applID == Daten.APPL_EFABH && !Daten.isAdminMode()) {
             return;
         }
         if (Daten.INTERNET_EFAMAIL != null) {

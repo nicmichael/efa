@@ -1,5 +1,253 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <efaOnlineUpdate>
+<Version>
+        <VersionID>2.5.2</VersionID>
+        <ReleaseDate>26.04.2026</ReleaseDate>
+        <DownloadUrl>TODO</DownloadUrl>
+        <DownloadSize>TODO</DownloadSize>
+     	<MinimumJavaVersion>1.8</MinimumJavaVersion>
+		<MinimumEfaCloudVersion>2.3.3</MinimumEfaCloudVersion>
+        <ShowNotice lang="de">Wenn efaCloud eingesetzt wird, muss der Server mindestens Version 2.3.3 unterstützen. EfaCloud 2.4.0_12 und höher werden empfohlen.</ShowNotice>
+        <ShowNotice lang="en">If you use efaCloud, make sure your server at least supports efaCloud Version 2.3.3. It is recommended to upgrade to EfaCloud 2.4.0_12 or above.</ShowNotice>
+        <Changes lang="de">
+        	<ChangeItem>Neu: Beta 2.5.1 wird hiermit für die Produktion freigegeben (als Version 2.5.2).</ChangeItem>
+        	<ChangeItem>Bugfix: Mehrtagesfahrten, Regatta- und Trainingscamp-Fahrten werden wieder ausschließlich unter "nicht verfügbare Boote" angezeigt, wenn die entsprechende Option aktiviert ist.</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+        	<ChangeItem>New: Beta 2.5.1 is hereby released for production (as version 2.5.2).</ChangeItem>
+        	<ChangeItem>Bugfix: Multi-day, regatta and training camp sessions will again be displayed exclusivly in the "unavailable boats" list if the corresponding option is enabled.</ChangeItem>
+        </Changes>
+	</Version>
+	<Version>
+        <VersionID>2.5.1#9</VersionID>
+        <ReleaseDate>19.02.2026</ReleaseDate>
+        <DownloadUrl>TODO</DownloadUrl>
+        <DownloadSize>TODO</DownloadSize>
+     	<MinimumJavaVersion>1.8</MinimumJavaVersion>
+		<MinimumEfaCloudVersion>2.3.3</MinimumEfaCloudVersion>
+        <ShowNotice lang="de">Basiert auf 2.5.0_01.</ShowNotice>
+        <ShowNotice lang="de">Wenn efaCloud eingesetzt wird, muss der Server mindestens Version 2.3.3 unterstützen. EfaCloud 2.4.0_12 und höher werden empfohlen.</ShowNotice>
+        <ShowNotice lang="en">Based on 2.5.0_01.</ShowNotice>
+        <ShowNotice lang="en">If you use efaCloud, make sure your server at least supports efaCloud Version 2.3.3. It is recommended to upgrade to EfaCloud 2.4.0_12 or above.</ShowNotice>
+        <Changes lang="de">
+        	<ChangeItem>Bugfix: Bei Multisession-Dialogen (Fahrtstart oder Nachtrag) verhindert ein unbekanntes Boot nicht mehr das Speichern.</ChangeItem>
+        	<ChangeItem>Bugfix: Durchtabben durch Dialoge mit vielen Elementen (z.B. in der Konfiguration oder bei Widgets) holt immer das fokussierte Element in den Sichtbereich. Es entfällt das manuelle Scrollen.</ChangeItem>
+        	<ChangeItem>Bugfix: Bei variablen Elementen (z.B. Wetter-Orten, HTML-Seiten, Bootstypen, Crontab-Elementen) können neue Elemente an eine bestimmte Stelle eingefügt werden, statt bisher nur am Ende.</ChangeItem>
+            <ChangeItem>Bugfix: Widget: Wetter-Widget: Ist standardmäßig aktiviert, aber ohne voreingestellte Wetter-Orte.</ChangeItem>
+            <ChangeItem>Bugfix: Widget: Wetter-Widget: Wenn Wetterdaten z.B. direkt beim Start nicht geladen werden, findet in kürzeren Zeitintervallen eine Aktualisierung statt.</ChangeItem>
+			<ChangeItem>Bugfix: Widget: HTML Widget: Ist standardmäßig aktiviert, aber ohne voreingestellte HTML-Seiten.</ChangeItem>
+			<ChangeItem>Bugfix: Widget: HTML Widget: Hintergrund war in Metal- und Nimbus-Look nicht mit der richtigen Farbe gefüllt.</ChangeItem>
+			<ChangeItem>Bugfix: Widget: Newsticker: Ist standardmäßig deaktiviert.</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+        	<ChangeItem>Bugfix: In multisession dialog (starting a session or late entry), an unknown boat no longer blocks the save operation.</ChangeItem>
+        	<ChangeItem>Bugfix: Tab navigation through dialogs with many items (e.g., in configuration or widgets) now always brings the focused element into view. Manual scrolling is no longer required.</ChangeItem>
+			<ChangeItem>Bugfix: For variable elements (e.g., weather locations, HTML pages, boattypes, crontab entries), new items can now be inserted at a specific position instead of only at the end.</ChangeItem>
+            <ChangeItem>Bugfix: Widget: Weather-Widget: Enabled by default, but no locations are set up.</ChangeItem>
+            <ChangeItem>Bugfix: Widget: Weather-Widget: If weather data cannot be loaded, a retry is performed in intervals of several minutes.</ChangeItem>
+			<ChangeItem>Bugfix: Widget: HTML Widget: Enabled by default, but no HTML pages are set up.</ChangeItem>
+			<ChangeItem>Bugfix: Widget: HTML Widget:Background did not have the correct color when using Metal or Nimbus look.</ChangeItem>
+			<ChangeItem>Bugfix: Widget: Newsticker: Disabled by default.</ChangeItem>
+        </Changes>
+	</Version>
+	<Version>
+        <VersionID>2.5.1#8</VersionID>
+        <ReleaseDate>14.02.2026</ReleaseDate>
+        <DownloadUrl>TODO</DownloadUrl>
+        <DownloadSize>TODO</DownloadSize>
+     	<MinimumJavaVersion>1.8</MinimumJavaVersion>
+		<MinimumEfaCloudVersion>2.3.3</MinimumEfaCloudVersion>
+        <ShowNotice lang="de">Basiert auf 2.5.0_01.</ShowNotice>
+        <ShowNotice lang="de">Wenn efaCloud eingesetzt wird, muss der Server mindestens Version 2.3.3 unterstützen. EfaCloud 2.4.0_12 und höher werden empfohlen.</ShowNotice>
+        <ShowNotice lang="en">Based on 2.5.0_01.</ShowNotice>
+        <ShowNotice lang="en">If you use efaCloud, make sure your server at least supports efaCloud Version 2.3.3. It is recommended to upgrade to EfaCloud 2.4.0_12 or above.</ShowNotice>
+        <Changes lang="de">
+            <ChangeItem>Neu: Statusleiste unter der Bootsliste wird standardmäßig nicht mehr angezeigt (konfigurierbar)</ChangeItem>
+            <ChangeItem>Neu: Hauptbildschirm von efaBootshaus auf GridBagLayout umgestellt. Hierdurch lassen sich die HTML-Widgets besser an die auf dem Bildschirm positionieren.</ChangeItem>
+            <ChangeItem>Neu: Neue Option um den Abstand der Schaltflächen zu den Bootslisten zu definieren (efaBootshaus-&gt;Erscheinungsbild)</ChangeItem>
+            <ChangeItem>Neu: Widget: Newsticker technisch überarbeitet. Keine Darstellungsprobleme mehr bei Verwendung einiger Schriftarten. Auch auf RASPI3b mit gleichmäßiger Tickerrate.</ChangeItem>
+            <ChangeItem>Bugfix: Widget: Wetter-Widget: WeatherAPI aus der Liste der Datenquellen entfernt.</ChangeItem>
+            <ChangeItem>Bugfix: Widget: Wetter-Widget: Besseres Fehlerhandling, wenn JSON-Bibliothek nicht gefunden wird.</ChangeItem>
+			<ChangeItem>Bugfix: Widget: HTML Widget: Korrekte Darstellung, wenn auf eigene Farben verzichtet wird. HTML-Inhalt hat transparenten Hintergrund, wenn eigene Farben verwendet werden.</ChangeItem>
+			<ChangeItem>Bugfix: Plugins: Org.Json Bibliothek aufgenommen und altes Wetter-Plugin entfernt.</ChangeItem>
+			<ChangeItem>Bugfix: "Über EFA" Dialog zeigt aktuelle URLs an und öffnet sie (wenn im Admin-Modus).</ChangeItem>
+			<ChangeItem>Bugfix: Info-Dialog zur Anzeige einer veralteten Java-Version kann Webseite öffnen.</ChangeItem>
+			<ChangeItem>Bugfix: Browserdialog nutzt beim Aufruf eines Externen Browsers auch die neue Desktop.browse() Funktion, wenn verfügbar.</ChangeItem>
+        	<ChangeItem>Bugfix: Performanceverbesserung beim Filtern in Listen und beim Sortieren von Tabellen.</ChangeItem>
+        	<ChangeItem>Bugfix: Performanceverbesserung bei der Sortierung der Bootsliste/Personenliste in efaBootshaus.</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>New: The status bar below the boot list is no longer displayed by default (configurable)</ChangeItem>
+			<ChangeItem>New: The main screen of efaBootshaus has been switched to GridBagLayout. This allows for better positioning of the HTML widgets on the screen.</ChangeItem>
+            <ChangeItem>New: New option in efaconfig to define the distance between Buttons and Boat lists. (efaBootshaus-&gt;Appearance)</ChangeItem>
+            <ChangeItem>New: Widget: News ticker technically revised. Avoids rendering problems when using certain fonts. Smooth ticker also on RASPI 3b.</ChangeItem>
+ 			<ChangeItem>Bugfix: Widget: Weather-Widget: WeatherAPI removed from the list of data sources.</ChangeItem>
+            <ChangeItem>Bugfix: Widget: Weather-Widget: Better error handling if JSON library is not found.</ChangeItem>
+			<ChangeItem>Bugfix: Widget: HTML Widget: Correct display when custom colors are not used. HTML content has a transparent background when custom colors are used.</ChangeItem>
+			<ChangeItem>Bugfix: Plugins: Org.Json library included and old weather plugin removed.</ChangeItem>
+			<ChangeItem>Bugfix: The "About EFA" dialog now displays and opens current URLs (when in admin mode).</ChangeItem>
+			<ChangeItem>Bugfix: Info dialog displaying an outdated Java version may open a website.</ChangeItem>
+			<ChangeItem>Bugfix: When calling an external browser, the browser dialog now also uses the new Desktop.browse() function, if available.</ChangeItem>
+			<ChangeItem>Bugfix: Performance improvement when filtering in lists and sorting tables.</ChangeItem>
+        	<ChangeItem>Bugfix: Performance improvement when sorting the three main lists in efaBoathouse.</ChangeItem>
+        </Changes>
+	</Version>
+ <Version>
+        <VersionID>2.5.1#6</VersionID>
+        <ReleaseDate>17.01.2026</ReleaseDate>
+        <DownloadUrl>TODO</DownloadUrl>
+        <DownloadSize>TODO</DownloadSize>
+     	<MinimumJavaVersion>1.8</MinimumJavaVersion>
+		<MinimumEfaCloudVersion>2.3.3</MinimumEfaCloudVersion>
+        <ShowNotice lang="de">Basiert auf Beta 2.5.0#21.</ShowNotice>
+        <ShowNotice lang="de">Wenn efaCloud eingesetzt wird, muss der Server mindestens Version 2.3.3 unterstützen. EfaCloud 2.4.0_12 und höher werden empfohlen.</ShowNotice>
+        <ShowNotice lang="en">Based on Beta 2.5.0#21.</ShowNotice>
+        <ShowNotice lang="en">If you use efaCloud, make sure your server at least supports efaCloud Version 2.3.3. It is recommended to upgrade to EfaCloud 2.4.0_12 or above.</ShowNotice>
+        <Changes lang="de">
+            <ChangeItem>Neu: Widget: Allgemein: Es können mehrere Widgets oben/unten/links/rechts positioniert werden.</ChangeItem>
+            <ChangeItem>Neu: Widget: HTML-Widget: Jedes HTML-Widget kann separat positioniert werden (oben/unten/links/rechts/multiwidget).</ChangeItem>
+            <ChangeItem>Neu: Widget: Wetter-Widget: Jedes Wetter-Widget kann separat positioniert werden (oben/unten/links/rechts/multiwidget).</ChangeItem>
+            <ChangeItem>Neu: Widget: Wetter-Widget: Jedes Wetter-Widget kann separat sichtbar/unsichtbar gemacht werden.</ChangeItem>
+			<ChangeItem>Bugfix: Datei-Eingabefelder zeigen keinen Fehler mehr an, wenn eine HTTP/HTTPs Seite gewählt ist.</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>New: Widget: Common: Multiple widgets can be positioned at the top/bottom/left/right.</ChangeItem>
+            <ChangeItem>New: Widget: HTML-Widget: Each HTML widget can be positioned separately (top/bottom/left/right/multiwidget).</ChangeItem>
+            <ChangeItem>New: Widget: Weather-Widget: Each weather widget can be positioned separately (top/bottom/left/right/multiwidget).</ChangeItem>
+            <ChangeItem>New: Widget: Weather widget: Each weather widget can be made visible/invisible separately.</ChangeItem>
+			<ChangeItem>Bugfix: Filename fields don't show an error message if file name starts with HTTP/HTTPs.</ChangeItem>
+        </Changes>
+	</Version>
+ <Version>
+        <VersionID>2.5.1#5</VersionID>
+        <ReleaseDate>15.01.2026</ReleaseDate>
+        <DownloadUrl>TODO</DownloadUrl>
+        <DownloadSize>TODO</DownloadSize>
+     	<MinimumJavaVersion>1.8</MinimumJavaVersion>
+		<MinimumEfaCloudVersion>2.3.3</MinimumEfaCloudVersion>
+        <ShowNotice lang="de">Early Access für Test der Widget-Überarbeitung. Basiert auf Beta 2.5.0#21. Einsatz auf eigene Gefahr.</ShowNotice>
+        <ShowNotice lang="de">Wenn efaCloud eingesetzt wird, muss der Server mindestens Version 2.3.3 unterstützen. EfaCloud 2.4.0_12 und höher werden empfohlen.</ShowNotice>
+        <ShowNotice lang="en">Early Access for testing efa widget refactoring. Based on Beta 2.5.0#21. Use at own risk.</ShowNotice>
+        <ShowNotice lang="en">If you use efaCloud, make sure your server at least supports efaCloud Version 2.3.3. It is recommended to upgrade to EfaCloud 2.4.0_12 or above.</ShowNotice>
+        <Changes lang="de">
+            <ChangeItem>Neu: GUI Optimierung: Einige Checkboxen sind nun eingerückt, was die GUI besser verständlich macht.</ChangeItem>
+            <ChangeItem>Neu: Cron Jobs: mehr Platz auf kleinen Bildschirmen</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>New: GUI optimization - Some checkboxes are indented for better GUI readability.</ChangeItem>
+            <ChangeItem>New: Cron jobs: better usage of available screen width.</ChangeItem>
+        </Changes>
+	</Version>
+ <Version>
+        <VersionID>2.5.1#4</VersionID>
+        <ReleaseDate>01.01.2026</ReleaseDate>
+        <DownloadUrl>TODO</DownloadUrl>
+        <DownloadSize>TODO</DownloadSize>
+     	<MinimumJavaVersion>1.8</MinimumJavaVersion>
+		<MinimumEfaCloudVersion>2.3.3</MinimumEfaCloudVersion>
+        <ShowNotice lang="de">Early Access für Test der Widget-Überarbeitung. Basiert auf Beta 2.5.0#21. Einsatz auf eigene Gefahr.</ShowNotice>
+        <ShowNotice lang="de">Wenn efaCloud eingesetzt wird, muss der Server mindestens Version 2.3.3 unterstützen. EfaCloud 2.4.0_12 und höher werden empfohlen.</ShowNotice>
+        <ShowNotice lang="en">Early Access for testing efa widget refactoring. Based on Beta 2.5.0#21. Use at own risk.</ShowNotice>
+        <ShowNotice lang="en">If you use efaCloud, make sure your server at least supports efaCloud Version 2.3.3. It is recommended to upgrade to EfaCloud 2.4.0_12 or above.</ShowNotice>
+        <Changes lang="de">
+            <ChangeItem>Neu: Widget: HTML-Widget: Klick auf die Fläche des Widgets öffnet die Inhalte in einem Popup-Fenster. Dieses schließt sich automatisch nach 90 Sekunden. </ChangeItem>
+            <ChangeItem>Neu: Widget: HTML-Widget: Anzeige einer Sanduhr als Mauszeiger, wenn der Browser nach Klick auf einem Link geöffnet wird.</ChangeItem>
+            <ChangeItem>Neu: Widget: HTML-Widget: Reihenfolge der Felder in der Oberfläche verbessert. </ChangeItem>
+            <ChangeItem>Neu: Widget: HTML-Widget: Einzelne HTML-Seiten können ausgeblendet werden.</ChangeItem>
+            <ChangeItem>Neu: Widget: HTML-Widget: HTML-Seite aus früheren efa-Versionen wird nicht mehr angezeigt (und muss manuell eingerichtet werden)</ChangeItem>
+            <ChangeItem>Neu: Widget: Wetter-Widget: Reihenfolge der Felder in der Oberfläche verbessert.</ChangeItem>
+            <ChangeItem>Neu: Widget: Wetter-Widget: Bessere Formatierung von Fließkommazahlen kleiner 1.</ChangeItem>
+            <ChangeItem>Neu: Widget: Wetter-Widget: Benutzerefinierte Farben für Wetterwidget.</ChangeItem>
+            <Changeitem>Bugfix: Widget: HTML-Widget: Bessere Behandlung des Standard-Browsers auf Linux/RASPIan. Verwendet internen Browser als Fallback, wenn externer Browser nicht geöffnet werden kann.</Changeitem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>New: Widget: HTML-Widget: Clicking in the area of the HTML widget opens a Popup window that closes automatically after 90 seconds.</ChangeItem>
+            <ChangeItem>New: Widget: HTML-Widget: Mouse cursor is an hourglass while opening the external browser.</ChangeItem>
+            <ChangeItem>New: Widget: HTML-Widget: Optimized order of parameter fields in the GUI.</ChangeItem>
+            <ChangeItem>New: Widget: HTML-Widget: Each HTML page can be set to invisible.</ChangeItem>
+            <ChangeItem>New: Widget: HTML-Widget: HTML-pages configured in earlier versions of efa won't be shown any more (and must be re-configured manually).</ChangeItem>
+            <ChangeItem>New: Widget: Weather-Widget: Optimized order of parameter fields in the GUI.</ChangeItem>
+            <ChangeItem>New: Widget: Weather-Widget: Optimized rendering of double values &lt; 1.</ChangeItem>
+            <ChangeItem>New: Widget: Weather-Widget: Colors are customizable.</ChangeItem>
+			<Changeitem>Bugfix: Widget: HTML-Widget: Handle default browser on Linux/RASPIan. Open internal browser if external browser fails.</Changeitem>
+        </Changes>
+	</Version>
+    <Version>
+        <VersionID>2.5.1#3</VersionID>
+        <ReleaseDate>23.11.2025</ReleaseDate>
+        <DownloadUrl>TODO</DownloadUrl>
+        <DownloadSize>TODO</DownloadSize>
+     	<MinimumJavaVersion>1.8</MinimumJavaVersion>
+		<MinimumEfaCloudVersion>2.3.3</MinimumEfaCloudVersion>
+        <ShowNotice lang="de">Early Access für Test der Widget-Überarbeitung. Basiert auf Beta 2.5.0#21. Einsatz auf eigene Gefahr.</ShowNotice>
+        <ShowNotice lang="de">Wenn efaCloud eingesetzt wird, muss der Server mindestens Version 2.3.3 unterstützen. EfaCloud 2.4.0_12 und höher werden empfohlen.</ShowNotice>
+        <ShowNotice lang="en">Early Access for testing efa widget refactoring. Based on Beta 2.5.0#21. Use at own risk.</ShowNotice>
+        <ShowNotice lang="en">If you use efaCloud, make sure your server at least supports efaCloud Version 2.3.3. It is recommended to upgrade to EfaCloud 2.4.0_12 or above.</ShowNotice>
+        <Changes lang="de">
+            <ChangeItem>Neu: Widget: HTML-Widget: Überschriften und Überschriftenfarbe definierbar.</ChangeItem>
+            <ChangeItem>Neu: Widget: HTML-Widget: Klick auf Links in den HTML-Widgets öffnet den Link im Webbrowser.</ChangeItem>
+            <ChangeItem>Neu: Widget: HTML-Widget: Reihenfolge der HTML-Widgets änderbar.</ChangeItem>
+            <ChangeItem>Neu: Widget: HTML-Widget: Bei Neuinstallationen ist die Standardposition im Multi-Widget.</ChangeItem>
+            <ChangeItem>Neu: Widget: Wetter-Widget: Reihenfolge der Wetter-Widgets änderbar.</ChangeItem>
+            <ChangeItem>Neu: Widget: Wetter-Widget: Bei Neuinstallationen ist die Standardposition im Multi-Widget.</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>New: Widget: HTML-Widget: Options for Captions and Caption-Colors.</ChangeItem>
+            <ChangeItem>New: Widget: HTML-Widget: Clicking on links in HTML-Widgets opens them in a browser.</ChangeItem>
+            <ChangeItem>New: Widget: HTML-Widget: Order of HTML-Widgets can be changed.</ChangeItem>
+            <ChangeItem>New: Widget: HTML-Widget: In fresh installations, the HTML widget's position is in the multiwidget.</ChangeItem>
+            <ChangeItem>New: Widget: Weather-Widget: Order of HTML-Widgets can be changed.</ChangeItem>
+            <ChangeItem>New: Widget: Weather-Widget: In fresh installations, the Weatherwidget's position is in the multiwidget.</ChangeItem>
+        </Changes>
+	</Version>
+    <Version>
+        <VersionID>2.5.1#2</VersionID>
+        <ReleaseDate>16.11.2025</ReleaseDate>
+        <DownloadUrl>TODO</DownloadUrl>
+        <DownloadSize>TODO</DownloadSize>
+     	<MinimumJavaVersion>1.8</MinimumJavaVersion>
+		<MinimumEfaCloudVersion>2.3.3</MinimumEfaCloudVersion>
+        <ShowNotice lang="de">Early Access für Test der Widget-Überarbeitung. Basiert auf Beta 2.5.0#21. Einsatz auf eigene Gefahr.</ShowNotice>
+        <ShowNotice lang="de">Wenn efaCloud eingesetzt wird, muss der Server mindestens Version 2.3.3 unterstützen. EfaCloud 2.4.0_12 und höher werden empfohlen.</ShowNotice>
+        <ShowNotice lang="en">Early Access for testing efa widget refactoring. Based on Beta 2.5.0#21. Use at own risk.</ShowNotice>
+        <ShowNotice lang="en">If you use efaCloud, make sure your server at least supports efaCloud Version 2.3.3. It is recommended to upgrade to EfaCloud 2.4.0_12 or above.</ShowNotice>
+        <Changes lang="de">
+            <ChangeItem>Neu: Widget: HTML-Widget: Download der HTML-Seite im Hintergrund. HTML-Caching. Standardfarben definierbar. </ChangeItem>
+            <ChangeItem>Bugfix: Widget: Wetter-Widget: Widgets überarbeitet, Übersetzungen für DE/EN/FR hinzugefügt.</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>New: Widget: HTML-Widget: Download of the HTML page in the background. HTML caching. Default colors can be defined.</ChangeItem>
+            <ChangeItem>Bugfix: Widget: Weather-Widget: Widgets revised, translations for DE/EN/FR added.</ChangeItem>
+        </Changes>
+    </Version>
+    <Version>
+        <VersionID>2.5.1#1</VersionID>
+        <ReleaseDate>09.11.2025</ReleaseDate>
+        <DownloadUrl>TODO</DownloadUrl>
+        <DownloadSize>TODO</DownloadSize>
+     	<MinimumJavaVersion>1.8</MinimumJavaVersion>
+		<MinimumEfaCloudVersion>2.3.3</MinimumEfaCloudVersion>
+        <ShowNotice lang="de">Early Access für Test der Widget-Überarbeitung. Basiert auf Beta 2.5.0#21. Einsatz auf eigene Gefahr.</ShowNotice>
+        <ShowNotice lang="de">Wenn efaCloud eingesetzt wird, muss der Server mindestens Version 2.3.3 unterstützen. EfaCloud 2.4.0_12 und höher werden empfohlen.</ShowNotice>
+        <ShowNotice lang="en">Early Access for testing efa widget refactoring. Based on Beta 2.5.0#21. Use at own risk.</ShowNotice>
+        <ShowNotice lang="en">If you use efaCloud, make sure your server at least supports efaCloud Version 2.3.3. It is recommended to upgrade to EfaCloud 2.4.0_12 or above.</ShowNotice>
+        <Changes lang="de">
+            <ChangeItem>Neu: Widget: Das Widget-System wesentlich überarbeitet und ergänzt.</ChangeItem>
+            <ChangeItem>Neu: Widget: Uhrzeit Widget: Datumsanzeige. Sonnenauf/Untergang kann bei der Uhr angezeigt werden.</ChangeItem>
+            <ChangeItem>Neu: Widget: Wetter Widget: Initiale Version der Wetteranzeige mit mehren Darstellungsmöglichkeiten.</ChangeItem>
+            <ChangeItem>Neu: Widget: Wetter Widget: Möglichkeit, mehrere Wetter-Widgets anzuzeigen.</ChangeItem>
+            <ChangeItem>Neu: Widget: HTML Widget: Möglichkeit, mehrere HTML-Widgets anzuzeigen.</ChangeItem>
+            <ChangeItem>Neu: Widget: Multi Widget zur Anzeige mehrerer Widgets, die automatisch durchlaufen.</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+            <ChangeItem>New: Widget: The widget system has been refactored and extended by new features.</ChangeItem>
+            <ChangeItem>New: Widget: Clock widget: Ability to show date. Sunrise/sunset times can be shown beneath the clock.</ChangeItem>
+            <ChangeItem>New: Widget: Weather Widget: Initial release with multiple Weather presentations.</ChangeItem>
+            <ChangeItem>New: Widget: Weather Widget: efa can show multiple Weather Widgets.</ChangeItem>
+            <ChangeItem>New: Widget: HTML Widget: efa can show multiple HTML Widgets.</ChangeItem>
+            <ChangeItem>New: Widget: Multi-Widget which is a container for multiple other Widgets. Automatic switch between several Widgets.</ChangeItem>
+        </Changes>
+    </Version>
     <Version>
         <VersionID>2.5.0</VersionID>
         <ReleaseDate>14.02.2025</ReleaseDate>

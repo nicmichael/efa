@@ -10,16 +10,19 @@
 
 package de.nmichael.efa.gui.widgets;
 
-import de.nmichael.efa.Daten;
+import java.util.Vector;
+
 import de.nmichael.efa.core.config.EfaTypes;
-import de.nmichael.efa.gui.*;
-import de.nmichael.efa.util.*;
-import de.nmichael.efa.core.items.*;
-import de.nmichael.efa.data.BoatRecord;
-import de.nmichael.efa.data.LogbookRecord;
+import de.nmichael.efa.core.items.IItemFactory;
+import de.nmichael.efa.core.items.IItemType;
+import de.nmichael.efa.core.items.ItemTypeBoolean;
+import de.nmichael.efa.core.items.ItemTypeItemList;
+import de.nmichael.efa.core.items.ItemTypeMultiSelectList;
+import de.nmichael.efa.core.items.ItemTypeString;
+import de.nmichael.efa.core.items.ItemTypeStringList;
 import de.nmichael.efa.data.types.DataTypeList;
-import javax.swing.*;
-import java.util.*;
+import de.nmichael.efa.util.International;
+import de.nmichael.efa.util.Logger;
 
 public class AlertWidget extends Widget implements IItemFactory {
 
@@ -38,7 +41,7 @@ public class AlertWidget extends Widget implements IItemFactory {
     static final String PARAM_TEXT          = "Text";
 
     public AlertWidget() {
-        super(NAME, International.getString("Hinweis-Widget"), false);
+        super(NAME, International.getString("Hinweis-Widget"), false, true, false, false);
         ItemTypeItemList item;
         addParameterInternal(item = new ItemTypeItemList(PARAM_ALERTS, new Vector<IItemType[]>(), this,
                 IItemType.TYPE_PUBLIC, "",
@@ -51,7 +54,7 @@ public class AlertWidget extends Widget implements IItemFactory {
         return (ItemTypeItemList)getParameterInternal(PARAM_ALERTS);
     }
 
-    public boolean isShowOnSessionStart(ItemTypeItemList list, int i) {
+    public static boolean isShowOnSessionStart(ItemTypeItemList list, int i) {
         try {
             return ((ItemTypeBoolean)list.getItem(i, PARAM_ATSTART)).getValue();
         } catch(Exception e) {
@@ -59,7 +62,7 @@ public class AlertWidget extends Widget implements IItemFactory {
         }
     }
 
-    public boolean isShowOnSessionFinish(ItemTypeItemList list, int i) {
+    public static boolean isShowOnSessionFinish(ItemTypeItemList list, int i) {
         try {
             return ((ItemTypeBoolean)list.getItem(i, PARAM_ATFINISH)).getValue();
         } catch(Exception e) {
@@ -82,7 +85,7 @@ public class AlertWidget extends Widget implements IItemFactory {
         return false;
     }
 
-    public boolean isShowForBoat(ItemTypeItemList list, int i, String bType, String bSeats) {
+    public static boolean isShowForBoat(ItemTypeItemList list, int i, String bType, String bSeats) {
         try {
             return isInSelection(bType, ((ItemTypeMultiSelectList)list.getItem(i, PARAM_BOATTYPE)).getValues()) &&
                    isInSelection(bSeats, ((ItemTypeMultiSelectList)list.getItem(i, PARAM_BOATSEATS)).getValues());
@@ -91,7 +94,7 @@ public class AlertWidget extends Widget implements IItemFactory {
         }
     }
 
-    public String getType(ItemTypeItemList list, int i) {
+    public static String getType(ItemTypeItemList list, int i) {
         try {
             return ((ItemTypeStringList)list.getItem(i, PARAM_TYPE)).getValue();
         } catch(Exception e) {
@@ -99,7 +102,7 @@ public class AlertWidget extends Widget implements IItemFactory {
         }
     }
 
-    public String getText(ItemTypeItemList list, int i) {
+    public static String getText(ItemTypeItemList list, int i) {
         try {
             return ((ItemTypeString)list.getItem(i, PARAM_TEXT)).getValue();
         } catch(Exception e) {
@@ -119,74 +122,18 @@ public class AlertWidget extends Widget implements IItemFactory {
             }
             for (int i = 0; i < list.size(); i++) {
                 ((ItemTypeMultiSelectList)list.getItem(i, PARAM_BOATTYPE)).setListData(
-                        Daten.efaTypes.makeBoatTypeArray(EfaTypes.ARRAY_STRINGLIST_VALUES),
-                        Daten.efaTypes.makeBoatTypeArray(EfaTypes.ARRAY_STRINGLIST_DISPLAY));
+                        EfaTypes.makeBoatTypeArray(EfaTypes.ARRAY_STRINGLIST_VALUES),
+                        EfaTypes.makeBoatTypeArray(EfaTypes.ARRAY_STRINGLIST_DISPLAY));
                 ((ItemTypeMultiSelectList)list.getItem(i, PARAM_BOATSEATS)).setListData(
-                        Daten.efaTypes.makeBoatSeatsArray(EfaTypes.ARRAY_STRINGLIST_VALUES),
-                        Daten.efaTypes.makeBoatSeatsArray(EfaTypes.ARRAY_STRINGLIST_DISPLAY));
+                        EfaTypes.makeBoatSeatsArray(EfaTypes.ARRAY_STRINGLIST_VALUES),
+                        EfaTypes.makeBoatSeatsArray(EfaTypes.ARRAY_STRINGLIST_DISPLAY));
             }
         } catch (Exception eignore) {
             Logger.logdebug(eignore);
         }
     }
 
-    public void runWidgetWarnings(int mode, boolean actionBegin, LogbookRecord r) {
-        try {
-            ItemTypeItemList list = getAlertList();
-            if (list == null || r == null) {
-                return;
-            }
-            BoatRecord b = r.getBoatRecord(System.currentTimeMillis());
-            String bType = null;
-            String bSeats = null;
-            if (b != null) {
-                if (b.getNumberOfVariants() > 1) {
-                    bType = b.getTypeType(b.getVariantIndex(r.getBoatVariant()));
-                    bSeats = b.getTypeSeats(b.getVariantIndex(r.getBoatVariant()));
-                } else {
-                    bType = b.getTypeType(0);
-                    bSeats = b.getTypeSeats(0);
-                }
-            }
-            for (int i = 0; i < list.size(); i++) {
-                if ((((mode == EfaBaseFrame.MODE_BOATHOUSE_START
-                        || mode == EfaBaseFrame.MODE_BOATHOUSE_START_CORRECT
-                        || mode == EfaBaseFrame.MODE_BOATHOUSE_START_MULTISESSION) && !actionBegin
-                        && isShowOnSessionStart(list, i))
-                        || (mode == EfaBaseFrame.MODE_BOATHOUSE_FINISH && !actionBegin
-                        && isShowOnSessionFinish(list, i))) && isShowForBoat(list, i, bType, bSeats)
-                        && Daten.efaConfig.getValueNotificationWindowTimeout() > 0) {
-                    String text = getText(list, i);
-                    String color = "0000ff";
-                    String image = BaseDialog.BIGIMAGE_INFO;
-                    if (TYPE_WARN.equals(getType(list, i))) {
-                        color = "ff0000";
-                        image = BaseDialog.BIGIMAGE_WARNING;
-                    }
-                    if (text != null && text.length() > 0) {
-                        NotificationDialog dlg = new NotificationDialog((JFrame) null,
-                                text, image, "ffffff", color, Daten.efaConfig.getValueNotificationWindowTimeout());
-                        dlg.showDialog();
-                    }
-                }
-            }
-        } catch(Exception eignore) {
-            Logger.logdebug(eignore);
-        }
-    }
 
-    @Override
-    void construct() {
-    }
-
-    @Override
-    public JComponent getComponent() {
-        return null;
-    }
-
-    @Override
-    public void stop() {
-    }
 
     public IItemType[] getDefaultItems(String itemName) {
         if (itemName.endsWith(PARAM_ALERTS)) {
@@ -200,14 +147,14 @@ public class AlertWidget extends Widget implements IItemFactory {
                 IItemType.TYPE_PUBLIC, "",
                 International.getString("bei Fahrtende"));
             items[2] = new ItemTypeMultiSelectList<String>(PARAM_BOATTYPE,
-                    new DataTypeList<String>(Daten.efaTypes.makeBoatTypeArray(EfaTypes.ARRAY_STRINGLIST_VALUES)),
-                    Daten.efaTypes.makeBoatTypeArray(EfaTypes.ARRAY_STRINGLIST_VALUES), Daten.efaTypes.makeBoatTypeArray(EfaTypes.ARRAY_STRINGLIST_DISPLAY),
+                    new DataTypeList<String>(EfaTypes.makeBoatTypeArray(EfaTypes.ARRAY_STRINGLIST_VALUES)),
+                    EfaTypes.makeBoatTypeArray(EfaTypes.ARRAY_STRINGLIST_VALUES),EfaTypes.makeBoatTypeArray(EfaTypes.ARRAY_STRINGLIST_DISPLAY),
                     IItemType.TYPE_PUBLIC, "",
                     International.getString("für Fahrten mit ..."));
             items[3] = new ItemTypeMultiSelectList<String>(PARAM_BOATSEATS,
-                    new DataTypeList<String>(Daten.efaTypes.makeBoatSeatsArray(EfaTypes.ARRAY_STRINGLIST_VALUES)),
-                    Daten.efaTypes.makeBoatSeatsArray(EfaTypes.ARRAY_STRINGLIST_VALUES),
-                    Daten.efaTypes.makeBoatSeatsArray(EfaTypes.ARRAY_STRINGLIST_DISPLAY),
+                    new DataTypeList<String>(EfaTypes.makeBoatSeatsArray(EfaTypes.ARRAY_STRINGLIST_VALUES)),
+                    EfaTypes.makeBoatSeatsArray(EfaTypes.ARRAY_STRINGLIST_VALUES),
+                    EfaTypes.makeBoatSeatsArray(EfaTypes.ARRAY_STRINGLIST_DISPLAY),
                     IItemType.TYPE_PUBLIC, "",
                     International.getString("für Fahrten mit ..."));
             ((ItemTypeMultiSelectList)items[3]).setXOffset(1);
@@ -230,4 +177,18 @@ public class AlertWidget extends Widget implements IItemFactory {
         return null;
     }
 
+	@Override
+	public Vector<WidgetInstance> createInstances() {
+		Vector <WidgetInstance> returnList = new Vector <WidgetInstance>();
+		AlertWidgetInstance wi = new AlertWidgetInstance();
+		wi.setAlertList(this.getAlertList());
+		wi.setPosition(IWidget.POSITION_CENTER);
+		returnList.add(wi);
+		return returnList;
+	}
+
+    @Override 
+    public boolean isGuiWidget() {
+    	return false;
+    }
 }

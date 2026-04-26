@@ -1,5 +1,6 @@
 #!/bin/bash
 # makeDist.sh   V2.0 04.10.2025
+# makeDist.sh   V2.1 09.11.2025 updated jars for json and flatlaf.
 # ######################################
 #
 # Originally created by Nicolas Michael. Updated by Stefan Gebers.
@@ -96,9 +97,10 @@ SRCBACKUP=/home/efa/Backup
 EFAWINDSETUP=$EFABASE/winmedia
 
 CLASSPATH=$MAKEDIST_JAVA:$MAKEDIST_TOOLS
-CLASSPATH=$CLASSPATH:$PLUGINS/ftp/edtftpj.jar:$CLASSPATH:$PLUGINS/ftp/jsch-0.1.55.jar:$PLUGINS/help/jh.jar:$PLUGINS/jsuntimes/jsuntimes.jar:$PLUGINS/mail/javax.mail.jar:$PLUGINS/mail/activation.jar:$PLUGINS/flatlaf/flatlaf-3.2.5.jar
+CLASSPATH=$CLASSPATH:$PLUGINS/ftp/edtftpj.jar:$CLASSPATH:$PLUGINS/ftp/jsch-0.1.55.jar:$PLUGINS/help/jh.jar:$PLUGINS/jsuntimes/jsuntimes.jar:$PLUGINS/mail/javax.mail.jar:$PLUGINS/mail/activation.jar:$PLUGINS/flatlaf/flatlaf-3.6.jar
 CLASSPATH=$CLASSPATH:$PLUGINS/pdf/avalon-framework.jar:$PLUGINS/pdf/batik-all.jar:$PLUGINS/pdf/commons-io.jar:$PLUGINS/pdf/commons-logging.jar:$PLUGINS/pdf/fop.jar:$PLUGINS/pdf/xmlgraphics-commons.jar
 CLASSPATH=$CLASSPATH:$PLUGINS/weather/commons-codec.jar:$PLUGINS/weather/signpost-core.jar
+CLASSPATH=$CLASSPATH:$PLUGINS/json/json-20250517.jar
 
 if [ -d ${MAKEDIST:?} ] ; then
   rm -fR ${MAKEDIST:?}
@@ -198,7 +200,8 @@ cp ${PLUGINS:?}/ftp/edtftpj.jar ${MAKEDIST_PLUGINS:?}/
 cp ${PLUGINS:?}/ftp/jsch-0.1.55.jar ${MAKEDIST_PLUGINS:?}/
 cp ${PLUGINS:?}/weather/commons-codec.jar ${MAKEDIST_PLUGINS:?}/
 cp ${PLUGINS:?}/weather/signpost-core.jar ${MAKEDIST_PLUGINS:?}/
-cp ${PLUGINS:?}/flatlaf/flatlaf-3.2.5.jar ${MAKEDIST_PLUGINS:?}/
+cp ${PLUGINS:?}/flatlaf/flatlaf-*.jar ${MAKEDIST_PLUGINS:?}/
+cp ${PLUGINS:?}/json/json*.jar ${MAKEDIST_PLUGINS:?}/
 
 echo "Copying Config Files ..."
 echo "------------------------------------------------------------------"

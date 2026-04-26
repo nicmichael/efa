@@ -9,18 +9,37 @@
  */
 package de.nmichael.efa.gui;
 
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Cursor;
+import java.awt.Desktop;
 import java.awt.FontMetrics;
 import java.awt.GridBagConstraints;
+import java.awt.Image;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JComponent;
+import javax.swing.JEditorPane;
 import javax.swing.JLabel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JViewport;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.event.HyperlinkEvent;
 
+import de.nmichael.efa.Daten;
 import de.nmichael.efa.core.config.EfaConfig;
 import de.nmichael.efa.core.items.ItemTypeLabel;
 import de.nmichael.efa.core.items.ItemTypeLabelHeader;
 import de.nmichael.efa.gui.util.RoundedBorder;
+import de.nmichael.efa.util.Logger;
 
 /**
  * This class provides common code to create GUI Elements like Headers, Hints and Descriptions. 
@@ -32,6 +51,7 @@ public class EfaGuiUtils {
 		//if caption starts with html, do not have a blank as a prefix as this will disable html rendering.
 		ItemTypeLabel item = (ItemTypeLabel) EfaGuiUtils.createDescription(uniqueName, type, category, (caption.startsWith("<html>") ? caption : " "+caption), gridWidth,
 				padBefore, padAfter);
+    	item.setStoreItem(false);//hint for other elements not to store this item (to efaconfig for instance)
 		item.setImage(ImagesAndIcons.getIcon(ImagesAndIcons.IMAGE_INFO));
 		item.setImagePosition(SwingConstants.TRAILING); // info icon should be first, the text trailing.
 		item.setBackgroundColor(EfaConfig.hintBackgroundColor);
@@ -114,8 +134,9 @@ public class EfaGuiUtils {
 		// ensure that the description value does not get saved in efaConfig file by
 		// adding a special prefix
 		ItemTypeLabel item = new ItemTypeLabel(EfaConfig.NOT_STORED_ITEM_PREFIX + uniqueName, type, category, caption);
+    	item.setStoreItem(false);//hint for other elements not to store this item (to efaconfig for instance)
 		item.setPadding(0, 0, padBefore, padAfter);
-		item.setFieldGrid(gridWidth, GridBagConstraints.EAST, GridBagConstraints.BOTH);
+		item.setFieldGrid(gridWidth, GridBagConstraints.EAST, GridBagConstraints.HORIZONTAL);
 		return item;
 	}	
 
@@ -134,9 +155,136 @@ public class EfaGuiUtils {
      */
     public static ItemTypeLabelHeader createHeader(String uniqueName, int type, String category, String caption, int gridWidth) {
     	ItemTypeLabelHeader item = new ItemTypeLabelHeader(EfaConfig.NOT_STORED_ITEM_PREFIX + uniqueName, type, category, " "+caption);
+    	item.setStoreItem(false);//hint for other elements not to store this item (to efaconfig for instance)
         item.setPadding(0, 0, 10, 10);
-        item.setFieldGrid(3,GridBagConstraints.EAST, GridBagConstraints.BOTH);
+        item.setFieldGrid(gridWidth,GridBagConstraints.EAST, GridBagConstraints.BOTH);
         return item;
     }	
+    
+    public static Image getEfaMainIcon() {
+        return ImagesAndIcons.getIcon(ImagesAndIcons.IMAGE_EFA_ICON).getImage();
+    }
+    
+	/**
+	 * addHyperLinkAction
+	 * 
+	 * Reacts to clicks on hyperlinks in the htmlPane.
+	 * If a standard webbrowser is defined in efaconfig -> common -> external programs,
+	 * this standard webbrowser is used. If not, the standard system webbrowser is used.
+	 * if an error occurrs, the internal webbrowser is used.
+	 */
+	public static void addHyperlinkAction(JEditorPane htmlPane) {
+		htmlPane.addHyperlinkListener(e -> {
+            if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+            	Cursor old;
+            	old = htmlPane.getCursor();
+            	htmlPane.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            	String urlString;
+            	try {
+            		urlString = e.getURL().toURI().toString();
+            	} catch (Exception eURLExcept) {
+            		Logger.log(eURLExcept);
+            		return;
+            	}
+            	
+                try {
+                	String theBrowser = Daten.efaConfig.getValueBrowser().trim();
+                	if (theBrowser!=null && theBrowser.length()>0) {
+                		// use internal browser, if browser config says "INTERN", otherwise start to run the external browser
+                		if (theBrowser.equalsIgnoreCase(BrowserDialog.INTERNAL_BROWSER)) {
+                			BrowserDialog.openInternalBrowser(null, urlString);
+                		} else {
+                			BrowserDialog.openExternalBrowser(null, urlString);               			
+                		}
+                	} else {
+                		//else use standard System function to run a browser.
+                		Desktop.getDesktop().browse(e.getURL().toURI());
+                	}
+                } catch (IOException eIO) {
+            		try {
+            			BrowserDialog.openInternalBrowser(null, urlString);
+            		} catch (Exception eOther){
+            			Logger.log(eOther);
+            		}
+                } catch (UnsupportedOperationException eUOP) {
+            		try {
+            			BrowserDialog.openInternalBrowser(null, urlString);
+            		} catch (Exception eOther){
+            			Logger.log(eOther);
+            		}
+                }
+                catch (Exception ex) {
+        			Logger.log(ex);
+                }
+                htmlPane.setCursor(old);
+            }
+        });
+	}
+
+	/**
+	 * Adds a focusGained event listener on any component on the component and all it's children.
+	 * Which scrolls the focused element into view, if it is on a Scrollpane.
+	 * @param root Root component
+	 */
+	public static void enableAutoScrollOnFocus(Component root) {
+	    if (root instanceof JComponent) {
+	        final JComponent jc = (JComponent) root;
+
+	        jc.addFocusListener(new FocusAdapter() {
+	            @Override
+	            public void focusGained(FocusEvent e) {
+	                SwingUtilities.invokeLater(new Runnable() {
+	                    @Override
+	                    public void run() {
+	                    	scrollToVisible(jc);
+	                    }
+	                });
+	            }
+	        });
+	    }
+
+	    if (root instanceof Container) {
+	        Container container = (Container) root;
+	        for (Component child : container.getComponents()) {
+	            enableAutoScrollOnFocus(child);
+	        }
+	    }
+	}
+	
+	/**
+	 * If the component is on a ScrollPane, scroll the component into the visible view.
+	 * Also works on nested Tabbedpanes and Scrollpanes like in efaConfigDialog.
+	 * @param comp
+	 */
+	public static void scrollToVisible(JComponent comp) {
+	    JScrollPane scrollPane = findScrollPane(comp);
+	    if (scrollPane == null) return;
+
+	    JViewport viewport = scrollPane.getViewport();
+
+	    // Convert rect to the coordinates of the viewport
+	    Rectangle rect = SwingUtilities.convertRectangle(
+	            comp.getParent(),
+	            comp.getBounds(),
+	            viewport // viewport.getView() will not work correctly.
+	            );
+
+	    viewport.scrollRectToVisible(rect);
+	}
+	
+	/**
+	 * Get the parent ScrollPane the component is placed on. Searches for it recursively, parent by parent.
+	 * @param c component
+	 * @return Returns the parent Scrollpane, if one exists. Null otherwise
+	 */
+	private static JScrollPane findScrollPane(Component c) {
+	    while (c != null) {
+	        if (c instanceof JScrollPane) {
+	        	return (JScrollPane) c;
+	        } 
+	        c = c.getParent();
+	    }
+	    return null;
+	}
 
 }

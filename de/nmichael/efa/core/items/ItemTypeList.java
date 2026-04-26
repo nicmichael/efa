@@ -60,6 +60,7 @@ import de.nmichael.efa.gui.util.RoundedBorder;
 import de.nmichael.efa.gui.util.RoundedLabel;
 import de.nmichael.efa.util.Dialog;
 import de.nmichael.efa.util.EfaUtil;
+import de.nmichael.efa.util.International;
 import de.nmichael.efa.util.Logger;
 import de.nmichael.efa.util.Mnemonics;
 import de.nmichael.efa.gui.ImagesAndIcons;
@@ -632,7 +633,7 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
 	        JPanel filterPanel=new JPanel();
 	        filterPanel.setLayout(new BorderLayout());
 	        filterPanel.setBorder(new EmptyBorder(4,0,4,0));//4 pix space before and after
-	        JLabel myFilterLabel = new JLabel("Filter:");
+	        JLabel myFilterLabel = new JLabel(International.getString("Filter")+":");
 	        myFilterLabel.setBorder(new EmptyBorder(0,0,0,4));//4 pix space on the right
 	        filterPanel.add(myFilterLabel, BorderLayout.WEST);
 	        filterPanel.add(filterTextField, BorderLayout.CENTER);

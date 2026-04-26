@@ -91,6 +91,7 @@ public class BoatStatus extends StorageObject {
             DataKey k = it.getFirst();
             String currentLogBookEfaBoatHouse = Daten.project.getCurrentLogbookEfaBoathouse();
             Boolean showForeignLogbookEntries = Daten.efaConfig.getValueEfaDirekt_boatListShowForeignLogbookSessionsAsNotAvailable();
+            Boolean showMultidaySessionsAsNotavailable = Daten.efaConfig.getValueEfaDirekt_wafaRegattaBooteAufFahrtNichtVerfuegbar();
             Boolean statusIsOnTheWater = status.equalsIgnoreCase(BoatStatusRecord.STATUS_ONTHEWATER);
             Boolean statusIsNotAvailableBoats = status.equalsIgnoreCase(BoatStatusRecord.STATUS_NOTAVAILABLE);
             
@@ -98,36 +99,40 @@ public class BoatStatus extends StorageObject {
             if (currentLogBookEfaBoatHouse == null)
                 currentLogBookEfaBoatHouse = "";
             while (k != null) {
-                BoatStatusRecord r = (BoatStatusRecord) data().get(k);
+                BoatStatusRecord bStatRec = (BoatStatusRecord) data().get(k);
 
-                if (r != null && !r.getDeletedOrInvisible()) {
+                if (bStatRec != null && !bStatRec.getDeletedOrInvisible()) {
                     if (Logger.isTraceOn(Logger.TT_GUI, 9)) {
                         Logger.log(Logger.DEBUG, Logger.MSG_DEBUG_BOATLISTS,
-                                "  Boat: " + r.getQualifiedName() + 
-                                " (boathouse " + r.getOnlyInBoathouseIdAsInt() + ": " +
-                                r.getOnlyInBoathouseId() + ")");
+                                "  Boat: " + bStatRec.getQualifiedName() + 
+                                " (boathouse " + bStatRec.getOnlyInBoathouseIdAsInt() + ": " +
+                                bStatRec.getOnlyInBoathouseId() + ")");
                     }
                     //  for boats on the water show only those which have sessions in the current logbook
                     if (statusIsOnTheWater) {
-                        String rLogbook = r.getLogbook();
+                        String rLogbook = bStatRec.getLogbook();
                         if ((rLogbook != null) && rLogbook.equalsIgnoreCase(currentLogBookEfaBoatHouse)) {
-                            v.add(r);
+                        	// now handle "onthewater" multi-day sessions, regattas, training camps and check if they have to appear on notavailable list
+                        	if (!(showMultidaySessionsAsNotavailable && bStatRec.isOnTheWaterShowNotAvailable())) {
+                        		v.add(bStatRec);
+                        	}
                         } 
                     } else {
                         // for all other show only the boats which are in this boathouse, if they are restricted.
-                        if (r.getOnlyInBoathouseIdAsInt() < 0
-                                || r.getOnlyInBoathouseIdAsInt() == boathouseId) {
-                            String s = (getBoatsForLists ? r.getShowInList() : r.getCurrentStatus());
+                        if (bStatRec.getOnlyInBoathouseIdAsInt() < 0
+                                || bStatRec.getOnlyInBoathouseIdAsInt() == boathouseId) {
+                            String s = (getBoatsForLists ? bStatRec.getShowInList() : bStatRec.getCurrentStatus());
                             if (s != null && s.equals(status)) {
-                                v.add(r);
+                            	
+                                v.add(bStatRec);
                             } else {
-                            	if (statusIsNotAvailableBoats && showForeignLogbookEntries && r.getCurrentStatus().equalsIgnoreCase(BoatStatusRecord.STATUS_ONTHEWATER)){
+                            	if (statusIsNotAvailableBoats && showForeignLogbookEntries && bStatRec.getCurrentStatus().equalsIgnoreCase(BoatStatusRecord.STATUS_ONTHEWATER)){
 
-                            		String rLogbook = r.getLogbook(); // r.getLogbook needs a lot of time, so determine this value late 
+                            		String rLogbook = bStatRec.getLogbook(); // r.getLogbook needs a lot of time, so determine this value late 
                                     if ((rLogbook != null) && !rLogbook.equalsIgnoreCase(currentLogBookEfaBoatHouse)) {
                                     	//boats which are on the water, but not in the current logbook, 
                                     	//shall be shown as "not available". 
-                                    	v.add(r);
+                                    	v.add(bStatRec);
                                     }
                             	}
                             }

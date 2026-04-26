@@ -70,6 +70,7 @@ public interface IItemType {
 
     public void setPadding(int padXbefore, int padXafter, int padYbefore, int padYafter);
     public void setFieldSize(int width, int height);
+    public void setFieldGrid(int gridWidth);
     public void setFieldGrid(int gridWidth, int gridAnchor, int gridFill);
     public void setFieldGrid(int gridWidth, int gridHeight, int gridAnchor, int gridFill);
 
@@ -94,5 +95,6 @@ public interface IItemType {
     public void setReferenceObject(Object o);
     public Object getReferenceObject();
 
-
+	public boolean isStoreItem();
+	public void setStoreItem(boolean storeItem);
 }

@@ -10,6 +10,15 @@
 
 package de.nmichael.efa.core;
 
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.Hashtable;
+
+import org.json.JSONObject;
+import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
+import org.xml.sax.XMLReader;
+
 import de.nmichael.efa.Daten;
 import de.nmichael.efa.util.Dialog;
 import de.nmichael.efa.util.EfaUtil;
@@ -19,12 +28,6 @@ import de.nmichael.efa.util.International;
 import de.nmichael.efa.util.Logger;
 import de.nmichael.efa.util.PDFWriter;
 import de.nmichael.efa.util.XmlHandler;
-import java.io.InputStream;
-import java.util.Arrays;
-import java.util.Hashtable;
-import org.xml.sax.Attributes;
-import org.xml.sax.InputSource;
-import org.xml.sax.XMLReader;
 
 public class Plugins {
 
@@ -33,8 +36,9 @@ public class Plugins {
     public static final String PLUGIN_JSUNTIMES = "jsuntimes";
     public static final String PLUGIN_MAIL = "mail";
     public static final String PLUGIN_PDF = "pdf";
-    public static final String PLUGIN_WEATHER = "weather";
     public static final String PLUGIN_FLATLAF = "flatlaf";
+    public static final String PLUGIN_FLATLAF36 = "flatlaf36";
+    public static final String PLUGIN_JSONORG = "org.json";
 
     private Hashtable<String,PluginInfo> pluginInfos;
 
@@ -106,22 +110,33 @@ public class Plugins {
                 return false;
             }
         }
-
-        if (pluginName.equals(PLUGIN_WEATHER)) {
+        
+        if (pluginName.equals(PLUGIN_FLATLAF)||pluginName.equals(PLUGIN_FLATLAF36)) {
+        	// During initialization of efa programs it is determined if flatlaf library is actually present.
+        	// a failure mostly comes from a missing flatlaf-3.2.5.jar in the classpath.  
+        	
+        	// in efa 2.5.1 and newer, we only need flatlaf 3.6. the classpath variable
+        	// in runefa.sh / runefa.bat takes care that the appropriate library version is used;
+        	// but once flatlaf is initialized correctly, we return "true" for both libraries.
+        	return Daten.flatLafInitializationOK;
+        }           
+        
+        if (pluginName.equals(PLUGIN_JSONORG)) {
             try {
-                oauth.signpost.basic.DefaultOAuthConsumer tmp = new oauth.signpost.basic.DefaultOAuthConsumer("foo", "bar");
-                return true;
+                Object tmp = new JSONObject();
+                if (tmp!=null) {
+                	return true;
+                }
+
             } catch (NoClassDefFoundError e) {
                 return false;
-            }
-        }
+            }        	
+            return false;
+        }    
         
-        if (pluginName.equals(PLUGIN_FLATLAF)) {
-        	// During initialization of efa programs it is determined if flatlaf library is actually present.
-        	// a failure mostly comes from a missing flatlaf-3.2.5.jar in the classpath.
-        	return Daten.flatLafInitializationOK;
-        }        
-
+        
+        //if we are here, an unknown plugin name is queried. put a "warning" log entry.
+        Logger.log(Logger.WARNING, International.getString("Unbekannter Pluginname: ")+pluginName);
         return false;
     }
 

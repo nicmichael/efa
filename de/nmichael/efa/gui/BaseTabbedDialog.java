@@ -199,8 +199,17 @@ public abstract class BaseTabbedDialog extends BaseDialog {
         updateGui(false);
     }
 
+    /**
+     * Updates the the GUI as additional elements may have been placed on it 
+     * (by ItemTypeItemList for instance). 
+     */
     public void updateGui() {
         updateGui(defaultGetGuiItemsOnUpdateGui);
+        //enableAutoScrollOnFocus is initially called in BaseDialog.prepareDialog()
+        //and should be called only once on each dialog.
+        //But as updateGUI removes all elements from the GUI and re-adds them,
+        //we need to re-initialize the AutoScroll on focus.
+        EfaGuiUtils.enableAutoScrollOnFocus(this);
     }
 
     public void updateGui(boolean readValuesFromGui) {
@@ -236,8 +245,6 @@ public abstract class BaseTabbedDialog extends BaseDialog {
                 defaultGetGuiItemsOnUpdateGui = true;
             }
         }
-
-
 
         // select an item to focus
         Vector<IItemType> v = itemsPerCategory.get( (selectedPanel != null ? selectedPanel : cats[0]));

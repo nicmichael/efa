@@ -396,6 +396,7 @@ public class BoatStatusRecord extends DataRecord {
         v.add(item = new ItemTypeBoolean(BoatStatusRecord.UNKNOWNBOAT, getUnknownBoat(),
                 IItemType.TYPE_EXPERT, CAT_STATUS,
                 International.getString("unbekanntes Boot")));
+        ((ItemTypeBoolean) item).setIndent(true);
         v.add(item = new ItemTypeStringList(BoatStatusRecord.BASESTATUS, getBaseStatus(),
                 makeStatusTypeArray(BASESTATUS, ARRAY_STRINGLIST_VALUES), makeStatusTypeArray(BASESTATUS, ARRAY_STRINGLIST_DISPLAY),
                 IItemType.TYPE_PUBLIC, CAT_STATUS,

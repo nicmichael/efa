@@ -768,6 +768,19 @@ public class Logger {
         log(type, Logger.MSG_GENERIC, msg);
     }
 
+    public static void logdebug(long topic, int level, String msg) {
+    	if (isTraceOn(topic, level)){
+    		log(Logger.DEBUG, msg);
+    	}
+    }
+    
+    public static void logdebug (long topic, int level, String key, String msg) {
+    	if (isTraceOn(topic, level)){
+    		log(Logger.DEBUG, key, msg);
+    	}
+    	
+    }
+    
     public static void logdebug(Exception e) {
         if (isTraceOn(TT_EXCEPTIONS) && logExceptions) {
             log(DEBUG, MSG_DEBUG_IGNOREDEXCEPTION, e);

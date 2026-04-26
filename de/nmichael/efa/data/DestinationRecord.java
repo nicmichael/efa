@@ -445,8 +445,10 @@ public class DestinationRecord extends DataRecord implements IItemFactory {
                 IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("Ende")));
         v.add(item = new ItemTypeBoolean(DestinationRecord.STARTISBOATHOUSE, getStartIsBoathouse(),
                 IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("Start ist Bootshaus")));
+        ((ItemTypeBoolean)item).setIndent(true);
         v.add(item = new ItemTypeBoolean(DestinationRecord.ROUNDTRIP, getRoundtrip(),
                 IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("Start gleich Ziel")));
+        ((ItemTypeBoolean)item).setIndent(true);
         if (Daten.efaConfig.getValueUseFunctionalityRowingBerlin()) {
             v.add(item = new ItemTypeString(DestinationRecord.GUIITEM_DESTINATIONAREAS, (getDestinationAreas() == null ? "" : getDestinationAreas().toString()),
                     IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.onlyFor("Zielbereiche","de")));

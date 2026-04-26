@@ -39,8 +39,12 @@ public class ItemTypeRadioButtons extends ItemTypeLabelValue {
 
     public IItemType copyOf() {
         ItemTypeRadioButtons copy = new ItemTypeRadioButtons(name, value, valueList.clone(), displayList.clone(), type, category, description);
+        copy.setFieldSize(fieldWidth, fieldHeight);
         copy.setPadding(padXbefore, padXafter, padYbefore, padYafter);
         copy.setIcon((label == null ? null : label.getIcon()));
+        copy.setIsItemOnSameRowAsPreviousItem(itemOnSameRowAsPreviousItem);
+        copy.setItemOnNewRow(itemOnNewRow);
+        copy.setFieldGrid(fieldGridWidth,fieldGridHeight,fieldGridAnchor,fieldGridFill);
         return copy;
     }
 

@@ -56,6 +56,7 @@ public abstract class ItemType implements IItemType {
     protected boolean isVisible = true;
     protected boolean isEnabled = true;
     protected boolean isEditable = true;
+    private boolean storeItem = true;
 
     public String getName() {
         return name;
@@ -159,6 +160,16 @@ public abstract class ItemType implements IItemType {
         fieldHeight = (height > 0 ? height : fieldHeight);
     }
 
+    public void setFieldSize(int width) {
+        fieldWidth = (width > 0 ? width : fieldWidth);
+    }
+    
+    public void setFieldGrid(int gridWidth) {
+        if (gridWidth >= 0) {
+            fieldGridWidth = gridWidth;
+        }
+    }    
+    
     public void setFieldGrid(int gridWidth, int gridAnchor, int gridFill) {
         if (gridWidth >= 0) {
             fieldGridWidth = gridWidth;
@@ -330,5 +341,13 @@ public abstract class ItemType implements IItemType {
         return International.getMessage("Ungültige Eingabe im Feld '{field}'",
                         getDescription()) + ": " + lastInvalidErrorText;
     }
+
+	public boolean isStoreItem() {
+		return storeItem;
+	}
+
+	public void setStoreItem(boolean storeItem) {
+		this.storeItem = storeItem;
+	}
 
 }

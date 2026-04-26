@@ -1,0 +1,202 @@
+package de.nmichael.efa.gui.widgets;
+
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.text.DecimalFormat;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+
+import de.nmichael.efa.Daten;
+import de.nmichael.efa.util.Logger;
+
+public class WeatherRendererCurrentUVIndex extends WeatherRenderer {
+
+	public static void renderWeather(WeatherDataForeCast wdf, JPanel roundPanel, WeatherWidgetInstance ww) {
+		JLabel curWeather_temp = new JLabel();
+		JLabel curWeather_icon = new JLabel();
+		JLabel curWeather_minTemp = new JLabel();
+		JLabel curWeather_maxTemp = new JLabel();
+		JLabel curWeather_sunshine = new JLabel();
+		JLabel curWeather_rain = new JLabel();
+		JLabel curWeather_sunshineUnit = new JLabel();
+		JLabel curWeather_rainUnit = new JLabel();
+		JLabel curWeather_uvindex = new JLabel();
+		//JLabel curWeather_wind = new JLabel();
+
+		JPanel pnlSunshine = initializePanel(roundPanel);
+		JPanel pnlUV = initializePanel(roundPanel);
+		JPanel pnlRain = initializePanel(roundPanel);
+		JPanel pnlMinMax=initializePanel(roundPanel);
+
+
+		double minTemp = wdf.getDaily().getTemperature_2m_min();
+		double maxTemp = wdf.getDaily().getTemperature_2m_max();
+		double sunshine = wdf.getDaily().getSunshine_duration()/60/60;
+		double rain = wdf.getDaily().getPrecipitation_sum();
+		double uvindex = wdf.getDaily().getUv_index_max();
+		
+		String tempLabel = " "+ww.getTempLabel(true);
+		
+		curWeather_temp = new JLabel();
+		curWeather_temp.setForeground(ww.getStandardForeground());
+		curWeather_temp.setFont(
+				roundPanel.getFont().deriveFont((float) (Daten.efaConfig.getValueEfaDirekt_BthsFontSize() + 8)));
+		curWeather_temp.setFont(curWeather_temp.getFont().deriveFont(Font.BOLD));
+		curWeather_temp.setText(" "+WeatherRenderer.oneDecimal(wdf.getCurrentWeather().getTemperature()) +" "+ ww.getTempLabel(true));
+
+		curWeather_icon.setIcon(WeatherIcons.getWeatherIconForCode(wdf.getCurrentWeather().getIconCode(), 64,
+				wdf.getCurrentWeather().getIsDay() == 1, false));
+		curWeather_icon.setToolTipText(wdf.getCurrentWeather().getDescription());
+		curWeather_icon.setIconTextGap(0);
+		curWeather_icon.setHorizontalTextPosition(SwingConstants.LEFT);
+		
+		curWeather_minTemp.setText(WeatherRenderer.oneDecimal(minTemp) + tempLabel);
+		curWeather_minTemp.setForeground(ww.getStandardForeground());
+
+		curWeather_maxTemp.setText(WeatherRenderer.oneDecimal(maxTemp) + tempLabel);
+		curWeather_maxTemp.setForeground(ww.getStandardForeground());
+
+		curWeather_sunshine.setText(WeatherRenderer.oneDecimal(sunshine));
+		curWeather_sunshine.setForeground(ww.getStandardForeground());
+
+		curWeather_sunshineUnit.setText("h");
+		curWeather_sunshineUnit.setForeground(ww.getStandardForeground());
+		curWeather_sunshineUnit.setFont(
+				roundPanel.getFont().deriveFont((float) (Daten.efaConfig.getValueEfaDirekt_BthsFontSize() -4)));
+		curWeather_sunshineUnit.setVerticalTextPosition(SwingConstants.BOTTOM);
+		
+		curWeather_uvindex.setText(WeatherRenderer.oneDecimal(uvindex));
+		curWeather_uvindex.setForeground(ww.getStandardForeground());
+		curWeather_uvindex.setHorizontalAlignment(SwingConstants.RIGHT);
+		
+		DecimalFormat df = new DecimalFormat("#");
+		curWeather_rain.setText(df.format(rain)); 
+		curWeather_rain.setForeground(ww.getStandardForeground());
+		
+		curWeather_rainUnit.setText("mm");
+		curWeather_rainUnit.setForeground(ww.getStandardForeground());
+		curWeather_rainUnit.setFont(
+				roundPanel.getFont().deriveFont((float) (Daten.efaConfig.getValueEfaDirekt_BthsFontSize() -4)));
+		curWeather_rainUnit.setVerticalTextPosition(SwingConstants.BOTTOM);
+		/*	roundpanel
+		 *  | HEADER                                   |	
+		 * 	|curtemp |  weatherIcon | pnlMinMax  
+		 *  |sunshine|   uvindex    | rain             |
+		 * 
+		 * 
+		 */
+		//Min max Temp
+		pnlMinMax.add(new JLabel (WeatherIcons.getIcon(WeatherIcons.IMAGE_MAX)), 
+				new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.VERTICAL, new Insets(2, 0, 2, 2), 0, 0));
+		pnlMinMax.add(curWeather_maxTemp, 
+				new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.EAST,GridBagConstraints.VERTICAL, new Insets(2, 0, 2, 0), 0, 0));
+		pnlMinMax.add(new JLabel (WeatherIcons.getIcon(WeatherIcons.IMAGE_MIN)), 
+				new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.VERTICAL, new Insets(2, 0, 2, 2), 0, 0));
+		pnlMinMax.add(curWeather_minTemp, 
+				new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.EAST,GridBagConstraints.VERTICAL, new Insets(2, 0, 2, 0), 0, 0));		
+		
+		//Sunshine hours
+		JLabel lblSunIcon=new JLabel (WeatherIcons.getIcon(WeatherIcons.IMAGE_SUN));
+		lblSunIcon.setHorizontalTextPosition(SwingConstants.RIGHT);
+		lblSunIcon.setIconTextGap(0);
+		pnlSunshine.add(lblSunIcon, 
+				new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.VERTICAL, new Insets(0, 0, 2, 2), 0, 0));
+		pnlSunshine.add(curWeather_sunshine, 
+				new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.EAST,GridBagConstraints.VERTICAL, new Insets(0, 2, 2, 2), 0, 0));		
+		pnlSunshine.add(curWeather_sunshineUnit, 
+				new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0, GridBagConstraints.SOUTHWEST,GridBagConstraints.VERTICAL, new Insets(0, 2, 2, 2), 0, 0));		
+		
+		// uv index
+		pnlUV.add(new JLabel (WeatherIcons.getIcon(WeatherIcons.IMAGE_UV_INDEX)), 
+				new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.VERTICAL, new Insets(0, 0, 2, 2), 0, 0));
+		pnlUV.add(curWeather_uvindex, 
+				new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.EAST,GridBagConstraints.VERTICAL, new Insets(0, 2, 2, 2), 0, 0));	
+		JLabel uvi = new JLabel(wdf.getDaily().getUv_index_icon());
+		uvi.setIconTextGap(0);
+		uvi.setHorizontalTextPosition(SwingConstants.RIGHT);
+		pnlUV.add(uvi, 
+				new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0, GridBagConstraints.EAST,GridBagConstraints.VERTICAL, new Insets(0, 0, 2, 2), 0, 0));		
+		
+		// rain
+		pnlRain.add(new JLabel (WeatherIcons.getIcon(WeatherIcons.IMAGE_RAIN)), 
+				new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.VERTICAL, new Insets(0, 2, 2, 4), 0, 0));
+		pnlRain.add(curWeather_rain, 
+				new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.EAST,GridBagConstraints.VERTICAL, new Insets(0, 2, 2, 2), 0, 0));		
+		pnlRain.add(curWeather_rainUnit, 
+				new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0, GridBagConstraints.SOUTHEAST,GridBagConstraints.VERTICAL, new Insets(0, 2, 2, 2), 0, 0));		
+				
+		//wind just a label 
+		/*
+		curWeather_wind.setText(International.getString("Wind") + ": "
+				+ International.getString(wdf.getCurrentWeather().getWindDirectionText()) + " "
+				+ International.getString("mit") + " " + wdf.getCurrentWeather().getWindSpeed()
+				+ ww.getSpeedScale());
+		curWeather_wind.setForeground(Daten.efaConfig.getToolTipHeaderForegroundColor());
+		curWeather_wind.setHorizontalTextPosition(SwingConstants.CENTER);
+		*/
+		// Klick auf das Icon wird an Parent weitergeleitet
+        curWeather_icon.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                // Simuliere Klick auf Parent
+            	try {
+                MouseEvent parentClick = new MouseEvent(
+                    roundPanel.getParent(),
+                    MouseEvent.MOUSE_CLICKED,
+                    System.currentTimeMillis(),
+                    e.getModifiersEx(),
+                    e.getX() + curWeather_icon.getX(),
+                    e.getY() + curWeather_icon.getY(),
+                    e.getClickCount(),
+                    e.isPopupTrigger(),
+                    e.getButton()
+                );
+                for (MouseListener ml : roundPanel.getParent().getMouseListeners()) {
+                    ml.mouseClicked(parentClick);
+                }
+            	} catch (Exception e1) {
+            		//should not occurr..
+            		Logger.logdebug(e1);
+            	}
+            }
+        });
+		
+		// Build the main panel view
+
+		roundPanel.add(getLocationHeader(ww.getCaption(),!ww.getHtmlPopupURL().isEmpty(), ww), new GridBagConstraints(0, 0, 3, 1, 1.0, 0.0, GridBagConstraints.CENTER,
+			GridBagConstraints.BOTH, new Insets(2, 2, 2, 2), 0, 0));		
+				
+		//first row
+		roundPanel.add(curWeather_temp,  new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.WEST,
+				GridBagConstraints.VERTICAL, new Insets(0, 2, 0, 2), 0, 0));
+
+		roundPanel.add(curWeather_icon,  new GridBagConstraints(1, 1, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER,
+				GridBagConstraints.VERTICAL, new Insets(2, 8, 0, 8), 0, 0));
+		
+		roundPanel.add(pnlMinMax,        new GridBagConstraints(2, 1, 1, 1, 1.0, 1.0, GridBagConstraints.EAST,
+				GridBagConstraints.VERTICAL, new Insets(0, 0, 0, 4), 0, 0));
+		
+		// second row
+		roundPanel.add(pnlSunshine,      new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
+				GridBagConstraints.VERTICAL, new Insets(2, 2, 0, 0), 0, 0));
+
+		roundPanel.add(pnlUV,            new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
+				GridBagConstraints.VERTICAL, new Insets(2, 8, 0, 8), 0, 0));
+
+		roundPanel.add(pnlRain,          new GridBagConstraints(2, 2, 1, 1, 0.0, 0.0, GridBagConstraints.SOUTHEAST,
+				GridBagConstraints.VERTICAL, new Insets(2, 0, 0, 4), 0, 0));
+
+		/*roundPanel.add(curWeather_wind, new GridBagConstraints(0, 3, 3, 1, 0.0, 0.0, GridBagConstraints.CENTER,
+				GridBagConstraints.BOTH, new Insets(2, 12, 0, 6), 0, 0));
+		*/
+		
+		
+	}
+	
+}

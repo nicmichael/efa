@@ -22,6 +22,7 @@ public class ItemTypeBoolean extends ItemType {
     private boolean value;
     private boolean useRadioButton = false;
     private ButtonGroup buttonGroup;
+    private boolean indent = false;
 
     public ItemTypeBoolean(String name, boolean value, int type,
             String category, String description) {
@@ -36,6 +37,8 @@ public class ItemTypeBoolean extends ItemType {
     public IItemType copyOf() {
         ItemTypeBoolean myCopy = new ItemTypeBoolean(name, value, type, category, description);
         myCopy.setPadding(padXbefore, padXafter, padYbefore, padYafter);
+        myCopy.setIndent(this.indent);
+        myCopy.setVisible(this.isVisible());
         return myCopy;
     }
 
@@ -81,7 +84,8 @@ public class ItemTypeBoolean extends ItemType {
     public int displayOnGui(Window dlg, JPanel panel, int x, int y) {
         this.dlg = dlg;
         iniDisplay();
-        panel.add(field, new GridBagConstraints(x, y, fieldGridWidth, fieldGridHeight, 0.0, 0.0,
+        panel.add(field, new GridBagConstraints((this.isIndent() ? x+1 : x), 
+        		y, fieldGridWidth, fieldGridHeight, 0.0, 0.0,
                 fieldGridAnchor, fieldGridFill, new Insets(padYbefore, padXbefore, padYafter, padXafter), 0, 0));
         return 1;
     }
@@ -144,4 +148,12 @@ public class ItemTypeBoolean extends ItemType {
             Mnemonics.setButton(dlg, (JCheckBox)field, getDescription());
         }
     }
+
+	public boolean isIndent() {
+		return indent;
+	}
+
+	public void setIndent(boolean indent) {
+		this.indent = indent;
+	}
 }

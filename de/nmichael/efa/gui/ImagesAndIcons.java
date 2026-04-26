@@ -87,6 +87,7 @@ public class ImagesAndIcons {
 	public static final String IMAGE_BUTTON_SPECIAL = "button_special.png";
 	public static final String IMAGE_BUTTON_STAT = "button_stat.png";
 	public static final String IMAGE_EFA_ICON_SMALL = "efa_icon_small.png";
+	public static final String IMAGE_EFA_ICON = "efa_icon.png";
 	public static final String IMAGE_EFACLOUD_AUTHENTICATING = "efacloud_AUTHENTICATING.png";
 	public static final String IMAGE_EFACLOUD_DISCONNECTED = "efacloud_DISCONNECTED.png";
 	public static final String IMAGE_EFACLOUD_IDLE = "efacloud_IDLE.png";
@@ -131,7 +132,12 @@ public class ImagesAndIcons {
 	public static final String IMAGE_MENU_TRANSLATE = "menu_translate.png";
 	public static final String IMAGE_MENU_UPDATE = "menu_update.png";
 	public static final String IMAGE_MENU_WATERS = "menu_waters.png";
-
+	public static final String IMAGE_SUNRISE = "sunrise.png";
+	public static final String IMAGE_SUNSET = "sunset.png";
+	public static final String IMAGE_WIDGET_ARROW_LEFT = "widget_arrow_left.png";
+	public static final String IMAGE_WIDGET_ARROW_RIGHT = "widget_arrow_right.png";
+	public static final String IMAGE_MAXIMIZE = "maximize.png";
+	
     public static ImageIcon getIcon(String name) {
         try {
             if (name.indexOf("/") < 0) {

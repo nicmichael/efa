@@ -40,12 +40,19 @@ public class ItemTypeStringList extends ItemTypeLabelValue {
     }
 
     public IItemType copyOf() {
-    	ItemTypeStringList retValue = new ItemTypeStringList(name, value, (valueList != null ? valueList.clone() : null), (displayList != null ? displayList.clone() : null), type, category, description);
+    	ItemTypeStringList copy = new ItemTypeStringList(name, value, (valueList != null ? valueList.clone() : null), (displayList != null ? displayList.clone() : null), type, category, description);
     	if (this.cellRenderer!=null) {
-    		((ItemTypeStringList) retValue).setCellRenderer(this.cellRenderer);
+    		((ItemTypeStringList) copy).setCellRenderer(this.cellRenderer);
     	}
-    	retValue.setIcon((label == null ? null : label.getIcon()));
-    	return retValue;
+
+        copy.setFieldSize(fieldWidth, fieldHeight);
+        copy.setPadding(padXbefore, padXafter, padYbefore, padYafter);
+        copy.setIcon((label == null ? null : label.getIcon()));
+        copy.setIsItemOnSameRowAsPreviousItem(itemOnSameRowAsPreviousItem);
+        copy.setItemOnNewRow(itemOnNewRow);
+        copy.setFieldGrid(fieldGridWidth,fieldGridHeight,fieldGridAnchor,fieldGridFill);
+    	
+    	return copy;
     }
 
     protected JComponent initializeField() {
