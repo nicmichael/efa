@@ -1,20 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <efaOnlineUpdate>
-<Version>
-        <VersionID>2.5.1#10</VersionID>
-        <ReleaseDate>19.04.2026</ReleaseDate>
+	<Version>
+        <VersionID>2.5.3#1</VersionID>
+        <ReleaseDate>27.04.2026</ReleaseDate>
         <DownloadUrl>TODO</DownloadUrl>
         <DownloadSize>TODO</DownloadSize>
      	<MinimumJavaVersion>1.8</MinimumJavaVersion>
 		<MinimumEfaCloudVersion>2.3.3</MinimumEfaCloudVersion>
-        <ShowNotice lang="de">Basiert auf 2.5.0_01.</ShowNotice>
         <ShowNotice lang="de">Wenn efaCloud eingesetzt wird, muss der Server mindestens Version 2.3.3 unterstützen. EfaCloud 2.4.0_12 und höher werden empfohlen.</ShowNotice>
-        <ShowNotice lang="en">Based on 2.5.0_01.</ShowNotice>
         <ShowNotice lang="en">If you use efaCloud, make sure your server at least supports efaCloud Version 2.3.3. It is recommended to upgrade to EfaCloud 2.4.0_12 or above.</ShowNotice>
         <Changes lang="de">
+        	<ChangeItem>Neu: Bootshaus: Bootsliste "Verfügbare Boote" kann den Bootsnamen um max. zwei Felder erweitern. Sie werden auch im Tooltipp angezeigt, und es kann nach den Feldern gefiltert werden. Die Felder sind in efaConfig konfigurierbar.</ChangeItem>
+        	<ChangeItem>Neu: Bootshaus: Personenliste in "Verfügbare Personen" kann den Personennamen um max. zwei Felder erweitern. Sie werden auch im Tooltipp angezeigt, und es kann nach den Feldern gefiltert werden. Die Felder sind in efaConfig konfigurierbar.</ChangeItem>
+        	<ChangeItem>Neu: Person/Boot bearbeiten Dialog: Die in der Bootsliste/Personenliste zusätzlich angezeigten Felder können bei Bedarf auf der ersten Registerkarte im "Bearbeiten" Dialog angezeigt werden.</ChangeItem>
+        	<ChangeItem>Neu: Performance-Optimierung für die Bootslisten in efaBootshaus.</ChangeItem>
+        	<ChangeItem>Bugfix: Person/Boot/Ziel/Gruppe bearbeiten Dialog: Scrollbars werden INNERHALB der Registerkarten angezeigt, wenn diese zu voll werden.</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+        	<ChangeItem>New: Boathouse: "Available boats" list can be extended by up to two additional fields. They are also shown in the tooltip, and can be used for filtering. The fields are configurable in efaConfig.</ChangeItem>
+        	<ChangeItem>New: Boathouse: "Available persons" list can be extended by up to two additional fields. They are also shown in the tooltip, and can be used for filtering. The fields are configurable in efaConfig.</ChangeItem>
+        	<ChangeItem>New: Edit person/boat dialog: The additional fields shown in the boat/person lists can optionally be shown on the first tab of the edit dialog.</ChangeItem>
+        	<ChangeItem>New: Performance optimization for boat lists in efaBoathouse.</ChangeItem>
+        	<ChangeItem>Bugfix: Edit person/boat/destination/group dialog: Scrollbars are now shown INSIDE the tabs if they get too full.</ChangeItem>
+        </Changes>
+	</Version>
+	<Version>
+        <VersionID>2.5.2</VersionID>
+        <ReleaseDate>26.04.2026</ReleaseDate>
+        <DownloadUrl>TODO</DownloadUrl>
+        <DownloadSize>TODO</DownloadSize>
+     	<MinimumJavaVersion>1.8</MinimumJavaVersion>
+		<MinimumEfaCloudVersion>2.3.3</MinimumEfaCloudVersion>
+        <ShowNotice lang="de">Wenn efaCloud eingesetzt wird, muss der Server mindestens Version 2.3.3 unterstützen. EfaCloud 2.4.0_12 und höher werden empfohlen.</ShowNotice>
+        <ShowNotice lang="en">If you use efaCloud, make sure your server at least supports efaCloud Version 2.3.3. It is recommended to upgrade to EfaCloud 2.4.0_12 or above.</ShowNotice>
+        <Changes lang="de">
+        	<ChangeItem>Neu: Beta 2.5.1 wird hiermit für die Produktion freigegeben (als Version 2.5.2).</ChangeItem>
         	<ChangeItem>Bugfix: Mehrtagesfahrten, Regatta- und Trainingscamp-Fahrten werden wieder ausschließlich unter "nicht verfügbare Boote" angezeigt, wenn die entsprechende Option aktiviert ist.</ChangeItem>
         </Changes>
         <Changes lang="en">
+        	<ChangeItem>New: Beta 2.5.1 is hereby released for production (as version 2.5.2).</ChangeItem>
         	<ChangeItem>Bugfix: Multi-day, regatta and training camp sessions will again be displayed exclusivly in the "unavailable boats" list if the corresponding option is enabled.</ChangeItem>
         </Changes>
 	</Version>
