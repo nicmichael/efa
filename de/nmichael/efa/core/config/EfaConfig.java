@@ -245,7 +245,6 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 	private ItemTypeBoolean efaBoathouseFilterTextfieldEasyFindEntriesWithSpecialCharacters;
 	private ItemTypeInteger efaBoathouseFilterTextAutoClearInterval;
 	private ItemTypeBoolean efaBoathouseFilterTextAutoClearAfterAction;
-	private ItemTypeBoolean efaBoathouseTwoColumnList;
 	private ItemTypeBoolean efaBoathouseExtdToolTips;
 	private ItemTypeInteger efaBoathouseExtdToolTipInitialDelayMsec;
 	private ItemTypeInteger efaBoathouseExtdToolTipDismissDelayMsec;
@@ -1460,10 +1459,6 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
 					International.getString("Inhalte / Darstellung"), 3);
 
-			addParameter(efaBoathouseTwoColumnList = new ItemTypeBoolean("efaBoathouseTwoColumnList", true,
-					IItemType.TYPE_EXPERT,
-					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
-					International.getString("Bootshaus-Listen mit zwei Spalten darstellen")));
 			addParameter(efaBoathouseBoatListWithReservationInfo = new ItemTypeBoolean(
 					"efaBoathouseBoatListWithReservationInfo", true, IItemType.TYPE_EXPERT,
 					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
@@ -2754,10 +2749,6 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 
 	public boolean getValueEfaBoathouseFilterTextAutoClearAfterAction() {
 		return efaBoathouseFilterTextAutoClearAfterAction.getValue();
-	}
-
-	public boolean getValueEfaBoathouseTwoColumnList() {
-		return efaBoathouseTwoColumnList.getValue();
 	}
 
 	public boolean getValueEfaBoathouseExtdToolTips() {

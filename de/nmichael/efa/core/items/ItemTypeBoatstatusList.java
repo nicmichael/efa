@@ -66,8 +66,8 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
 
     public ItemTypeBoatstatusList(String name,
             int type, String category, String description,
-            EfaBoathouseFrame efaBoathouseFrame, boolean showFilterField, boolean showTwoColumnList) {
-        super(name, type, category, description, showFilterField, showTwoColumnList);
+            EfaBoathouseFrame efaBoathouseFrame, boolean showFilterField) {
+        super(name, type, category, description, showFilterField);
         this.efaBoathouseFrame = efaBoathouseFrame;
     }
     
@@ -295,7 +295,7 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
 
                 // we only have to put the destination in the item text if the two column layout is _in_active.
                 // if two column layout is active, the destination is put into the BoatListItem.secondaryItem right at the end of this method.
-                if (showDestination && (!this.getShowTwoColumnList())  &&
+                if (showDestination  &&
                 		isCurrentStatusOnTheWater &&
                 		srEntryNo != null && srEntryNo.length() > 0) {
                     LogbookRecord lr = logbook.getLogbookRecord(srEntryNo);

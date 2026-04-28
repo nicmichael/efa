@@ -522,26 +522,26 @@ public class PersonRecord extends DataRecord implements IItemFactory {
     }
 
     public static String getFullName(String first, String last, String affix, boolean firstFirst) {
-        String s = "";
+        StringBuilder sb = new StringBuilder();
         if (firstFirst) {
             if (first != null && first.length() > 0) {
-                s = first.trim();
+                sb.append(first.trim());
             }
             if (last != null && last.length() > 0) {
-                s = s + (s.length() > 0 ? " " : "") + last.trim();
+                sb.append((sb.length() > 0 ? " " : "")).append(last.trim());
             }
         } else {
             if (last != null && last.length() > 0) {
-                s = last.trim();
+                sb.append(last.trim());
             }
             if (first != null && first.length() > 0) {
-                s = s + (s.length() > 0 ? ", " : "") + first.trim();
+                sb.append((sb.length() > 0 ? ", " : "")).append(first.trim());
             }
         }
         if (affix != null && affix.length() > 0) {
-            s = s + " (" + affix + ")";
+            sb.append(" (").append(affix).append(")");
         }
-        return s;
+        return sb.toString();
     }
 
     public static String getFirstLastName(String name) {

@@ -729,10 +729,13 @@ public class BoatRecord extends DataRecord implements IItemFactory, IItemListene
 
     public String getQualifiedName() {
         String name = getName();
-        if (name != null && name.length() > 0 && getNameAffix() != null && getNameAffix().length() > 0) {
-            name = name + " (" + getNameAffix() + ")";
-        }
-        return (name != null ? name : "");
+        String affix = getNameAffix();
+        if (name != null && name.length() > 0 && affix != null && affix.length() > 0) {
+            StringBuilder sb = new StringBuilder();
+            sb.append(name).append(" (").append(affix).append(")");
+            return sb.toString();
+       }
+       return (name != null ? name : "");
     }
 
     public String[] getQualifiedNameFields() {
