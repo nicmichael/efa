@@ -6,7 +6,7 @@
         <DownloadUrl>TODO</DownloadUrl>
         <DownloadSize>TODO</DownloadSize>
      	<MinimumJavaVersion>1.8</MinimumJavaVersion>
-		<MinimumEfaCloudVersion>2.3.3</MinimumEfaCloudVersion>
+		  <MinimumEfaCloudVersion>2.3.3</MinimumEfaCloudVersion>
         <ShowNotice lang="de">Wenn efaCloud eingesetzt wird, muss der Server mindestens Version 2.3.3 unterstützen. EfaCloud 2.4.0_12 und höher werden empfohlen.</ShowNotice>
         <ShowNotice lang="en">If you use efaCloud, make sure your server at least supports efaCloud Version 2.3.3. It is recommended to upgrade to EfaCloud 2.4.0_12 or above.</ShowNotice>
         <Changes lang="de">
@@ -26,7 +26,7 @@
         	<ChangeItem>Bugfix: Edit person/boat/destination/group dialog: Scrollbars are now shown INSIDE the tabs if they get too full.</ChangeItem>
         </Changes>
 	</Version>
-	<Version>
+  <Version>
         <VersionID>2.5.2</VersionID>
         <ReleaseDate>26.04.2026</ReleaseDate>
         <DownloadUrl>TODO</DownloadUrl>
