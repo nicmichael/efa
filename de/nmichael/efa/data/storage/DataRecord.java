@@ -1069,5 +1069,13 @@ public abstract class DataRecord implements Cloneable, Comparable {
             }
         }
     }
+    
+    public String getStringValueFromField(String fieldName) {
+		try {
+			return getString(fieldName);
+		} catch (Exception e) {
+			return null;
+		}
+    }
 
 }

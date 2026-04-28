@@ -8,11 +8,14 @@ package de.nmichael.efa.core.config;
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.io.File;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Locale;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Vector;
+import java.util.stream.Collectors;
 
 import javax.swing.UIManager;
 import javax.swing.plaf.ColorUIResource;
@@ -42,7 +45,9 @@ import de.nmichael.efa.core.items.ItemTypeRadioButtons;
 import de.nmichael.efa.core.items.ItemTypeString;
 import de.nmichael.efa.core.items.ItemTypeStringList;
 import de.nmichael.efa.core.items.ItemTypeTime;
+import de.nmichael.efa.data.BoatRecord;
 import de.nmichael.efa.data.MessageRecord;
+import de.nmichael.efa.data.PersonRecord;
 import de.nmichael.efa.data.storage.DataKey;
 import de.nmichael.efa.data.storage.DataKeyIterator;
 import de.nmichael.efa.data.storage.DataLocks;
@@ -54,6 +59,7 @@ import de.nmichael.efa.data.types.DataTypeDate;
 import de.nmichael.efa.data.types.DataTypeDistance;
 import de.nmichael.efa.data.types.DataTypeList;
 import de.nmichael.efa.data.types.DataTypeTime;
+import de.nmichael.efa.data.types.DataTypeWeight;
 import de.nmichael.efa.ex.EfaException;
 import de.nmichael.efa.gui.BaseTabbedDialog;
 import de.nmichael.efa.gui.EfaGuiUtils;
@@ -209,6 +215,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 	
 	private ItemTypeStringList standardFahrtart;
 	private ItemTypeStringList defaultDistanceUnit;
+	private ItemTypeStringList defaultWeightUnit;
 	private ItemTypeStringList dateFormat;
 	private ItemTypeBoolean debugLogging;
 	private ItemTypeString traceTopic;
@@ -240,13 +247,17 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 	private ItemTypeBoolean efaBoathouseFilterTextfieldEasyFindEntriesWithSpecialCharacters;
 	private ItemTypeInteger efaBoathouseFilterTextAutoClearInterval;
 	private ItemTypeBoolean efaBoathouseFilterTextAutoClearAfterAction;
-	private ItemTypeBoolean efaBoathouseTwoColumnList;
 	private ItemTypeBoolean efaBoathouseExtdToolTips;
 	private ItemTypeInteger efaBoathouseExtdToolTipInitialDelayMsec;
 	private ItemTypeInteger efaBoathouseExtdToolTipDismissDelayMsec;
 	private ItemTypeBoolean efaBoathouseBoatListWithReservationInfo;
 	private ItemTypeString efaBoathouseNonAllowedUnknownPersonNames;
 	private ItemTypeBoolean efaDirekt_eintragHideUnnecessaryInputFields;
+	
+	private ItemTypeStringList efaDirekt_BoathouseExtBoatField1;
+	private ItemTypeStringList efaDirekt_BoathouseExtBoatField2;
+	private ItemTypeStringList efaDirekt_BoathouseExtPersonField1;
+	private ItemTypeStringList efaDirekt_BoathouseExtPersonField2;
 	
 	private ItemTypeBoolean efaDirekt_eintragPresentLastTripOnNewEntry;
 	private ItemTypeBoolean efaDirekt_eintragPresentLastTripOnLateEntry;
@@ -287,6 +298,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 	private ItemTypeString efaDirekt_butSpezialCmd;
 	private ItemTypeBoolean efaDirekt_showButtonHotkey;
 	private ItemTypeInteger efaDirekt_showButtonBorderWidth;
+	private ItemTypeBoolean efaDirekt_ExtendedFieldsOnFirstPageInEditDialog;
 	private ItemTypeBoolean efaDirekt_sortByAnzahl;
 	private ItemTypeBoolean efaDirekt_sortByRigger;
 	private ItemTypeBoolean efaDirekt_sortByType;
@@ -451,13 +463,15 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 	public static Color standardHeaderBackgroundColor = standardTableSelectionBackgroundColor;
 	public static Color standardHeaderForegroundColor = standardTableSelectionForegroundColor;
 	
+	public static HashMap<String, String> boatExtFields = createBoatExtFieldsMap();
+	public static HashMap<String, String> personExtFields = createPersonExtFieldsMap();
 	
 	// private internal data
 	private HashMap<String, IItemType> configValues; // always snychronize on this object!!
 	private Vector<String> configValueNames;
 	private ConfigValueUpdateThread configValueUpdateThread;
 	private EfaTypes myEfaTypes;
-
+	
 	public EfaConfig(int storageType, String storageLocation, String storageUsername, String storagePassword) {
 		super(storageType, storageLocation, storageUsername, storagePassword, "configuration", DATATYPE,
 				International.getString("Konfiguration"));
@@ -1413,8 +1427,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
 					International.getString("Listengröße") + " '" + International.getString("nicht verfügbare Boote")
 							+ "'"));
-			// ===================== BOATHOUSE: Contents and Look of Boat Lists
-			// ============================
+			// ===================== BOATHOUSE: Contents and Look of Boat Lists ============================
 
 			addHeader("efaGuiBoathouseBoatListsFilter", IItemType.TYPE_EXPERT,
 					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
@@ -1448,10 +1461,6 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
 					International.getString("Inhalte / Darstellung"), 3);
 
-			addParameter(efaBoathouseTwoColumnList = new ItemTypeBoolean("efaBoathouseTwoColumnList", true,
-					IItemType.TYPE_EXPERT,
-					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
-					International.getString("Bootshaus-Listen mit zwei Spalten darstellen")));
 			addParameter(efaBoathouseBoatListWithReservationInfo = new ItemTypeBoolean(
 					"efaBoathouseBoatListWithReservationInfo", true, IItemType.TYPE_EXPERT,
 					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
@@ -1474,6 +1483,45 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
 					International.getString("Verzögerung, bis Tooltip ausgeblendet wird (msec)")));
 
+			// additional fields in boatlist
+			addHeader("efaGuiBoathouseBoatListsAddFieldsHeader", IItemType.TYPE_EXPERT,
+					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
+					International.getString("Zusätzliche Felder in der Bootsliste"), 3);
+			
+			addParameter(efaDirekt_BoathouseExtBoatField1 = new ItemTypeStringList("efaGuiBoathouseBoatListsAddFieldsBoat1",
+					"", 
+					makeExtdFieldsArray(STRINGLIST_VALUES, boatExtFields),
+					makeExtdFieldsArray(STRINGLIST_DISPLAY, boatExtFields), IItemType.TYPE_EXPERT,
+					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
+					International.getString("Bootsliste - Zusatzfeld 1")));
+
+			addParameter(efaDirekt_BoathouseExtBoatField2 = new ItemTypeStringList("efaGuiBoathouseBoatListsAddFieldsBoat2", 
+					"", 
+					makeExtdFieldsArray(STRINGLIST_VALUES, boatExtFields),
+					makeExtdFieldsArray(STRINGLIST_DISPLAY, boatExtFields), IItemType.TYPE_EXPERT,
+					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
+					International.getString("Bootsliste - Zusatzfeld 2")));
+			efaDirekt_BoathouseExtBoatField2.setPadding(0, 0, 0, 20);
+
+			addParameter(efaDirekt_BoathouseExtPersonField1 = new ItemTypeStringList("efaGuiBoathouseBoatListsAddFieldsPerson1", 
+					"",
+					makeExtdFieldsArray(STRINGLIST_VALUES, personExtFields),
+					makeExtdFieldsArray(STRINGLIST_DISPLAY, personExtFields), IItemType.TYPE_EXPERT,
+					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
+					International.getString("Personenliste - Zusatzfeld 1")));
+
+			addParameter(efaDirekt_BoathouseExtPersonField2 = new ItemTypeStringList("efaGuiBoathouseBoatListsAddFieldsPerson2", 
+					"",
+					makeExtdFieldsArray(STRINGLIST_VALUES, personExtFields),
+					makeExtdFieldsArray(STRINGLIST_DISPLAY, personExtFields), IItemType.TYPE_EXPERT,
+					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
+					International.getString("Personenliste - Zusatzfeld 2")));
+
+			addParameter(efaDirekt_ExtendedFieldsOnFirstPageInEditDialog = new ItemTypeBoolean(
+					"efaGuiBoathouseBoatListsExtdFieldsOnFirstPageInEditDialog", true, IItemType.TYPE_EXPERT,
+					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI), International.getString(
+							"In Bearbeitungsdialogen die ausgewählten Felder auf der ersten Seite darstellen")));			
+			
 			addHeader("efaGuiBoathouseBoatListsSortorder", IItemType.TYPE_EXPERT,
 					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
 					International.getString("Bootslisten Sortierung"), 3);
@@ -1733,6 +1781,13 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 					DataTypeDistance.makeDistanceUnitNamesArray(), IItemType.TYPE_PUBLIC,
 					BaseTabbedDialog.makeCategory(CATEGORY_LOCALE),
 					International.getString("Standardeinheit für Entfernungen")));
+			
+			addParameter(defaultWeightUnit = new ItemTypeStringList("LocaleDefaultWeightUnit",
+					DataTypeWeight.KILOGRAMS, DataTypeWeight.makeWeightUnitValueArray(),
+					DataTypeWeight.makeWeightUnitValueArray(), IItemType.TYPE_PUBLIC,
+					BaseTabbedDialog.makeCategory(CATEGORY_LOCALE),
+					International.getString("Standardeinheit für Gewicht")));
+			
 			addParameter(dateFormat = new ItemTypeStringList("LocaleDateFormat", DataTypeDate.DAY_MONTH_YEAR,
 					DataTypeDate.makeDistanceUnitValueArray(), DataTypeDate.makeDistanceUnitNamesArray(),
 					IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CATEGORY_LOCALE),
@@ -2265,7 +2320,27 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 	public String getValueDefaultDistanceUnit() {
 		return defaultDistanceUnit.getValue();
 	}
+	
+	public String getValueDefaultWeightUnit() {
+		return defaultWeightUnit.getValue();
+	}
 
+	public String getValueEfaDirektBoathouseExtBoatField1() {
+		return efaDirekt_BoathouseExtBoatField1.getValue();
+	}
+	
+	public String getValueEfaDirektBoathouseExtBoatField2() {
+		return efaDirekt_BoathouseExtBoatField2.getValue();
+	}
+	
+	public String getValueEfaDirektBoathouseExtPersonField1() {
+		return efaDirekt_BoathouseExtPersonField1.getValue();
+	}
+	
+	public String getValueEfaDirektBoathouseExtPersonField2() {
+		return efaDirekt_BoathouseExtPersonField2.getValue();
+	}
+	
 	public String getValueDateFormat() {
 		return dateFormat.getValue();
 	}
@@ -2525,6 +2600,10 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 		return efaDirekt_showButtonBorderWidth.getValue();
 	}
 	
+	public boolean getValueEfaDirekt_ExtendedFieldsOnFirstPageInEditDialog() {
+		return efaDirekt_ExtendedFieldsOnFirstPageInEditDialog.getValue();
+	}
+	
 	public boolean getValueEfaDirekt_sortByAnzahl() {
 		return efaDirekt_sortByAnzahl.getValue();
 	}
@@ -2668,10 +2747,6 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 
 	public boolean getValueEfaBoathouseFilterTextAutoClearAfterAction() {
 		return efaBoathouseFilterTextAutoClearAfterAction.getValue();
-	}
-
-	public boolean getValueEfaBoathouseTwoColumnList() {
-		return efaBoathouseTwoColumnList.getValue();
 	}
 
 	public boolean getValueEfaBoathouseExtdToolTips() {
@@ -3505,6 +3580,67 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 		return obmann;
 	}
 
+	/**
+	 * Creates an array of boat/person fields for extended boatFields. Used for both
+	 * internal names and display names, depending on type.
+	 * 
+	 * The returned array is always sorted by the second string field (the Map value,
+	 * i.e. the display name), regardless of type (STRINGLIST_VALUES or STRINGLIST_DISPLAY).
+	 * 
+	 * @param type (STRINGLIST_VALUES or STRINGLIST_DISPLAY)
+	 * @return Array of boat/person fields for extended boat/person types, depending
+	 *         on type either with internal names or display names.
+	 */
+	private String[] makeExtdFieldsArray(int type, Map<String, String> extFields) {
+
+	    // Handle null/empty map: return array with single empty element
+	    if (extFields == null || extFields.isEmpty()) {
+	        return new String[] { "" };
+	    }
+
+	    // it may be inefficient to sort the whole map every time, but since we expect only a few entries
+	    // and this method is not called very often, it should be acceptable.
+
+	    // Sort entries by the map value (display name) case-insensitive	    
+	    java.util.List<Map.Entry<String, String>> entries = extFields.entrySet().stream()
+	            .sorted((e1, e2) -> {
+	                String v1 = (e1.getValue() == null) ? "" : e1.getValue();
+	                String v2 = (e2.getValue() == null) ? "" : e2.getValue();
+	                return v1.compareToIgnoreCase(v2);
+	            })
+	            .collect(Collectors.toList());
+
+	    // Build result: first element empty, then keys (values array) or values (display array),
+	    // but keep the order determined by the sorted display names.
+	    Vector<String> extFieldVector = new Vector<String>();
+	    extFieldVector.add("");
+	    for (Map.Entry<String, String> entry : entries) {
+	        extFieldVector.add(type == STRINGLIST_VALUES ? entry.getKey() : entry.getValue());
+	    }
+
+	    return extFieldVector.toArray(new String[extFieldVector.size()]);
+	}
+	
+	private static HashMap<String, String> createBoatExtFieldsMap(){
+		HashMap<String, String>  result = new HashMap<String, String>();
+		result.put(BoatRecord.OWNER, International.getString("Eigentümer"));
+		result.put(BoatRecord.FREEUSE1, International.getString("Boot Freie Verwendung 1"));
+		result.put(BoatRecord.FREEUSE2, International.getString("Boot Freie Verwendung 2"));
+		result.put(BoatRecord.FREEUSE3, International.getString("Boot Freie Verwendung 3"));
+		result.put(BoatRecord.MAXCREWWEIGHT, International.getString("Maximales Mannschaftsgewicht"));
+		return result;
+	}	
+	
+	private static HashMap<String, String> createPersonExtFieldsMap(){
+		HashMap<String, String>  result = new HashMap<String, String>();
+		result.put(PersonRecord.ASSOCIATION, International.getString("Verein"));
+		result.put(PersonRecord.FREEUSE1, International.getString("Person Freie Verwendung 1"));
+		result.put(PersonRecord.FREEUSE2, International.getString("Person Freie Verwendung 2"));
+		result.put(PersonRecord.FREEUSE3, International.getString("Person Freie Verwendung 3"));
+		result.put(PersonRecord.INPUTSHORTCUT, International.getString("Eingabekürzel"));
+		return result;
+	}
+	
 	public void buildTypes() {
 		myEfaTypes = getMyEfaTypes();
 		if (myEfaTypes == null) {
