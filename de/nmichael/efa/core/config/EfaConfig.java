@@ -8,12 +8,14 @@ package de.nmichael.efa.core.config;
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.io.File;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Vector;
+import java.util.stream.Collectors;
 
 import javax.swing.UIManager;
 import javax.swing.plaf.ColorUIResource;
@@ -1485,10 +1487,6 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 			addHeader("efaGuiBoathouseBoatListsAddFieldsHeader", IItemType.TYPE_EXPERT,
 					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
 					International.getString("Zusätzliche Felder in der Bootsliste"), 3);
-			
-			addHintWordWrap("efaGuiBoathouseBoatListsAddFieldsHint", IItemType.TYPE_EXPERT, 
-					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
-					International.getString("Dies ist ein sauber ausformulierter Hinweistext, der noch nicht fertig ist, aber mehrzeilig wird."), 3, 10,10,700);
 			
 			addParameter(efaDirekt_BoathouseExtBoatField1 = new ItemTypeStringList("efaGuiBoathouseBoatListsAddFieldsBoat1",
 					"", 
@@ -3586,17 +3584,41 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 	 * Creates an array of boat/person fields for extended boatFields. Used for both
 	 * internal names and display names, depending on type.
 	 * 
+	 * The returned array is always sorted by the second string field (the Map value,
+	 * i.e. the display name), regardless of type (STRINGLIST_VALUES or STRINGLIST_DISPLAY).
+	 * 
 	 * @param type (STRINGLIST_VALUES or STRINGLIST_DISPLAY)
 	 * @return Array of boat/person fields for extended boat/person types, depending
 	 *         on type either with internal names or display names.
 	 */
 	private String[] makeExtdFieldsArray(int type, Map<String, String> extFields) {
-		Vector<String> extFieldVector = new Vector<String>();
-		extFieldVector.add("");
-		for (Map.Entry<String, String> entry : extFields.entrySet()) {
-			extFieldVector.add((type == STRINGLIST_VALUES ? entry.getKey() : entry.getValue()));
-		}
-		return extFieldVector.toArray(new String[extFieldVector.size()]);
+
+	    // Handle null/empty map: return array with single empty element
+	    if (extFields == null || extFields.isEmpty()) {
+	        return new String[] { "" };
+	    }
+
+	    // it may be inefficient to sort the whole map every time, but since we expect only a few entries
+	    // and this method is not called very often, it should be acceptable.
+
+	    // Sort entries by the map value (display name) case-insensitive	    
+	    java.util.List<Map.Entry<String, String>> entries = extFields.entrySet().stream()
+	            .sorted((e1, e2) -> {
+	                String v1 = (e1.getValue() == null) ? "" : e1.getValue();
+	                String v2 = (e2.getValue() == null) ? "" : e2.getValue();
+	                return v1.compareToIgnoreCase(v2);
+	            })
+	            .collect(Collectors.toList());
+
+	    // Build result: first element empty, then keys (values array) or values (display array),
+	    // but keep the order determined by the sorted display names.
+	    Vector<String> extFieldVector = new Vector<String>();
+	    extFieldVector.add("");
+	    for (Map.Entry<String, String> entry : entries) {
+	        extFieldVector.add(type == STRINGLIST_VALUES ? entry.getKey() : entry.getValue());
+	    }
+
+	    return extFieldVector.toArray(new String[extFieldVector.size()]);
 	}
 	
 	private static HashMap<String, String> createBoatExtFieldsMap(){
@@ -3616,7 +3638,6 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 		result.put(PersonRecord.FREEUSE2, International.getString("Person Freie Verwendung 2"));
 		result.put(PersonRecord.FREEUSE3, International.getString("Person Freie Verwendung 3"));
 		result.put(PersonRecord.INPUTSHORTCUT, International.getString("Eingabekürzel"));
-		result.put(PersonRecord.STATUSID, International.getString("Status"));
 		return result;
 	}
 	
