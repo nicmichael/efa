@@ -1491,7 +1491,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 					International.getString("Dies ist ein sauber ausformulierter Hinweistext, der noch nicht fertig ist, aber mehrzeilig wird."), 3, 10,10,700);
 			
 			addParameter(efaDirekt_BoathouseExtBoatField1 = new ItemTypeStringList("efaGuiBoathouseBoatListsAddFieldsBoat1",
-					BoatRecord.MAXCREWWEIGHT, 
+					"", 
 					makeExtdFieldsArray(STRINGLIST_VALUES, boatExtFields),
 					makeExtdFieldsArray(STRINGLIST_DISPLAY, boatExtFields), IItemType.TYPE_EXPERT,
 					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
@@ -1506,7 +1506,7 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 			efaDirekt_BoathouseExtBoatField2.setPadding(0, 0, 0, 20);
 
 			addParameter(efaDirekt_BoathouseExtPersonField1 = new ItemTypeStringList("efaGuiBoathouseBoatListsAddFieldsPerson1", 
-					PersonRecord.ASSOCIATION,
+					"",
 					makeExtdFieldsArray(STRINGLIST_VALUES, personExtFields),
 					makeExtdFieldsArray(STRINGLIST_DISPLAY, personExtFields), IItemType.TYPE_EXPERT,
 					BaseTabbedDialog.makeCategory(CATEGORY_BOATHOUSE, CATEGORY_GUI),
