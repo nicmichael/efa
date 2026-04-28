@@ -290,23 +290,6 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
                 bs.setColors(colors); 
                 bs.setRecord(item);
 
-                // destination is only shown for boats on the water, and if efaConfig says that destination shall be shown
-                // for boats on the water list.
-
-                // we only have to put the destination in the item text if the two column layout is _in_active.
-                // if two column layout is active, the destination is put into the BoatListItem.secondaryItem right at the end of this method.
-                if (showDestination  &&
-                		isCurrentStatusOnTheWater &&
-                		srEntryNo != null && srEntryNo.length() > 0) {
-                    LogbookRecord lr = logbook.getLogbookRecord(srEntryNo);
-                    if (lr != null) {
-                        String dest = lr.getDestinationAndVariantName();
-                        if (dest != null && dest.length() > 0) {
-                            bs.setName(bs.getName()+ STR_DESTINATION_DELIMITER  + dest);
-                        }
-                    }
-                }
-
                 bsv.add(bs);
                 if (!bs.isSortBySeats()) {
                     break;

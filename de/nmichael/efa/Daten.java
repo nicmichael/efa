@@ -193,6 +193,7 @@ public class Daten {
 	public static String osName = "";
 	public static String osVersion = "";
 	public static String lookAndFeel = "";
+	public static int javaVersionInt = 0;
 
 	// Class names of LookAndFeels provided with efa
 	public static String LAF_METAL = "MetalLookAndFeel";
@@ -436,6 +437,7 @@ public class Daten {
 		project = null;
 		fileSep = System.getProperty("file.separator");
 		javaVersion = System.getProperty("java.version");
+		javaVersionInt = Daten.getJavaVersion();
 		jvmVersion = System.getProperty("java.vm.version");
 		osName = System.getProperty("os.name");
 		osVersion = System.getProperty("os.version");
@@ -1749,16 +1751,20 @@ public class Daten {
 	 * Java *minor* version. Newer Versions are guaranteed to have higher numbers
 	 * than previous versions. e.g. for Java 1.4, this will return "4" for Java 1.5,
 	 * this will return "5" for Java 1.6, this will return "6" for Java 1.7, this
-	 * will return "7"
+	 * will return "7" for Java 1.8. 
+	 * 
+	 * Java versions 9 and newer are not using the "1." prefix anymore, so for Java 9 and newer, 
+	 * this will return "9", "10", "11", etc. If the Java version cannot be determined, 
+	 * this method returns 0.
 	 * 
 	 * @return the Java version
 	 */
 	public static int getJavaVersion() {
 		try {
-			if (Daten.javaVersion.startsWith("1.")) {
-				return Integer.parseInt(Daten.javaVersion.substring(2, 3));
-			}
-			return 99;
+	        int javaVersionInt = Integer.parseInt(Daten.javaVersion.split("\\.")[0]);
+	        if ((javaVersionInt == 1) && (Daten.javaVersion.split("\\.").length > 2))   // Windows calls java 8 java 1.8_xxx
+	            javaVersionInt = Integer.parseInt(Daten.javaVersion.split("\\.")[1]);
+	        return javaVersionInt;
 		} catch (Exception e) {
 			return 0;
 		}

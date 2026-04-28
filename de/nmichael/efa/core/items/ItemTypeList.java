@@ -114,6 +114,7 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
         Font fontBold ;
         FontMetrics fmStandard ;
         FontMetrics fmBold ;
+        Object desktopHints=null;
         
         Color listBackground;
         Color selBg = javax.swing.UIManager.getColor("List.selectionBackground");
@@ -151,6 +152,11 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
             fmStandard = getFontMetrics(fontStandard);
             fmBold = getFontMetrics(fontBold);
             
+            if (Daten.javaVersionInt >= 9) {
+				// On Java 9 and above, we can rely on the desktop hints for optimal text rendering, which may include subpixel anti-aliasing if supported by the OS and font.
+            	desktopHints = Toolkit.getDefaultToolkit().getDesktopProperty("awt.font.desktophints");
+            } // else desktophints remain null
+            
             int prefH = Math.max(fmStandard.getHeight() + 6, (iconHeight > 0 ? iconHeight + 4 : 0));
             setPreferredSize(new Dimension(fieldWidth, prefH));
 
@@ -186,13 +192,15 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
         	 */
             Graphics2D g = (Graphics2D) g0;
 
-            // This is taken from flatlaf code: RenderingHints.KEY_TEXT_ANTIALIASING would enable standard aliasing
-            // without using the the operation system's special renderings like ClearType(r). This would lead to thicker text,
-            // but it would look inconsistent with the rest of the Swing GUI. Flatlaf therefore does not use RenderingHints.KEY_TEXT_ANTIALIASING,
-            // but instead the desktop property "awt.font.desktophints" is applied, which contains text antialiasing hints set by JVM and operating system. 
+            // Handle font aliasing hints.
+            if (desktopHints!=null && desktopHints instanceof Map) {
+				// Java 9+ has better font rendering and less bugs on aliasing, so we can rely on the desktop hints for optimal text rendering.
 
-            Object desktopHints = Toolkit.getDefaultToolkit().getDesktopProperty("awt.font.desktophints");
-            if (desktopHints instanceof Map) {
+	            // RenderingHints.KEY_TEXT_ANTIALIASING would enable standard aliasing without using 
+	            // the the operation system's special renderings like LCD Subpixel rendering. This would lead to thicker text, which may be desirable for some users, 
+	            // but it would look inconsistent with the rest of the Swing GUI. 
+	            // On Java9 and above, "awt.font.desktophints" is applied, which contains text antialiasing hints set by JVM and operating system. 
+	            
                 @SuppressWarnings("unchecked")
                 Map<Object,Object> hints = (Map<Object,Object>) desktopHints;
                 for (Map.Entry<Object,Object> e : hints.entrySet()) {
@@ -202,8 +210,14 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
                         g.setRenderingHint((RenderingHints.Key) key, value);
                     }
                 }
-            }
-            // Use aliasing for smooth shapes (round borders)
+            } else {
+				// For Java 8 and below, or if desktopHints could not be obtained, 
+            	// we enable standard text antialiasing for better text quality, even if it may be a bit thicker. 
+				// This is a tradeoff to avoid very bad font rendering on Java 8, especially on Windows.
+				g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+			}
+            
+            // For graphics, use standard aliasing for smooth shapes (round borders)
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             
             if (currentItem == null) {
