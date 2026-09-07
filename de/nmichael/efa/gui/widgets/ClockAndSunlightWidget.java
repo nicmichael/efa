@@ -91,13 +91,13 @@ public class ClockAndSunlightWidget extends Widget {
                 International.getString("Warntext bei Dunkelheit")));
         addParameterInternal(new ItemTypeInteger(PARAM_WARNTIMEBEFORESUNSET, 30, 0, 60, false,
                 IItemType.TYPE_EXPERT, "",
-                PARAM_WARNTIMEBEFORESUNSET));
+                International.getString("Warnzeit vor Sonnenuntergang (min)")));
         addParameterInternal(new ItemTypeInteger(PARAM_WARNTIMEAFTERSUNSET, 30, 0, 60, false,
                 IItemType.TYPE_EXPERT, "",
-                PARAM_WARNTIMEAFTERSUNSET));
+                International.getString("Warnzeit nach Sonnenuntergang (min)")));
         addParameterInternal(new ItemTypeInteger(PARAM_WARNTIMEBEFORESUNRISE, 30, 0, 60, false,
                 IItemType.TYPE_EXPERT, "",
-                PARAM_WARNTIMEBEFORESUNRISE));
+                International.getString("Warnzeit vor Sonnenaufgang (min)")));
 
         super.setEnabled(true);
         super.setPosition(IWidget.POSITION_CENTER);

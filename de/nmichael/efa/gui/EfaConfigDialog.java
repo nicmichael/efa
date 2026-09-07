@@ -265,7 +265,7 @@ public class EfaConfigDialog extends BaseTabbedDialog {
         JPanel navPanel = new JPanel(new BorderLayout(0, 4));
         navPanel.add(navigationFilterField, BorderLayout.NORTH);
         JScrollPane myScroller = new JScrollPane(navigationList);
-        myScroller.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        //myScroller.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         navPanel.add(myScroller, BorderLayout.CENTER);
         navPanel.setPreferredSize(new Dimension(NAVIGATIONLIST_WIDTH, 10));
 
