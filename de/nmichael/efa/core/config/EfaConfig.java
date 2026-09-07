@@ -686,6 +686,19 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 						BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_COMMON),
 						International.getString("efa-Konfiguration") + " (" + International.getString("remote") + ")"));
 			}
+
+			addParameter(dataFileSaveInterval = new ItemTypeLong("DataFileSaveInterval", 10, 1, 3600,
+					IItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_COMMON),
+					"File Save Interval (sec)"));
+			addParameter(dataFileLockTimeout = new ItemTypeLong("DataFileLockTimeout", DataLocks.LOCK_TIMEOUT / 1000,
+					10, 120, IItemType.TYPE_EXPERT,
+					BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_COMMON), "File Lock Timeout (sec)"));
+
+			addParameter(dataFileSynchronousJournal = new ItemTypeBoolean("DataFileSynchronousJournal", true,
+					IItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_COMMON),
+					"Flush Journal synchronously"));
+			dataFileSynchronousJournal.setIndent(true);
+
 			
 			addHintWordWrap("dataBackupDirectoryHint", IItemType.TYPE_PUBLIC,
 					BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_COMMON),
@@ -2090,17 +2103,6 @@ public class EfaConfig extends StorageObject implements IItemFactory {
 			addParameter(dataAuditCorrectErrors = new ItemTypeBoolean("DataAuditCorrectErrors", true,
 					IItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_DATAACCESS, CATEGORY_COMMON),
 					"DataAuditCorrectErrors"));
-
-			addParameter(dataFileSaveInterval = new ItemTypeLong("DataFileSaveInterval", 10, 1, 3600,
-					IItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_COMMON),
-					"File Save Interval (sec)"));
-			addParameter(dataFileLockTimeout = new ItemTypeLong("DataFileLockTimeout", DataLocks.LOCK_TIMEOUT / 1000,
-					10, 120, IItemType.TYPE_EXPERT,
-					BaseTabbedDialog.makeCategory(CATEGORY_COMMON, CATEGORY_COMMON), "File Lock Timeout (sec)"));
-
-			addParameter(dataFileSynchronousJournal = new ItemTypeBoolean("DataFileSynchronousJournal", true,
-					IItemType.TYPE_EXPERT, BaseTabbedDialog.makeCategory(CATEGORY_DATAACCESS, CATEGORY_COMMON),
-					"Flush Journal synchronously"));
 
 			addHintWordWrap("dataRemoteEfaServerEnabledDescription", IItemType.TYPE_PUBLIC,
 					BaseTabbedDialog.makeCategory(CATEGORY_DATAACCESS, CATEGORY_DATAREMOTE),
