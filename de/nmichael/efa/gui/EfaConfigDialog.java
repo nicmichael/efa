@@ -814,9 +814,10 @@ public class EfaConfigDialog extends BaseTabbedDialog {
         JScrollPane scrollPane = new JScrollPane(innerPanel);
         scrollPane.setPreferredSize(EfaGuiUtils.getTabPanelPreferredSizeEfaConfig(this, NAVIGATIONLIST_WIDTH+50, 200));
         scrollPane.getVerticalScrollBar().setUnitIncrement(12);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder());
 
         innerPanel.setLayout(new GridBagLayout());
-        innerPanel.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
+        innerPanel.setBorder(BorderFactory.createEmptyBorder(8, 2, 0, 6));
         panel.setLayout(new GridBagLayout());
         panel.add(scrollPane, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
         
@@ -920,7 +921,8 @@ public class EfaConfigDialog extends BaseTabbedDialog {
             }
         }
 
-        if (selectedIndex > 1) {
+        if ((filter!=null&& filter.trim().length()>0 && selectedIndex >= 1)
+        		|| ((filter == null || (filter !=null && filter.trim().length()==0) && selectedIndex>1))){
             navigationList.setSelectedIndex(selectedIndex);
             if (navigationList.getFirstVisibleIndex()>selectedIndex || navigationList.getLastVisibleIndex()<selectedIndex) {
             	navigationList.ensureIndexIsVisible(selectedIndex);
