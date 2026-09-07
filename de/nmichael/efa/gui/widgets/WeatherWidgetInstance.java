@@ -63,9 +63,12 @@ public class WeatherWidgetInstance extends WidgetInstance implements IWidgetInst
 	public void stop() {
         try {
         	// stopHTML also lets the thread die, and efaBths is responsible to set up a new thread.
-        	weatherUpdater.stopRunning();
+        	if (weatherUpdater!=null) {
+        		weatherUpdater.stopRunning();
+        	}
         } catch(Exception eignore) {
             // nothing to do, might not be initialized
+        	Logger.logdebug(eignore);
         }
 	}
 
@@ -96,14 +99,14 @@ public class WeatherWidgetInstance extends WidgetInstance implements IWidgetInst
 		roundPanel.revalidate();
 		
         // show a hand cursor on sunrise/sunset/weather widget only if an html popup is set up.
-        if (getHtmlPopupURL() != null && getHtmlPopupURL().length() > 0) {
+        if (hasHtmlPopup()) {
         	mainPanel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         }
         
         // HTML-Popup
         roundPanel.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
-                if (getHtmlPopupURL() != null && getHtmlPopupURL().length() > 0) {
+                if (hasHtmlPopup()) {
                     new HtmlPopupDialog(getCaption(),
                     		getHtmlPopupURL(),
                             getPopupExecCommand(),
@@ -132,7 +135,7 @@ public class WeatherWidgetInstance extends WidgetInstance implements IWidgetInst
 		infoLabel.setOpaque(false);
 		infoLabel.setEditable(false);
 		
-		JPanel titlePanel = WeatherRenderer.getLocationHeader(this.getCaption(), !this.getHtmlPopupURL().isEmpty(), this);
+		JPanel titlePanel = WeatherRenderer.getLocationHeader(getCaption(), hasHtmlPopup(), this);
 		titlePanel.setBackground(getStandardHeaderBackground());
 		titlePanel.setForeground(getStandardHeaderForeground());
 		
@@ -145,6 +148,10 @@ public class WeatherWidgetInstance extends WidgetInstance implements IWidgetInst
 				GridBagConstraints.BOTH, new Insets(2, 4, 2, 4), 0, 0));
 	}
 
+	private boolean hasHtmlPopup() {
+	    return htmlPopupURL != null && !htmlPopupURL.isEmpty();
+	}
+	
 	public String getTempLabel(boolean withUnit) {
 		if (!withUnit) {
 			return "°";
@@ -221,8 +228,8 @@ public class WeatherWidgetInstance extends WidgetInstance implements IWidgetInst
 		return latitude;
 	}
 
-	public void setLatitude(String latiude) {
-		this.latitude = latiude;
+	public void setLatitude(String latitude) {
+		this.latitude = latitude;
 	}
 
 	public String getLongitude() {
@@ -347,6 +354,8 @@ public class WeatherWidgetInstance extends WidgetInstance implements IWidgetInst
             		//depending on the current state of the weatherdata.
            			wdf = WeatherDataCache.getInstance().getWeatherData(ww.getSource(), ww.getLongitude(), ww.getLatitude());
 	            	
+           			//WeatherDataForecast wdf may be null, or the status not be ok.
+           			//but this is handled by the UpdateWeatherRunner. So no need to check for null or wdf.getStatus.
 	            	//Use invokelater as swing threadsafe ways
 	            	SwingUtilities.invokeLater(new UpdateWeatherRunner(this.panel, wdf, ww));
 	
@@ -364,10 +373,10 @@ public class WeatherWidgetInstance extends WidgetInstance implements IWidgetInst
 
             	} catch (InterruptedException e) {
                 	//This is when the thread gets interrupted when it is sleeping.
-                	EfaUtil.foo();            
+                	EfaUtil.foo();
                 } catch (Exception e) {
-                	Throwable t = e.getCause();
-                	if (t.getClass().getName().equalsIgnoreCase("java.lang.InterruptedException")) {
+                	Throwable cause = e.getCause();
+                	if (cause !=null && cause.getClass().getName().equalsIgnoreCase("java.lang.InterruptedException")) {
                 		EfaUtil.foo();
                 	} else {
                 		Logger.logdebug(e);
@@ -400,21 +409,21 @@ public class WeatherWidgetInstance extends WidgetInstance implements IWidgetInst
     	public void run() {
     		try {
 
-    			getInnerPannel();
+    			getInnerPanel();
     			
     			uwrPanel.removeAll();
     			uwrPanel.add(uwrInnerPanel, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER,
     					GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
     			uwrPanel.revalidate();
-    			uwrPanel.updateUI();
-    			uwrPanel.invalidate();
+    			uwrPanel.repaint();
+    			//uwrPanel.updateUI(); not neccessary, usually used for L&F changes (which are not possible at runtime)
     			
     		} catch (Exception e){
     			Logger.log(e);
     		}
     	}
     	
-    	private void getInnerPannel() {
+    	private void getInnerPanel() {
 			
 			uwrInnerPanel = new JPanel();
 			uwrInnerPanel.setLayout(new GridBagLayout());
@@ -423,15 +432,15 @@ public class WeatherWidgetInstance extends WidgetInstance implements IWidgetInst
 			uwrInnerPanel.setBorder(BorderFactory.createEmptyBorder());
 			uwrInnerPanel.setName("WeatherWidget-InnerPanel");
 			uwrInnerPanel.setOpaque(false);
-			
+			final String layoutLocal = getLayout();
     		if (uwrWdf != null && uwrWdf.getStatus() == WDFStatus.OK) {
-        		if (getLayout().equalsIgnoreCase(WeatherWidget.WEATHER_LAYOUT_CURRENT_CLASSIC)) {
+        		if (WeatherWidget.WEATHER_LAYOUT_CURRENT_CLASSIC.equalsIgnoreCase(layoutLocal)) {
 					WeatherRendererCurrentClassic.renderWeather(uwrWdf, uwrInnerPanel, uwrWW);
-				} else if (getLayout().equalsIgnoreCase(WeatherWidget.WEATHER_LAYOUT_CURRENT_WIND)) {
+				} else if (WeatherWidget.WEATHER_LAYOUT_CURRENT_WIND.equalsIgnoreCase(layoutLocal)) {
 					WeatherRendererCurrentWind.renderWeather(uwrWdf, uwrInnerPanel, uwrWW);
-				} else if (getLayout().equalsIgnoreCase(WeatherWidget.WEATHER_LAYOUT_CURRENT_UVINDEX)) {
+				} else if (WeatherWidget.WEATHER_LAYOUT_CURRENT_UVINDEX.equalsIgnoreCase(layoutLocal)) {
 					WeatherRendererCurrentUVIndex.renderWeather(uwrWdf, uwrInnerPanel, uwrWW);
-				} else if (getLayout().equalsIgnoreCase(WeatherWidget.WEATHER_LAYOUT_FORECASTSIMPLE)){
+				} else if (WeatherWidget.WEATHER_LAYOUT_FORECASTSIMPLE.equalsIgnoreCase(layoutLocal)){
 					WeatherRendererForeCastSimple.renderWeather(uwrWdf, uwrInnerPanel, uwrWW);
 				} else {
 					WeatherRendererForeCastComplex.renderWeather(uwrWdf, uwrInnerPanel, uwrWW);
