@@ -1,6 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <efaOnlineUpdate>
 	<Version>
+        <VersionID>2.5.3#13</VersionID>
+        <ReleaseDate>07.09.2026</ReleaseDate>
+        <DownloadUrl>TODO</DownloadUrl>
+        <DownloadSize>TODO</DownloadSize>
+     	<MinimumJavaVersion>1.8</MinimumJavaVersion>
+		<MinimumEfaCloudVersion>2.3.3</MinimumEfaCloudVersion>
+        <ShowNotice lang="de">Wenn efaCloud eingesetzt wird, muss der Server mindestens Version 2.3.3 unterstützen. EfaCloud 2.4.0_12 und höher werden empfohlen.</ShowNotice>
+        <ShowNotice lang="en">If you use efaCloud, make sure your server at least supports efaCloud Version 2.3.3. It is recommended to upgrade to EfaCloud 2.4.0_12 or above.</ShowNotice>
+        <Changes lang="de">
+        	<ChangeItem>Bugfix: HTML Widget Inhalte werden nun zuverlässig neu geladen beim Eintreten des Update intervals. Beim Laden von einer lokalen Datei wird auch versucht, den Zeichensatz korrekt zu ermitteln (mit und ohne BOM: UTF-8, UTF-16BE, UTF-16LE, Windows-1252 (Windows ANSI) or ISO-8859-1)</ChangeItem>
+        	<ChangeItem>Bugfix: Härtung des Codes von WeatherWidget* und HTMLWidget*</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+        	<ChangeItem>Bugfix: HTML Widget content is now reliably reloaded when the update interval is reached. When loading from a local file, an attempt is also made to correctly determine the character set (with and without BOM: UTF-8, UTF-16BE, UTF-16LE, Windows-1252 (Windows ANSI) or ISO-8859-1)</ChangeItem>
+        	<ChangeItem>Bugfix: Hardening of the code of WeatherWidget* and HTMLWidget*</ChangeItem>
+        </Changes>
+	</Version>
+	<Version>
         <VersionID>2.5.3#10</VersionID>
         <ReleaseDate>16.08.2026</ReleaseDate>
         <DownloadUrl>TODO</DownloadUrl>

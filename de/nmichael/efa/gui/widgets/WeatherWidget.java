@@ -213,13 +213,10 @@ public class WeatherWidget extends Widget implements IItemFactory {
 		//which Item do we want to get the elements from?
 		if (itemName.endsWith(PARAM_WEATHER_LOCATIONLIST)) {
 			
-            ItemTypeItemList item = (ItemTypeItemList)getParameterInternal(PARAM_WEATHER_LOCATIONLIST);
-            int i = item.size()+1;
-			
             // build the GUI
             ItemTypeLabelTextfield curItem; 
             IItemType[] items = new IItemType[11];
-            i=0;
+            int i=0;
             
             items[i] = new ItemTypeBoolean(PARAM_WEATHER_VISIBLE, true,
                     IItemType.TYPE_PUBLIC, "",
@@ -314,9 +311,23 @@ public class WeatherWidget extends Widget implements IItemFactory {
 	@Override
     public Vector <WidgetInstance> createInstances(){
 		
+		// cache some often used parameter values which have a common value for all WeatherInstances
+		String weatherSpeedScale = getWeatherSpeedScale();
+		String weatherTempScale = getWeatherTempScale();
+		String weatherSource = getWeatherSource();
+		
+		Color standardBackground = this.getStandardBackground();
+		Color standardForeground = this.getStandardForeground();
+		Color standardHeaderBackground = this.getStandardHeaderBackground();
+		Color standardHeaderForeground = this.getStandardHeaderForeground();
+		Color errorBackground = this.getErrorBackground();
+		Color errorForeground = this.getErrorForeground();
+		Color errorHeaderBackground = this.getErrorHeaderBackground();
+		Color errorHeaderForeground = this.getErrorHeaderForeground();
+		
 		//initialize Weather Data Cache for current widget
-		WeatherDataCache.getInstance().setSpeedScale(getWeatherSpeedScale());
-		WeatherDataCache.getInstance().setTempScale(getWeatherTempScale());
+		WeatherDataCache.getInstance().setSpeedScale(weatherSpeedScale);
+		WeatherDataCache.getInstance().setTempScale(weatherTempScale);
 		WeatherDataCache.getInstance().setRegularUpdateIntervalSeconds(getUpdateInterval());
 		
 		//now initialize Instances
@@ -326,7 +337,7 @@ public class WeatherWidget extends Widget implements IItemFactory {
 		if (myWList==null) {
 			return returnList;
 		}
-		
+
 		for (int i = 0; i < myWList.size(); i++) {
 			if (getWeatherPageVisible(myWList, i)) {
 				WeatherWidgetInstance wwi = new WeatherWidgetInstance();
@@ -334,9 +345,9 @@ public class WeatherWidget extends Widget implements IItemFactory {
 				wwi.setPosition(this.getWeatherPosition(myWList,i));
 	
 				wwi.setUpdateInterval(this.getUpdateInterval());
-				wwi.setSource(this.getWeatherSource());
-				wwi.setSpeedScale(this.getWeatherSpeedScale());
-				wwi.setTempScale(this.getWeatherTempScale());
+				wwi.setSource(weatherSource);
+				wwi.setSpeedScale(weatherSpeedScale);
+				wwi.setTempScale(weatherTempScale);
 	
 				wwi.setCaption(this.getWeatherCaption(myWList,i));
 				wwi.setLatitude(this.getWeatherLatitude(myWList,i));
@@ -348,15 +359,15 @@ public class WeatherWidget extends Widget implements IItemFactory {
 				wwi.setHtmlPopupWidth(this.getHtmlPopupWidth(myWList,i));
 				wwi.setPopupExecCommand(this.getPopupExecCommand(myWList,i));
 			
-				wwi.setStandardBackground(this.getStandardBackground());
-				wwi.setStandardForeground(this.getStandardForeground());
-				wwi.setStandardHeaderBackground(this.getStandardHeaderBackground());
-				wwi.setStandardHeaderForeground(this.getStandardHeaderForeground());
+				wwi.setStandardBackground(standardBackground);
+				wwi.setStandardForeground(standardForeground);
+				wwi.setStandardHeaderBackground(standardHeaderBackground);
+				wwi.setStandardHeaderForeground(standardHeaderForeground);
 				
-				wwi.setErrorBackground(this.getErrorBackground());
-				wwi.setErrorForeground(this.getErrorForeground());
-				wwi.setErrorHeaderBackground(this.getErrorHeaderBackground());
-				wwi.setErrorHeaderForeground(this.getErrorHeaderForeground());		
+				wwi.setErrorBackground(errorBackground);
+				wwi.setErrorForeground(errorForeground);
+				wwi.setErrorHeaderBackground(errorHeaderBackground);
+				wwi.setErrorHeaderForeground(errorHeaderForeground);		
 				
 				returnList.add(wwi);
 			}
@@ -426,7 +437,12 @@ public class WeatherWidget extends Widget implements IItemFactory {
     }    
     
 	private String getWeatherLongitude(ItemTypeItemList list, int i) {
-		return getLongLatTogether(list, i).getLongitude()+"";
+		uk.me.jstott.coordconv.LatitudeLongitude longlat = getLongLatTogether(list, i);
+		if (longlat != null) {
+			return longlat.getLongitude()+"";
+		} else {
+			return "";
+		}
 	}
 
 	private uk.me.jstott.coordconv.LatitudeLongitude getLongLatTogether(ItemTypeItemList list, int index){
@@ -481,7 +497,12 @@ public class WeatherWidget extends Widget implements IItemFactory {
 	}
 
 	private String getWeatherLatitude(ItemTypeItemList list, int i) {
-		return getLongLatTogether(list, i).getLatitude()+"";
+		uk.me.jstott.coordconv.LatitudeLongitude longlat = getLongLatTogether(list, i);
+		if (longlat != null) {
+			return longlat.getLatitude()+"";
+		} else {
+			return "";
+		}
 	}
 
 	private String getWeatherLayout(ItemTypeItemList list, int i) {
@@ -494,15 +515,15 @@ public class WeatherWidget extends Widget implements IItemFactory {
 	}
 
 	private String getWeatherSource() {
-		return ((ItemTypeStringList) getParameterInternal(PARAM_WEATHER_SOURCE)).toString();
+		return ((ItemTypeStringList) getParameterInternal(PARAM_WEATHER_SOURCE)).getValue();
 	}
 
 	public String getWeatherTempScale() {
-		return ((ItemTypeStringList) getParameterInternal(PARAM_TEMPERATURESCALE)).toString();
+		return ((ItemTypeStringList) getParameterInternal(PARAM_TEMPERATURESCALE)).getValue();
 	}
 
 	public String getWeatherSpeedScale() {
-		return ((ItemTypeStringList) getParameterInternal(PARAM_SPEEDSCALE)).toString();
+		return ((ItemTypeStringList) getParameterInternal(PARAM_SPEEDSCALE)).getValue();
 	}
 
     public String getPopupExecCommand(ItemTypeItemList list, int i) {

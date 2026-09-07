@@ -99,7 +99,9 @@ public class WeatherDataHourly {
 	public void setDescription(List<String> description) {
 		this.description = description;
 	}	
-	
+	public int getItemSize() {
+		return time.size();
+	}
 	/**
 	 * Returns the index of the array which matches the next forecast item depending of the current systems time. 
 	 *  
