@@ -108,7 +108,7 @@ public class ItemTypeColor extends ItemTypeLabelValue {
         this.fieldGridFill = GridBagConstraints.HORIZONTAL;
     	int count = super.displayOnGui(dlg, panel, x, y);
         panel.add(butdel, new GridBagConstraints(x+fieldGridWidth+1, y, 1, fieldGridHeight, 0.0, 0.0,
-                GridBagConstraints.WEST, fieldGridFill,
+                GridBagConstraints.WEST, GridBagConstraints.NONE,
                 new Insets((itemOnNewRow ? 0 : padYbefore), (itemOnNewRow ? padXbefore : 0), padYafter, padXafter), 0, 0));
         return count;
     }

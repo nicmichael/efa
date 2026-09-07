@@ -133,7 +133,7 @@ public class WeatherWidget extends Widget implements IItemFactory {
 	    locationList.setShortDescription(International.getString("Wetter-Orte"));		
 		locationList.setRepeatTitle(true);
 		locationList.setShowUpDownButtons(true);
-		locationList.setXForAddDelButtons(WEATHERWIDGET_GRIDWIDTH-1);
+		locationList.setXForAddDelButtons(5);
 		locationList.setStorageType(ItemTypeItemList.StorageType.keyvalue);//important flag: GUI items can change in order and elements, without breaking storage
 
 

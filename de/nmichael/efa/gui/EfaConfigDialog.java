@@ -94,6 +94,9 @@ public class EfaConfigDialog extends BaseTabbedDialog {
     private List<NavEntry> allNavigationEntries;
     private JTextField navigationFilterField;
     private Timer navigationFilterTimer;
+    private RoundedLabel breadcrumbLabel;
+    private JPanel rightContentPanel;
+
 
     private JPanel cardPanel;
     private CardLayout cardLayout;
@@ -268,15 +271,23 @@ public class EfaConfigDialog extends BaseTabbedDialog {
 
         JScrollPane cardScrollWrapper = new JScrollPane(cardPanel);
         cardScrollWrapper.getVerticalScrollBar().setUnitIncrement(12);
-        cardScrollWrapper.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-
-        JPanel rightPanel = new JPanel(new BorderLayout());
-        rightPanel.add(cardScrollWrapper, BorderLayout.CENTER);
+        cardScrollWrapper.setBorder(BorderFactory.createEmptyBorder(3, 0, 0, 0));
         
+        breadcrumbLabel = new RoundedLabel();
+        breadcrumbLabel.setBorder(new RoundedBorder(Daten.efaConfig.getHeaderForegroundColor()));
+        breadcrumbLabel.setOpaque(true);
+        breadcrumbLabel.setForeground(Daten.efaConfig.getHeaderForegroundColor());
+        breadcrumbLabel.setBackground(Daten.efaConfig.getHeaderBackgroundColor());//.darker());
+        breadcrumbLabel.setFont(breadcrumbLabel.getFont().deriveFont(Font.BOLD));
+        breadcrumbLabel.setText(" ");
+        
+        rightContentPanel = new JPanel(new BorderLayout(0, 6));
+        rightContentPanel.add(breadcrumbLabel, BorderLayout.NORTH);
+        rightContentPanel.add(cardScrollWrapper, BorderLayout.CENTER);
+
         JPanel contentPanel = new JPanel(new BorderLayout(8, 0));
         contentPanel.add(navPanel, BorderLayout.WEST);
-        contentPanel.add(rightPanel, BorderLayout.CENTER);
-        //contentPanel.setBorder(BorderFactory.createEmptyBorder());
+        contentPanel.add(rightContentPanel, BorderLayout.CENTER);
 
         currentPane.setLayout(new BorderLayout(8, 0));
         currentPane.add(contentPanel, BorderLayout.CENTER);
@@ -805,17 +816,9 @@ public class EfaConfigDialog extends BaseTabbedDialog {
         scrollPane.getVerticalScrollBar().setUnitIncrement(12);
 
         innerPanel.setLayout(new GridBagLayout());
+        innerPanel.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
         panel.setLayout(new GridBagLayout());
-        panel.add(scrollPane, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(2, 2, 2, 2), 0, 0));
-
-        RoundedLabel localBreadcrumb = new RoundedLabel();
-        localBreadcrumb.setBorder(new RoundedBorder(Daten.efaConfig.getHeaderForegroundColor()));
-        localBreadcrumb.setOpaque(true);
-        localBreadcrumb.setForeground(Daten.efaConfig.getHeaderForegroundColor());
-        localBreadcrumb.setBackground(Daten.efaConfig.getHeaderBackgroundColor().darker());
-        localBreadcrumb.setFont(localBreadcrumb.getFont().deriveFont(Font.BOLD));
-        localBreadcrumb.setText(getBreadcrumbFromFullCategory(thisCatKey));
-        innerPanel.add(localBreadcrumb, new GridBagConstraints(0, 0, 10, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 0, 10, 0), 0, 0));
+        panel.add(scrollPane, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
         
         Vector<IItemType> v = items.get(thisCatKey);
         int y = 1;
@@ -828,6 +831,14 @@ public class EfaConfigDialog extends BaseTabbedDialog {
             }
         }
 
+        // Push remaining vertical space below all real items so content stays top-aligned.
+        JPanel filler = new JPanel();
+        filler.setOpaque(false);
+        innerPanel.add(filler, new GridBagConstraints(
+                0, y, 12, 1, 1.0, 1.0,
+                GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH,
+                new Insets(0, 0, 0, 0), 0, 0));
+        
         return y > 1 ? panel : null;
     }
 
@@ -1214,10 +1225,10 @@ public class EfaConfigDialog extends BaseTabbedDialog {
         if (indexToSelect < 0) {
             for (int i = 0; i < navigationModel.size(); i++) {
                 NavEntry e = navigationModel.get(i);
-                if (e.selectable) {
+                //if (e.selectable) {
                     indexToSelect = i;
                     break;
-                }
+                //}
             }
         }
 
@@ -1245,12 +1256,28 @@ public class EfaConfigDialog extends BaseTabbedDialog {
             cardLayout.show(cardPanel, CARD_EMPTY);
             lastSelectedCardKey = CARD_EMPTY;
             persistedSelectedCardKey = CARD_EMPTY;
+            updateBreadcrumb(null);
             return;
         }
         cardLayout.show(cardPanel, cardKey);
         lastSelectedCardKey = cardKey;
         persistedSelectedCardKey = cardKey;
+        updateBreadcrumb(fullCategoryKey);
     }
+    
+    private void updateBreadcrumb(String fullCategoryKey) {
+        if (breadcrumbLabel == null) {
+            return;
+        }
+
+        if (fullCategoryKey == null || fullCategoryKey.length() == 0) {
+            breadcrumbLabel.setText(" ");
+            return;
+        }
+
+        breadcrumbLabel.setText(getBreadcrumbFromFullCategory(fullCategoryKey));
+    }
+
 
     /**
 	 * Generates a breadcrumb string from the full category key by splitting it into parts and retrieving
