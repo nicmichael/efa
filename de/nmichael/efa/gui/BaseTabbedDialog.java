@@ -76,6 +76,37 @@ import de.nmichael.efa.util.Logger;
 import de.nmichael.efa.util.Mnemonics;
 
 // @i18n complete
+/*
+ * BaseTabbedDialog is an abstract class that extends BaseDialog and provides a framework for creating dialogs with tabbed panes or left navigation.
+ * It manages the display of items based on their categories and supports expert mode for advanced users.
+ * The class handles the layout, navigation, and filtering of items, allowing subclasses to customize the behavior as needed.
+ * 
+ * There are two navigation modes: MODE_TABBED_PANE (0) and MODE_LEFT_NAVIGATION (1). The default mode is MODE_TABBED_PANE,
+ * which is standard for all former efa dialogs. The left navigation mode is used e.g. in EfaConfigDialog and StatisticsEditDialog.
+ * 
+ * TabbedPane navigation mode displays items in a classic tabbed pane layout, and does not provide a search/filter functionality. 
+ * 
+ * Left navigation mode displays items in a list on the left side of the dialog, with a filter field for searching items.
+ * - The navigation list shows categories and subcategories, and selecting an entry displays the corresponding card panel on the right.
+ * 
+ * - The filter field allows users to search for items by name or content, and the list updates dynamically based on the filter text.
+ * 
+ * - Filter field can be focused using Ctrl+F, and the filter is applied after a short delay (500 ms) to avoid excessive updates while typing.
+ *   So it is even performant with large numbers of items, even on a Raspberry Pi 3B+ with all of the efaconfig items displayed.
+ * 
+ * - Filtering is case-insensitive and ignores HTML tags in item labels.
+ * 
+ * - The filtering looks for matches in both category names and the content of the card panels,
+ *   and only displays entries that have matching items or subcategories.
+ *   Filtering looks for matches in the JLabels (with highlighting), abstract buttons (with highlighting), 
+ *   and without highligtning in the values of JTextComponents (JTextField, JTextArea, JPasswordField) JLists or JComboBoxes in the card panels.
+ *   
+ * - The navigation list supports keyboard navigation, including arrow keys and Enter to activate the selected entry.
+ * 
+ * 
+ * - The breadcrumb label at the top of the right panel shows the current category path.
+ * - The class also manages the persistence of the selected panel and filter text across dialog updates.
+ */
 public abstract class BaseTabbedDialog extends BaseDialog {
 
     private static final String CARD_EMPTY = "__empty__";
@@ -84,7 +115,7 @@ public abstract class BaseTabbedDialog extends BaseDialog {
     public static final String CATEGORY_COMMON = "%00%" + International.getString("Allgemein");
     public static final String CATEGORY_NONAME = "%00%NONAME";
     
-    // Navigation Mode Konstanten
+    // Constants for Navigation Mode 
     protected static final int MODE_TABBED_PANE = 0;
     protected static final int MODE_LEFT_NAVIGATION = 1;
     protected static final int NAVIGATIONLIST_WIDTH = 220;
@@ -211,6 +242,12 @@ public abstract class BaseTabbedDialog extends BaseDialog {
         return catName;
     }
 
+    /**
+	 * Sets the items to be displayed in the dialog and builds the category hierarchy and items per category.
+	 * Also determines if there are any expert mode items present.
+	 * 
+	 * @param guiItems The vector of IItemType items to be displayed in the dialog.
+	 */
     public void setItems(Vector<IItemType> guiItems) {
         this.allGuiItems = guiItems;
         expertModeItems = false;
@@ -276,11 +313,16 @@ public abstract class BaseTabbedDialog extends BaseDialog {
         }
 
     }
-
+    @Override
     public void keyAction(ActionEvent evt) {
         _keyAction(evt);
     }
 
+    /**
+	 * Initializes the dialog by setting up the main panel layout, creating the data panel,
+	 * adding the expert mode checkbox, and adding the data north panel to the data panel.
+	 * @throws Exception if an error occurs during initialization.
+	 */ 
     protected void iniDialog() throws Exception {
         mainPanel.setLayout(new BorderLayout());
         dataPanel = new JPanel();
@@ -322,6 +364,12 @@ public abstract class BaseTabbedDialog extends BaseDialog {
         EfaGuiUtils.enableAutoScrollOnFocus(this);
     }
 
+    /**
+	 * Updates the GUI by either reading values from the GUI or using existing values,
+	 * and then rebuilding the GUI based on the current category hierarchy and items per category.
+	 * 
+	 * @param readValuesFromGui If true, values will be read from the GUI before rebuilding; otherwise, existing values will be used.
+	 */
     public void updateGui(boolean readValuesFromGui) {
         if (readValuesFromGui) {
             getValuesFromGui();
@@ -436,6 +484,7 @@ public abstract class BaseTabbedDialog extends BaseDialog {
             
             if (subCat.size() != 0) {
                 JTabbedPane subTabbedPane = new JTabbedPane();
+                // buildGUiWithTabbedPane also calls buildLeafPanel() for leaf panels, so we don't need to do it here
                 if (buildGuiWithTabbedPane(subCat, items, thisCatKey, subTabbedPane, selectNextCat, otherPanelHeight ) > 0) {
                     if (currentPane instanceof JTabbedPane) {
                         currentPane.add(subTabbedPane, catName);
@@ -1173,6 +1222,11 @@ public abstract class BaseTabbedDialog extends BaseDialog {
         return sb.toString();
     }
 
+    /**
+	 * Splits the full category key into its individual parts based on the defined category separator.
+	 *  * @param fullCategoryKey The full category key to split.
+	 *  @return A list of strings representing the individual parts of the full category key.
+	 *  */
     private List<String> splitCategoryKey(String fullCategoryKey) {
         ArrayList<String> parts = new ArrayList<String>();
         if (fullCategoryKey == null || fullCategoryKey.length() == 0) {
@@ -1195,7 +1249,11 @@ public abstract class BaseTabbedDialog extends BaseDialog {
         return parts;
     }
 
-
+    /**
+	 * Applies the navigation filter to the navigation list and card panels based on the provided filter string
+	 * and updates the selection in the navigation list accordingly. If the filter string is null, it is treated as an empty string.
+	 * @param filter The filter string to apply to the navigation list and card panels.
+	 * */
     private void applyNavigationFilter(String filter) {
         String effectiveFilter = filter == null ? "" : filter;
 
@@ -1268,7 +1326,12 @@ public abstract class BaseTabbedDialog extends BaseDialog {
             showCard(CARD_EMPTY, null);
         }
     }
-
+    
+    /**
+	 * Applies highlights to the text of JLabel and AbstractButton components within the card panels based on
+	 * the provided normalized filter string. If the filter string is empty, it restores the original text of the components.
+	 * @param normalizedFilter The normalized filter string used to determine which parts of the text to highlight.
+	 * */
     private void applyHighlightsToCards(String normalizedFilter) {
         String f = normalizedFilter == null ? "" : normalizedFilter.trim();
 
@@ -1287,6 +1350,12 @@ public abstract class BaseTabbedDialog extends BaseDialog {
         }
     }
 
+    /**
+	 * Recursively applies highlights to the text of JLabel and AbstractButton components within the specified component
+	 * based on the provided normalized filter string. If the component is a container, it traverses its child components.
+	 * @param c The component to process for highlights.
+	 * @param normalizedFilter The normalized filter string used to determine which parts of the text to highlight.
+	 * */
     private void applyHighlightsRecursive(Component c, String normalizedFilter) {
         if (c == null) {
             return;
@@ -1513,12 +1582,23 @@ public abstract class BaseTabbedDialog extends BaseDialog {
         return html.toString();
     }
 
+    /**
+	 * Builds a search text string for the specified component and its child components.
+	 *  * @param c The component to build the search text from.
+	 *  @return A string containing the concatenated search text from the component and its child components.
+	 *  */
     private String buildSearchText(Component c) {
         StringBuilder sb = new StringBuilder();
         appendSearchText(c, sb);
         return sb.toString();
     }
 
+    /**
+	 * Appends the search text from the specified component and its child components to the provided String
+	 * Builder. It handles JLabel, AbstractButton, JTextComponent, JList, and JComboBox components, as well as containers.
+	 * @param c The component to extract search text from.
+	 * @param sb The StringBuilder to append the search text to.
+	 * */
     private void appendSearchText(Component c, StringBuilder sb) {
         if (c == null) {
             return;
@@ -1569,7 +1649,11 @@ public abstract class BaseTabbedDialog extends BaseDialog {
             }
         }
     }
-
+    /**
+	 * Normalizes the search text by stripping HTML tags and converting it to lowercase.
+	 * @param text The input text to normalize.
+	 * @return A normalized string suitable for search operations.	
+	 * */
     private String normalizeSearchText(String text) {
         if (text == null) {
             return "";
@@ -1578,6 +1662,11 @@ public abstract class BaseTabbedDialog extends BaseDialog {
         return noTags.toLowerCase();
     }
 
+    /**
+	 * Strips HTML tags from the input text using a regular expression pattern.
+	 * @param text The input text from which to remove HTML tags.
+	 * @return A string with HTML tags removed, or an empty string if the input is null.
+	 * */
     private String stripHtmlTags(String text) {
         if (text == null) {
             return "";
@@ -1586,6 +1675,12 @@ public abstract class BaseTabbedDialog extends BaseDialog {
         return m.replaceAll(" ");
     }
 
+    /**
+	 * Retrieves the parent key from the provided full category key by finding the last occurrence of the
+	 * CATEGORY_SEPARATOR. If the separator is not found, it returns null.
+	 *  * @param fullKey The full category key from which to extract the parent key.
+	 *  @return The parent key as a string, or null if the full key is null, empty, or has no parent.
+	 *  */
     private String getParentKey(String fullKey) {
         if (fullKey == null || fullKey.length() == 0) {
             return null;
@@ -1608,7 +1703,11 @@ public abstract class BaseTabbedDialog extends BaseDialog {
         panel.add(label, BorderLayout.CENTER);
         return panel;
     }
-
+    
+    /**
+	 * Retrieves values from the GUI components and checks if any of the values have changed.
+	 * @return true if any values have changed, false otherwise.
+	 * */
     protected boolean getValuesFromGui() {
         if (allGuiItems == null) {
             return false;
@@ -1627,6 +1726,9 @@ public abstract class BaseTabbedDialog extends BaseDialog {
         return changed;
    }
 
+    /**
+	 * Updates the GUI components based on the current values of the underlying data model.
+	 * */
     void expertModeChanged(ActionEvent e) {
         if (expertMode.isSelected()) {
             expertMode.setForeground(Color.red);
@@ -1637,6 +1739,9 @@ public abstract class BaseTabbedDialog extends BaseDialog {
         updateGui();
     }
 
+    /**
+	 * Updates the GUI components based on the current values of the underlying data model.
+	 * */
     protected String getSelectedPanel(JTabbedPane pane) {
         if (_selectedPanel != null) {
             String s = _selectedPanel;
@@ -1662,10 +1767,19 @@ public abstract class BaseTabbedDialog extends BaseDialog {
         }
     }
 
+    /**
+	 * Retrieves the list of all GUI items managed by this dialog.
+	 * @return A Vector containing all IItemType instances managed by this dialog.
+	 * */
     public Vector<IItemType> getItems() {
         return allGuiItems;
     }
 
+    /**
+	 * Retrieves the IItemType instance corresponding to the specified name.
+	 * @param name The name of the item to retrieve.
+	 * @return The IItemType instance with the specified name, or null if no such item exists.
+	 * */
     public IItemType getItem(String name) {
         for (int i=0; i<allGuiItems.size(); i++) {
             if (allGuiItems.get(i).getName().equals(name)) {
@@ -1675,6 +1789,11 @@ public abstract class BaseTabbedDialog extends BaseDialog {
         return null;
     }
     
+    /**
+	 * Reduces the height of the inner scroll pane based on the visibility and preferred sizes of
+	 * the dataNorthPanel and topLevelPane. It calculates the total height to reduce from the scroll pane.
+	 * @return The total height to reduce from the inner scroll pane.
+	 * */
     protected int reduceInnerScrollPaneHeight() { 
         int height = 0;
         if (dataNorthPanel != null && dataNorthPanel.isVisible()) {
@@ -1686,6 +1805,9 @@ public abstract class BaseTabbedDialog extends BaseDialog {
         return height;
     }
 
+    /**
+	 * Inner class to hold the state of cursors for various components in the dialog.
+	 * */
     private static class CursorState {
         private Window window;
         private Cursor windowCursor;
@@ -1727,7 +1849,10 @@ public abstract class BaseTabbedDialog extends BaseDialog {
             return label;
         }
     }
-
+    
+    /**
+	 * Custom ListCellRenderer for rendering navigation entries in the navigation list.
+	 * */
     private static class NavEntryRenderer extends DefaultListCellRenderer {
         private static final Color TOP_GROUP_BG = new Color(230, 230, 230);
         private static final int NAV_INDENT_PER_LEVEL = 10;
