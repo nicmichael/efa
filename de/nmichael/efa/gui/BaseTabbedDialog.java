@@ -53,14 +53,17 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
+import javax.swing.UIManager;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.JTextComponent;
@@ -121,6 +124,8 @@ public abstract class BaseTabbedDialog extends BaseDialog {
     protected static final int MODE_LEFT_NAVIGATION = 1;
     protected static final int NAVIGATIONLIST_WIDTH = 220;
     private static final String HIGHLIGHT_STYLE = "background-color:#fff176; color:#000000;";
+    private static final Color HIGHLIGHT_COLOR = new Color(0xFFF176);
+    private static final Color FILTERFIELD_FILLED = new Color(255,255,204);
     private static final Pattern TAG_PATTERN = Pattern.compile("<[^>]*>");
     private static final int FILTER_DELAY_MS = 500;
     private static final int MIN_FILTER_LENGTH = 2;
@@ -887,7 +892,7 @@ public abstract class BaseTabbedDialog extends BaseDialog {
             }
             public void focusLost(FocusEvent e) {
                 if (!navigationFilterField.getText().isEmpty()) {
-                    navigationFilterField.setBackground(new Color(255,255,204));
+                    navigationFilterField.setBackground(FILTERFIELD_FILLED);
                 } else {
                     navigationFilterField.setBackground(navigationFilterFieldBackground);
                 }
@@ -1408,38 +1413,192 @@ public abstract class BaseTabbedDialog extends BaseDialog {
     }
 
     /**
-	 * Recursively applies highlights to the text of JLabel and AbstractButton components within the specified component
-	 * based on the provided normalized filter string. If the component is a container, it traverses its child components.
+	 * Recursively applies highlights to text components and data-containing components (JTextArea, JComboBox, JList).
+	 * This method traverses child components within containers and applies highlighting where appropriate.
+	 * 
+	 * Performance considerations:
+	 * - Early termination for null components
+	 * - Minimal memory allocation for non-matching components
+	 * - Direct component checking without intermediate storage
 	 * @param c The component to process for highlights.
 	 * @param normalizedFilter The normalized filter string used to determine which parts of the text to highlight.
-	 * */
+	 */
     private void applyHighlightsRecursive(Component c, String normalizedFilter) {
+        // Early exit für null-Komponenten
         if (c == null) {
             return;
         }
 
+        // Prüfe ob der Komponenten-Text den Filter enthält
+        String componentText = getComponentSearchableText(c);
+        boolean matchesFilter = componentText != null && 
+                               componentText.toLowerCase().contains(normalizedFilter.toLowerCase());
+
+        // Highlights für JLabel anwenden
         if (c instanceof JLabel) {
             JLabel label = (JLabel) c;
             if (!originalLabelTexts.containsKey(label)) {
                 originalLabelTexts.put(label, label.getText());
             }
             String original = originalLabelTexts.get(label);
-            label.setText(highlightForDisplay(original, normalizedFilter));
-        } else if (c instanceof AbstractButton) {
+            // Nur hervorheben wenn Filter vorhanden und Match gefunden
+            if (matchesFilter) {
+                label.setText(highlightForDisplay(original, normalizedFilter));
+            } else if (original != null) {
+                label.setText(original);
+            }
+        } 
+        // Highlights für AbstractButton anwenden
+        else if (c instanceof AbstractButton) {
             AbstractButton button = (AbstractButton) c;
             if (!originalButtonTexts.containsKey(button)) {
                 originalButtonTexts.put(button, button.getText());
             }
             String original = originalButtonTexts.get(button);
-            button.setText(highlightForDisplay(original, normalizedFilter));
+            // Nur hervorheben wenn Filter vorhanden und Match gefunden
+            if (matchesFilter) {
+                button.setText(highlightForDisplay(original, normalizedFilter));
+            } else if (original != null) {
+                button.setText(original);
+            }
+        } 
+        // apply highlights for jtextarea, but not for passwordfield.
+        // otherwise, you could determine the contents of the passwortfield by applying filters consecutively.
+        else if ((c instanceof JTextField) && (!(c instanceof JPasswordField))) {
+            JTextField textfield = (JTextField) c;
+            String text = textfield.getText();
+            // Visuelle Hervorhebung für JTextArea durch Border oder Hintergrundfarbe
+            if (matchesFilter && text != null && !text.isEmpty()) {
+                // Highlight durch Hintergrundfarbe
+                textfield.setBackground(HIGHLIGHT_COLOR); // Gelber Hintergrund wie bei Labels
+                textfield.setOpaque(true);
+            } else {
+                // Zurücksetzen auf Standard-Hintergrundfarbe
+                textfield.setBackground(UIManager.getColor("TextField.background"));
+                textfield.setOpaque(true);
+            }
+        } 
+        // Highlights für JTextArea anwenden
+        else if (c instanceof JTextArea) {
+            JTextArea textArea = (JTextArea) c;
+            String text = textArea.getText();
+            // Visuelle Hervorhebung für JTextArea durch Border oder Hintergrundfarbe
+            if (matchesFilter && text != null && !text.isEmpty()) {
+                // Highlight durch Hintergrundfarbe
+                textArea.setBackground(HIGHLIGHT_COLOR); // Gelber Hintergrund wie bei Labels
+                textArea.setOpaque(true);
+            } else {
+                // Zurücksetzen auf Standard-Hintergrundfarbe
+                textArea.setBackground(UIManager.getColor("TextArea.background"));
+                textArea.setOpaque(true);
+            }
+        } 
+        // Highlights für JComboBox anwenden
+        else if (c instanceof JComboBox) {
+            JComboBox<?> comboBox = (JComboBox<?>) c;
+            Object selectedItem = comboBox.getSelectedItem();
+            // Visuelle Hervorhebung für JComboBox durch Hintergrundfarbe
+            if (matchesFilter && selectedItem != null) {
+                // Highlight durch Hintergrundfarbe
+                comboBox.setBackground(HIGHLIGHT_COLOR); // Gelber Hintergrund
+                comboBox.setOpaque(true);
+            } else {
+                // Zurücksetzen auf Standard-Hintergrundfarbe
+                comboBox.setBackground(UIManager.getColor("ComboBox.background"));
+                comboBox.setOpaque(true);
+            }
+        } 
+        // Highlights für JList anwenden
+        else if (c instanceof JList) {
+            JList<?> list = (JList<?>) c;
+            int[] selectedIndices = list.getSelectedIndices();
+            // Visuelle Hervorhebung für JList durch Hintergrundfarbe
+            if (matchesFilter && selectedIndices.length > 0) {
+                // Highlight durch Hintergrundfarbe
+                list.setBackground(HIGHLIGHT_COLOR); // Gelber Hintergrund
+                list.setOpaque(true);
+            } else {
+                // Zurücksetzen auf Standard-Hintergrundfarbe
+                list.setBackground(UIManager.getColor("List.background"));
+                list.setOpaque(true);
+            }
         }
 
+        // Rekursiv alle Kind-Komponenten verarbeiten
         if (c instanceof Container) {
             Component[] children = ((Container) c).getComponents();
             for (int i = 0; i < children.length; i++) {
                 applyHighlightsRecursive(children[i], normalizedFilter);
             }
         }
+    }
+
+    /**
+     * Retrieves the searchable text content from a component.
+     * This method extracts text that can be searched from various component types.
+     * 
+     * Performance optimization:
+     * - Single method to get searchable text instead of multiple instanceof checks
+     * - Avoids null pointer exceptions through null-safe design
+     * 
+     * @param c The component to extract searchable text from.
+     * @return The searchable text content, or null if the component has no searchable text.
+     */
+    private String getComponentSearchableText(Component c) {
+        // Frühe Rückgabe für null-Komponenten
+        if (c == null) {
+            return null;
+        }
+
+        // JLabel: Text direkt auslesen
+        if (c instanceof JLabel) {
+        	return originalLabelTexts.get(c);
+            //return (JLabel) c).getText();
+        } 
+        // AbstractButton: Text direkt auslesen
+        else if (c instanceof AbstractButton) {
+        	return originalButtonTexts.get(c);
+            //return ((AbstractButton) c).getText();
+        } 
+        // JTextComponent (JTextField, JTextArea, JPasswordField): Text auslesen
+        else if (c instanceof JTextComponent) {
+            return ((JTextComponent) c).getText();
+        } 
+        // JList: Ausgewählte Elemente auslesen
+        else if (c instanceof JList<?>) {
+            JList<?> list = (JList<?>) c;
+            int[] selectedIndices = list.getSelectedIndices();
+            
+            // Wenn keine Elemente ausgewählt, null zurückgeben (Performance)
+            if (selectedIndices.length == 0) {
+                return null;
+            }
+            
+            // Alle ausgewählten Elemente als Text zusammenfassen
+            StringBuilder sb = new StringBuilder();
+            for (int i : selectedIndices) {
+                Object item = list.getModel().getElementAt(i);
+                if (item != null) {
+                    sb.append(" ").append(item.toString());
+                }
+            }
+            return sb.toString();
+        } 
+        // JComboBox: Ausgewähltes Element auslesen
+        else if (c instanceof JComboBox) {
+            JComboBox<?> comboBox = (JComboBox<?>) c;
+            Object selectedItem = comboBox.getSelectedItem();
+            
+            // Wenn nichts ausgewählt, null zurückgeben (Performance)
+            if (selectedItem == null) {
+                return null;
+            }
+            
+            return selectedItem.toString();
+        }
+
+        // Unbekannter Komponenten-Typ
+        return null;
     }
     
     /**
@@ -1449,6 +1608,13 @@ public abstract class BaseTabbedDialog extends BaseDialog {
 	 *
 	 * @return The modified text with highlighted occurrences of the filter string, or the original text if no highlights are applied.
 	 */
+    /**
+     * Highlights occurrences of the normalized filter string within the original text for display purposes.
+     * @param originalText The original text to be displayed, which may contain HTML tags.
+     * @param normalizedFilter The normalized filter string used to determine which parts of the text to highlight.
+     *
+     * @return The modified text with highlighted occurrences of the filter string, or the original text if no highlights are applied.
+     */
     private String highlightForDisplay(String originalText, String normalizedFilter) {
         if (originalText == null) {
             return null;
@@ -1550,11 +1716,8 @@ public abstract class BaseTabbedDialog extends BaseDialog {
 
         String visibleLower = visible.toString().toLowerCase();
         int flen = filter.length();
-        int firstHit = visibleLower.indexOf(filter);
-        if (firstHit < 0) {
-            return originalText;
-        }
-
+        
+        // Finde alle Treffer EINMALIG
         ArrayList<Integer> hitStarts = new ArrayList<Integer>(8);
         ArrayList<Integer> hitEnds = new ArrayList<Integer>(8);
         int searchPos = 0;
@@ -1565,53 +1728,57 @@ public abstract class BaseTabbedDialog extends BaseDialog {
             }
             hitStarts.add(Integer.valueOf(h));
             hitEnds.add(Integer.valueOf(h + flen));
-            searchPos = h + flen;
+            searchPos = h + 1; // WICHTIG: Nicht h + flen, sondern h + 1, um überlappende Treffer zu finden
         }
 
-        int hitPtr = 0;
+        if (hitStarts.isEmpty()) {
+            return originalText;
+        }
+
+        // Wende Hervorhebungen auf Chunks an
         for (int r = 0; r < runChunkIdx.size(); r++) {
             int cidx = runChunkIdx.get(r).intValue();
             String text = chunks.get(cidx);
             int rs = runStart.get(r).intValue();
             int re = runEnd.get(r).intValue();
 
-            while (hitPtr < hitStarts.size() && hitEnds.get(hitPtr).intValue() <= rs) {
-                hitPtr++;
+            // Finde Treffer, die in diesen Run fallen
+            ArrayList<Integer> relevantHits = new ArrayList<Integer>();
+            for (int hp = 0; hp < hitStarts.size(); hp++) {
+                int hs = hitStarts.get(hp).intValue();
+                int he = hitEnds.get(hp).intValue();
+                
+                // Treffer überlappt mit diesem Run?
+                if (hs < re && he > rs) {
+                    relevantHits.add(Integer.valueOf(hp));
+                }
             }
-            if (hitPtr >= hitStarts.size() || hitStarts.get(hitPtr).intValue() >= re) {
+
+            if (relevantHits.isEmpty()) {
                 continue;
             }
 
             StringBuilder out = new StringBuilder(text.length() + 32);
             int localPos = 0;
-            int hp = hitPtr;
 
-            while (hp < hitStarts.size()) {
+            for (int hi = 0; hi < relevantHits.size(); hi++) {
+                int hp = relevantHits.get(hi).intValue();
                 int hs = hitStarts.get(hp).intValue();
                 int he = hitEnds.get(hp).intValue();
-                if (hs >= re) {
-                    break;
-                }
-                if (he <= rs) {
-                    hp++;
-                    continue;
-                }
 
-                int os = hs > rs ? hs : rs;
-                int oe = he < re ? he : re;
-                int ls = os - rs;
-                int le = oe - rs;
+                // Berechne Positionen relativ zu diesem Run
+                int os = Math.max(hs, rs) - rs;
+                int oe = Math.min(he, re) - rs;
 
-                if (ls > localPos) {
-                    out.append(EfaUtil.escapeHtml(text.substring(localPos, ls)));
+                if (os > localPos) {
+                    out.append(EfaUtil.escapeHtml(text.substring(localPos, os)));
                 }
 
                 out.append("<span style='").append(HIGHLIGHT_STYLE).append("'><b>")
-                   .append(EfaUtil.escapeHtml(text.substring(ls, le)))
+                   .append(EfaUtil.escapeHtml(text.substring(os, oe)))
                    .append("</b></span>");
 
-                localPos = le;
-                hp++;
+                localPos = oe;
             }
 
             if (localPos < text.length()) {
@@ -1638,6 +1805,7 @@ public abstract class BaseTabbedDialog extends BaseDialog {
         html.append("</html>");
         return html.toString();
     }
+
 
     /**
 	 * Builds a search text string for the specified component and its child components.
