@@ -11,9 +11,11 @@
         <ShowNotice lang="en">If you use efaCloud, make sure your server at least supports efaCloud Version 2.3.3. It is recommended to upgrade to EfaCloud 2.4.0_12 or above.</ShowNotice>
         <Changes lang="de">
         	<ChangeItem>Neu: EfaConfig mit Baumnavigation und Suchfunktion. Neuordnung von einigen Optionen. Aktualisierung der Beschriftung von Optionen.</ChangeItem>
+        	<ChangeItem>Neu: Statistik-Editor mit Baumnavigation und Suchfunktion.</ChangeItem>
         </Changes>
         <Changes lang="en">
         	<ChangeItem>New: EfaConfig with tree navigation and search function. Reorganisation of some options. Some of the option's labels have been updated.</ChangeItem>
+        	<ChangeItem>New: Statistics editor with tree navigation and search function.</ChangeItem>
         </Changes>
 	</Version>
 	<Version>
