@@ -91,11 +91,11 @@ section="Other"
         <ShowNotice lang="en">If you use efaCloud, make sure your server at least supports efaCloud Version 2.3.3. It is recommended to upgrade to EfaCloud 2.4.0_12 or above.</ShowNotice>
         <Changes lang="de">
         	<ChangeItem section="Widget">Bugfix: HTML Widget Inhalte werden nun zuverlässig neu geladen beim Eintreten des Update intervals. Beim Laden von einer lokalen Datei wird auch versucht, den Zeichensatz korrekt zu ermitteln (mit und ohne BOM: UTF-8, UTF-16BE, UTF-16LE, Windows-1252 (Windows ANSI) or ISO-8859-1)</ChangeItem>
-        	<ChangeItem section="Stability">Bugfix: Härtung des Codes von WeatherWidget* und HTMLWidget*</ChangeItem>
+        	<ChangeItem section="Widget">Bugfix: Härtung des Codes von WeatherWidget* und HTMLWidget*</ChangeItem>
         </Changes>
         <Changes lang="en">
         	<ChangeItem section="Widget">Bugfix: HTML Widget content is now reliably reloaded when the update interval is reached. When loading from a local file, an attempt is also made to correctly determine the character set (with and without BOM: UTF-8, UTF-16BE, UTF-16LE, Windows-1252 (Windows ANSI) or ISO-8859-1)</ChangeItem>
-        	<ChangeItem section="Stability">Bugfix: Hardening of the code of WeatherWidget* and HTMLWidget*</ChangeItem>
+        	<ChangeItem section="Widget">Bugfix: Hardening of the code of WeatherWidget* and HTMLWidget*</ChangeItem>
         </Changes>
 	</Version>
 	<Version>
@@ -111,14 +111,14 @@ section="Other"
         	<ChangeItem section="Boathouse">Neu: ist in efaBths drei Minuten lang Inaktivität, erhält die Liste der verfügbaren Boote den Fokus.</ChangeItem>
 			<ChangeItem section="Statistics">Neu: Statistiken: Obmann Feld ist im XML-Export enthalten.</ChangeItem>	
 			<ChangeItem section="Session Entry">Bugfix: Bei der Anlage einer Fahrt mit ausgeschiedenen Mitgliedern wird deren letztgültiges Berechtigungsprofil geprüft.</ChangeItem>
-        	<ChangeItem section="Stability">Bugfix: efaBase blieb seit efa 2.5.3#3 beim Beenden im Hintergrund hängen. efaBase lässt sich nun wieder korrekt beenden.</ChangeItem>
+        	<ChangeItem section="Base">Bugfix: efaBase blieb seit efa 2.5.3#3 beim Beenden im Hintergrund hängen. efaBase lässt sich nun wieder korrekt beenden.</ChangeItem>
         	<ChangeItem section="GUI/Usability">Bugfix: Kleinere Darstellungsfehler bei GUI-Elementen mit abgerundeten Ecken wurden behoben.</ChangeItem>
         </Changes>
         <Changes lang="en">
 			<ChangeItem section="Boathouse">New: If there is three minutes of inactivity in efaBths, the list of available boats will receive focus.</ChangeItem>
 			<ChangeItem section="Statistics">New: Statistics: "Boat Captain" field is included in the XML export.</ChangeItem>
 			<ChangeItem section="Session Entry">Bugfix: When creating a session with former members, their last valid permission profile is checked.</ChangeItem>
-        	<ChangeItem section="Stability">Bugfix: efaBase has been hanging in the background since efa 2.5.3#3 when exiting. efaBase can now be exited correctly again.</ChangeItem>
+        	<ChangeItem section="Base">Bugfix: efaBase has been hanging in the background since efa 2.5.3#3 when exiting. efaBase can now be exited correctly again.</ChangeItem>
 			<ChangeItem section="GUI/Usability">Bugfix: Minor display errors concerning GUI elements with rounded corners have been fixed.</ChangeItem>
         </Changes>
 	</Version>
@@ -769,7 +769,7 @@ section="Other"
 			<ChangeItem section="efaCloud">Neu: Bei Aktualisierung von Gewässern nach Update: Hinweis darauf, dass das Gewässerupdate nur bei einer Instanz im efaCloud-System erfolgen sollte.</ChangeItem>
 			<ChangeItem section="efaCloud">Neu: Bei Aktualisierung von Gewässern (manueller Aufruf): Hinweis darauf, dass das Gewässerupdate nur bei einer Instanz im efaCloud-System erfolgen sollte.</ChangeItem>
 			<ChangeItem section="efaCloud">Neu: Bei Anlage neuer Fahrtenbücher werden Hinweise zur Benennung der Fahrtenbücher gegeben.</ChangeItem>
-			<ChangeItem section="efaCloud">New: Wenn das aktuelle Projekt ein efaCloud Projekt ist, wird ein Hinweis angezeigt.</ChangeItem>
+			<ChangeItem section="efaCloud">Neu: Wenn das aktuelle Projekt ein efaCloud Projekt ist, wird ein Hinweis angezeigt.</ChangeItem>
 			<ChangeItem section="Base">BugFix: efaBase schließt sich nicht mehr bei Betätigung von ESC im Hauptfenster.</ChangeItem>
 			<ChangeItem section="Admin/Data Edit">BugFix: Admin Modus: Boote bearbeiten: Register 'Bootsreservierungen' und 'Bootsschäden' wachsen mit der Größe des Dialogs.</ChangeItem>
 			<ChangeItem section="Admin/Data Edit">BugFix: Admin Modus: Projekt/Fahrtenbuch/Vereinsarbeit/Plugin Liste: Listen wachsen mit der Dialoggröße.</ChangeItem>
@@ -851,7 +851,7 @@ section="Other"
             <ChangeItem section="Admin/Other">BugFix: In Beta-Versionen wird im Admin-Modus nicht mehr beständig die Aktualisierung der Gewässerliste angeboten.</ChangeItem>
             <ChangeItem section="Admin/Configuration">BugFix: Versteckte Option für "efa immer im Vordergrund" wird wieder angezeigt.</ChangeItem>
             <ChangeItem section="Admin/Other">BugFix: Wenn ein Backup efa-Konfigurationsdaten wiederherstellt, dann wird zum Neustart von EFA aufgefordert. Hierdurch wird verhindert, dass der Audit Task beim Öffnen des Projekts Daten korrigiert, weil er ggfs. nicht geladene TYPEN oder andere Konfigurationsdaten (noch) nicht findet.</ChangeItem>
-            <ChangeItem section="Stability"> Audit Task behoben, wenn Reservierungen zu nicht sichtbaren Booten gelöscht werden sollen.</ChangeItem>
+            <ChangeItem section="Stability"> Bugfix: Fehler in Audit Task behoben, wenn Reservierungen zu nicht sichtbaren Booten gelöscht werden sollen.</ChangeItem>
 			<ChangeItem section="Admin/Other">BugFix: Wenn ein Restore auch Konfigurationsdaten wiederherstellt, wird das Projekt nicht neu geladen und der Anwender zum Neustart von efa aufgefordert. Dies sorgt dafür, dass die wiederhergestellten Konfigurationsdaten, Bootstypen etc. direkt zum Einsatz kommen.</ChangeItem>
 			<ChangeItem section="Admin/Other">BugFix: Admin Dialog: Besseres Layout, wenn ein anstehender Fahrtenbuch- oder Vereinsarbeitswechsel dargestellt wird.</ChangeItem>			
             <ChangeItem section="efaCLI">BugFix: EFA#102: EFA2.5.0#8 Beta: efaCLI Export: bisherige Standards für Feld- und Text-Trennzeichen sollen bestehen bleiben (für Abwärtskompatiblität)</ChangeItem>
@@ -1103,7 +1103,7 @@ section="Other"
             <ChangeItem section="GUI/Usability">Neu: Einfacheres Finden von Einträgen mit Umlauten/Sonderzeichen in Tabellen, Bootslisten, und Eingabefeldern mit Vervollständigung (konfigurierbar)</ChangeItem>
             <ChangeItem section="Admin/Configuration">BugFix: Mehr Konfigurationselemente, die einen Neustart von EFA benötigen, melden dieses beim Speichern der Konfigurationsdaten.</ChangeItem>
             <ChangeItem section="Session Entry">BugFix: Der Dialog für die Auswahl unklar eingegebener Werte zeigt keine doppelten Einträge mehr an.</ChangeItem>      
-            <ChangeItem section="Boathouse">Reservierungen: Ändern von Bootsnamen und Erstellen von Reservierungs-Kopien</ChangeItem>
+            <ChangeItem section="Boathouse">Neu: Reservierungen: Ändern von Bootsnamen und Erstellen von Reservierungs-Kopien</ChangeItem>
 			<ChangeItem section="efaCloud">BugFix: Synchronisation in efaBase erlaubt Übernahme von Datensätzen mit vielen Änderungen.</ChangeItem>
         </Changes>
         <Changes lang="en">
@@ -1457,7 +1457,7 @@ section="Other"
         <DownloadSize>4249556</DownloadSize>
 		<MinimumJavaVersion>1.6</MinimumJavaVersion>
         <Changes lang="de">
-            <ChangeItem section="Other">New: Erweiterte User Statistics bei remote Online-Update</ChangeItem>
+            <ChangeItem section="Other">Neu: Erweiterte User Statistics bei remote Online-Update</ChangeItem>
         </Changes>
         <Changes lang="en">
             <ChangeItem section="Other">New: Enhanced Statistics during remote Online Update</ChangeItem>
@@ -1472,7 +1472,7 @@ section="Other"
 		<MinimumJavaVersion>1.6</MinimumJavaVersion>
         <Changes lang="de">
             <ChangeItem section="Session Entry">Bugfix: NullPointerException beim Beenden einer Fahrt korrigiert</ChangeItem>
-            <ChangeItem section="Other">New: User Statistics bei remote Online-Update</ChangeItem>
+            <ChangeItem section="Other">Neu: User Statistics bei remote Online-Update</ChangeItem>
         </Changes>
         <Changes lang="en">
             <ChangeItem section="Session Entry">Bugfix: NullPointerException fixed when finishing a session</ChangeItem>
