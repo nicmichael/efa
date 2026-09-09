@@ -2600,6 +2600,7 @@ public class StatisticsRecord extends DataRecord implements IItemListener {
         String CAT_FIELDSLOGBOOK= "%033%" + International.getString("Fahrtenbuch");
         String CAT_FIELDSOTHER  = "%034%" + International.getString("Weitere");
         String CAT_FIELDSBARS   = "%035%" + International.getString("Balken");
+        String CAT_STATISTIC	= "%01%" + International.getString("Statistik");
         String CAT_SORTING      = "%04%" + International.getString("Sortierung");
         String CAT_COMP         = "%05%" + International.getString("Wettbewerbe");
         String CAT_OUTPUT       = "%06%" + International.getString("Ausgabe");
@@ -2609,35 +2610,35 @@ public class StatisticsRecord extends DataRecord implements IItemListener {
 
         // CAT_BASEDATA
         v.add(item = new ItemTypeString(StatisticsRecord.NAME, getName(),
-                IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("Name")));
+                IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CAT_STATISTIC,CAT_BASEDATA), International.getString("Name")));
         item.setNotNull(true);
         v.add(item = new ItemTypeBoolean(StatisticsRecord.PUBLICLYAVAILABLE, getPubliclyAvailable(),
-                IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("Statistik allgemein verfügbar")));
+                IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CAT_STATISTIC,CAT_BASEDATA), International.getString("Statistik allgemein verfügbar")));
         ((ItemTypeBoolean)item).registerItemListener(this);
         v.add(item = new ItemTypeDate(StatisticsRecord.DATEFROM, getDateFrom(),
-                IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("Von")));
+                IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CAT_STATISTIC,CAT_BASEDATA), International.getString("Von")));
         itemDateFrom = (ItemTypeDate)item;
         v.add(item = new ItemTypeDate(StatisticsRecord.DATETO, getDateTo(),
-                IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("Bis")));
+                IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CAT_STATISTIC,CAT_BASEDATA), International.getString("Bis")));
         ((ItemTypeDate)item).setMustBeAfter(itemDateFrom, true);
         itemDateTo = (ItemTypeDate)item;
         v.add(item = new ItemTypeStringList(StatisticsRecord.STATISTICCATEGORY, getStatisticCategory(),
                 getStatisticCategories(ARRAY_STRINGLIST_VALUES), getStatisticCategories(ARRAY_STRINGLIST_DISPLAY),
-                IItemType.TYPE_PUBLIC, CAT_BASEDATA,
+                IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CAT_STATISTIC,CAT_BASEDATA),
                 International.getString("Statistiktyp")));
         item.registerItemListener(this);
         this.itemStatisticCategory = (ItemTypeStringList)item;
         v.add(item = new ItemTypeStringList(StatisticsRecord.STATISTICTYPE, getStatisticType(),
                 getStatisticTypes(getStatisticCategoryEnum(), ARRAY_STRINGLIST_VALUES),
                 getStatisticTypes(getStatisticCategoryEnum(), ARRAY_STRINGLIST_DISPLAY),
-                IItemType.TYPE_PUBLIC, CAT_BASEDATA,
+                IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CAT_STATISTIC,CAT_BASEDATA),
                 International.getString("Statistikart")));
         item.registerItemListener(this);
         this.itemStatisticType = (ItemTypeStringList)item;
         v.add(item = new ItemTypeStringList(StatisticsRecord.STATISTICKEY, getStatisticKey(),
                 getStatisticKeys(getStatisticType(), ARRAY_STRINGLIST_VALUES),
                 getStatisticKeys(getStatisticType(), ARRAY_STRINGLIST_DISPLAY),
-                IItemType.TYPE_PUBLIC, CAT_BASEDATA,
+                IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CAT_STATISTIC,CAT_BASEDATA),
                 International.getString("Statistikschlüssel")));
         this.itemStatisticKey = (ItemTypeStringList)item;
 
@@ -2667,6 +2668,7 @@ public class StatisticsRecord extends DataRecord implements IItemListener {
                 International.getString("Fahrtart")));
         itemFilterSessionType = (ItemTypeMultiSelectList<String>)item;
         itemFilterSessionType.setEnabled(!getFilterSessionTypeAll());
+        ((ItemTypeMultiSelectList)item).setFieldSize(400, 300);
         v.add(item = new ItemTypeBoolean(StatisticsRecord.FILTERSESSIONTYPEALL, getFilterSessionTypeAll(),
                 IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CAT_FILTER,CAT_FILTERSESSIONTYPE),
                 International.getString("alle")));
@@ -2677,6 +2679,7 @@ public class StatisticsRecord extends DataRecord implements IItemListener {
                 International.getString("Bootstyp")));
         itemFilterBoatType = (ItemTypeMultiSelectList<String>)item;
         itemFilterBoatType.setEnabled(!getFilterBoatTypeAll());
+        ((ItemTypeMultiSelectList)item).setFieldSize(400, 300);
         v.add(item = new ItemTypeBoolean(StatisticsRecord.FILTERBOATTYPEALL, getFilterBoatTypeAll(),
                 IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CAT_FILTER,CAT_FILTERBOATTYPE),
                 International.getString("alle")));
@@ -2687,6 +2690,7 @@ public class StatisticsRecord extends DataRecord implements IItemListener {
                 International.getString("Bootsplätze")));
         itemFilterBoatSeats = (ItemTypeMultiSelectList<String>)item;
         itemFilterBoatSeats.setEnabled(!getFilterBoatSeatsAll());
+        ((ItemTypeMultiSelectList)item).setFieldSize(400, 300);
         v.add(item = new ItemTypeBoolean(StatisticsRecord.FILTERBOATSEATSALL, getFilterBoatSeatsAll(),
                 IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CAT_FILTER,CAT_FILTERBOATSEAT),
                 International.getString("alle")));
@@ -2839,49 +2843,49 @@ public class StatisticsRecord extends DataRecord implements IItemListener {
         // CAT_SORTING
         v.add(item = new ItemTypeStringList(StatisticsRecord.SORTINGCRITERIA, getSortingCriteria(),
                 getSortingCriteria(ARRAY_STRINGLIST_VALUES), getSortingCriteria(ARRAY_STRINGLIST_DISPLAY),
-                IItemType.TYPE_PUBLIC, CAT_SORTING,
+                IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CAT_STATISTIC,CAT_SORTING),
                 International.getString("Sortierkriterium")));
         itemTypeSortingCriteria = (ItemTypeStringList)item;
         v.add(item = new ItemTypeStringList(StatisticsRecord.SORTINGORDER, getSortingOrder(),
                 getSortingOrders(ARRAY_STRINGLIST_VALUES), getSortingOrders(ARRAY_STRINGLIST_DISPLAY),
-                IItemType.TYPE_PUBLIC, CAT_SORTING,
+                IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CAT_STATISTIC,CAT_SORTING),
                 International.getString("Sortierreihenfolge")));
         itemTypeSortingOrder = (ItemTypeStringList)item;
 
         // CAT_COMP
         v.add(item = new ItemTypeInteger(StatisticsRecord.COMPYEAR, getCompYear(),
                 1900, 2100,
-                IItemType.TYPE_PUBLIC, CAT_COMP,
+                IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CAT_STATISTIC,CAT_COMP),
                 International.getString("Wettbewerbsjahr")));
         item.registerItemListener(this);
         itemCompYear = (ItemTypeInteger)item;
 
         v.add(item = new ItemTypeInteger(StatisticsRecord.COMPPERCENTFULFILLED, getCompPercentFulfilled(),
                 0, 100,
-                IItemType.TYPE_PUBLIC, CAT_COMP,
+                IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CAT_STATISTIC,CAT_COMP),
                 International.getString("Prozent erfüllt")));
         v.add(item = new ItemTypeBoolean(StatisticsRecord.COMPOUTPUTRULES, getCompOutputRules(),
-                IItemType.TYPE_PUBLIC, CAT_COMP,
+                IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CAT_STATISTIC,CAT_COMP),
                 International.getString("Wettbewerbsbedingungen ausgeben")));
         v.add(item = new ItemTypeBoolean(StatisticsRecord.COMPOUTPUTSHORT, getCompOutputShort(),
-                IItemType.TYPE_PUBLIC, CAT_COMP,
+                IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CAT_STATISTIC,CAT_COMP),
                 International.getString("Ausgabe im Kurzformat")));
         v.add(item = new ItemTypeBoolean(StatisticsRecord.COMPOUTPUTWITHOUTDETAILS, getCompOutputWithoutDetails(),
-                IItemType.TYPE_PUBLIC, CAT_COMP,
+                IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CAT_STATISTIC,CAT_COMP),
                 International.getString("Ausgabe ohne Details")));
         v.add(item = new ItemTypeBoolean(StatisticsRecord.COMPOUTPUTADDITIONALWITHREQUIREMENTS, getCompOutputAdditionalWithRequirements(),
-                IItemType.TYPE_PUBLIC, CAT_COMP,
+                IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CAT_STATISTIC,CAT_COMP),
                 International.getString("Ausgabe zusätzlich mit Anforderungen")));
         v.add(item = new ItemTypeBoolean(StatisticsRecord.COMPOUTPUTALLDESTINATIONAREAS, getCompOutputAllDestinationAreas(),
-                IItemType.TYPE_PUBLIC, CAT_COMP,
+                IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CAT_STATISTIC,CAT_COMP),
                 International.onlyFor("Alle Zielbereiche ausgeben", "de")));
 
         // CAT_OUTPUT
-        v.add(item = EfaGuiUtils.createHint("HINT_"+StatisticsRecord.OUTPUTFILE, IItemType.TYPE_PUBLIC, CAT_OUTPUT, "<html>"+International.getStringWithMnemonic("STATISTICS_RELATIVE_PATHS_HINT")+"</html>", 3, 0, 10));
+        v.add(item = EfaGuiUtils.createHint("HINT_"+StatisticsRecord.OUTPUTFILE, IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CAT_STATISTIC,CAT_OUTPUT), "<html>"+International.getStringWithMnemonic("STATISTICS_RELATIVE_PATHS_HINT")+"</html>", 3, 0, 10));
         this.itemOutputFileHINT = (ItemTypeLabel) item;
         v.add(item = new ItemTypeStringList(StatisticsRecord.OUTPUTTYPE, getOutputType(),
                 getOutputTypes(ARRAY_STRINGLIST_VALUES), getOutputTypes(ARRAY_STRINGLIST_DISPLAY),
-                IItemType.TYPE_PUBLIC, CAT_OUTPUT,
+                IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CAT_STATISTIC,CAT_OUTPUT),
                 International.getString("Ausgabeart")));
         item.registerItemListener(this);
         item.setNotNull(true);
@@ -2889,38 +2893,38 @@ public class StatisticsRecord extends DataRecord implements IItemListener {
                 International.getString("Ausgabedatei"),
                 International.getString("alle Dateien"),
                 null, ItemTypeFile.MODE_SAVE, ItemTypeFile.TYPE_FILE,
-                IItemType.TYPE_PUBLIC, CAT_OUTPUT, International.getString("Ausgabedatei")));
+                IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CAT_STATISTIC,CAT_OUTPUT), International.getString("Ausgabedatei")));
         item.setNotNull(true);
         this.itemOutputFile = (ItemTypeFile)item;
         v.add(item = new ItemTypeStringList(StatisticsRecord.OUTPUTENCODING, getOutputEncoding(),
                 new String[] { Daten.ENCODING_UTF, Daten.ENCODING_ISO },
                 new String[] { Daten.ENCODING_UTF, Daten.ENCODING_ISO },
-                IItemType.TYPE_PUBLIC, CAT_OUTPUT,
+                IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CAT_STATISTIC,CAT_OUTPUT),
                 International.getStringWithMnemonic("Zeichensatz")
         ));
         item.setNotNull(true);
         this.itemOutputEncoding = (ItemTypeStringList)item;
         v.add(item = new ItemTypeBoolean(StatisticsRecord.OUTPUTHTMLUPDATETABLE, getOutputHtmlUpdateTable(),
-                IItemType.TYPE_PUBLIC, CAT_OUTPUT,
+                IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CAT_STATISTIC,CAT_OUTPUT),
                 International.getString("in existierenden HTML-Dateien nur Tabelle ersetzen")));
         this.itemOutputHtmlUpdateTable = (ItemTypeBoolean)item;
         v.add(item = new ItemTypeString(StatisticsRecord.OUTPUTCSVSEPARATOR, getOutputCsvSeparator(),
-                IItemType.TYPE_PUBLIC, CAT_OUTPUT,
+                IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CAT_STATISTIC,CAT_OUTPUT),
                 International.getString("Feldtrenner") + " (CSV)"));
         item.setNotNull(true);
         this.itemOutputCsvSeparator = (ItemTypeString)item;
         v.add(item = new ItemTypeString(StatisticsRecord.OUTPUTCSVQUOTES, getOutputCsvQuotes(),
-                IItemType.TYPE_PUBLIC, CAT_OUTPUT,
+                IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CAT_STATISTIC,CAT_OUTPUT),
                 International.getString("Texttrenner") + " (CSV)"));
         this.itemOutputCsvQuotes = (ItemTypeString)item;
         v.add(item = new ItemTypeButton(GUIITEM_OUTPUTFTP,
-                IItemType.TYPE_PUBLIC, CAT_OUTPUT,
+                IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CAT_STATISTIC,CAT_OUTPUT),
                 International.getString("FTP-Upload") + " ..."));
         ((ItemTypeButton)item).setFieldGrid(2, GridBagConstraints.EAST, GridBagConstraints.NONE);
         ((ItemTypeButton)item).registerItemListener(this);
         this.itemOutputFtpButton = (ItemTypeButton)item;
         v.add(item = new ItemTypeButton(GUIITEM_OUTPUTEMAIL,
-                IItemType.TYPE_PUBLIC, CAT_OUTPUT,
+                IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CAT_STATISTIC,CAT_OUTPUT),
                 International.getString("email-Versand") + " ..."));
         ((ItemTypeButton)item).setFieldGrid(2, GridBagConstraints.EAST, GridBagConstraints.NONE);
         ((ItemTypeButton)item).registerItemListener(this);
@@ -2928,33 +2932,33 @@ public class StatisticsRecord extends DataRecord implements IItemListener {
 
         // CAT_OPTIONS
         v.add(item = new ItemTypeBoolean(StatisticsRecord.OPTIONDISTANCEWITHUNIT, getOptionDistanceWithUnit(),
-                IItemType.TYPE_PUBLIC, CAT_OPTIONS,
+                IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CAT_STATISTIC,CAT_OPTIONS),
                 International.getString("Entfernungen mit Längeneinheit ausgeben")));
         v.add(item = new ItemTypeBoolean(StatisticsRecord.OPTIONTRUNCATEDIST, getOptionTruncateDistance(),
-                IItemType.TYPE_PUBLIC, CAT_OPTIONS,
+                IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CAT_STATISTIC,CAT_OPTIONS),
                 International.getString("Nachkommastellen bei Ausgabe von Entfernungen abschneiden")));
         v.add(item = new ItemTypeBoolean(StatisticsRecord.OPTIONLISTALLNULLENTRIES, getOptionListAllNullEntries(),
-                IItemType.TYPE_PUBLIC, CAT_OPTIONS,
+                IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CAT_STATISTIC,CAT_OPTIONS),
                 International.getString("Alle Einträge ausgeben")));
         v.add(item = new ItemTypeBoolean(StatisticsRecord.OPTIONIGNORENULLVALUES, getOptionIgnoreNullValues(),
-                IItemType.TYPE_PUBLIC, CAT_OPTIONS,
+                IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CAT_STATISTIC,CAT_OPTIONS),
                 International.getString("Nullwerte nicht ausgeben")));
         v.add(item = new ItemTypeBoolean(StatisticsRecord.OPTIONSUMGUESTSANDOTHERS, getOptionSumGuestsAndOthers(),
-                IItemType.TYPE_PUBLIC, CAT_OPTIONS,
+                IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CAT_STATISTIC,CAT_OPTIONS),
                 International.getString("Gäste und andere zusammenfassen")));
         v.add(item = new ItemTypeBoolean(StatisticsRecord.OPTIONSUMGUESTSBYCLUB, getOptionSumGuestsByClub(),
-                IItemType.TYPE_PUBLIC, CAT_OPTIONS,
+                IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CAT_STATISTIC,CAT_OPTIONS),
                 International.getString("Gäste/Fremdboote vereinsweise zusammenfassen")));
         v.add(item = new ItemTypeStringList(StatisticsRecord.OPTIONSHOWVALIDLASTTRIP, 
                 getOptionShowValidLastTrip() ? SHOWDATAVALID_LASTTRIPTIME: SHOWDATAVALID_STATENDTIME,
                 new String[] { SHOWDATAVALID_STATENDTIME, SHOWDATAVALID_LASTTRIPTIME },
                 new String[] { International.getString("Ende des Auswertungszeitraums"), 
                                International.getString("Letzte jeweilige ausgewertete Fahrt") },
-                IItemType.TYPE_PUBLIC, CAT_OPTIONS,
+                IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CAT_STATISTIC,CAT_OPTIONS),
                 International.getStringWithMnemonic("Gültigkeitszeitpunkt für Anzeige von Daten")
         ));
         v.add(item = new ItemTypeBoolean(StatisticsRecord.OPTIONONLYMEMBERSWITHINSUFFICIENTCLUBWORK, getOptionOnlyMembersWithInsufficientClubwork(),
-                IItemType.TYPE_PUBLIC, CAT_OPTIONS,
+                IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CAT_STATISTIC,CAT_OPTIONS),
                 International.getString("Für Vereinsarbeit nur Mitglieder ausgeben, die Sollstunden noch nicht erfüllt haben")));
 
         setVisibleItems(getOutputTypeEnum());
