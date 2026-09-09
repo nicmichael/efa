@@ -36,6 +36,7 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -141,10 +142,10 @@ public abstract class BaseTabbedDialog extends BaseDialog {
     protected String _selectedPanel; // selected panel specified in constructor
 
     protected Vector<IItemType> allGuiItems;
-    protected Hashtable<String,Hashtable> categoryHierarchy;
-    protected Hashtable<String,Vector<IItemType>> itemsPerCategory;
+    protected HashMap<String,HashMap> categoryHierarchy;
+    protected HashMap<String,Vector<IItemType>> itemsPerCategory;
     protected Vector<IItemType> displayedGuiItems;
-    protected Hashtable<JPanel,String> panels;
+    protected HashMap<JPanel,String> panels;
 
     protected boolean defaultGetGuiItemsOnUpdateGui = false; // true for EfaConfigDialog (req. by Hashtable); else false
 
@@ -215,12 +216,9 @@ public abstract class BaseTabbedDialog extends BaseDialog {
     }
 
     public static String[] getCategoryKeyArray(String keystring) {
-        Vector v = EfaUtil.split(keystring, CATEGORY_SEPARATOR);
-        String[] a = new String[v.size()];
-        for (int i=0; i<v.size(); i++) {
-            a[i] = (String)v.get(i);
-        }
-        return a;
+        Vector<String> v = EfaUtil.split(keystring, CATEGORY_SEPARATOR);
+        return v.toArray(new String[0]);  
+
     }
 
     public static String getCatName(String key) {
@@ -252,8 +250,8 @@ public abstract class BaseTabbedDialog extends BaseDialog {
         this.allGuiItems = guiItems;
         expertModeItems = false;
 
-        categoryHierarchy = new Hashtable<String,Hashtable>();    // category          -> sub-categories
-        itemsPerCategory = new Hashtable<String,Vector<IItemType>>(); // categoryhierarchy -> config items
+        categoryHierarchy = new HashMap<String,HashMap>();    // category          -> sub-categories
+        itemsPerCategory = new HashMap<String,Vector<IItemType>>(); // categoryhierarchy -> config items
 
         if (guiItems == null) {
             return;
@@ -265,11 +263,11 @@ public abstract class BaseTabbedDialog extends BaseDialog {
                 expertModeItems = true;
             }
             String[] cats = getCategoryKeyArray(item.getCategory());
-            Hashtable<String,Hashtable> h = categoryHierarchy;
+            HashMap<String,HashMap> h = categoryHierarchy;
             for (int j=0; j<cats.length; j++) {
-                Hashtable hnext = h.get(cats[j]);
+                HashMap hnext = h.get(cats[j]);
                 if (hnext == null) {
-                    hnext = new Hashtable<String,Hashtable>();
+                    hnext = new HashMap<String,HashMap>();
                     h.put(cats[j], hnext);
                 }
                 h = hnext;
@@ -282,9 +280,9 @@ public abstract class BaseTabbedDialog extends BaseDialog {
             item.setUnchanged();
             String cat = item.getCategory();
             String[] cats = getCategoryKeyArray(cat);
-            Hashtable<String,Hashtable> h = categoryHierarchy;
+            HashMap<String,HashMap> h = categoryHierarchy;
             for (int j=0; j<cats.length; j++) {
-                Hashtable hnext = h.get(cats[j]);
+                HashMap hnext = h.get(cats[j]);
 
                 // check whether there are subcategories for the parameter's level
                 if (j == cats.length-1 && hnext.size() != 0) {
@@ -398,7 +396,7 @@ public abstract class BaseTabbedDialog extends BaseDialog {
             }
         }
         
-        panels = new Hashtable<JPanel,String>();
+        panels = new HashMap<JPanel,String>();
         expertModeEnabled = expertMode.isSelected();
         recursiveBuildGui(categoryHierarchy,itemsPerCategory,"",topLevelPane, selectedPanel, this.reduceInnerScrollPaneHeight());
         dataPanel.add(topLevelPane, BorderLayout.CENTER);
@@ -439,8 +437,8 @@ public abstract class BaseTabbedDialog extends BaseDialog {
 	 * @param otherPanelHeight The height of other panels, used for layout calculations.
 	 * @return The total number of selectable items processed.
 	 */
-    protected int recursiveBuildGui(Hashtable<String,Hashtable> categories,
-                                   Hashtable<String,Vector<IItemType>> items,
+    protected int recursiveBuildGui(HashMap<String,HashMap> categories,
+                                   HashMap<String,Vector<IItemType>> items,
                                    String catKey,
                                    JComponent currentPane,
                                    String selectedPanel, int otherPanelHeight) {
@@ -464,13 +462,13 @@ public abstract class BaseTabbedDialog extends BaseDialog {
 	 * @param otherPanelHeight The height of other panels, used for layout calculations.
 	 * @return The total number of selectable items processed.
 	 */
-    protected int buildGuiWithTabbedPane(Hashtable<String,Hashtable> categories,
-                                   Hashtable<String,Vector<IItemType>> items,
+    protected int buildGuiWithTabbedPane(HashMap<String,HashMap> categories,
+    		HashMap<String,Vector<IItemType>> items,
                                    String catKey,
                                    JComponent currentPane,
                                    String selectedPanel, int otherPanelHeight) {
         int itmcnt = 0;
-        int pos = (selectedPanel != null && selectedPanel.length() > 0 ? selectedPanel.indexOf(CATEGORY_SEPARATOR) : -1);
+        int pos = (selectedPanel != null && !selectedPanel.isEmpty() ? selectedPanel.indexOf(CATEGORY_SEPARATOR) : -1);
         String selectThisCat = (pos < 0 ? selectedPanel : selectedPanel.substring(0,pos));
         String selectNextCat = (pos < 0 ? null : selectedPanel.substring(pos+1));
 
@@ -478,9 +476,9 @@ public abstract class BaseTabbedDialog extends BaseDialog {
         Arrays.sort(cats);
         for (int i=0; i<cats.length; i++) {
             String key = (String)cats[i];
-            String thisCatKey = (catKey.length() == 0 ? key : makeCategory(catKey, key));
+            String thisCatKey = (catKey.isEmpty() ? key : makeCategory(catKey, key));
             String catName = getCatName(thisCatKey);
-            Hashtable<String,Hashtable> subCat = categories.get(key);
+            HashMap<String,HashMap> subCat = categories.get(key);
             
             if (subCat.size() != 0) {
                 JTabbedPane subTabbedPane = new JTabbedPane();
@@ -526,8 +524,8 @@ public abstract class BaseTabbedDialog extends BaseDialog {
 	 * 
 	 * @return The total number of selectable items processed.
 	 */    
-    protected int buildGuiWithLeftNavigation(Hashtable<String,Hashtable> categories,
-                                          Hashtable<String,Vector<IItemType>> items,
+    protected int buildGuiWithLeftNavigation(HashMap<String,HashMap> categories,
+                                          HashMap<String,Vector<IItemType>> items,
                                           String catKey,
                                           JComponent currentPane,
                                           String selectedPanel,
@@ -601,7 +599,7 @@ public abstract class BaseTabbedDialog extends BaseDialog {
             }
         });
 
-        if (persistedFilterText != null && persistedFilterText.length() > 0) {
+        if (persistedFilterText != null && !persistedFilterText.isEmpty()) {
             navigationFilterField.setText(persistedFilterText);
         }
 
@@ -631,7 +629,7 @@ public abstract class BaseTabbedDialog extends BaseDialog {
 	 * 
 	 * @return A JPanel representing the leaf panel for the specified category, or null if there are no items to display.
 	 */   
-    private JPanel buildLeafPanel(Hashtable<String, Vector<IItemType>> items, String thisCatKey) {
+    private JPanel buildLeafPanel(HashMap<String, Vector<IItemType>> items, String thisCatKey) {
         JPanel panel = new JPanel();
         JPanel innerPanel = new JPanel();
 
@@ -695,8 +693,8 @@ public abstract class BaseTabbedDialog extends BaseDialog {
 	 * 
 	 * @return The total number of selectable items processed.
 	 */
-    private int collectNavAndCards(Hashtable<String, Hashtable> categories,
-                                   Hashtable<String, Vector<IItemType>> items,
+    private int collectNavAndCards(HashMap<String, HashMap> categories,
+    							   HashMap<String, Vector<IItemType>> items,
                                    String catKey,
                                    int otherPanelHeight,
                                    int level) {
@@ -706,9 +704,9 @@ public abstract class BaseTabbedDialog extends BaseDialog {
 
         for (int i = 0; i < cats.length; i++) {
             String key = (String) cats[i];
-            String thisCatKey = (catKey.length() == 0 ? key : makeCategory(catKey, key));
+            String thisCatKey = (catKey.isEmpty() ? key : makeCategory(catKey, key));
             String catName = getCatName(thisCatKey);
-            Hashtable<String, Hashtable> subCat = categories.get(key);
+            HashMap<String, HashMap> subCat = categories.get(key);
 
             if (subCat != null && subCat.size() != 0) {
                 String parentKey = getParentKey(thisCatKey);
@@ -984,7 +982,7 @@ public abstract class BaseTabbedDialog extends BaseDialog {
         String trimmed = raw == null ? "" : raw.trim();
         String filter = normalizeSearchText(trimmed);
 
-        if (filter.length() > 0 && filter.length() < MIN_FILTER_LENGTH) {
+        if (!filter.isEmpty() && filter.length() < MIN_FILTER_LENGTH) {
             filter = "";
         }
 
@@ -1083,7 +1081,7 @@ public abstract class BaseTabbedDialog extends BaseDialog {
         String desiredCard = persistedSelectedCardKey != null ? persistedSelectedCardKey : lastSelectedCardKey;
         String desiredPanel = persistedSelectedPanelKey;
 
-        if (desiredPanel != null && desiredPanel.length() > 0) {
+        if (desiredPanel != null && !desiredPanel.isEmpty()) {
             for (int i = 0; i < navigationModel.size(); i++) {
                 NavEntry e = navigationModel.get(i);
                 if (e.selectable && desiredPanel.equals(e.key)) {
@@ -1097,7 +1095,7 @@ public abstract class BaseTabbedDialog extends BaseDialog {
             }
         }
 
-        if (desiredCard != null && desiredCard.length() > 0) {
+        if (desiredCard != null && !desiredCard.isEmpty()) {
             for (int i = 0; i < navigationModel.size(); i++) {
                 NavEntry e = navigationModel.get(i);
                 if (e.selectable && desiredCard.equals(e.cardKey)) {
@@ -1123,7 +1121,7 @@ public abstract class BaseTabbedDialog extends BaseDialog {
     private void selectInitialEntry(String selectedPanel) {
         int indexToSelect = -1;
 
-        if (selectedPanel != null && selectedPanel.length() > 0) {
+        if (selectedPanel != null && !selectedPanel.isEmpty()) {
             for (int i = 0; i < navigationModel.size(); i++) {
                 NavEntry e = navigationModel.get(i);
                 if (e.selectable && selectedPanel.equals(e.key)) {
@@ -1185,7 +1183,7 @@ public abstract class BaseTabbedDialog extends BaseDialog {
             return;
         }
 
-        if (fullCategoryKey == null || fullCategoryKey.length() == 0) {
+        if (fullCategoryKey == null || fullCategoryKey.isEmpty()) {
             breadcrumbLabel.setText(" ");
             return;
         }
@@ -1208,7 +1206,7 @@ public abstract class BaseTabbedDialog extends BaseDialog {
         for (int i = 0; i < parts.size(); i++) {
             partialKey = (i == 0) ? parts.get(i) : makeCategory(partialKey, parts.get(i));
             String name = getCatName(partialKey);
-            if (name == null || name.length() == 0) {
+            if (name == null || name.isEmpty()) {
                 name = parts.get(i);
             }
             if (sb.length() > 0) {
@@ -1228,11 +1226,11 @@ public abstract class BaseTabbedDialog extends BaseDialog {
 	 *  @return A list of strings representing the individual parts of the full category key.
 	 *  */
     private List<String> splitCategoryKey(String fullCategoryKey) {
-        ArrayList<String> parts = new ArrayList<String>();
-        if (fullCategoryKey == null || fullCategoryKey.length() == 0) {
+        ArrayList<String> parts = new ArrayList<String>(8);
+        if (fullCategoryKey == null || fullCategoryKey.isEmpty()) {
             return parts;
         }
-        if (CATEGORY_SEPARATOR_STRING == null || CATEGORY_SEPARATOR_STRING.length() == 0) {
+        if (CATEGORY_SEPARATOR_STRING == null || CATEGORY_SEPARATOR_STRING.isEmpty()) {
             parts.add(fullCategoryKey);
             return parts;
         }
@@ -1250,75 +1248,104 @@ public abstract class BaseTabbedDialog extends BaseDialog {
     }
 
     /**
-	 * Applies the navigation filter to the navigation list and card panels based on the provided filter string
-	 * and updates the selection in the navigation list accordingly. If the filter string is null, it is treated as an empty string.
-	 * @param filter The filter string to apply to the navigation list and card panels.
-	 * */
+     * Applies the navigation filter to the navigation list and card panels based on the provided filter string
+     * and updates the selection in the navigation list accordingly. If the filter string is null, it is treated as an empty string.
+     * 
+     * Optimizations:
+     * - Uses cached parent keys to avoid repeated lookups
+     * - Builds a parent cache in a single pass
+     * - Uses ArrayList instead of HashSet for better performance with small collections
+     * - Combines selection logic to avoid multiple iterations
+     * 
+     * @param filter The filter string to apply to the navigation list and card panels.
+     */
     private void applyNavigationFilter(String filter) {
         String effectiveFilter = filter == null ? "" : filter;
-
+        
         applyHighlightsToCards(effectiveFilter);
-
+        
         String keepCard = lastSelectedCardKey;
         if (keepCard == null && navigationList != null && navigationList.getSelectedValue() != null) {
             keepCard = navigationList.getSelectedValue().cardKey;
         }
-
+        
         navigationModel.clear();
-
-        if (effectiveFilter.length() == 0) {
-            for (int i = 0; i < allNavigationEntries.size(); i++) {
-                navigationModel.addElement(allNavigationEntries.get(i));
-            }
+        
+        // If no filter, show all entries
+        if (effectiveFilter.isEmpty()) {
+        	allNavigationEntries.forEach(navigationModel::addElement);
         } else {
-            HashSet<String> visibleKeys = new HashSet<String>();
-
-            for (int i = 0; i < allNavigationEntries.size(); i++) {
-                NavEntry e = allNavigationEntries.get(i);
-                if (e.searchText != null && e.searchText.contains(effectiveFilter)) {
-                    visibleKeys.add(e.key);
-                    String p = e.parentKey;
-                    while (p != null) {
-                        visibleKeys.add(p);
-                        p = getParentKey(p);
-                    }
+            // Build parent hierarchy cache in one pass to avoid repeated getParentKey() calls
+            Map<String, String> parentCache = new HashMap<>(allNavigationEntries.size());
+            for (NavEntry e : allNavigationEntries) {
+                if (e.parentKey != null ) {
+                    parentCache.put(e.key, e.parentKey); //insert or update item in parentCache
                 }
             }
-
-            for (int i = 0; i < allNavigationEntries.size(); i++) {
-                NavEntry e = allNavigationEntries.get(i);
+            
+            // Find matching entries and collect visible keys
+            Set<String> visibleKeys = new HashSet<>(allNavigationEntries.size() / 2);
+            for (NavEntry e : allNavigationEntries) {
+                if (e.searchText != null && e.searchText.contains(effectiveFilter)) {
+                    // Add entry and all its ancestors
+                    addEntryAndAncestors(e.key, visibleKeys, parentCache);
+                }
+            }
+            
+            // Add filtered entries to model
+            for (NavEntry e : allNavigationEntries) {
                 if (visibleKeys.contains(e.key)) {
                     navigationModel.addElement(e);
                 }
             }
         }
+        
+        // Find and select the appropriate entry
+        selectAppropriateEntry(keepCard);
+    }
 
+    /**
+     * Helper method to add an entry and all its ancestor entries to the visible keys set.
+     * Uses a cached parent map to avoid repeated string lookups.
+     * 
+     * @param key The key to add
+     * @param visibleKeys The set to add keys to
+     * @param parentCache Map of key -> parentKey for fast lookups
+     */
+    private void addEntryAndAncestors(String key, Set<String> visibleKeys, Map<String, String> parentCache) {
+        String current = key;
+        while (current != null) {
+            if (!visibleKeys.add(current)) {
+                // Already added, stop to avoid cycles
+                break;
+            }
+            current = parentCache.get(current);
+        }
+    }
+
+    /**
+     * Helper method to find and select the appropriate entry in the navigation list.
+     * Tries to keep the previous selection, then falls back to first entry.
+     * 
+     * @param keepCard The card key to try to keep selected
+     */
+    private void selectAppropriateEntry(String keepCard) {
         int selectedIndex = -1;
-        if (keepCard != null) {
-            for (int i = 0; i < navigationModel.size(); i++) {
-                NavEntry e = navigationModel.get(i);
-                if (e.selectable && keepCard.equals(e.cardKey)) {
-                    selectedIndex = i;
-                    break;
-                }
-            }
+        
+        // First try to find the previously selected card
+        if (keepCard != null && !keepCard.isEmpty()) {
+            selectedIndex = findSelectableEntryByCardKey(keepCard);
         }
-
-        if (selectedIndex < 0) {
-            for (int i = 0; i < navigationModel.size(); i++) {
-                NavEntry e = navigationModel.get(i);
-                //if (e.selectable) {
-                    selectedIndex = i;
-                    break;
-                //}
-            }
+        
+        // If not found, select first entry
+        if (selectedIndex < 0 && navigationModel.size() > 0) {
+            selectedIndex = 0;
         }
-
+        
+        // Apply selection
         if (selectedIndex >= 0) {
             navigationList.setSelectedIndex(selectedIndex);
-            if (navigationList.getFirstVisibleIndex()>selectedIndex || navigationList.getLastVisibleIndex()<selectedIndex) {
-                navigationList.ensureIndexIsVisible(selectedIndex);
-            }
+            ensureIndexIsVisible(selectedIndex);
             NavEntry entry = navigationModel.get(selectedIndex);
             persistedSelectedPanelKey = entry.key;
             showCard(entry.cardKey, entry.key);
@@ -1326,6 +1353,36 @@ public abstract class BaseTabbedDialog extends BaseDialog {
             showCard(CARD_EMPTY, null);
         }
     }
+
+    /**
+     * Helper method to find a selectable entry by card key in the current model.
+     * 
+     * @param cardKey The card key to search for
+     * @return The index of the entry, or -1 if not found
+     */
+    private int findSelectableEntryByCardKey(String cardKey) {
+        for (int i = 0; i < navigationModel.size(); i++) {
+            NavEntry e = navigationModel.get(i);
+            if (e.selectable && cardKey.equals(e.cardKey)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Helper method to ensure an index is visible in the navigation list.
+     * Extracted to reduce code duplication.
+     * 
+     * @param index The index to make visible
+     */
+    private void ensureIndexIsVisible(int index) {
+        if (navigationList != null && 
+            (navigationList.getFirstVisibleIndex() > index || navigationList.getLastVisibleIndex() < index)) {
+            navigationList.ensureIndexIsVisible(index);
+        }
+    }
+
     
     /**
 	 * Applies highlights to the text of JLabel and AbstractButton components within the card panels based on
@@ -1335,7 +1392,7 @@ public abstract class BaseTabbedDialog extends BaseDialog {
     private void applyHighlightsToCards(String normalizedFilter) {
         String f = normalizedFilter == null ? "" : normalizedFilter.trim();
 
-        if (f.length() == 0) {
+        if (f.isEmpty()) {
             for (Map.Entry<JLabel, String> e : originalLabelTexts.entrySet()) {
                 e.getKey().setText(e.getValue());
             }
@@ -1398,7 +1455,7 @@ public abstract class BaseTabbedDialog extends BaseDialog {
         }
 
         String filter = normalizedFilter == null ? "" : normalizedFilter.trim().toLowerCase();
-        if (filter.length() == 0) {
+        if (filter.isEmpty()) {
             return originalText;
         }
 
@@ -1476,7 +1533,7 @@ public abstract class BaseTabbedDialog extends BaseDialog {
         for (int i = 0; i < chunks.size(); i++) {
             if (!isTag.get(i).booleanValue()) {
                 String t = chunks.get(i);
-                if (t.length() > 0) {
+                if (!t.isEmpty()) {
                     int s = visible.length();
                     visible.append(t);
                     int e = visible.length();
@@ -1606,36 +1663,39 @@ public abstract class BaseTabbedDialog extends BaseDialog {
 
         if (c instanceof JLabel) {
             String t = ((JLabel) c).getText();
-            if (t != null && t.length() > 0) {
+            if (t != null && !t.isEmpty()) {
                 sb.append(' ').append(t);
             }
         } else if (c instanceof AbstractButton) {
             String t = ((AbstractButton) c).getText();
-            if (t != null && t.length() > 0) {
+            if (t != null && !t.isEmpty()) {
                 sb.append(' ').append(t);
             }
         } else if (c instanceof JTextComponent) {
+        	//use the value of the textcomponent
             String t = ((JTextComponent) c).getText();
-            if (t != null && t.length() > 0) {
+            if (t != null && !t.isEmpty()) {
                 sb.append(' ').append(t);
             }
-        } else if (c instanceof JList) {
-        	JList a=(JList)c;
-            for (int i=0; i<a.getModel().getSize();i++) {
-            	if (a.isSelectedIndex(i)) {
-	            	String t = (String)a.getModel().getElementAt(i).toString();
-	                if (t != null && t.length() > 0) {
-	                    sb.append(' ').append(t);
-	                }
-            	}
-            }            
+        } else if (c instanceof JList<?>) {
+        	// use selected indexes of a list
+            JList<?> list = (JList<?>) c;
+            int[] selectedIndices = list.getSelectedIndices();
+            for (int i : selectedIndices) {
+                Object item = list.getModel().getElementAt(i);
+                if (item != null) {
+                    String t = item.toString();
+                    if (!t.isEmpty()) {
+                        sb.append(' ').append(t);
+                    }
+                }
+            }
         } else if (c instanceof JComboBox) {
         	JComboBox a = (JComboBox)c;
-        	
         	Object x = a.getSelectedItem();
         	if (x!=null) {
         		String t = x.toString();
-                if (t != null && t.length() > 0) {
+                if (!t.isEmpty()) {
                     sb.append(' ').append(t);
                 }
         	}
@@ -1644,9 +1704,10 @@ public abstract class BaseTabbedDialog extends BaseDialog {
 
         if (c instanceof Container) {
             Component[] children = ((Container) c).getComponents();
-            for (int i = 0; i < children.length; i++) {
-                appendSearchText(children[i], sb);
+            for (Component child : children) {
+                appendSearchText(child, sb);
             }
+
         }
     }
     /**
@@ -1682,7 +1743,7 @@ public abstract class BaseTabbedDialog extends BaseDialog {
 	 *  @return The parent key as a string, or null if the full key is null, empty, or has no parent.
 	 *  */
     private String getParentKey(String fullKey) {
-        if (fullKey == null || fullKey.length() == 0) {
+        if (fullKey == null || fullKey.isEmpty()) {
             return null;
         }
         int pos = fullKey.lastIndexOf(CATEGORY_SEPARATOR);
