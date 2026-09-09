@@ -1184,7 +1184,7 @@ public abstract class BaseTabbedDialog extends BaseDialog {
         }
 
         if (fullCategoryKey == null || fullCategoryKey.isEmpty()) {
-            breadcrumbLabel.setText(" ");
+            breadcrumbLabel.setText(" "+this.getTitle());
             return;
         }
 
@@ -1202,7 +1202,7 @@ public abstract class BaseTabbedDialog extends BaseDialog {
         List<String> parts = splitCategoryKey(fullCategoryKey);
         StringBuilder sb = new StringBuilder();
         String partialKey = "";
-        
+        sb.append(" "+this.getTitle());
         for (int i = 0; i < parts.size(); i++) {
             partialKey = (i == 0) ? parts.get(i) : makeCategory(partialKey, parts.get(i));
             String name = getCatName(partialKey);
