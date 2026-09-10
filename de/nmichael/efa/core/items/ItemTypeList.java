@@ -31,6 +31,7 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.Vector;
 
+import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -665,6 +666,8 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
         }
 
         list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        //leave some space on top and on bottom
+        list.setBorder(BorderFactory.createEmptyBorder(4, 0, 4, 0));
         scrollPane.setPreferredSize(new Dimension(fieldWidth, fieldHeight));
         buildPopupMenu(); //popupItems has been initialized earlier
         // KeyListeners entfernen, damit unter Java 1.4.x nicht automatisch gescrollt wird, sondern durch den eigenen Algorithmus

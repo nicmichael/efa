@@ -661,6 +661,13 @@ public abstract class BaseTabbedDialog extends BaseDialog {
             }
         }
 
+        // Store original texts of the panel components, 
+        // but only in MODE_LEFT_NAVIGATION, as this is the only mode which provides filtering
+        // (and the filtering needs the original texts in an hash map)
+        if (this.navigationMode == MODE_LEFT_NAVIGATION) {
+        	storeOriginalTexts(innerPanel);
+        }
+        
         // Push remaining vertical space below all real items so content stays top-aligned.
         // but only if we are in left naviation mode.
         if (this.navigationMode == MODE_LEFT_NAVIGATION) {
@@ -674,6 +681,24 @@ public abstract class BaseTabbedDialog extends BaseDialog {
         return y > 1 ? panel : null;
     }
 
+    private void storeOriginalTexts(Component c) {
+        if (c instanceof JLabel) {
+            JLabel label = (JLabel) c;
+            originalLabelTexts.put(label, label.getText());
+        } else if (c instanceof AbstractButton) {
+            AbstractButton button = (AbstractButton) c;
+            originalButtonTexts.put(button, button.getText());
+        }
+        
+        if (c instanceof Container) {
+            Component[] children = ((Container) c).getComponents();
+            for (Component child : children) {
+                storeOriginalTexts(child);
+            }
+        }
+    }
+
+    
     /**
 	 * Creates an empty card panel with a message indicating that the user can use Ctrl+F for search.
 	 * 
@@ -1548,10 +1573,6 @@ public abstract class BaseTabbedDialog extends BaseDialog {
         // Frühe Rückgabe für null-Komponenten
         if (c == null) {
             return null;
-        }
-        //only filter for visible elements
-        if (!c.isVisible()) {
-        	return null;
         }
         // JLabel: Text direkt auslesen
         if (c instanceof JLabel) {
