@@ -128,7 +128,7 @@ public abstract class BaseTabbedDialog extends BaseDialog {
     private static final Color FILTERFIELD_FILLED = new Color(255,255,204);
     private static final Pattern TAG_PATTERN = Pattern.compile("<[^>]*>");
     private static final int FILTER_DELAY_MS = 500;
-    private static final int MIN_FILTER_LENGTH = 2;
+    private static final int MIN_FILTER_LENGTH = 1;
     private static final String BREADCRUMB_SEPARATOR = "  >  ";//" \u203A ";
     private static final String ACTION_NAV_ACTIVATE = "nav.activate";
     private static final String ACTION_NAV_FOCUS_FILTER = "nav.focusFilter";
@@ -1496,9 +1496,8 @@ public abstract class BaseTabbedDialog extends BaseDialog {
         // Highlights für JComboBox anwenden
         else if (c instanceof JComboBox) {
             JComboBox<?> comboBox = (JComboBox<?>) c;
-            Object selectedItem = comboBox.getSelectedItem();
             // Visuelle Hervorhebung für JComboBox durch Hintergrundfarbe
-            if (matchesFilter && selectedItem != null) {
+            if (matchesFilter) {
                 // Highlight durch Hintergrundfarbe
                 comboBox.setBackground(HIGHLIGHT_COLOR); // Gelber Hintergrund
                 comboBox.setOpaque(true);
@@ -1511,6 +1510,7 @@ public abstract class BaseTabbedDialog extends BaseDialog {
         // Highlights für JList anwenden
         else if (c instanceof JList) {
             JList<?> list = (JList<?>) c;
+            
             int[] selectedIndices = list.getSelectedIndices();
             // Visuelle Hervorhebung für JList durch Hintergrundfarbe
             if (matchesFilter && selectedIndices.length > 0) {
@@ -1567,16 +1567,16 @@ public abstract class BaseTabbedDialog extends BaseDialog {
         // JList: Ausgewählte Elemente auslesen
         else if (c instanceof JList<?>) {
             JList<?> list = (JList<?>) c;
-            int[] selectedIndices = list.getSelectedIndices();
             
-            // Wenn keine Elemente ausgewählt, null zurückgeben (Performance)
-            if (selectedIndices.length == 0) {
+            // Wenn keine Elemente enthalten, null zurückgeben (Performance)
+            if (list.getModel().getSize() == 0) {
                 return null;
             }
             
-            // Alle ausgewählten Elemente als Text zusammenfassen
+            // Alle Elemente als Text zusammenfassen
             StringBuilder sb = new StringBuilder();
-            for (int i : selectedIndices) {
+            int size = list.getModel().getSize();
+            for (int i=0; i<size; i++) {
                 Object item = list.getModel().getElementAt(i);
                 if (item != null) {
                     sb.append(" ").append(item.toString());

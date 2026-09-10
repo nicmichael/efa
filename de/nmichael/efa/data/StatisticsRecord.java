@@ -2582,7 +2582,7 @@ public class StatisticsRecord extends DataRecord implements IItemListener {
     }
 
     public Vector<IItemType> getGuiItems(AdminRecord admin) {
-        String CAT_BASEDATA     = "%01%" + International.getString("Statistik");
+        String CAT_BASEDATA     = "%01%" + International.getString("Grundlagen");
         String CAT_FILTER       = "%02%" + International.getString("Filter");
         String CAT_FILTERGENDER        = "%021%" + International.getString("Geschlecht");
         String CAT_FILTERSTATUS        = "%022%" + International.getString("Status");
@@ -2615,9 +2615,11 @@ public class StatisticsRecord extends DataRecord implements IItemListener {
         v.add(item = new ItemTypeBoolean(StatisticsRecord.PUBLICLYAVAILABLE, getPubliclyAvailable(),
                 IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CAT_STATISTIC,CAT_BASEDATA), International.getString("Statistik allgemein verfügbar")));
         ((ItemTypeBoolean)item).registerItemListener(this);
+        ((ItemTypeBoolean)item).setIndent(true);
         v.add(item = new ItemTypeDate(StatisticsRecord.DATEFROM, getDateFrom(),
                 IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CAT_STATISTIC,CAT_BASEDATA), International.getString("Von")));
         itemDateFrom = (ItemTypeDate)item;
+        item.setPadding(0, 0, 16, 0);
         v.add(item = new ItemTypeDate(StatisticsRecord.DATETO, getDateTo(),
                 IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CAT_STATISTIC,CAT_BASEDATA), International.getString("Bis")));
         ((ItemTypeDate)item).setMustBeAfter(itemDateFrom, true);
@@ -2627,6 +2629,7 @@ public class StatisticsRecord extends DataRecord implements IItemListener {
                 IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CAT_STATISTIC,CAT_BASEDATA),
                 International.getString("Statistiktyp")));
         item.registerItemListener(this);
+        item.setPadding(0, 0, 16, 0);
         this.itemStatisticCategory = (ItemTypeStringList)item;
         v.add(item = new ItemTypeStringList(StatisticsRecord.STATISTICTYPE, getStatisticType(),
                 getStatisticTypes(getStatisticCategoryEnum(), ARRAY_STRINGLIST_VALUES),
@@ -2867,9 +2870,11 @@ public class StatisticsRecord extends DataRecord implements IItemListener {
         v.add(item = new ItemTypeBoolean(StatisticsRecord.COMPOUTPUTRULES, getCompOutputRules(),
                 IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CAT_STATISTIC,CAT_COMP),
                 International.getString("Wettbewerbsbedingungen ausgeben")));
+        ((ItemTypeBoolean)item).setIndent(true);
         v.add(item = new ItemTypeBoolean(StatisticsRecord.COMPOUTPUTSHORT, getCompOutputShort(),
                 IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CAT_STATISTIC,CAT_COMP),
                 International.getString("Ausgabe im Kurzformat")));
+        item.setPadding(0, 0, 16, 0);
         v.add(item = new ItemTypeBoolean(StatisticsRecord.COMPOUTPUTWITHOUTDETAILS, getCompOutputWithoutDetails(),
                 IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CAT_STATISTIC,CAT_COMP),
                 International.getString("Ausgabe ohne Details")));
@@ -2889,6 +2894,7 @@ public class StatisticsRecord extends DataRecord implements IItemListener {
                 International.getString("Ausgabeart")));
         item.registerItemListener(this);
         item.setNotNull(true);
+        item.setPadding(0, 0, 0, 16);
         v.add(item = new ItemTypeFile(StatisticsRecord.OUTPUTFILE, getOutputFile(),
                 International.getString("Ausgabedatei"),
                 International.getString("alle Dateien"),
@@ -2940,12 +2946,14 @@ public class StatisticsRecord extends DataRecord implements IItemListener {
         v.add(item = new ItemTypeBoolean(StatisticsRecord.OPTIONLISTALLNULLENTRIES, getOptionListAllNullEntries(),
                 IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CAT_STATISTIC,CAT_OPTIONS),
                 International.getString("Alle Einträge ausgeben")));
+        item.setPadding(0, 0, 16, 0);
         v.add(item = new ItemTypeBoolean(StatisticsRecord.OPTIONIGNORENULLVALUES, getOptionIgnoreNullValues(),
                 IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CAT_STATISTIC,CAT_OPTIONS),
                 International.getString("Nullwerte nicht ausgeben")));
         v.add(item = new ItemTypeBoolean(StatisticsRecord.OPTIONSUMGUESTSANDOTHERS, getOptionSumGuestsAndOthers(),
                 IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CAT_STATISTIC,CAT_OPTIONS),
                 International.getString("Gäste und andere zusammenfassen")));
+        item.setPadding(0, 0, 16, 0);
         v.add(item = new ItemTypeBoolean(StatisticsRecord.OPTIONSUMGUESTSBYCLUB, getOptionSumGuestsByClub(),
                 IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CAT_STATISTIC,CAT_OPTIONS),
                 International.getString("Gäste/Fremdboote vereinsweise zusammenfassen")));
@@ -2956,7 +2964,8 @@ public class StatisticsRecord extends DataRecord implements IItemListener {
                                International.getString("Letzte jeweilige ausgewertete Fahrt") },
                 IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CAT_STATISTIC,CAT_OPTIONS),
                 International.getStringWithMnemonic("Gültigkeitszeitpunkt für Anzeige von Daten")
-        ));
+        ));        
+        item.setPadding(0, 0, 16, 16);
         v.add(item = new ItemTypeBoolean(StatisticsRecord.OPTIONONLYMEMBERSWITHINSUFFICIENTCLUBWORK, getOptionOnlyMembersWithInsufficientClubwork(),
                 IItemType.TYPE_PUBLIC, BaseTabbedDialog.makeCategory(CAT_STATISTIC,CAT_OPTIONS),
                 International.getString("Für Vereinsarbeit nur Mitglieder ausgeben, die Sollstunden noch nicht erfüllt haben")));
