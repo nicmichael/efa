@@ -119,14 +119,23 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
         Color inActiveSelBg = javax.swing.UIManager.getColor("List.selectionInactiveBackground");
         
         private final Color grayColor = new Color(136, 136, 136); // #888888
-
+        
         public FastTwoColumnListCellRenderer() {
             setOpaque(true);
             setBorder(_emptyBorder);
+            
+            updateCachedColors();
            
-            if (Daten.lookAndFeel.endsWith(Daten.LAF_METAL) || Daten.lookAndFeel.endsWith(Daten.LAF_WINDOWS) || Daten.lookAndFeel.endsWith(Daten.LAF_WINDOWS_CLASSIC)) {
+            if (Daten.lookAndFeel.endsWith(Daten.LAF_METAL) || Daten.lookAndFeel.endsWith(Daten.LAF_WINDOWS) || Daten.lookAndFeel.endsWith(Daten.LAF_WINDOWS_CLASSIC) 
+            		|| Daten.lookAndFeel.endsWith(Daten.LAF_NIMBUS)) {
             	inActiveSelBg = selBg;
             }
+            
+        }
+
+        private void updateCachedColors() { 
+        	selBg = (selBg != null ? selBg : new JList().getSelectionBackground());
+        	selFg = (selFg != null ? selFg : new JList().getSelectionForeground());
         }
 
         @Override
