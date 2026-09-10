@@ -1549,7 +1549,10 @@ public abstract class BaseTabbedDialog extends BaseDialog {
         if (c == null) {
             return null;
         }
-
+        //only filter for visible elements
+        if (!c.isVisible()) {
+        	return null;
+        }
         // JLabel: Text direkt auslesen
         if (c instanceof JLabel) {
         	return originalLabelTexts.get(c);
