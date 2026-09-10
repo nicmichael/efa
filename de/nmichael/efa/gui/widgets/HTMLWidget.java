@@ -44,7 +44,7 @@ public class HTMLWidget extends Widget implements IWidget, IItemFactory {
     
     public static final String PARAM_COLORSACTIVE   = "ColorsActive";
     public static final String PARAM_COLORBACKGROUND= "BackgroundColor";
-    public static final String PARAM_COLORFORECROUND= "ForegroundColor";
+    public static final String PARAM_COLORFOREGROUND= "ForegroundColor";
     public static final String PARAM_HEADER_COLOR_BACKGROUND = "HeaderBackgroundColor";
     public static final String PARAM_HEADER_COLOR_FOREGROUND = "HeaderForegroundColor";
     public static final String PARAM_HTMLPAGE_VISIBLE = "HTMLPageVisible";
@@ -193,7 +193,7 @@ public class HTMLWidget extends Widget implements IWidget, IItemFactory {
 
 	private Color getForegroundColor(ItemTypeItemList list, int i) {
         try {
-            return ((ItemTypeColor)list.getItem(i, PARAM_COLORFORECROUND)).getColor();
+            return ((ItemTypeColor)list.getItem(i, PARAM_COLORFOREGROUND)).getColor();
         } catch(Exception e) {
             Logger.logdebug(e);
             return null;
@@ -239,16 +239,17 @@ public class HTMLWidget extends Widget implements IWidget, IItemFactory {
 	 * getDefaultItems is the factory for all location elements
 	 */
 	public IItemType[] getDefaultItems(String itemName) {
+		String ttBackground = EfaUtil.getColor(Daten.efaConfig.getToolTipBackgroundColor());
+		String ttForeground = EfaUtil.getColor(Daten.efaConfig.getToolTipForegroundColor());
+		String ttHeaderBackground = EfaUtil.getColor(EfaConfig.standardToolTipHeaderBackgroundColor);
+		String ttHeaderForeground = EfaUtil.getColor(EfaConfig.standardToolTipHeaderForegroundColor);
+		
 		//which Item do we want to get the elements from?
 		if (itemName.endsWith(PARAM_HTML_PAGELIST)) {
 			
-            ItemTypeItemList item = (ItemTypeItemList)getParameterInternal(PARAM_HTML_PAGELIST);
-            int i = item.size()+1;
-			
-            // build the GUI
-           
+            // build the GUI           
             IItemType[] items = new IItemType[13];
-            i=0;
+            int i=0;
             
             
             items[i] = new ItemTypeBoolean(PARAM_HTMLPAGE_VISIBLE, true,
@@ -312,29 +313,29 @@ public class HTMLWidget extends Widget implements IWidget, IItemFactory {
             items[i++].setFieldGrid(HTMLWIDGET_GRIDWIDTH-2, -1, GridBagConstraints.HORIZONTAL);
             
 			items[i] = new ItemTypeColor(PARAM_COLORBACKGROUND,
-							EfaUtil.getColor(Daten.efaConfig.getToolTipBackgroundColor()),
-							EfaUtil.getColor(Daten.efaConfig.getToolTipBackgroundColor()), IItemType.TYPE_PUBLIC,
+							ttBackground,
+							ttBackground, IItemType.TYPE_PUBLIC,
 							"",
 							International.getString("Hintergrundfarbe"), false);
             items[i++].setFieldGrid(HTMLWIDGET_GRIDWIDTH-2, -1, GridBagConstraints.HORIZONTAL);
             
-            items[i] =  new ItemTypeColor(PARAM_COLORFORECROUND,
-					EfaUtil.getColor(Daten.efaConfig.getToolTipForegroundColor()),
-					EfaUtil.getColor(Daten.efaConfig.getToolTipForegroundColor()), IItemType.TYPE_PUBLIC,
+            items[i] =  new ItemTypeColor(PARAM_COLORFOREGROUND,
+					ttForeground,
+					ttForeground, IItemType.TYPE_PUBLIC,
 							"",
 							International.getString("Textfarbe"), false);							
             items[i++].setFieldGrid(HTMLWIDGET_GRIDWIDTH-2, -1, GridBagConstraints.HORIZONTAL);
             
 			items[i] = new ItemTypeColor(PARAM_HEADER_COLOR_BACKGROUND,
-					EfaUtil.getColor(EfaConfig.standardToolTipHeaderBackgroundColor),
-					EfaUtil.getColor(EfaConfig.standardToolTipHeaderBackgroundColor), IItemType.TYPE_PUBLIC,
+					ttHeaderBackground,
+					ttHeaderBackground, IItemType.TYPE_PUBLIC,
 					"",
 					International.getString("Überschriften Hintergrundfarbe"), false);
             items[i++].setFieldGrid(HTMLWIDGET_GRIDWIDTH-2, -1, GridBagConstraints.HORIZONTAL);
             
 			items[i] =new ItemTypeColor(PARAM_HEADER_COLOR_FOREGROUND,
-					EfaUtil.getColor(EfaConfig.standardToolTipHeaderForegroundColor),
-					EfaUtil.getColor(EfaConfig.standardToolTipHeaderForegroundColor), IItemType.TYPE_PUBLIC,
+					ttHeaderForeground,
+					ttHeaderForeground, IItemType.TYPE_PUBLIC,
 					"",
 					International.getString("Überschriften Textfarbe"), false);
             items[i++].setFieldGrid(HTMLWIDGET_GRIDWIDTH-2, -1, GridBagConstraints.HORIZONTAL);

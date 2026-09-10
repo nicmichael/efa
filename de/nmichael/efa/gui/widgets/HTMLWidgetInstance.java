@@ -22,9 +22,11 @@ import javax.swing.JEditorPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
+import javax.swing.text.Document;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
 
+import de.nmichael.efa.Daten;
 import de.nmichael.efa.data.LogbookRecord;
 import de.nmichael.efa.gui.EfaGuiUtils;
 import de.nmichael.efa.gui.util.RoundedBorder;
@@ -110,46 +112,52 @@ public class HTMLWidgetInstance extends WidgetInstance implements IWidgetInstanc
             htmlUpdater = new HTMLUpdater();
         }
         htmlUpdater.setUseHttpCaching(this.useHttpCaching);
-        htmlUpdater.start();
+        // set the page to load and the update interval. 
+        // this will also start the scheduled updates (which use a timer instead of a thread)
         htmlUpdater.setPage(url, updateInterval);
         scrollPane.revalidate();
     }
 
 	private void addGeneralPopupAction() {
 
-		//popup only when a click appears on any component of the header panel
-		//and useMaximizeButton is false (only) for already maximized component
-		if (titlePanel!=null && this.useMaximizeButton) {
-			titlePanel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-			titlePanel.addMouseListener(new MouseAdapter() {
+	    // popup only when a click appears on any component of the header panel
+		// this only affects the maximize button, but also the caption label and the header background panel,
+		// if the component is not maximized yet. 
+		// If it is already maximized, the maximize button is not shown and the header panel is not clickable.
+	    if (titlePanel != null && this.useMaximizeButton) {
+	        final MouseAdapter popupClickListener = new MouseAdapter() {
+	            @Override
 	            public void mouseClicked(MouseEvent e) {
-	            	Cursor old = titlePanel.getCursor();
-	            	titlePanel.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-	                new WidgetPopupDialog(getCaption(),
-	                		getCopy(),
-	                        540, 540, 90).showDialog();
-	                titlePanel.setCursor(old);
+	                Component source = e.getComponent();
+	                Cursor old = source.getCursor();
+	                source.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+	                try {
+	                    new WidgetPopupDialog(
+	                            getCaption(),
+	                            getCopy(),
+	                            540, 540, 90
+	                    ).showDialog();
+	                } finally {
+	                    source.setCursor(old);
+	                }
 	            }
-	        });
-			
-			for (int curComp=0; curComp <titlePanel.getComponentCount(); curComp++) {
-				Component comp = titlePanel.getComponent(curComp);
-				if (comp!=null) {
-					comp.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-					comp.addMouseListener(new MouseAdapter() {
-			            public void mouseClicked(MouseEvent e) {
-			            	Cursor old = comp.getCursor();
-			            	comp.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-			                new WidgetPopupDialog(getCaption(),
-			                		getCopy(),
-			                        540, 540, 90).showDialog();
-			                comp.setCursor(old);
-			            }
-			        });					
-				}
-			}
-		}
+	        };
+
+	        // Header selbst
+	        titlePanel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+	        titlePanel.addMouseListener(popupClickListener);
+
+	        // Alle direkten Unterkomponenten
+	        for (int curComp = 0; curComp < titlePanel.getComponentCount(); curComp++) {
+	            Component comp = titlePanel.getComponent(curComp);
+	            if (comp != null) {
+	                comp.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+	                comp.addMouseListener(popupClickListener);
+	            }
+	        }
+	    }
 	}
+
 	
 	private void createRoundPanelWithCaption() {
 
@@ -160,10 +168,13 @@ public class HTMLWidgetInstance extends WidgetInstance implements IWidgetInstanc
 		roundPanel.setForeground((colorsActive ? this.getForegroundColor() : roundPanel.getForeground()));
 		roundPanel.setBorder(new RoundedBorder(this.getForegroundColor()));
 		roundPanel.setName("HTMLWidget-RoundPanel");
-		roundPanel.setLayout(new GridBagLayout());
 		
-		titlePanel= getHTMLCaptionHeader(this.getCaption(),useMaximizeButton);
-		titlePanel.setVisible(!this.getCaption().trim().isEmpty());
+		String myCaption = this.getCaption();
+		if (myCaption==null) {
+			myCaption="";
+		}
+		titlePanel= getHTMLCaptionHeader(myCaption,useMaximizeButton);
+		titlePanel.setVisible(isCaptionActive());
 		
 		roundPanel.add(titlePanel, new GridBagConstraints(0, 0, 4, 1, 1.0, 0.0, GridBagConstraints.CENTER,
 				GridBagConstraints.HORIZONTAL, new Insets(2, 2, 2, 2), 0, 0));	
@@ -263,7 +274,7 @@ public class HTMLWidgetInstance extends WidgetInstance implements IWidgetInstanc
 		this.foregroundColor = foregroundColor;
 	}
 
-	private class HTMLUpdater extends Thread {
+	private class HTMLUpdater {
 
 		private final java.util.concurrent.ScheduledExecutorService scheduler = java.util.concurrent.Executors.newSingleThreadScheduledExecutor(r -> {
 	            Thread t = new Thread(r, "HTMLWidget.HtmlUpdater");
@@ -294,27 +305,28 @@ public class HTMLWidgetInstance extends WidgetInstance implements IWidgetInstanc
             }
         }
 
+        private String correctUrlHTMLWidget(String url) {
+            int pos = url.indexOf(":");
+            if (pos < 4 || pos > 10) { // http, https, file, mailto, ftp, ...
+                url = "file:///" + url;
+            }
+            return EfaUtil.replace(url, "\\", "/", true);
+        }
+
+        
         private void updateOnce() {
             String u = this.url;
             if (u == null || u.trim().isEmpty()) {
                 return;
             }
-            u = EfaUtil.correctUrl(u);
+            u = correctUrlHTMLWidget(u);
             final String urlToLoad = u;
             try {
                 java.net.URL urlObj = new java.net.URL(urlToLoad);
                 String protocol = urlObj.getProtocol();
                 // For local files or unsupported protocols, delegate to JEditorPane directly on EDT
                 if (!"http".equalsIgnoreCase(protocol) && !"https".equalsIgnoreCase(protocol)) {
-                    SwingUtilities.invokeLater(() -> {
-                        try {
-                            htmlPane.setPage(urlObj);
-                            htmlPane.setCaretPosition(0);
-                        } catch (IOException ee) {
-                            htmlPane.setText(International.getString("FEHLER") + ": "
-                                    + International.getMessage("Kann Adresse '{url}' nicht öffnen: {message}", urlToLoad, ee.toString()));
-                        }
-                    });
+                    loadHtmlFromFileUrlAlwaysFresh(urlObj, urlToLoad);
                     return;
                 }
 
@@ -358,6 +370,10 @@ public class HTMLWidgetInstance extends WidgetInstance implements IWidgetInstanc
                     // No ETag-based caching: let JEditorPane handle the HTTP URL directly
                     SwingUtilities.invokeLater(() -> {
                         try {
+                            // Clear the document URL to force a fresh load on setPage(url)
+                        	Document doc = htmlPane.getDocument();
+                            doc.putProperty(Document.StreamDescriptionProperty, null);     
+                            // Now set the page, which will (re)fetch the content
                             htmlPane.setPage(urlObj);
                         } catch (IOException ee) {
                             htmlPane.setText(International.getString("FEHLER") + ": "
@@ -373,6 +389,189 @@ public class HTMLWidgetInstance extends WidgetInstance implements IWidgetInstanc
             }
         }
 
+        private void loadHtmlFromFileUrlAlwaysFresh(final java.net.URL fileUrl, final String urlToLoad) {
+            java.io.BufferedInputStream in = null;
+            java.io.Reader reader = null;
+            try {
+                java.nio.file.Path path = java.nio.file.Paths.get(fileUrl.toURI());
+
+                // Stream-based loading: no full byte[] in memory (works for very large files).
+                in = new java.io.BufferedInputStream(java.nio.file.Files.newInputStream(path), 64 * 1024);
+
+                // Read only a small prefix for BOM/meta sniff; then reset and parse as stream.
+                final int sniffLimit = 64 * 1024;
+                in.mark(sniffLimit);
+
+                java.nio.charset.Charset cs = detectCharsetFromStreamPrefix(in, sniffLimit, java.nio.charset.StandardCharsets.UTF_8);
+
+                in.reset();
+
+                reader = new java.io.InputStreamReader(in, cs);
+
+                HTMLEditorKit kit = new HTMLEditorKit();
+                final HTMLDocument doc = (HTMLDocument) kit.createDefaultDocument();
+                doc.putProperty("IgnoreCharsetDirective", Boolean.TRUE);
+                doc.setBase(fileUrl);
+
+                kit.read(reader, doc, 0);
+
+                SwingUtilities.invokeLater(() -> {
+                    try {
+                        htmlPane.setDocument(doc);
+                        htmlPane.setCaretPosition(0);
+                        htmlPane.revalidate();
+                        htmlPane.repaint();
+                    } catch (Exception ee) {
+                        htmlPane.setText(International.getString("FEHLER") + ": "
+                                + International.getMessage("Kann Adresse '{url}' nicht öffnen: {message}", urlToLoad, ee.toString()));
+                        htmlPane.setCaretPosition(0);
+                    }
+                });
+            } catch (Exception ee) {
+                SwingUtilities.invokeLater(() -> {
+                    htmlPane.setText(International.getString("FEHLER") + ": "
+                            + International.getMessage("Kann Adresse '{url}' nicht öffnen: {message}", urlToLoad, ee.toString()));
+                    htmlPane.setCaretPosition(0);
+                });
+            } finally {
+                try {
+                    if (reader != null) {
+                        reader.close(); // closes underlying stream as well
+                    } else if (in != null) {
+                        in.close();
+                    }
+                } catch (Exception ignore) {
+                    // ignore close errors
+                }
+            }
+        }
+
+
+        private java.nio.charset.Charset detectCharsetFromStreamPrefix(
+                java.io.BufferedInputStream in,
+                int maxPrefixBytes,
+                java.nio.charset.Charset fallback) throws java.io.IOException {
+
+            byte[] prefix = new byte[maxPrefixBytes];
+            int len = in.read(prefix);
+            if (len <= 0) {
+                return fallback;
+            }
+
+            // 1) BOM
+            if (len >= 3
+                    && (prefix[0] & 0xFF) == 0xEF
+                    && (prefix[1] & 0xFF) == 0xBB
+                    && (prefix[2] & 0xFF) == 0xBF) {
+                return java.nio.charset.StandardCharsets.UTF_8;
+            }
+            if (len >= 2
+                    && (prefix[0] & 0xFF) == 0xFE
+                    && (prefix[1] & 0xFF) == 0xFF) {
+                return java.nio.charset.StandardCharsets.UTF_16BE;
+            }
+            if (len >= 2
+                    && (prefix[0] & 0xFF) == 0xFF
+                    && (prefix[1] & 0xFF) == 0xFE) {
+                return java.nio.charset.StandardCharsets.UTF_16LE;
+            }
+
+            // 2) HTML meta sniff from prefix only
+            String head = new String(prefix, 0, len, java.nio.charset.StandardCharsets.ISO_8859_1);
+
+            java.util.regex.Pattern p1 = java.util.regex.Pattern.compile(
+                    "(?i)<meta\\s+[^>]*charset\\s*=\\s*['\\\"]?\\s*([a-zA-Z0-9_\\-:.]+)\\s*['\\\"]?[^>]*>");
+            java.util.regex.Matcher m1 = p1.matcher(head);
+            if (m1.find()) {
+                String csName = m1.group(1).trim();
+                try {
+                    if (java.nio.charset.Charset.isSupported(csName)) {
+                        return java.nio.charset.Charset.forName(csName);
+                    }
+                } catch (Exception ignore) {}
+            }
+
+            java.util.regex.Pattern p2 = java.util.regex.Pattern.compile(
+                    "(?i)<meta\\s+[^>]*http-equiv\\s*=\\s*['\\\"]?content-type['\\\"]?[^>]*content\\s*=\\s*['\\\"][^'\\\"]*charset\\s*=\\s*([a-zA-Z0-9_\\-:.]+)[^'\\\"]*['\\\"][^>]*>");
+            java.util.regex.Matcher m2 = p2.matcher(head);
+            if (m2.find()) {
+                String csName = m2.group(1).trim();
+                try {
+                    if (java.nio.charset.Charset.isSupported(csName)) {
+                        return java.nio.charset.Charset.forName(csName);
+                    }
+                } catch (Exception ignore) {}
+            }
+
+
+            // 3) UTF-8 validity check (ohne BOM)
+            java.nio.charset.CharsetDecoder utf8 = java.nio.charset.StandardCharsets.UTF_8
+                    .newDecoder()
+                    .onMalformedInput(java.nio.charset.CodingErrorAction.REPORT)
+                    .onUnmappableCharacter(java.nio.charset.CodingErrorAction.REPORT);
+            try {
+                utf8.decode(java.nio.ByteBuffer.wrap(prefix, 0, len));
+                return java.nio.charset.StandardCharsets.UTF_8;
+            } catch (java.nio.charset.CharacterCodingException ignore) {
+                // not valid UTF-8
+            }
+
+            // 4 UTF-)16 without BOM heuristic (many 0x00 in even/odd positions)
+            if (looksLikeUtf16WithoutBom(prefix,len)) {
+                return guessUtf16Endian(prefix,len);
+            }
+
+            // last) pragmatic fallback
+            try {
+                if (Daten.isOsWindows()) {
+                    return java.nio.charset.Charset.forName("windows-1252");
+                } else {
+                    return java.nio.charset.StandardCharsets.ISO_8859_1;
+                }
+            } catch (Exception ignore) {
+                return fallback;
+            }
+        }
+        
+        private boolean looksLikeUtf16WithoutBom(byte[] bytes, int maxLength) {
+            int sample = Math.min(maxLength, 2000);
+            if (sample < 4) {
+                return false;
+            }
+
+            int zeroEven = 0;
+            int zeroOdd = 0;
+            int pairs = sample / 2;
+
+            for (int i = 0; i + 1 < sample; i += 2) {
+                if (bytes[i] == 0) zeroEven++;
+                if (bytes[i + 1] == 0) zeroOdd++;
+            }
+
+            double evenRatio = (double) zeroEven / pairs;
+            double oddRatio = (double) zeroOdd / pairs;
+
+            return evenRatio > 0.3 || oddRatio > 0.3;
+        }
+
+        private java.nio.charset.Charset guessUtf16Endian(byte[] bytes, int maxLength) {
+            int sample = Math.min(maxLength, 2000);
+            int zeroEven = 0;
+            int zeroOdd = 0;
+            int pairs = sample / 2;
+
+            for (int i = 0; i + 1 < sample; i += 2) {
+                if (bytes[i] == 0) zeroEven++;
+                if (bytes[i + 1] == 0) zeroOdd++;
+            }
+
+            // For mostly ASCII text in UTF-16:
+            // BE have  to tends0x00 on even positions, LE on odd positions.
+            return (zeroEven > zeroOdd)
+                    ? java.nio.charset.StandardCharsets.UTF_16BE
+                    : java.nio.charset.StandardCharsets.UTF_16LE;
+        }        
+        
         public void setUseHttpCaching(boolean useHttpCaching) {
 			this.useHttpCaching=useHttpCaching;
 		}
@@ -380,7 +579,7 @@ public class HTMLWidgetInstance extends WidgetInstance implements IWidgetInstanc
         public synchronized void setPage(String url, int updateIntervalInSeconds) {
             this.url = url;
             if (updateIntervalInSeconds <= 0) {
-                updateIntervalInSeconds = 24*3600;
+                updateIntervalInSeconds = 24*3600; // only update once per day if no valid interval is given
             }
             this.updateIntervalInSeconds = updateIntervalInSeconds;
             // set URL in fetcher (resets validators internally)
