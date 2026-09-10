@@ -10,10 +10,16 @@
 
 package de.nmichael.efa.core.items;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.AWTEvent;
+import java.awt.event.FocusEvent;
+import java.awt.event.ItemEvent;
 import java.util.Hashtable;
-import javax.swing.*;
+
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+
+import de.nmichael.efa.util.Dialog;
 
 // @i18n complete
 
@@ -65,6 +71,7 @@ public class ItemTypeStringList extends ItemTypeLabelValue {
         });
         f.setVisible(isVisible);
         f.setEnabled(isEnabled);
+        Dialog.setPreferredSize(f, fieldGridWidth, fieldGridHeight);
         if (cellRenderer!=null) {
         	f.setRenderer(cellRenderer);
         }

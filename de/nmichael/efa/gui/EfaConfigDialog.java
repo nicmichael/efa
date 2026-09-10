@@ -10,21 +10,14 @@
 
 package de.nmichael.efa.gui;
 
-import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.Frame;
-import java.awt.GridBagLayout;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
-import java.util.Arrays;
-import java.util.Hashtable;
-import java.util.Vector;
 
-import javax.swing.BorderFactory;
-import javax.swing.JComponent;
 import javax.swing.JDialog;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
 
+import de.nmichael.efa.Daten;
 import de.nmichael.efa.core.config.EfaConfig;
 import de.nmichael.efa.core.items.IItemType;
 import de.nmichael.efa.core.items.ItemTypeHashtable;
@@ -41,6 +34,8 @@ public class EfaConfigDialog extends BaseTabbedDialog {
               International.getStringWithMnemonic("Speichern"),
               efaConfig.getGuiItems(), true);
         this.myEfaConfig = efaConfig;
+        this.setNavigationMode(MODE_LEFT_NAVIGATION);
+        this.setContentDimension(getTabPanelPreferredSize(this, NAVIGATIONLIST_WIDTH+40, 200));
     }
 
     public EfaConfigDialog(JDialog parent, EfaConfig efaConfig) {
@@ -49,6 +44,8 @@ public class EfaConfigDialog extends BaseTabbedDialog {
               International.getStringWithMnemonic("Speichern"),
               efaConfig.getGuiItems(), true);
         this.myEfaConfig = efaConfig;
+        this.setNavigationMode(MODE_LEFT_NAVIGATION);
+        this.setContentDimension(getTabPanelPreferredSize(this, NAVIGATIONLIST_WIDTH+40, 200));
     }
 
     public EfaConfigDialog(JDialog parent, EfaConfig efaConfig, String selectedPanel) {
@@ -58,6 +55,8 @@ public class EfaConfigDialog extends BaseTabbedDialog {
               efaConfig.getGuiItems(), true);
         this._selectedPanel = selectedPanel;
         this.myEfaConfig = efaConfig;
+        this.setNavigationMode(MODE_LEFT_NAVIGATION);
+        this.setContentDimension(getTabPanelPreferredSize(this, NAVIGATIONLIST_WIDTH+40, 200));
     }
 
     public void keyAction(ActionEvent evt) {
@@ -119,73 +118,42 @@ public class EfaConfigDialog extends BaseTabbedDialog {
         return (ItemTypeHashtable<String>)getItem(myEfaConfig.getValueTypesStatus().getName());
     }
 
-    
-    // Efa Config Dialogue needs its own recursiveBuildGui...
-	protected int recursiveBuildGui(Hashtable<String, Hashtable> categories, Hashtable<String, Vector<IItemType>> items,
-			String catKey, JComponent currentPane, String selectedPanel, int otherPanelHeight) {
-		int itmcnt = 0;
-		int pos = (selectedPanel != null && selectedPanel.length() > 0 ? selectedPanel.indexOf(CATEGORY_SEPARATOR)
-				: -1);
-		String selectThisCat = (pos < 0 ? selectedPanel : selectedPanel.substring(0, pos));
-		String selectNextCat = (pos < 0 ? null : selectedPanel.substring(pos + 1));
-
-		Object[] cats = categories.keySet().toArray();
-		Arrays.sort(cats);
-		for (int i = 0; i < cats.length; i++) {
-			String key = (String) cats[i];
-			String thisCatKey = (catKey.length() == 0 ? key : makeCategory(catKey, key));
-			String catName = getCatName(thisCatKey);
-			Hashtable<String, Hashtable> subCat = categories.get(key);
-			if (subCat.size() != 0) {
-				JTabbedPane subTabbedPane = new JTabbedPane();
-				if (recursiveBuildGui(subCat, items, thisCatKey, subTabbedPane, selectNextCat, otherPanelHeight) > 0) {
-					if (currentPane instanceof JTabbedPane) {
-						currentPane.add(subTabbedPane, catName);
-					} else {
-						currentPane.add(subTabbedPane, BorderLayout.CENTER);
-					}
-					if (key.equals(selectThisCat) && currentPane instanceof JTabbedPane) {
-						((JTabbedPane) currentPane).setSelectedComponent(subTabbedPane);
-					}
-				}
-			} else {
-				JPanel panel = new JPanel();
-				panels.put(panel, thisCatKey);
-				JPanel innerPanel = new JPanel();
-
-				//This puts the scrollbar INSIDE the tabbedPane, so that config panes can have more elements
-				//than the current screen size allows.
-				JScrollPane scrollPane = new JScrollPane(innerPanel);
-		        scrollPane.setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
-				scrollPane.setPreferredSize(EfaGuiUtils.getTabPanelPreferredSizeEfaConfig(EfaGuiUtils.getSubCatCount(thisCatKey),this));
-				scrollPane.getVerticalScrollBar().setUnitIncrement(12);
-				innerPanel.setLayout(new GridBagLayout());
-				panel.setLayout(new BorderLayout());
-				panel.add(scrollPane,BorderLayout.CENTER);
-				Vector<IItemType> v = items.get(thisCatKey);
-				int y = 0;
-				for (int j = 0; v != null && j < v.size(); j++) {
-					IItemType itm = v.get(j);
-					if (itm.getType() == IItemType.TYPE_PUBLIC
-							|| (itm.getType() == IItemType.TYPE_EXPERT && expertModeEnabled)) {
-						y += itm.displayOnGui(this, innerPanel, y);
-						displayedGuiItems.add(itm);
-						itmcnt++;
-					}
-				}
-				if (y > 0) {
-					if (currentPane instanceof JTabbedPane) {
-						currentPane.add(panel, catName);
-					} else {
-						currentPane.add(panel, BorderLayout.CENTER);
-					}
-					if (key.equals(selectThisCat) && currentPane instanceof JTabbedPane) {
-						((JTabbedPane) currentPane).setSelectedComponent(panel);
-					}
-				}
-			}
+    public Dimension getTabPanelPreferredSize(BaseDialog base, int reduceWidth, int reduceHeight) {
+		Dimension s = Toolkit.getDefaultToolkit().getScreenSize();
+		
+		Dimension efaBthsSize = null;
+		Frame myParentFrame=EfaGuiUtils.getParentFrameRecursive(base);
+		if (myParentFrame!=null) {
+			efaBthsSize=myParentFrame.getSize();
 		}
-		return itmcnt;
-	}  
+		
+    	int maxDlgW=Daten.efaConfig.getValueMaxDialogWidth();
+    	int maxDlgH=Daten.efaConfig.getValueMaxDialogHeight()-20;
+    	
+    	//no max size for dialogs set? have a look at configured maximum screen width/height
+    	if (maxDlgW<=0) {
+    		maxDlgW=Daten.efaConfig.getValueScreenWidth();
+    	}
+    	if (maxDlgH<=0) {
+    		maxDlgH=Daten.efaConfig.getValueScreenHeight();
+    	}
+    	
+    	if (maxDlgW<=0 && efaBthsSize!=null) {
+    		maxDlgW = efaBthsSize.width-4;
+    	}
+    	if (maxDlgH<=0 && efaBthsSize!=null) {
+    		maxDlgH = efaBthsSize.height-90;
+    	}
+    	
+    	// No size configured for dialogs or even efaBths window? 
+    	// then use screen height/width as base
+   		maxDlgW=Math.max(maxDlgW-reduceWidth,500);
+   		maxDlgH=Math.max(maxDlgH-reduceHeight, 500);
+    	
+		return new Dimension(
+				maxDlgW, maxDlgH);
+				//(int) Math.round(maxDlgW*.85), 
+				//(int) Math.round(maxDlgH*.70));
+    }
     
 }

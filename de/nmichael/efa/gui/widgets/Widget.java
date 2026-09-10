@@ -71,7 +71,7 @@ public abstract class Widget implements IWidget {
         this.parameterPrefix = parameterPrefix;
         this.description = description;
         
-        addHeader("WidgetCommon_"+parameterPrefix,IItemType.TYPE_PUBLIC, "", International.getString("Widget Allgemein"), gridWidth);
+        //addHeader("WidgetCommon_"+parameterPrefix,IItemType.TYPE_PUBLIC, "", International.getString("Widget Allgemein"), gridWidth);
         addParameterInternal(new ItemTypeBoolean(PARAM_ENABLED, isWidgetActiveByDefault,
                 IItemType.TYPE_PUBLIC, "",
                 (showVisibleParam ?

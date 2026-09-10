@@ -460,13 +460,13 @@ public class ItemTypeItemList extends ItemType {
 	            panel.add(delButton, new GridBagConstraints(x+xForAddDelButtons, y+curYPos, 1, 1, 0.0, 0.0,
 	                    GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets((label==null ? 0 : padYbetween), 2, (label==null ? 0 : padYbetween), 0), 0, 0));
 
-	            panel.add(addButtonAtItem, new GridBagConstraints(x+(xForAddDelButtons*2), y+curYPos, 1, 1, 0.0, 0.0,
+	            panel.add(addButtonAtItem, new GridBagConstraints(x+(xForAddDelButtons+1), y+curYPos, 1, 1, 0.0, 0.0,
 	                    GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets((label==null ? 0 : padYbetween), 2, (label==null ? 0 : padYbetween), 0), 0, 0));
 	            
-	            panel.add(upButton, new GridBagConstraints(x+(xForAddDelButtons*3), y+curYPos, 1, 1, 0.0, 0.0,
+	            panel.add(upButton, new GridBagConstraints(x+(xForAddDelButtons+2), y+curYPos, 1, 1, 0.0, 0.0,
 	                    GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets((label==null ? 0 : padYbetween), 2, (label==null ? 0 : padYbetween), 0), 0, 0));
 
-	            panel.add(downButton, new GridBagConstraints(x+(xForAddDelButtons*4), y+curYPos, 1, 1, 0.0, 0.0,
+	            panel.add(downButton, new GridBagConstraints(x+(xForAddDelButtons+3), y+curYPos, 1, 1, 0.0, 0.0,
 	                    GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets((label==null ? 0 : padYbetween), 2, (label==null ? 0 : padYbetween), 0), 0, 0));
 	            
 
@@ -487,7 +487,7 @@ public class ItemTypeItemList extends ItemType {
 	                    GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets((label==null ? 0 : padYbetween), 2, (label==null ? 0 : padYbetween), 0), 0, 0));
 	            delButtons.put(delButton, iCurrentItemListIndex);
 
-	            panel.add(addButtonAtItem, new GridBagConstraints(x+(xForAddDelButtons*2), y+curYPos, 1, 1, 0.0, 0.0,
+	            panel.add(addButtonAtItem, new GridBagConstraints(x+(xForAddDelButtons+1), y+curYPos, 1, 1, 0.0, 0.0,
 	                    GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets((label==null ? 0 : padYbetween), 2, (label==null ? 0 : padYbetween), 0), 0, 0));
 	            addButtons.put(addButtonAtItem, iCurrentItemListIndex);
 	            

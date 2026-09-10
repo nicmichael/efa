@@ -104,9 +104,11 @@ public class ItemTypeColor extends ItemTypeLabelValue {
     }
 
     public int displayOnGui(Window dlg, JPanel panel, int x, int y) {
-        int count = super.displayOnGui(dlg, panel, x, y);
+        this.fieldGridWeightX = 1.0;
+        this.fieldGridFill = GridBagConstraints.HORIZONTAL;
+    	int count = super.displayOnGui(dlg, panel, x, y);
         panel.add(butdel, new GridBagConstraints(x+fieldGridWidth+1, y, 1, fieldGridHeight, 0.0, 0.0,
-                fieldGridAnchor, fieldGridFill,
+                GridBagConstraints.WEST, GridBagConstraints.NONE,
                 new Insets((itemOnNewRow ? 0 : padYbefore), (itemOnNewRow ? padXbefore : 0), padYafter, padXafter), 0, 0));
         return count;
     }

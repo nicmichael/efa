@@ -324,42 +324,7 @@ public class EfaGuiUtils {
     		
     }
     
-    public static Dimension getTabPanelPreferredSizeEfaConfig(int numCats, BaseDialog base) {
-		Dimension s = Toolkit.getDefaultToolkit().getScreenSize();
-		
-		Dimension efaBthsSize = null;
-		Frame myParentFrame=EfaGuiUtils.getParentFrameRecursive(base);
-		if (myParentFrame!=null) {
-			efaBthsSize=myParentFrame.getSize();
-		}
-		
-    	int maxDlgW=Daten.efaConfig.getValueMaxDialogWidth();
-    	int maxDlgH=Daten.efaConfig.getValueMaxDialogHeight()-20;
-    	
-    	//no max size for dialogs set? have a look at configured maximum screen width/height
-    	if (maxDlgW<=0) {
-    		maxDlgW=Daten.efaConfig.getValueScreenWidth();
-    	}
-    	if (maxDlgH<=0) {
-    		maxDlgH=Daten.efaConfig.getValueScreenHeight();
-    	}
-    	
-    	if (maxDlgW<=0 && efaBthsSize!=null) {
-    		maxDlgW = efaBthsSize.width-4;
-    	}
-    	if (maxDlgH<=0 && efaBthsSize!=null) {
-    		maxDlgH = efaBthsSize.height-90;
-    	}
-    	
-    	// No size configured for dialogs or even efaBths window? 
-    	// then use screen height/width as base
-   		maxDlgW=Math.min(s.width-80,1200);
-   		maxDlgH=Math.min(s.height-((numCats+1)*25), 900);
-    	
-		return new Dimension(
-				(int) Math.round(maxDlgW*.85), 
-				(int) Math.round(maxDlgH*.70));
-    }
+
     
     public static Dimension getTabPanelPreferredSize(int reduceHeight, BaseDialog base, int intendedMaxWidth, int intendedMaxHeight) {
 		Dimension s = Toolkit.getDefaultToolkit().getScreenSize();
