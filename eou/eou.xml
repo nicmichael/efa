@@ -81,6 +81,24 @@ section="Other"
 		</Section>
 	</Sections>
 	<Version>
+        <VersionID>2.5.3#14</VersionID>
+        <ReleaseDate>10.09.2026</ReleaseDate>
+        <DownloadUrl>TODO</DownloadUrl>
+        <DownloadSize>TODO</DownloadSize>
+     	  <MinimumJavaVersion>1.8</MinimumJavaVersion>
+		    <MinimumEfaCloudVersion>2.3.3</MinimumEfaCloudVersion>
+        <ShowNotice lang="de">Wenn efaCloud eingesetzt wird, muss der Server mindestens Version 2.3.3 unterstützen. EfaCloud 2.4.0_12 und höher werden empfohlen.</ShowNotice>
+        <ShowNotice lang="en">If you use efaCloud, make sure your server at least supports efaCloud Version 2.3.3. It is recommended to upgrade to EfaCloud 2.4.0_12 or above.</ShowNotice>
+        <Changes lang="de">
+        	<ChangeItem section="Admin/Configuration">Neu: EfaConfig mit Baumnavigation und Suchfunktion. Neuordnung von einigen Optionen. Aktualisierung der Beschriftung von Optionen.</ChangeItem>
+        	<ChangeItem section="Statistics">Neu: Statistik-Editor mit Baumnavigation und Suchfunktion.</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+        	<ChangeItem section="Admin/Configuration">>New: EfaConfig with tree navigation and search function. Reorganisation of some options. Some of the option's labels have been updated.</ChangeItem>
+        	<ChangeItem section="Statistics">New: Statistics editor with tree navigation and search function.</ChangeItem>
+        </Changes>
+	</Version>
+	<Version>
         <VersionID>2.5.3#13</VersionID>
         <ReleaseDate>07.09.2026</ReleaseDate>
         <DownloadUrl>TODO</DownloadUrl>
@@ -686,15 +704,15 @@ section="Other"
         <ShowNotice lang="en">If you use efaCloud, make sure your server at least supports efaCloud Version 2.3.3. It is recommended to upgrade to EfaCloud 2.4.0_10 or above.</ShowNotice>
         <Changes lang="de">
         	<ChangeItem section="Admin/Data Edit">Neu: Bootsstatus-Dialog im Querformat und zeigt die zugeordnete Fahrt-Nr und Fahrtenbuchname zum Bootsstatus.</ChangeItem>
-        	<ChangeItem section="Admin/Data Edit">Neu: EfaBase/Admin-Modus: Bei der Bearbeitung von Fahrtenbucheinträgen werden bestimmte leere Felder mit einem roten Warnicon hervorgehoben.</ChangeItem>
-        	<ChangeItem section="Admin/Data Edit">Neu: EfaBase/Admin-Modus: Eine Fahrt wird nicht mehr _grundsätzlich_ bei der Bearbeitung in efaBase/Adminmodus auf "geschlossen" gesetzt. D.h. die "Fahrt offen - jetzt beenden" bleibt häufiger sichtbar, wenn die Fahrt tatsächlich noch offen ist.</ChangeItem>
+        	<ChangeItem section="Session Entry">Neu: EfaBase/Admin-Modus: Bei der Bearbeitung von Fahrtenbucheinträgen werden bestimmte leere Felder mit einem roten Warnicon hervorgehoben.</ChangeItem>
+        	<ChangeItem section="Session Entry">Neu: EfaBase/Admin-Modus: Eine Fahrt wird nicht mehr _grundsätzlich_ bei der Bearbeitung in efaBase/Adminmodus auf "geschlossen" gesetzt. D.h. die "Fahrt offen - jetzt beenden" bleibt häufiger sichtbar, wenn die Fahrt tatsächlich noch offen ist.</ChangeItem>
         	<ChangeItem section="Admin/Data Edit">Bugfix: Bootstatus: Wird der Bootstatus auf einen Wert != Unterwegs gesetzt, werden im Bootsstatus die Angaben von Fahrtnummer und Fahrtenbuchnamen geleert.</ChangeItem>
         	<ChangeItem section="Session Entry">Bugfix: Fahrt anlegen/Nacherfassen: Ist eine Fahrt&gt;30km, und ist nur eine Fahrtart zur Auswahl möglich, unterbleibt die Abfrage der Fahrtart.</ChangeItem>
         </Changes>
         <Changes lang="en">
         	<ChangeItem section="Admin/Data Edit">New: Dialog for editing BoatStatus in landscape mode; shows a new column for Trip number and Logbook-Date.</ChangeItem>
-        	<ChangeItem section="Admin/Data Edit">New: EfaBase/Admin mode: When editing logbook entries, some fields are highlighted with a red warning icon when they are (unexpectedly) empty.</ChangeItem>
-        	<ChangeItem section="Admin/Data Edit">New: EfaBase/Admin mode: A Session does not gets set to "closed" by default if a session gets edited in efaBase/Admin mode. This means that the button "Session open - finish now" is visible more often if the session is actually open.</ChangeItem>
+        	<ChangeItem section="Session Entry">New: EfaBase/Admin mode: When editing logbook entries, some fields are highlighted with a red warning icon when they are (unexpectedly) empty.</ChangeItem>
+        	<ChangeItem section="Session Entry">New: EfaBase/Admin mode: A Session does not gets set to "closed" by default if a session gets edited in efaBase/Admin mode. This means that the button "Session open - finish now" is visible more often if the session is actually open.</ChangeItem>
         	<ChangeItem section="Admin/Data Edit">Bugfix: Boatstatus: If the BoatStatus gets set to a value != OnTheWater, the attributes for TripNo and Logbookname get cleared as well.</ChangeItem>
         	<ChangeItem section="Session Entry">Bugfix: Session start: if a trip is &gt;30km, and only a single trip type is available, no dialog for confirming the trip type is shown.</ChangeItem>
         </Changes>	
