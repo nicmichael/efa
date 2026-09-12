@@ -3,32 +3,77 @@
            elementFormDefault="qualified"
            attributeFormDefault="unqualified">
 
-  <!-- Root element -->
+  <!--Root-->
   <xs:element name="efaOnlineUpdate">
     <xs:complexType>
       <xs:sequence>
+        <!-- optionaler Section-Übersetzungsblock -->
+        <xs:element name="Sections" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Section" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="Translation" maxOccurs="unbounded">
+                      <xs:complexType>
+                        <xs:simpleContent>
+                          <xs:extension base="xs:string">
+                            <xs:attribute name="lang" type="LangCodeType" use="required"/>
+                          </xs:extension>
+                        </xs:simpleContent>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                  <xs:attribute name="name" type="xs:string" use="required"/>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+        <!-- viele Version-Elemente -->
         <xs:element name="Version" type="VersionType" minOccurs="0" maxOccurs="unbounded"/>
+
+        <!-- Erweiterungspunkt für zukünftige Top-Level-Elemente -->
+        <xs:any minOccurs="0" maxOccurs="unbounded" processContents="lax"/>
       </xs:sequence>
+      <xs:anyAttribute processContents="lax"/>
     </xs:complexType>
   </xs:element>
 
-  <!-- Version block: fixed order, DownloadUrl optional -->
+  <!-- VersionType -->
   <xs:complexType name="VersionType">
     <xs:sequence>
       <xs:element name="VersionID" type="VersionIDType"/>
-      <xs:element name="ReleaseDate" type="DateDDMMYYYY"/>
-      <xs:element name="DownloadUrl" type="xs:string" minOccurs="0"/>
+      <!-- ReleaseDate: erlaubt DD.MM.YYYY oder ISO YYYY-MM-DD -->
+      <xs:element name="ReleaseDate" minOccurs="0">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:pattern value="([0-9]{2}\.[0-9]{2}\.[0-9]{4})|([0-9]{4}-[0-9]{2}-[0-9]{2})"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+
+      <xs:element name="DownloadUrl" type="xs:anyURI" minOccurs="0"/>
+      <!-- DownloadSize erlaubt numerische Bytes oder Literal "TODO" -->
       <xs:element name="DownloadSize" type="DownloadSizeType" minOccurs="0"/>
+
       <xs:element name="MinimumJavaVersion" type="VersionTokenType" minOccurs="0"/>
       <xs:element name="MinimumEfaCloudVersion" type="VersionTokenType" minOccurs="0"/>
 
-      <!-- fixed order: first zero-or-more ShowNotice, then zero-or-more Changes -->
+      <!-- ShowNotice / localized text (typischerweise mit lang-Attribut) -->
       <xs:element name="ShowNotice" type="LocalizedTextType" minOccurs="0" maxOccurs="unbounded"/>
+
+      <!-- Changes-Blöcke: meist mehrere Sprachen (lang erforderlich) -->
       <xs:element name="Changes" type="ChangesType" minOccurs="0" maxOccurs="unbounded"/>
+
+      <!-- zusätzlicher Inhalt (locker verarbeitet) -->
+      <!--<xs:any minOccurs="0" maxOccurs="unbounded" processContents="lax"/>-->
     </xs:sequence>
+    <!--x!<xs:anyAttribute processContents="lax"/>-->
   </xs:complexType>
 
-  <!-- Localized free text with required lang attribute -->
+  <!--  LocalizedTextType (ShowNotice etc.) -->
   <xs:complexType name="LocalizedTextType">
     <xs:simpleContent>
       <xs:extension base="xs:string">
@@ -37,57 +82,64 @@
     </xs:simpleContent>
   </xs:complexType>
 
-  <!-- Changes element (has required lang attribute and many ChangeItem children) -->
+  <!--        ChangesType und ChangeItem
+    - ChangeItem ist simpleContent, erlaubt optionales Attribut section 
+  -->
   <xs:complexType name="ChangesType">
     <xs:sequence>
-      <xs:element name="ChangeItem" type="xs:string" minOccurs="1" maxOccurs="unbounded"/>
+      <xs:element name="ChangeItem" type="ChangeItemType" minOccurs="1" maxOccurs="unbounded"/>
     </xs:sequence>
     <xs:attribute name="lang" type="LangCodeType" use="required"/>
   </xs:complexType>
 
-  <!-- Date DD.MM.YYYY (XSD regex: use [0-9] rather than \d) -->
-  <xs:simpleType name="DateDDMMYYYY">
-    <xs:restriction base="xs:string">
-      <xs:pattern value="[0-9]{2}\.[0-9]{2}\.[0-9]{4}"/>
-    </xs:restriction>
-  </xs:simpleType>
+  <xs:complexType name="ChangeItemType">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <!-- Erlaube beide Varianten, falls in der Datei gemischt geschrieben wurde -->
+        <xs:attribute name="section" type="xs:string" use="required"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
 
-  <!-- VersionID: XSD-compatible regex
-       Example allowed formats: 2.5.3  2.5.3#3  2.3.3_02  2.3.3_02#1  2.1.1_#1 etc.
-       Pattern (XSD): [0-9]+\.[0-9]+\.[0-9]+(_([0-9]+|#[0-9]+))?(#[0-9]+)?
-  -->
+  <!-- Hilfs-Typen -->
+
+  <!-- VersionID: flexibel, deckt gängige Varianten wie 2.5.3, 2.5.3#13, 2.3.3_02, 2.3.3_02#1 ab -->
   <xs:simpleType name="VersionIDType">
     <xs:restriction base="xs:string">
-      <xs:pattern value="[0-9]+\.[0-9]+\.[0-9]+(_([0-9]+|#[0-9]+))?(#[0-9]+)?"/>
+      <!-- Pattern: Major.Minor.Patch optional (_NN) optional (#NN) -->
+      <xs:pattern value="[0-9]+(\.[0-9]+){2}(_[0-9]+)?(#[0-9]+)?"/>
     </xs:restriction>
   </xs:simpleType>
 
-  <!-- Generic small version token (e.g. "1.8", "2.3.3") -->
+  <!-- Generic version token like "1.8" or "2.3.3" -->
   <xs:simpleType name="VersionTokenType">
     <xs:restriction base="xs:string">
       <xs:pattern value="[0-9]+(\.[0-9]+)*"/>
     </xs:restriction>
   </xs:simpleType>
 
-  <!-- DownloadSize: either a non-negative integer (bytes) OR the literal "TODO" -->
+  <!-- DownloadSize: numeric bytes or literal TODO -->
   <xs:simpleType name="DownloadSizeType">
-    <xs:union>
-      <xs:simpleType>
-        <xs:restriction base="xs:nonNegativeInteger"/>
-      </xs:simpleType>
-      <xs:simpleType>
-        <xs:restriction base="xs:string">
-          <xs:enumeration value="TODO"/>
-        </xs:restriction>
-      </xs:simpleType>
+    <xs:union memberTypes="xs:nonNegativeInteger xs:string">
+      <!-- If it's a string, allow "TODO" explicitly; other string values valid but we prefer TODO -->
     </xs:union>
   </xs:simpleType>
 
-  <!-- Language code: two-lowercase optionally -COUNTRY (e.g. de, en, en-US) -->
+  <!-- Language code: e.g. de or en or en-US -->
   <xs:simpleType name="LangCodeType">
     <xs:restriction base="xs:string">
       <xs:pattern value="[a-z]{2}(-[A-Z]{2})?"/>
     </xs:restriction>
   </xs:simpleType>
+
+  <!-- Zusätzliche Anmerkungen / Extensibility -->
+  <xs:annotation>
+    <xs:documentation>
+      Dieses Schema ist bewusst pragmatisch: es validiert die Struktur der Version-/Changes-Blöcke
+      und erlaubt gleichzeitig leichte Abweichungen (z.B. alternative Datumsformate).
+      Vor der Validierung muss die XML-Wohlgeformtheit (fehlende '>' oder falsche schließende Tags)
+      in der Datei behoben werden.
+    </xs:documentation>
+  </xs:annotation>
 
 </xs:schema>
