@@ -1,5 +1,7 @@
 #!/bin/bash
-# makeDist.sh   V2.0 04.10.2025
+# makeDist.sh V2.0 04.10.2025
+# makeDist.sh V2.1 09.11.2025 updated jars for json and flatlaf.
+# makeDist.sh V2.2 12.09.2026 updated for new eou.xml transformation to changelog_de.html etc.
 # ######################################
 #
 # Originally created by Nicolas Michael. Updated by Stefan Gebers.
@@ -97,6 +99,7 @@ EFAWINDSETUP=$EFABASE/winmedia
 
 CLASSPATH=$MAKEDIST_JAVA:$MAKEDIST_TOOLS
 CLASSPATH=$CLASSPATH:$PLUGINS/ftp/edtftpj.jar:$CLASSPATH:$PLUGINS/ftp/jsch-0.1.55.jar:$PLUGINS/help/jh.jar:$PLUGINS/jsuntimes/jsuntimes.jar:$PLUGINS/mail/javax.mail.jar:$PLUGINS/mail/activation.jar:
+#new flatlaf version 3.6 for newer efa versions since 2.5.3
 CLASSPATH=$CLASSPATH:$PLUGINS/flatlaf/flatlaf-3.6.jar
 CLASSPATH=$CLASSPATH:$PLUGINS/pdf/avalon-framework.jar:$PLUGINS/pdf/batik-all.jar:$PLUGINS/pdf/commons-io.jar:$PLUGINS/pdf/commons-logging.jar:$PLUGINS/pdf/fop.jar:$PLUGINS/pdf/xmlgraphics-commons.jar
 CLASSPATH=$CLASSPATH:$PLUGINS/weather/commons-codec.jar:$PLUGINS/weather/signpost-core.jar
@@ -182,7 +185,7 @@ $JAR cfv efa.jar de || exit 1
 echo "Updating efa_de.properties ..."
 echo "------------------------------------------------------------------"
 
-#
+# the make_i18n_keys.sh does not work anymore due to need for outdated perl libraries, so it is not run any more
 #cd ${EFASRC:?}
 #./tools/make_i18n_keys.sh -ur ${MAKEDIST_JAVA:?}/efa_de.properties
 
@@ -218,8 +221,8 @@ cp ${EFADOC:?}/*.gif ${MAKEDIST_DOC:?}
 cp ${EFADOC:?}/*.png ${MAKEDIST_DOC:?}
 cp ${EFADOC:?}/*.html ${MAKEDIST_DOC:?}
 
-#
-#
+# Online help creation need javahelp 2.0 programs in ./jh2.0/...
+# should be commented out if javahelp not available
 echo "Creating Online Help ..."
 echo "------------------------------------------------------------------"
 mkdir -p ${MAKEDIST_HELP:?}
@@ -241,7 +244,7 @@ echo ${MAKEDIST_DOC}
 
 xsltproc --stringparam langcode "de" ${EFABASE}/eoutransformv2.xslt ${EFASRC}/eou/eou.xml >${MAKEDIST_DOC:?}/changelog_de.html
 xsltproc --stringparam langcode "en" ${EFABASE}/eoutransformv2.xslt ${EFASRC}/eou/eou.xml >${MAKEDIST_DOC:?}/changelog_en.html
-#Addendum SGB
+# Addendum SGB: eou changelog refers do some png images for showing the structure. include them in the doc directory.
 cp ${EFASRC}/eou/*.png ${MAKEDIST_DOC:?}
 
 echo "DONE. Check"
