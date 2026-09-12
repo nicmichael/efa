@@ -85,8 +85,8 @@ section="Other"
         <ReleaseDate>10.09.2026</ReleaseDate>
         <DownloadUrl>TODO</DownloadUrl>
         <DownloadSize>TODO</DownloadSize>
-     	  <MinimumJavaVersion>1.8</MinimumJavaVersion>
-		    <MinimumEfaCloudVersion>2.3.3</MinimumEfaCloudVersion>
+     	<MinimumJavaVersion>1.8</MinimumJavaVersion>
+		<MinimumEfaCloudVersion>2.3.3</MinimumEfaCloudVersion>
         <ShowNotice lang="de">Wenn efaCloud eingesetzt wird, muss der Server mindestens Version 2.3.3 unterstützen. EfaCloud 2.4.0_12 und höher werden empfohlen.</ShowNotice>
         <ShowNotice lang="en">If you use efaCloud, make sure your server at least supports efaCloud Version 2.3.3. It is recommended to upgrade to EfaCloud 2.4.0_12 or above.</ShowNotice>
         <Changes lang="de">
@@ -94,7 +94,7 @@ section="Other"
         	<ChangeItem section="Statistics">Neu: Statistik-Editor mit Baumnavigation und Suchfunktion.</ChangeItem>
         </Changes>
         <Changes lang="en">
-        	<ChangeItem section="Admin/Configuration">>New: EfaConfig with tree navigation and search function. Reorganisation of some options. Some of the option's labels have been updated.</ChangeItem>
+        	<ChangeItem section="Admin/Configuration">New: EfaConfig with tree navigation and search function. Reorganisation of some options. Some of the option's labels have been updated.</ChangeItem>
         	<ChangeItem section="Statistics">New: Statistics editor with tree navigation and search function.</ChangeItem>
         </Changes>
 	</Version>

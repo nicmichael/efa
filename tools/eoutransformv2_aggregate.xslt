@@ -2,19 +2,67 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 <xsl:output method="html" version="4.0" encoding="UTF-8"/>
 
+
 <!--
   refVersion:
   - Beta:      major.minor.patch#build   (z.B. 2.5.3#10)
   - Produktiv: major.minor.patch_update  (z.B. 2.4.0_00)
 -->
 <xsl:param name="refVersion" select="'2.4.0_00'"/>
+<xsl:param name="langcode" select="'de'"/>
+
+<!-- 
+Transformation script for an eou.xml which has a section name parameter for each change item.
+It is intended to be used in the new efaOnlineUpdate feature in efa.
+
+It is optimized for generating a changelog which aggregates the changes over multiple versions,
+beginning from $refVersion.
+
+It iterates through all Version nodes in the eou.xml, sorts them by version number
+and outputs a table with the latest version number, release date, latest minimum Java version, latest minimum efaCloud version, important notices 
+and the changes grouped by section and type (new / bugfix / other).
+
+if a section is defined in the eou.xml, it will be displayed in the order of the sections defined in the eou.xml.
+
+-->
+
+<!-- Constants for case-insensitive comparisons -->
+<xsl:variable name="UPPER" select="'ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜ'"/>
+<xsl:variable name="LOWER" select="'abcdefghijklmnopqrstuvwxyzäöü'"/>
+
+<xsl:variable name="NEWITEM_PREFIX">
+    <xsl:choose>
+        <xsl:when test="$langcode='de'">neu:</xsl:when>
+        <xsl:otherwise>new:</xsl:otherwise>
+    </xsl:choose>
+</xsl:variable>
+
+<xsl:variable name="AdditionsTitle">
+    <xsl:choose>
+        <xsl:when test="$langcode='de'">Neuerungen</xsl:when>
+        <xsl:otherwise>New Features</xsl:otherwise>
+    </xsl:choose>
+</xsl:variable>
+<xsl:variable name="BugfixTitle">
+    <xsl:choose>
+        <xsl:when test="$langcode='de'">Korrekturen</xsl:when>
+        <xsl:otherwise>Bug Fixes</xsl:otherwise>
+    </xsl:choose>
+</xsl:variable>
+<xsl:variable name="OtherTitle">
+    <xsl:choose>
+        <xsl:when test="$langcode='de'">Sonstige Änderungen</xsl:when>
+        <xsl:otherwise>Other Changes</xsl:otherwise>
+    </xsl:choose>
+</xsl:variable>
+
 
 <!-- Liefert die deutsche Übersetzung einer Section; Fallback ist der interne Section-Name -->
-<xsl:template name="section-label-de">
+<xsl:template name="section-label">
     <xsl:param name="sectionName"/>
     <xsl:choose>
-        <xsl:when test="/efaOnlineUpdate/Sections/Section[@name=$sectionName]/Translation[@lang='de']">
-            <xsl:value-of select="/efaOnlineUpdate/Sections/Section[@name=$sectionName]/Translation[@lang='de'][1]"/>
+        <xsl:when test="/efaOnlineUpdate/Sections/Section[@name=$sectionName]/Translation[@lang=$langcode]">
+            <xsl:value-of select="/efaOnlineUpdate/Sections/Section[@name=$sectionName]/Translation[@lang=$langcode][1]"/>
         </xsl:when>
         <xsl:otherwise>
             <xsl:value-of select="$sectionName"/>
@@ -78,14 +126,14 @@
             </xsl:call-template>
         </xsl:variable>
         <xsl:if test="number($vRank) &gt; number($refRank) and
-            Changes[@lang='de']/ChangeItem[@section=$sectionName][
-                ($mode='new' and starts-with(translate(normalize-space(.),'ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜ','abcdefghijklmnopqrstuvwxyzäöü'),'neu:'))
+            Changes[@lang=$langcode]/ChangeItem[@section=$sectionName][
+                ($mode='new' and starts-with(translate(normalize-space(.), $UPPER, $LOWER),$NEWITEM_PREFIX))
                 or
-                ($mode='bugfix' and starts-with(translate(normalize-space(.),'ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜ','abcdefghijklmnopqrstuvwxyzäöü'),'bugfix:'))
+                ($mode='bugfix' and starts-with(translate(normalize-space(.),$UPPER, $LOWER),'bugfix:'))
                 or
                 ($mode='other'
-                    and not(starts-with(translate(normalize-space(.),'ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜ','abcdefghijklmnopqrstuvwxyzäöü'),'neu:'))
-                    and not(starts-with(translate(normalize-space(.),'ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜ','abcdefghijklmnopqrstuvwxyzäöü'),'bugfix:'))
+                    and not(starts-with(translate(normalize-space(.), $UPPER, $LOWER),$NEWITEM_PREFIX))
+                    and not(starts-with(translate(normalize-space(.), $UPPER, $LOWER),'bugfix:'))
                 )
             ]">1</xsl:if>
     </xsl:for-each>
@@ -107,7 +155,7 @@
     </xsl:variable>
 
     <xsl:if test="contains($hasMode, '1')">
-        <b><xsl:value-of select="$title"/></b>
+        <br/><xsl:value-of select="$title"/>
         <ul>
             <!-- Alle passenden ChangeItems aus allen neueren Versionen, in Original-Reihenfolge -->
             <xsl:for-each select="/efaOnlineUpdate/Version">
@@ -117,14 +165,14 @@
                     </xsl:call-template>
                 </xsl:variable>
                 <xsl:if test="number($vRank) &gt; number($refRank)">
-                    <xsl:for-each select="Changes[@lang='de']/ChangeItem[@section=$sectionName][
-                        ($mode='new' and starts-with(translate(normalize-space(.),'ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜ','abcdefghijklmnopqrstuvwxyzäöü'),'neu:'))
+                    <xsl:for-each select="Changes[@lang=$langcode]/ChangeItem[@section=$sectionName][
+                        ($mode='new' and starts-with(translate(normalize-space(.),$UPPER, $LOWER),$NEWITEM_PREFIX))
                         or
-                        ($mode='bugfix' and starts-with(translate(normalize-space(.),'ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜ','abcdefghijklmnopqrstuvwxyzäöü'),'bugfix:'))
+                        ($mode='bugfix' and starts-with(translate(normalize-space(.),$UPPER, $LOWER),'bugfix:'))
                         or
                         ($mode='other'
-                            and not(starts-with(translate(normalize-space(.),'ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜ','abcdefghijklmnopqrstuvwxyzäöü'),'neu:'))
-                            and not(starts-with(translate(normalize-space(.),'ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜ','abcdefghijklmnopqrstuvwxyzäöü'),'bugfix:'))
+                            and not(starts-with(translate(normalize-space(.),$UPPER, $LOWER),$NEWITEM_PREFIX))
+                            and not(starts-with(translate(normalize-space(.),$UPPER, $LOWER),'bugfix:'))
                         )
                     ]">
                         <li>
@@ -184,7 +232,7 @@
             <xsl:if test="contains($hasNew, '1') or contains($hasBugfix, '1') or contains($hasOther, '1')">
                 <li>
                     <b>
-                        <xsl:call-template name="section-label-de">
+                        <xsl:call-template name="section-label">
                             <xsl:with-param name="sectionName" select="$sectionName"/>
                         </xsl:call-template>
                     </b>
@@ -193,21 +241,21 @@
                     <!-- Untergruppen pro Section -->
                     <xsl:call-template name="output-section-subgroup">
                         <xsl:with-param name="sectionName" select="$sectionName"/>
-                        <xsl:with-param name="title" select="'Neuerungen'"/>
+                        <xsl:with-param name="title" select="$AdditionsTitle"/>
                         <xsl:with-param name="mode" select="'new'"/>
                         <xsl:with-param name="refRank" select="$refRank"/>
                     </xsl:call-template>
 
                     <xsl:call-template name="output-section-subgroup">
                         <xsl:with-param name="sectionName" select="$sectionName"/>
-                        <xsl:with-param name="title" select="'Korrekturen'"/>
+                        <xsl:with-param name="title" select="$BugfixTitle"/>
                         <xsl:with-param name="mode" select="'bugfix'"/>
                         <xsl:with-param name="refRank" select="$refRank"/>
                     </xsl:call-template>
 
                     <xsl:call-template name="output-section-subgroup">
                         <xsl:with-param name="sectionName" select="$sectionName"/>
-                        <xsl:with-param name="title" select="'Sonstige Änderungen'"/>
+                        <xsl:with-param name="title" select="$OtherTitle"/>
                         <xsl:with-param name="mode" select="'other'"/>
                         <xsl:with-param name="refRank" select="$refRank"/>
                     </xsl:call-template>
@@ -227,8 +275,19 @@
     </xsl:variable>
 
     <html>
-    <body title="EFA Versionshistorie (kumuliert)">
-    <h1><b>EFA Versionshistorie (kumuliert)</b></h1>
+    <body title="EFA Changelog (cummulated)">
+    <xsl:choose>
+		<xsl:when test="$langcode='de'">
+			<xsl:variable name="NEWITEM_PREFIX" select="'neu:'"/>
+			<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+			<h1><b>EFA Versionshistorie (zusammengefasst)</b></h1>
+		</xsl:when>
+		<xsl:otherwise>
+			<xsl:variable name="NEWITEM_PREFIX" select="'new:'"/>
+			<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+			<h1><b>EFA Changelog (cummulated)</b></h1>
+		</xsl:otherwise>
+	</xsl:choose>
     <b>Referenzversion: <xsl:value-of select="$refVersion"/></b><br/><br/>
 
     <!-- Neueste Version ermitteln: höchster Rank > refRank (direkter DOM-Zugriff) -->
@@ -246,23 +305,53 @@
     <xsl:if test="$newestVersion/MinimumJavaVersion or $newestVersion/MinimumEfaCloudVersion">
         <b>Anforderungen (neueste Version: <xsl:value-of select="$newestVersion/VersionID"/>):</b><br/>
         <xsl:if test="$newestVersion/MinimumJavaVersion">
-            Minimale Java Version: <xsl:value-of select="$newestVersion/MinimumJavaVersion"/><br/>
+			<xsl:choose> 
+				<xsl:when test="$langcode='de'">                        
+                	Minimale Java Version:
+                </xsl:when>
+                <xsl:otherwise>
+                	Minimal Java Version:
+                </xsl:otherwise>
+            </xsl:choose>
+           <xsl:value-of select="$newestVersion/MinimumJavaVersion"/><br/>
         </xsl:if>
         <xsl:if test="$newestVersion/MinimumEfaCloudVersion">
-            Minimale efaCloud Version: <xsl:value-of select="$newestVersion/MinimumEfaCloudVersion"/><br/>
+        	<xsl:choose> 
+				<xsl:when test="$langcode='de'">                        
+                	Minimale Java Version:
+                </xsl:when>
+                <xsl:otherwise>
+                	Minimal Java Version:
+                </xsl:otherwise>
+            </xsl:choose>
+            <xsl:value-of select="$newestVersion/MinimumEfaCloudVersion"/><br/>
         </xsl:if>
         <br/>
     </xsl:if>
 
     <!-- Wichtige Hinweise nur aus neuester Version -->
-    <xsl:if test="$newestVersion/ShowNotice[@lang='de']">
-        <b><i><font color="#EE0000">Wichtige Hinweise:</font></i></b>
-        <ul>
-            <xsl:for-each select="$newestVersion/ShowNotice[@lang='de']">
-                <li><xsl:value-of select="."/></li>
-            </xsl:for-each>
-        </ul>
-    </xsl:if>
+	<xsl:choose> 
+		<xsl:when test="$langcode='de'">
+		    <xsl:if test="$newestVersion/ShowNotice[@lang='de']">
+		        <b><i><font color="#EE0000">Wichtige Hinweise:</font></i></b>
+		        <ul>
+		            <xsl:for-each select="$newestVersion/ShowNotice[@lang='de']">
+		                <li><xsl:value-of select="."/></li>
+		            </xsl:for-each>
+		        </ul>
+		    </xsl:if>
+	    </xsl:when>
+	    <xsl:otherwise>
+	    	<xsl:if test="$newestVersion/ShowNotice[@lang='de']">
+		        <b><i><font color="#EE0000">Important notice:</font></i></b>
+		        <ul>
+		            <xsl:for-each select="$newestVersion/ShowNotice[@lang='de']">
+		                <li><xsl:value-of select="."/></li>
+		            </xsl:for-each>
+		        </ul>
+		    </xsl:if>
+		</xsl:otherwise>
+    </xsl:choose>     
 
     <!-- Kumulierte Änderungen section-zentriert mit Untergruppen -->
     <xsl:call-template name="output-sections-with-subgroups">
