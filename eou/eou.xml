@@ -81,6 +81,24 @@ section="Other"
 		</Section>
 	</Sections>
 	<Version>
+        <VersionID>2.5.3#15</VersionID>
+        <ReleaseDate>13.09.2026</ReleaseDate>
+        <DownloadUrl>TODO</DownloadUrl>
+        <DownloadSize>TODO</DownloadSize>
+     	<MinimumJavaVersion>1.8</MinimumJavaVersion>
+		<MinimumEfaCloudVersion>2.3.3</MinimumEfaCloudVersion>
+        <ShowNotice lang="de">Wenn efaCloud eingesetzt wird, muss der Server mindestens Version 2.3.3 unterstützen. EfaCloud 2.4.0_12 und höher werden empfohlen.</ShowNotice>
+        <ShowNotice lang="en">If you use efaCloud, make sure your server at least supports efaCloud Version 2.3.3. It is recommended to upgrade to EfaCloud 2.4.0_12 or above.</ShowNotice>
+        <Changes lang="de">
+        	<ChangeItem section="Admin/Data Edit">Bugfix: Dialoge für die Bearbeitung von Booten, Personen, Gruppen, Zielen wurden größer als das konfigurierte Limit für Dialoggrößen.</ChangeItem>
+        	<ChangeItem section="Stability">Neu: die Änderungshistorie zeigt die Änderungen einer Version nun je nach Bereich an. Dazu wurde eou.xml überarbeitet und um alle Einträge früher als Version 2.3.3 bereinigt.</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+			<ChangeItem section="Admin/Data Edit">Bugfix: Dialogs for editing boats, persons, groups, and destinations were larger than the configured limit for dialog sizes.</ChangeItem>
+			<ChangeItem section="Stability">New: The change history now displays the changes of a version according to their respective areas. For this purpose, eou.xml has been revised and all entries earlier than version 2.3.3 have been cleaned up.</ChangeItem>
+        </Changes>
+	</Version>
+	<Version>
         <VersionID>2.5.3#14</VersionID>
         <ReleaseDate>10.09.2026</ReleaseDate>
         <DownloadUrl>TODO</DownloadUrl>
