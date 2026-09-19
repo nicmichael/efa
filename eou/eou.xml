@@ -81,6 +81,22 @@ section="Other"
 		</Section>
 	</Sections>
 	<Version>
+        <VersionID>2.5.3#16</VersionID>
+        <ReleaseDate>19.09.2026</ReleaseDate>
+        <DownloadUrl>TODO</DownloadUrl>
+        <DownloadSize>TODO</DownloadSize>
+     	<MinimumJavaVersion>1.8</MinimumJavaVersion>
+		<MinimumEfaCloudVersion>2.3.3</MinimumEfaCloudVersion>
+        <ShowNotice lang="de">Wenn efaCloud eingesetzt wird, muss der Server mindestens Version 2.3.3 unterstützen. EfaCloud 2.4.0_12 und höher werden empfohlen.</ShowNotice>
+        <ShowNotice lang="en">If you use efaCloud, make sure your server at least supports efaCloud Version 2.3.3. It is recommended to upgrade to EfaCloud 2.4.0_12 or above.</ShowNotice>
+        <Changes lang="de">
+        	<ChangeItem section="Admin/Other">BugFix: Verarbeitung der .efacred Datei verbessert. Logging für das Handling der .efacred Datei und für Loginvorgänge verbessert.</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+        	<ChangeItem section="Admin/Other">BugFix: Improved processing of the .efacred file. Logging for handling the .efacred file and for login processes improved.</ChangeItem>
+        </Changes>
+	</Version>
+	<Version>
         <VersionID>2.5.3#15</VersionID>
         <ReleaseDate>13.09.2026</ReleaseDate>
         <DownloadUrl>TODO</DownloadUrl>
