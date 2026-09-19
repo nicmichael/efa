@@ -216,9 +216,14 @@ public class Admins extends StorageObject {
             txq.setAdminCredentials(ecr.getAdminName(),Integer.toString(ecr.getEfaCloudUserID()), password);
             return admin;
         }
+        // local admin, check password
         if (admin.getPassword().equals(new DataTypePasswordHashed(password))) {
             // local admin, do not change the efaCloud credentials.
             return admin;
+        } else {
+        	// protocol failed logins as warning
+        	Logger.log(Logger.WARNING, Logger.MSG_ADMIN_LOGINFAILURE, International.getString("Admin-Login") + ": "
+					+ International.getMessage("Name {name} oder Paßwort ungültig!", name));
         }
         return null;
     }

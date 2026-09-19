@@ -50,42 +50,72 @@ public class Credentials {
 
     public boolean readCredentials() {
         credentials = new Hashtable<String,String>();
+        defaultAdmin = null; // Reset defaultAdmin to null before reading new credentials if credentials file is read again
         try {
+            if (Logger.isTraceOn(Logger.TT_CORE, 3)) {
+                Logger.log(Logger.DEBUG, Logger.MSG_CORE_CREDENTIALS, "Trying to access credentials file: " + filename);
+            }
+
             File credfile = new File(filename);
             if (credfile.exists()) {
-                BufferedReader f = new BufferedReader(new InputStreamReader(
-                        new FileInputStream(filename), Daten.ENCODING_UTF));
-                String s;
-                while ( (s = f.readLine()) != null) {
-                    s = s.trim();
-                    if (s.startsWith("#") || s.length() == 0) {
-                        continue;
-                    }
-                    StringTokenizer tok = new StringTokenizer(s, " ");
-                    if (tok.countTokens() >= 2) {
-                        String username = tok.nextToken();
-                        String password = tok.nextToken();
-                        if (username.startsWith("+")) {
-                            username = username.substring(1);
-                            defaultAdmin = (defaultAdmin == null ? username : defaultAdmin);
+                int lineCount = 0;
+                int commentLineCount = 0;
+
+                // try-with-resources statement to ensure the BufferedReader is closed automatically
+                try (BufferedReader f = new BufferedReader(
+                        new InputStreamReader(new FileInputStream(filename), Daten.ENCODING_UTF))) {
+
+                    String s;
+                    while ((s = f.readLine()) != null) {
+                        lineCount++;
+
+                        // Normalize whitespace: replace tabs with spaces, trim leading/trailing whitespace,
+                        // and replace multiple spaces with a single space
+                        s = s.replaceAll("\t", " ").trim();
+                        s = s.replaceAll(" +", " ");
+
+                        if (s.startsWith("#") || s.length() == 0) {
+                            commentLineCount++;
+                            continue;
                         }
-                        if (Logger.isTraceOn(Logger.TT_CORE, 3)) {
-                            Logger.log(Logger.DEBUG, Logger.MSG_CORE_CREDENTIALS, "found credentials for: " + username
-                                    + (s.startsWith("+") ? " (default)" : ""));
+
+                        StringTokenizer tok = new StringTokenizer(s, " ");
+                        if (tok.countTokens() >= 2) {
+                            String username = tok.nextToken();
+                            String password = tok.nextToken();
+                            if (username.startsWith("+")) {
+                                username = username.substring(1);
+                                defaultAdmin = (defaultAdmin == null ? username : defaultAdmin);
+                            }
+                            if (Logger.isTraceOn(Logger.TT_CORE, 3)) {
+                                Logger.log(Logger.DEBUG, Logger.MSG_CORE_CREDENTIALS, "found credentials for: " + username
+                                        + (s.startsWith("+") ? " (default)" : ""));
+                            }
+                            credentials.put(username, password);
                         }
-                    credentials.put(username, password);
                     }
+                } catch (Exception e) {
+                    Logger.logdebug(e);
+                    return false;
                 }
-                f.close();
+
+                if (Logger.isTraceOn(Logger.TT_CORE, 3)) {
+                    Logger.log(Logger.DEBUG, Logger.MSG_CORE_CREDENTIALS, "Total number of lines in credentials file: " + lineCount);
+                    Logger.log(Logger.DEBUG, Logger.MSG_CORE_CREDENTIALS, "Number of comment/empty lines in credentials file: " + commentLineCount);
+                }
                 return true;
             } else {
+                if (Logger.isTraceOn(Logger.TT_CORE, 3)) {
+                    Logger.log(Logger.DEBUG, Logger.MSG_CORE_CREDENTIALS, "credentials file not found: " + filename);
+                }
                 return false;
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             Logger.logdebug(e);
             return false;
         }
     }
+
 
     public boolean writeCredentials() {
         try {
