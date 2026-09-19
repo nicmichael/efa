@@ -72,7 +72,7 @@ public class Credentials {
                         // Normalize whitespace: replace tabs with spaces, trim leading/trailing whitespace,
                         // and replace multiple spaces with a single space
                         s = s.replaceAll("\t", " ").trim();
-                        s = s.replaceAll(" +", " ");
+                        s = s.replaceAll("\\s+", " ").trim();//replace multiple spaces (including unicode ones) with a single space
 
                         if (s.startsWith("#") || s.length() == 0) {
                             commentLineCount++;
