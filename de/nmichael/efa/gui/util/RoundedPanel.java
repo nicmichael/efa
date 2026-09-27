@@ -1,5 +1,6 @@
 package de.nmichael.efa.gui.util;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -18,9 +19,9 @@ public class RoundedPanel extends JPanel {
 	                if (this.isOpaque()) {
 	                	// draw background in standard color, then draw the rounded rectangle 
 	                	// in the background color to create the rounded effect
-	                	
-	                	g2d.setColor(new JPanel().getBackground());
-	                	g2d.setBackground(new JPanel().getBackground());
+	                	Color bgColor=(this.getParent()!=null ? getParent().getBackground() : new JPanel().getBackground());
+	                	g2d.setColor(bgColor);
+	                	g2d.setBackground(bgColor);
 	                	g2d.fillRect(0, 0, this.getWidth(), this.getHeight());
 	                    g2d.setColor(this.getBackground());
 	                    g2d.fillRoundRect(0, 0, this.getWidth()-1, this.getHeight()-1, ARC, ARC);
