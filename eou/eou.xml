@@ -81,9 +81,9 @@ section="Other"
 		</Section>
 	</Sections>
 	<Version>
-        <VersionID>2.5.3#16</VersionID>
+        <VersionID>2.5.3_#16</VersionID>
         <ReleaseDate>19.09.2026</ReleaseDate>
-        <DownloadUrl>TODO</DownloadUrl>
+        <DownloadUrl>https://github.com/nicmichael/efa/releases/download/2.5.3-beta.16/efa2.5.3_16.zip</DownloadUrl>
         <DownloadSize>TODO</DownloadSize>
      	<MinimumJavaVersion>1.8</MinimumJavaVersion>
 		<MinimumEfaCloudVersion>2.3.3</MinimumEfaCloudVersion>
@@ -97,9 +97,9 @@ section="Other"
         </Changes>
 	</Version>
 	<Version>
-        <VersionID>2.5.3#15</VersionID>
+        <VersionID>2.5.3_#15</VersionID>
         <ReleaseDate>13.09.2026</ReleaseDate>
-        <DownloadUrl>TODO</DownloadUrl>
+        <DownloadUrl>https://github.com/nicmichael/efa/releases/download/2.5.3-beta.15/efa2.5.3_15.zip</DownloadUrl>
         <DownloadSize>TODO</DownloadSize>
      	<MinimumJavaVersion>1.8</MinimumJavaVersion>
 		<MinimumEfaCloudVersion>2.3.3</MinimumEfaCloudVersion>
@@ -113,11 +113,11 @@ section="Other"
 			<ChangeItem section="Admin/Data Edit">Bugfix: Dialogs for editing boats, persons, groups, and destinations were larger than the configured limit for dialog sizes.</ChangeItem>
 			<ChangeItem section="Stability">New: The change history now displays the changes of a version according to their respective areas. For this purpose, eou.xml has been revised and all entries earlier than version 2.3.3 have been cleaned up.</ChangeItem>
         </Changes>
-	</Version>
+	</Version>	
 	<Version>
-        <VersionID>2.5.3#14</VersionID>
+        <VersionID>2.5.3_#14</VersionID>
         <ReleaseDate>10.09.2026</ReleaseDate>
-        <DownloadUrl>TODO</DownloadUrl>
+        <DownloadUrl>https://github.com/nicmichael/efa/releases/download/2.5.3-beta.14/efa2.5.3_14.zip</DownloadUrl>
         <DownloadSize>TODO</DownloadSize>
      	<MinimumJavaVersion>1.8</MinimumJavaVersion>
 		<MinimumEfaCloudVersion>2.3.3</MinimumEfaCloudVersion>
@@ -133,9 +133,9 @@ section="Other"
         </Changes>
 	</Version>
 	<Version>
-        <VersionID>2.5.3#13</VersionID>
+        <VersionID>2.5.3_#13</VersionID>
         <ReleaseDate>07.09.2026</ReleaseDate>
-        <DownloadUrl>TODO</DownloadUrl>
+        <DownloadUrl>https://github.com/nicmichael/efa/releases/download/2.5.3-beta.13/efa2.5.3_13.zip</DownloadUrl>
         <DownloadSize>TODO</DownloadSize>
      	  <MinimumJavaVersion>1.8</MinimumJavaVersion>
 		    <MinimumEfaCloudVersion>2.3.3</MinimumEfaCloudVersion>
@@ -151,9 +151,9 @@ section="Other"
         </Changes>
 	</Version>
 	<Version>
-        <VersionID>2.5.3#10</VersionID>
+        <VersionID>2.5.3_#10</VersionID>
         <ReleaseDate>16.08.2026</ReleaseDate>
-        <DownloadUrl>TODO</DownloadUrl>
+        <DownloadUrl>https://github.com/nicmichael/efa/releases/download/2.5.3-beta.10/efa2.5.3_10.zip</DownloadUrl>
         <DownloadSize>TODO</DownloadSize>
      	<MinimumJavaVersion>1.8</MinimumJavaVersion>
 		<MinimumEfaCloudVersion>2.3.3</MinimumEfaCloudVersion>
@@ -175,9 +175,9 @@ section="Other"
         </Changes>
 	</Version>
 	<Version>
-        <VersionID>2.5.3#9</VersionID>
+        <VersionID>2.5.3_#9</VersionID>
         <ReleaseDate>19.07.2026</ReleaseDate>
-        <DownloadUrl>TODO</DownloadUrl>
+        <DownloadUrl>https://github.com/nicmichael/efa/releases/download/2.5.3-beta.9/efa2.5.3_9.zip</DownloadUrl>
         <DownloadSize>TODO</DownloadSize>
      	<MinimumJavaVersion>1.8</MinimumJavaVersion>
 		<MinimumEfaCloudVersion>2.3.3</MinimumEfaCloudVersion>
@@ -193,9 +193,9 @@ section="Other"
         </Changes>
 	</Version>
 	<Version>
-        <VersionID>2.5.3#8</VersionID>
+        <VersionID>2.5.3_#8</VersionID>
         <ReleaseDate>14.06.2026</ReleaseDate>
-        <DownloadUrl>TODO</DownloadUrl>
+        <DownloadUrl>https://github.com/nicmichael/efa/releases/download/2.5.1-beta.8/efa2.5.1_8.zip</DownloadUrl>
         <DownloadSize>TODO</DownloadSize>
      	<MinimumJavaVersion>1.8</MinimumJavaVersion>
 		<MinimumEfaCloudVersion>2.3.3</MinimumEfaCloudVersion>
@@ -219,9 +219,9 @@ section="Other"
         </Changes>
 	</Version>
 	<Version>
-        <VersionID>2.5.3#7</VersionID>
+        <VersionID>2.5.3_#7</VersionID>
         <ReleaseDate>14.06.2026</ReleaseDate>
-        <DownloadUrl>TODO</DownloadUrl>
+        <DownloadUrl>https://github.com/nicmichael/efa/releases/download/2.5.3-beta.7/efa2.5.3_7.zip</DownloadUrl>
         <DownloadSize>TODO</DownloadSize>
      	<MinimumJavaVersion>1.8</MinimumJavaVersion>
 		<MinimumEfaCloudVersion>2.3.3</MinimumEfaCloudVersion>
@@ -237,9 +237,9 @@ section="Other"
         </Changes>
 	</Version>
 	<Version>
-        <VersionID>2.5.3#6</VersionID>
+        <VersionID>2.5.3_#6</VersionID>
         <ReleaseDate>09.06.2026</ReleaseDate>
-        <DownloadUrl>TODO</DownloadUrl>
+        <DownloadUrl>https://github.com/nicmichael/efa/releases/download/2.5.3-beta.6/efa2.5.3_6.zip</DownloadUrl>
         <DownloadSize>TODO</DownloadSize>
      	<MinimumJavaVersion>1.8</MinimumJavaVersion>
 		<MinimumEfaCloudVersion>2.3.3</MinimumEfaCloudVersion>
@@ -255,9 +255,9 @@ section="Other"
         </Changes>
 	</Version>
 	<Version>
-        <VersionID>2.5.3#5</VersionID>
+        <VersionID>2.5.3_#5</VersionID>
         <ReleaseDate>02.06.2026</ReleaseDate>
-        <DownloadUrl>TODO</DownloadUrl>
+        <DownloadUrl>https://github.com/nicmichael/efa/releases/download/2.5.3-beta.5/efa2.5.3_5.zip</DownloadUrl>
         <DownloadSize>TODO</DownloadSize>
      	<MinimumJavaVersion>1.8</MinimumJavaVersion>
 		<MinimumEfaCloudVersion>2.3.3</MinimumEfaCloudVersion>
@@ -271,7 +271,7 @@ section="Other"
         </Changes>
 	</Version>
 	<Version>
-        <VersionID>2.5.3#4</VersionID>
+        <VersionID>2.5.3_#4</VersionID>
         <ReleaseDate>31.05.2026</ReleaseDate>
         <DownloadUrl>TODO</DownloadUrl>
         <DownloadSize>TODO</DownloadSize>
@@ -307,9 +307,9 @@ section="Other"
         </Changes>
 	</Version>
 	<Version>
-        <VersionID>2.5.3#2</VersionID>
+        <VersionID>2.5.3_#2</VersionID>
         <ReleaseDate>27.05.2026</ReleaseDate>
-        <DownloadUrl>TODO</DownloadUrl>
+        <DownloadUrl>https://github.com/nicmichael/efa/releases/download/2.5.3-beta.2/efa2.5.3_2.zip</DownloadUrl>
         <DownloadSize>TODO</DownloadSize>
      	<MinimumJavaVersion>1.8</MinimumJavaVersion>
 		  <MinimumEfaCloudVersion>2.3.3</MinimumEfaCloudVersion>
@@ -337,9 +337,9 @@ section="Other"
         </Changes>
 	</Version>
 	<Version>
-        <VersionID>2.5.3#1</VersionID>
+        <VersionID>2.5.3_#1</VersionID>
         <ReleaseDate>27.04.2026</ReleaseDate>
-        <DownloadUrl>TODO</DownloadUrl>
+        <DownloadUrl>https://github.com/nicmichael/efa/releases/download/2.5.3-beta.1/efa2.5.3_1.zip</DownloadUrl>
         <DownloadSize>TODO</DownloadSize>
      	<MinimumJavaVersion>1.8</MinimumJavaVersion>
 		  <MinimumEfaCloudVersion>2.3.3</MinimumEfaCloudVersion>
@@ -365,7 +365,7 @@ section="Other"
   <Version>
         <VersionID>2.5.2</VersionID>
         <ReleaseDate>26.04.2026</ReleaseDate>
-        <DownloadUrl>TODO</DownloadUrl>
+        <DownloadUrl>https://github.com/nicmichael/efa/releases/download/v2.5.2/efa2.5.2.zip</DownloadUrl>
         <DownloadSize>TODO</DownloadSize>
      	<MinimumJavaVersion>1.8</MinimumJavaVersion>
 		<MinimumEfaCloudVersion>2.3.3</MinimumEfaCloudVersion>
@@ -381,9 +381,9 @@ section="Other"
         </Changes>
 	</Version>
 	<Version>
-        <VersionID>2.5.1#9</VersionID>
+        <VersionID>2.5.1_#9</VersionID>
         <ReleaseDate>19.02.2026</ReleaseDate>
-        <DownloadUrl>TODO</DownloadUrl>
+        <DownloadUrl>https://github.com/nicmichael/efa/releases/download/2.5.1-beta.9/efa2.5.1_9.zip</DownloadUrl>
         <DownloadSize>TODO</DownloadSize>
      	<MinimumJavaVersion>1.8</MinimumJavaVersion>
 		<MinimumEfaCloudVersion>2.3.3</MinimumEfaCloudVersion>
@@ -413,9 +413,9 @@ section="Other"
         </Changes>
 	</Version>
 	<Version>
-        <VersionID>2.5.1#8</VersionID>
+        <VersionID>2.5.1_#8</VersionID>
         <ReleaseDate>14.02.2026</ReleaseDate>
-        <DownloadUrl>TODO</DownloadUrl>
+        <DownloadUrl>https://github.com/nicmichael/efa/releases/download/2.5.1-beta.8/efa2.5.1_8.zip</DownloadUrl>
         <DownloadSize>TODO</DownloadSize>
      	<MinimumJavaVersion>1.8</MinimumJavaVersion>
 		<MinimumEfaCloudVersion>2.3.3</MinimumEfaCloudVersion>
@@ -455,7 +455,7 @@ section="Other"
         </Changes>
 	</Version>
  <Version>
-        <VersionID>2.5.1#6</VersionID>
+        <VersionID>2.5.1_#6</VersionID>
         <ReleaseDate>17.01.2026</ReleaseDate>
         <DownloadUrl>TODO</DownloadUrl>
         <DownloadSize>TODO</DownloadSize>
@@ -481,7 +481,7 @@ section="Other"
         </Changes>
 	</Version>
  <Version>
-        <VersionID>2.5.1#5</VersionID>
+        <VersionID>2.5.1_#5</VersionID>
         <ReleaseDate>15.01.2026</ReleaseDate>
         <DownloadUrl>TODO</DownloadUrl>
         <DownloadSize>TODO</DownloadSize>
@@ -501,7 +501,7 @@ section="Other"
         </Changes>
 	</Version>
  <Version>
-        <VersionID>2.5.1#4</VersionID>
+        <VersionID>2.5.1_#4</VersionID>
         <ReleaseDate>01.01.2026</ReleaseDate>
         <DownloadUrl>TODO</DownloadUrl>
         <DownloadSize>TODO</DownloadSize>
@@ -535,7 +535,7 @@ section="Other"
         </Changes>
 	</Version>
     <Version>
-        <VersionID>2.5.1#3</VersionID>
+        <VersionID>2.5.1_#3</VersionID>
         <ReleaseDate>23.11.2025</ReleaseDate>
         <DownloadUrl>TODO</DownloadUrl>
         <DownloadSize>TODO</DownloadSize>
@@ -563,7 +563,7 @@ section="Other"
         </Changes>
 	</Version>
     <Version>
-        <VersionID>2.5.1#2</VersionID>
+        <VersionID>2.5.1_#2</VersionID>
         <ReleaseDate>16.11.2025</ReleaseDate>
         <DownloadUrl>TODO</DownloadUrl>
         <DownloadSize>TODO</DownloadSize>
@@ -583,7 +583,7 @@ section="Other"
         </Changes>
     </Version>
     <Version>
-        <VersionID>2.5.1#1</VersionID>
+        <VersionID>2.5.1_#1</VersionID>
         <ReleaseDate>09.11.2025</ReleaseDate>
         <DownloadUrl>TODO</DownloadUrl>
         <DownloadSize>TODO</DownloadSize>
@@ -633,7 +633,7 @@ section="Other"
         </Changes>
     </Version>
     <Version>
-        <VersionID>2.5.0#21</VersionID>
+        <VersionID>2.5.0_#21</VersionID>
         <ReleaseDate>03.11.2025</ReleaseDate>
         <DownloadUrl>TODO</DownloadUrl>
         <DownloadSize>TODO</DownloadSize>
@@ -651,7 +651,7 @@ section="Other"
         </Changes>
     </Version>
     <Version>
-        <VersionID>2.5.0#20</VersionID>
+        <VersionID>2.5.0_#20</VersionID>
         <ReleaseDate>25.10.2025</ReleaseDate>
         <DownloadUrl>TODO</DownloadUrl>
         <DownloadSize>TODO</DownloadSize>
@@ -668,7 +668,7 @@ section="Other"
         </Changes>
     </Version>
 	<Version>
-  		<VersionID>2.5.0#19</VersionID>
+  		<VersionID>2.5.0_#19</VersionID>
   		<ReleaseDate>05.10.2025</ReleaseDate>
         <DownloadUrl>TODO</DownloadUrl>
         <DownloadSize>TODO</DownloadSize>
@@ -686,7 +686,7 @@ section="Other"
         </Changes>	
 	</Version>
 	<Version>
-  		<VersionID>2.5.0#18</VersionID>
+  		<VersionID>2.5.0_#18</VersionID>
   		<ReleaseDate>03.08.2025</ReleaseDate>
         <DownloadUrl>TODO</DownloadUrl>
         <DownloadSize>TODO</DownloadSize>
@@ -704,7 +704,7 @@ section="Other"
         </Changes>	
 	</Version>
 	<Version>
-  		<VersionID>2.5.0#17</VersionID>
+  		<VersionID>2.5.0_#17</VersionID>
   		<ReleaseDate>08.06.2025</ReleaseDate>
         <DownloadUrl>TODO</DownloadUrl>
         <DownloadSize>TODO</DownloadSize>
@@ -728,7 +728,7 @@ section="Other"
         </Changes>	
 	</Version>
 	<Version>
-  		<VersionID>2.5.0#16</VersionID>
+  		<VersionID>2.5.0_#16</VersionID>
   		<ReleaseDate>21.04.2025</ReleaseDate>
         <DownloadUrl>TODO</DownloadUrl>
         <DownloadSize>TODO</DownloadSize>
@@ -752,7 +752,7 @@ section="Other"
         </Changes>	
 	</Version>
 	<Version>
-  		<VersionID>2.5.0#15</VersionID>
+  		<VersionID>2.5.0_#15</VersionID>
   		<ReleaseDate>13.04.2025</ReleaseDate>
         <DownloadUrl>TODO</DownloadUrl>
         <DownloadSize>TODO</DownloadSize>
@@ -772,7 +772,7 @@ section="Other"
         </Changes>	
 	</Version>
 	<Version>
-        <VersionID>2.5.0#14</VersionID>
+        <VersionID>2.5.0_#14</VersionID>
         <ReleaseDate>16.03.2025</ReleaseDate>
         <DownloadUrl>TODO</DownloadUrl>
         <DownloadSize>TODO</DownloadSize>
@@ -800,7 +800,7 @@ section="Other"
         </Changes>
 	</Version>
 	<Version>
-        <VersionID>2.5.0#12</VersionID>
+        <VersionID>2.5.0_#12</VersionID>
         <ReleaseDate>09.03.2025</ReleaseDate>
         <DownloadUrl>TODO</DownloadUrl>
         <DownloadSize>TODO</DownloadSize>
@@ -859,7 +859,7 @@ section="Other"
 		</Changes>
 	</Version>
 	<Version>
-        <VersionID>2.5.0#11</VersionID>
+        <VersionID>2.5.0_#11</VersionID>
         <ReleaseDate>27.10.2024</ReleaseDate>
         <DownloadUrl>TODO</DownloadUrl>
         <DownloadSize>TODO</DownloadSize>
