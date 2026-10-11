@@ -81,6 +81,24 @@ section="Other"
 		</Section>
 	</Sections>
 	<Version>
+        <VersionID>2.5.3_17</VersionID>
+        <ReleaseDate>11.10.2026</ReleaseDate>
+        <DownloadUrl>https://github.com/nicmichael/efa/releases/download/2.5.3_00/efa2.5.3_00.zip</DownloadUrl>
+        <DownloadSize>TODO</DownloadSize>
+     	<MinimumJavaVersion>1.8</MinimumJavaVersion>
+		<MinimumEfaCloudVersion>2.3.3</MinimumEfaCloudVersion>
+        <ShowNotice lang="de">Wenn efaCloud eingesetzt wird, muss der Server mindestens Version 2.3.3 unterstützen. EfaCloud 2.4.0_12 und höher werden empfohlen.</ShowNotice>
+        <ShowNotice lang="en">If you use efaCloud, make sure your server at least supports efaCloud Version 2.3.3. It is recommended to upgrade to EfaCloud 2.4.0_12 or above.</ShowNotice>
+        <Changes lang="de">
+        	<ChangeItem section="Other">Neu: efa 2.5.3 für Produktion freigegeben auf Basis von Beta efa 2.5.3_#16.</ChangeItem>
+        	<ChangeItem section="Other">Neu: eou.xml und eou.xsd an neue Vorgaben für das Online-Update angepasst (abwärtskompatibel). GitHub Download Links aktualisiert in eou.xml</ChangeItem>
+        </Changes>
+        <Changes lang="en">
+        	<ChangeItem section="Other">New: efa 2.5.3 released for production based on Beta efa 2.5.3_#16.</ChangeItem>
+			<ChangeItem section="Other">New: eou.xml and eou.xsd adapted to new requirements for online update (backwards compatible). GitHub download links updated in eou.xml</ChangeItem>
+        </Changes>
+	</Version>
+	<Version>
         <VersionID>2.5.3_#16</VersionID>
         <ReleaseDate>19.09.2026</ReleaseDate>
         <DownloadUrl>https://github.com/nicmichael/efa/releases/download/2.5.3-beta.16/efa2.5.3_16.zip</DownloadUrl>
@@ -363,7 +381,7 @@ section="Other"
         </Changes>
 	</Version>
   <Version>
-        <VersionID>2.5.2</VersionID>
+        <VersionID>2.5.2_00</VersionID>
         <ReleaseDate>26.04.2026</ReleaseDate>
         <DownloadUrl>https://github.com/nicmichael/efa/releases/download/v2.5.2/efa2.5.2.zip</DownloadUrl>
         <DownloadSize>TODO</DownloadSize>
@@ -611,7 +629,7 @@ section="Other"
         </Changes>
     </Version>
     <Version>
-        <VersionID>2.5.0</VersionID>
+        <VersionID>2.5.0_00</VersionID>
         <ReleaseDate>14.02.2025</ReleaseDate>
         <DownloadUrl>TODO</DownloadUrl>
         <DownloadSize>TODO</DownloadSize>
