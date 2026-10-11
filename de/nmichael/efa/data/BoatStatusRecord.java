@@ -10,19 +10,15 @@
 
 package de.nmichael.efa.data;
 
-import java.awt.AWTEvent;
 import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.util.UUID;
 import java.util.Vector;
 
 import de.nmichael.efa.Daten;
 import de.nmichael.efa.core.config.AdminRecord;
 import de.nmichael.efa.core.config.EfaTypes;
-import de.nmichael.efa.core.items.IItemListener;
 import de.nmichael.efa.core.items.IItemType;
 import de.nmichael.efa.core.items.ItemTypeBoolean;
-import de.nmichael.efa.core.items.ItemTypeButton;
 import de.nmichael.efa.core.items.ItemTypeLabelHeader;
 import de.nmichael.efa.core.items.ItemTypeString;
 import de.nmichael.efa.core.items.ItemTypeStringList;
@@ -33,9 +29,7 @@ import de.nmichael.efa.data.storage.MetaData;
 import de.nmichael.efa.data.types.DataTypeDate;
 import de.nmichael.efa.data.types.DataTypeIntString;
 import de.nmichael.efa.data.types.DataTypeTime;
-import de.nmichael.efa.ex.EfaModifyException;
 import de.nmichael.efa.gui.EfaGuiUtils;
-import de.nmichael.efa.gui.ImagesAndIcons;
 import de.nmichael.efa.gui.util.TableItem;
 import de.nmichael.efa.gui.util.TableItemHeader;
 import de.nmichael.efa.util.EfaUtil;

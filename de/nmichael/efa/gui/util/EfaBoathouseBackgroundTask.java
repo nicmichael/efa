@@ -9,9 +9,11 @@
  */
 package de.nmichael.efa.gui.util;
 
+import java.awt.Component;
 import java.awt.Window;
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -65,6 +67,8 @@ public class EfaBoathouseBackgroundTask extends Thread {
     private long newReservationStatusScn =-1;
 
     private long lastListUpdate = -1;
+	private int nonListFocussedCount;
+	private Component lastFocussedElement;
 
     public EfaBoathouseBackgroundTask(EfaBoathouseFrame efaBoathouseFrame) {
         this.efaBoathouseFrame = efaBoathouseFrame;
@@ -92,15 +96,17 @@ public class EfaBoathouseBackgroundTask extends Thread {
 
     private void mailWarnings() {
         try {
-            BufferedReader f = new BufferedReader(new FileReader(Daten.efaLogfile));
-            String s;
-            Vector <String>warnings = new Vector<String>();
-            while ((s = f.readLine()) != null) {
-                if (Logger.isWarningLine(s) && Logger.getLineTimestamp(s) > Daten.efaConfig.getValueEfaDirekt_bnrWarning_lasttime()) {
-                    warnings.add(s);
-                }
-            }
-            f.close();
+            if (Daten.efaLogfile == null || Daten.efaConfig == null) {return;}
+            ArrayList <String>warnings = new ArrayList<String>();
+            try (BufferedReader f = new BufferedReader(new FileReader(Daten.efaLogfile))){
+	            String s;
+	            while ((s = f.readLine()) != null) {
+	                if (Logger.isWarningLine(s) && Logger.getLineTimestamp(s) > Daten.efaConfig.getValueEfaDirekt_bnrWarning_lasttime()) {
+	                    warnings.add(s);
+	                }
+	            }
+            } //try-with-resources closes f automatically
+            
             if (warnings.size() == 0) {
                 Logger.log(Logger.INFO, Logger.MSG_EVT_CHECKFORWARNINGS,
                         International.getMessage("Seit {date} sind keinerlei Warnungen in efa verzeichnet worden.",
@@ -154,7 +160,7 @@ public class EfaBoathouseBackgroundTask extends Thread {
                      if (Logger.isTraceOn(Logger.TT_BACKGROUND, 5)) {
                          Logger.log(Logger.DEBUG, Logger.MSG_DEBUG_EFABACKGROUNDTASK, "EfaBoathouseBackgroundTask: doing nothing as admin mode is active.");
                      }
-                } else if (Daten.isShutdownRequested) {
+                } else if (Daten.isShutdownRequested()) {
                     if (Logger.isTraceOn(Logger.TT_BACKGROUND, 5)) {
                         Logger.log(Logger.DEBUG, Logger.MSG_DEBUG_EFABACKGROUNDTASK, "EfaBoathouseBackgroundTask: doing nothing as shutdown is requested.");
                     }
@@ -220,7 +226,9 @@ public class EfaBoathouseBackgroundTask extends Thread {
     private void checkFilterTextFields() {
     	SwingUtilities.invokeLater(new Runnable() {
     	      public void run() {
-    	    	  efaBoathouseFrame.clearListFilterAfterInterval();
+    	    	  if (efaBoathouseFrame!=null) {
+    	    		  efaBoathouseFrame.clearListFilterAfterInterval();
+    	    	  }
     	      }
       	});
     }
@@ -367,7 +375,9 @@ public class EfaBoathouseBackgroundTask extends Thread {
                 	// This includes swing updates, so we have to use invokeLater to avoid concurrency problems
                 	SwingUtilities.invokeLater(new Runnable() {
               	      public void run() {
-                      	efaBoathouseFrame.updateGuiElements();
+              	    	  if (efaBoathouseFrame!=null) {
+              	    		  efaBoathouseFrame.updateGuiElements();
+              	    	  }
               	      }
                 	});
                     lastEfaConfigScn = scn;
@@ -431,7 +441,7 @@ public class EfaBoathouseBackgroundTask extends Thread {
                         Logger.log(Logger.DEBUG, Logger.MSG_DEBUG_EFABACKGROUNDTASK, "EfaBoathouseBackgroundTask: stopping update of boatstatus as admin mode is active.");
                     }
                     break;
-               } else if (Daten.isShutdownRequested) {
+               } else if (Daten.isShutdownRequested()) {
                    if (Logger.isTraceOn(Logger.TT_BACKGROUND, 5)) {
                        Logger.log(Logger.DEBUG, Logger.MSG_DEBUG_EFABACKGROUNDTASK, "EfaBoathouseBackgroundTask: stopping update of boatstatus as shutdown is requested.");
                    }
@@ -448,12 +458,12 @@ public class EfaBoathouseBackgroundTask extends Thread {
                     String oldComment = boatStatusRecord.getComment();
 
                     // set CurrentStatus correctly
-                    if (!boatStatusRecord.getCurrentStatus().equals(BoatStatusRecord.STATUS_ONTHEWATER)
-                            && !boatStatusRecord.getCurrentStatus().equals(boatStatusRecord.getBaseStatus())) {
+                    if (!BoatStatusRecord.STATUS_ONTHEWATER.equals(boatStatusRecord.getCurrentStatus())
+                            && !boatStatusRecord.getBaseStatus().equals(boatStatusRecord.getCurrentStatus())) {
                         boatStatusRecord.setCurrentStatus(boatStatusRecord.getBaseStatus());
                     }
 
-                    if (boatStatusRecord.getCurrentStatus().equals(BoatStatusRecord.STATUS_HIDE)) {
+                    if (BoatStatusRecord.STATUS_HIDE.equals(boatStatusRecord.getCurrentStatus())) {
                         if (boatStatusRecord.getShowInList() != null && !boatStatusRecord.getShowInList().equals(BoatStatusRecord.STATUS_HIDE)) {
                             boatStatusRecord.setShowInList(null);
                             boatStatus.data().update(boatStatusRecord);
@@ -464,7 +474,7 @@ public class EfaBoathouseBackgroundTask extends Thread {
                         //continue; 
                     }
                     if (boatStatusRecord.getUnknownBoat()) {
-                        if (!boatStatusRecord.getCurrentStatus().equals(BoatStatusRecord.STATUS_ONTHEWATER)) {
+                        if (!BoatStatusRecord.STATUS_ONTHEWATER.equals(boatStatusRecord.getCurrentStatus())) {
                             boatStatus.data().delete(boatStatusRecord.getKey());
                             listChanged = true;
                         }
@@ -478,7 +488,7 @@ public class EfaBoathouseBackgroundTask extends Thread {
                     BoatReservationRecord[] reservations = boatReservations.getBoatReservations(boatStatusRecord.getBoatId(), now, 0);
                     if (reservations == null || reservations.length == 0) {
                         // no reservations at the moment - nothing to do
-                        if (!boatStatusRecord.getCurrentStatus().equals(BoatStatusRecord.STATUS_ONTHEWATER)
+                        if (!BoatStatusRecord.STATUS_ONTHEWATER.equals(boatStatusRecord.getCurrentStatus())
                                 && boatStatusRecord.getShowInList() != null && !boatStatusRecord.getShowInList().equals(boatStatusRecord.getCurrentStatus())) {
                             boatStatusRecord.setShowInList(null);
                         }
@@ -503,7 +513,7 @@ public class EfaBoathouseBackgroundTask extends Thread {
                         }
                     } else {
                         // reservations found
-                        if (!boatStatusRecord.getCurrentStatus().equals(BoatStatusRecord.STATUS_ONTHEWATER)) {
+                        if (!BoatStatusRecord.STATUS_ONTHEWATER.equals(boatStatusRecord.getCurrentStatus())) {
                             if (Daten.efaConfig.getValueEfaDirekt_resBooteNichtVerfuegbar()) {
                                 //Show reserved boats in the "not available" list if configured
                             	//"Hidden" Boats have no list they are shown by default, and thus return NULL as getShowInList.
@@ -518,12 +528,16 @@ public class EfaBoathouseBackgroundTask extends Thread {
                                     boatStatusRecord.setShowInList(boatStatusRecord.getBaseStatus());
                                 }
                             }
+                            // only set reservation comment if boat is not on the water. 
+                            // If boat is on the water, the reservation comment would be confusing, as we would expect the comment
+                            // to show who is on the water.
+                            String s = International.getMessage("reserviert für {name} ({reason}) {from_to}",
+                                    reservations[0].getPersonAsName(),
+                                    reservations[0].getReason(),
+                                    reservations[0].getReservationTimeDescription());
+                            boatStatusRecord.setComment(s);
                         }
-                        String s = International.getMessage("reserviert für {name} ({reason}) {from_to}",
-                                reservations[0].getPersonAsName(),
-                                reservations[0].getReason(),
-                                reservations[0].getReservationTimeDescription());
-                        boatStatusRecord.setComment(s);
+
                     }
 
                     // find all current damages
@@ -534,7 +548,7 @@ public class EfaBoathouseBackgroundTask extends Thread {
                                 && damages[i].getSeverity().equals(BoatDamageRecord.SEVERITY_NOTUSEABLE)) {
                             boatStatusRecord.setComment(damages[i].getShortDamageInfo());
                             damaged = true;
-                            if (!boatStatusRecord.getShowInList().equals(BoatStatusRecord.STATUS_NOTAVAILABLE)) {
+                            if (!BoatStatusRecord.STATUS_NOTAVAILABLE.equals(boatStatusRecord.getShowInList())) {
                                 boatStatusRecord.setShowInList(BoatStatusRecord.STATUS_NOTAVAILABLE);
                             }
                             break; // stop after first severe damage
@@ -546,7 +560,7 @@ public class EfaBoathouseBackgroundTask extends Thread {
                     }
 
                     // make sure that if the boat is on the water, this status overrides any other list settings
-                    if (boatStatusRecord.getCurrentStatus().equals(BoatStatusRecord.STATUS_ONTHEWATER)) {
+                    if (BoatStatusRecord.STATUS_ONTHEWATER.equals(boatStatusRecord.getCurrentStatus())) {
                         if (boatStatusRecord.isOnTheWaterShowNotAvailable()) {
                             boatStatusRecord.setShowInList(BoatStatusRecord.STATUS_NOTAVAILABLE);
                         } else {
@@ -559,7 +573,7 @@ public class EfaBoathouseBackgroundTask extends Thread {
                             || !oldCurrentStatus.equals(boatStatusRecord.getCurrentStatus())) {
                         statusRecordChanged = true;
                     }
-                    if ((!boatStatusRecord.getCurrentStatus().equals(BoatStatusRecord.STATUS_HIDE)) 
+                    if ((!BoatStatusRecord.STATUS_HIDE.equals(boatStatusRecord.getCurrentStatus())) 
                     	&& (oldShowInList == null || !oldShowInList.equals(boatStatusRecord.getShowInList()))) {
                     	//if the boat is hidden, oldShowInList is always null. 
                     	//if we would not check again for a hidden boat in this location, 
@@ -740,7 +754,9 @@ public class EfaBoathouseBackgroundTask extends Thread {
             if (Daten.efaConfig.getValueEfaDirekt_locked()) {
             	SwingUtilities.invokeLater(new Runnable() {
             		public void run() {
-                    	efaBoathouseFrame.lockEfa();
+            			if (efaBoathouseFrame!=null) {
+            				efaBoathouseFrame.lockEfa();
+            			}
             		}
             	});
                 return;
@@ -755,7 +771,9 @@ public class EfaBoathouseBackgroundTask extends Thread {
             if (cal.after(lockEfa) && efaBoathouseFrame != null) {
             	SwingUtilities.invokeLater(new Runnable() {
             		public void run() {
-                    	efaBoathouseFrame.lockEfa();
+            			if (efaBoathouseFrame!=null) {
+            				efaBoathouseFrame.lockEfa();
+            			}
             		}
             	});
                 lockEfa = null;
@@ -813,7 +831,9 @@ public class EfaBoathouseBackgroundTask extends Thread {
             	// This includes swing updates, so we have to use invokeLater to avoid concurrency problems
             	SwingUtilities.invokeLater(new Runnable() {
             		public void run() {
-                        efaBoathouseFrame.bringFrameToFront();
+            			if (efaBoathouseFrame!=null) {
+            				efaBoathouseFrame.bringFrameToFront();
+            			}
             		}
             	});
             }
@@ -826,14 +846,47 @@ public class EfaBoathouseBackgroundTask extends Thread {
             Logger.log(Logger.DEBUG, Logger.MSG_DEBUG_EFABACKGROUNDTASK,
                     "EfaBoathouseBackgroundTask: checkFocus()");
         }
-        if (this.efaBoathouseFrame != null && this.efaBoathouseFrame.getFocusOwner() == this.efaBoathouseFrame) {
-            // das Frame selbst hat den Fokus: Das soll nicht sein! Gib einer Liste den Fokus!
-        	// This includes swing updates, so we have to use invokeLater to avoid concurrency problems
-        	SwingUtilities.invokeLater(new Runnable() {
-        		public void run() {
-                	efaBoathouseFrame.boatListRequestFocus(0);
+        if (this.efaBoathouseFrame != null) {
+        	if (this.efaBoathouseFrame.getFocusOwner() == this.efaBoathouseFrame) {
+        		nonListFocussedCount=0;
+        		lastFocussedElement = null;
+	            // das Frame selbst hat den Fokus: Das soll nicht sein! Gib einer Liste den Fokus!
+	        	// This includes swing updates, so we have to use invokeLater to avoid concurrency problems
+	        	SwingUtilities.invokeLater(new Runnable() {
+	        		public void run() {
+	        			if (efaBoathouseFrame!=null) {
+	        				efaBoathouseFrame.boatListRequestFocus(0);
+	        			}
+	        		}
+	        	});
+        	} else {
+        		// if no boatlist is focussed, get the last focussed element.
+        		if (!efaBoathouseFrame.isAnyListFocused()) {
+        			nonListFocussedCount++;
+        			if (this.lastFocussedElement != null) {
+        				if (this.lastFocussedElement != efaBoathouseFrame.getFocusOwner()){
+        					// the last focussed element changed, although no boatlist is focussed - 
+        					// user is still active. wait for another 3 minutes before automatically changing focus to a boatlist
+        					nonListFocussedCount=0;
+        				}
+        				this.lastFocussedElement = efaBoathouseFrame.getFocusOwner();
+        			}
+        			
+        			if (nonListFocussedCount>3) {
+        				// same element has focus for more than three minutes, and it is no boatlist?
+        				// change the focus to the list of available boats.
+        				nonListFocussedCount = 0;
+        				lastFocussedElement = null;
+        	        	SwingUtilities.invokeLater(new Runnable() {
+        	        		public void run() {
+        	        			if (efaBoathouseFrame!=null) {
+        	        				efaBoathouseFrame.boatListRequestFocus(1);
+        	        			}
+        	        		}
+        	        	});             				
+        			}
         		}
-        	});
+        	}
         }
     }
 
@@ -884,12 +937,12 @@ public class EfaBoathouseBackgroundTask extends Thread {
         long last = (Daten.efaConfig != null ? Daten.efaConfig.getValueLastBoatDamageReminder() : -1);
         if (last == -1 || now - BOAT_DAMAGE_REMINDER_INTERVAL > last) {
             boolean damagesOlderThanAWeek = false;
-            Vector<DataKey> openDamages = new Vector<DataKey>();
+            ArrayList <DataKey> openDamages = new ArrayList<DataKey>();
             try {
                 DataKeyIterator it = boatDamages.data().getStaticIterator();
                 for (DataKey k = it.getFirst(); k != null; k = it.getNext()) {
                     BoatDamageRecord damage = (BoatDamageRecord) boatDamages.data().get(k);
-                    if (boatDamages == null) {
+                    if (damage == null) {
                         continue;
                     }
                     if (!damage.getFixed()) {
@@ -912,7 +965,7 @@ public class EfaBoathouseBackgroundTask extends Thread {
                             openDamages.size()) + "\n\n");
                     for (DataKey k : openDamages) {
                         BoatDamageRecord damage = (BoatDamageRecord) boatDamages.data().get(k);
-                        if (boatDamages == null) {
+                        if (damage == null) {
                             continue;
                         }
                         s.append(damage.getCompleteDamageInfo() + "\n");
@@ -1011,32 +1064,42 @@ public class EfaBoathouseBackgroundTask extends Thread {
             // Step 2: Abort open Sessions (only for local project)
             boolean sessionsAborted = false;
             if (Daten.project.getProjectStorageType() != IDataAccess.TYPE_EFA_REMOTE) {
-                Vector<BoatStatusRecord> boatsOnTheWater = boatStatus.getBoats(BoatStatusRecord.STATUS_ONTHEWATER);
-                if (boatsOnTheWater.size() > 0) {
-                    lockStatus = boatStatus.data().acquireGlobalLock();
-                    lockLogbook = currentLogbook.data().acquireGlobalLock();
-                    sessionsAborted = true;
-                    Logger.log(Logger.INFO, Logger.MSG_EVT_AUTOSTARTNEWLBSTEP,
-                            International.getString("Offene Fahrten werden abgebrochen ..."));
-                    for (int i = 0; i < boatsOnTheWater.size(); i++) {
-                        BoatStatusRecord sr = boatsOnTheWater.get(i);
-                        LogbookRecord r = null;
-                        if (sr.getEntryNo() != null && sr.getEntryNo().isSet()) {
-                            r = currentLogbook.getLogbookRecord(sr.getEntryNo());
-                            r.setSessionIsOpen(false);
-                            currentLogbook.data().update(r, lockLogbook);
-                        }
-                        sr.setEntryNo(null);
-                        sr.setCurrentStatus(sr.getBaseStatus());
-                        boatStatus.data().update(sr, lockStatus);
-                        EfaBaseFrame.logBoathouseEvent(Logger.INFO, Logger.MSG_EVT_TRIPABORT,
-                                International.getString("Fahrtabbruch"), r);
-                        boatStatus.data().releaseGlobalLock(lockStatus);
-                        lockStatus = -1;
-                        currentLogbook.data().releaseGlobalLock(lockLogbook);
-                        lockLogbook = -1;
-                    }
-                }
+            	if (boatStatus!=null) {
+            		//only proceed if boatstatus !=null as it actually CAN be null if project is in deletion...
+	                Vector<BoatStatusRecord> boatsOnTheWater = boatStatus.getBoats(BoatStatusRecord.STATUS_ONTHEWATER);
+	                if (boatsOnTheWater.size() > 0) {
+	                    lockStatus = boatStatus.data().acquireGlobalLock();
+	                    lockLogbook = currentLogbook.data().acquireGlobalLock();
+	                    sessionsAborted = true;
+	                    Logger.log(Logger.INFO, Logger.MSG_EVT_AUTOSTARTNEWLBSTEP,
+	                            International.getString("Offene Fahrten werden abgebrochen ..."));
+	                    try {
+		                    for (int i = 0; i < boatsOnTheWater.size(); i++) {
+		                        BoatStatusRecord sr = boatsOnTheWater.get(i);
+		                        LogbookRecord r = null;
+		                        if (sr.getEntryNo() != null && sr.getEntryNo().isSet()) {
+		                            r = currentLogbook.getLogbookRecord(sr.getEntryNo());
+		                            r.setSessionIsOpen(false);
+		                            currentLogbook.data().update(r, lockLogbook);
+		                        }
+		                        sr.setEntryNo(null);
+		                        sr.setCurrentStatus(sr.getBaseStatus());
+		                        boatStatus.data().update(sr, lockStatus);
+		                        EfaBaseFrame.logBoathouseEvent(Logger.INFO, Logger.MSG_EVT_TRIPABORT,
+		                                International.getString("Fahrtabbruch"), r);
+		                    }
+		                } catch (Exception e){
+		                	Logger.log(e);
+		                } finally {
+		                    // moved out of the for loop as the lock seems to be needed for the whole loop, not for the very first item only.
+		                	// also handled possible exceptions and will release lock also if exceptions occur.
+		                	boatStatus.data().releaseGlobalLock(lockStatus);
+		                    lockStatus = -1;
+		                    currentLogbook.data().releaseGlobalLock(lockLogbook);
+		                    lockLogbook = -1;
+		                }
+	                }
+            	}
             }
 
             // Step 3: Activate the new Logbook
@@ -1067,7 +1130,9 @@ public class EfaBoathouseBackgroundTask extends Thread {
             EfaUtil.sleep(500);
         	SwingUtilities.invokeLater(new Runnable() {
         		public void run() {
-                	efaBoathouseFrame.updateBoatLists(true,false);
+        			if (efaBoathouseFrame!=null) {
+        				efaBoathouseFrame.updateBoatLists(true,false);
+        			}
         		}
         	});
             EfaUtil.sleep(500);
@@ -1095,31 +1160,35 @@ public class EfaBoathouseBackgroundTask extends Thread {
     
     private class BthsUpdateBoatLists implements Runnable {
         
-    	private Boolean bListChanged=false;
-    	private Boolean bOnlyAvailablePersons=false;
+    	private boolean bListChanged=false;
+    	private boolean bOnlyAvailablePersons=false;
     	
-    	public BthsUpdateBoatLists(Boolean listChanged, Boolean onlyAvailablePersonsOrBoats) {
+    	public BthsUpdateBoatLists(boolean listChanged, boolean onlyAvailablePersonsOrBoats) {
     		bListChanged=listChanged;
     		bOnlyAvailablePersons=onlyAvailablePersonsOrBoats;
     	}
     	
     	public void run() {
-	        	efaBoathouseFrame.updateBoatLists(bListChanged, bOnlyAvailablePersons);
-	      }
+    		if (efaBoathouseFrame!=null) {
+    			efaBoathouseFrame.updateBoatLists(bListChanged, bOnlyAvailablePersons);
+    		}
+	    }
 	}
 	
 	private class BthsSetUnreadMessages implements Runnable {
 		
-		private Boolean bAdmin=false;
-		private Boolean bBoatMaintenance=false;
+		private boolean bAdmin=false;
+		private boolean bBoatMaintenance=false;
 		
-    	public BthsSetUnreadMessages(Boolean admin, Boolean boatMaintenance) {
+    	public BthsSetUnreadMessages(boolean admin, boolean boatMaintenance) {
     		bAdmin=admin;
     		bBoatMaintenance=boatMaintenance;
     	}
 		
 		public void run() {
-		    efaBoathouseFrame.setUnreadMessages(bAdmin, bBoatMaintenance);
+			if (efaBoathouseFrame!=null) {
+				efaBoathouseFrame.setUnreadMessages(bAdmin, bBoatMaintenance);
+			}
 		}
 		
 	}

@@ -18,13 +18,10 @@ import java.awt.event.ActionEvent;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 
-import com.formdev.flatlaf.util.SwingUtils;
-
 import de.nmichael.efa.Daten;
 import de.nmichael.efa.core.config.AdminRecord;
 import de.nmichael.efa.core.config.Admins;
 import de.nmichael.efa.core.items.IItemType;
-import de.nmichael.efa.core.items.ItemTypeBoolean;
 import de.nmichael.efa.core.items.ItemTypeDataRecordTable;
 import de.nmichael.efa.core.items.ItemTypeLabel;
 import de.nmichael.efa.data.storage.DataRecord;

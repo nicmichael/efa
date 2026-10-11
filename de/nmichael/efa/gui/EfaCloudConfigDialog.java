@@ -272,7 +272,6 @@ public class EfaCloudConfigDialog extends BaseTabbedDialog implements IItemListe
                         try {
 							pr.closeAllStorageObjects();
 						} catch (Exception e) {
-							// TODO Auto-generated catch block
 							Logger.logdebug(e);
 						}
                         pr.close();

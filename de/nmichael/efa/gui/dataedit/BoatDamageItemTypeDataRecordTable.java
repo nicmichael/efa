@@ -11,7 +11,7 @@ import de.nmichael.efa.gui.util.TableItemHeader;
 
 public class BoatDamageItemTypeDataRecordTable extends ItemTypeDataRecordTable {
 
-	private Boolean showOpenDamagesOnly = true;
+	private boolean showOpenDamagesOnly = true;
 	
 	public BoatDamageItemTypeDataRecordTable(String name, TableItemHeader[] tableHeader, StorageObject persistence,
 			long validAt, AdminRecord admin, String filterFieldName, String filterFieldValue, String[] actions,
@@ -80,11 +80,11 @@ public class BoatDamageItemTypeDataRecordTable extends ItemTypeDataRecordTable {
     	}
     }
 	
-	public Boolean getShowOpenDamagesOnly() {
+	public boolean getShowOpenDamagesOnly() {
 		return showOpenDamagesOnly;
 	}
 
-	public void setShowOpenDamagesOnly(Boolean bShowOpenDamagesOnly) {
+	public void setShowOpenDamagesOnly(boolean bShowOpenDamagesOnly) {
 		this.showOpenDamagesOnly = bShowOpenDamagesOnly;
 		// When the item is set, apply the filter...
 		updateData();

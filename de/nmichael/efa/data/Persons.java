@@ -44,6 +44,50 @@ public class Persons extends StorageObject {
         return r;
     }
 
+    public PersonRecord getPersonLatest(UUID id) {
+        try {
+            return (PersonRecord)data().getValidLatest(
+            		//we can use System.currentTimeMillis here, as it is ignored by getValidLatest.
+            		PersonRecord.getKey(id, System.currentTimeMillis()));
+        } catch(Exception e) {
+            Logger.logdebug(e);
+            return null;
+        }
+    }
+
+  //find the latest valid personRecord for the given personName, regardless of the validAt time
+    public PersonRecord getPersonLatest(String personName) {
+   
+        try {
+            DataKey[] keys = data().getByFields(
+                staticPersonRecord.getQualifiedNameFields(), staticPersonRecord.getQualifiedNameValues(personName));
+            if (keys == null || keys.length < 1) {
+                return null;
+            }
+            PersonRecord candidate = null;
+            long candidateValidity = 0; //oldest record
+            
+            // keys contain persons matching the given personName.
+            // iterate through keys and find the candidate with the highest (in)validity end date.
+            for (int i=0; i<keys.length; i++) {
+                PersonRecord r = (PersonRecord)data().get(keys[i]);
+                if (r != null) {
+                	//find the record with the latest validity, which is the max invalidity timestamp of all record
+                	if (r.getInvalidFrom()>candidateValidity) {
+                		candidate = r;
+                		candidateValidity=r.getInvalidFrom();
+                	}
+                }
+            }            
+            
+            return candidate;
+        } catch(Exception e) {
+            Logger.logdebug(e);
+            return null;
+        }
+    	
+    }
+    
     public PersonRecord getPerson(UUID id, long validAt) {
         try {
             return (PersonRecord)data().getValidAt(PersonRecord.getKey(id, validAt), validAt);

@@ -50,7 +50,7 @@ public class CLI {
     public static final String MENU_COMMAND          = "command";
     public static final String MENU_CLUBWORK_BASE	 = "clubworkbase";
     public static final String MENU_CLUBWORK_BOATHOUSE = "clubworkboathouse";
-
+    
     public static final int RC_OK                            =  0;
     public static final int RC_ERROR_LOGIN                   =  1;
     public static final int RC_ERROR_OPEN_PROJECT            =  2;
@@ -59,6 +59,7 @@ public class CLI {
     public static final int RC_NO_PERMISSION                 =  5;
     public static final int RC_COMMAND_COMPLETED_WITH_ERRORS = 10;
     public static final int RC_COMMAND_FAILED                = 11;
+    public static final int RC_INVALID_ARGUMENT              = 12;
 
     enum MODE {
         cli,
@@ -239,6 +240,12 @@ public class CLI {
         }
     }
 
+    /*
+     * efaRemote needs to be active in the efaBths instance.
+     * efaCli creates a temporary project with efaRemote storage and opens it 
+     * to check the connection and get the admin permissions.
+     * also, shutdown and reboot commands are sent to the remote instance, so that they can be used by efaCli.
+     */
     private int connect() {
         if (mode == MODE.cron) {
             return RC_OK;
@@ -399,6 +406,8 @@ public class CLI {
         if (mymenu.equals(MENU_CLUBWORK_BOATHOUSE)) {
         	return de.nmichael.efa.cli.MenuClubWorkBoatHouse.class;
         }
+
+        
         return null;
     }
 

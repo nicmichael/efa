@@ -4,7 +4,7 @@ import java.awt.Color;
 
 import de.nmichael.efa.util.EfaUtil;
 
-public class BoatString implements Comparable {
+public class BoatString implements Comparable<BoatString> {
 
     private String name;
     private String normName;
@@ -37,7 +37,7 @@ public class BoatString implements Comparable {
     }
     
 
-    public int compareTo(Object o) {
+    public int compareTo(BoatString o) {
     	return sortString.compareTo (((BoatString) o).getSortString());
     }
 

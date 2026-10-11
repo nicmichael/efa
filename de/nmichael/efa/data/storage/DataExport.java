@@ -191,10 +191,10 @@ public class DataExport {
 
                     	int iFieldType=getAbstractFieldType(r, fields[i]);
 
-                    	Boolean isTextField= (iFieldType==IDataAccess.DATA_TEXT);
-                        Boolean isFloatField = (iFieldType==IDataAccess.DATA_DOUBLE);
-                        Boolean isDateField = (iFieldType==IDataAccess.DATA_DATE);    
-                        Boolean isDistanceField = (iFieldType==IDataAccess.DATA_DISTANCE);
+                    	boolean isTextField= (iFieldType==IDataAccess.DATA_TEXT);
+                        boolean isFloatField = (iFieldType==IDataAccess.DATA_DOUBLE);
+                        boolean isDateField = (iFieldType==IDataAccess.DATA_DATE);    
+                        boolean isDistanceField = (iFieldType==IDataAccess.DATA_DISTANCE);
 
                     	if (isTextField) {
                     		//if (and only if) we export a string type field, include quotes, als long as the value is not empty 

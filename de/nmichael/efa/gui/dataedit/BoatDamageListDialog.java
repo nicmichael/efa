@@ -10,21 +10,33 @@
 
 package de.nmichael.efa.gui.dataedit;
 
-import de.nmichael.efa.*;
+import java.awt.AWTEvent;
+import java.awt.BorderLayout;
+import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.util.UUID;
+
+import javax.swing.JDialog;
+import javax.swing.JPanel;
+
+import de.nmichael.efa.Daten;
 import de.nmichael.efa.core.config.AdminRecord;
-import de.nmichael.efa.core.items.*;
-import de.nmichael.efa.data.*;
-import de.nmichael.efa.data.storage.*;
+import de.nmichael.efa.core.items.IItemListenerDataRecordTable;
+import de.nmichael.efa.core.items.IItemType;
+import de.nmichael.efa.core.items.ItemTypeBoolean;
+import de.nmichael.efa.core.items.ItemTypeStringAutoComplete;
+import de.nmichael.efa.data.BoatDamageRecord;
+import de.nmichael.efa.data.BoatDamages;
+import de.nmichael.efa.data.BoatReservationRecord;
+import de.nmichael.efa.data.Boats;
+import de.nmichael.efa.data.storage.DataRecord;
+import de.nmichael.efa.data.storage.StorageObject;
 import de.nmichael.efa.data.types.DataTypeDate;
 import de.nmichael.efa.data.types.DataTypeTime;
 import de.nmichael.efa.gui.SimpleInputDialog;
 import de.nmichael.efa.gui.util.AutoCompleteList;
-import de.nmichael.efa.util.*;
-import de.nmichael.efa.util.Dialog;
-import java.util.*;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
+import de.nmichael.efa.util.International;
+import de.nmichael.efa.util.Logger;
 
 
 // @i18n complete

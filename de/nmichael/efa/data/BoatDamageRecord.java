@@ -340,7 +340,7 @@ public class BoatDamageRecord extends DataRecord {
     public String getCompleteDamageInfo() {
         StringBuffer s = new StringBuffer();
         s.append(International.getMessage("Bootsschaden für {boat}", getBoatAsName()) + "\n==============================================\n");
-        s.append(International.getString("Beschreibung") + ": " + getDescription() + "\n");
+        s.append(International.getString("Beschreibung(BoatDamageRecord)") + ": " + getDescription() + "\n");
         s.append(International.getString("Schwere des Schadens") + ": " + getSeverityDescription() + "\n");
         s.append(International.getString("gemeldet am") + ": " + DataTypeDate.getDateTimeString(getReportDate(), getReportTime()) + "\n");
         s.append(International.getString("gemeldet von") + ": " + getReportedByPersonAsName() + "\n");
@@ -419,7 +419,7 @@ public class BoatDamageRecord extends DataRecord {
         item.setFieldGrid(6,GridBagConstraints.EAST, GridBagConstraints.BOTH);
 
         v.add(item = new ItemTypeString(BoatDamageRecord.DESCRIPTION, getDescription(),
-                IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("Beschreibung")));
+                IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("Beschreibung(BoatDamageRecord)")));
         item.setNotNull(true);
         item.setFieldGrid(4,GridBagConstraints.EAST, GridBagConstraints.BOTH);
         v.add(item = new ItemTypeStringList(SEVERITY, getSeverity(),

@@ -90,10 +90,10 @@ public class BoatStatus extends StorageObject {
             DataKeyIterator it = data().getStaticIterator();
             DataKey k = it.getFirst();
             String currentLogBookEfaBoatHouse = Daten.project.getCurrentLogbookEfaBoathouse();
-            Boolean showForeignLogbookEntries = Daten.efaConfig.getValueEfaDirekt_boatListShowForeignLogbookSessionsAsNotAvailable();
-            Boolean showMultidaySessionsAsNotavailable = Daten.efaConfig.getValueEfaDirekt_wafaRegattaBooteAufFahrtNichtVerfuegbar();
-            Boolean statusIsOnTheWater = status.equalsIgnoreCase(BoatStatusRecord.STATUS_ONTHEWATER);
-            Boolean statusIsNotAvailableBoats = status.equalsIgnoreCase(BoatStatusRecord.STATUS_NOTAVAILABLE);
+            boolean showForeignLogbookEntries = Daten.efaConfig.getValueEfaDirekt_boatListShowForeignLogbookSessionsAsNotAvailable();
+            boolean showMultidaySessionsAsNotavailable = Daten.efaConfig.getValueEfaDirekt_wafaRegattaBooteAufFahrtNichtVerfuegbar();
+            boolean statusIsOnTheWater = status.equalsIgnoreCase(BoatStatusRecord.STATUS_ONTHEWATER);
+            boolean statusIsNotAvailableBoats = status.equalsIgnoreCase(BoatStatusRecord.STATUS_NOTAVAILABLE);
             
             // take care for null values. null should not happen here, but anyway
             if (currentLogBookEfaBoatHouse == null)

@@ -383,7 +383,7 @@ public class OpenProjectOrLogbookDialog extends BaseDialog implements IItemListe
         }
 
         if (type == Type.logbook) {
-            ProjectRecord logbook = Daten.project.getLoogbookRecord(name);
+            ProjectRecord logbook = Daten.project.getLogbookRecord(name);
             if (Daten.project == null || logbook == null) {
                 return;
             }

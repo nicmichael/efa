@@ -31,8 +31,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.NetworkInterface;
-import java.net.URL;
-import java.net.URLConnection;
 import java.security.MessageDigest;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
@@ -45,12 +43,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.Map;
 import java.util.Vector;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
@@ -79,7 +73,7 @@ public class EfaUtil {
     private static final int ZIP_BUFFER = 2048;
     private static java.awt.Container java_awt_Container = new java.awt.Container();
 
-    //both strings need to be of equal length.
+    //WARNING both strings MUST BE of equal length, see method buildCharMap()
 	private static String UMLAUTS 		= "åàáâăäāąćçčèéêęëėěēìíîįīïďđģķĺļłńňñņòóôőõöōøřŕůùúûűüųūýÿšśşťţżžź";
 	private static String REPLACEMENT 	= "aaaaaaaaccceeeeeeeeiiiiiiddgklllnnnnoooooooorruuuuuuuuyysssttzzz"; 
 
@@ -95,7 +89,7 @@ public class EfaUtil {
 	}
 	
     private static String UMLAUTSEXTEND = UMLAUTS + "ßæœ";// those umlauts get translated to two characters
-
+    
     public static String escapeXml(String str) {
         str = replaceString(str, "&", "&amp;");
         str = replaceString(str, "<", "&lt;");
@@ -145,7 +139,7 @@ public class EfaUtil {
      * the first n values of the search string.
      *
      * @param text String to do search and replace in
-     * @param repl String to search for
+     * @param repl String to search for; must not be null or of zero length
      * @param with String to replace with
      * @param n    int    values to replace
      *
@@ -154,9 +148,11 @@ public class EfaUtil {
     public static String replaceString(String text, String repl, String with, int max) {
         if (text == null) {
             return null;
+        } else if ((repl==null)||repl.length()==0) {
+        	return null; // otherwise text.indexof(repl...) would always return 0, resulting in an endless loop
         }
 
-        StringBuffer buffer = new StringBuffer(text.length());
+        StringBuilder buffer = new StringBuilder(text.length());
         int start = 0;
         int end = 0;
         while ((end = text.indexOf(repl, start)) != -1) {
@@ -279,7 +275,10 @@ public class EfaUtil {
     }    
     
     public static boolean containsUmlaut(String data) {
-    	return data.toLowerCase().matches(".*["+UMLAUTSEXTEND+"]+.*");
+    	if (data!=null) {
+    		return data.toLowerCase().matches(".*["+UMLAUTSEXTEND+"]+.*");
+    	} 
+    	return false;
     }
     
     public static String getString(String s, int length) {
@@ -820,8 +819,11 @@ public class EfaUtil {
 
     // Suchen und Ersetzen in Strings
     public static String replace(String org, String such, String ers) {
-        int wo;
+        if (org==null||such==null) { return org; }
+
+    	int wo;
         String s = org;
+        
         if ((wo = org.indexOf(such)) >= 0) {
             if (wo > 0) {
                 if (wo + such.length() < org.length()) {
@@ -925,7 +927,7 @@ public class EfaUtil {
         if (b.jahr > v.jahr) {
             return true;
         }
-        if (b.jahr > v.jahr) {
+        if (b.jahr < v.jahr) { //bugfix, vorher war hier "if (b.jahr > v.jahr) { return true; }"
             return false;
         }
         return false;
@@ -940,6 +942,7 @@ public class EfaUtil {
     // Anzahl eines Zeichens in einem String ermitteln
     public static int countCharInString(String s, char c) {
         int n = 0;
+        if (s==null) { return 0; }
         for (int i = 0; i < s.length(); i++) {
             if (s.charAt(i) == c) {
                 n++;
@@ -1315,8 +1318,12 @@ public class EfaUtil {
             
             s.append(" (MAC ");
             byte[] mac = intf.getHardwareAddress();
-            for (int i=0; i<mac.length; i++) {
-                s.append( (i > 0 ? ":" : "") + EfaUtil.hexByte(mac[i]));
+            if (mac!=null) {
+	            for (int i=0; i<mac.length; i++) {
+	                s.append( (i > 0 ? ":" : "") + EfaUtil.hexByte(mac[i]));
+	            }
+            } else {
+            	s.append("n/a");
             }
             
             s.append(" MTU " + intf.getMTU());
@@ -1643,7 +1650,10 @@ public class EfaUtil {
         try {
             ZipFile zip = new ZipFile(zipFile);
             Enumeration files = zip.entries();
-            ZipEntry file = (ZipEntry) files.nextElement();
+            ZipEntry file = null;
+            if (files.hasMoreElements()) {//zip could be empty, so check for it.
+            	file = (ZipEntry) files.nextElement();
+            }
             while (file != null) {
                 String filename = file.getName();
                 if (file.isDirectory()) {
@@ -1712,11 +1722,12 @@ public class EfaUtil {
     }
 
     public static String createZipArchive(Vector sourceDirs, Vector inclSubdirs, String zipFile) {
-        try {
-            String warnings = "";
+    	ZipOutputStream out=null;
+        String warnings = "";
+    	try {
             BufferedInputStream origin = null;
             FileOutputStream dest = new FileOutputStream(zipFile);
-            ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(dest));
+            out = new ZipOutputStream(new BufferedOutputStream(dest));
             Hashtable <String,String>processedDirectories = new Hashtable<String,String>();
             byte data[] = new byte[ZIP_BUFFER];
             for (int j = 0; j < sourceDirs.size(); j++) {
@@ -1731,6 +1742,13 @@ public class EfaUtil {
                 processedDirectories.put(dir, "foobar");
                 File f = new File(dir);
                 String files[] = f.list();
+                if (files==null) {
+                	//files can be null if there is no access to the directory.
+                	//we just add a warning that the files of the dir could not be stored
+                	//and continue to the next sourceDir.
+                	warnings += dir + "\\*.*\n";
+                	continue;
+                }
 
                 // relative directory (for storing file in zipfile)
                 String reldir = dir;
@@ -1746,36 +1764,46 @@ public class EfaUtil {
                 if (!Daten.fileSep.equals("/")) {
                     reldir = EfaUtil.replace(reldir, Daten.fileSep, "/", true); // Bugfix: in <=160 konnten die unter Windows erstellten ZIP-Archive unter Linux nicht richtig gelesen werden
                 }
-                for (int i = 0; i < files.length; i++) {
-                    if ((new File(dir + files[i])).isDirectory()) {
-                        if (j >= inclSubdirs.size() || // j >= inclSubdirs.size() == true, wenn das Verzeichnis zuvor durch folgende Zeile dynamisch hinzugefügt wurde
-                                ((Boolean) inclSubdirs.get(j)).booleanValue()) {
-                            sourceDirs.add(dir + files[i]);
-                        }
-                    } else {
-                        try {
-                            FileInputStream fi = new FileInputStream(dir + files[i]);
-                            origin = new BufferedInputStream(fi, ZIP_BUFFER);
-                            ZipEntry entry = new ZipEntry(reldir + files[i]);
-                            out.putNextEntry(entry);
-                            int count;
-                            while ((count = origin.read(data, 0, ZIP_BUFFER)) != -1) {
-                                out.write(data, 0, count);
-                            }
-                        } catch (Exception se) {
-                            warnings += dir + files[i] + "\n";
-                        }
-                        origin.close();
-                    }
+                if (files!=null) {
+	                for (int i = 0; i < files.length; i++) {
+	                    if ((new File(dir + files[i])).isDirectory()) {
+	                        if (j >= inclSubdirs.size() || // j >= inclSubdirs.size() == true, wenn das Verzeichnis zuvor durch folgende Zeile dynamisch hinzugefügt wurde
+	                                ((Boolean) inclSubdirs.get(j)).booleanValue()) {
+	                            sourceDirs.add(dir + files[i]);
+	                        }
+	                    } else {
+	                        try {
+	                            FileInputStream fi = new FileInputStream(dir + files[i]);
+	                            origin = new BufferedInputStream(fi, ZIP_BUFFER);
+	                            ZipEntry entry = new ZipEntry(reldir + files[i]);
+	                            out.putNextEntry(entry);
+	                            int count;
+	                            while ((count = origin.read(data, 0, ZIP_BUFFER)) != -1) {
+	                                out.write(data, 0, count);
+	                            }
+	                        } catch (Exception se) {
+	                            warnings += dir + files[i] + "\n";
+	                        }
+	                        if (origin!=null) { origin.close(); }
+	                    }
+	                }
                 }
             }
-            out.close();
+
+        } catch (Exception e) {
+            return e.toString();
+        } finally {
+            if (out!=null) { 
+            	try {
+            		out.close(); 
+            	} catch (Exception ee) {
+            		Logger.log(ee);
+            	}
+            }
             if (warnings.length() > 0) {
                 return International.getString("Folgende Dateien konnten nicht gesichert werden:") +
                         " " + warnings + "\n";
             }
-        } catch (Exception e) {
-            return e.toString();
         }
         return null; // erfolgreich
     }
@@ -1892,7 +1920,7 @@ public class EfaUtil {
         return sum;
     }
 
-    public static String vector2string(AbstractList v, String sep) {
+    public static String vector2string(AbstractList<?> v, String sep) {
         if (v == null) {
             return null;
         }
@@ -2011,9 +2039,11 @@ public class EfaUtil {
         if (s.length() <= maxchar) {
             return s;
         }
+
         return (addDots ?
-            s.substring(0, maxchar-3) + "..."
-            : s.substring(0, maxchar));
+            s.substring(0, 
+            		Math.max(0, maxchar-3)) + "..." 
+            		: s.substring(0, maxchar));
     }
 
     public static String wrapString(String s, int maxchar) {
@@ -2067,8 +2097,10 @@ public class EfaUtil {
             }
         }
         if (Logger.isTraceOn(Logger.TT_XMLFILE)) {
-            Logger.log(Logger.DEBUG, Logger.MSG_FILE_XMLPARSER,
-                    "XML-Parser successfully loaded.");
+        	if (parser != null) {
+	            Logger.log(Logger.DEBUG, Logger.MSG_FILE_XMLPARSER,
+	                    "XML-Parser successfully loaded.");
+        	}
         }
         return parser;
     }
@@ -2116,7 +2148,11 @@ public class EfaUtil {
         if (forceOverwrite || !EfaUtil.canOpenFile(fname)) {
             try {
                 BufferedImage img = javax.imageio.ImageIO.read(EfaUtil.class.getResource(Daten.IMAGEPATH + image));
-                javax.imageio.ImageIO.write(img, format, new File(fname));
+                if (img!=null) {
+                	javax.imageio.ImageIO.write(img, format, new File(fname));
+                } else {
+                	Logger.log(Logger.ERROR, International.getString("Nicht gefunden")+": "+Daten.IMAGEPATH+image);
+                }
             } catch (Exception e) {
                 Logger.logdebug(e);
             }
@@ -2225,32 +2261,13 @@ public class EfaUtil {
         return x.toString();
     }
     
-    public static String getBodyFromURL(String url) {
-        try {
-            URLConnection conn = new URL(url).openConnection();
-            conn.connect();
-            BufferedInputStream in = new BufferedInputStream(conn.getInputStream());
-            StringBuilder s = new StringBuilder();
-            while (in.available() > 0) {
-                byte[] data = new byte[in.available()];
-                in.read(data);
-                s.append(new String(data));
-            }
-            in.close();
-            Pattern p = Pattern.compile(".*<body[^>]*>(.+)</body>.*", Pattern.DOTALL);
-            Matcher m = p.matcher(s.toString());
-            if (m.matches()) {
-                return m.group(1);
-            }
-        } catch(Exception e) {
-            Logger.log(e);
-        }
-        return null;
-    }
-
-    
     /*
-     * Calculates the remaining minutes until today, 23:59:00
+     * 
+     */
+    /**
+     * Calculates the remaining minutes until today, 23:59:00.
+     * Seconds between 23:59:00 and midnight are not considered.
+     * @return number of full minutes until midnight.
      */
     public static long getRemainingMinutesToday() {
     	
@@ -2308,7 +2325,7 @@ public class EfaUtil {
 	 * 
 	 * @return String array with all installed font family names on the current system.
 	 */
-	public static String[] makeFontFamilyArray(Boolean showAllFonts, String DEFAULT_FONT_NAME) {
+	public static String[] makeFontFamilyArray(boolean showAllFonts, String DEFAULT_FONT_NAME) {
     	Vector <String>fontFamilies = makeFontFamilyVector(showAllFonts, DEFAULT_FONT_NAME);
     	String[] fontFamiliesArray =new String[fontFamilies.size()];
 
@@ -2326,7 +2343,7 @@ public class EfaUtil {
 	 * 
 	 * @return Vector with all installed font family names on the current system.
 	 */	
-	public static Vector <String>makeFontFamilyVector (Boolean showAllFonts, String DEFAULT_FONT_NAME) {
+	public static Vector <String>makeFontFamilyVector (boolean showAllFonts, String DEFAULT_FONT_NAME) {
         GraphicsEnvironment graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment();
         Font[] allFonts = graphicsEnvironment.getAllFonts();
         String guiFontRegexp="arial.*|dialog|roboto.*|tahoma.*|trebuchet.*|.*inter.*|.*sansserif|segoe.ui.*|verdana.*|cantarell.*|dejavu.*|liberation.*|.*piboto.*|noto.sans|noto.sans.display.*|quicksand.*";        
@@ -2404,9 +2421,9 @@ public class EfaUtil {
 
     }	
     public static Color lighter(Color theColor, float percent) {
-    	int red=Math.round(theColor.getRed()*(1+(percent/100)));
-    	int green=Math.round(theColor.getGreen()*(1+(percent/100)));
-    	int blue=Math.round(theColor.getBlue()*(1+(percent/100)));
+    	int red=Math.min(255, Math.round(theColor.getRed()*(1+(percent/100))));
+    	int green=Math.min(255,Math.round(theColor.getGreen()*(1+(percent/100))));
+    	int blue=Math.min(255,Math.round(theColor.getBlue()*(1+(percent/100))));
         return new Color(red, green, blue);	
     }
 
@@ -2416,8 +2433,46 @@ public class EfaUtil {
     	int green=theColor.getGreen();
     	green=Math.max(0, green-(int)Math.round(green*percent/100));
     	int blue=theColor.getBlue();
-    	blue=Math.max(0, blue-(int)Math.round(green*percent/100));
+    	blue=Math.max(0, blue-(int)Math.round(blue*percent/100));
         return new Color(red, green, blue);	
+    }
+    
+    /**
+     * Macht eine Farbe kräftiger / gesättigter.
+     * @param theColor Ausgangsfarbe (darf nicht null sein)
+     * @param percent Erhöhung in Prozent (z.B. 20 = +20% Sättigung). Werte <= 0 geben die unveränderte Farbe zurück.
+     *                Werte können >100 sein, werden aber auf Maximalwerte begrenzt.
+     * @return neue Color mit erhöhter Sättigung/leicht erhöhter Helligkeit
+     */
+    public static Color stronger(Color theColor, float percent) {
+        if (theColor == null) {
+            return null;
+        }
+        if (percent <= 0f) {
+            return theColor;
+        }
+
+        // Konvertiere RGB -> HSB (Hue, Saturation, Brightness)
+        float[] hsb = Color.RGBtoHSB(theColor.getRed(), theColor.getGreen(), theColor.getBlue(), null);
+        float h = hsb[0];
+        float s = hsb[1];
+        float b = hsb[2];
+
+        // Für sehr graue Farben (nahe 0 Sättigung) eine absolute Sättigungszufuhr,
+        // sonst multiplicative Erhöhung (gleiches Muster wie bei lighter/darker).
+        if (s < 0.02f) {
+            s = Math.min(1f, percent / 100f);
+        } else {
+            s = Math.min(1f, s * (1f + percent / 100f));
+        }
+
+        // Leicht die Helligkeit anheben, damit stark gesättigte Farben nicht zu dunkel wirken.
+        b = Math.min(1f, b * (1f + percent / 300f));
+
+        Color result = Color.getHSBColor(h, s, b);
+        // Color.getHSBColor liefert bereits eine Color, aber zur Konsistenz mit anderen Methoden
+        // geben wir eine neue Color mit den RGB-Komponenten zurück.
+        return new Color(result.getRed(), result.getGreen(), result.getBlue());
     }
 
     /**

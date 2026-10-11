@@ -10,16 +10,24 @@
 
 package de.nmichael.efa.util;
 
-import de.nmichael.efa.*;
+import java.io.File;
+import java.text.DecimalFormat;
+import java.text.MessageFormat;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Hashtable;
+import java.util.Locale;
+import java.util.ResourceBundle;
+
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+
+import de.nmichael.efa.Daten;
 import de.nmichael.efa.core.config.EfaTypes;
 import de.nmichael.efa.core.items.IItemType;
 import de.nmichael.efa.core.items.ItemTypeStringList;
 import de.nmichael.efa.gui.SimpleInputDialog;
-import java.util.*;
-import java.io.*;
-import java.text.*;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 
 // @i18n complete
 
@@ -37,7 +45,8 @@ public class International {
     private static NumberFormat numberFormat = null;
     private static char decimalSeparator = '.';
     private static boolean initializationFailed = false;
-
+    private static Hashtable <String,String> replacements = new Hashtable<String,String>();
+    
     private static void initializeData() {
         try {
             if (Daten.efaBaseConfig != null && Daten.efaBaseConfig.language != null &&
@@ -72,6 +81,7 @@ public class International {
             Daten.EFA_CLOUD = "efaCloud";
 
             EfaTypes.TEXT_UNKNOWN = International.getString("unbekannt");
+            
             JOptionPane.setDefaultLocale(locale);
         } catch(Exception e) {
             Logger.log(Logger.ERROR, Logger.MSG_INTERNATIONAL_FAILEDSETUP, "Failed to set up internationalization: "+e.toString()); // no need for translation
@@ -235,7 +245,9 @@ public class International {
                 return (MARK_MISSING_KEYS ? "#"+key+"#" : key);
             } else {
                 String t;
-                if (useBundle == null) {
+                if (replacements.containsKey(key)){
+                	t=replacements.get(key);
+                } else if (useBundle == null) {
                     t = bundle.getString(key);
                 } else {
                     t = useBundle.getString(key);
@@ -548,5 +560,12 @@ public class International {
     public static void setShowKeys(boolean enabled) {
         SHOW_KEY_INSTEAD_OF_TRANSLATION = enabled;
     }
+
+	public static void setReplacements(Hashtable<String, String> map) {
+		replacements.clear();
+		for (String key : map.keySet()) {
+			replacements.put(key, map.get(key));
+		}
+	}
 
 }

@@ -453,9 +453,9 @@ public class ShowLogbookDialog extends BaseDialog implements IItemListener {
 
 		private static final long serialVersionUID = 7627514043061724774L;
 
-		private Boolean tooltipsEnabled=false;
+		private boolean tooltipsEnabled=false;
 		
-		public MyJTable(TableSorter sorter, Boolean showToolTips) {
+		public MyJTable(TableSorter sorter, boolean showToolTips) {
             super(sorter);
             tooltipsEnabled=showToolTips;
         }
@@ -536,7 +536,7 @@ public class ShowLogbookDialog extends BaseDialog implements IItemListener {
         Object[][] data = null;
         Object[] title = null;
 
-        public MyNestedJTable(Object[][] data, Object[] title, Boolean showToolTips) {
+        public MyNestedJTable(Object[][] data, Object[] title, boolean showToolTips) {
             super(data, title);
             this.tooltipsEnabled=showToolTips;
             this.data = data;
@@ -657,7 +657,7 @@ public class ShowLogbookDialog extends BaseDialog implements IItemListener {
 
                 if (this.useAlternatingColor) {
                 	if (table instanceof MyNestedJTable) {
-                		Boolean startsWithOdd=((MyNestedJTable) table).getStartWithOddRow();
+                		boolean startsWithOdd=((MyNestedJTable) table).getStartWithOddRow();
                 		if (startsWithOdd) {
                 			bkgColor = null; //(row % 2 == 0 ? null : alternateColor);
                 		} else {

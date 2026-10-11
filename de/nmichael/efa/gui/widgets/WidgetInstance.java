@@ -54,7 +54,7 @@ public abstract class WidgetInstance implements IWidgetInstance {
         		//Multiwidget itself takes care of layout if multiple elements are put on it.
         		panel.add(comp);        		
         	} else if (panelPosition.equals(IWidget.POSITION_CENTER)) {
-        		Boolean verticalAlignment=true;
+        		boolean verticalAlignment=true;
         		int compCount = panel.getComponentCount();
         		int insetLeft = 3;
         		int insetTop = 3;
@@ -68,7 +68,7 @@ public abstract class WidgetInstance implements IWidgetInstance {
 		            			insetLeft, insetRight);
 
         	} else { //top,bottom,left,right position: Gridbag
-        		Boolean verticalAlignment= (panelPosition.equals(IWidget.POSITION_LEFT)|| panelPosition.equals(IWidget.POSITION_RIGHT));
+        		boolean verticalAlignment= (panelPosition.equals(IWidget.POSITION_LEFT)|| panelPosition.equals(IWidget.POSITION_RIGHT));
         		int compCount = panel.getComponentCount();
         		int insetLeft = 3;
         		int insetTop = 3;
@@ -104,11 +104,11 @@ public abstract class WidgetInstance implements IWidgetInstance {
 		return returnList;
 	}
 
-	protected static JPanel getLocationHeader(String caption, Boolean showMaximize) {
+	protected static JPanel getLocationHeader(String caption, boolean showMaximize) {
 		return getLocationHeader(caption, showMaximize, null, null);
 	}	
 
-	protected static JPanel getLocationHeader(String caption, Boolean showMaximize, Color bg, Color fg) {
+	protected static JPanel getLocationHeader(String caption, boolean showMaximize, Color bg, Color fg) {
 		RoundedPanel titlePanel = new RoundedPanel();
 		titlePanel.setLayout(new GridBagLayout());
 		titlePanel.setBackground((bg == null ? Daten.efaConfig.getToolTipHeaderBackgroundColor() : bg));

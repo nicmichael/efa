@@ -1,6 +1,7 @@
 #!/bin/bash
-# makeDist.sh   V2.0 04.10.2025
-# makeDist.sh   V2.1 09.11.2025 updated jars for json and flatlaf.
+# makeDist.sh V2.0 04.10.2025
+# makeDist.sh V2.1 09.11.2025 updated jars for json and flatlaf.
+# makeDist.sh V2.2 12.09.2026 updated for new eou.xml transformation to changelog_de.html etc.
 # ######################################
 #
 # Originally created by Nicolas Michael. Updated by Stefan Gebers.
@@ -74,7 +75,7 @@ TARGET=1.8
 
 #EFA SOURCE AND OTHER RESOURCES
 EFABASE=/home/efa/efadev
-EFASRC=$EFABASE/src
+EFASRC=$EFABASE/src/
 EFADOC=$EFABASE/src/help/main
 EFACFG=$EFABASE/src/cfg
 EFAFMT=$EFABASE/src/fmt
@@ -97,10 +98,14 @@ SRCBACKUP=/home/efa/Backup
 EFAWINDSETUP=$EFABASE/winmedia
 
 CLASSPATH=$MAKEDIST_JAVA:$MAKEDIST_TOOLS
-CLASSPATH=$CLASSPATH:$PLUGINS/ftp/edtftpj.jar:$CLASSPATH:$PLUGINS/ftp/jsch-0.1.55.jar:$PLUGINS/help/jh.jar:$PLUGINS/jsuntimes/jsuntimes.jar:$PLUGINS/mail/javax.mail.jar:$PLUGINS/mail/activation.jar:$PLUGINS/flatlaf/flatlaf-3.6.jar
+CLASSPATH=$CLASSPATH:$PLUGINS/ftp/edtftpj.jar:$CLASSPATH:$PLUGINS/ftp/jsch-0.1.55.jar:$PLUGINS/help/jh.jar:$PLUGINS/jsuntimes/jsuntimes.jar:$PLUGINS/mail/javax.mail.jar:$PLUGINS/mail/activation.jar:
+#new flatlaf version 3.6 for newer efa versions since 2.5.3
+CLASSPATH=$CLASSPATH:$PLUGINS/flatlaf/flatlaf-3.6.jar
 CLASSPATH=$CLASSPATH:$PLUGINS/pdf/avalon-framework.jar:$PLUGINS/pdf/batik-all.jar:$PLUGINS/pdf/commons-io.jar:$PLUGINS/pdf/commons-logging.jar:$PLUGINS/pdf/fop.jar:$PLUGINS/pdf/xmlgraphics-commons.jar
 CLASSPATH=$CLASSPATH:$PLUGINS/weather/commons-codec.jar:$PLUGINS/weather/signpost-core.jar
 CLASSPATH=$CLASSPATH:$PLUGINS/json/json-20250517.jar
+
+echo $CLASSPATH
 
 if [ -d ${MAKEDIST:?} ] ; then
   rm -fR ${MAKEDIST:?}
@@ -146,7 +151,7 @@ cd ${MAKEDIST_JAVA:?}
 rm ~/compile.log
 for f in `cat  ${MAKEDIST:?}/dirlist.tmp`
 do
-  $JAVAC -target $TARGET -source $TARGET -classpath $CLASSPATH $f/*.java >>~/compile.log 2>&1 || exit 1
+  $JAVAC -target $TARGET -source $TARGET -classpath $CLASSPATH $f/*.java >~/compile.log 2>&1 || exit 1
   rm $f/*.java
 done
 rm -f ${MAKEDIST:?}/dirlist.tmp
@@ -200,7 +205,7 @@ cp ${PLUGINS:?}/ftp/edtftpj.jar ${MAKEDIST_PLUGINS:?}/
 cp ${PLUGINS:?}/ftp/jsch-0.1.55.jar ${MAKEDIST_PLUGINS:?}/
 cp ${PLUGINS:?}/weather/commons-codec.jar ${MAKEDIST_PLUGINS:?}/
 cp ${PLUGINS:?}/weather/signpost-core.jar ${MAKEDIST_PLUGINS:?}/
-cp ${PLUGINS:?}/flatlaf/flatlaf-*.jar ${MAKEDIST_PLUGINS:?}/
+cp ${PLUGINS:?}/flatlaf/flatlaf*.jar ${MAKEDIST_PLUGINS:?}/
 cp ${PLUGINS:?}/json/json*.jar ${MAKEDIST_PLUGINS:?}/
 
 echo "Copying Config Files ..."
@@ -237,9 +242,9 @@ echo ${EFABASE}
 echo ${EFASRC}
 echo ${MAKEDIST_DOC}
 
-xsltproc  ${EFABASE}/eoutransform_de.xslt ${EFASRC}/eou/eou.xml >${MAKEDIST_DOC:?}/changelog_de.html
-xsltproc  ${EFABASE}/eoutransform_en.xslt ${EFASRC}/eou/eou.xml >${MAKEDIST_DOC:?}/changelog_en.html
-# Addendum SGB: eou changelog refers do some png images for showing the structure.
+xsltproc --stringparam langcode "de" ${EFABASE}/eoutransformv2.xslt ${EFASRC}/eou/eou.xml >${MAKEDIST_DOC:?}/changelog_de.html
+xsltproc --stringparam langcode "en" ${EFABASE}/eoutransformv2.xslt ${EFASRC}/eou/eou.xml >${MAKEDIST_DOC:?}/changelog_en.html
+# Addendum SGB: eou changelog refers do some png images for showing the structure. include them in the doc directory.
 cp ${EFASRC}/eou/*.png ${MAKEDIST_DOC:?}
 
 echo "DONE. Check"
@@ -299,6 +304,11 @@ rm -f ${DIST:?}/efa${VERSION:?}.tar
 zip -r ${DIST:?}/efa${VERSION:?}.zip .
 tar cfv ${DIST:?}/efa${VERSION:?}.tar .
 
+#Github needs the eou.xml as asset for each version, so that efa online update
+#can search for update info for each release. So we include the eou.xml file for publishing on github
+cp ${EFASRC}/eou/eou.xml ${DIST:?}/efa${VERSION:?}/eou.xml
+
+#Preapare windows release files.
 if [ "$VERSIONID" != "" ] ; then
   mkdir ${EFAVERSIONS}/${VERSIONID}
   cp ${DIST:?}/efa${VERSION:?}.zip ${EFAVERSIONS}/${VERSIONID}/

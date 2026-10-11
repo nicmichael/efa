@@ -545,6 +545,36 @@ public class LogbookRecord extends DataRecord {
         return null;
     }
 
+    /**
+	 * Get the latest person record for the given position (0 = cox, 1..CREW_MAX = crew)
+	 * So that the validAt timestamp is not needed, but the latest record is returned.
+	 * @param pos
+	 * @return
+	 */
+    private PersonRecord getPersonRecordLatest(int pos, String crewName) {
+        try {
+            UUID id = null;
+            if (pos == 0) {
+                id = getCoxId();
+            }
+            if (pos >= 1 && pos <= CREW_MAX) {
+                id = getCrewId(pos);
+            }
+            if (id != null) {
+                return getPersistence().getProject().getPersons(false).getPersonLatest(id);
+            } else {
+            	// no person ID found at that position. will try to find the person by Name (if available)
+            	if (crewName != null && crewName.length() > 0) {
+					return getPersistence().getProject().getPersons(false).getPersonLatest(crewName);
+				}
+            	
+            }
+        } catch(Exception e) {
+            Logger.logdebug(e);
+        }
+        return null;    	
+    }
+    
     public PersonRecord getCoxRecord(long validAt) {
         return getPersonRecord(0, validAt);
     }
@@ -553,6 +583,10 @@ public class LogbookRecord extends DataRecord {
         return getPersonRecord(pos, validAt);
     }
 
+    public PersonRecord getCrewRecordLatest(int pos, String crewName) {
+    	return getPersonRecordLatest(pos, crewName);
+    }
+    
     public DestinationRecord getDestinationRecord(long validAt) {
         try {
             UUID id = getDestinationId();

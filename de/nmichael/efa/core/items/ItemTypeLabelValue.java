@@ -61,6 +61,7 @@ public abstract class ItemTypeLabelValue extends ItemType {
     protected boolean itemOnNewRow = false; // set to true, if label and field (e.g. multiline textfield) shall be in separate rows
     protected boolean itemOnSameRowAsPreviousItem = false; // set to true, if this field shall be on the same line as the previous field (allow two-column-layouts)   
     
+    protected double fieldGridWeightX = 0.0;
     protected int xOffset = 0;
     protected int yOffset = 0;
     protected JLabel separator = null;
@@ -173,7 +174,7 @@ public abstract class ItemTypeLabelValue extends ItemType {
         	separator = new JLabel();
         	separator.setText("  ");
         	Dialog.setPreferredSize(separator, GUI_SEPARATOR_WIDTH, fieldHeight);
-        	panel.add(separator, new GridBagConstraints(x, y, 1, 1, 0.0, 0.0,
+        	panel.add(separator, new GridBagConstraints(x, y, 1, 1, fieldGridWeightX, 0.0,
                     fieldGridAnchor, GridBagConstraints.NONE, 
                     new Insets((itemOnNewRow ? 0 : padYbefore), (itemOnNewRow ? padXbefore : 0), padYafter, padXafter), 0, 0));
 

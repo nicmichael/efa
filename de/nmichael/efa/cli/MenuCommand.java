@@ -9,13 +9,19 @@
  */
 package de.nmichael.efa.cli;
 
-import de.nmichael.efa.util.Logger;
 import java.io.File;
 import java.util.Stack;
+import java.util.Vector;
+
+import de.nmichael.efa.Daten;
+import de.nmichael.efa.data.storage.RemoteCommand;
+import de.nmichael.efa.util.Logger;
 
 public class MenuCommand extends MenuBase {
 
     public static final String CMD_RUN  = "run";
+    public static final String CMD_EFA_SHUTDOWN = "shutdownefa";
+    public static final String CMD_EFA_RESTART = "restartefa";
 
     public MenuCommand(CLI cli) {
         super(cli);
@@ -23,6 +29,8 @@ public class MenuCommand extends MenuBase {
 
     public void printHelpContext() {
         printUsage(CMD_RUN,  "<command> [options...] [>file]", "run a command");
+        printUsage(CMD_EFA_SHUTDOWN, "", "Shut down efaBoathouse you are currently connected to");
+        printUsage(CMD_EFA_RESTART, "", "Restart efaBoathouse you are currently connected to");
     }
 
     public int runExternalCommand(String args) {
@@ -69,10 +77,70 @@ public class MenuCommand extends MenuBase {
         if (ret < 0) {
             if (cmd.equalsIgnoreCase(CMD_RUN)) {
                 return runExternalCommand(args);
-            }
+            } else if (cmd.equalsIgnoreCase(CMD_EFA_SHUTDOWN)) {
+				return restartEfaBoathouse(false, args);
+			} else if (cmd.equalsIgnoreCase(CMD_EFA_RESTART)) {
+				return restartEfaBoathouse(true, args);
+			}
             return CLI.RC_UNKNOWN_COMMAND;
         } else {
             return ret;
         }
     }
+
+	private int restartEfaBoathouse(boolean restart, String args) {
+		Vector<String> options = getArgs(args);
+		
+		if (!isArgsOkForEfaInstance(CMD_EFA_RESTART, options)) {
+			return CLI.RC_INVALID_ARGUMENT;
+		}
+		
+        if (!cli.getAdminRecord().isAllowedExitEfa()) {
+            cli.logerr("You don't have permission to access this function.");
+            return CLI.RC_NO_PERMISSION;
+        }
+        
+        RemoteCommand cmd = new RemoteCommand(Daten.project);
+        boolean result = cmd.exitEfa(restart);
+        if (result) {
+        	if (restart) {
+        		cli.loginfo("efaBoathouse restart command successfully sent to remote instance. efaCLI will now exit.");
+        	} else {
+        		cli.loginfo("efaBoathouse shutdown command successfully sent to remote instance. efaCLI will now exit.");
+        	}
+        	cli.quit(CLI.RC_OK);
+			return CLI.RC_OK;
+        } else {
+            cli.logerr("Failed to send efaBoathouse restart command to remote instance.");
+    		return CLI.RC_COMMAND_FAILED;
+        }
+
+
+	}
+	
+	private Vector<String> getArgs(String args) {
+		Vector<String> options = new Vector<String>();
+		if (args != null) {
+			String[] argsarr = args.split(" ");
+			for (String arg : argsarr) {
+				if (arg.trim().length() > 0) {
+					options.add(arg.trim());
+				}
+			}
+		}
+		return options;
+	}
+
+	private boolean isArgsOkForEfaInstance(String cmd, Vector<String> args) {
+		if (args == null) {
+			args = new Vector<String>();
+		}
+		if (args.size() != 0) {
+			printUsage("Too many arguments for command: "+ cmd, "" ,"");
+			printHelpContext();
+			return false;
+		} 
+		return true;
+		
+	}
 }

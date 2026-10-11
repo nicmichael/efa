@@ -157,7 +157,7 @@ public class ItemTypeButton extends ItemType {
     	}
     }
     
-    public void setBold(Boolean value) {
+    public void setBold(boolean value) {
     	this.boldfont=value;
     }
 }

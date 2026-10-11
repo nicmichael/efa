@@ -609,7 +609,7 @@ public class ItemTypeStringAutoComplete extends ItemTypeString implements AutoCo
                     LogString.itemIsUnknown(name, International.getString("Name")) + "\n" +
                    International.getString("Meintest Du ...?"));
             for (int i=0; i<neighbours.size(); i++) {
-                item.addItem(neighbours.get(i), neighbours.get(i), null, neighbours.get(i), false, '\0');
+                item.addItem(neighbours.get(i), neighbours.get(i), null, null, neighbours.get(i), false, '\0');
             }
             item.setFieldSize(300, 200);
 
@@ -946,7 +946,7 @@ public class ItemTypeStringAutoComplete extends ItemTypeString implements AutoCo
     			
     }
     
-    public void setShowButtonFocusable(Boolean value) {
+    public void setShowButtonFocusable(boolean value) {
     	this.showButtonFocusable=value;
     	if (button != null) {
     		button.setFocusable(value);

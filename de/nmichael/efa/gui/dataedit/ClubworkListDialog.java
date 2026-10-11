@@ -10,11 +10,21 @@
 
 package de.nmichael.efa.gui.dataedit;
 
+import java.awt.BorderLayout;
+import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.util.UUID;
+
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
+
 import de.nmichael.efa.Daten;
 import de.nmichael.efa.core.config.AdminRecord;
 import de.nmichael.efa.core.items.IItemType;
 import de.nmichael.efa.core.items.ItemTypeDataRecordTable;
-import de.nmichael.efa.data.BoatReservationRecord;
 import de.nmichael.efa.data.Clubwork;
 import de.nmichael.efa.data.ClubworkRecord;
 import de.nmichael.efa.data.storage.DataRecord;
@@ -23,12 +33,6 @@ import de.nmichael.efa.ex.EfaModifyException;
 import de.nmichael.efa.gui.BaseDialog;
 import de.nmichael.efa.util.International;
 import de.nmichael.efa.util.Logger;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.util.UUID;
 
 
 // @i18n complete

@@ -99,7 +99,9 @@ public class WeatherDataHourly {
 	public void setDescription(List<String> description) {
 		this.description = description;
 	}	
-	
+	public int getItemSize() {
+		return time.size();
+	}
 	/**
 	 * Returns the index of the array which matches the next forecast item depending of the current systems time. 
 	 *  
@@ -114,27 +116,18 @@ public class WeatherDataHourly {
     	 * This method serves this purpose. It utilizes the fact that OpenMeteo stores the Unix time (seconds since January 1, 1970) 
     	 * based on UTC in the `TIME` array.
     	 */
-   	 	int index=0;
-    	long compareTimeStamp=System.currentTimeMillis();
-    	
-    	if (time !=null && time.size()>0) {
-	    	for(Long unixStamp : time)
-			{
-	    		//we are looking for the index BEFORE the first entry that is in the future compared to now.
-	    		//unix Stamp is always in GMT, so we don't have to worry about time zones.
-	    		
-	    		if (unixStamp.longValue()*1000>compareTimeStamp) {
-	    			index--; // we want the item before.
-	    			if (index<0) {index=0;}
-	    			break;
-	    		} else {
-	    			index++;
-	    		}
-			}
-	    	return index;
-    	} else {
-    		return -1;
-    	}
+        if (time == null || time.isEmpty()) {
+            return -1;
+        }
+        long now = System.currentTimeMillis();
+        for (int i = 0; i < time.size(); i++) {
+            long tsMillis = time.get(i) * 1000L;
+            if (tsMillis > now) {
+                return Math.max(0, i - 1); // get the prior element or zero (first element)
+            }
+        }
+        // if there is no element for the future time, return the last element of the list as relevant.
+        return time.size() - 1;
     }
 	public List<ImageIcon> getUv_index_icon() {
 		return uv_index_icon;

@@ -1,0 +1,1 @@
+powershell -ExecutionPolicy Bypass -File .\KillJavaVMForWindows.ps1 -Pattern "de.nmichael.efa.boathouse.Main" 

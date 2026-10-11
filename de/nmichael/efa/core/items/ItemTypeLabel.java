@@ -196,11 +196,11 @@ public class ItemTypeLabel extends ItemType {
     	return border;
     }
     
-    public Boolean getRoundShape() {
+    public boolean getRoundShape() {
     	return roundShape;
     }
     
-    public void setRoundShape(Boolean value) {
+    public void setRoundShape(boolean value) {
     	roundShape=value;
     }
     

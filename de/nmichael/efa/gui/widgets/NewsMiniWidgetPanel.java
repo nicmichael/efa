@@ -30,7 +30,8 @@ public class NewsMiniWidgetPanel extends RoundedPanel{
         super.paintComponent(g);
 
         Graphics2D g2 = (Graphics2D) g.create();
-        //g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 
         int panelWidth = getWidth();
         int panelHeight = getHeight();
@@ -87,22 +88,22 @@ public class NewsMiniWidgetPanel extends RoundedPanel{
         textImage = new BufferedImage(w + 20, h+2, BufferedImage.TYPE_INT_ARGB);
         g = textImage.createGraphics();
         g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-
+        g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
         g.setColor(Color.RED);
-        g.fillRect(0, 0, textImage.getWidth(), textImage.getHeight());
+        g.fillRect(1, 1, textImage.getWidth(), textImage.getHeight());
 
         g.setFont(this.getFont());
         g.setColor(Color.WHITE);
-        g.drawString(text, 20, 0 + fm.getAscent());
+        g.drawString(text, 20, 1 + fm.getAscent());
 
         g.dispose();
     }
 
-	private int getOffsetX() {
+	public int getOffsetX() {
 		return offsetX;
 	}
 
-	private void setOffsetX(int offsetX) {
+	public void setOffsetX(int offsetX) {
 		this.offsetX = offsetX;
 	}
 

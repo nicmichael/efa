@@ -568,7 +568,7 @@ public class Project extends StorageObject {
                                 }
                             }
                             
-                            Boolean currentProject=(Daten.project != null ? p.getName().equals(Daten.project.getName()) : false);
+                            boolean currentProject=(Daten.project != null ? p.getName().equals(Daten.project.getName()) : false);
                             
                             //items.put(name, "<html>"+description.toString()+"</html>");
                             //highlight currently loaded project with green background
@@ -617,13 +617,13 @@ public class Project extends StorageObject {
         Hashtable<String, String> items = new Hashtable<String, String>();
         String[] logbooks = getAllLogbookNames();
         for (int i = 0; logbooks != null && i < logbooks.length; i++) {
-            ProjectRecord r = getLoogbookRecord(logbooks[i]);
+            ProjectRecord r = getLogbookRecord(logbooks[i]);
             if (r != null) {
                 String name = "<b>" + International.getString("Fahrtenbuch") + ":</b> <b><font color=blue>" + logbooks[i] + "</font></b><br>";
                 String description = (r.getDescription() != null && r.getDescription().length() > 0 ? "<i>"+r.getDescription() + "</i><br> " : "");
                 description += "(" + r.getStartDate().toString() + " - " + r.getEndDate() + ")";
                 
-                Boolean currentLogbook=(Daten.project != null && Daten.project.getCurrentLogbook() != null 
+                boolean currentLogbook=(Daten.project != null && Daten.project.getCurrentLogbook() != null 
                 		? logbooks[i].equals(Daten.project.getCurrentLogbook().getName() ) 
                 		: false);
                 
@@ -650,7 +650,7 @@ public class Project extends StorageObject {
                 String description = (r.getDescription() != null && r.getDescription().length() > 0 ? r.getDescription() + " " : "");
                 description += "(" + r.getStartDate().toString() + " - " + r.getEndDate() + ")";
                 
-                Boolean currentClubwork=(Daten.project != null && Daten.project.getCurrentClubwork() != null 
+                boolean currentClubwork=(Daten.project != null && Daten.project.getCurrentClubwork() != null 
                 		? clubworks[i].equals(Daten.project.getCurrentClubwork().getName() ) 
                 		: false);
                 
@@ -805,7 +805,7 @@ public class Project extends StorageObject {
         return ProjectRecord.getDataKey(ProjectRecord.TYPE_CLUB, null);
     }
 
-    public DataKey getLoogbookRecordKey(String logbookName) {
+    public DataKey getLogbookRecordKey(String logbookName) {
         return ProjectRecord.getDataKey(ProjectRecord.TYPE_LOGBOOK, logbookName);
     }
 
@@ -863,8 +863,8 @@ public class Project extends StorageObject {
         return r;
     }
 
-    public ProjectRecord getLoogbookRecord(String logbookName) {
-        return getRecord(getLoogbookRecordKey(logbookName));
+    public ProjectRecord getLogbookRecord(String logbookName) {
+        return getRecord(getLogbookRecordKey(logbookName));
     }
 
     public ProjectRecord getClubworkBookRecord(String clubworkName) {
@@ -1216,7 +1216,7 @@ public class Project extends StorageObject {
     }
 
     public Logbook getLogbook(String logbookName, boolean createNewIfDoesntExist) {
-        ProjectRecord rec = getLoogbookRecord(logbookName);
+        ProjectRecord rec = getLogbookRecord(logbookName);
         if (rec == null) {
             return null;
         }
@@ -2440,7 +2440,7 @@ public class Project extends StorageObject {
             if (((ProjectRecord) record).getType().equals(ProjectRecord.TYPE_BOATHOUSE)) {
                 ProjectRecord r = (ProjectRecord) record;
                 String lName = r.getAutoNewLogbookName();
-                if (lName != null && lName.length() > 0 && getLoogbookRecord(lName) == null) {
+                if (lName != null && lName.length() > 0 && getLogbookRecord(lName) == null) {
                     throw new EfaModifyException(Logger.MSG_DATA_MODIFYEXCEPTION,
                             "Logbook " + lName + " not found!",
                             Thread.currentThread().getStackTrace());

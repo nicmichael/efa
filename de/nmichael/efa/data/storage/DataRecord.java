@@ -10,18 +10,13 @@
 
 package de.nmichael.efa.data.storage;
 
-import java.awt.GridBagConstraints;
 import java.util.HashMap;
 import java.util.UUID;
 import java.util.Vector;
 
-import javax.swing.SwingConstants;
-
 import de.nmichael.efa.Daten;
 import de.nmichael.efa.core.config.AdminRecord;
-import de.nmichael.efa.core.config.EfaConfig;
 import de.nmichael.efa.core.items.IItemType;
-import de.nmichael.efa.core.items.ItemTypeLabel;
 import de.nmichael.efa.core.items.ItemTypeStringAutoComplete;
 import de.nmichael.efa.data.types.DataTypeDate;
 import de.nmichael.efa.data.types.DataTypeDecimal;
@@ -31,9 +26,7 @@ import de.nmichael.efa.data.types.DataTypeList;
 import de.nmichael.efa.data.types.DataTypePasswordCrypted;
 import de.nmichael.efa.data.types.DataTypePasswordHashed;
 import de.nmichael.efa.data.types.DataTypeTime;
-import de.nmichael.efa.gui.ImagesAndIcons;
 import de.nmichael.efa.gui.util.AutoCompleteList;
-import de.nmichael.efa.gui.util.RoundedBorder;
 import de.nmichael.efa.gui.util.TableItem;
 import de.nmichael.efa.gui.util.TableItemHeader;
 import de.nmichael.efa.util.EfaUtil;
@@ -560,15 +553,33 @@ public abstract class DataRecord implements Cloneable, Comparable {
         
     }
 
+    /**
+	 * Returns a string with all field values separated by ";".
+	 * This is intended to used ONLY for filtering (checkbox filter set to "true") of records in the DataListDialog.
+	 * Do not use this for any other purpose, as the output format is not defined and may change without notice.
+	 * 
+	 * The field order is the same as defined in the respective DataRecord subclass.
+	 * Fields with empty or null values are not included in the output.
+	 * Also, some technical fields are not included in the output (LastModified, ChangeCount, ValidFrom, InvalidFrom, Invisible, Deleted).
+	 */
     public String getAllFieldsAsSeparatedText() {
         StringBuilder b = new StringBuilder();
         for (int i=0; i<getFieldCount(); i++) {
             if (b.length() > 1) {
                 b.append(";");
             }
-            String v = getAsText(getFieldName(i));
-            if (v != null && v.length() > 0) {
-                b.append(v);
+            String fieldName = getFieldName(i);
+            if (fieldName!= null && fieldName.length() > 0 
+            		&& !fieldName.equals(LASTMODIFIED)
+            		&& !fieldName.equals(CHANGECOUNT) 
+            		&& !fieldName.equals(VALIDFROM) 
+            		&& !fieldName.equals(INVALIDFROM) 
+            		&& !fieldName.equals(INVISIBLE) 
+            		&& !fieldName.equals(DELETED)) {
+	            String v = getAsText(fieldName);
+	            if (v != null && v.length() > 0) {
+	                b.append(v);
+	            }
             }
         }
         return b.toString();
@@ -1068,6 +1079,14 @@ public abstract class DataRecord implements Cloneable, Comparable {
                 }
             }
         }
+    }
+    
+    public String getStringValueFromField(String fieldName) {
+		try {
+			return getString(fieldName);
+		} catch (Exception e) {
+			return null;
+		}
     }
 
 }

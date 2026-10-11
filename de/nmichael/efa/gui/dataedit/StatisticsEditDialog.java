@@ -16,6 +16,7 @@ import de.nmichael.efa.core.items.ItemTypeString;
 import de.nmichael.efa.util.*;
 import de.nmichael.efa.data.*;
 import de.nmichael.efa.gui.BaseDialog;
+import de.nmichael.efa.gui.EfaGuiUtils;
 import de.nmichael.efa.gui.SimpleInputDialog;
 import de.nmichael.efa.gui.ImagesAndIcons;
 import de.nmichael.efa.statistics.StatisticTask;
@@ -54,6 +55,8 @@ public class StatisticsEditDialog extends UnversionizedDataEditDialog {
         if (admin != null) {
             setSaveAsButton();
         }
+        this.setNavigationMode(MODE_LEFT_NAVIGATION);
+        this.setContentDimension(EfaGuiUtils.getTabPanelPreferredSize(60, this, 500, 650));
     }
 
     public void keyAction(ActionEvent evt) {

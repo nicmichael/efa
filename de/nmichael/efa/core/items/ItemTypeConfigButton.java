@@ -61,7 +61,10 @@ public class ItemTypeConfigButton extends ItemType {
     }
 
     public IItemType copyOf() {
-        return new ItemTypeConfigButton(name, text, bcolor, show, isChangeableText, isChangeableColor, isChangeableShow, type, category, description);
+        ItemTypeConfigButton copy = new ItemTypeConfigButton(name, text, bcolor, show, isChangeableText, isChangeableColor, isChangeableShow, 
+        		type, category, description);
+        copy.setFieldSize(fieldWidth,  fieldHeight);
+        return copy;
     }
 
     public void parseValue(String value) {
@@ -110,7 +113,7 @@ public class ItemTypeConfigButton extends ItemType {
 
     protected void iniDisplay() {
         JButton button = new JButton();
-        Dialog.setPreferredSize(button, 300, 21);
+        Dialog.setPreferredSize(button, fieldWidth, 21);
         button.setText(text);
         button.setBackground(EfaUtil.getColorOrGray(bcolor));
         button.addActionListener(new java.awt.event.ActionListener() {
@@ -259,6 +262,14 @@ public class ItemTypeConfigButton extends ItemType {
         if (checkbox != null) {
             checkbox.setEnabled(enabled);
         }
+    }
+    
+    @Override 
+    public void setFieldSize(int width, int height) {
+    	super.setFieldSize(width, height);
+    	if (field!=null) {
+            Dialog.setPreferredSize(field, fieldWidth, 21);
+    	}
     }
 
 }

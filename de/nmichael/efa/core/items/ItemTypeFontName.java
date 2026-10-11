@@ -34,14 +34,14 @@ public class ItemTypeFontName extends ItemTypeLabelValue implements IItemListene
 	private String defaultFontName;
 
 	private String defaultColor;
-	private Boolean canBeNull;
+	private boolean canBeNull;
 	
 	ItemTypeStringList comboFontNameALL;
 	ItemTypeStringList comboFontNameGUI; 
 	ItemTypeBoolean chkShowOnlyStandardGUIFonts;
 
 	public ItemTypeFontName(String name, String fontName, String defaultFontName, int type, String category,
-			String description, Boolean canBeNull) {
+			String description, boolean canBeNull) {
 		this.name = name;
 		this.fontName = fontName;
 		this.defaultFontName = defaultFontName;
@@ -209,7 +209,7 @@ public class ItemTypeFontName extends ItemTypeLabelValue implements IItemListene
         dialogElements[2]=comboFontNameALL;
         dialogElements[3]=comboFontNameGUI;
         
-        Boolean userCommittedChoice=false;
+        boolean userCommittedChoice=false;
         if (this.getParentDialog()!=null) {
         	userCommittedChoice = SimpleInputDialog.showInputDialog(this.getParentDialog(), this.getDescription(), dialogElements);
         } else if (this.getParentFrame()!=null) {

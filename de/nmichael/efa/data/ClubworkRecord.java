@@ -16,6 +16,7 @@ import de.nmichael.efa.data.storage.DataRecord;
 import de.nmichael.efa.data.storage.IDataAccess;
 import de.nmichael.efa.data.storage.MetaData;
 import de.nmichael.efa.data.types.DataTypeDate;
+import de.nmichael.efa.data.types.DataTypeTime;
 import de.nmichael.efa.ex.EfaException;
 import de.nmichael.efa.gui.util.TableItem;
 import de.nmichael.efa.gui.util.TableItemHeader;
@@ -27,6 +28,11 @@ import java.util.HashSet;
 import java.util.UUID;
 import java.util.Vector;
 import java.util.regex.Pattern;
+
+/*
+ * Some Infos on Clubwork.
+ * 
+ */
 
 // @i18n complete
 public class ClubworkRecord extends DataRecord implements IItemFactory {
@@ -63,7 +69,9 @@ public class ClubworkRecord extends DataRecord implements IItemFactory {
     public static final String INPUTSHORTCUT = "InputShortcut";
     public static final String[] IDX_DATE_NAME_NAMEAFFIX = new String[]{FIRSTLASTNAME, NAMEAFFIX, WORKDATE};
     private static Pattern qnamePattern = Pattern.compile("(.+) \\(([^\\(\\)]+)\\)");
-
+    
+    private Clubwork clubworkPersistence=null;
+    
     public static void initialize() {
         Vector<String> f = new Vector<String>();
         Vector<Integer> t = new Vector<Integer>();
@@ -100,6 +108,10 @@ public class ClubworkRecord extends DataRecord implements IItemFactory {
 
     public ClubworkRecord(Clubwork clubwork, MetaData metaData) {
         super(clubwork, metaData);
+        // we save the clubworkbook for later use in getGuiItems. 
+        // we do not save the clubworkbook startdate and enddate here, as this leads to problems
+        // within efaRemote, e.g. backups via efaCLI.
+        clubworkPersistence = clubwork;
     }
 
     public DataRecord createDataRecord() { // used for cloning
@@ -134,8 +146,18 @@ public class ClubworkRecord extends DataRecord implements IItemFactory {
         // nothing to do (this column in virtual)
     }
 
+    private long getWorkDateTimeStamp() {
+    	DataTypeDate myWorkDate = this.getWorkDate();
+    	if (myWorkDate!=null && myWorkDate.isSet()) {
+    		return myWorkDate.getTimestamp(DataTypeTime.time000000());
+    	} else {
+    		//if no workdate is set, it is the current day and time.
+    		return System.currentTimeMillis();
+    	}
+    }
+    
     public String getFirstName() {
-        PersonRecord pr = tryGetPerson(PERSONID, System.currentTimeMillis());
+        PersonRecord pr = tryGetPerson(PERSONID, getWorkDateTimeStamp());
         return pr != null ? pr.getFirstName() : null;
     }
 
@@ -144,7 +166,7 @@ public class ClubworkRecord extends DataRecord implements IItemFactory {
     }
 
     public String getLastName() {
-        PersonRecord pr = tryGetPerson(PERSONID, System.currentTimeMillis());
+        PersonRecord pr = tryGetPerson(PERSONID, getWorkDateTimeStamp());
         return pr != null ? pr.getLastName() : null;
     }
 
@@ -153,7 +175,7 @@ public class ClubworkRecord extends DataRecord implements IItemFactory {
     }
 
     public String getFirstLastName() {
-        PersonRecord pr = tryGetPerson(PERSONID, System.currentTimeMillis());
+        PersonRecord pr = tryGetPerson(PERSONID, getWorkDateTimeStamp());
         return pr != null ? pr.getFirstLastName() : null;
     }
 
@@ -162,7 +184,7 @@ public class ClubworkRecord extends DataRecord implements IItemFactory {
     }
 
     public String getNameAffix() {
-        PersonRecord pr = tryGetPerson(PERSONID, System.currentTimeMillis());
+        PersonRecord pr = tryGetPerson(PERSONID, getWorkDateTimeStamp());
         return pr != null ? pr.getNameAffix() : null;
     }
 
@@ -342,7 +364,7 @@ public class ClubworkRecord extends DataRecord implements IItemFactory {
 
     public String getAsText(String fieldName) {
         if (fieldName.equals(PERSONID)) {
-            return getPersonAsName(PERSONID, System.currentTimeMillis());
+            return getPersonAsName(PERSONID, getWorkDateTimeStamp());
         }
         if (fieldName.equals(APPROVED)) {
             return getApprovedAsText();
@@ -398,11 +420,46 @@ public class ClubworkRecord extends DataRecord implements IItemFactory {
             ((ItemTypeItemList) item).setPadYbetween(0);
         }
 
+        ItemTypeDate clubworkPeriodStart;
+        ItemTypeDate clubworkPeriodEnd;
+        
+        /* this is sort of an hack. On the one hand, we want efa to check that the actual work date
+         * is within the period of the current clubworkbook. 
+         * To do so, ItemTypeDate allows to set 
+         * a mustBeBefore and mustBeAfter attribute. Unfortunately, this is not a DateTypeDate, but another ItemTypeDate.
+         * this is not a flaw, as it is used in statisticsrecord to connect several date fields.
+         * 
+         * On the other hand, the only way to check for the clubwork date to be within the clubwork period,
+         * is to use the mustBeBefore and mustBeAfter attributes, as they are called by IItemtype.isValidInput().
+         * 
+         * So... we add two INVISIBLE = TYPE_INTERNAL ItemTypeDate attributes, which store the clubwork period start and end date.
+         * And tell the WorkDate Field that its value must be between these two.
+         * 
+         * Kinda hacky stuff, but it works and it is absolutely conform to efa's framework.
+         */
+        
+        //get start and end date of the clubworkbook, or start and end of the current year.
+        //the latter should never happen as we only get GuiItems for Clubworkbook files which exist.
+        DataTypeDate clubworkPeriodStartDate = clubworkPersistence!=null ? clubworkPersistence.getStartDate() : DataTypeDate.getStartOfYear();
+        DataTypeDate clubworkPeriodEndDate = clubworkPersistence != null ? clubworkPersistence.getEndDate()   : DataTypeDate.getEndOfYear();
+        
+        v.add(clubworkPeriodStart = new ItemTypeDate(WORKDATE+"_ClubworkStart", clubworkPeriodStartDate,
+                IItemType.TYPE_INTERNAL, CAT_BASEDATA, International.getString("Datum")));
+        clubworkPeriodStart.setVisible(false);
+
+        v.add(clubworkPeriodEnd = new ItemTypeDate(WORKDATE+"_ClubworkEnd", clubworkPeriodEndDate,
+                IItemType.TYPE_INTERNAL, CAT_BASEDATA, International.getString("Datum")));
+        clubworkPeriodEnd.setVisible(false);
+        
         v.add(item = new ItemTypeDate(WORKDATE, getWorkDate(),
                 IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("Datum")));
+        
+        // by this, the workdate is checked wether it is in the clubwork period.
+        ((ItemTypeDate)item).setMustBeAfter(clubworkPeriodStart, true);
+        ((ItemTypeDate)item).setMustBeBefore(clubworkPeriodEnd, true); 
 
         v.add(item = new ItemTypeString(DESCRIPTION, getDescription(),
-                IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("Beschreibung")));
+                IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("Beschreibung(ClubworkRecord)")));
 
         v.add(item = new ItemTypeDouble(HOURS, getHours(), ItemTypeDouble.MIN, ItemTypeDouble.MAX,
                 IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("Stunden")));
@@ -461,7 +518,7 @@ public class ClubworkRecord extends DataRecord implements IItemFactory {
             header[1] = new TableItemHeader(International.getString("Vorname"));
         }
         header[2] = new TableItemHeader(International.getString("Datum"));
-        header[3] = new TableItemHeader(International.getString("Beschreibung"));
+        header[3] = new TableItemHeader(International.getString("Beschreibung(ClubworkRecord)"));
         header[4] = new TableItemHeader(International.getString("Stunden"));
         header[5] = new TableItemHeader(International.getString("Typ"));
         if(Daten.efaConfig.getValueClubworkRequiresApproval()) {

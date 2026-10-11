@@ -96,8 +96,8 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
     ItemTypeString entryno;
     ItemTypeLabel opensession;
     ItemTypeButton closesessionButton;
-    ItemTypeDate date;
-    ItemTypeDate enddate;
+    ItemTypeDate startDate;
+    ItemTypeDate endDate;
     ItemTypeStringAutoComplete boat;
     ItemTypeStringList boatvariant;
     ItemTypeStringAutoComplete cox;
@@ -560,33 +560,33 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         closesessionButton.setVisible(false);
 
         // Date
-        date = new ItemTypeDate(LogbookRecord.DATE, new DataTypeDate(), IItemType.TYPE_PUBLIC, null, International.getStringWithMnemonic("Datum"));
-        date.showWeekday(true);
-        date.setFieldSize(100, FIELD_HEIGHT);
-        date.setLabelGrid(1, GridBagConstraints.EAST, GridBagConstraints.NONE);
-        date.setFieldGrid(1, GridBagConstraints.WEST, GridBagConstraints.NONE);
-        date.setWeekdayGrid(2, GridBagConstraints.WEST, GridBagConstraints.NONE);
-        date.setBackgroundColorWhenFocused(Daten.efaConfig.getValueEfaDirekt_colorizeInputField() ? Color.yellow : null);
-        date.displayOnGui(this, mainInputPanel, 0, 1);
-        date.registerItemListener(this);
+        startDate = new ItemTypeDate(LogbookRecord.DATE, new DataTypeDate(), IItemType.TYPE_PUBLIC, null, International.getStringWithMnemonic("Datum"));
+        startDate.showWeekday(true);
+        startDate.setFieldSize(100, FIELD_HEIGHT);
+        startDate.setLabelGrid(1, GridBagConstraints.EAST, GridBagConstraints.NONE);
+        startDate.setFieldGrid(1, GridBagConstraints.WEST, GridBagConstraints.NONE);
+        startDate.setWeekdayGrid(2, GridBagConstraints.WEST, GridBagConstraints.NONE);
+        startDate.setBackgroundColorWhenFocused(Daten.efaConfig.getValueEfaDirekt_colorizeInputField() ? Color.yellow : null);
+        startDate.displayOnGui(this, mainInputPanel, 0, 1);
+        startDate.registerItemListener(this);
 
         // End Date
-        enddate = new ItemTypeDate(LogbookRecord.ENDDATE, new DataTypeDate(), IItemType.TYPE_PUBLIC, null, International.getStringWithMnemonic("bis"));
-        enddate.setMustBeAfter(date, false);
-        enddate.showWeekday(true);
-        enddate.setFieldSize(100, FIELD_HEIGHT);
-        enddate.setLabelGrid(1, GridBagConstraints.EAST, GridBagConstraints.NONE);
-        enddate.setFieldGrid(2, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL);
-        enddate.setWeekdayGrid(1, GridBagConstraints.WEST, GridBagConstraints.NONE);
-        enddate.showOptional(true);
+        endDate = new ItemTypeDate(LogbookRecord.ENDDATE, new DataTypeDate(), IItemType.TYPE_PUBLIC, null, International.getStringWithMnemonic("bis"));
+        endDate.setMustBeAfter(startDate, false);
+        endDate.showWeekday(true);
+        endDate.setFieldSize(100, FIELD_HEIGHT);
+        endDate.setLabelGrid(1, GridBagConstraints.EAST, GridBagConstraints.NONE);
+        endDate.setFieldGrid(2, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL);
+        endDate.setWeekdayGrid(1, GridBagConstraints.WEST, GridBagConstraints.NONE);
+        endDate.showOptional(true);
         if (isModeBoathouse()) {
-            enddate.setOptionalButtonText("+ " + International.getString("Enddatum"));
+            endDate.setOptionalButtonText("+ " + International.getString("Enddatum"));
         }
-        enddate.setBackgroundColorWhenFocused(Daten.efaConfig.getValueEfaDirekt_colorizeInputField() ? Color.yellow : null);
-        enddate.displayOnGui(this, mainInputPanel, 4, 1);
-        enddate.registerItemListener(this);
+        endDate.setBackgroundColorWhenFocused(Daten.efaConfig.getValueEfaDirekt_colorizeInputField() ? Color.yellow : null);
+        endDate.displayOnGui(this, mainInputPanel, 4, 1);
+        endDate.registerItemListener(this);
         if (isModeBoathouse() && !Daten.efaConfig.getValueAllowEnterEndDate()) {
-            enddate.setVisible(false);
+            endDate.setVisible(false);
         }
 
         // Boat
@@ -842,12 +842,12 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         saveButton.registerItemListener(this);
 
         // Set Valid Date and Time Fields for Autocomplete Lists
-        boat.setValidAt(date, starttime);
-        cox.setValidAt(date, starttime);
+        boat.setValidAt(startDate, starttime);
+        cox.setValidAt(startDate, starttime);
         for (int i=0; i<crew.length; i++) {
-            crew[i].setValidAt(date, starttime);
+            crew[i].setValidAt(startDate, starttime);
         }
-        destination.setValidAt(date, starttime);
+        destination.setValidAt(startDate, starttime);
     }
 
     /**
@@ -929,8 +929,8 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
 
     private void clearAllBackgroundColors() {
         entryno.restoreBackgroundColor();
-        date.restoreBackgroundColor();
-        enddate.restoreBackgroundColor();
+        startDate.restoreBackgroundColor();
+        endDate.restoreBackgroundColor();
         boat.restoreBackgroundColor();
         boatvariant.restoreBackgroundColor();
         cox.restoreBackgroundColor();
@@ -959,7 +959,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         if (r != null) {
             t = r.getValidAtTimestamp();
         } else {
-            t = LogbookRecord.getValidAtTimestamp(date.getDate(), starttime.getTime());
+            t = LogbookRecord.getValidAtTimestamp(startDate.getDate(), starttime.getTime());
         }
         if (t == 0) {
             t = System.currentTimeMillis();
@@ -967,6 +967,22 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         return t;
     }
 
+    protected long getValidAtTimestamp(DataTypeDate date, DataTypeTime time) {
+		long t = LogbookRecord.getValidAtTimestamp(date, time);
+		if (t == 0) {
+			t = System.currentTimeMillis();
+		}
+		return t;
+	}
+    
+    /**
+     * Find a person by its name (or association postfix) and a timestamp.
+     * If the person is not valid at that timestamp, we try to find a person with this name 
+     * which is valid at the timestamp of the logbook.
+     * @param item String with the person name (or association postfix)
+     * @param validAt timestamp at which the person should be valid
+     * @return the person record or null if no person could be found
+     */
     protected PersonRecord findPerson(ItemTypeString item, long validAt) {
          try {
             String s = item.getValueFromField().trim();
@@ -985,6 +1001,8 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
                 // some other time for this logbook. It might be that "A" is just another name for
                 // "B" of the same record, which is valid. If there is a "B", we will use that.
                 // That means, even though the user entered "A", we will save the ID, and display "B".
+                // (mostly changes in names over time, and, versions of the same person record,  
+                // are due to corrected typos or marriages)
                 if (validAt > 0 && r == null) {
                     PersonRecord r2 = Daten.project.getPersons(false).getPerson(s, this.logbookValidFrom, logbookInvalidFrom-1, validAt);
                     if (r2 != null) {
@@ -1236,7 +1254,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         if (!isModeBoathouse()) {
             Daten.project.setCurrentLogbookEfaBase(logbook.getName());
         }
-        ProjectRecord pr = Daten.project.getLoogbookRecord(logbook.getName());
+        ProjectRecord pr = Daten.project.getLogbookRecord(logbook.getName());
         if (pr != null) {
             logbookValidFrom = logbook.getValidFrom();
             logbookInvalidFrom = logbook.getInvalidFrom();
@@ -1300,10 +1318,10 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
             if (field == entryno) {
                 return (r != null && r.getEntryId() != null ? r.getEntryId().toString() : "");
             }
-            if (field == date) {
+            if (field == startDate) {
                 return (r != null ? r.getDate().toString() : "");
             }
-            if (field == enddate) {
+            if (field == endDate) {
                 return (r != null ? r.getEndDate().toString() : "");
             }
             if (field == boat) {
@@ -1385,8 +1403,8 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         isInsertedRecord = false;
 
         setField(entryno,r);
-        setField(date,r);
-        setField(enddate,r);
+        setField(startDate,r);
+        setField(endDate,r);
         setField(boat,r);
         setField(boatvariant,r);
         setField(cox,r);
@@ -1411,8 +1429,8 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         updateSessionTypeInfo();
         entryNoForNewEntry = -1; // -1 bedeutet, daß beim nächsten neuen Datensatz die LfdNr "last+1" vorgegeben wird
         if (r == null) {
-            date.requestFocus();
-            date.setSelection(0, Integer.MAX_VALUE);
+            startDate.requestFocus();
+            startDate.setSelection(0, Integer.MAX_VALUE);
             if (Daten.efaConfig.getValueDefaultValueComments() != null && 
                 Daten.efaConfig.getValueDefaultValueComments().trim().length() > 0) {
                 comments.parseAndShowValue(Daten.efaConfig.getValueDefaultValueComments().trim());
@@ -1428,7 +1446,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
     private void setWarningsForUnsetFields() {
     	if (isModeBase() || isModeAdmin() ) {
     		Icon warning =  ImagesAndIcons.getIcon(ImagesAndIcons.IMAGE_WARNING);
-    		date.setIcon     (date.isSet() ? null : warning);
+    		startDate.setIcon     (startDate.isSet() ? null : warning);
     		starttime.setIcon(starttime.isSet() ? null : warning);
     		endtime.setIcon  (endtime.isSet() ? null : warning);
     		distance.setIcon ((distance.getValue().getRoundedValueInKilometers()>0) ? null : warning );
@@ -1456,15 +1474,15 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         r.setEntryId(DataTypeIntString.parseString(entryno.getValue()));
 
         // Date
-        if (date.isSet()) {
-            r.setDate(date.getDate());
+        if (startDate.isSet()) {
+            r.setDate(startDate.getDate());
         } else {
             r.setDate(null);
         }
 
         // End Date
-        if (enddate.isSet()) {
-            r.setEndDate(enddate.getDate());
+        if (endDate.isSet()) {
+            r.setEndDate(endDate.getDate());
         } else {
             r.setEndDate(null);
         }
@@ -1586,7 +1604,6 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         		!checkBoatNameValid(boat) ||
         		!checkBoatStatus() ||
                 !checkDuplicatePersons() ||
-                !checkPersonsForBoatType() ||
                 !checkCrewNamesValid() ||
                 !checkUnknownNames() ||
                 !checkProperUnknownNames() ||
@@ -1642,6 +1659,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
 
         long lock = 0;
         Exception myE = null;
+        boolean isNewRecordForLogging=false;
         try {
             boolean changeEntryNo = false;
             if (!isNewRecord && currentRecord != null && !currentRecord.getEntryId().toString().equals(entryno.toString())) {
@@ -1688,7 +1706,8 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
                     currentRecord = (LogbookRecord)newRecord;
                 }
             }
-            isNewRecord = false;
+            isNewRecordForLogging = isNewRecord; // safe for later logging
+            isNewRecord = false;//static variable in efaBaseFrame, must be set here
         } catch (Exception e) {
             Logger.log(e);
             myE = e;
@@ -1703,8 +1722,8 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         }
 
         if (isModeFull()) {
-            logAdminEvent(Logger.INFO, (isNewRecord ? Logger.MSG_ADMIN_LOGBOOK_ENTRYADDED : Logger.MSG_ADMIN_LOGBOOK_ENTRYMODIFIED),
-                    (isNewRecord ? International.getString("Eintrag hinzugefügt") : International.getString("Eintrag geändert")) , currentRecord);
+            logAdminEvent(Logger.INFO, (isNewRecordForLogging ? Logger.MSG_ADMIN_LOGBOOK_ENTRYADDED : Logger.MSG_ADMIN_LOGBOOK_ENTRYMODIFIED),
+                    (isNewRecordForLogging ? International.getString("Eintrag hinzugefügt") : International.getString("Eintrag geändert")) , currentRecord);
         }
         return true;
     }
@@ -1712,8 +1731,8 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
 
     void setEntryUnchanged() {
         entryno.setUnchanged();
-        date.setUnchanged();
-        enddate.setUnchanged();
+        startDate.setUnchanged();
+        endDate.setUnchanged();
         boat.setUnchanged();
         boatvariant.setUnchanged();
         cox.setUnchanged();
@@ -1734,8 +1753,8 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
     boolean isEntryChanged() {
         boolean changed =
                 entryno.isChanged() ||
-                date.isChanged() ||
-                enddate.isChanged() ||
+                startDate.isChanged() ||
+                endDate.isChanged() ||
                 boat.isChanged() ||
                 cox.isChanged() ||
                 boatcaptain.isChanged() ||
@@ -1849,14 +1868,14 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
     }
 
     void updateTimeInfoFields() {
-        JComponent endDateField = enddate.getComponent();
+        JComponent endDateField = endDate.getComponent();
         starttimeInfoLabel.setVisible(endDateField != null && endDateField.isVisible() &&
                 starttime.isVisible());
         endtimeInfoLabel.setVisible(endDateField != null && endDateField.isVisible() &&
                 endtime.isVisible());
         
-        String date1 = date.getValueFromField();
-        String date2 = enddate.getValueFromField();
+        String date1 = startDate.getValueFromField();
+        String date2 = endDate.getValueFromField();
         starttimeInfoLabel.setDescription( (date1 != null && date1.length() > 0 ?
                 " (" + International.getMessage("am {date}", date1) + ")" :
             "") );
@@ -2136,7 +2155,21 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         }
     }
     
-
+	protected BoatReservationRecord getCurrentOrNextReservationForPerson(UUID personId, boolean oneSeaterOnly ) {
+		BoatReservations boatReservations = Daten.project.getBoatReservations(false);
+		int lookAheadTime=Daten.efaConfig.getValueEfaDirekt_resLookAheadTime();
+		// get all reservations on the day of startdate of our person.
+		ArrayList<BoatReservationRecord> reservations = boatReservations.getPersonReservations(personId, startDate.getDate(), starttime.getTime(), lookAheadTime, oneSeaterOnly);
+		if (reservations!=null && reservations.size()>=1) {
+			//at least one one-seater reservation is available, 
+			//but we will only take the first
+			return reservations.get(0);
+		}
+		//otherwise
+		return null; 
+	}
+    
+    
     // =========================================================================
     // Save Entry Checks
     // =========================================================================
@@ -2387,7 +2420,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
                     efaBoathouseAction.boatStatus = efaBoathouseAction.boat.getBoatStatus();
                 }
                 boolean success = efaBoathouseFrame.checkStartSessionForBoat(efaBoathouseAction,
-                        entryno.getValueFromField(), checkMode);
+                        entryno.getValueFromField(), checkMode, null);
                 if (!success) {
                     efaBoathouseAction.boat = null; // otherwise next check would fail
                     boat.requestFocus();
@@ -2406,12 +2439,12 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         }
         UUID sgId = (UUID)sessiongroup.getRememberedId();
         SessionGroupRecord g = (sgId != null ? Daten.project.getSessionGroups(false).findSessionGroupRecord(sgId) : null);
-        if (!date.getDate().isSet()) {
+        if (!startDate.getDate().isSet()) {
             return true; // shouldn't happen
         }
         if (g != null) {
-            DataTypeDate entryStartDate = date.getDate();
-            DataTypeDate entryEndDate = enddate.getDate();
+            DataTypeDate entryStartDate = startDate.getDate();
+            DataTypeDate entryEndDate = endDate.getDate();
             DataTypeDate groupStartDate = g.getStartDate();
             DataTypeDate groupEndDate = g.getEndDate();
             if (entryStartDate.isBefore(groupStartDate) || entryStartDate.isAfter(groupEndDate) ||
@@ -2521,10 +2554,10 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
     }
 
     protected boolean checkDate() {
-        if (date.isSet() && enddate.isSet() && !date.getDate().isBefore(enddate.getDate())) {
+        if (startDate.isSet() && endDate.isSet() && !startDate.getDate().isBefore(endDate.getDate())) {
             String msg = International.getString("Das Enddatum muß nach dem Startdatum liegen.");
             Dialog.error(msg);
-            enddate.requestFocus();
+            endDate.requestFocus();
             return false;
         }
         return true;
@@ -2545,14 +2578,14 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
                 starttime.isSet() && endtime.isSet() &&
                 starttime.getTime().isAfter(endtime.getTime()) &&
                 endtime.isEditable() &&
-                !enddate.isSet()) {
+                !endDate.isSet()) {
                 if (Dialog.yesNoDialog(
                         International.getMessage("Ungültige Eingabe im Feld '{field}'",
                         International.getString("Zeit")),
                         International.getString("Bitte überprüfe die eingetragenen Uhrzeiten.") + "\n" +
                         International.getString("Ist dieser Eintrag eine Mehrtagsfahrt?")) == Dialog.YES) {
-                    enddate.expandToField();
-                    enddate.requestFocus();
+                    endDate.expandToField();
+                    endDate.requestFocus();
                     return false;
                 }
                 endtime.requestFocus();
@@ -2566,7 +2599,13 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
                 !sType.equals(EfaTypes.TYPE_SESSION_TRAININGCAMP) &&
                 starttime.isVisible() && endtime.isVisible() && distance.isVisible() &&
                 starttime.isSet() && endtime.isSet() && endtime.isEditable() && distance.isSet()) {
-                long timediff = Math.abs(endtime.getTime().getTimeAsSeconds() - starttime.getTime().getTimeAsSeconds());
+            	// we need to check if start and end time differ at least for 15 minutes.
+            	// and we need to take into account the date and end date.
+            	DataTypeDate myEndDate = endDate.isSet() ? endDate.getDate() : startDate.getDate();
+            	
+                long differenceinMinutes = DataTypeDate.getDifferenceInMinutes(startDate.getDate(), starttime.getTime(),myEndDate, endtime.getTime());
+                
+                long timediff = differenceinMinutes * 60; // convert to seconds
                 long dist = distance.getValue().getValueInMeters();
                 if (timediff < 15*60 && 
                     timediff < dist/10 &&
@@ -2598,7 +2637,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
                         + "für dieses Fahrtenbuch liegt.", logbook.getStartDate().toString(), logbook.getEndDate().toString());
                 Logger.log(Logger.WARNING, Logger.MSG_EVT_ERRORADDRECORDOUTOFRANGE, msg + " (" + getFields().toString() + ")");
                 Dialog.error(msg);
-                date.requestFocus();
+                startDate.requestFocus();
             } else {
                 currentRecord = getFields();
                 String msg = International.getMessage("Das Datum {date} liegt außerhalb des Zeitraums " + 
@@ -2611,7 +2650,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
                         International.getString("Datum korrigieren"),
                         International.getString("Nachtrag an Admin senden"), true)) {
                     case 0:
-                        date.requestFocus();
+                        startDate.requestFocus();
                         break;
                     case 1:
                         String fname = Daten.efaTmpDirectory + "entry_" +
@@ -2970,9 +3009,9 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
     
     protected boolean checkUnknownNames() {
 
-    	return checkUnknownNamesBoat() ||
-    			checkUnknownNamesPerson() ||
-    			checkUnknownNamesDestination() ||
+    	return checkUnknownNamesBoat() &&
+    			checkUnknownNamesPerson() &&
+    			checkUnknownNamesDestination() &&
     			checkUnknownNamesWaters();
     }
     
@@ -3220,17 +3259,24 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
             long tstmp = getValidAtTimestamp(myRecord);
 
             DataTypeList<UUID> groupIdList = currentBoat.getAllowedGroupIdList();
-            if (groupIdList != null && groupIdList.length() > 0) {
+            boolean currentBoatHasGroups = (groupIdList != null && groupIdList.length() > 0);
+            
                 String nichtErlaubt = null;
                 int nichtErlaubtAnz = 0;
                 //Vector g = Boote.getGruppen(b);
                 for (int i = 0; i <= LogbookRecord.CREW_MAX; i++) {
+                	// get the person for the crew item.
+                	// if there is no personRecord for the crewitem at the time of the logbook record,
+                	// get the latest possible item for the person (but ignore deleted persons).
+                	// so, persons which have an end date are tested for their latest configuration.
                     PersonRecord p = myRecord.getCrewRecord(i, tstmp);
                     String ptext = myRecord.getCrewName(i);
-                    if (p == null && ptext == null) {
-                        continue;
+                    if (p == null) {
+                    	p = myRecord.getCrewRecordLatest(i, ptext);
                     }
+                    
 
+                    
                     if (p != null && p.getBoatUsageBan()) {
                         switch (Dialog.auswahlDialog(International.getString("Bootsbenutzungs-Sperre"),
                             International.getMessage("Für {name} liegt zur Zeit eine Bootsbenutzungs-Sperre vor.", p.getQualifiedName()) +
@@ -3262,8 +3308,12 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
                         }
                     }
 
+                    if (p == null && ptext == null) {
+                        continue;
+                    }
+                    
                     boolean inAnyGroup = false;
-                    if (p != null) {
+                    if (p != null && currentBoatHasGroups) {
                         for (int j = 0; j < groupIdList.length(); j++) {
                             GroupRecord g = groups.findGroupRecord(groupIdList.get(j), tstmp);
                             if (g != null && g.getMemberIdList() != null && g.getMemberIdList().contains(p.getId())) {
@@ -3272,13 +3322,15 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
                             }
                         }
                     }
-                    if (!inAnyGroup) {
+                    if (!inAnyGroup && currentBoatHasGroups) {
                         String name = (p != null ? p.getQualifiedName() : ptext);
                         nichtErlaubt = (nichtErlaubt == null ? name : nichtErlaubt + "\n" + name);
                         nichtErlaubtAnz++;
                     }
-                }
-                if (Daten.efaConfig.getValueCheckAllowedPersonsInBoat() &&
+                } // for each crew member loop end
+                
+                if (currentBoatHasGroups &&
+                	Daten.efaConfig.getValueCheckAllowedPersonsInBoat() &&
                     nichtErlaubtAnz > 0 &&
                     nichtErlaubtAnz > currentBoat.getMaxNotInGroup()) {
                     String erlaubteGruppen = null;
@@ -3321,7 +3373,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
                             return false;                            
                     }
                 }
-            }
+            
 
             // Prüfen, ob mind 1 Ruderer (oder Stm) der Gruppe "mind 1 aus Gruppe" im Boot sitzt
             if (Daten.efaConfig.getValueCheckMinOnePersonsFromGroupInBoat() &&
@@ -3575,11 +3627,11 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         } else {
             d = EfaUtil.getCurrentTimeStampDD_MM_YYYY();
         }
-        date.parseAndShowValue(d);
+        startDate.parseAndShowValue(d);
         updateTimeInfoFields();
-        date.setUnchanged();
+        startDate.setUnchanged();
         if (isModeFull()) {
-            date.setSelection(0, Integer.MAX_VALUE);
+            startDate.setSelection(0, Integer.MAX_VALUE);
         }
     }
 
@@ -3775,9 +3827,9 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
                     !isCoxOrCrewItem(item)) {
                 autoSelectBoatCaptain();
             }
-            if (item == date) {
+            if (item == startDate) {
                 if (isNewRecord && (isModeFull() || mode == MODE_BOATHOUSE_LATEENTRY || mode == MODE_BOATHOUSE_LATEENTRY_MULTISESSION )) {
-                    date.setSelection(0, Integer.MAX_VALUE);
+                    startDate.setSelection(0, Integer.MAX_VALUE);
                 }
             }
             if (item == destination) {
@@ -3795,10 +3847,10 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         if (id == FocusEvent.FOCUS_LOST) {
             showHint(null);
             lastFocusedItem = item;
-            if (item == date) {
+            if (item == startDate) {
                 updateTimeInfoFields();
             }
-            if (item == enddate) {
+            if (item == endDate) {
                 updateTimeInfoFields();
                 updateSessionTypeInfo();
             }
@@ -3904,11 +3956,11 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
                 updateSessionTypeInfo();
             }
         }
-        if (id == ItemTypeDate.ACTIONID_FIELD_EXPANDED && item == enddate) {
+        if (id == ItemTypeDate.ACTIONID_FIELD_EXPANDED && item == endDate) {
             starttimeInfoLabel.setVisible(true);
             endtimeInfoLabel.setVisible(true);
         }
-        if (id == ItemTypeDate.ACTIONID_FIELD_COLLAPSED && item == enddate) {
+        if (id == ItemTypeDate.ACTIONID_FIELD_COLLAPSED && item == endDate) {
             starttimeInfoLabel.setVisible(false);
             endtimeInfoLabel.setVisible(false);
         }
@@ -4010,9 +4062,9 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
             String sess = sessiontype.getValueFromField();
             DataTypeDistance dist = DataTypeDistance.parseDistance(distance.getValueFromField(), true);
             long days = 1;
-            if (enddate != null && enddate.isVisible() && date != null && date.isVisible() &&
-                date.isSet() && enddate.isSet()) {
-                days = enddate.getDate().getDifferenceDays(date.getDate()) + 1;
+            if (endDate != null && endDate.isVisible() && startDate != null && startDate.isVisible() &&
+                startDate.isSet() && endDate.isSet()) {
+                days = endDate.getDate().getDifferenceDays(startDate.getDate()) + 1;
             }
             if (sess != null && sess.length() > 0 && dist != null && 
                 (dist.getValueInMeters() >= 40000 || (days == 1 && dist.getValueInMeters() >= 30000))) {
@@ -4111,7 +4163,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
 		autoCompleteListPersons.reset();
 		
 		// remove currently used persons	
-		for (int i=0; i<LogbookRecord.CREW_MAX; i++) {
+		for (int i=0; i<=LogbookRecord.CREW_MAX; i++) {
 			//crew(0)=cox crew(1)..crew(24)=crew					
 			removeFromAutoCompleteVisible(getCrewItem(i));
 		}
@@ -4416,7 +4468,8 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
     	return cancel(false);
     }
 
-    public boolean cancel(Boolean keyESCAction) {
+    @Override
+    public boolean cancel(boolean keyESCAction) {
     	
         if (isModeBoathouse()) {
             efaBoathouseHideEfaFrame();
@@ -4479,11 +4532,11 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
             if (c == efaBaseFrame.entryno.getComponent()) {
                 return efaBaseFrame.entryno;
             }
-            if (c == efaBaseFrame.date.getComponent()) {
-                return efaBaseFrame.date;
+            if (c == efaBaseFrame.startDate.getComponent()) {
+                return efaBaseFrame.startDate;
             }
-            if (c == efaBaseFrame.enddate.getComponent()) {
-                return efaBaseFrame.enddate;
+            if (c == efaBaseFrame.endDate.getComponent()) {
+                return efaBaseFrame.endDate;
             }
             if (c == efaBaseFrame.boat.getComponent() ||
                 c == efaBaseFrame.boat.getButton()) {
@@ -4576,12 +4629,12 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
 
             // LFDNR
             if (item == efaBaseFrame.entryno) {
-                focusItem(efaBaseFrame.date, cur, 1);
+                focusItem(efaBaseFrame.startDate, cur, 1);
                 return;
             }
 
             // DATUM
-            if (item == efaBaseFrame.date) {
+            if (item == efaBaseFrame.startDate) {
                 focusItem(efaBaseFrame.boat, cur, 1);
                 return;
             }
@@ -4821,17 +4874,52 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
             currentBoatUpdateGui();
             setRequestFocus(boat);
         }
+        //user starts a session cased on a person record
         if (item.person != null) {
             crew[0].parseAndShowValue(item.person.getQualifiedName());
-            if (item.person.getDefaultBoatId() != null) {
-                BoatRecord r = Daten.project.getBoats(false).getBoat(
-                        item.person.getDefaultBoatId(), System.currentTimeMillis());
-                if (r != null) {
-                    boat.parseAndShowValue(r.getQualifiedName());
-                    currentBoatUpdateGui();
-                    setRequestFocus(starttime);
-                }
+            
+            //Obtain the person's standard boat
+            BoatRecord personsStandardBoat = Daten.project.getBoats(false).getBoat(
+                    item.person.getDefaultBoatId(), System.currentTimeMillis());	
+             
+            //get all reservations of the current person, all boat types
+            BoatReservationRecord personsCurrentReservation = getCurrentOrNextReservationForPerson(item.person.getId(),false);
+            BoatRecord personsCurrentReservationBoat = (personsCurrentReservation!=null? personsCurrentReservation.getBoat():null);
+                
+            if ((personsCurrentReservationBoat != null) && (personsStandardBoat != null)){
+            	// a standard boat AND a reservation - which boat should we take?
+            	int chosenOption = Dialog.auswahlDialog(International.getString("Boot auswählen"), 
+            			International.getMessage("Für die Person {person} gibt es eine aktuelle Reservierung und ein Standardboot. Welches Boot soll eingetragen werden?", item.person.getQualifiedName()),
+            			International.getString("Reservierung") + ":  "+personsCurrentReservationBoat.getQualifiedName(),
+            			International.getString("Standard-Boot")+ ":  "+personsStandardBoat.getQualifiedName(), false);
+            	
+            	if (chosenOption==0) {
+            		//reservation
+            		personsStandardBoat=null;
+            	} else if (chosenOption==1) {
+            		//standard boat
+            		personsCurrentReservationBoat=null;
+            	} else {
+            		//user selected cancel
+            		personsStandardBoat=null;
+            		personsCurrentReservationBoat=null;
+            	}
             }
+            boat.setToolTipText(null);//default
+            // if available, set boat name
+            if (personsStandardBoat != null || personsCurrentReservationBoat !=null) {
+                if (personsStandardBoat!=null) {
+                	boat.parseAndShowValue(personsStandardBoat.getQualifiedName());
+                	boat.setToolTipText(International.getString("Vorbelegung mit Standardboot"));
+                } else {
+                	boat.parseAndShowValue(personsCurrentReservationBoat.getQualifiedName()); 
+                	boat.setToolTipText(International.getString("Vorbelegung aus Reservierung")+": \n\n" +personsCurrentReservation.getAsUserText());
+                }
+                	
+                currentBoatUpdateGui();
+                setRequestFocus(starttime);
+            }
+            
         }
     }
 
@@ -4839,11 +4927,11 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         this.setTitle(International.getString("Neue Fahrt beginnen"));
         saveButton.setDescription(International.getStringWithMnemonic("Fahrt beginnen"));
         createNewRecord(false);
-        date.parseAndShowValue(EfaUtil.getCurrentTimeStampDD_MM_YYYY());
+        startDate.parseAndShowValue(EfaUtil.getCurrentTimeStampDD_MM_YYYY());
         setTime(starttime, Daten.efaConfig.getValueEfaDirekt_plusMinutenAbfahrt(), null);
 
         setFieldEnabled(false, true, entryno);
-        setFieldEnabled(true, true, date);
+        setFieldEnabled(true, true, startDate);
         setFieldEnabled(item.boat == null, true, boat);
         if (Daten.efaConfig.getValueEfaDirekt_eintragNichtAenderbarUhrzeit()) {
             setFieldEnabled(false, true, starttime);
@@ -4866,7 +4954,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
 	        	efaBoathouseSetDataFromLatestSession();
 	            setRequestFocus(boat);
         } else {
-        	setRequestFocus(date);
+        	setRequestFocus(startDate);
         }
 
 
@@ -4896,7 +4984,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         setFields(currentRecord);
 
         setFieldEnabled(false, true, entryno);
-        setFieldEnabled(true, true, date);
+        setFieldEnabled(true, true, startDate);
         setFieldEnabled(true, true, boat);
         if (Daten.efaConfig.getValueEfaDirekt_eintragNichtAenderbarUhrzeit()) {
             setFieldEnabled(false, true, starttime);
@@ -4942,7 +5030,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         setDesinationDistance();
 
         setFieldEnabled(false, true, entryno);
-        setFieldEnabled(true, true, date);
+        setFieldEnabled(true, true, startDate);
         setFieldEnabled(false, true, boat);
         if (Daten.efaConfig.getValueEfaDirekt_eintragNichtAenderbarUhrzeit()) {
             setFieldEnabled(false, true, starttime);
@@ -4968,10 +5056,10 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         this.setTitle(International.getString("Nachtrag"));
         saveButton.setDescription(International.getStringWithMnemonic("Nachtrag"));
         createNewRecord(false);
-        date.parseAndShowValue(EfaUtil.getCurrentTimeStampDD_MM_YYYY());
+        startDate.parseAndShowValue(EfaUtil.getCurrentTimeStampDD_MM_YYYY());
 
         setFieldEnabled(false, true, entryno);
-        setFieldEnabled(true, true, date);
+        setFieldEnabled(true, true, startDate);
         setFieldEnabled(true, true, boat);
         setFieldEnabled(true, true, starttime);
         setFieldEnabled(true, true, endtime);
@@ -4993,7 +5081,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         }
         
         updateTimeInfoFields();
-        setRequestFocus(date);
+        setRequestFocus(startDate);
         return true;
     }
 
@@ -5007,8 +5095,8 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
     		// add a new entry within N minutes after the last one
     		// efaconfig makes sure that the value is >0
     		if ((System.currentTimeMillis()-myReference.getLastModified())< (Daten.efaConfig.getValueEfaDirekt_eintragPresentLastTripTimeout()*60*1000)) {
-	    		setField(date, myReference);
-	    		setField(enddate, myReference);
+	    		setField(startDate, myReference);
+	    		setField(endDate, myReference);
 	    		setField(starttime, myReference);
 	    		setField(endtime, myReference);
 	    		setField(destination, myReference);
@@ -5276,6 +5364,7 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         if (focusItem != null) {
             focusItem.requestFocus();
         }
+
     }
 
     private void efaBoathouseHideEfaFrame() {

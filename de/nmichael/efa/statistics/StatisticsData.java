@@ -87,6 +87,7 @@ public class StatisticsData implements Comparable {
     DataTypeDate date;
     DataTypeTime time; // start time for logbook records
     String[] logbookFields;
+    String boatCaptainName; // Obmann for XML Export to be listed separately
     String[] otherFields;
     CompetitionData compData;
     public Hashtable<Object,StatisticsData> matrixData;

@@ -13,7 +13,7 @@ public class TableItemHeader {
 
     private String txt;
     private int maxColumnWidth = -1;
-    private Boolean isVisible=true;
+    private boolean isVisible=true;
 
     public TableItemHeader(String txt) {
         this.txt = txt;
@@ -38,11 +38,11 @@ public class TableItemHeader {
         return maxColumnWidth;
     }
     
-    public Boolean getVisible(){
+    public boolean getVisible(){
     	return isVisible;
     }
 
-    public void setVisible(Boolean value) {
+    public void setVisible(boolean value) {
     	this.isVisible=value;
     }
 }

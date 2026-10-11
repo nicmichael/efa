@@ -10,16 +10,9 @@
  */
 package de.nmichael.efa.data.efacloud;
 
-import de.nmichael.efa.Daten;
-import de.nmichael.efa.data.*;
-import de.nmichael.efa.data.storage.DataKey;
-import de.nmichael.efa.data.storage.DataKeyIterator;
-import de.nmichael.efa.data.storage.DataRecord;
-import de.nmichael.efa.data.storage.EfaCloudStorage;
-import de.nmichael.efa.data.types.DataTypeIntString;
-import de.nmichael.efa.ex.EfaException;
-import de.nmichael.efa.util.EfaUtil;
-import de.nmichael.efa.util.International;
+import static de.nmichael.efa.data.LogbookRecord.ECRID;
+import static de.nmichael.efa.data.efacloud.TxRequestQueue.TX_SYNCH_QUEUE_INDEX;
+import static de.nmichael.efa.data.efacloud.TxRequestQueue.synchErrorFilePath;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -28,8 +21,17 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.UUID;
 
-import static de.nmichael.efa.data.LogbookRecord.*;
-import static de.nmichael.efa.data.efacloud.TxRequestQueue.*;
+import de.nmichael.efa.Daten;
+import de.nmichael.efa.data.AutoIncrement;
+import de.nmichael.efa.data.AutoIncrementRecord;
+import de.nmichael.efa.data.BoatStatusRecord;
+import de.nmichael.efa.data.storage.DataKey;
+import de.nmichael.efa.data.storage.DataKeyIterator;
+import de.nmichael.efa.data.storage.DataRecord;
+import de.nmichael.efa.data.storage.EfaCloudStorage;
+import de.nmichael.efa.data.types.DataTypeIntString;
+import de.nmichael.efa.ex.EfaException;
+import de.nmichael.efa.util.International;
 
 class SynchControl {
 
@@ -95,7 +97,7 @@ class SynchControl {
         // truncate log files,
         File synchErrorsFile = new File(path);
         
-        Boolean appendLine=true;
+        boolean appendLine=true;
         if (isError) {
         	//log rotation only if we write to synchError.log
 	        //synchErrors.log rotation: if >5 Mb, delete old synchErrors.previous.log file and rename synchErrors.log to synchErrors.log.previous.log

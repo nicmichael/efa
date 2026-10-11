@@ -11,7 +11,6 @@
 package de.nmichael.efa.core.items;
 
 import de.nmichael.efa.data.storage.IDataAccess;
-import de.nmichael.efa.data.types.DataTypeDistance;
 import de.nmichael.efa.util.Logger;
 
 // @i18n complete

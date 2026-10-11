@@ -151,7 +151,7 @@ public class ProjectEditDialog extends UnversionizedDataEditDialog implements II
                     guiItems.addAll(r.getGuiItems(admin, subtype, null, false));
                 }
             } else if (type == Type.logbook) {
-                r = p.getLoogbookRecord(logbookName);
+                r = p.getLogbookRecord(logbookName);
                 if (r != null) {
                     guiItems.addAll(r.getGuiItems(admin, subtype, null, false));
                 }
@@ -166,7 +166,7 @@ public class ProjectEditDialog extends UnversionizedDataEditDialog implements II
                 }
                 String[] logbooks = p.getAllLogbookNames();
                 for (int i = 0; logbooks != null && i < logbooks.length; i++) {
-                    r = p.getLoogbookRecord(logbooks[i]);
+                    r = p.getLogbookRecord(logbooks[i]);
                     Vector<IItemType> v = r.getGuiItems(admin, subtype, null, false);
                     for (int j = 0; j < v.size(); j++) {
                         IItemType item = v.get(j);

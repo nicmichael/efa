@@ -125,7 +125,8 @@ public class XMLFile extends DataFile {
         while(k != null) {
             DataRecord r = data.dataAccess.get(k);
             if (r == null) {
-                continue;
+            	k=it.getNext(); //avoid an endless loop by moving to the next record.
+            	continue; // no record, nothing to write
             }
             write(data, xmltagStart(data, FIELD_DATA_RECORD));
             for (int i=0; i<fields.length; i++) {

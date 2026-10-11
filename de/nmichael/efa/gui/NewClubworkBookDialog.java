@@ -85,7 +85,7 @@ public class NewClubworkBookDialog extends StepwiseDialog {
         ((ItemTypeString)item).setReplacementCharacter('_');
         ((ItemTypeString)item).setNotNull(true);
         items.add(item);
-        item = new ItemTypeString(CLUBWORKDESCRIPTION, "", IItemType.TYPE_PUBLIC, "0", International.getString("Beschreibung"));
+        item = new ItemTypeString(CLUBWORKDESCRIPTION, "", IItemType.TYPE_PUBLIC, "0", International.getString("Beschreibung(ClubworkRecord)"));
         items.add(item);
 
         // Items for Step 1

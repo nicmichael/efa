@@ -71,7 +71,7 @@ public class EfaOnlineThread extends Thread {
                     String username = (Daten.efaConfig != null ? Daten.efaConfig.getValueDataRemoteEfaOnlineUsername() : null);
                     String password = (Daten.efaConfig != null ? Daten.efaConfig.getValueDataRemoteEfaOnlinePassword() : null);
                     String url = (Daten.efaConfig != null ? Daten.efaConfig.getValueDataRemoteEfaOnlineUrl() : null);
-                    int remoteEfaPort = (Daten.efaConfig != null ? Daten.efaConfig.getValueDataataRemoteEfaServerPort() : -1);
+                    int remoteEfaPort = (Daten.efaConfig != null ? Daten.efaConfig.getValueDataRemoteEfaServerPort() : -1);
                     if (username == null || username.length() == 0 ||
                         password == null || password.length() == 0 ||
                         url == null || url.length() == 0) {

@@ -19,6 +19,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
 import de.nmichael.efa.Daten;
+import de.nmichael.efa.gui.util.RoundedBorder;
 import de.nmichael.efa.util.Logger;
 /*
  * NewMiniwidget is not a classical widget. Its config data is set up directly in efaconfig
@@ -38,7 +39,7 @@ public class NewsMiniWidget {
         mainNewsWidgetPanel.setOpaque(true);
         mainNewsWidgetPanel.setVisible(false);
         mainNewsWidgetPanel.setFont(mainNewsWidgetPanel.getFont().deriveFont(Font.BOLD));
-        mainNewsWidgetPanel.setBorder(BorderFactory.createLineBorder(mainNewsWidgetPanel.getForeground(), 1, true));
+        mainNewsWidgetPanel.setBorder(new RoundedBorder(Color.white));
         mainNewsWidgetPanel.setWidthPercent(Daten.efaConfig.getValueEfaDirekt_newsWidthPercent());
         newsUpdater = new NewsUpdater(mainNewsWidgetPanel,mainNewsWidgetPanel.getText(), 100);
         newsUpdater.start();
@@ -52,7 +53,7 @@ public class NewsMiniWidget {
         newsUpdater.setScrollSpeed(scrollSpeed);
     }
 
-    public void setVisible(Boolean value) {
+    public void setVisible(boolean value) {
     	SwingUtilities.invokeLater(new Runnable() {
     		public void run() {
                 mainNewsWidgetPanel.setVisible(value);

@@ -14,9 +14,8 @@ import javax.swing.UIManager;
 
 import de.nmichael.efa.core.config.AdminRecord;
 import de.nmichael.efa.util.EfaUtil;
-import de.nmichael.efa.util.Logger;
 import de.nmichael.efa.util.International;
-import de.nmichael.efa.util.LogString;
+import de.nmichael.efa.util.Logger;
 
 // @i18n complete
 public class Program {
@@ -220,7 +219,12 @@ public class Program {
             Daten.efaRunning.closeServer();
             Daten.efaRunning.stopDataLockThread();
         }
-        System.exit(exitCode);
+        Daten.setShutdownExitCode(exitCode);
+        if (!Daten.isShutdownHookActuallyRunning()){
+        	//when ShutdownHook is running, we shall not call System.exit() here
+        	//because the Shutdownhook will call System.exit() itself.
+        	System.exit(exitCode);
+        }
     }
 
 }

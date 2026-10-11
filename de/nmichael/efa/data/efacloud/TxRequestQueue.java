@@ -234,7 +234,7 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
     private Container efaGUIroot;
     private long lastStatsUpload = 0L;
     
-    public Boolean isExtendedDebug = true; //intentionally set to true so that the sync log provides better data traceability.
+    public boolean isExtendedDebug = true; //intentionally set to true so that the sync log provides better data traceability.
 
     /**
      * Get a new transaction ID and increment the counter.
@@ -409,7 +409,7 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
      *
      * @return the state of operation, e. g. TX_QUEUE_WORKING
      */
-    public String getStateForDisplay(Boolean withState) {
+    public String getStateForDisplay(boolean withState) {
     	if (txq==null) 
     		return "";
     	
@@ -486,7 +486,7 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
         if (type < 2) {
             // truncate log files,
             File efaCloudLogFile = new File(logFilePath);
-            Boolean appendLine=true;
+            boolean appendLine=true;
             
             //efacloud.log rotation: if >5 Mb, delete old efacloud.previous.log file and rename efacloud.log to efacloud.log.previous.log
             if (efaCloudLogFile.length() > EFACLOUD_LOG_MAX_SIZE) {
@@ -908,7 +908,8 @@ public class TxRequestQueue implements TaskManager.RequestDispatcherIF {
                         case RQ_QUEUE_START_SYNCH_UPLOAD:
                         case RQ_QUEUE_START_SYNCH_UPLOAD_ALL:
                             // Obsolete from 2.3.1: case RQ_QUEUE_START_SYNCH_DELETE:
-                            if ((currentState == QUEUE_IS_WORKING) || (currentState == QUEUE_IS_IDLE)) {
+                        	//EFA_131: Don't start synchronisation if there is a shutdown request running.
+                            if (!Daten.isShutdownRequested() && ((currentState == QUEUE_IS_WORKING) || (currentState == QUEUE_IS_IDLE))) {
                                 if ((queues.get(TX_PENDING_QUEUE_INDEX).size() == 0) &&
                                         (queues.get(TX_BUSY_QUEUE_INDEX).size() == 0)) {
                                     // prepare synchronization

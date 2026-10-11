@@ -66,6 +66,7 @@ public class StatisticXMLWriter extends StatisticWriter {
     
     public static final String FIELD_LOGBOOK = "Logbook";
     public static final String FIELD_RECORD = "Record";
+    public static final String FIELD_RECORD_OBMANN = "Obmann";
     // field names see StatisticRecord.LFIELDS_*
 
     public static final String FIELD_COMPETITION = "Competition";
@@ -350,6 +351,7 @@ public class StatisticXMLWriter extends StatisticWriter {
                                 write(f, indent, xmltag(lfNames.get(j), s));
                             }
                         }
+                        write(f, indent, xmltag(FIELD_RECORD_OBMANN, sd[i].boatCaptainName));
                         write(f, indent, xmltagEnd(FIELD_RECORD));
                     }
                 }

@@ -28,7 +28,7 @@ public class MultiWidgetContainerInstance extends WidgetInstance implements IWid
 
 	@Override
 	public void runWidgetWarnings(int mode, boolean actionBegin, LogbookRecord r) {
-		// TODO Auto-generated method stub
+		
 	}
 
 	@Override

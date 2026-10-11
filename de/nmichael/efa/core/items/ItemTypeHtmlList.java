@@ -30,6 +30,7 @@ import javax.swing.JScrollPane;
 import javax.swing.border.Border;
 
 import de.nmichael.efa.Daten;
+import de.nmichael.efa.gui.EfaGuiUtils;
 import de.nmichael.efa.gui.util.EfaMouseListener;
 import de.nmichael.efa.util.EfaUtil;
 import de.nmichael.efa.util.Logger;
@@ -115,10 +116,14 @@ public class ItemTypeHtmlList extends ItemType implements ActionListener {
         if (popupActions != null) {
             popup = new JPopupMenu();
             for (int i = 0; i < popupActions.length; i++) {
-                JMenuItem menuItem = new JMenuItem(popupActions[i]);
-                menuItem.setActionCommand(EfaMouseListener.EVENT_POPUP_CLICKED + "_" + i);
-                menuItem.addActionListener(this);
-                popup.add(menuItem);
+	        	if (popupActions[i].equals(EfaGuiUtils.MENU_SEPARATOR)) {
+	        		popup.addSeparator();
+	        	} else {
+	                JMenuItem menuItem = new JMenuItem(popupActions[i]);
+	                menuItem.setActionCommand(EfaMouseListener.EVENT_POPUP_CLICKED + "_" + i);
+	                menuItem.addActionListener(this);
+	                popup.add(menuItem);
+	        	}
             }
         } else {
             popup = null;

@@ -10,11 +10,14 @@
 
 package de.nmichael.efa.core.items;
 
-import de.nmichael.efa.*;
-import de.nmichael.efa.util.*;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
+import java.awt.Color;
+import java.awt.event.KeyEvent;
+
+import javax.swing.JComponent;
+import javax.swing.JTextField;
+
+import de.nmichael.efa.Daten;
+import de.nmichael.efa.util.EfaUtil;
 
 // @i18n complete
 
@@ -95,4 +98,18 @@ public abstract class ItemTypeLabelTextfield extends ItemTypeLabelValue {
             ((JTextField) field).setEnabled(isEnabled && isEditable);
         }
     }
+    
+	public void setToolTipText(String text) {
+        if (field != null) {
+            ((JTextField) field).setToolTipText(text);
+        }
+	}
+	
+	public String getToolTipText() {
+		if (field!=null) {
+			return ((JTextField) field).getToolTipText();
+		}
+		return null;
+	}
+
 }

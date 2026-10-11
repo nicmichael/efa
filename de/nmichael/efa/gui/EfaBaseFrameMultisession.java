@@ -19,8 +19,6 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-import org.apache.batik.ext.swing.GridBagConstants;
-
 import de.nmichael.efa.Daten;
 import de.nmichael.efa.core.config.AdminRecord;
 import de.nmichael.efa.core.config.EfaTypes;
@@ -38,6 +36,7 @@ import de.nmichael.efa.core.items.ItemTypeStringAutoComplete;
 import de.nmichael.efa.core.items.ItemTypeStringList;
 import de.nmichael.efa.core.items.ItemTypeTime;
 import de.nmichael.efa.data.BoatRecord;
+import de.nmichael.efa.data.BoatReservationRecord;
 import de.nmichael.efa.data.Boats;
 import de.nmichael.efa.data.DestinationRecord;
 import de.nmichael.efa.data.GroupRecord;
@@ -141,33 +140,33 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
         yPos++;
 
         // Date, Enddate, optionally a button to append end date
-        date = new ItemTypeDate(LogbookRecord.DATE, new DataTypeDate(), IItemType.TYPE_PUBLIC, null, International.getStringWithMnemonic("Datum"));
-        date.showWeekday(true);
-        date.setFieldSize(100, FIELD_HEIGHT);
-        date.setLabelGrid(1, GridBagConstraints.EAST, GridBagConstraints.NONE);
-        date.setFieldGrid(1, GridBagConstraints.WEST, GridBagConstraints.NONE);
-        date.setWeekdayGrid(2, GridBagConstraints.WEST, GridBagConstraints.NONE);
-        date.setBackgroundColorWhenFocused(Daten.efaConfig.getValueEfaDirekt_colorizeInputField() ? Color.yellow : null);
-        date.displayOnGui(this, mainInputPanel, 0, yPos);
-        date.registerItemListener(this);
+        startDate = new ItemTypeDate(LogbookRecord.DATE, new DataTypeDate(), IItemType.TYPE_PUBLIC, null, International.getStringWithMnemonic("Datum"));
+        startDate.showWeekday(true);
+        startDate.setFieldSize(100, FIELD_HEIGHT);
+        startDate.setLabelGrid(1, GridBagConstraints.EAST, GridBagConstraints.NONE);
+        startDate.setFieldGrid(1, GridBagConstraints.WEST, GridBagConstraints.NONE);
+        startDate.setWeekdayGrid(2, GridBagConstraints.WEST, GridBagConstraints.NONE);
+        startDate.setBackgroundColorWhenFocused(Daten.efaConfig.getValueEfaDirekt_colorizeInputField() ? Color.yellow : null);
+        startDate.displayOnGui(this, mainInputPanel, 0, yPos);
+        startDate.registerItemListener(this);
         
         // End Date
-        enddate = new ItemTypeDate(LogbookRecord.ENDDATE, new DataTypeDate(), IItemType.TYPE_PUBLIC, null, International.getStringWithMnemonic("bis"));
-        enddate.setMustBeAfter(date, false);
-        enddate.showWeekday(true);
-        enddate.setFieldSize(100, FIELD_HEIGHT);
-        enddate.setLabelGrid(1, GridBagConstraints.EAST, GridBagConstraints.NONE);
-        enddate.setFieldGrid(2, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL);
-        enddate.setWeekdayGrid(1, GridBagConstraints.WEST, GridBagConstraints.NONE);
-        enddate.showOptional(true);
+        endDate = new ItemTypeDate(LogbookRecord.ENDDATE, new DataTypeDate(), IItemType.TYPE_PUBLIC, null, International.getStringWithMnemonic("bis"));
+        endDate.setMustBeAfter(startDate, false);
+        endDate.showWeekday(true);
+        endDate.setFieldSize(100, FIELD_HEIGHT);
+        endDate.setLabelGrid(1, GridBagConstraints.EAST, GridBagConstraints.NONE);
+        endDate.setFieldGrid(2, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL);
+        endDate.setWeekdayGrid(1, GridBagConstraints.WEST, GridBagConstraints.NONE);
+        endDate.showOptional(true);
         if (isModeBoathouse()) {
-            enddate.setOptionalButtonText("+ " + International.getString("Enddatum"));
+            endDate.setOptionalButtonText("+ " + International.getString("Enddatum"));
         }
-        enddate.setBackgroundColorWhenFocused(Daten.efaConfig.getValueEfaDirekt_colorizeInputField() ? Color.yellow : null);
-        enddate.displayOnGui(this, mainInputPanel, 4, yPos);
-        enddate.registerItemListener(this);
+        endDate.setBackgroundColorWhenFocused(Daten.efaConfig.getValueEfaDirekt_colorizeInputField() ? Color.yellow : null);
+        endDate.displayOnGui(this, mainInputPanel, 4, yPos);
+        endDate.registerItemListener(this);
         if (isModeBoathouse() && !Daten.efaConfig.getValueAllowEnterEndDate()) {
-            enddate.setVisible(false);
+            endDate.setVisible(false);
         }
 
         yPos++;
@@ -264,7 +263,7 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
 		
 		if (!Daten.efaConfig.getValueEfaDirekt_MultisessionLastGuiElemParticipants()){
 		   mainInputPanel.add(teilnehmerUndBoot, new GridBagConstraints(0, yPos, HEADER_WIDTH, 1, 0, 0,
-		                      GridBagConstants.WEST, GridBagConstants.HORIZONTAL, new Insets(0,0,0,0), 0, 0));
+				   GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0,0,0,0), 0, 0));
 		}
 		yPos++;
 		
@@ -340,7 +339,7 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
         //Alternate layout: put participans after all other GUI elements
 		if (Daten.efaConfig.getValueEfaDirekt_MultisessionLastGuiElemParticipants()){
 			   mainInputPanel.add(teilnehmerUndBoot, new GridBagConstraints(0, yPos, HEADER_WIDTH, 1, 0, 0,
-			                      GridBagConstants.WEST, GridBagConstants.HORIZONTAL, new Insets(0,0,0,0), 0, 0));
+					   GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0,0,0,0), 0, 0));
 		}
 
                 
@@ -366,7 +365,7 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
 
         createAllUnusedElements();
         
-        destination.setValidAt(date, starttime);
+        destination.setValidAt(startDate, starttime);
         
         Dimension dim = mainPanel.getMinimumSize();
         dim.height = dim.height + ADD_HEIGHT_TO_DIALOG;
@@ -406,11 +405,11 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
     	if (mode == MODE_BOATHOUSE_START_MULTISESSION) {
 	    	// set Date
 	        String d = EfaUtil.getCurrentTimeStampDD_MM_YYYY();
-	        date.parseAndShowValue(d);
+	        startDate.parseAndShowValue(d);
 	        updateTimeInfoFields();
-	        date.setUnchanged();
+	        startDate.setUnchanged();
 	        if (isModeFull()) {
-	            date.setSelection(0, Integer.MAX_VALUE);
+	            startDate.setSelection(0, Integer.MAX_VALUE);
 	        }
 	        
 	        setTime(starttime, Daten.efaConfig.getValueEfaDirekt_plusMinutenAbfahrt(), null);
@@ -426,16 +425,20 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
 	        setFieldEnabled(true, true, destination);
 	        setFieldEnabled(false, false, distance);
 	        setFieldEnabled(true, true, comments);
+	        // if Multisession start and a person has been selected from available persons
+	        if (efaBoathouseAction!=null && efaBoathouseAction.person!=null) {
+	        	setPersonNameForRow(0, efaBoathouseAction.person.getQualifiedName());
+	        }
 	        
 	        updateTimeInfoFields();
     	} else if (mode == MODE_BOATHOUSE_LATEENTRY_MULTISESSION) {
-            date.parseAndShowValue(EfaUtil.getCurrentTimeStampDD_MM_YYYY());
+            startDate.parseAndShowValue(EfaUtil.getCurrentTimeStampDD_MM_YYYY());
             updateTimeInfoFields();
 	        if (isModeFull()) {
-	            date.setSelection(0, Integer.MAX_VALUE);
+	            startDate.setSelection(0, Integer.MAX_VALUE);
 	        }
             
-            setFieldEnabled(true, true, date);
+            setFieldEnabled(true, true, startDate);
             setFieldEnabled(true, true, starttime);
             setFieldEnabled(true, true, endtime);
             setFieldEnabled(true, true, destination);
@@ -446,7 +449,7 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
             
     	}
 
-        setRequestFocus(date);
+        setRequestFocus(startDate);
     }
     
     
@@ -467,7 +470,7 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
         	}
         }
       
-        ProjectRecord pr = Daten.project.getLoogbookRecord(logbook.getName());
+        ProjectRecord pr = Daten.project.getLogbookRecord(logbook.getName());
         if (pr != null) {
             logbookValidFrom = logbook.getValidFrom();
             logbookInvalidFrom = logbook.getInvalidFrom();
@@ -499,7 +502,7 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
 	 * Where boat only contains single person boats.
 	 * 
 	 * The Name field knows the Boat field as "other" field. 
-	 * This is neccesary for the feature "auto fill in the person's standard boat, if available".
+	 * This is necessary for the feature "auto fill in the person's standard boat, if available".
 	 * And it is used by the itemListenerAction()
 	 */
     public IItemType[] getDefaultItems(String itemName) {
@@ -509,14 +512,15 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
         	items[0] = getGuiAutoComplete(itemName+STR_NAME_LOOKUP, International.getString("Name"), this.autoCompleteListPersons);
 	        items[0].setFieldSize(200, -1);
 	        items[0].setBackgroundColorWhenFocused(Daten.efaConfig.getValueEfaDirekt_colorizeInputField() ? Color.yellow : null);
-	        items[0].setValidAt(date, starttime);
+	        items[0].setValidAt(startDate, starttime);
 	        items[0].registerItemListener(this);
 	        
 	    // Boat
         	items[1] = getGuiAutoComplete(itemName+STR_BOAT_LOOKUP, STR_SPACER+International.getString("Boot"), this.autoCompleteListBoats);
 	        items[1].setFieldSize(200, -1);
 	        items[1].setBackgroundColorWhenFocused(Daten.efaConfig.getValueEfaDirekt_colorizeInputField() ? Color.yellow : null);
-	        items[1].setValidAt(date, starttime);
+	        items[1].setValidAt(startDate, starttime);
+	        //no item listener here: if we change the boat, there is no need to change the name field.
 
 	        items[0].setOtherField(items[1]);
 	        
@@ -551,13 +555,47 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
 							//Obtain the person's standard boat
 	                		PersonRecord person = Daten.project.getPersons(false).getPerson(field.getValue(), System.currentTimeMillis());
 							if (person!=null) {
-				                BoatRecord r = Daten.project.getBoats(false).getBoat(
+				                BoatRecord personsStandardBoat = Daten.project.getBoats(false).getBoat(
 				                        person.getDefaultBoatId(), System.currentTimeMillis());	
-				                if (r!=null) {
-				                	if (field.getOtherField().getAutoCompleteData().getDataVisible().contains(r.getQualifiedName())) {
-				                		field.getOtherField().setValue(r.getQualifiedName());
-				                	}
-			                	}
+				                
+				                //get Person's reservations, one-seater only in this use case.
+				                //get all reservations of the current person, all boat types
+				                BoatReservationRecord personsCurrentReservation = getCurrentOrNextReservationForPerson(person.getId(),true);
+				                BoatRecord personsCurrentReservationBoat = (personsCurrentReservation!=null? personsCurrentReservation.getBoat():null);
+				                
+				                if ((personsCurrentReservationBoat != null) && (personsStandardBoat != null)){
+				                	// a standard boat AND a reservation - which boat should we take?
+				                	int chosenOption = Dialog.auswahlDialog(International.getString("Boot auswählen"), 
+				                			International.getMessage("Für die Person {person} gibt es eine aktuelle Reservierung und ein Standardboot. Welches Boot soll eingetragen werden?", person.getQualifiedName()),
+				                			International.getString("Reservierung") + ":  "+personsCurrentReservationBoat.getQualifiedName(),
+				                			International.getString("Standard-Boot")+ ":  "+personsStandardBoat.getQualifiedName());
+				                	
+				                	if (chosenOption==0) {
+				                		//reservation
+				                		personsStandardBoat=null;
+					                } else if (chosenOption==1) {
+				                		//standard boat
+					                	personsCurrentReservationBoat=null;
+					                } else {
+					                	// user selected cancel
+					                	personsStandardBoat=null;
+					                	personsCurrentReservationBoat=null;
+					                }
+				                }
+				                field.getOtherField().setToolTipText(null);//default value
+				                if ((personsCurrentReservationBoat != null) || (personsStandardBoat != null)){
+					                if (personsCurrentReservationBoat!=null) {
+					                	if (field.getOtherField().getAutoCompleteData().getDataVisible().contains(personsCurrentReservationBoat.getQualifiedName())) {
+					                		field.getOtherField().setValue(personsCurrentReservationBoat.getQualifiedName());
+					                		field.getOtherField().setToolTipText(International.getString("Vorbelegung aus Reservierung")+": \n\n"+personsCurrentReservation.getAsUserText());
+					                	}			                						                		
+					                } else if (personsStandardBoat!=null) {
+					                	if (field.getOtherField().getAutoCompleteData().getDataVisible().contains(personsStandardBoat.getQualifiedName())) {
+					                		field.getOtherField().setValue(personsStandardBoat.getQualifiedName());
+					                		field.getOtherField().setToolTipText(International.getString("Vorbelegung mit Standardboot"));
+					                	}
+					                }
+				                }
 			                }
 	                	}
 					}
@@ -572,7 +610,7 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
 		    super.itemListenerAction(item, event);
         }
 	}	    
-    
+
 	/**
 	 * Create an ItemTypeAutoComplete 
 	 * @param name Name of the field
@@ -690,7 +728,7 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
         // users have found strange ways of working around completion...
         autocompleteAllFields();
 
-        Boolean checkMultisessionLast=Daten.efaConfig.getValueEfaDirekt_MultisessionLastGuiElemParticipants();
+        boolean checkMultisessionLast=Daten.efaConfig.getValueEfaDirekt_MultisessionLastGuiElemParticipants();
 
         // check all data in the appropriate order of the fields.
         // as user can select where the items for boat/person are located in the GUI, 
@@ -710,10 +748,9 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
             !checkMultiSessionNameAndBoatValuesValid()||
             !checkUnknownNames() || 
             !checkProperUnknownNames() ||
-            !checkAllowedPersons() ||
+            //!checkAllowedPersons() || //not applicable for multisession, where person and boat data are in different fields
             !checkAllowedPersonsForBoat() ||
             !checkSinglePersonBoats() ||
-            
 
             !checkDestinationAndOther(!checkMultisessionLast) ||
 	        
@@ -776,13 +813,25 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
 	    		ItemTypeStringAutoComplete[] acItem= (ItemTypeStringAutoComplete[])nameAndBoat.getItems(iRow);
 		    	ItemTypeStringAutoComplete curName= acItem[0];
 		    	ItemTypeStringAutoComplete curBoat = acItem[1];    	
-		    	return (!(curName.getValue().trim().isEmpty() && curBoat.getValue().trim().isEmpty()));
+		    	return (!curName.getValue().trim().isEmpty() && !curBoat.getValue().trim().isEmpty());
 	    	} else {
 	    		return false;
 	    	}
     	} catch (Exception e) {
     		Logger.logdebug(e);
     		return false;
+    	}
+    }
+    
+    private void setPersonNameForRow(int iRow, String personName) {
+    	try {
+	    	if (iRow>=0 && iRow<nameAndBoat.getItemCount())  {
+	    		ItemTypeStringAutoComplete[] acItem= (ItemTypeStringAutoComplete[])nameAndBoat.getItems(iRow);
+		    	ItemTypeStringAutoComplete curName= acItem[0];
+		    	curName.setValue(personName);
+	    	}
+    	} catch (Exception e) {
+    		Logger.logdebug(e);
     	}
     }
     
@@ -880,7 +929,7 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
             	theRecord.setCrewId(1, p.getId());
             	theRecord.setCrewName(1, null);
             } else {
-                String s = curName.getValue().toString().trim();
+                String s = curName.getValueFromField().trim();
             	theRecord.setCrewName(1, (s.length() == 0 ? null : s) );
             	theRecord.setCrewId(1, null);
             }	    	
@@ -892,7 +941,7 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
             	theRecord.setBoatVariant(getOneSeaterBoatVariant(b));
             	theRecord.setBoatName(null);
             } else {
-                String s = curBoat.toString().trim();
+                String s = curBoat.getValueFromField().trim();
                 theRecord.setBoatName( (s.length() == 0 ? null : s) );
                 theRecord.setBoatId(null);
                 theRecord.setBoatVariant(IDataAccess.UNDEFINED_INT);
@@ -918,7 +967,7 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
             }
         }
         //none of the variants is a OneSeater
-        return 0;
+        return IDataAccess.UNDEFINED_INT;
     }    
     
     public void keyAction(ActionEvent evt) {
@@ -932,8 +981,11 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
     /**
      * AutoComplete fields which are visible: try to autocomplete the item based on the data entered.
      */
+    @Override
     protected void autocompleteAllFields() {
-        try {
+    	// we do not call super implementation, as we do not set the fields which are 
+    	// referenced in the super implementation.
+    	try {
         	
 			if (destination.isVisible()) {
 			    destination.acpwCallback(null);
@@ -1025,7 +1077,7 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
         Hashtable<UUID,String> boatHash = new Hashtable<UUID,String>();
         
         String doppelt = null; // Ergebnis doppelt==null heißt ok, doppelt!=null heißt Fehler! ;-)
-        Boolean isPersonDoppelt = false;
+        boolean isPersonDoppelt = false;
     	ItemTypeStringAutoComplete curName= null;
     	ItemTypeStringAutoComplete curBoat = null;
     	
@@ -1099,6 +1151,7 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
 	    for (int iCurNameAndBoat =0; iCurNameAndBoat<nameAndBoat.getItemCount(); iCurNameAndBoat++) {
 	    	ItemTypeStringAutoComplete[] acItem= (ItemTypeStringAutoComplete[])nameAndBoat.getItems(iCurNameAndBoat);
 	    	ItemTypeStringAutoComplete curBoat = acItem[1];    	
+	    	ItemTypeStringAutoComplete curName = acItem[0];
     	
 	        if (getMode() == MODE_BOATHOUSE_START_MULTISESSION ) { // avoid if mode lateentry
 	            int checkMode = 2;
@@ -1112,7 +1165,7 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
 		                // update boat status (may have changed since we opened the dialog)
 		                efaBoathouseAction.boatStatus = efaBoathouseAction.boat.getBoatStatus();
 		            }
-		            boolean success = efaBoathouseFrame.checkStartSessionForBoat(efaBoathouseAction, "0", checkMode);
+		            boolean success = efaBoathouseFrame.checkStartSessionForBoat(efaBoathouseAction, "0", checkMode, curName.getValueFromField());
 		            if (!success) {
 		                efaBoathouseAction.boat = null; // otherwise next check would fail
 		                curBoat.requestFocus();
@@ -1306,17 +1359,30 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
     protected boolean checkBoatUsageBan(ItemTypeStringAutoComplete theBoat, ItemTypeStringAutoComplete theName) {
         
 	    Groups groups = Daten.project.getGroups(false);
-	    long tstmp = System.currentTimeMillis();
+	    long tstmp = getValidAtTimestamp(startDate.getDate(), starttime.getTime()); // this allows starttime.getTime() to be null, as it will then be set to 00:00:00.000 of the startDate.
 	    
 	    BoatRecord curBoat = findBoat(theBoat, tstmp);
-        PersonRecord curPerson = findPerson(theName, tstmp);
-        
         if (curBoat == null) {
         	return true;
         }
+        
+	    // find a person record for the name and the timestamp of the record. 
+	    // Or if this is not applicable, 
+	    // find a person record for the name and the validity of the logbook.
+        PersonRecord curPerson = findPerson(theName, tstmp); 
+        
+        //if there still is no person found, try to find the latest version of the person with that name, 
+        //as we want to check for a usage ban.
+        if (curPerson == null) {
+        	curPerson = Daten.project.getPersons(false).getPersonLatest(theName.getValueFromField());
+        }
+        
+
 
         DataTypeList<UUID> groupIdList = curBoat.getAllowedGroupIdList();
-        if (groupIdList != null && groupIdList.length() > 0) {
+        boolean currentBoatHasGroups = (groupIdList != null && groupIdList.length() > 0);
+
+        
             String nichtErlaubt = null;
             int nichtErlaubtAnz = 0;
             String ptext = theName.getValue().toString();
@@ -1346,7 +1412,7 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
             }
             //check if the person is in any group the boat may be used by
             boolean inAnyGroup = false;
-            if (curPerson!=null) {
+            if (curPerson!=null && currentBoatHasGroups) {
 	            for (int j = 0; j < groupIdList.length(); j++) {
 	                GroupRecord g = groups.findGroupRecord(groupIdList.get(j), tstmp);
 	                if (g != null && g.getMemberIdList() != null && g.getMemberIdList().contains(curPerson.getId())) {
@@ -1356,7 +1422,7 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
 	            }
             }
             
-            if (!inAnyGroup) {
+            if (!inAnyGroup && currentBoatHasGroups) {
                 String name = (curPerson != null ? curPerson.getQualifiedName() : ptext);
                 nichtErlaubt = (nichtErlaubt == null ? name : nichtErlaubt + "\n" + name);
                 nichtErlaubtAnz++;
@@ -1365,7 +1431,8 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
             
             // a boat may be assigned to a group, but may need a participant of another
             // like used by a special crew, but needs at least a member of group "trainers"
-            if (Daten.efaConfig.getValueCheckAllowedPersonsInBoat() &&
+            if (currentBoatHasGroups &&
+            	Daten.efaConfig.getValueCheckAllowedPersonsInBoat() &&
                 nichtErlaubtAnz > 0 &&
                 nichtErlaubtAnz > curBoat.getMaxNotInGroup()) {
                 String erlaubteGruppen = null;
@@ -1402,7 +1469,7 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
                         return false;                            
                 }
             }
-        }
+        
         return true;
     }
     
@@ -1415,13 +1482,22 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
     protected boolean checkMinPersonsInBoat(ItemTypeStringAutoComplete theBoat, ItemTypeStringAutoComplete theName) {
     	
 	    Groups groups = Daten.project.getGroups(false);
-	    long tstmp = System.currentTimeMillis();
+	    long tstmp = getValidAtTimestamp(startDate.getDate(), starttime.getTime());
 	    
 	    BoatRecord curBoat = findBoat(theBoat, tstmp);
-        PersonRecord curPerson = findPerson(theName, tstmp);
-        
         if (curBoat == null) {
         	return true;
+        }
+        
+	    // find a person record for the name and the timestamp of the record. 
+	    // Or if this is not applicable, 
+	    // find a person record for the name and the validity of the logbook.
+        PersonRecord curPerson = findPerson(theName, tstmp); 
+        
+        //if there still is no person found, try to find the latest version of the person with that name, 
+        //as we want to check for a usage ban.
+        if (curPerson==null) {
+        	curPerson = Daten.project.getPersons(false).getPersonLatest(theName.getValueFromField());
         }
     	
         // Prüfen, ob mind 1 Ruderer (oder Stm) der Gruppe "mind 1 aus Gruppe" im Boot sitzt
@@ -1538,7 +1614,7 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
         	
         	for (int icurUncertainBoat =0; icurUncertainBoat<uncertainBoatFields.size(); icurUncertainBoat++) {
         		
-        	    long timePreferredValidity = LogbookRecord.getValidAtTimestamp(this.date.getDate(),
+        	    long timePreferredValidity = LogbookRecord.getValidAtTimestamp(this.startDate.getDate(),
                            (this.starttime != null ? this.starttime.getTime() : null));
         	    
         	    String boatName = uncertainBoatFields.get(icurUncertainBoat).getValueFromField();
@@ -1557,7 +1633,7 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
     			if (aBoat != null) {
     				//now, check if boat is visible, and supports a single-seater variant
     				if ((aBoat.isValidAt(timePreferredValidity)) && (!aBoat.getInvisible()) && (aBoat.isOneSeaterBoat())) {
-    					return true;
+    					continue;// this item is correct, proceed with next one
     				} else {
     					//go to the uncertain field
     					uncertainBoatFields.get(icurUncertainBoat).requestFocus();
@@ -1571,7 +1647,7 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
         	//if we are here, the user specified at least one unknown boat, but none of the uncertain boats could be mapped to a boat in our database.
         	//
         	//we cannot check if it's config is "Single/Skiff", so we return true, so that we can proceed.
-        	return true; // The 
+        	return true;  
         }
         return true; // no boat specified, so no problem with the boats
     }

@@ -31,7 +31,7 @@ public abstract class WeatherRenderer {
 		return ret;
 	}
 	
-	protected static JPanel getLocationHeader(String caption, Boolean showMaximize, WeatherWidgetInstance ww) {
+	protected static JPanel getLocationHeader(String caption, boolean showMaximize, WeatherWidgetInstance ww) {
 		return WidgetInstance.getLocationHeader(caption, showMaximize, ww.getStandardHeaderBackground(), ww.getStandardHeaderForeground());
 	}
 	

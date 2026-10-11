@@ -186,7 +186,7 @@ public class ItemTypeCronEntry extends ItemTypeLabelValue {
         return s.toString();
     }
 
-    private JTextField initializeField(String labelTxt, int width, JPanel panel, int y, Boolean withToolTip) {
+    private JTextField initializeField(String labelTxt, int width, JPanel panel, int y, boolean withToolTip) {
         JLabel l = new JLabel(labelTxt + ":");
         JTextField f = new JTextField();
         Dialog.setPreferredSize(f, width, 19);

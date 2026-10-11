@@ -203,7 +203,7 @@ public class NewLogbookDialog extends StepwiseDialog implements IItemListener {
             ItemTypeString item = (ItemTypeString)getItemByName(LOGBOOKNAME);
             item.getValueFromGui();
             String name = item.getValue();
-            if (Daten.project.getLoogbookRecord(name) != null) {
+            if (Daten.project.getLogbookRecord(name) != null) {
                     Dialog.error(LogString.fileAlreadyExists(name, International.getString("Fahrtenbuch")));
                     item.requestFocus();
                     return false;
@@ -356,7 +356,7 @@ public class NewLogbookDialog extends StepwiseDialog implements IItemListener {
     }
 
     public void itemListenerAction(IItemType itemType, AWTEvent event) {
-    	Boolean calculateField=false;
+    	boolean calculateField=false;
     	if (itemAutoCalcDateTo!=null)  {
     		itemAutoCalcDateTo.getValueFromGui();//Read checkbox from Gui into the field
     		calculateField=itemAutoCalcDateTo.getValue();
@@ -379,7 +379,7 @@ public class NewLogbookDialog extends StepwiseDialog implements IItemListener {
     }
     
     protected boolean nextButton_actionPerformed(ActionEvent e) {
-    	Boolean val = super.nextButton_actionPerformed(e);
+    	boolean val = super.nextButton_actionPerformed(e);
     	if (step == 1) {
     		// usability: if entering step 1, take care that the itemDateFrom gets the focus.
     		// otherwise AUTOCALC_DATETO checkbox would be focused, this is not optimal
@@ -389,7 +389,7 @@ public class NewLogbookDialog extends StepwiseDialog implements IItemListener {
     }
 
     protected boolean backButton_actionPerformed(ActionEvent e) {
-    	Boolean val = super.backButton_actionPerformed(e);
+    	boolean val = super.backButton_actionPerformed(e);
     	if (step == 1) {
     		// usability: if entering step 1, take care that the itemDateFrom gets the focus.
     		// otherwise AUTOCALC_DATETO checkbox would be focused, this is not optimal    		

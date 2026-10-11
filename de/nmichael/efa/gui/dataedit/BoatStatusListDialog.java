@@ -10,18 +10,20 @@
 
 package de.nmichael.efa.gui.dataedit;
 
-import de.nmichael.efa.*;
-import de.nmichael.efa.core.config.AdminRecord;
-import de.nmichael.efa.core.items.*;
-import de.nmichael.efa.data.*;
-import de.nmichael.efa.data.storage.*;
-import de.nmichael.efa.gui.BaseDialog;
-import de.nmichael.efa.util.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.UUID;
+import java.awt.BorderLayout;
+import java.awt.Frame;
+import java.awt.event.ActionEvent;
 
-import javax.swing.*;
+import javax.swing.JDialog;
+
+import de.nmichael.efa.Daten;
+import de.nmichael.efa.core.config.AdminRecord;
+import de.nmichael.efa.core.items.ItemTypeDataRecordTable;
+import de.nmichael.efa.data.BoatStatusRecord;
+import de.nmichael.efa.data.storage.DataRecord;
+import de.nmichael.efa.data.storage.StorageObject;
+import de.nmichael.efa.gui.BaseDialog;
+import de.nmichael.efa.util.International;
 
 
 // @i18n complete

@@ -31,7 +31,7 @@ public class Main extends Program {
     public Main(String[] args) {
         super(Daten.APPL_CLI, args);
         if (port == null) {
-            port = Integer.toString(Daten.efaConfig.getValueDataataRemoteEfaServerPort());
+            port = Integer.toString(Daten.efaConfig.getValueDataRemoteEfaServerPort());
         }
         if (project == null || project.length() == 0) {
             project = Daten.efaConfig.getValueLastProjectEfaCli();

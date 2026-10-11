@@ -75,15 +75,15 @@ import de.nmichael.efa.util.Logger;
 public class Daten {
 
 	private static final String KEY_VALUE_DELIMITER = " = ";
-	public final static String VERSION = "2.5.2"; // Version für die Ausgabe (z.B. 2.1.0, kann aber
+	public final static String VERSION = "2.5.3"; // Version für die Ausgabe (z.B. 2.1.0, kann aber
 																	// auch Zusätze wie "alpha" o.ä. enthalten)
 
-	public final static String VERSIONID = "2.5.2"; // VersionsID: Format: "X.Y.Z_MM"; final-Version z.B. 1.4.0_00;
+	public final static String VERSIONID = "2.5.3_17"; // VersionsID: Format: "X.Y.Z_MM"; final-Version z.B. 1.4.0_00;
 														// beta-Version z.B. 1.4.0_#1  //# is not good, is used in efa.data.Waters 
-	public final static String VERSIONRELEASEDATE = "26.04.2026"; // Release Date: TT.MM.JJJJ
+	public final static String VERSIONRELEASEDATE = "11.10.2026"; // Release Date: TT.MM.JJJJ
 	public final static String MAJORVERSION = "2";
-	public final static String PROGRAMMID = "EFA.252"; // Versions-ID für Wettbewerbsmeldungen
-	public final static String PROGRAMMID_DRV = "EFADRV.252"; // Versions-ID für Wettbewerbsmeldungen
+	public final static String PROGRAMMID = "EFA.253"; // Versions-ID für Wettbewerbsmeldungen
+	public final static String PROGRAMMID_DRV = "EFADRV.253"; // Versions-ID für Wettbewerbsmeldungen
 	public final static String COPYRIGHTYEAR = "26"; // aktuelles Jahr (Copyright (c) 2001-COPYRIGHTYEAR)
 	public final static int REQUIRED_JAVA_VERSION = 17;
 
@@ -193,6 +193,7 @@ public class Daten {
 	public static String osName = "";
 	public static String osVersion = "";
 	public static String lookAndFeel = "";
+	public static int javaVersionInt = 0;
 
 	// Class names of LookAndFeels provided with efa
 	public static String LAF_METAL = "MetalLookAndFeel";
@@ -289,10 +290,44 @@ public class Daten {
 	// This boolean is set during startup and tells if Flatlaf could be initialized
 	// at all.
 	// if not, flatLaf-3.2.5.jar may be missing in classpath.
-	public static Boolean flatLafInitializationOK = false;
+	public static boolean flatLafInitializationOK = false;
 	
-	public static Boolean isShutdownRequested=false;
+	private static boolean isShutdownRequested=false;
+	private static boolean isShutdownHookRunning=false;
+	private static int shutdownExitCode=0;
 
+	public static synchronized void requestShutdown() {
+		isShutdownRequested = true;
+	}
+	
+	public static synchronized void resetShutdownRequest() {
+		isShutdownRequested = false;
+	}
+	
+	public static synchronized boolean isShutdownRequested() {
+		return isShutdownRequested;
+	}
+	
+	public static synchronized void setShutdownHookRunning() {
+		isShutdownHookRunning = true;
+	}
+	
+	public static synchronized void resetShutdownHookRunning() {
+		isShutdownHookRunning = false;
+	}
+	
+	public static synchronized boolean isShutdownHookActuallyRunning() {
+		return isShutdownHookRunning;
+	}
+	
+	public static synchronized void setShutdownExitCode(int exitCode) {
+		shutdownExitCode = exitCode;
+	}
+	
+	public static synchronized int getShutdownExitCode() {
+		return shutdownExitCode;
+	}
+	
 	// Applikations- PID
 	public static String applPID = "XXXXX"; // will be set in iniBase(...)
 
@@ -425,7 +460,12 @@ public class Daten {
 		if (program != null) {
 			program.exit(exitCode);
 		} else {
-			System.exit(exitCode);
+			Daten.setShutdownExitCode(exitCode);
+        	//when ShutdownHook is running, we shall not call System.exit() here
+        	//because the Shutdownhook will call System.exit() itself.
+			if (!Daten.isShutdownHookActuallyRunning()) {
+				System.exit(exitCode);
+			} 
 		}
 	}
 
@@ -436,6 +476,7 @@ public class Daten {
 		project = null;
 		fileSep = System.getProperty("file.separator");
 		javaVersion = System.getProperty("java.version");
+		javaVersionInt = Daten.getJavaVersion();
 		jvmVersion = System.getProperty("java.vm.version");
 		osName = System.getProperty("os.name");
 		osVersion = System.getProperty("os.version");
@@ -968,6 +1009,7 @@ public class Daten {
 			}
 			Daten.efaConfig.setExternalParameters(false);
 			Daten.dateFormatDMY = !DataTypeDate.MONTH_DAY_YEAR.equals(Daten.efaConfig.getValueDateFormat());
+			Daten.efaConfig.initInternationalReplacements();
 		}
 	}
 
@@ -1080,7 +1122,7 @@ public class Daten {
 		if (applID != APPL_EFABH) {
 			return;
 		}
-		new RemoteEfaServer(Daten.efaConfig.getValueDataataRemoteEfaServerPort(),
+		new RemoteEfaServer(Daten.efaConfig.getValueDataRemoteEfaServerPort(),
 				Daten.efaConfig.getValueDataRemoteEfaServerEnabled());
 	}
 
@@ -1749,22 +1791,26 @@ public class Daten {
 	 * Java *minor* version. Newer Versions are guaranteed to have higher numbers
 	 * than previous versions. e.g. for Java 1.4, this will return "4" for Java 1.5,
 	 * this will return "5" for Java 1.6, this will return "6" for Java 1.7, this
-	 * will return "7"
+	 * will return "7" for Java 1.8. 
+	 * 
+	 * Java versions 9 and newer are not using the "1." prefix anymore, so for Java 9 and newer, 
+	 * this will return "9", "10", "11", etc. If the Java version cannot be determined, 
+	 * this method returns 0.
 	 * 
 	 * @return the Java version
 	 */
 	public static int getJavaVersion() {
 		try {
-			if (Daten.javaVersion.startsWith("1.")) {
-				return Integer.parseInt(Daten.javaVersion.substring(2, 3));
-			}
-			return 99;
+	        int javaVersionInt = Integer.parseInt(Daten.javaVersion.split("\\.")[0]);
+	        if ((javaVersionInt == 1) && (Daten.javaVersion.split("\\.").length > 2))   // Windows calls java 8 java 1.8_xxx
+	            javaVersionInt = Integer.parseInt(Daten.javaVersion.split("\\.")[1]);
+	        return javaVersionInt;
 		} catch (Exception e) {
 			return 0;
 		}
 	}
 
-	public static Boolean isEfaFlatLafActive() {
+	public static boolean isEfaFlatLafActive() {
 		return (lookAndFeel.endsWith(Daten.LAF_EFAFLAT_LIGHT) || lookAndFeel.endsWith(Daten.LAF_EFAFLAT_DARK));
 	}
 

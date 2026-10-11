@@ -932,4 +932,24 @@ public class BoatReservationRecord extends DataRecord {
         return IDX_BOATID;
     }
 
+	public String getAsUserText() {
+        String result = "";
+
+        if (this.getType().equals(BoatReservationRecord.TYPE_WEEKLY)  
+        		|| this.getType().equals(BoatReservationRecord.TYPE_WEEKLY_LIMITED)) {
+                    result = this.getBoatName() + " / " + this.getPersonAsName() + " (" 
+                    		+ Daten.efaTypes.getValueWeekday(this.getDayOfWeek()) + " " + this.getTimeFrom() + " -- " + this.getTimeTo() + ")"
+                    		
+                            + "\n" + International.getString("Reservierungsgrund") + ": " + this.getReason()
+                            + "\n" + International.getString("Telefon für Rückfragen") + ": " + this.getContact();
+                    
+        } else if (this.getType().equals(BoatReservationRecord.TYPE_ONETIME)) {
+            result =  this.getBoatName() + " / " + this.getPersonAsName() + " (" + this.getDateFrom().getWeekdayAsString() + " " + this.getDateFrom() + " " + this.getTimeFrom() + " -- " + this.getDateTo().getWeekdayAsString() + " " + this.getDateTo() + " " + this.getTimeTo() + ")"
+                    + "\n" + International.getString("Reservierungsgrund") + ": " + this.getReason()
+                    + "\n" + International.getString("Telefon für Rückfragen") + ": " + this.getContact();
+        }
+
+        return result;
+	}
+
 }

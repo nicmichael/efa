@@ -130,7 +130,7 @@ public class Dialog {
     /**
      * @return true if efaBoathouse and screen size has been manually set in common -> window and user wants to respect the taskbars..
      */
-    private static Boolean isEfaBoathouseAndAutoScreenOffset() {
+    private static boolean isEfaBoathouseAndAutoScreenOffset() {
     	if (Daten.efaConfig!=null) {
     		return ( Daten.isApplEfaBoathouse() && (Daten.efaConfig.getValueWindowXOffset()+Daten.efaConfig.getValueWindowYOffset()==0) && Daten.efaConfig.getValueEfaDirekt_startMaximizedRespectTaskbar());
     	} else {

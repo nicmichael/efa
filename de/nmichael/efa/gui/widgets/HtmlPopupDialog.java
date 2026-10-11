@@ -9,23 +9,24 @@
  */
 package de.nmichael.efa.gui.widgets;
 
-import de.nmichael.efa.Daten;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.io.IOException;
+
+import javax.swing.JDialog;
+import javax.swing.JEditorPane;
+import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
+import javax.swing.text.html.HTMLEditorKit;
+
 import de.nmichael.efa.gui.BaseDialog;
 import de.nmichael.efa.gui.EfaGuiUtils;
 import de.nmichael.efa.util.EfaUtil;
 import de.nmichael.efa.util.International;
 import de.nmichael.efa.util.LogString;
 import de.nmichael.efa.util.Logger;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.io.IOException;
-import javax.swing.JDialog;
-import javax.swing.JEditorPane;
-import javax.swing.JScrollPane;
-import javax.swing.SwingUtilities;
-import javax.swing.text.html.HTMLEditorKit;
 
 public class HtmlPopupDialog extends BaseDialog {
 

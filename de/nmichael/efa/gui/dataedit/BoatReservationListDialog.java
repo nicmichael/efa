@@ -75,35 +75,35 @@ public class BoatReservationListDialog extends DataListDialog {
 
     public BoatReservationListDialog(Frame parent, AdminRecord admin) {
         super(parent, International.getString("Bootsreservierungen"), Daten.project.getBoatReservations(false), 0, admin);
-        iniValues(null, true, true, true);
+        iniValues(null, null, true, true, true);
     }
 
     public BoatReservationListDialog(JDialog parent, AdminRecord admin) {
         super(parent, International.getString("Bootsreservierungen"), Daten.project.getBoatReservations(false), 0, admin);
-        iniValues(null, true, true, true);
+        iniValues(null, null, true, true, true);
     }
 
-    public BoatReservationListDialog(Frame parent, UUID boatId, AdminRecord admin) {
+    public BoatReservationListDialog(Frame parent, UUID boatId, UUID personId, AdminRecord admin) {
         super(parent, International.getString("Bootsreservierungen"), Daten.project.getBoatReservations(false), 0, admin);
-        iniValues(boatId, true, true, true);
+        iniValues(boatId, personId, true, true, true);
     }
 
-    public BoatReservationListDialog(JDialog parent, UUID boatId, AdminRecord admin) {
+    public BoatReservationListDialog(JDialog parent, UUID boatId, UUID personId,  AdminRecord admin) {
         super(parent, International.getString("Bootsreservierungen"), Daten.project.getBoatReservations(false), 0, admin);
-        iniValues(boatId, true, true, true);
+        iniValues(boatId, personId, true, true, true);
     }
 
-    public BoatReservationListDialog(Frame parent, UUID boatId, boolean allowNewReservations, boolean allowNewReservationsWeekly, boolean allowEditDeleteReservations) {
+    public BoatReservationListDialog(Frame parent, UUID boatId, UUID personId, boolean allowNewReservations, boolean allowNewReservationsWeekly, boolean allowEditDeleteReservations) {
         super(parent, International.getString("Bootsreservierungen"), Daten.project.getBoatReservations(false), 0, null);
-        iniValues(boatId, allowNewReservations, allowNewReservationsWeekly, allowEditDeleteReservations);
+        iniValues(boatId, personId, allowNewReservations, allowNewReservationsWeekly, allowEditDeleteReservations);
     }
 
-    public BoatReservationListDialog(JDialog parent, UUID boatId, boolean allowNewReservations, boolean allowNewReservationsWeekly, boolean allowEditDeleteReservations) {
+    public BoatReservationListDialog(JDialog parent, UUID boatId, UUID personId, boolean allowNewReservations, boolean allowNewReservationsWeekly, boolean allowEditDeleteReservations) {
         super(parent, International.getString("Bootsreservierungen"), Daten.project.getBoatReservations(false), 0, null);
-        iniValues(boatId, allowNewReservations, allowNewReservationsWeekly, allowEditDeleteReservations);
+        iniValues(boatId, personId, allowNewReservations, allowNewReservationsWeekly, allowEditDeleteReservations);
     }
 
-    private void iniValues(UUID boatId, boolean allowNewReservations, boolean allowNewReservationsWeekly, boolean allowEditDeleteReservations) {
+    private void iniValues(UUID boatId, UUID personId, boolean allowNewReservations, boolean allowNewReservationsWeekly, boolean allowEditDeleteReservations) {
         if (boatId != null) {
             this.filterFieldName  = BoatReservationRecord.BOATID;
             this.filterFieldValue = boatId.toString();
@@ -117,6 +117,19 @@ public class BoatReservationListDialog extends DataListDialog {
                     }
                 }
             }
+        } else if (personId != null) {
+            this.filterFieldName  = BoatReservationRecord.PERSONID;
+            this.filterFieldValue = personId.toString();
+            if (Daten.project != null) {
+                Persons persons  = Daten.project.getPersons(false);
+                if (persons != null) {
+                    PersonRecord r = persons.getPerson(personId, System.currentTimeMillis());
+                    if (r != null) {
+                        this.filterFieldDescription = International.getString("Person") + ": " +
+                                r.getQualifiedName();
+                    }
+                }
+            }        	
         }
         if (allowNewReservations && allowEditDeleteReservations) {
             if (admin != null) {
@@ -172,13 +185,17 @@ public class BoatReservationListDialog extends DataListDialog {
         /* A dataListDialog can be opened with a parameter which specifies the corresponding boat/... on which the list is shown.
          * this is stored in filterFieldValue. So, we have to check for filterFieldValue and use this base record instead of asking for a boat/... to create the data for 
          */
-        if (record == null && persistence != null && filterFieldValue != null) {
+        if (record == null && persistence != null && filterFieldValue != null
+        		// boatReservationListDialog can be filtered by BOATID and PersonID, 
+        		// we only want to have the boat fixed for new reservations if BOATID filter is set
+        		&& filterFieldName.equals(BoatReservationRecord.BOATID)) {
             record = ((BoatReservations)persistence).createBoatReservationsRecord(UUID.fromString(filterFieldValue));
         }
         if (record == null) {
             long now = System.currentTimeMillis();
             ItemTypeStringAutoComplete boat = new ItemTypeStringAutoComplete("BOAT", "", IItemType.TYPE_PUBLIC,
                     "", International.getString("Boot"), true);
+            boat.setPadding(0, 0, 10, 10);
             boat.setAutoCompleteData(new AutoCompleteList(Daten.project.getBoats(false).data(), now, now));
             if (SimpleInputDialog.showInputDialog(this, International.getString("Boot auswählen"), boat)) {
                 String s = boat.toString();
@@ -359,7 +376,7 @@ public class BoatReservationListDialog extends DataListDialog {
     }
     
     
-    private Boolean isCopyOrBoatChangeAllowed(DataRecord record) {
+    private boolean isCopyOrBoatChangeAllowed(DataRecord record) {
     	BoatReservationRecord br =((BoatReservationRecord)record); 
     	String boatReservationRecordType=br.getType();
     	
@@ -410,7 +427,7 @@ public class BoatReservationListDialog extends DataListDialog {
      * @param record record to create a copy for
      * @return
      */
-    public DataEditDialog createNewDataDialogForCopyOrChangeBootname(JDialog parent, StorageObject persistence, DataRecord baseRecord, int iCurrentRecord, int iCountRecords, Boolean bDoCopy) {
+    public DataEditDialog createNewDataDialogForCopyOrChangeBootname(JDialog parent, StorageObject persistence, DataRecord baseRecord, int iCurrentRecord, int iCountRecords, boolean bDoCopy) {
 
         BoatReservationRecord copyRecord = null;
         BoatReservationRecord originalRecord = (BoatReservationRecord) baseRecord;

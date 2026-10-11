@@ -362,7 +362,7 @@ public abstract class BaseDialog extends JDialog implements ActionListener {
     	return internalCancel();
     }
     
-    public boolean cancel(Boolean keyESCAction) {
+    public boolean cancel(boolean keyESCAction) {
     	return internalCancel();
     }
     

@@ -339,7 +339,7 @@ public abstract class ItemType implements IItemType {
 
     public String getInvalidErrorText() {
         return International.getMessage("Ungültige Eingabe im Feld '{field}'",
-                        getDescription()) + ": " + lastInvalidErrorText;
+                        getDescription()) + ": \n\n" + lastInvalidErrorText;
     }
 
 	public boolean isStoreItem() {

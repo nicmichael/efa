@@ -354,12 +354,12 @@ public class SearchLogbookDialog extends BaseTabbedDialog implements IItemListen
                     }
                     if (tryMatch(s, r.getDate(), exact,
                             (searchLogbookDialog != null ? searchLogbookDialog.sDate.getValue() : true))) {
-                        foundMatch(r, efaBaseFrame.date, jumpToField);
+                        foundMatch(r, efaBaseFrame.startDate, jumpToField);
                         return true;
                     }
                     if (tryMatch(s, r.getEndDate(), exact,
                             (searchLogbookDialog != null ? searchLogbookDialog.sEnddate.getValue() : true))) {
-                        foundMatch(r, efaBaseFrame.enddate, jumpToField);
+                        foundMatch(r, efaBaseFrame.endDate, jumpToField);
                         return true;
                     }
                     if (tryMatch(s, r.getBoatAsName(), exact,

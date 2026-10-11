@@ -190,11 +190,16 @@ public class ItemTypeDate extends ItemTypeLabelTextfield {
     }
 
     public boolean isValidInput() {
+    	lastInvalidErrorText = "";
         if (mustBeBefore != null && isSet() && value.isSet() && !value.isBefore(mustBeBefore.value)) {
-            return mustBeCanBeEqual && value.equals(mustBeBefore.value);
+            boolean ok = mustBeCanBeEqual && value.equals(mustBeBefore.value);
+            if (!ok) { lastInvalidErrorText = International.getMessage("Das Datum {Datum} muss vor dem {VorDatum} liegen.", value.toString(), mustBeBefore.value.toString());}
+        	return ok;
         }
         if (mustBeAfter != null && isSet() && value.isSet() && !value.isAfter(mustBeAfter.value)) {
-            return mustBeCanBeEqual && value.equals(mustBeAfter.value);
+        	boolean ok = mustBeCanBeEqual && value.equals(mustBeAfter.value);
+            if (!ok) { lastInvalidErrorText = International.getMessage("Das Datum {Datum} muss nach dem {NachDatum} liegen.", value.toString(), mustBeAfter.value.toString());}
+        	return ok;
         }
         if (isNotNullSet()) {
             return isSet();

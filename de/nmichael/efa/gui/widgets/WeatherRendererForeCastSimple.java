@@ -12,7 +12,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-import de.nmichael.efa.Daten;
 import de.nmichael.efa.util.Logger;
 
 public class WeatherRendererForeCastSimple extends WeatherRenderer {

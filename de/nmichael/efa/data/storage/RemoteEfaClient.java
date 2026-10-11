@@ -64,7 +64,7 @@ public class RemoteEfaClient extends DataAccess {
             url = "http://" + url;
         }
         if (url.lastIndexOf(":") < 7) {
-            url = url + ":" + Daten.efaConfig.getValueDataataRemoteEfaServerPort();
+            url = url + ":" + Daten.efaConfig.getValueDataRemoteEfaServerPort();
         }
         try {
             return new URL(url);

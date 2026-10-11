@@ -8,6 +8,8 @@
  */
 package de.nmichael.efa.core;
 
+import javax.swing.JDialog;
+
 import de.nmichael.efa.Daten;
 import de.nmichael.efa.core.config.AdminRecord;
 import de.nmichael.efa.data.Clubwork;
@@ -17,10 +19,8 @@ import de.nmichael.efa.data.types.DataTypeDate;
 import de.nmichael.efa.gui.AdminDialog;
 import de.nmichael.efa.gui.BrowserDialog;
 import de.nmichael.efa.util.Dialog;
-import de.nmichael.efa.util.EfaUtil;
 import de.nmichael.efa.util.International;
 import de.nmichael.efa.util.Logger;
-import javax.swing.JDialog;
 
 /**
  * Task that is executed whenever admin logs in. This task runs in the

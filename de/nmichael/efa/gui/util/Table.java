@@ -293,7 +293,7 @@ public class Table extends JTable {
 					Rectangle l_cellRect=getCellRect(row, col, false);
 
 					//Obtain tooltip only in the first column.
-					String toolTip = (col==0) ? ((TableItem) getValueAt(row,col)).getToolTipText() : null;
+					String toolTip = (col<=2) ? ((TableItem) getValueAt(row,col)).getToolTipText() : null;
 					if (toolTip == null) {
 						if (l_cellRect.width >= l_component.getPreferredSize().width) {
 							// do not show any tooltip if the column has enough space for the value

@@ -22,7 +22,8 @@ public class WeatherRendererForeCastComplex extends WeatherRenderer {
 		// Build the main panel view
 		int hourlyIndex = wdf.getHourly().getIndexForCurrentTime();
 
-		roundPanel.add(getLocationHeader(ww.getCaption(),!ww.getHtmlPopupURL().isEmpty(), ww), new GridBagConstraints(0, 0, 9, 1, 1.0, 0.0, GridBagConstraints.CENTER,
+		if (hourlyIndex <= wdf.getHourly().getItemSize()) {
+			roundPanel.add(getLocationHeader(ww.getCaption(),!ww.getHtmlPopupURL().isEmpty(), ww), new GridBagConstraints(0, 0, 9, 1, 1.0, 0.0, GridBagConstraints.CENTER,
 			GridBagConstraints.BOTH, new Insets(2, 2, 2, 2), 0, 0));		
 		
 				addForeCastPanel(WeatherRenderer.getHourlyHourRendering(wdf, hourlyIndex), 
@@ -36,7 +37,9 @@ public class WeatherRendererForeCastComplex extends WeatherRenderer {
 
 				startY=startY+2;
 				hourlyIndex++;
-				addForeCastPanel(WeatherRenderer.getHourlyHourRendering(wdf, hourlyIndex), 
+				if (hourlyIndex <= wdf.getHourly().getItemSize()) {
+					//only provide next line if there is forecast info for that line
+					addForeCastPanel(WeatherRenderer.getHourlyHourRendering(wdf, hourlyIndex), 
 						WeatherRenderer.getHourlyWeatherIcon(wdf,hourlyIndex),
 						WeatherRenderer.getHourlyDescription(wdf,hourlyIndex),
 						WeatherRenderer.getHourlyTemp(wdf, hourlyIndex, tempLabel), 
@@ -44,10 +47,12 @@ public class WeatherRendererForeCastComplex extends WeatherRenderer {
 						WeatherRenderer.getHourlyUVIndexIcon(wdf, hourlyIndex),
 						WeatherRenderer.getHourlyRain(wdf, hourlyIndex)+" mm",
 						WeatherRenderer.getHourlyRainPercentage(wdf, hourlyIndex)+"%", roundPanel, startY, ww);
-				
+				}
 				startY=startY+2;
 				hourlyIndex++;		
-				addForeCastPanel(WeatherRenderer.getHourlyHourRendering(wdf, hourlyIndex), 
+				if (hourlyIndex <= wdf.getHourly().getItemSize()) {
+					//only provide next line if there is forecast info for that line
+					addForeCastPanel(WeatherRenderer.getHourlyHourRendering(wdf, hourlyIndex), 
 						WeatherRenderer.getHourlyWeatherIcon(wdf,hourlyIndex),
 						WeatherRenderer.getHourlyDescription(wdf,hourlyIndex),
 						WeatherRenderer.getHourlyTemp(wdf, hourlyIndex, tempLabel), 
@@ -55,6 +60,8 @@ public class WeatherRendererForeCastComplex extends WeatherRenderer {
 						WeatherRenderer.getHourlyUVIndexIcon(wdf, hourlyIndex),
 						WeatherRenderer.getHourlyRain(wdf, hourlyIndex)+" mm",
 						WeatherRenderer.getHourlyRainPercentage(wdf, hourlyIndex)+"%", roundPanel, startY, ww);
+				}
+		}
 	}
 
 	

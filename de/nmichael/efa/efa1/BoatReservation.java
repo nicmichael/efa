@@ -15,7 +15,7 @@ import de.nmichael.efa.util.*;
 // @i18n complete
 
 
-public class BoatReservation implements Comparable {
+public class BoatReservation implements Comparable<BoatReservation> {
 
     // important to keep order of weekdays starting with Monday (as in ReservierungenEditFrame)!
     public static final String[] WEEKDAYKEYS  = { "MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN" };
@@ -112,7 +112,7 @@ public class BoatReservation implements Comparable {
         return null;
     }
 
-    public int compareTo(Object o) throws ClassCastException {
+    public int compareTo(BoatReservation o) throws ClassCastException {
         BoatReservation b = (BoatReservation) o;
         if (this.oneTimeReservation != b.oneTimeReservation) {
             return (this.oneTimeReservation ? -1 : 1);

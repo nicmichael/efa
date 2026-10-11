@@ -10,13 +10,18 @@
 
 package de.nmichael.efa.core.items;
 
-import de.nmichael.efa.core.config.*;
-import de.nmichael.efa.gui.EfaConfigDialog;
-import de.nmichael.efa.util.*;
-import de.nmichael.efa.util.Dialog;
+import java.awt.AWTEvent;
+import java.awt.GridBagConstraints;
+import java.awt.event.ActionEvent;
+import java.util.HashMap;
+
 import de.nmichael.efa.Daten;
-import java.awt.*;
-import java.awt.event.*;
+import de.nmichael.efa.core.config.CustSettings;
+import de.nmichael.efa.core.config.EfaConfig;
+import de.nmichael.efa.core.config.EfaTypes;
+import de.nmichael.efa.gui.EfaConfigDialog;
+import de.nmichael.efa.util.Dialog;
+import de.nmichael.efa.util.International;
 
 // @i18n complete
 
@@ -26,6 +31,7 @@ public class ItemTypeAction extends ItemTypeButton {
     public static final int ACTION_TYPES_ADDALLDEFAULT = 2;
     public static final int ACTION_GENERATE_ROWING_BOAT_TYPES = 3;
     public static final int ACTION_GENERATE_CANOEING_BOAT_TYPES = 4;
+    public static final int ACTION_CREATE_FREEUSE_FIELD_STANDARD_CAPTIONS = 5;
 
     private int action;
 
@@ -60,11 +66,47 @@ public class ItemTypeAction extends ItemTypeButton {
             case ACTION_GENERATE_CANOEING_BOAT_TYPES:
                 generateTypes(ACTION_GENERATE_CANOEING_BOAT_TYPES);
                 break;
+            case ACTION_CREATE_FREEUSE_FIELD_STANDARD_CAPTIONS:
+            	setStandardCaptionForFreeUseFields();
+            	break;
         }
         super.actionEvent(e);
     }
 
-    private void resetTypesToDefault() {
+    private void setStandardCaptionForFreeUseFields() {
+        // resetTypesToDefault() is only called from buttonHit(ActionEvent) if the configured action is
+        // ACTION_TYPES_RESETTODEFAULT.
+        // This is (and must!) only be the case if dlg is a EfaConfigFrame!
+        EfaConfigDialog efaConfigFrame = null;
+        try {
+            efaConfigFrame = (EfaConfigDialog)dlg;
+        } catch(ClassCastException ee) {
+            return;
+        }
+
+        //Search for the config item on efaConfigDialog
+        ItemTypeInternationalReplacement guiElement = (ItemTypeInternationalReplacement) efaConfigFrame.getItem(EfaConfig.ITEM_LANGUAGE_REPLACEMENT);
+        
+        HashMap<String, String> neededLanguageKeys = EfaConfig.createBoatPersonExtFieldsLanguagekeys();
+    	
+        //This is absolutely needed, see comment in de.nmichael.efa.core.items.ItemTypeHashtable.getValueFromGui()
+        
+        guiElement.getValueFromGui();
+        
+    	//now, add some items
+        for (String neededKey: neededLanguageKeys.values()) {
+    		String translation=International.getString(neededKey);
+    		if (translation == null || translation.isEmpty()) {
+    			translation = neededKey; // workaround
+    		}
+    		guiElement.addToHashExternal(neededKey, translation);
+    	}
+        
+        efaConfigFrame.updateGui();
+		
+	}
+
+	private void resetTypesToDefault() {
         if (Dialog.yesNoDialog(International.getString("Frage"),
                 International.getString("Möchtest Du alle Typen auf die Standard-Einstellungen zurücksetzen? "+
                 "Manuell hinzugefügte Typen bleiben dabei bestehen.")) != Dialog.YES) {
