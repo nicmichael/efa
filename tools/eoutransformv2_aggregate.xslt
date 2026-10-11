@@ -79,25 +79,27 @@ if a section is defined in the eou.xml, it will be displayed in the order of the
 <xsl:template name="version-rank">
     <xsl:param name="v"/>
 
-    <xsl:variable name="main" select="substring-before(concat($v, '#'), '#')"/>
-    <xsl:variable name="buildStr">
-        <xsl:choose>
-            <xsl:when test="contains($v, '#')">
-                <xsl:value-of select="substring-after($v, '#')"/>
-            </xsl:when>
-            <xsl:otherwise>0</xsl:otherwise>
-        </xsl:choose>
-    </xsl:variable>
-
-    <xsl:variable name="mainNoUpdate" select="substring-before(concat($main, '_'), '_')"/>
-    <xsl:variable name="updateStr">
-        <xsl:choose>
-            <xsl:when test="contains($main, '_')">
-                <xsl:value-of select="substring-after($main, '_')"/>
-            </xsl:when>
-            <xsl:otherwise>0</xsl:otherwise>
-        </xsl:choose>
-    </xsl:variable>
+	<xsl:variable name="main" select="substring-before(concat($v, '#'), '#')"/>
+	<xsl:variable name="buildStr">
+	    <xsl:choose>
+	        <xsl:when test="contains($v, '#')">
+	            <xsl:value-of select="substring-after($v, '#')"/>
+	        </xsl:when>
+	        <!-- production release build no is always higher than any beta build -->
+	        <xsl:otherwise>999</xsl:otherwise>
+	    </xsl:choose>
+	</xsl:variable>
+	
+	<xsl:variable name="mainNoUpdate" select="substring-before(concat($main, '_'), '_')"/>
+	<xsl:variable name="updateStr">
+	    <xsl:choose>
+	        <!-- nur ein nicht-leerer Update-Teil zählt, z. B. "17" bei 2.5.3_17, nicht bei 2.5.3_#16 -->
+	        <xsl:when test="string-length(substring-after($main, '_')) &gt; 0">
+	            <xsl:value-of select="substring-after($main, '_')"/>
+	        </xsl:when>
+	        <xsl:otherwise>0</xsl:otherwise>
+	    </xsl:choose>
+	</xsl:variable>
 
     <xsl:variable name="majorStr" select="substring-before($mainNoUpdate, '.')"/>
     <xsl:variable name="rest1" select="substring-after($mainNoUpdate, '.')"/>
