@@ -413,4 +413,8 @@ public class GithubReleaseUpdateProviderStrategy implements UpdateProviderStrate
 			return null;
     	}
     }
-}
+    
+   @Override
+   public boolean isEOUFileTemporary() {
+    	return true; // the EOU file is always a temporary file that should be deleted after parsing
+   };}

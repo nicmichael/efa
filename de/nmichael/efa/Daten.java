@@ -94,7 +94,7 @@ public class Daten {
 	 * 2.5.3-beta.16	2.5.3_#16 		2.5.3 			(beta, build 16)
 	 * 2.5.3-beta.1		2.5.3_#1  		2.5.3			(beta, build 1. could also be 2.5.3_#01
 	 * 2.5.2_02			2.5.2_02  		2.5.2			(production, build 2, e.g. a bugfix)
-	 * 2.5.2_01			2.5.2_00  		2.5.2 			(production, build 0, no prior beta for same release)
+	 * 2.5.2_01			2.5.2_00  		2.5.2 			(production, build 01, no prior beta for same release)
 	 * 2.5.1_04			2.5.1_04  		2.5.1 			(production, build 04)
 	 * 2.5.1_03			2.5.1_03	 	2.5.1			(production, build 03)
 	 * 2.5.1-beta.2		2.5.1_#2  		2.5.1			(beta, build 02)
@@ -109,16 +109,15 @@ public class Daten {
 	 *   creates an html output which contains all changes between the newest version and a base version (applied per parameter)
 	 *   Language de or en depending on parameter.
 	 *   
-	 * - eoutransformv2_aggregate_github
+	 * - eoutransformv2_aggregate_github.xslt
 	 *   just like the other aggregate xslt script, just creating a GitHub md compatible output so that one
 	 *   can copy/paste it into a new github release section.
 	 */
 	
-	public final static String VERSION = "2.5.3"; // Version für die Ausgabe (z.B. 2.1.0, kann aber
-																	// auch Zusätze wie "alpha" o.ä. enthalten)
+	public final static String VERSION = "2.5.3"; // Version für die Ausgabe (z.B. 2.1.0, auch Zusätze wie "alpha" o.ä. enthalten)
 	
 	public final static String VERSIONID = "2.5.3_#14"; // VersionsID: Format: "X.Y.Z_MM"; final-Version z.B. 1.4.0_00;
-														// beta-Version z.B. 1.4.0_#1  //# is not good, is used in efa.data.Waters 
+														// beta-Version z.B. 1.4.0_#1
 	public final static String VERSIONRELEASEDATE = "10.09.2026"; // Release Date: TT.MM.JJJJ
 	public final static String MAJORVERSION = "2";
 	public final static String PROGRAMMID = "EFA.253"; // Versions-ID für Wettbewerbsmeldungen
@@ -1487,7 +1486,7 @@ public class Daten {
 		Vector<String> infos = new Vector<String>();
 		UIDefaults uid = Dialog.getUiDefaults();
 
-		java.util.Enumeration keys = uid.keys();
+		Enumeration<?> keys = uid.keys();
 		while (keys.hasMoreElements()) {
 			Object key = keys.nextElement();
 			Object value = uid.get(key);
@@ -1544,7 +1543,7 @@ public class Daten {
 		Vector<String> infos = new Vector<String>();
 		HTMLEditorKit kit = new HTMLEditorKit();
 		StyleSheet styles = kit.getStyleSheet();
-		Enumeration rules = styles.getStyleNames();
+		Enumeration<?> rules = styles.getStyleNames();
 		while (rules.hasMoreElements()) {
 			String name = (String) rules.nextElement();
 			Style rule = styles.getStyle(name);
@@ -1680,7 +1679,7 @@ public class Daten {
 					if (jarfile != null && jarfile.length() > 0 && new File(jarfile).isFile()) {
 						infos.add("java.jar.filename=" + jarfile);
 						try (JarFile jar = new JarFile(jarfile)) {
-							Enumeration _enum = jar.entries();
+							Enumeration<?> _enum = jar.entries();
 							Object o;
 							while (_enum.hasMoreElements() && (o = _enum.nextElement()) != null) {
 								infos.add("java.jar.content=" + o + ":" + (jar.getEntry(o.toString()) == null ? "null"
@@ -1708,7 +1707,7 @@ public class Daten {
 
 	public static void printEfaInfos(boolean efaInfos, boolean pluginInfos, boolean javaInfos, boolean hostInfos,
 			boolean jarInfos) {
-		Vector infos = getEfaInfos(efaInfos, pluginInfos, javaInfos, hostInfos, jarInfos);
+		Vector<String> infos = getEfaInfos(efaInfos, pluginInfos, javaInfos, hostInfos, jarInfos);
 		for (int i = 0; infos != null && i < infos.size(); i++) {
 			Logger.log(Logger.INFO, Logger.MSG_INFO_CONFIGURATION, (String) infos.get(i));
 		}

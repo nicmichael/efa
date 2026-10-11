@@ -55,4 +55,10 @@ public interface UpdateProviderStrategy {
      * @throws Exception
      */
     File fetchNewestEOUFile(Window parent, List<UpdateCandidate> newerCandidates) throws Exception;
+    
+    /** 
+	 * Checks if the EOU file is temporary.
+	 * This is the case when it is NOT downloaded from a local file, but from an online source.
+	 */
+    boolean isEOUFileTemporary();
 }

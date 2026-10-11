@@ -57,7 +57,7 @@ public class EfaNMichaelDeUpdateProviderStrategy implements UpdateProviderStrate
                     v.downloadSize,
                     new ArrayList<String>(v.getChanges()),
                     getName(),
-                    false,
+                    v.versionId.contains("#"),
                     eouUrl,
                     v.versionId
                 ));
@@ -97,5 +97,9 @@ public class EfaNMichaelDeUpdateProviderStrategy implements UpdateProviderStrate
 			return new File(versionFile);
 		}
     }
+     @Override
+    public boolean isEOUFileTemporary() {
+    	return true; // the EOU file is always a temporary file that is deleted after parsing
+    };
     
 }

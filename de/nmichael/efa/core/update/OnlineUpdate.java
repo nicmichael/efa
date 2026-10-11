@@ -45,6 +45,11 @@ import de.nmichael.efa.util.LogString;
 import de.nmichael.efa.util.Logger;
 import de.nmichael.efa.util.XmlHandler;
 
+/**
+ * The OnlineUpdate class provides functionality to check for and perform online updates for the efa application.
+ * It handles fetching update information, displaying update dialogs, downloading updates, and applying them.
+ */
+
 public class OnlineUpdate {
 
     private static String lastError;
@@ -72,7 +77,7 @@ public class OnlineUpdate {
             JDialog parent,
             UpdateProviderStrategy provider,
             UpdateSelectionStrategy selection) {
-        Vector<OnlineUpdateInfo> eouVersions = null;
+        Vector<OnlineUpdateInfo> eouVersionInfo = null;
         lastError = null;
 
         List<UpdateCandidate> allUpdateCandidates = null;
@@ -88,57 +93,25 @@ public class OnlineUpdate {
         }
         List<UpdateCandidate> newerCandidates = filterNewerCandidates(allUpdateCandidates, Daten.VERSIONID);
 
-        // aktuelle Versionsnummer aus dem Internet besorgen
-        File versionFile = null;
-        try {
-			versionFile = provider.fetchNewestEOUFile(parent, newerCandidates);
-		} catch (Exception e) {
-			lastError = International.getString("Fehler beim Abrufen der Update-Informationen!")
-					+ "\n" + e.getMessage();
+        if (newerCandidates==null || newerCandidates.isEmpty()) {
 			if (parent != null) {
-				Dialog.error(lastError);
+				Dialog.infoDialog(International.getString("Es liegt derzeit keine neuere Version von efa vor.") + "\n"
+						+ International.getMessage("Die von Dir benutzte Version {version} ist noch aktuell.",
+						Daten.VERSIONID));
+			} else {
+				lastError = International.getString("Es liegt derzeit keine neuere Version von efa vor.");
 			}
-			return false;
-		}
-        if (versionFile == null || !versionFile.exists()) {
-			lastError = International.getString("Keine neue Version gefunden!");
-			if (parent != null) {
-				Dialog.error(lastError);
-			}
-			return false;
+			return true;
 		}
         
-        try {
-            XMLReader parser = EfaUtil.getXMLReader();
-            OnlineUpdateFileParser ou = new OnlineUpdateFileParser();
-            parser.setContentHandler(ou);
-            parser.parse(versionFile.getAbsolutePath());
-            eouVersions = ou.getVersions();
-        } catch (Exception ee) {
-            lastError = International.getString("Keine neue Version gefunden!")
-                        + "\n" + ee.getMessage();
-            if (parent != null) {
-                Dialog.error(lastError);
-            }
-            EfaUtil.deleteFile(versionFile.getAbsolutePath());
-            return false;
-        }
-        if (eouVersions == null || eouVersions.size() == 0) {
-            lastError = International.getString("Keine neue Version gefunden!");
-            if (parent != null) {
-                Dialog.error(lastError);
-            }
-            EfaUtil.deleteFile(versionFile.getAbsolutePath());
-            return false;
-        }
-		
+        // Update check timestamp speichern, damit nicht bei jedem Start von efa ein Online-Update-Check durchgeführt wird
         if (Daten.efaConfig != null) {
             Daten.efaConfig.setValueEfaVersionLastCheck(System.currentTimeMillis());
         }
-	
-        // ist die installierte Version aktuell?
-        OnlineUpdateInfo newestVersion = eouVersions.get(0); // first version is always newest one!
-        if (!VersionIdComparator.isNewer(newestVersion.versionId, Daten.VERSIONID)) {
+        
+    	UpdateCandidate newestCandidate = newerCandidates.get(0); // first candidate is always the newest one!
+
+        if (!VersionIdComparator.isNewer(newestCandidate.getVersionId(), Daten.VERSIONID)) {
             if (parent != null) {
                 Dialog.infoDialog(International.getString("Es liegt derzeit keine neuere Version von efa vor.") + "\n"
                         + International.getMessage("Die von Dir benutzte Version {version} ist noch aktuell.",
@@ -150,10 +123,14 @@ public class OnlineUpdate {
             return true;
         }
 
+        // Get the newest version information from the EOU file so that we can display the changes and download size to the user.
+        // we always use the newest candidate to get the EOU file, because it contains all newer versions and their changes.
+        eouVersionInfo = getEOUVersionInfo(parent, provider, newerCandidates);
+
         // Ok, es gibt eine neue Version --> Infos über diese Version einlesen
         Vector<String> changes = new Vector<String>();
-        for (int i=0; i<eouVersions.size(); i++) {
-            OnlineUpdateInfo version = eouVersions.get(i);
+        for (int i=0; i<eouVersionInfo.size(); i++) {
+            OnlineUpdateInfo version = eouVersionInfo.get(i);
             if (Daten.VERSIONID.compareTo(version.versionId) >= 0) {
                 break;
             }
@@ -165,19 +142,11 @@ public class OnlineUpdate {
             }
         }
 
-        // TODO: needs fix so that the download size is only taken from eou file 
-        // if the provider is not GitHub or LocalFile, because those providers may not provide the download size in the eou file.
-        if (newestVersion.downloadSize==0) {
-        	if (provider.getName().equals(GithubReleaseUpdateProviderStrategy.GITHUB) || 
-        			provider.getName().equals(LocalFileUpdateProviderStrategy.LOCAL_FILE)) {
-        		newestVersion.downloadSize = -1;
-        	}
-        }
         // Ok, Informationen gelesen: Jetzt auf dem Bildschirm anzeigen
         if (parent != null) {
             OnlineUpdateDialog dlg = new OnlineUpdateDialog(parent,
-                    newestVersion.versionId, newestVersion.releaseDate,
-                    newestVersion.downloadSize, changes);
+                    newestCandidate.getVersionId(), newestCandidate.getReleaseDate(),
+                    newestCandidate.getDownloadSize(), changes);
             dlg.showDialog();
             if (!dlg.getDialogResult()) {
                 return false;
@@ -210,34 +179,117 @@ public class OnlineUpdate {
 
         // If the update was triggered remotely through efaRemote, update user statistics
         if (parent == null) {
-            OnlineUpdate.submitUserInfos(newestVersion.versionId);
+            OnlineUpdate.submitUserInfos(newestCandidate.getVersionId());
         }
 
-        // Download des Updates
+        return downloadAndApplyUpdate(parent, newestCandidate);
+    }
+
+	private static boolean downloadAndApplyUpdate(JDialog parent, UpdateCandidate newestCandidate) {
+		// Download des Updates
         String zipFile = Daten.efaTmpDirectory + "eou.zip";
         ExecuteAfterDownload afterDownload = new ExecuteAfterDownloadImpl(parent,
-                zipFile, newestVersion.downloadSize, newestVersion.versionId);
+                zipFile, newestCandidate.getDownloadSize(), newestCandidate.getVersionId());
         if (parent != null) {
             parent.setEnabled(false);
-            if (!DownloadThread.getFile(parent, newestVersion.downloadUrl, zipFile, afterDownload)) {
+            if (!DownloadThread.getFile(parent, newestCandidate.getDownloadUrl(), zipFile, afterDownload)) {
                 parent.setEnabled(true);
                 return false;
             }
         } else {
             Logger.log(Logger.INFO, Logger.MSG_EVT_REMOTEONLINEUPDATEDOWNLOAD,
-                    International.getMessage("Download von {file}", newestVersion.downloadUrl) + " ...");
-            if (!DownloadThread.getFile(parent, newestVersion.downloadUrl, zipFile, true)) {
+                    International.getMessage("Download von {file}", newestCandidate.getDownloadUrl()) + " ...");
+            if (!DownloadThread.getFile(parent, newestCandidate.getDownloadUrl(), zipFile, true)) {
                 lastError = LogString.operationFailed(International.getString("Download"));
                 return false;
             }
             Logger.log(Logger.INFO, Logger.MSG_EVT_REMOTEONLINEUPDATEDOWNLOAD,
                     LogString.operationSuccessfullyCompleted(
-                        International.getMessage("Download von {file}", newestVersion.downloadUrl)));
+                        International.getMessage("Download von {file}", newestCandidate.getDownloadUrl())));
             afterDownload.success();
         }
         return true;
-    }
+	}
 
+    
+    /**
+	 * Fetches and parses the EOU version information from the specified provider.
+	 * @param parent The parent dialog for displaying messages. Can be null if running in headless mode.
+	 * @param provider The strategy for fetching available updates.
+	 * @param newerCandidates The list of update candidates that are newer than the current version.
+	 * 
+	 * @return A vector of OnlineUpdateInfo objects containing the parsed version information, 
+	 * or null if an error occurred.
+	 */
+	private static Vector<OnlineUpdateInfo> getEOUVersionInfo(JDialog parent, UpdateProviderStrategy provider, List<UpdateCandidate> newerCandidates) {
+		
+		Vector<OnlineUpdateInfo> eouVersionInfo=null;
+		
+		// aktuelle Versionsnummer aus dem Internet besorgen
+        File versionFile = null;
+        try {
+			versionFile = provider.fetchNewestEOUFile(parent, newerCandidates);
+		} catch (Exception e) {
+			lastError = International.getString("Fehler beim Abrufen der Update-Informationen!")
+					+ "\n" + e.getMessage();
+			if (parent != null) {
+				Dialog.error(lastError);
+			}
+			return null;
+		}
+
+        try {
+        	eouVersionInfo = parseEOUFile(versionFile, parent);
+        } catch (Exception e) {
+			lastError = International.getString("Fehler beim Einlesen der Update-Informationen!")
+					+ "\n" + e.getMessage();
+			if (parent != null) {
+				Dialog.error(lastError);
+			}
+			return null;
+        } finally {
+        	if (provider.isEOUFileTemporary() ) {
+        		EfaUtil.deleteFile(versionFile.getAbsolutePath());
+        	}
+		}
+        
+		return eouVersionInfo;
+	}
+
+    private static Vector<OnlineUpdateInfo> parseEOUFile(File eouFile, Window parent) throws Exception {
+		if (eouFile == null || !eouFile.exists()) {
+			throw new Exception(International.getString("Die Datei mit den Update-Informationen konnte nicht gefunden werden."));
+		}
+
+		Vector<OnlineUpdateInfo> eouVersionInfo = null;
+		
+        try {
+            XMLReader parser = EfaUtil.getXMLReader();
+            OnlineUpdateFileParser ou = new OnlineUpdateFileParser();
+            parser.setContentHandler(ou);
+            parser.parse(eouFile.getAbsolutePath());
+            eouVersionInfo = ou.getVersions();
+        } catch (Exception ee) {
+            lastError = International.getString("Keine neue Version gefunden!")
+                        + "\n" + ee.getMessage();
+            if (parent != null) {
+                Dialog.error(lastError);
+            }
+            EfaUtil.deleteFile(eouFile.getAbsolutePath());
+            return null;
+        }
+        if (eouVersionInfo == null || eouVersionInfo.size() == 0) {
+            lastError = International.getString("Keine neue Version gefunden!");
+            if (parent != null) {
+                Dialog.error(lastError);
+            }
+            EfaUtil.deleteFile(eouFile.getAbsolutePath());
+            return null;
+        }
+
+		return eouVersionInfo;
+	}
+    
     /**
 	 * Filters the list of all update candidates to only include those that are newer than the specified version ID.
 	 * @param allUpdateCandidates The list of all available update candidates.
@@ -361,7 +413,6 @@ public class OnlineUpdate {
             return;
         }
     }
-
 }
 
 /**	
@@ -519,7 +570,7 @@ class ExecuteAfterDownloadImpl implements ExecuteAfterDownload {
                     || Daten.project.getProjectStorageType() == IDataAccess.TYPE_EFA_REMOTE) {
                 backupProject = false;
             }
-            Backup backup = new Backup(Daten.efaBakDirectory, null, backupProject, true, false); // do not include efa log during onlineupdate backup
+            Backup backup = new Backup(Daten.efaBakDirectory, null, backupProject, true, true); // do not include efa log during onlineupdate backup
             if (backup.runBackup(null) != 0) {
                 lastError = LogString.operationFailed(International.getString("Backup"));
                 if (parent == null) {

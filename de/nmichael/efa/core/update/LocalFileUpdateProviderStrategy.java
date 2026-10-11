@@ -77,11 +77,11 @@ public class LocalFileUpdateProviderStrategy implements UpdateProviderStrategy {
             	result.add(new UpdateCandidate(
                     v.versionId,
                     v.releaseDate,
-                    v.downloadUrl,
+                    "file://"+downloadFilePath,
                     v.downloadSize,
                     new ArrayList<String>(v.getChanges()),
                     getName(),
-                    false,
+                    v.versionId.contains("#"),
                     eouFileName, 
                     v.versionId
                 ));
@@ -117,4 +117,10 @@ public class LocalFileUpdateProviderStrategy implements UpdateProviderStrategy {
 		}
     }
 	
+    @Override
+   public boolean isEOUFileTemporary() {
+    	// in the LocalFileUpdateProviderStrategy, the EOU file is not temporary, 
+    	// as it is expected to be a local file that persists on the filesystem.
+    	return false; 
+   };
 }
