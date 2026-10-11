@@ -75,9 +75,48 @@ import de.nmichael.efa.util.Logger;
 public class Daten {
 
 	private static final String KEY_VALUE_DELIMITER = " = ";
+
+	/**
+	 * Versioning: The versioning scheme used here is based on Semantic Versioning (SemVer) principles, 
+	 * with some customizations for the efa project. 
+	 * 
+	 * 2.5.3_17 indicates: Release 2.5.3, Production Release 17
+	 * 2.5.3_#14 indicates: Release 2.5.3, Beta14
+	 * 2.5.3_#1 indicates: Release 2.5.3, Beta1
+	 * 
+	 * If a beta exists for a release (2.5.3), the following production release build should be higher than the prior beta release build.
+	 * This is due to the fact that the new code for online updates and tools for creating release notes need to be 
+	 * able to sort the releases in a descending order.
+	 * 
+	 * So a valid release line would be (descending order)
+	 * GitHub Tag   	efaVersionID    efa version    	description
+	 * 2.5.3_17			2.5.3_17  		2.5.3			(production, build 17)									
+	 * 2.5.3-beta.16	2.5.3_#16 		2.5.3 			(beta, build 16)
+	 * 2.5.3-beta.1		2.5.3_#1  		2.5.3			(beta, build 1. could also be 2.5.3_#01
+	 * 2.5.2_02			2.5.2_02  		2.5.2			(production, build 2, e.g. a bugfix)
+	 * 2.5.2_01			2.5.2_00  		2.5.2 			(production, build 0, no prior beta for same release)
+	 * 2.5.1_04			2.5.1_04  		2.5.1 			(production, build 04)
+	 * 2.5.1_03			2.5.1_03	 	2.5.1			(production, build 03)
+	 * 2.5.1-beta.2		2.5.1_#2  		2.5.1			(beta, build 02)
+	 * 2.5.1-beta.1		2.5.1_#1  		2.5.1			(beta, build 01)
+	 * 2.4.1_00			2.5.1_00		2.4.1  			(production, build 00)
+	 * 
+	 * During the build process, some xslt scripts in the "tools" directory are applied
+	 * - eoutransformv2.xslt 
+	 *   creates the version history which is shown in efa about dialog. Language de or en depending on parameter.
+	 *   
+	 * - eoutransformv2_aggregate.xslt
+	 *   creates an html output which contains all changes between the newest version and a base version (applied per parameter)
+	 *   Language de or en depending on parameter.
+	 *   
+	 * - eoutransformv2_aggregate_github
+	 *   just like the other aggregate xslt script, just creating a GitHub md compatible output so that one
+	 *   can copy/paste it into a new github release section.
+	 */
+	
 	public final static String VERSION = "2.5.3"; // Version für die Ausgabe (z.B. 2.1.0, kann aber
 																	// auch Zusätze wie "alpha" o.ä. enthalten)
-
+	
 	public final static String VERSIONID = "2.5.3_#14"; // VersionsID: Format: "X.Y.Z_MM"; final-Version z.B. 1.4.0_00;
 														// beta-Version z.B. 1.4.0_#1  //# is not good, is used in efa.data.Waters 
 	public final static String VERSIONRELEASEDATE = "10.09.2026"; // Release Date: TT.MM.JJJJ
