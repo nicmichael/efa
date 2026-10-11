@@ -81,7 +81,7 @@ section="Other"
 		</Section>
 	</Sections>
 	<Version>
-        <VersionID>2.5.3_00</VersionID>
+        <VersionID>2.5.3_17</VersionID>
         <ReleaseDate>11.10.2026</ReleaseDate>
         <DownloadUrl>https://github.com/nicmichael/efa/releases/download/2.5.3_00/efa2.5.3_00.zip</DownloadUrl>
         <DownloadSize>TODO</DownloadSize>
