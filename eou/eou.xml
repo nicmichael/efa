@@ -42,6 +42,10 @@ section="Other"
 		<Section name="Admin/Data Edit">
 			<Translation lang="de">Administration/Datenerfassung</Translation>
 			<Translation lang="en">Admin/Data Edit</Translation>
+		</Section>		
+		<Section name="Admin/Configuration">
+			<Translation lang="de">Admin/Konfiguration</Translation>
+			<Translation lang="en">Admin/Configuration</Translation>
 		</Section>
 		<Section name="Admin/Other">
 			<Translation lang="de">Administration/Sonstiges</Translation>
