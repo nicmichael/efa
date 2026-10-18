@@ -248,6 +248,8 @@ public class Daten {
 
 	public final static String ONLINEUPDATE_INFO = "http://efa.nmichael.de/eou/eou.xml";
 	public final static String ONLINEUPDATE_INFO_DRV = "http://efa.nmichael.de/eou/eoudrv.xml";
+	public final static String ONLINEUPDATE_INFO_GITHUB_OWNER = "nicmichael";
+	public final static String ONLINEUPDATE_INFO_GITHUB_REPOSITORY = "efa";
 	public final static String EFW_UPDATE_DATA = "http://efa.nmichael.de/efw.data";
 	public final static String INTERNET_EFAMAIL = "http://efa.rudern.de/efamail.pl"; // was:
 																						// "http://cgi.snafu.de/nmichael/user-cgi-bin/efamail.pl";

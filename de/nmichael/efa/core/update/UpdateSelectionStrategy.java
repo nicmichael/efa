@@ -15,5 +15,6 @@ public interface UpdateSelectionStrategy {
 	 * @param currentVersion The current version of the application.
 	 * @return The selected update candidate, or null if the selection was aborted by the user.
 	 * */
-    UpdateCandidate select(JDialog parent, List<UpdateCandidate> newerCandidates, String currentVersion);
+    UpdateCandidate select(JDialog parent, UpdateProviderStrategy provider, 
+    		List<UpdateCandidate> newerCandidates, String currentVersion);
 }

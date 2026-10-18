@@ -976,7 +976,12 @@ public class RemoteEfaServer {
             final AdminRecord _admin = admin;
             RemoteEfaMessage response;
             if (EfaBoathouseFrame.efaBoathouseFrame != null) {
-                if (OnlineUpdate.runOnlineUpdate(null, Daten.ONLINEUPDATE_INFO)) {
+            	/*
+            	 * We will only run online updates on efaRemote with the default GitHub repository
+            	 * and avoid beta releases. Beta releases have to be installed manually using the GUI of efaBths
+            	 * or a manual update.
+            	 */
+                if (OnlineUpdate.runOnlineUpdateGitHubNewestProd(null, false)) {
                     EfaBoathouseFrame.efaBoathouseFrame.cancelRunInThreadWithDelay(EfaBoathouseFrame.EFA_EXIT_REASON_ONLINEUPDATE, _admin, true);
                     response  = RemoteEfaMessage.createResponseResult(request.getMsgId(), RemoteEfaMessage.RESULT_OK, null);
                 } else {

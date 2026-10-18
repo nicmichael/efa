@@ -562,13 +562,7 @@ public class EfaMenuButton {
                             result));
                 }
             } else {
-                //OnlineUpdate.runOnlineUpdate(parentDialog, Daten.ONLINEUPDATE_INFO);
-            	UpdateProviderStrategy gitHubUpdateProvider = 
-            			//new LocalFileUpdateProviderStrategy("D://efa/99_Alte_Versionen//eou.xml");
-            			//new EfaNMichaelDeUpdateProviderStrategy(Daten.ONLINEUPDATE_INFO);
-            			new GithubReleaseUpdateProviderStrategy("nicmichael", "efa", true);
-            	UpdateSelectionStrategy dialogStrategy = new DialogSelectionStrategy();
-            	OnlineUpdate.runOnlineUpdate(parentDialog, gitHubUpdateProvider, dialogStrategy);
+                runOnlineUpdate(parentDialog);
             }
             return false; // nothing to do for caller of this method
         }
@@ -1046,6 +1040,28 @@ public class EfaMenuButton {
 
         return true;
     }
+
+    /** 
+	 * Run the online update process, using the given parent dialog for any user interaction.
+	 * @param parentDialog The parent dialog to use for user interaction during the update process.
+	 */
+	private static void runOnlineUpdate(BaseDialog parentDialog) {
+		
+		/*
+		 * How to use the online update process:
+		 * 1. provide a dialog to choose between several update sources 
+		 *    (updateproviderstrategies). 
+		 *    if the provider strategy is "local file", let the user choose the eou file.
+		 * 2. depending on the dialog, run the online update process with the DialogSelectionStrategy.
+		 */
+		
+		UpdateProviderStrategy gitHubUpdateProvider = 
+				new LocalFileUpdateProviderStrategy("D://efa/99_Alte_Versionen//eou.xml");
+				//new EfaNMichaelDeUpdateProviderStrategy(Daten.ONLINEUPDATE_INFO);
+				//new GithubReleaseUpdateProviderStrategy("nicmichael", "efa", true);
+		UpdateSelectionStrategy dialogStrategy = new DialogSelectionStrategy();
+		OnlineUpdate.runOnlineUpdate(parentDialog, gitHubUpdateProvider, dialogStrategy);
+	}
 
     public static String insufficientRights(AdminRecord admin, String action) {
         String actionText = (actionMapping != null ? actionMapping.get(action) : action);
