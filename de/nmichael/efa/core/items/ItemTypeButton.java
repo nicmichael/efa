@@ -18,6 +18,10 @@ import javax.swing.*;
 
 // @i18n complete
 
+/**
+ * This class represents a button item type that can be displayed in the GUI.
+ * It can be used to represent a button in the configuration dialog or other parts of the application.
+ */
 public class ItemTypeButton extends ItemType {
 
     protected JButton button;
@@ -36,12 +40,24 @@ public class ItemTypeButton extends ItemType {
     }
 
     public IItemType copyOf() {
-    	ItemTypeButton newItem= new ItemTypeButton(name, type, category, description);
+    	ItemTypeButton copy= new ItemTypeButton(name, type, category, description);
     	if (margin!=null) {
-    		newItem.setMargin(margin.top,margin.left, margin.bottom, margin.right);
+    		copy.setMargin(margin.top,margin.left, margin.bottom, margin.right);
 	    }
-    	newItem.setBold(this.boldfont);
-    	return newItem;
+
+        copy.setFieldSize(fieldWidth,  fieldHeight);
+        copy.setIndent(this.isIndent());
+        copy.setVisible(this.isVisible());
+        copy.setFieldGrid(fieldGridWidth, fieldGridHeight, fieldGridAnchor, fieldGridFill);
+        copy.setPadding(padXbefore, padXafter, padYbefore, padYafter);
+    	copy.setBold(this.boldfont);
+    	copy.setIcon(this.icon);
+    	copy.setColor(this.color);
+    	copy.setBorder(this.border);
+    	if (this.hAlignment != -1) {
+    		copy.setHorizontalAlignment(this.hAlignment);
+    	}
+        return copy;
     }
 
     protected void iniDisplay() {
@@ -88,7 +104,7 @@ public class ItemTypeButton extends ItemType {
     public int displayOnGui(Window dlg, JPanel panel, int x, int y) {
         this.dlg = dlg;
         iniDisplay();
-        panel.add(field, new GridBagConstraints(x, y, fieldGridWidth, fieldGridHeight, 0.0, 0.0,
+        panel.add(field, new GridBagConstraints((this.isIndent() ? x+1 : x), y, fieldGridWidth, fieldGridHeight, 0.0, 0.0,
                 fieldGridAnchor, fieldGridFill, new Insets(padYbefore, padXbefore, padYafter, padXafter), 0, 0));
         return 1;
     }
@@ -130,7 +146,7 @@ public class ItemTypeButton extends ItemType {
             button.setVisible(visible);
         }
         super.setVisible(visible);
-}
+    }
 
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);

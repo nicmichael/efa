@@ -33,7 +33,7 @@ import org.xml.sax.XMLReader;
 import de.nmichael.efa.Daten;
 import de.nmichael.efa.core.Backup;
 import de.nmichael.efa.data.storage.IDataAccess;
-import de.nmichael.efa.gui.OnlineUpdateDialog;
+import de.nmichael.efa.gui.onlineupdate.OnlineUpdateDialog;
 import de.nmichael.efa.util.Dialog;
 import de.nmichael.efa.util.DownloadThread;
 import de.nmichael.efa.util.EfaUtil;

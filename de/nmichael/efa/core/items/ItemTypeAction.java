@@ -25,6 +25,11 @@ import de.nmichael.efa.util.International;
 
 // @i18n complete
 
+/**
+ * This class represents an action button item type that can be displayed in the GUI.
+ * Is is solely used in the configuration dialog to perform certain actions like resetting types to default or generating boat types.
+ * 
+ */
 public class ItemTypeAction extends ItemTypeButton {
 
     public static final int ACTION_TYPES_RESETTODEFAULT = 1;
@@ -46,7 +51,20 @@ public class ItemTypeAction extends ItemTypeButton {
     }
 
     public IItemType copyOf() {
-        return new ItemTypeAction(name, action, type, category, description);
+        ItemTypeAction copy = new ItemTypeAction(name, action, type, category, description);
+    	if (margin!=null) {
+    		copy.setMargin(margin.top,margin.left, margin.bottom, margin.right);
+	    }
+        copy.setFieldSize(fieldWidth,  fieldHeight);
+        copy.setIndent(this.isIndent());
+        copy.setVisible(this.isVisible());
+        copy.setFieldGrid(fieldGridWidth, fieldGridHeight, fieldGridAnchor, fieldGridFill);
+        copy.setPadding(padXbefore, padXafter, padYbefore, padYafter);
+    	copy.setBold(this.boldfont);
+    	copy.setIcon(this.icon);
+    	copy.setColor(this.color);
+    	copy.setBorder(this.border);
+    	return copy;
     }
 
     public void actionEvent(AWTEvent e) {
@@ -85,7 +103,11 @@ public class ItemTypeAction extends ItemTypeButton {
         }
 
         //Search for the config item on efaConfigDialog
-        ItemTypeInternationalReplacement guiElement = (ItemTypeInternationalReplacement) efaConfigFrame.getItem(EfaConfig.ITEM_LANGUAGE_REPLACEMENT);
+        IItemType item =  efaConfigFrame.getItem(EfaConfig.ITEM_LANGUAGE_REPLACEMENT);
+        if (item == null || !(item instanceof ItemTypeInternationalReplacement)) {
+			return;
+		}
+        ItemTypeInternationalReplacement guiElement = (ItemTypeInternationalReplacement) item;
         
         HashMap<String, String> neededLanguageKeys = EfaConfig.createBoatPersonExtFieldsLanguagekeys();
     	

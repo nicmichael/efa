@@ -22,9 +22,6 @@ import de.nmichael.efa.core.config.EfaConfig;
 import de.nmichael.efa.core.items.IItemType;
 import de.nmichael.efa.core.items.ItemTypeString;
 import de.nmichael.efa.core.update.DialogSelectionStrategy;
-import de.nmichael.efa.core.update.EfaNMichaelDeUpdateProviderStrategy;
-import de.nmichael.efa.core.update.GithubReleaseUpdateProviderStrategy;
-import de.nmichael.efa.core.update.LocalFileUpdateProviderStrategy;
 import de.nmichael.efa.core.update.OnlineUpdate;
 import de.nmichael.efa.core.update.UpdateProviderStrategy;
 import de.nmichael.efa.core.update.UpdateSelectionStrategy;
@@ -64,6 +61,7 @@ import de.nmichael.efa.gui.dataedit.SessionGroupListDialog;
 import de.nmichael.efa.gui.dataedit.StatisticsListDialog;
 import de.nmichael.efa.gui.dataedit.StatusListDialog;
 import de.nmichael.efa.gui.dataedit.WatersListDialog;
+import de.nmichael.efa.gui.onlineupdate.OnlineUpdateSourceSelectionDialog;
 import de.nmichael.efa.util.Dialog;
 import de.nmichael.efa.util.Help;
 import de.nmichael.efa.util.International;
@@ -465,6 +463,9 @@ public class EfaMenuButton {
         return menuAction(null, parent, action, admin, logbook);
     }
 
+    /**
+	 * Returns true if the action was handled, false if the caller has to handle it.
+	 */
     private static boolean menuAction(BaseFrame parentFrame, BaseDialog parentDialog, String action, AdminRecord admin, Logbook logbook) {
         if (action == null) {
             return false;
@@ -606,6 +607,7 @@ public class EfaMenuButton {
                             LogString.cantExecCommand(cmd, International.getString("Kommando")));
                 }
             }
+            return true;
         }
 
         if (action.equals(BUTTON_EXIT)) {
@@ -1041,28 +1043,45 @@ public class EfaMenuButton {
         return true;
     }
 
-    /** 
-	 * Run the online update process, using the given parent dialog for any user interaction.
-	 * @param parentDialog The parent dialog to use for user interaction during the update process.
+    /**
+	 * Run the interactive online update process, showing a dialog for both to select the update source
+	 * and to select the actual version to update to.
+	 * 
+	 * @param parentDialog The parent dialog for the update process.
 	 */
 	private static void runOnlineUpdate(BaseDialog parentDialog) {
+
+		UpdateProviderStrategy updateSource = getUpdateSourceByDialog(parentDialog);
+		UpdateSelectionStrategy updateChooser = new DialogSelectionStrategy();
 		
-		/*
-		 * How to use the online update process:
-		 * 1. provide a dialog to choose between several update sources 
-		 *    (updateproviderstrategies). 
-		 *    if the provider strategy is "local file", let the user choose the eou file.
-		 * 2. depending on the dialog, run the online update process with the DialogSelectionStrategy.
-		 */
-		
-		UpdateProviderStrategy gitHubUpdateProvider = 
-				new LocalFileUpdateProviderStrategy("D://efa/99_Alte_Versionen//eou.xml");
-				//new EfaNMichaelDeUpdateProviderStrategy(Daten.ONLINEUPDATE_INFO);
-				//new GithubReleaseUpdateProviderStrategy("nicmichael", "efa", true);
-		UpdateSelectionStrategy dialogStrategy = new DialogSelectionStrategy();
-		OnlineUpdate.runOnlineUpdate(parentDialog, gitHubUpdateProvider, dialogStrategy);
+		if (updateSource!=null) {
+			OnlineUpdate.runOnlineUpdate(parentDialog, updateSource, updateChooser);
+		}
 	}
 
+	/**
+	 * Show a dialog to the user to select the update source, and return the selected strategy.
+	 * 
+	 * @param parent The parent dialog for the selection dialog.
+	 * @return The selected UpdateProviderStrategy, or null if the user cancelled the selection.
+	 */
+	private static UpdateProviderStrategy getUpdateSourceByDialog(BaseDialog parent)	{
+		UpdateProviderStrategy result = null;
+		
+		OnlineUpdateSourceSelectionDialog dlg = new OnlineUpdateSourceSelectionDialog(parent);
+		dlg.showDialog(); // modal, kehrt nach dem Schließen zurück
+		result = dlg.getSelectedProviderStrategy(); // null bei Abbruch
+		
+		return result;
+	}
+	
+	/**
+	 * Show a dialog to the user to select the update source, and return the selected strategy
+	 * 
+	 * @param parent The parent frame for the selection dialog.
+	 * @return The selected UpdateProviderStrategy, or null if the user cancelled the selection.
+	 */
+	 
     public static String insufficientRights(AdminRecord admin, String action) {
         String actionText = (actionMapping != null ? actionMapping.get(action) : action);
         if (actionText == null) {

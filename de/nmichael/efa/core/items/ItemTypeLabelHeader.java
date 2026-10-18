@@ -30,13 +30,20 @@ public class ItemTypeLabelHeader extends ItemTypeLabel {
 
     public IItemType copyOf() {
     	
-        ItemTypeLabel thisCopy=new ItemTypeLabelHeader(name, type, category, description);
-        thisCopy.setBackgroundColor(this.backgroundColor);
-        thisCopy.setColor(this.color);
-        thisCopy.setPadding(padXbefore, padXafter, padYbefore, padYafter);
-        thisCopy.setFieldGrid(fieldGridWidth, fieldGridHeight, fieldGridAnchor, fieldGridFill);
-        thisCopy.setRoundShape(true);
-        return thisCopy;
+        ItemTypeLabel copy=new ItemTypeLabelHeader(name, type, category, description);
+        copy.setVisible(this.isVisible());
+        copy.setFieldSize(fieldWidth,  fieldHeight);
+        copy.setBackgroundColor(this.backgroundColor);
+        copy.setColor(this.color);
+        copy.setPadding(padXbefore, padXafter, padYbefore, padYafter);
+        copy.setFieldGrid(fieldGridWidth, fieldGridHeight, fieldGridAnchor, fieldGridFill);
+        copy.setRoundShape(true);
+        copy.setIndent(this.isIndent());
+        copy.setImage(icon);
+        copy.setHorizontalAlignment(hAlignment);
+        copy.setBorder(border);
+        copy.setImagePosition(iconPosition);
+        return copy;
 
     }	
 	

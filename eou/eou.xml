@@ -85,6 +85,24 @@ section="Other"
 		</Section>
 	</Sections>
 	<Version>
+        <VersionID>2.5.4_#1</VersionID>
+        <ReleaseDate>18.10.2026</ReleaseDate>
+        <DownloadUrl>https://github.com/nicmichael/efa/releases/download/2.5.4_1/efa2.5.4_1.zip</DownloadUrl>
+        <DownloadSize>TODO</DownloadSize>
+     	<MinimumJavaVersion>1.8</MinimumJavaVersion>
+		<MinimumEfaCloudVersion>2.3.3</MinimumEfaCloudVersion>
+        <ShowNotice lang="de">Wenn efaCloud eingesetzt wird, muss der Server mindestens Version 2.3.3 unterstützen. EfaCloud 2.4.0_12 und höher werden empfohlen.</ShowNotice>
+        <ShowNotice lang="en">If you use efaCloud, make sure your server at least supports efaCloud Version 2.3.3. It is recommended to upgrade to EfaCloud 2.4.0_12 or above.</ShowNotice>
+        <Changes lang="de">
+			<ChangeItem section="Other">Bugfix: Alle Oberflächenelemente vom Typ ItemType wurden gehärtet gegen Nullpointer und Programmierfehler.</ChangeItem>
+			<ChangeItem section="Admin/Other">Neu: Online-Update überarbeitet. Unterstützt Update von GitHub, efa.nmichael.de oder von einem lokalen Verzeichnis/USB Stick.</ChangeItem>
+		</Changes>
+        <Changes lang="en">
+        	<ChangeItem section="Other">Bugfix: All GUI elements of type ItemType have been hardened against null pointers and programming errors.</ChangeItem>
+        	<ChangeItem section="Admin/Other">New: Online update revised. Supports update from GitHub, efa.nmichael.de or from a local directory/USB stick.</ChangeItem>
+        </Changes>
+	</Version>
+	<Version>
         <VersionID>2.5.3_17</VersionID>
         <ReleaseDate>11.10.2026</ReleaseDate>
         <DownloadUrl>https://github.com/nicmichael/efa/releases/download/2.5.3_17/efa2.5.3_17.zip</DownloadUrl>

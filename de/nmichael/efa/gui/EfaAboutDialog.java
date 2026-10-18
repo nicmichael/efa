@@ -301,7 +301,7 @@ public class EfaAboutDialog extends BaseDialog {
 
         
         urlHomepageLabel.setText(International.getString("Homepage") + ": ");
-        urlLabel.setForeground(getUrlLabelColor());
+        urlLabel.setForeground(EfaGuiUtils.getUrlLabelColor());
         urlLabel.setText(Daten.EFAURL);
         urlLabel.addMouseListener(new java.awt.event.MouseAdapter() {
 
@@ -319,7 +319,7 @@ public class EfaAboutDialog extends BaseDialog {
         });
         
         urlGithubLabel0.setText(International.getString("Github: Releases & Source") + ": ");
-        urlGithubLabel.setForeground(getUrlLabelColor());
+        urlGithubLabel.setForeground(EfaGuiUtils.getUrlLabelColor());
         urlGithubLabel.setText(Daten.EFAGITHUBURL);
         urlGithubLabel.addMouseListener(new java.awt.event.MouseAdapter() {
 
@@ -339,7 +339,7 @@ public class EfaAboutDialog extends BaseDialog {
         
         
         supportLabel0.setText(International.getString("Hilfe und Support") + ": ");
-        supportLabel.setForeground(getUrlLabelColor());
+        supportLabel.setForeground(EfaGuiUtils.getUrlLabelColor());
         supportLabel.setText(Daten.EFASUPPORTURL);
         supportLabel.addMouseListener(new java.awt.event.MouseAdapter() {
 
@@ -357,7 +357,7 @@ public class EfaAboutDialog extends BaseDialog {
         });
         
         dokuLabel0.setText(International.getString("Dokumentation") + ": ");
-        dokuLabel.setForeground(getUrlLabelColor());
+        dokuLabel.setForeground(EfaGuiUtils.getUrlLabelColor());
         dokuLabel.setText(Daten.EFADOCUMENTATIONURL);
         dokuLabel.addMouseListener(new java.awt.event.MouseAdapter() {
 
@@ -380,7 +380,7 @@ public class EfaAboutDialog extends BaseDialog {
         logoLabel.setHorizontalTextPosition(SwingConstants.CENTER);
         logoLabel.setIcon(getIcon(Daten.getEfaImage(2)));
         gpl1Label.setText(International.getString("efa unterliegt den") + " ");
-        gplLabel.setForeground(getUrlLabelColor());
+        gplLabel.setForeground(EfaGuiUtils.getUrlLabelColor());
         gplLabel.setText(International.getMessage("Lizenzbestimmungen der {license}", "GPL v2"));
         gplLabel.addMouseListener(new java.awt.event.MouseAdapter() {
 
@@ -438,12 +438,7 @@ public class EfaAboutDialog extends BaseDialog {
         		+ "   (" + Daten.VERSIONID + " / " + Daten.VERSIONRELEASEDATE + ")");
 	}
 
-	private Color getUrlLabelColor() {
-		if (Daten.applID == Daten.APPL_EFABH && !Daten.isAdminMode()) {
-			return nameLabel.getForeground();
-		}
-		return Color.BLUE;
-	}
+
 	
     void label_mouseEntered(MouseEvent e) {
         try {
@@ -456,7 +451,7 @@ public class EfaAboutDialog extends BaseDialog {
     void label_mouseExited(MouseEvent e) {
         try {
             JLabel label = (JLabel) e.getSource();
-            label.setForeground(getUrlLabelColor());
+            label.setForeground(EfaGuiUtils.getUrlLabelColor());
         } catch (Exception eignore) {
         }
     }

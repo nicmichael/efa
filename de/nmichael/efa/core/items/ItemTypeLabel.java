@@ -30,10 +30,10 @@ import de.nmichael.efa.util.EfaUtil;
 public class ItemTypeLabel extends ItemType {
 
     private JLabel[] labels = null;
-    private ImageIcon icon;
+    protected ImageIcon icon;
     private boolean mouseClickListener = false;
     private boolean roundShape=false;
-    private int iconPosition=-1;
+    protected int iconPosition=-1;
     private boolean boldFont = false;
     		
     public ItemTypeLabel(String name, int type,
@@ -47,18 +47,21 @@ public class ItemTypeLabel extends ItemType {
 
     public IItemType copyOf() {
     	
-        ItemTypeLabel thisCopy=new ItemTypeLabel(name, type, category, description);
-        thisCopy.setBackgroundColor(this.backgroundColor);
-        thisCopy.setColor(this.color);
-        thisCopy.setPadding(padXbefore, padXafter, padYbefore, padYafter);
-        thisCopy.setFieldGrid(fieldGridWidth, fieldGridHeight, fieldGridAnchor, fieldGridFill);
-        thisCopy.setImage(icon);
-        thisCopy.setHorizontalAlignment(hAlignment);
-        thisCopy.setRoundShape(roundShape);
-        thisCopy.setBorder(border);
-        thisCopy.setImagePosition(iconPosition);
-        thisCopy.setBoldFont(boldFont);
-        return thisCopy;
+        ItemTypeLabel copy=new ItemTypeLabel(name, type, category, description);
+        copy.setVisible(this.isVisible());
+        copy.setFieldSize(fieldWidth,  fieldHeight);
+        copy.setBackgroundColor(this.backgroundColor);
+        copy.setColor(this.color);
+        copy.setPadding(padXbefore, padXafter, padYbefore, padYafter);
+        copy.setFieldGrid(fieldGridWidth, fieldGridHeight, fieldGridAnchor, fieldGridFill);
+        copy.setImage(icon);
+        copy.setHorizontalAlignment(hAlignment);
+        copy.setRoundShape(roundShape);
+        copy.setBorder(border);
+        copy.setImagePosition(iconPosition);
+        copy.setBoldFont(boldFont);
+        copy.setIndent(this.isIndent());
+        return copy;
 
     }
 
@@ -69,16 +72,34 @@ public class ItemTypeLabel extends ItemType {
         return description;
     }
 
+    /**
+	 * Setzt die Beschreibung und verteilt sie auf die Labels.
+	 */
     public void setDescription(String s) {
         super.setDescription(s);
+        /* TODO:
+         * This method works ok if the number of lines in the description does not GROW.
+         * If the number of lines increases, the additional lines won't be displayed because the labels array is not big enough.
+         *
+         * This would need to be fixed by creating a new labels array with the correct size and adding the new labels to the GUI.
+         * But it would need some more references to the GUI components to do that. So for now, we just ignore this case and assume that the number of lines does not grow.
+         *
+         */
         Vector<String> v = EfaUtil.split(description, '\n');
         if (v.size() == 0) {
             v.add("");
         }
-        if (labels!=null) {
-	        for (int i=0; i<v.size() && i<labels.length; i++) {
-	            labels[i].setText((String)v.get(i));
-	        }
+        if (labels != null) {
+            for (int i = 0; i < labels.length; i++) {
+                if (i < v.size()) {
+                    labels[i].setText(v.get(i));
+                    labels[i].setVisible(isVisible);
+                } else {
+                    // überzählige Labels leeren und ausblenden
+                    labels[i].setText("");
+                    labels[i].setVisible(false);
+                }
+            }
         }
     }
 
@@ -138,7 +159,7 @@ public class ItemTypeLabel extends ItemType {
         this.dlg = dlg;
         iniDisplay();
         for (int i=0; i<labels.length; i++) {
-            panel.add(labels[i], new GridBagConstraints(x, y + i, fieldGridWidth, fieldGridHeight, 0.0, 0.0,
+            panel.add(labels[i], new GridBagConstraints((this.isIndent() ? x+1 : x), y + i, fieldGridWidth, fieldGridHeight, 0.0, 0.0,
                     fieldGridAnchor, fieldGridFill, new Insets((i == 0 ? padYbefore : 0), padXbefore, (i+1 == labels.length ? padYafter : 0), padXafter), 0, 0));
         }
         return labels.length;
@@ -162,6 +183,7 @@ public class ItemTypeLabel extends ItemType {
     }
     
     public void setVisible(boolean visible) {
+        super.setVisible(visible);
         for (int i=0; labels != null && i<labels.length; i++) {
             labels[i].setVisible(visible);
         }
@@ -175,8 +197,11 @@ public class ItemTypeLabel extends ItemType {
 
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
-        for (int i=0; i<labels.length; i++) {
-            labels[i].setForeground((enabled ? (new JLabel()).getForeground() : Color.gray));
+        Color c = (enabled 
+        			? (getColor() != null ? getColor() : new JLabel().getForeground()) 
+        			: Color.gray);
+        for (int i=0; labels != null && i<labels.length; i++) {
+            labels[i].setForeground(c);
         }
     }
 
@@ -254,10 +279,14 @@ public class ItemTypeLabel extends ItemType {
     private void labelMouseExited(MouseEvent e) {
         try {
             JLabel label = (JLabel) e.getSource();
-            label.setForeground(Color.blue);
+            Color c = (isEnabled()
+                    ? (getColor() != null ? getColor() : new JLabel().getForeground())
+                    : Color.gray);
+            label.setForeground(c);
         } catch (Exception eignore) {
         }
     }
+
    
 
 

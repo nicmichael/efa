@@ -10,12 +10,21 @@
 
 package de.nmichael.efa.core.items;
 
+import java.awt.Color;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+
+import javax.swing.JButton;
+import javax.swing.JColorChooser;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+
 import de.nmichael.efa.gui.BaseDialog;
-import de.nmichael.efa.util.*;
 import de.nmichael.efa.util.Dialog;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
+import de.nmichael.efa.util.EfaUtil;
+import de.nmichael.efa.util.International;
 
 // @i18n complete
 
@@ -63,6 +72,8 @@ public class ItemTypeColor extends ItemTypeLabelValue {
          copy.setIsItemOnSameRowAsPreviousItem(itemOnSameRowAsPreviousItem);
          copy.setItemOnNewRow(itemOnNewRow);
          copy.setFieldGrid(fieldGridWidth,fieldGridHeight,fieldGridAnchor,fieldGridFill);
+         copy.setIndent(this.isIndent());
+         copy.setVisible(this.isVisible());
          return copy;
     }
 
@@ -81,6 +92,7 @@ public class ItemTypeColor extends ItemTypeLabelValue {
 
         return f;
     }
+    
     protected void iniDisplay() {
         super.iniDisplay();
         JButton f = (JButton)field;
@@ -107,15 +119,27 @@ public class ItemTypeColor extends ItemTypeLabelValue {
         this.fieldGridWeightX = 1.0;
         this.fieldGridFill = GridBagConstraints.HORIZONTAL;
     	int count = super.displayOnGui(dlg, panel, x, y);
+        //respect the indent property of the item, if set
+        x=(this.isIndent() ? x+1 : x);
         panel.add(butdel, new GridBagConstraints(x+fieldGridWidth+1, y, 1, fieldGridHeight, 0.0, 0.0,
                 GridBagConstraints.WEST, GridBagConstraints.NONE,
                 new Insets((itemOnNewRow ? 0 : padYbefore), (itemOnNewRow ? padXbefore : 0), padYafter, padXafter), 0, 0));
         return count;
     }
 
+    /**
+	 * Get the value from the GUI and store it in the item.
+	 * If the button color is the same as the original button color, set the item value to null.
+	 * Otherwise, set the item value to the button color.
+	 */
     public void getValueFromGui() {
         if (field != null) {
-            color = EfaUtil.getColor(field.getBackground());
+            Color bg = field.getBackground();
+            if (canBeNull && bg.equals(origButtonColor)) {
+                color = null;
+            } else {
+                color = EfaUtil.getColor(bg);
+            }
         }
     }
 
