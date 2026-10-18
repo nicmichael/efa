@@ -188,13 +188,13 @@ public class VersionizedDataEditDialog extends UnversionizedDataEditDialog imple
         versionList.parseAndShowValue(curValue);
         setSelectedVersionLabel();
     }
-    
-    protected int recursiveBuildGui(Hashtable<String,Hashtable> categories,
-            Hashtable<String,Vector<IItemType>> items,
+    @Override
+    protected int buildGuiWithTabbedPane(HashMap<String,HashMap> categories,
+            HashMap<String,Vector<IItemType>> items,
             String catKey,
             JComponent currentPane,
             String selectedPanel, int otherPanelHeight) {
-		int itmcnt = 0;
+ 		int itmcnt = 0;
 		int pos = (selectedPanel != null && selectedPanel.length() > 0 ? selectedPanel.indexOf(CATEGORY_SEPARATOR) : -1);
 		String selectThisCat = (pos < 0 ? selectedPanel : selectedPanel.substring(0,pos));
 		String selectNextCat = (pos < 0 ? null : selectedPanel.substring(pos+1));
@@ -205,11 +205,11 @@ public class VersionizedDataEditDialog extends UnversionizedDataEditDialog imple
 			String key = (String)cats[i];
 			String thisCatKey = (catKey.length() == 0 ? key : makeCategory(catKey, key));
 			String catName = getCatName(thisCatKey);
-			Hashtable<String,Hashtable> subCat = categories.get(key);
+			HashMap<String,HashMap> subCat = categories.get(key);
 			
 			if (subCat.size() != 0) {
 				JTabbedPane subTabbedPane = new JTabbedPane();
-					if (recursiveBuildGui(subCat, items, thisCatKey, subTabbedPane, selectNextCat, otherPanelHeight) > 0) {
+					if (buildGuiWithTabbedPane(subCat, items, thisCatKey, subTabbedPane, selectNextCat, otherPanelHeight) > 0) {
 						if (currentPane instanceof JTabbedPane) {
 						 currentPane.add(subTabbedPane, catName);
 						} else {

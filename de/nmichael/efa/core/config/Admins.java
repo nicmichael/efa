@@ -186,13 +186,19 @@ public class Admins extends StorageObject {
         if (name == null || password == null || password.length() < AdminRecord.MIN_PASSWORD_LENGTH) {
             return null;
         }
+        name=name.trim();
         AdminRecord admin = getAdmin(name);
         if (admin == null || admin.getPassword() == null) {
             // for efaCloud configurations the user may also be authenticated using the efaCloud server
             // authentication. On any error admin will be null.
             if ((Daten.project == null) ||
-                    (Daten.project.getProjectStorageType() != IDataAccess.TYPE_EFA_CLOUD))
-                return null;
+                    (Daten.project.getProjectStorageType() != IDataAccess.TYPE_EFA_CLOUD)) {
+            	// protocol failed logins as warning
+            	Logger.log(Logger.WARNING, Logger.MSG_ADMIN_LOGINFAILURE, International.getString("Admin-Login") + ": "
+    					+ International.getMessage("Name {name} oder Paßwort ungültig!", name));
+            	return null;
+            }
+            // efaCloud authentication
             TxRequestQueue txq = TxRequestQueue.getInstance();
             if (txq == null)
                 return null;
@@ -200,25 +206,43 @@ public class Admins extends StorageObject {
                 || (txq.getState() == TxRequestQueue.QUEUE_IS_DISCONNECTED)) {
                 Dialog.error(International.getString(
                         "Admin login am efaCloud-Server zur Zeit nicht möglich, die Verbindung ist unterbrochen."));
+            	
+                Logger.log(Logger.WARNING, Logger.MSG_ADMIN_LOGINFAILURE, International.getString("Admin-Login") + ": "+ name+ ": "
+    					+ International.getString("Admin login am efaCloud-Server zur Zeit nicht möglich, die Verbindung ist unterbrochen."));
+                
                 return null;
             }
             if (TxRequestQueue.efa_cloud_used_api_version < 2) {
                 Dialog.error(International.getString(
                         "Admin login am efaCloud-Server benötigt dort Version 2.3.1 und höher."));
+                
+                Logger.log(Logger.WARNING, Logger.MSG_ADMIN_LOGINFAILURE, International.getString("Admin-Login") + ": "+ name+ ": "
+    					+ International.getString("Admin login am efaCloud-Server benötigt dort Version 2.3.1 und höher."));
+
                 return null;
             }
             EfaCloudUsers efaCloudUsers = Daten.project.getEfaCloudUsers(true);
             EfaCloudUserRecord ecr = efaCloudUsers.login(this, name, password);
-            if (ecr == null)
+            if (ecr == null) {
+            	Logger.log(Logger.WARNING, Logger.MSG_ADMIN_LOGINFAILURE, International.getString("Admin-Login") + ": "+ name+ ": "
+            			   + International.getString("Admin login via efaCloud-Server fehlgeschlagen, Name oder Passwort ungültig!"));
                 return null;
+            }
             admin = new AdminRecord(this, ecr);
             txq = TxRequestQueue.getInstance();
             txq.setAdminCredentials(ecr.getAdminName(),Integer.toString(ecr.getEfaCloudUserID()), password);
+            Logger.log(Logger.INFO, Logger.MSG_ADMIN_LOGIN, International.getString("Admin-Login") + ": " + name);
             return admin;
         }
+        // local admin, check password
         if (admin.getPassword().equals(new DataTypePasswordHashed(password))) {
             // local admin, do not change the efaCloud credentials.
+            Logger.log(Logger.INFO, Logger.MSG_ADMIN_LOGIN, International.getString("Admin-Login") + ": " + name);
             return admin;
+        } else {
+        	// protocol failed logins as warning
+        	Logger.log(Logger.WARNING, Logger.MSG_ADMIN_LOGINFAILURE, International.getString("Admin-Login") + ": "
+					+ International.getMessage("Name {name} oder Paßwort ungültig!", name));
         }
         return null;
     }
