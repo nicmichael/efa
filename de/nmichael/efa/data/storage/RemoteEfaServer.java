@@ -976,7 +976,7 @@ public class RemoteEfaServer {
             final AdminRecord _admin = admin;
             RemoteEfaMessage response;
             if (EfaBoathouseFrame.efaBoathouseFrame != null) {
-            	/*
+            	/* TODO:
             	 * We will only run online updates on efaRemote with the default GitHub repository
             	 * and avoid beta releases. Beta releases have to be installed manually using the GUI of efaBths
             	 * or a manual update.
