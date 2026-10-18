@@ -10,12 +10,27 @@
 
 package de.nmichael.efa.core.items;
 
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.io.File;
+
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+
 import de.nmichael.efa.gui.BaseFrame;
-import de.nmichael.efa.util.*;
 import de.nmichael.efa.util.Dialog;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
+import de.nmichael.efa.util.EfaUtil;
+import de.nmichael.efa.util.International;
+import de.nmichael.efa.util.Logger;
+import de.nmichael.efa.util.Mnemonics;
 
 // @i18n complete
 
@@ -42,7 +57,13 @@ public class ItemTypeImage extends ItemType {
     }
 
     public IItemType copyOf() {
-        return new ItemTypeImage(name, value, maxX, maxY, type, category, description);
+        ItemTypeImage copy = new ItemTypeImage(name, value, maxX, maxY, type, category, description);
+        copy.setFieldSize(fieldWidth,  fieldHeight);
+        copy.setIndent(this.isIndent());
+        copy.setVisible(this.isVisible());
+        copy.setFieldGrid(fieldGridWidth, fieldGridHeight, fieldGridAnchor, fieldGridFill);
+        copy.setPadding(padXbefore, padXafter, padYbefore, padYafter);
+        return copy;
     }
 
     public void parseValue(String value) {
@@ -64,7 +85,9 @@ public class ItemTypeImage extends ItemType {
         image.setToolTipText(getDescription());
         image.setHorizontalAlignment(SwingConstants.CENTER);
         image.setHorizontalTextPosition(SwingConstants.CENTER);
+        
         this.field = image;
+        
         setImage(toString());
         label = new JLabel();
         Mnemonics.setLabel(dlg, label, getDescription() + ": ");
@@ -89,13 +112,13 @@ public class ItemTypeImage extends ItemType {
         removeButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(ActionEvent e) { removeButtonHit(e); }
         });
-        field = image;
     }
 
     public int displayOnGui(Window dlg, JPanel panel, int x, int y) {
         this.dlg = dlg;
         iniDisplay();
         this.field = image;
+        x=(this.isIndent() ? x+1 : x);
         panel.add(label, new GridBagConstraints(x, y, 1, 2, 0.0, 0.0,
                 GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(padYbefore, padXbefore, 0, 0), 0, 0));
         panel.add(image, new GridBagConstraints(x+1, y, 1, 2, 0.0, 0.0,
@@ -112,7 +135,7 @@ public class ItemTypeImage extends ItemType {
     }
 
     private void setImage(String filename) {
-        value = "";
+        value = ""; // clear value first, so that if an exception occurs, the value is not set to a wrong filename
         if (field == null) {
             return;
         }
@@ -123,10 +146,16 @@ public class ItemTypeImage extends ItemType {
         }
         try {
             ((JLabel)field).setText("");
-            ((JLabel)field).setIcon(new ImageIcon(filename));
-            value = filename;
+            if (new File(filename).exists()) {
+                ((JLabel)field).setIcon(new ImageIcon(filename));
+                value = filename; // if no exception occurred, set value to filename
+			} else {
+				((JLabel)field).setText(International.getMessage("{filedescription} '{filename}' existiert nicht",
+                        International.getString("Datei"),"")+".");
+				((JLabel)field).setIcon(null);
+			}
         } catch (Exception ee) {
-            EfaUtil.foo();
+        	Logger.logdebug(ee); 
         }
     }
 
@@ -153,7 +182,7 @@ public class ItemTypeImage extends ItemType {
     }
 
     private void removeButtonHit(ActionEvent e) {
-        if (value == null) {
+        if (value == null || value.length() == 0) {
             return;
         }
         if (Dialog.yesNoDialog(International.getString("Wirklich entfernen"),
@@ -177,9 +206,11 @@ public class ItemTypeImage extends ItemType {
     public void showValue() {
         try {
             ((JLabel)field).setText("");
-            ((JLabel)field).setIcon(new ImageIcon(value));
+            if (value!=null) {
+            	((JLabel)field).setIcon(new ImageIcon(value));
+            }
         } catch (Exception ee) {
-            EfaUtil.foo();
+            Logger.logdebug(ee);
         }
     }
 
@@ -197,19 +228,35 @@ public class ItemTypeImage extends ItemType {
     }
 
     public void setVisible(boolean visible) {
-        image.setVisible(visible);
-        label.setVisible(visible);
-        selectButton.setVisible(visible);
-        removeButton.setVisible(visible);
-        super.setVisible(visible);
+		super.setVisible(visible);
+    	if (image!=null) {
+			image.setVisible(visible);
+		}
+		if (label!=null) {
+			label.setVisible(visible);
+		}
+		if (selectButton!=null) {
+			selectButton.setVisible(visible);
+		}
+		if (removeButton!=null) {
+			removeButton.setVisible(visible);
+		}
     }
 
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
-        image.setForeground((enabled ? (new JLabel()).getForeground() : Color.gray));
-        label.setForeground((enabled ? (new JLabel()).getForeground() : Color.gray));
-        selectButton.setEnabled(enabled);
-        removeButton.setEnabled(enabled);
+        if (image!=null) { 
+            image.setForeground((enabled ? (new JLabel()).getForeground() : Color.gray));
+        }
+        if (label!=null) {
+	        label.setForeground((enabled ? (new JLabel()).getForeground() : Color.gray));		
+        }
+        if (selectButton!=null) {
+        	selectButton.setEnabled(enabled);
+        }
+        if (removeButton!=null) {
+			removeButton.setEnabled(enabled);
+		}
     }
 
 }

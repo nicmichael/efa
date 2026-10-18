@@ -8,9 +8,22 @@
  */
 package de.nmichael.efa.data;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.UUID;
+import java.util.Vector;
+import java.util.regex.Pattern;
+
 import de.nmichael.efa.Daten;
 import de.nmichael.efa.core.config.AdminRecord;
-import de.nmichael.efa.core.items.*;
+import de.nmichael.efa.core.items.IItemFactory;
+import de.nmichael.efa.core.items.IItemType;
+import de.nmichael.efa.core.items.ItemTypeBoolean;
+import de.nmichael.efa.core.items.ItemTypeDate;
+import de.nmichael.efa.core.items.ItemTypeDouble;
+import de.nmichael.efa.core.items.ItemTypeItemList;
+import de.nmichael.efa.core.items.ItemTypeString;
+import de.nmichael.efa.core.items.ItemTypeStringAutoComplete;
 import de.nmichael.efa.data.storage.DataKey;
 import de.nmichael.efa.data.storage.DataRecord;
 import de.nmichael.efa.data.storage.IDataAccess;
@@ -18,16 +31,11 @@ import de.nmichael.efa.data.storage.MetaData;
 import de.nmichael.efa.data.types.DataTypeDate;
 import de.nmichael.efa.data.types.DataTypeTime;
 import de.nmichael.efa.ex.EfaException;
+import de.nmichael.efa.gui.EfaGuiUtils;
 import de.nmichael.efa.gui.util.TableItem;
 import de.nmichael.efa.gui.util.TableItemHeader;
 import de.nmichael.efa.util.International;
 import de.nmichael.efa.util.Logger;
-
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.UUID;
-import java.util.Vector;
-import java.util.regex.Pattern;
 
 /*
  * Some Infos on Clubwork.
@@ -453,6 +461,7 @@ public class ClubworkRecord extends DataRecord implements IItemFactory {
         
         v.add(item = new ItemTypeDate(WORKDATE, getWorkDate(),
                 IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("Datum")));
+        item.setPadding(0, 0, 20, 0);
         
         // by this, the workdate is checked wether it is in the clubwork period.
         ((ItemTypeDate)item).setMustBeAfter(clubworkPeriodStart, true);

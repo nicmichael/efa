@@ -13,12 +13,13 @@ package de.nmichael.efa.data.storage;
 import com.sun.net.httpserver.*;
 import de.nmichael.efa.Daten;
 import de.nmichael.efa.core.config.AdminRecord;
+import de.nmichael.efa.core.update.OnlineUpdate;
 import de.nmichael.efa.gui.EfaBoathouseFrame;
 import de.nmichael.efa.util.Base64;
 import de.nmichael.efa.util.EfaUtil;
 import de.nmichael.efa.util.International;
 import de.nmichael.efa.util.Logger;
-import de.nmichael.efa.core.OnlineUpdate;
+
 import java.io.*;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -975,7 +976,12 @@ public class RemoteEfaServer {
             final AdminRecord _admin = admin;
             RemoteEfaMessage response;
             if (EfaBoathouseFrame.efaBoathouseFrame != null) {
-                if (OnlineUpdate.runOnlineUpdate(null, Daten.ONLINEUPDATE_INFO)) {
+            	/* TODO:
+            	 * We will only run online updates on efaRemote with the default GitHub repository
+            	 * and avoid beta releases. Beta releases have to be installed manually using the GUI of efaBths
+            	 * or a manual update.
+            	 */
+                if (OnlineUpdate.runOnlineUpdateGitHubNewestProd(null, false)) {
                     EfaBoathouseFrame.efaBoathouseFrame.cancelRunInThreadWithDelay(EfaBoathouseFrame.EFA_EXIT_REASON_ONLINEUPDATE, _admin, true);
                     response  = RemoteEfaMessage.createResponseResult(request.getMsgId(), RemoteEfaMessage.RESULT_OK, null);
                 } else {

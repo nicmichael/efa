@@ -41,6 +41,7 @@ public abstract class ItemType implements IItemType {
     protected Color savedBkgColor = null;
     protected Color backgroundColorWhenFocused = null;
     protected Border border = null;
+    private boolean indent = false;
     protected int padXbefore = 0;
     protected int padXafter = 0;
     protected int padYbefore = 0;
@@ -147,7 +148,16 @@ public abstract class ItemType implements IItemType {
     public boolean hasFocus() {
         return (field != null && field.hasFocus());
     }
-
+    
+    /**
+	 * Sets the padding (in pixels) around the field when displayed on the GUI.
+	 * xBefore, xAfter,  yBefore, yAfter are the padding values in pixels for the left, right, top and bottom of the field respectively.
+	 * 
+	 * @param padXbefore Padding before the field in X direction (left)
+	 * @param padXafter Padding after the field in X direction (right)
+	 * @param padYbefore Padding before the field in Y direction (top)
+	 * @param padYafter Padding after the field in Y direction (bottom)
+	 */
     public void setPadding(int padXbefore, int padXafter, int padYbefore, int padYafter) {
         this.padXbefore = padXbefore;
         this.padXafter = padXafter;
@@ -349,5 +359,11 @@ public abstract class ItemType implements IItemType {
 	public void setStoreItem(boolean storeItem) {
 		this.storeItem = storeItem;
 	}
+	public boolean isIndent() {
+		return indent;
+	}
 
+	public void setIndent(boolean indent) {
+		this.indent = indent;
+	}
 }

@@ -17,6 +17,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import javax.swing.ProgressMonitor;
 
 public class DownloadThread {
@@ -139,9 +143,13 @@ public class DownloadThread {
 
     public static boolean getFile(Window frame, String remote, String local, boolean wait) {
         try {
-            URLConnection conn = new URL(remote).openConnection();
-            conn.connect();
-            return runDownload(frame, conn, remote, local, wait);
+        	if (remote == null || remote.toLowerCase().startsWith("file://")) {
+        		return copyLocalFile(remote, local);
+        	} else {
+	            URLConnection conn = new URL(remote).openConnection();
+	            conn.connect();
+	            return runDownload(frame, conn, remote, local, wait);
+        	}
         } catch (Exception e) {
             // if frame==null, we run in "silent" mode
             if (frame != null) {
@@ -154,9 +162,19 @@ public class DownloadThread {
 
     public static boolean getFile(Window frame, String remote, String local, ExecuteAfterDownload afterDownload) {
         try {
-            URLConnection conn = new URL(remote).openConnection();
-            conn.connect();
-            return runDownload(frame, conn, remote, local, afterDownload);
+        	if (remote == null || remote.toLowerCase().startsWith("file://")) {
+        		if (copyLocalFile(remote, local)) {
+			        afterDownload.success();
+					return true;
+        		} else {
+					afterDownload.failure(International.getString("Fehler beim Kopieren der Datei"));
+					return false;
+				}
+        	} else {
+	            URLConnection conn = new URL(remote).openConnection();
+	            conn.connect();
+	            return runDownload(frame, conn, remote, local, afterDownload);
+        	}
         } catch (Exception e) {
             if (frame != null) {
                 Dialog.error(LogString.operationFailed(International.getString("Download"),e.toString()) + "\n"
@@ -165,6 +183,23 @@ public class DownloadThread {
             return false;
         }
     }
+
+	private static boolean copyLocalFile(String remote, String local) {
+		remote = remote.substring(7); // remove "file://" prefix
+		
+		Path source= Paths.get(remote);
+		Path target = Paths.get(local);
+		try {
+		    // Option StandardCopyOption.REPLACE_EXISTING überschreibt die Zieldatei, falls sie bereits existiert
+		    Files.copy(source, target, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+		    System.out.println("Datei erfolgreich kopiert!");
+		} catch (IOException e) {
+		    Dialog.error(LogString.operationFailed(International.getString("Download"),e.toString()) + "\n");
+
+			return false; // error while copying the file
+		}
+		return true; // file copied successfully
+	}
 
 
     class ActualTask {

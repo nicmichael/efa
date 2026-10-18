@@ -20,14 +20,21 @@ public class ItemTypeInternationalReplacement extends ItemTypeStringHashtable {
 	}
 
 	public IItemType copyOf() {
-		ItemTypeInternationalReplacement item = new ItemTypeInternationalReplacement(name, value, isEditable, type,
+		ItemTypeInternationalReplacement copy = new ItemTypeInternationalReplacement(name, value, isEditable, type,
 				category, description);
 		String[] myKeys = this.getKeysArray();
 		for (int i = 0; i < myKeys.length; i++) {
 			String value = get(myKeys[i]);
-			item.put(myKeys[i], value);
+			copy.put(myKeys[i], value);
 		}
-		return item;
+		
+        copy.setFieldSize(fieldWidth,  fieldHeight);
+        copy.setIndent(this.isIndent());
+        copy.setVisible(this.isVisible());
+        copy.setFieldGrid(fieldGridWidth, fieldGridHeight, fieldGridAnchor, fieldGridFill);
+        copy.setPadding(padXbefore, padXafter, padYbefore, padYafter);
+ 
+		return copy;
 	}
 
 	public Hashtable<String, String> getMap() {

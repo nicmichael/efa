@@ -1630,10 +1630,15 @@ public class EfaUtil {
 
     // Entpacken eines Ziparchivs zipFile in einem Verzeichnis destDir
     // Rückgabe: null, wenn erfolgreich; String != null mit Fehlermeldungen, sonst
-    public static String unzip(String zipFile, String destDir) {
-        return unzip(zipFile, destDir, null, null);
+    @Deprecated
+    //new variant EfaZIPUtils
+    public static String unzipOld(String zipFile, String destDir) {
+        return unzipOld(zipFile, destDir, null, null);
     }
-    public static String unzip(String zipFile, String destDir,
+
+    @Deprecated
+    //new variant EfaZIPUtils
+    public static String unzipOld(String zipFile, String destDir,
             String replaceFilePostfixSource, String replaceFilePostfixDest) {
         if (!(new File(zipFile)).isFile()) {
             return LogString.fileNotFound(zipFile, International.getString("ZIP-Archiv"));
@@ -1721,6 +1726,9 @@ public class EfaUtil {
         return result;
     }
 
+    /* This method is only used by DRV.DatensicherungFrame.
+     * efaBackup uses a different technology. so this method remains unchanged, although it has some flaws.
+     */
     public static String createZipArchive(Vector sourceDirs, Vector inclSubdirs, String zipFile) {
     	ZipOutputStream out=null;
         String warnings = "";
@@ -2310,6 +2318,10 @@ public class EfaUtil {
 			UIManager.put("TabbedPane.selectedForeground", Daten.efaConfig.getHeaderForegroundColor());
 		    UIManager.put("TabbedPane.selectedBackground", Daten.efaConfig.getHeaderBackgroundColor());
 		    UIManager.put("TabbedPane.selected", Daten.efaConfig.getHeaderBackgroundColor());
+	    }
+	    if (Daten.lookAndFeel.endsWith(Daten.LAF_NIMBUS)) {
+	    	//use orange focus color for Nimbus LAF
+	    	UIManager.put("nimbusFocus", new Color(0xFF9900)); // orange
 	    }
     }
     

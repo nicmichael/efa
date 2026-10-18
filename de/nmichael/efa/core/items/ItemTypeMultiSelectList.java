@@ -45,11 +45,14 @@ public class ItemTypeMultiSelectList<T> extends ItemType implements ActionListen
     }
 
     public ItemTypeMultiSelectList copyOf() {
-        ItemTypeMultiSelectList mylist = new ItemTypeMultiSelectList(name, new DataTypeList<T>(value), keyData.clone(), displayData.clone(), type, category, description);
-        mylist.setFieldGrid(this.fieldGridWidth, this.fieldGridAnchor, this.fieldGridFill);
-        mylist.setFieldSize(this.fieldWidth, this.fieldHeight);
-        mylist.setPadding(this.padXbefore, this.padXafter, this.padYbefore, this.padYafter);
-        return mylist;
+        ItemTypeMultiSelectList copy = new ItemTypeMultiSelectList(name, new DataTypeList<T>(value), keyData.clone(), displayData.clone(), type, category, description);
+        copy.setFieldGrid(this.fieldGridWidth, this.fieldGridAnchor, this.fieldGridFill);
+        copy.setFieldSize(this.fieldWidth, this.fieldHeight);
+        copy.setPadding(this.padXbefore, this.padXafter, this.padYbefore, this.padYafter);
+        copy.setIndent(this.isIndent());
+        copy.setVisible(this.isVisible());
+
+        return copy;
     }
 
     public int size() {
@@ -84,6 +87,8 @@ public class ItemTypeMultiSelectList<T> extends ItemType implements ActionListen
     }
 
     public int displayOnGui(Window dlg, JPanel panel, int x, int y) {
+        //respect the indent property of the item, if set
+        x=(this.isIndent() ? x+1 : x);
         panel.add(setupPanel(dlg), new GridBagConstraints(x+xoffset, y+yoffset, fieldGridWidth, fieldGridHeight, 0.0, 0.0,
                 fieldGridAnchor, fieldGridFill, new Insets(padYbefore, 0, padYafter, padXafter), 0, 0));
         showValue();

@@ -10,10 +10,10 @@
 package de.nmichael.efa.statistics;
 
 import de.nmichael.efa.Daten;
-import de.nmichael.efa.core.OnlineUpdate;
 import de.nmichael.efa.core.Plugins;
 import de.nmichael.efa.core.config.AdminRecord;
 import de.nmichael.efa.core.config.EfaTypes;
+import de.nmichael.efa.core.update.OnlineUpdate;
 import de.nmichael.efa.data.*;
 import de.nmichael.efa.data.StatisticsRecord.OutputTypes;
 import de.nmichael.efa.data.StatisticsRecord.StatisticCategory;
@@ -2393,7 +2393,7 @@ public class StatisticTask extends ProgressTask {
             long lastUpdate = System.currentTimeMillis() - Daten.efaConfig.getValueEfaVersionLastCheck();
             long versionAge = EfaUtil.getDateDiff(Daten.VERSIONRELEASEDATE, EfaUtil.getCurrentTimeStampDD_MM_YYYY());
             if (lastUpdate > 7 * 24 * 60 * 60 * 1000 && versionAge > 7) {
-                if (!OnlineUpdate.runOnlineUpdate(lastParentDialog, Daten.ONLINEUPDATE_INFO)) {
+                if (!OnlineUpdate.runOnlineUpdateGitHubNewestProd(lastParentDialog, false /*no beta versions*/)) {
                     Dialog.error("Das Erstellen von Meldedateien erfordert eine aktuelle Version von efa.\n" +
                                  "Vor dem Fortfahren mit der Meldung ist ein Online-Update erforderlich.");
                     return false;

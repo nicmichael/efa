@@ -42,6 +42,10 @@ section="Other"
 		<Section name="Admin/Data Edit">
 			<Translation lang="de">Administration/Datenerfassung</Translation>
 			<Translation lang="en">Admin/Data Edit</Translation>
+		</Section>		
+		<Section name="Admin/Configuration">
+			<Translation lang="de">Administration/Konfiguration</Translation>
+			<Translation lang="en">Admin/Configuration</Translation>
 		</Section>
 		<Section name="Admin/Other">
 			<Translation lang="de">Administration/Sonstiges</Translation>
@@ -80,6 +84,38 @@ section="Other"
 			<Translation lang="en">Other</Translation>
 		</Section>
 	</Sections>
+	<Version>
+        <VersionID>2.5.4_#1</VersionID>
+        <ReleaseDate>18.10.2026</ReleaseDate>
+        <DownloadUrl>https://github.com/nicmichael/efa/releases/download/2.5.4_1/efa2.5.4_1.zip</DownloadUrl>
+        <DownloadSize>TODO</DownloadSize>
+     	<MinimumJavaVersion>1.8</MinimumJavaVersion>
+		<MinimumEfaCloudVersion>2.3.3</MinimumEfaCloudVersion>
+        <ShowNotice lang="de">Wenn efaCloud eingesetzt wird, muss der Server mindestens Version 2.3.3 unterstützen. EfaCloud 2.4.0_12 und höher werden empfohlen.</ShowNotice>
+        <ShowNotice lang="en">If you use efaCloud, make sure your server at least supports efaCloud Version 2.3.3. It is recommended to upgrade to EfaCloud 2.4.0_12 or above.</ShowNotice>
+        <Changes lang="de">
+			<ChangeItem section="Admin/Other">Neu: Online-Update überarbeitet. Unterstützt Update von GitHub, efa.nmichael.de oder von einem lokalen Verzeichnis/USB Stick. Der Anwender kann wählen, aus welcher Quelle das Update installiert werden soll.</ChangeItem>
+			<ChangeItem section="GUI/Usability">Neu: Im Nimbus-LookAndFeel ist die Fokusfarbe Orange statt Blau und damit besser sichtbar.</ChangeItem>
+			<ChangeItem section="Statistics">Neu: Wettbewerbe/Rudern in Deutschland: Das Auto-Update bei der Erstellung von Wettkampf-Update geht nun auf GitHub Repository und berücksichtigt dort ausschließlich produktive efa-Versionen.</ChangeItem>
+			<ChangeItem section="Other">Neu: Das Online-Update über efaRemote lädt jeweils nur die neueste produktive efa-Version von GitHub. Keine Auswahl der Zielversion möglich (dies geht nur beim lokalen Update vor Ort).</ChangeItem>
+			<ChangeItem section="Other">Bugfix: Die bisherige Unzip-Methode für das Online-Update wurde gehärtet.</ChangeItem>
+			<ChangeItem section="Other">Bugfix: Die Reihenfolge (Sortierung) der Build-Nummern von Produktions- und Beta-Version wurde festgelegt und dokumentiert. So können anhand der eou.xml und der aktuellen efa-Versionsnummer automatisiert alle neueren Versionen identifiziert werden.</ChangeItem>
+			<ChangeItem section="Other">Bugfix: Alle Oberflächenelemente vom Typ ItemType wurden gehärtet gegen Nullpointer und Programmierfehler.</ChangeItem>
+			<ChangeItem section="Other">Neu: XSLT-Scripte zum automatisierten Erstellen von Changelogs zwischen zwei efa-Versionen erstellt, wahlweise nach HTML oder MarkDown für GitHub. Änderungen werden nach Bereich der Änderungen gruppiert.</ChangeItem>
+			<ChangeItem section="Other">Neu: XSLT-Scripte für das Erstellen des efa-Changelogs im "Über Efa" Dialog unterstützen zwei Sprachen und geben Änderungen nach Bereich gruppiert aus, und stellen Neuerungen getrennt von Bugfixes dar.</ChangeItem>
+		</Changes>
+        <Changes lang="en">
+        	<ChangeItem section="Admin/Other">New: Online update revised. Supports update from GitHub, efa.nmichael.de or from a local directory/USB stick. The user can choose from which source the update shall be installed from.</ChangeItem>
+        	<ChangeItem section="GUI/Usability">New: In the Nimbus LookAndFeel, the focus color is orange instead of blue and thus better visible.</ChangeItem>
+        	<ChangeItem section="Statistics">New: Competitions/Rowing in Germany: The auto-update when creating a competition update now goes to the GitHub repository and only considers productive efa versions there.</ChangeItem>
+        	<ChangeItem section="Other">New: The online update via efaRemote now only downloads the latest productive efa version from GitHub. No selection of the target version is possible (this is only possible with the local update on site).</ChangeItem>
+        	<ChangeItem section="Other">Bugfix: The previous unzip method for the online update has been hardened.</ChangeItem>
+        	<ChangeItem section="Other">Bugfix: The order (sorting) of the build numbers of production and beta versions has been defined and documented. This allows all newer versions to be identified automatically based on the eou.xml and the current efa version number.</ChangeItem>
+        	<ChangeItem section="Other">Bugfix: All GUI elements of type ItemType have been hardened against null pointers and programming errors.</ChangeItem>
+        	<ChangeItem section="Other">New: XSLT scripts created for automatically generating changelogs between two efa versions, optionally in HTML or MarkDown for GitHub. Changes are grouped by area of change.</ChangeItem>
+        	<ChangeItem section="Other">New: XSLT scripts for creating the efa changelog in the "About Efa" dialog support two languages and output changes grouped by area, and display new features separately from bug fixes.</ChangeItem>
+        </Changes>
+	</Version>
 	<Version>
         <VersionID>2.5.3_17</VersionID>
         <ReleaseDate>11.10.2026</ReleaseDate>

@@ -10,7 +10,6 @@
 
 package de.nmichael.efa.drv;
 
-import de.nmichael.efa.core.OnlineUpdate;
 import de.nmichael.efa.util.*;
 import de.nmichael.efa.util.Dialog;
 import java.awt.*;
@@ -18,6 +17,8 @@ import java.awt.event.*;
 import javax.swing.*;
 import java.io.*;
 import de.nmichael.efa.*;
+import de.nmichael.efa.core.update.OnlineUpdate;
+
 import java.util.Vector;
 
 // @i18n complete (needs no internationalization -- only relevant for Germany)
@@ -258,7 +259,7 @@ public class DRVAdminFrame extends JDialog implements ActionListener {
   }
 
   void updateButton_actionPerformed(ActionEvent e) {
-    OnlineUpdate.runOnlineUpdate(this,Daten.ONLINEUPDATE_INFO_DRV);
+    OnlineUpdate.runOnlineUpdateGitHubNewestProd(this, false /*no beta versions*/);
   }
 
   void datensicherungButton_actionPerformed(ActionEvent e) {

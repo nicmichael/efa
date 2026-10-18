@@ -332,6 +332,7 @@ public class ItemTypeDataRecordTable extends ItemTypeTable implements IItemListe
 
 
     public int displayOnGui(Window dlg, JPanel panel, int x, int y) {
+    	// we ignore the indents, so no check for isIndent() here. The table should always be displayed in the same column as the other items.
         iniDisplayActionTable(dlg);
         panel.add(myPanel, new GridBagConstraints(x, y, fieldGridWidth, fieldGridHeight, 1.0, 1.0, // 1.0 means grow with the element size.-
                 fieldGridAnchor, fieldGridFill, new Insets(padYbefore, padXbefore, padYafter, padXafter), 0, 0));

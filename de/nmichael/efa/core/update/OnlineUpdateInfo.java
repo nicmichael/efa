@@ -8,12 +8,16 @@
  * @version 2
  */
 
-package de.nmichael.efa.core;
+package de.nmichael.efa.core.update;
 
 import de.nmichael.efa.util.International;
 import java.util.Hashtable;
 import java.util.Vector;
 
+/**
+ * This class holds information about an online update, including version ID, release date, 
+ * download URL, download size, and change items.
+ */
 public class OnlineUpdateInfo {
     public String versionId;
     public String releaseDate;

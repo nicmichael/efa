@@ -15,7 +15,6 @@ import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
-import java.util.StringTokenizer;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -32,6 +31,13 @@ import de.nmichael.efa.util.Mnemonics;
 
 // @i18n complete
 
+/**
+ * This class represents a button that can be configured in the configuration dialog.
+ * 
+ * The button can have a text, a background color and a visibility state.
+ * The text, color and visibility can be changeable or not.
+ * The button can be displayed in the configuration dialog with a label and a checkbox for visibility.
+ */
 public class ItemTypeConfigButton extends ItemType {
 
     private String text;
@@ -64,42 +70,52 @@ public class ItemTypeConfigButton extends ItemType {
         ItemTypeConfigButton copy = new ItemTypeConfigButton(name, text, bcolor, show, isChangeableText, isChangeableColor, isChangeableShow, 
         		type, category, description);
         copy.setFieldSize(fieldWidth,  fieldHeight);
+        copy.setIndent(this.isIndent());
+        copy.setVisible(this.isVisible());
+        copy.setFieldGrid(fieldGridWidth, fieldGridHeight, fieldGridAnchor, fieldGridFill);
+        copy.setPadding(padXbefore, padXafter, padYbefore, padYafter);
         return copy;
     }
 
+    /**
+     * Parses a serialized value string in the format "text|color|show".
+     *
+     * Fields are separated by '|'. Empty fields are preserved (split with limit -1),
+     * so the position of each field always stays the same. A field is only applied
+     * if the corresponding "changeable" flag is set. Unchangeable fields are written
+     * as "#" by toString() and are therefore ignored here.
+     *
+     * @param value the serialized value, or null (then nothing is changed)
+     */
     public void parseValue(String value) {
-        if (value == null) return;
-        value = value.trim();
+        // Nothing to parse
+        if (value == null) {
+            return;
+        }
+
         try {
-            StringTokenizer tok = new StringTokenizer(value, "|");
-            int i = 0;
-            while (tok.hasMoreTokens()) {
-                String t = tok.nextToken();
-                if (t.length() > 0) {
-                    switch(i) {
-                        case 0:
-                            if (isChangeableText) {
-                                text = t;
-                            }
-                            break;
-                        case 1:
-                            if (isChangeableColor) {
-                                bcolor = t;
-                            }
-                            break;
-                        case 2:
-                            if (isChangeableShow) {
-                                show = t.equals("+");
-                            }
-                            break;
-                    }
-                }
-                i++;
+            // Remove surrounding whitespace and split into fields.
+            // A limit of -1 keeps trailing and empty fields, so positions do not shift.
+            String[] parts = value.trim().split("\\|", -1);
+
+            // Field 0: button text
+            if (parts.length > 0 && isChangeableText) {
+                text = parts[0];
+            }
+
+            // Field 1: background color
+            if (parts.length > 1 && isChangeableColor) {
+                bcolor = parts[1];
+            }
+
+            // Field 2: visibility ("+" = visible, anything else = hidden)
+            if (parts.length > 2 && isChangeableShow) {
+                show = parts[2].equals("+");
             }
         } catch (Exception e) {
+            // Log unexpected parsing errors instead of failing silently
             Logger.log(Logger.ERROR, Logger.MSG_CORE_UNSUPPORTEDDATATYPE,
                     "Invalid value for parameter " + name + ": " + value);
-
         }
     }
 
@@ -143,6 +159,8 @@ public class ItemTypeConfigButton extends ItemType {
     public int displayOnGui(Window dlg, JPanel panel, int x, int y) {
         this.dlg = dlg;
         iniDisplay();
+        /* we ignore the x parameter and the indent property , because we always want to display the label in column 0, 
+         * the field in column 1 and the checkbox in column 2 */
         panel.add(label, new GridBagConstraints(0, y, 1, 1, 0.0, 0.0,
                 GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(padYbefore, padXbefore, padYafter, 0), 0, 0));
         panel.add(field, new GridBagConstraints(1, y, 1, 1, 0.0, 0.0,
@@ -156,13 +174,19 @@ public class ItemTypeConfigButton extends ItemType {
 
     public void getValueFromGui() {
         if (isChangeableText) {
-            text = ((JButton)field).getText();
+        	if (field != null) {
+        		text = ((JButton)field).getText();
+			}
         }
         if (isChangeableColor) {
-            bcolor = EfaUtil.getColor(field.getBackground());
+        	if (field != null) {
+        		bcolor = EfaUtil.getColor(field.getBackground());
+        	}
         }
         if (isChangeableShow) {
-            show = checkbox.isSelected();
+            if (checkbox != null) {
+            	show = checkbox.isSelected();
+            }
         }
     }
 
@@ -208,12 +232,12 @@ public class ItemTypeConfigButton extends ItemType {
 
     private void chooseColor() {
         if (!isChangeableColor) return;
-        Color color = JColorChooser.showDialog(dlg,
+        Color tmpColor = JColorChooser.showDialog(dlg,
                 International.getMessage("{item} auswählen",
                 International.getString("Farbe")),
                 field.getBackground());
-        if (color != null) {
-            field.setBackground(color);
+        if (tmpColor != null) {
+            field.setBackground(tmpColor);
         }
 
     }
@@ -247,18 +271,27 @@ public class ItemTypeConfigButton extends ItemType {
     }
 
     public void setVisible(boolean visible) {
-        label.setVisible(visible);
-        field.setVisible(visible);
+        super.setVisible(visible);
+    	if (label != null) {
+			label.setVisible(visible);
+		}
+    	if (field != null) {
+    		field.setVisible(visible);
+    	}
         if (checkbox != null) {
             checkbox.setVisible(visible);
         }
-        super.setVisible(visible);
     }
 
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
-        label.setForeground((enabled ? (new JLabel()).getForeground() : Color.gray));
-        field.setEnabled(enabled);
+        if (label != null) {
+            label.setForeground((enabled ? (new JLabel()).getForeground() : Color.gray));
+		}
+        if (field != null) {
+            field.setEnabled(enabled);
+		}
+
         if (checkbox != null) {
             checkbox.setEnabled(enabled);
         }

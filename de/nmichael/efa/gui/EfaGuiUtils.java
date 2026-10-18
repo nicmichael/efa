@@ -9,6 +9,7 @@
  */
 package de.nmichael.efa.gui;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Cursor;
@@ -97,43 +98,62 @@ public class EfaGuiUtils {
         return createHint(uniqueName, type, category, a, gridWidth, padBefore, padAfter);
 	}
 	
-	// Splits a string word-wise into an array. wordwrap when the next word does not fit into maxWidth pixels.
-    private static List<String> splitStringByWidth(String text, int maxWidth, FontMetrics fontMetrics) {
-        List<String> lines = new ArrayList<>();
-        if (text == null || text.isEmpty()) {
-            return lines;
-        }
-        String[] words = text.split("\\s+");
-        StringBuilder currentLine = new StringBuilder();
+	// Splits a string word-wise into lines. Wordwrap when the next word does not fit into maxWidth pixels.
+	// An explicit newline (\n) in the text always starts a new line.
+	/**
+	 * Splits a string into lines based on the specified maximum width in pixels.
+	 * The splitting is done word-wise, and explicit newline characters in the text are respected.
+	 *
+	 * @param text        The input string to be split.
+	 * @param maxWidth    The maximum width in pixels for each line.
+	 * @param fontMetrics The FontMetrics object used to measure the width of the text.
+	 * @return A list of strings, where each string represents a line that fits within the specified width.
+	 */
+	private static List<String> splitStringByWidth(String text, int maxWidth, FontMetrics fontMetrics) {
+	    List<String> lines = new ArrayList<>();
+	    if (text == null || text.isEmpty()) {
+	        return lines;
+	    }
 
-        for (String word : words) {
-            String testLine = currentLine.length() == 0 ? word : currentLine + " " + word;
-            int lineWidth = fontMetrics.stringWidth(testLine);
+	    // Zuerst an expliziten Zeilenumbrüchen trennen (-1: leere Abschnitte am Ende bleiben erhalten)
+	    for (String paragraph : text.split("\\r?\\n", -1)) {
+	        StringBuilder currentLine = new StringBuilder();
 
-            if (lineWidth > maxWidth) {
-                if (currentLine.length() > 0) {
-                    lines.add(currentLine.toString());
-                    currentLine = new StringBuilder(word);
-                } else {
-                    // einzelnes Wort passt nicht in eine Linie - füge es trotzdem als eigene Linie hinzu
-                    lines.add(word);
-                    currentLine = new StringBuilder();
-                }
-            } else {
-                if (currentLine.length() == 0) {
-                    currentLine.append(word);
-                } else {
-                    currentLine.append(" ").append(word);
-                }
-            }
-        }
+	        for (String word : paragraph.trim().split("\\s+")) {
+	            if (word.isEmpty()) {
+	                continue;
+	            }
+	            String testLine = currentLine.length() == 0 ? word : currentLine + " " + word;
+	            int lineWidth = fontMetrics.stringWidth(testLine);
 
-        if (currentLine.length() > 0) {
-            lines.add(currentLine.toString());
-        }
+	            if (lineWidth > maxWidth) {
+	                if (currentLine.length() > 0) {
+	                    lines.add(currentLine.toString());
+	                    currentLine = new StringBuilder(word);
+	                } else {
+	                    // einzelnes Wort passt nicht in eine Linie - als eigene Linie hinzufügen
+	                    lines.add(word);
+	                    currentLine = new StringBuilder();
+	                }
+	            } else {
+	                if (currentLine.length() == 0) {
+	                    currentLine.append(word);
+	                } else {
+	                    currentLine.append(" ").append(word);
+	                }
+	            }
+	        }
 
-        return lines;
-    }
+	        if (currentLine.length() > 0) {
+	            lines.add(currentLine.toString());
+	        } else {
+	            // Leerer Abschnitt (z. B. zwei aufeinanderfolgende \n): leere Zeile erhalten
+	            lines.add("");
+	        }
+	    }
+	    return lines;
+	}
+
 	/**
 	 * Adds a description item in an efa GUI. This description value is not safed
 	 * within efaConfig. There is no word-wrap for the caption.
@@ -415,5 +435,9 @@ public class EfaGuiUtils {
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         
     }
+    
+	public static Color getUrlLabelColor() {
+		return Color.BLUE;
+	}
 	
 }
