@@ -538,9 +538,15 @@ public class EfaMenuButton {
 
             boolean remoteEfa = false;
             if (Daten.project != null && Daten.project.getProjectStorageType() == IDataAccess.TYPE_EFA_REMOTE) {
+            	String efaRemoteUpdateHint = "Hinweis:\nDas Remote Online-Update startet sofort, und führt ein Update"+
+            			" auf die bei GitHub hinterlegte neueste Produktionsversion durch.\nEs ist kein remote Update"+
+            			" auf Testversionen möglich.\n\nDas Remote Update kann wegen Download, Backup, Installation,"+
+            			" Neustart von efa länger dauern. Daher ist es wahrscheinlich, dass auf diesem Rechner nach"+
+            			" 60 Sekunden eine Fehlermeldung wegen Timeout erscheint. Das heißt aber nicht, dass das Update"+
+            			" fehlgeschlagen ist.\nBitte prüfen Sie nach einigen Minuten, ob efa auf dem Remote-Rechner aktualisiert wurde.";
                 switch (Dialog.auswahlDialog(International.getString("Online-Update"),
                         International.getString("Lokales oder entferntes efa aktualisieren?")
-                        + "\n\n"+ International.getString("Hinweis: Das Remote-Update startet sofort und aktualisiert das entfernte efa auf die aktuellste Produktionsversion von GitHub).\n\nEs ist kein remote Update auf Testversionen möglich."),
+                        + "\n\n"+ International.getString(efaRemoteUpdateHint),
                         International.getString("Lokal"),
                         International.getString("Remote"), true)) {
                     case 0:

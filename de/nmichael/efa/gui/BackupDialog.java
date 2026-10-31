@@ -30,6 +30,7 @@ import de.nmichael.efa.core.items.IItemType;
 import de.nmichael.efa.core.items.ItemTypeBoolean;
 import de.nmichael.efa.core.items.ItemTypeButton;
 import de.nmichael.efa.core.items.ItemTypeFile;
+import de.nmichael.efa.core.items.ItemTypeLabel;
 import de.nmichael.efa.core.items.ItemTypeString;
 import de.nmichael.efa.core.items.ItemTypeTable;
 import de.nmichael.efa.data.storage.IDataAccess;
@@ -132,9 +133,11 @@ public class BackupDialog extends BaseTabbedDialog implements IItemListener {
         cat = "%02%" + International.getString("Backup einspielen");
 
         if (Daten.project != null && Daten.project.getProjectStorageType() == IDataAccess.TYPE_EFA_REMOTE) {
-			guiItems.add(item = EfaGuiUtils.createHintWordWrap("RESTORE_HINT_REMOTE", IItemType.TYPE_PUBLIC, cat,
+        	ItemTypeLabel hint;
+			guiItems.add(hint = EfaGuiUtils.createHintWordWrap("RESTORE_HINT_REMOTE", IItemType.TYPE_PUBLIC, cat,
 					International.getString("efaRemote Projekt aktiv\nDaten werden aus der lokalen Datei geladen"
-							+" und auf den Remote Server wiederhergestellt."), 2,10,20,700));
+							+" und auf den Remote Server wiederhergestellt."), 1,10,10,600));
+			hint.setIndent(true);
 		}
 
         guiItems.add(item = new ItemTypeFile(ZIPFILE_SELECT, "",

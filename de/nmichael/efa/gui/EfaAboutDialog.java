@@ -32,8 +32,14 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
+import javax.swing.SwingWorker;
+
 
 import de.nmichael.efa.Daten;
+import de.nmichael.efa.data.storage.IDataAccess;
+import de.nmichael.efa.data.storage.RemoteCommand;
+import de.nmichael.efa.data.storage.RemoteEfaMessage;
+import de.nmichael.efa.data.storage.RemoteVersionInfo;
 import de.nmichael.efa.util.Dialog;
 import de.nmichael.efa.util.EfaUtil;
 import de.nmichael.efa.util.HtmlFactory;
@@ -48,6 +54,8 @@ public class EfaAboutDialog extends BaseDialog {
     JLabel nameLabel = new JLabel();
     JLabel versionLabel = new JLabel();
     JLabel remoteVersionLabel = new JLabel();
+    private RemoteVersionWorker remoteVersionWorker;
+
     JLabel languageLabel = new JLabel();
     JLabel copyLabel = new JLabel();
     JLabel urlHomepageLabel = new JLabel();
@@ -318,7 +326,7 @@ public class EfaAboutDialog extends BaseDialog {
             }
         });
         
-        urlGithubLabel0.setText(International.getString("Github: Releases & Source") + ": ");
+        urlGithubLabel0.setText(International.getString("GitHub: Releases & Source") + ": ");
         urlGithubLabel.setForeground(EfaGuiUtils.getUrlLabelColor());
         urlGithubLabel.setText(Daten.EFAGITHUBURL);
         urlGithubLabel.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -415,24 +423,27 @@ public class EfaAboutDialog extends BaseDialog {
 		aboutEfaPanel.add(logoLabel, new GridBagConstraints(0, 0, 1, 7, 0.0, 0.0, GridBagConstraints.NORTH, GridBagConstraints.NONE, new Insets(0, 0, 0, 20), 0, 0));
         aboutEfaPanel.add(nameLabel, new GridBagConstraints(1, 0, 4, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 93, 0));
         aboutEfaPanel.add(versionLabel, new GridBagConstraints(1, 1, 4, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 5, 0), 230, 0));
-        aboutEfaPanel.add(languageLabel, new GridBagConstraints(1, 2, 4, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 20, 0), 230, 0));
-        aboutEfaPanel.add(copyLabel, new GridBagConstraints(1, 3, 4, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 20, 0), 65, 0));
-        aboutEfaPanel.add(urlHomepageLabel, new GridBagConstraints(1, 4, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 00, 0), 1, 0));
-        aboutEfaPanel.add(urlLabel, new GridBagConstraints(2, 4, 3, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 00, 0), 1, 0));
+        aboutEfaPanel.add(remoteVersionLabel, new GridBagConstraints(1, 2, 4, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 5, 0), 230, 0));
+        aboutEfaPanel.add(languageLabel, new GridBagConstraints(1, 3, 4, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 20, 0), 230, 0));
+        aboutEfaPanel.add(copyLabel, new GridBagConstraints(1, 4, 4, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 20, 0), 65, 0));
+        aboutEfaPanel.add(urlHomepageLabel, new GridBagConstraints(1, 5, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 00, 0), 1, 0));
+        aboutEfaPanel.add(urlLabel, new GridBagConstraints(2, 5, 3, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 00, 0), 1, 0));
         
-        aboutEfaPanel.add(supportLabel0, new GridBagConstraints(1, 5, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 1, 0));
-        aboutEfaPanel.add(supportLabel, new GridBagConstraints(2, 5, 3, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 1, 0));
-        aboutEfaPanel.add(dokuLabel0, new GridBagConstraints(1, 6, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 20, 0), 1, 0));
-        aboutEfaPanel.add(dokuLabel, new GridBagConstraints(2, 6, 3, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 20, 0), 1, 0));
+        aboutEfaPanel.add(supportLabel0, new GridBagConstraints(1, 6, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 1, 0));
+        aboutEfaPanel.add(supportLabel, new GridBagConstraints(2, 6, 3, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 1, 0));
+        aboutEfaPanel.add(dokuLabel0, new GridBagConstraints(1, 7, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 20, 0), 1, 0));
+        aboutEfaPanel.add(dokuLabel, new GridBagConstraints(2, 7, 3, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 20, 0), 1, 0));
         //infoPanel.add(emailLabel0, new GridBagConstraints(1, 6, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 20, 0), 0, 0));
         //infoPanel.add(emailLabel, new GridBagConstraints(2, 6, 3, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 20, 0), 0, 0));
-        aboutEfaPanel.add(urlGithubLabel0, new GridBagConstraints(1, 7, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 20, 0), 1, 0));
-        aboutEfaPanel.add(urlGithubLabel, new GridBagConstraints(2, 7, 3, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 20, 0), 1, 0));
+        aboutEfaPanel.add(urlGithubLabel0, new GridBagConstraints(1, 8, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 20, 0), 1, 0));
+        aboutEfaPanel.add(urlGithubLabel, new GridBagConstraints(2, 8, 3, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 20, 0), 1, 0));
         
-        aboutEfaPanel.add(gpl1Label, new GridBagConstraints(1, 8, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 20, 0), 0, 0));
-        aboutEfaPanel.add(gplLabel, new GridBagConstraints(3, 8, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 20, 20), 0, 0));
-        aboutEfaPanel.add(devNoteLabel, new GridBagConstraints(1, 9, 4, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 20), 0, 0));
+        aboutEfaPanel.add(gpl1Label, new GridBagConstraints(1, 9, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 20, 0), 0, 0));
+        aboutEfaPanel.add(gplLabel, new GridBagConstraints(3, 9, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 20, 20), 0, 0));
+        aboutEfaPanel.add(devNoteLabel, new GridBagConstraints(1, 10, 4, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 20), 0, 0));
         aboutEfaPanel.add(efaBirthdayLabel, new GridBagConstraints(0, 12, 4, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+        
+        iniRemoteVersionLabel();
         
         versionLabel.setText(International.getString("Version") + " " + Daten.VERSION 
         		+ "   (" + Daten.VERSIONID + " / " + Daten.VERSIONRELEASEDATE + ")");
@@ -441,6 +452,98 @@ public class EfaAboutDialog extends BaseDialog {
 
 
 	
+    /**
+     * Shows the version of the remote efa instance in remoteVersionLabel.
+     * The label is only visible if efa runs in admin mode and the current project
+     * is an efaRemote project. While the version is being determined, a "checking" text is shown.
+     * The remote call runs in a background SwingWorker, so the EDT is not blocked.
+     */
+    private void iniRemoteVersionLabel() {
+        remoteVersionLabel.setVisible(false);
+        if (!Daten.isAdminMode()
+                || Daten.project == null
+                || Daten.project.getProjectStorageType() != IDataAccess.TYPE_EFA_REMOTE) {
+            return;
+        }
+        setRemoteVersionText(International.getString("Prüfe..."));
+        try {
+            remoteVersionWorker = new RemoteVersionWorker(new RemoteCommand(Daten.project));
+            remoteVersionWorker.execute();
+        } catch (Exception e) {
+            Logger.logdebug(e);
+            setRemoteVersionText(International.getString("Nicht ermittelbar"));
+        }
+    }
+
+    private void setRemoteVersionText(String text) {
+        remoteVersionLabel.setForeground(Color.black);
+        remoteVersionLabel.setText(International.getString("Remote-Version") + ": " + text);
+        remoteVersionLabel.setVisible(true);
+    }
+
+    /**
+     * Cancels a running remote version lookup when the dialog is closed.
+     */
+    @Override
+    public boolean cancel() {
+        cancelRemoteVersionWorker();
+        return super.cancel();
+    }
+
+    @Override
+    public boolean cancel(boolean keyESCAction) {
+        cancelRemoteVersionWorker();
+        return super.cancel(keyESCAction);
+    }
+
+    private void cancelRemoteVersionWorker() {
+        if (remoteVersionWorker != null) {
+            remoteVersionWorker.cancel(true);
+        }
+    }
+
+    /**
+     * Determines the remote efa version in a background thread and updates
+     * remoteVersionLabel on the EDT when finished. Results of a cancelled lookup are discarded.
+     */
+    private class RemoteVersionWorker extends SwingWorker<RemoteVersionInfo, Void> {
+
+        private final RemoteCommand remoteCommand;
+
+        RemoteVersionWorker(RemoteCommand remoteCommand) {
+            this.remoteCommand = remoteCommand;
+        }
+
+        @Override
+        protected RemoteVersionInfo doInBackground() throws Exception {
+            return remoteCommand.getVersionInfo();
+        }
+
+        @Override
+        protected void done() {
+            if (isCancelled()) {
+                return; // dialog was closed, label is no longer shown
+            }
+            String versionText;
+            try {
+                RemoteVersionInfo info = get();
+                if (info != null && info.getResultCode() == RemoteEfaMessage.RESULT_OK && info.getVersion() != null) {
+                    versionText = info.getVersion()
+                            + "   (" + info.getVersionId() + " / " + info.getVersionReleaseDate() + ")";
+                } else {
+                    versionText = International.getString("Nicht ermittelbar");
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                versionText = International.getString("Nicht ermittelbar");
+            } catch (Exception e) { // ExecutionException
+                Logger.logdebug(e);
+                versionText = International.getString("Nicht ermittelbar");
+            }
+            setRemoteVersionText(versionText);
+        }
+    }
+
     void label_mouseEntered(MouseEvent e) {
         try {
             JLabel label = (JLabel) e.getSource();
