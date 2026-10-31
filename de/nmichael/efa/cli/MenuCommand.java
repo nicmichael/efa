@@ -22,6 +22,8 @@ public class MenuCommand extends MenuBase {
     public static final String CMD_RUN  = "run";
     public static final String CMD_EFA_SHUTDOWN = "shutdownefa";
     public static final String CMD_EFA_RESTART = "restartefa";
+    public static final String CMD_EFA_ONLINEUPDATE = "onlineupdate";
+    public static final String CMD_EFA_VERSION = "efaversion";
 
     public MenuCommand(CLI cli) {
         super(cli);
@@ -29,8 +31,17 @@ public class MenuCommand extends MenuBase {
 
     public void printHelpContext() {
         printUsage(CMD_RUN,  "<command> [options...] [>file]", "run a command");
-        printUsage(CMD_EFA_SHUTDOWN, "", "Shut down efaBoathouse you are currently connected to");
-        printUsage(CMD_EFA_RESTART, "", "Restart efaBoathouse you are currently connected to");
+        printUsage(CMD_EFA_SHUTDOWN, "", "Shut down efaBoathouse you are currently connected to.");
+        printUsage(CMD_EFA_RESTART, "", "Restart efaBoathouse you are currently connected to.");
+        printUsage(CMD_EFA_VERSION, "", "Show the version information of the efaBoathouse you are currently connected to.");
+        cli.loginfo("   Remote efa needs to be version 2.5.4 or higher to support this command.");
+        printUsage(CMD_EFA_ONLINEUPDATE, "", "Request an online update of the efaBoathouse you are currently connected to.");
+        cli.loginfo("   Remote online update always uses GitHub as update source, and will only update to the latest production release version.");
+        cli.loginfo("   If you want to update to a specific version or a beta version, please use the efaBoathouse GUI.");
+        cli.loginfo("");
+        cli.loginfo("   OnlineUpdate performs a download of the update files, a backup of the current data, performs the update");
+        cli.loginfo("   and restarts efaBoathouse. This may take more than the standard timeout of 60 seconds.");
+        cli.loginfo("   If you get a timeout error, please check the remote efaBoathouse log file for the result of the update command.");
     }
 
     public int runExternalCommand(String args) {
@@ -81,12 +92,45 @@ public class MenuCommand extends MenuBase {
 				return restartEfaBoathouse(false, args);
 			} else if (cmd.equalsIgnoreCase(CMD_EFA_RESTART)) {
 				return restartEfaBoathouse(true, args);
+			} else if (cmd.equalsIgnoreCase(CMD_EFA_ONLINEUPDATE)) {
+				return runEfaOnlineUpdate(args);
+			} else if (cmd.equalsIgnoreCase(CMD_EFA_VERSION)) {
+				return getVersionInfo(args);
 			}
+            
             return CLI.RC_UNKNOWN_COMMAND;
         } else {
             return ret;
         }
     }
+
+	private int getVersionInfo(String args) {
+		RemoteCommand rcmd = new RemoteCommand(Daten.project);
+		de.nmichael.efa.data.storage.RemoteVersionInfo versionInfo = rcmd.getVersionInfo();
+		if (versionInfo.getResultCode() == -1) {
+			cli.logerr("Failed to get version information from remote instance.");
+			return CLI.RC_COMMAND_FAILED;
+		} else if (versionInfo.getResultCode() != 0) {
+			cli.logerr("Failed to get version information from remote instance: " + versionInfo.getResultCode());
+			return CLI.RC_COMMAND_FAILED;
+		} else {
+			cli.loginfo("Remote efaBoathouse version: " + versionInfo.getVersion() +
+					" (" + versionInfo.getVersionId() + "), release date: " + versionInfo.getVersionReleaseDate());
+			return CLI.RC_OK;
+		}
+	}
+
+	private int runEfaOnlineUpdate(String args) {
+		RemoteCommand rcmd = new RemoteCommand(Daten.project);
+		String result = rcmd.onlineUpdate();
+		if (result == null) {
+			cli.loginfo("efaBoathouse online update command successfully sent to remote instance.");
+			return CLI.RC_OK;
+		} else {
+			cli.logerr("Failed to send efaBoathouse online update command to remote instance: " + result);
+			return CLI.RC_COMMAND_FAILED;
+		}
+	}
 
 	private int restartEfaBoathouse(boolean restart, String args) {
 		Vector<String> options = getArgs(args);

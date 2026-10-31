@@ -68,6 +68,8 @@ public class RemoteEfaMessage {
 
     public static final String OPERATION_CMD_EXITEFA             = "CmdExitEfa";
     public static final String OPERATION_CMD_ONLINEUPDATE        = "CmdOnlineUpdate";
+    public static final String OPERATION_CMD_GETVERSIONINFO      = "CmdGetVersionInfo";
+
 
     // Field Names for Operations
     public static final String FIELD_SESSIONID          = "SID";
@@ -91,6 +93,9 @@ public class RemoteEfaMessage {
     public static final String FIELD_FIELDVALUE         = "FieldValue";
     public static final String FIELD_PID                = "PID";
     public static final String FIELD_BOOLEAN            = "Boolean";
+    public static final String FIELD_VERSION            = "Version";
+    public static final String FIELD_VERSIONID          = "VersionId";
+    public static final String FIELD_VERSIONRELEASEDATE = "VersionReleaseDate";
 
     // Result Codes
     public static final int RESULT_OK                   =  0;

@@ -430,6 +430,11 @@ public class RemoteEfaServer {
                         break;
                     }
 
+                    if (operation.equals(RemoteEfaMessage.OPERATION_CMD_GETVERSIONINFO)) {
+                        responses.add(requestCmdGetVersionInfo(request, admin));
+                        break;
+                    }
+
                     // unknown request
                     responses.add(RemoteEfaMessage.createResponseResult(msgId, RemoteEfaMessage.ERROR_INVALIDREQUEST, "Unsupported Request: " + request.toString()));
                     break;
@@ -990,6 +995,23 @@ public class RemoteEfaServer {
             } else {
                 response  = RemoteEfaMessage.createResponseResult(request.getMsgId(), RemoteEfaMessage.RESULT_FALSE, null);
             }
+            return response;
+        } catch(Exception e) {
+            return RemoteEfaMessage.createResponseResult(request.getMsgId(), RemoteEfaMessage.ERROR_UNKNOWN, e.toString());
+        }
+    }
+
+    /**
+     * Returns the efa version information (VERSION, VERSIONID, VERSIONRELEASEDATE)
+     * of the running efa instance. Access is already restricted to logged-in sessions
+     * by the caller; the version data is not sensitive, so no further permission check is needed.
+     */
+    private RemoteEfaMessage requestCmdGetVersionInfo(RemoteEfaMessage request, AdminRecord admin) {
+        try {
+            RemoteEfaMessage response = RemoteEfaMessage.createResponseResult(request.getMsgId(), RemoteEfaMessage.RESULT_OK, null);
+            response.addField(RemoteEfaMessage.FIELD_VERSION, Daten.VERSION);
+            response.addField(RemoteEfaMessage.FIELD_VERSIONID, Daten.VERSIONID);
+            response.addField(RemoteEfaMessage.FIELD_VERSIONRELEASEDATE, Daten.VERSIONRELEASEDATE);
             return response;
         } catch(Exception e) {
             return RemoteEfaMessage.createResponseResult(request.getMsgId(), RemoteEfaMessage.ERROR_UNKNOWN, e.toString());

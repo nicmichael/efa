@@ -47,6 +47,7 @@ public class EfaAboutDialog extends BaseDialog {
 	JPanel aboutEfaPanel = new JPanel();
     JLabel nameLabel = new JLabel();
     JLabel versionLabel = new JLabel();
+    JLabel remoteVersionLabel = new JLabel();
     JLabel languageLabel = new JLabel();
     JLabel copyLabel = new JLabel();
     JLabel urlHomepageLabel = new JLabel();
@@ -294,7 +295,6 @@ public class EfaAboutDialog extends BaseDialog {
         nameLabel.setFont(new java.awt.Font("Dialog", 1, (Dialog.getFontSize() > 0 ? Dialog.getFontSize() + 6 : 18)));
         nameLabel.setForeground(Color.black);
         nameLabel.setText(Daten.EFA_LONGNAME);
-        versionLabel.setText("Version 0.1"); // do not internationalize
         languageLabel.setText(International.getString("Sprache") + ": "
                 + International.getLanguageDescription());
         copyLabel.setText("Copyright (c) 2001-" + Daten.COPYRIGHTYEAR + " by Nicolas Michael"); // do not internationalize
@@ -436,6 +436,7 @@ public class EfaAboutDialog extends BaseDialog {
         
         versionLabel.setText(International.getString("Version") + " " + Daten.VERSION 
         		+ "   (" + Daten.VERSIONID + " / " + Daten.VERSIONRELEASEDATE + ")");
+        
 	}
 
 
