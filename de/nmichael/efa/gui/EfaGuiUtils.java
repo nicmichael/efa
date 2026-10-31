@@ -34,6 +34,7 @@ import java.util.Map;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JViewport;
@@ -493,5 +494,17 @@ public class EfaGuiUtils {
 			parent.setCursor(wait ? Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR) : Cursor.getDefaultCursor());
 		}
 	}
+	
+	/**
+	 * Sets or resets the wait cursor (hourglass) on the parent dialog. Does nothing if parent is null.
+	 * @param parent The parent frame, can be null.
+	 * @param wait true to show the wait cursor, false to restore the default cursor.
+	 */
+	public static void setWaitCursor(JFrame parent, boolean wait) {
+		if (parent != null) {
+			parent.setCursor(wait ? Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR) : Cursor.getDefaultCursor());
+		}
+	}
+	
 	
 }
