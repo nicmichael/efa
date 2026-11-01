@@ -2,8 +2,10 @@ package de.nmichael.efa.core.update;
 
 import java.awt.Window;
 import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -12,44 +14,49 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.zip.GZIPInputStream;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import de.nmichael.efa.Daten;
+import de.nmichael.efa.gui.EfaGuiUtils;
 import de.nmichael.efa.util.DownloadThread;
 import de.nmichael.efa.util.Logger;
 
 /**
+ * Abstract base class for fetching and parsing GitHub releases into UpdateCandidate objects.
+ *
+ * At the current time, efa provides two concrete implementations: 
+ * * GithubProductionReleaseUpdateProviderStrategy 
+ *   only fetches production releases (non-draft, non-prerelease) and is used for standard update checks.
+ *   
+ * * GithubBetaReleaseUpdateProviderStrategy
+ *   only fetches beta releases (prerelease and draft) and is used for beta update checks.
+ * 
  * Loads releases from GitHub API and maps them to UpdateCandidate.
  * Expected API endpoint: https://api.github.com/repos/{owner}/{repo}/releases
  */
-public class GithubReleaseUpdateProviderStrategy implements UpdateProviderStrategy {
+public abstract class GithubReleaseUpdateProviderStrategy implements UpdateProviderStrategy {
 
     private final String owner;
     private final String repo;
     private final boolean includePrereleases;
     private final boolean includeDrafts;
+    private final boolean includeProductionReleases;
     private final String assetNameMustContain; // optional, e.g. "efa"
     private final int connectTimeoutMs;
     private final int readTimeoutMs;
     public static final String GITHUB = "GitHub";
 
-    public GithubReleaseUpdateProviderStrategy(String owner, String repo) {
-        this(owner, repo, false, false, "efa", 15000, 30000);
-    }
-    
-    public GithubReleaseUpdateProviderStrategy(String owner, String repo, boolean includePrereleases) {
-        this(owner, repo, includePrereleases, false, "efa", 15000, 30000);
-    }
-
     public GithubReleaseUpdateProviderStrategy(String owner, String repo,
-            boolean includePrereleases, boolean includeDrafts,
+            boolean includePrereleases, boolean includeDrafts, boolean includeProductionReleases,
             String assetNameMustContain, int connectTimeoutMs, int readTimeoutMs) {
         this.owner = owner;
         this.repo = repo;
         this.includePrereleases = includePrereleases;
         this.includeDrafts = includeDrafts;
+        this.includeProductionReleases = includeProductionReleases;
         this.assetNameMustContain = assetNameMustContain;
         this.connectTimeoutMs = connectTimeoutMs;
         this.readTimeoutMs = readTimeoutMs;
@@ -69,24 +76,26 @@ public class GithubReleaseUpdateProviderStrategy implements UpdateProviderStrate
 	 * Sorts the result by version descending (newest first).
 	 */
     public List<UpdateCandidate> fetchAvailableUpdates() throws Exception {
-        String json = loadReleasesJson();
-        Logger.log(Logger.DEBUG, Logger.MSG_STAT_IGNOREDENTRIES, json);
-        JSONArray releases = new JSONArray(json);
+        JSONArray releases = loadAllReleases();
 
         List<UpdateCandidate> result = new ArrayList<UpdateCandidate>();
         for (int i = 0; i < releases.length(); i++) {
             JSONObject release = releases.getJSONObject(i);
 
-            boolean draft = release.optBoolean("draft", false);
-            boolean prerelease = release.optBoolean("prerelease", false);
-
-            if (!includeDrafts && draft) {
+            boolean isDraft = release.optBoolean("draft", false);
+            boolean isPrerelease = release.optBoolean("prerelease", false);
+            boolean isProductionRelease = !isDraft && !isPrerelease;
+            
+            if (!includeDrafts && isDraft) {
                 continue;
             }
-            if (!includePrereleases && prerelease) {
+            if (!includePrereleases && isPrerelease) {
                 continue;
             }
-
+			if (!includeProductionReleases && isProductionRelease) {
+				continue;
+			}
+			
             String tag = normalizeTag(release.optString("tag_name", ""));
             String versionId = tag;
             if (versionId.length() == 0) {
@@ -126,7 +135,8 @@ public class GithubReleaseUpdateProviderStrategy implements UpdateProviderStrate
                     downloadSize,
                     changes,
                     getName(),
-                    draft,
+                    isDraft,
+                    isPrerelease,
                     eouXmlDownloadUrl, 
                     tag));
         }
@@ -144,38 +154,81 @@ public class GithubReleaseUpdateProviderStrategy implements UpdateProviderStrate
     }
 
     /**
+     * Loads the first 100 releases (newest first) from the GitHub API in a single request.
+     * The assumtion is that performing an online update, the user is interested in the latest releases.
+     * and 100 releases should be sufficient to cover all recent updates.
+     * 
+     * There is the edge case that we are looking for a production release update, 
+     * but it is not found in the first 100 releases (which must all  be draft or prereleases to get to
+     * this edge case). This is a very unlikely edge case, but if it happens, the user will not be able to update to the latest production release.
+     * 
+     * On the other hand, if we would load all releases, it could be a very large number of releases, 
+     * and the request could take a long time to complete.
+     * 
+     * The request is made to the GitHub API endpoint: https://api.github.com/repos/{owner}/{repo}/releases?per_page=60&page=1
+     * And this class requests gzip compression for the response, which is supported by the GitHub API,
+     * and should dramatically reduce the amount of data transferred, especially for large release notes.
+     * 
+     * So also on slow connections, this should be a reasonable approach to get the latest releases.
+     * 
+     * @return JSONArray of release objects.
+     * @throws Exception if the request or parsing fails.
+     */
+    private JSONArray loadAllReleases() throws Exception {
+        String pageUrl = getApiUrl() + "?per_page=100&page=1";
+        return new JSONArray(loadReleasesJson(pageUrl));
+    }
+
+    /**
 	 * Loads the releases JSON from GitHub API.
 	 * @return JSON string of releases.
 	 * @throws Exception if an error occurs during HTTP request or reading response.
 	 */
-    private String loadReleasesJson() throws Exception {
+    private String loadReleasesJson(String urlString) throws Exception {
         HttpURLConnection con = null;
         try {
-            URL url = new URL(getApiUrl());
+            URL url = new URL(urlString);
             con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("GET");
             con.setConnectTimeout(connectTimeoutMs);
             con.setReadTimeout(readTimeoutMs);
             con.setUseCaches(false);
             con.setRequestProperty("Accept", "application/vnd.github+json");
+            con.setRequestProperty("Accept-Encoding", "gzip");
             con.setRequestProperty("User-Agent", buildUserAgent());
 
             int code = con.getResponseCode();
             if (code < 200 || code >= 300) {
                 String errText = "";
-                InputStream err = con.getErrorStream();
+                InputStream err = decodeIfGzip(con, con.getErrorStream());
                 if (err != null) {
                     try (InputStream errIn = new BufferedInputStream(err)) {
                         errText = readFully(errIn);
                     }
                 }
                 throw new IllegalStateException(
-                        "GitHub API HTTP " + code + " for " + getApiUrl() + "\n" + errText);
+                        "GitHub API HTTP " + code + " for " + urlString + "\n" + errText);
             }
 
+            boolean gzip = "gzip".equalsIgnoreCase(con.getContentEncoding());
+            byte[] rawBytes;
             try (InputStream in = new BufferedInputStream(con.getInputStream())) {
-                return readFully(in);
+                rawBytes = readBytes(in);
             }
+
+            byte[] bodyBytes = rawBytes;
+            if (gzip) {
+                try (InputStream gz = new GZIPInputStream(new ByteArrayInputStream(rawBytes))) {
+                    bodyBytes = readBytes(gz);
+                }
+            }
+
+            Logger.log(Logger.DEBUG, Logger.MSG_EVT_ONLINEUPDATEINFO,
+                    "GitHub API response from " + urlString + ": gzip=" + gzip
+                    + ", compressed length=" + rawBytes.length + " bytes"
+                    + ", decompressed length=" + bodyBytes.length + " bytes");
+
+            return new String(bodyBytes, "UTF-8");
         } finally {
             if (con != null) {
                 con.disconnect();
@@ -224,7 +277,7 @@ public class GithubReleaseUpdateProviderStrategy implements UpdateProviderStrate
     }
 
     /**
-	 * Finds the first zip asset in the given assets array that matches the optional name filter.
+	 * Finds the first eou.xml asset in the given assets array that matches the optional name filter.
 	 * @param assets JSONArray of asset objects from GitHub release.
 	 * @return JSONObject of the matching zip asset, or null if none found.
 	 */
@@ -259,18 +312,6 @@ public class GithubReleaseUpdateProviderStrategy implements UpdateProviderStrate
         String n = name == null ? "" : name.toLowerCase(Locale.ROOT);
         String u = url == null ? "" : url.toLowerCase(Locale.ROOT);
         return n.endsWith(".zip") || u.contains(".zip");
-    }
-    
-    /**
-	 * Checks if the given name or URL indicates a zip file.
-	 * @param name Asset name.
-	 * @param url Asset download URL.
-	 * @return true if either name ends with .zip or URL contains .zip, false otherwise.
-	 * */
-    private boolean isXML(String name, String url) {
-        String n = name == null ? "" : name.toLowerCase(Locale.ROOT);
-        String u = url == null ? "" : url.toLowerCase(Locale.ROOT);
-        return n.endsWith(".xml") || u.contains(".xml");
     }
     
 
@@ -362,6 +403,24 @@ public class GithubReleaseUpdateProviderStrategy implements UpdateProviderStrate
     }
 
     /**
+	 * Reads the entire InputStream into a byte array.
+	 * @param in InputStream to read.
+	 * @return raw bytes of the InputStream.
+	 * @throws IOException if an error occurs during reading.
+	 * */
+    private byte[] readBytes(InputStream in) throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        byte[] buf = new byte[8192];
+        int n;
+        while ((n = in.read(buf)) >= 0) {
+            if (n > 0) {
+                out.write(buf, 0, n);
+            }
+        }
+        return out.toByteArray();
+    }
+
+    /**
 	 * Reads the entire InputStream into a UTF-8 string.
 	 * @param in InputStream to read.
 	 * @return String content of the InputStream.
@@ -377,6 +436,23 @@ public class GithubReleaseUpdateProviderStrategy implements UpdateProviderStrate
             }
         }
         return new String(out.toByteArray(), "UTF-8");
+    }
+
+    /**
+     * Wraps the stream in a GZIPInputStream if the server responded with gzip content encoding.
+     * @param con The HTTP connection.
+     * @param raw The raw response stream (may be null).
+     * @return The decoded stream, or raw if no decoding is needed.
+     * @throws IOException if the gzip header cannot be read.
+     */
+    private InputStream decodeIfGzip(HttpURLConnection con, InputStream raw) throws IOException {
+        if (raw == null) {
+            return null;
+        }
+        if ("gzip".equalsIgnoreCase(con.getContentEncoding())) {
+            return new GZIPInputStream(raw);
+        }
+        return raw;
     }
     /**
 	 * Constructs the GitHub API URL for releases based on owner and repo.
@@ -394,27 +470,36 @@ public class GithubReleaseUpdateProviderStrategy implements UpdateProviderStrate
 	 * @return The newest EOU file or null if the download fails.
 	 * @throws Exception
 	 */
-    public File fetchNewestEOUFile(Window parent, List<UpdateCandidate> newerCandidates) throws Exception{
-    	UpdateCandidate newestCandidate = null;
-    	newestCandidate = (newestCandidate != null) ? newestCandidate : newerCandidates.get(0);
-
-    	if (newestCandidate != null && newestCandidate.getEouURL() != null && !newestCandidate.getEouURL().isEmpty()) {
-			String versionFile = Daten.efaTmpDirectory + "eou.xml";
-			if (!DownloadThread.getFile(parent, newestCandidate.getEouURL(), versionFile, true)) {
-				// No candidate with a valid EOU download URL found.
-				Logger.log(Logger.INFO, Logger.MSG_STAT_IGNOREDENTRIES, "No EOU download URL found in newer candidates.");
-				return null;
-			} else {
-				Logger.log(Logger.INFO, Logger.MSG_STAT_IGNOREDENTRIES, "Downloaded EOU file from: " + newestCandidate.getEouURL());
-				return new File(versionFile);
-			}
-    	} else {
-    		Logger.log(Logger.INFO, Logger.MSG_STAT_IGNOREDENTRIES, "No newer candidates found or no EOU download URL available.");
-			return null;
-    	}
+    public File fetchNewestEOUFile(Window parent, List<UpdateCandidate> newerCandidates) throws Exception {
+        if (newerCandidates == null || newerCandidates.isEmpty()) {
+            Logger.log(Logger.INFO, Logger.MSG_EVT_ONLINEUPDATEINFO, "No newer candidates found.");
+            return null;
+        }
+        
+		EfaGuiUtils.setWaitCursor(parent, true);
+		try {
+	        UpdateCandidate newestCandidate = newerCandidates.get(0);
+	        String eouUrl = newestCandidate.getEouURL();
+	        if (eouUrl == null || eouUrl.isEmpty()) {
+	            Logger.log(Logger.INFO, Logger.MSG_EVT_ONLINEUPDATEINFO,
+	                    "No EOU download URL available for " + newestCandidate.getVersionId());
+	            return null;
+	        }
+	
+	        String versionFile = Daten.efaTmpDirectory + "eou.xml";
+	        if (!DownloadThread.getFile(parent, eouUrl, versionFile, true)) {
+	            Logger.log(Logger.INFO, Logger.MSG_EVT_ONLINEUPDATEINFO, "Download of EOU file failed: " + eouUrl);
+	            return null;
+	        }
+	        Logger.log(Logger.INFO, Logger.MSG_EVT_ONLINEUPDATEINFO, "Downloaded EOU file from: " + eouUrl);
+	        return new File(versionFile);
+		} finally {
+			EfaGuiUtils.setWaitCursor(parent, false);
+		}
     }
-    
-   @Override
-   public boolean isEOUFileTemporary() {
-    	return true; // the EOU file is always a temporary file that should be deleted after parsing
-   };}
+
+    @Override
+    public boolean isEOUFileTemporary() {
+        return true; // the EOU file is always a temporary file that should be deleted after parsing
+    }
+}

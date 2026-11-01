@@ -38,6 +38,7 @@ import de.nmichael.efa.gui.EfaAboutDialog;
 import de.nmichael.efa.gui.EfaBaseFrame;
 import de.nmichael.efa.gui.EfaCloudConfigDialog;
 import de.nmichael.efa.gui.EfaConfigDialog;
+import de.nmichael.efa.gui.EfaGuiUtils;
 import de.nmichael.efa.gui.ImagesAndIcons;
 import de.nmichael.efa.gui.LogViewDialog;
 import de.nmichael.efa.gui.PluginDialog;
@@ -537,8 +538,15 @@ public class EfaMenuButton {
 
             boolean remoteEfa = false;
             if (Daten.project != null && Daten.project.getProjectStorageType() == IDataAccess.TYPE_EFA_REMOTE) {
+            	String efaRemoteUpdateHint = "Hinweis:\nDas Remote Online-Update startet sofort, und führt ein Update"+
+            			" auf die bei GitHub hinterlegte neueste Produktionsversion durch.\nEs ist kein remote Update"+
+            			" auf Testversionen möglich.\n\nDas Remote Update kann wegen Download, Backup, Installation,"+
+            			" Neustart von efa länger dauern. Daher ist es wahrscheinlich, dass auf diesem Rechner nach"+
+            			" 60 Sekunden eine Fehlermeldung wegen Timeout erscheint. Das heißt aber nicht, dass das Update"+
+            			" fehlgeschlagen ist.\nBitte prüfen Sie nach einigen Minuten, ob efa auf dem Remote-Rechner aktualisiert wurde.";
                 switch (Dialog.auswahlDialog(International.getString("Online-Update"),
-                        International.getString("Lokales oder entferntes efa aktualisieren?"),
+                        International.getString("Lokales oder entferntes efa aktualisieren?")
+                        + "\n\n"+ International.getString(efaRemoteUpdateHint),
                         International.getString("Lokal"),
                         International.getString("Remote"), true)) {
                     case 0:
@@ -901,6 +909,7 @@ public class EfaMenuButton {
                 return false;
             }
             EfaConfig myEfaConfig = Daten.efaConfig;
+            boolean remoteConfig = false;
             if (Daten.project != null && Daten.project.getProjectStorageType() == IDataAccess.TYPE_EFA_REMOTE) {
                 switch(Dialog.auswahlDialog(International.getString("efa-Konfiguration"),
                         International.getString("Lokale oder remote Konfiguration bearbeiten?"),
@@ -910,11 +919,17 @@ public class EfaMenuButton {
                     case 0:
                         break;
                     case 1:
-                        myEfaConfig = new EfaConfig(Daten.project.getProjectStorageType(),
-                                Daten.project.getProjectStorageLocation(),
-                                Daten.project.getProjectStorageUsername(),
-                                Daten.project.getProjectStoragePassword());
-                        myEfaConfig.updateConfigValuesWithPersistence();
+                    	try {
+                    		setWaitCursor(parentFrame, parentDialog, true);
+	                        myEfaConfig = new EfaConfig(Daten.project.getProjectStorageType(),
+	                                Daten.project.getProjectStorageLocation(),
+	                                Daten.project.getProjectStorageUsername(),
+	                                Daten.project.getProjectStoragePassword());
+	                        myEfaConfig.updateConfigValuesWithPersistence();
+	                        remoteConfig = true;
+                    	} finally {
+                    		setWaitCursor(parentFrame, parentDialog, false);
+                    	}
                         break;
                     default:
                         return false;
@@ -922,6 +937,7 @@ public class EfaMenuButton {
             }
 
             EfaConfigDialog dlg = (parentFrame != null ? new EfaConfigDialog(parentFrame, myEfaConfig) : new EfaConfigDialog(parentDialog, myEfaConfig));
+            dlg.setTitle(dlg.getTitle() + (remoteConfig ? " (" + International.getString("Remote") + ")" : ""));
             dlg.showDialog();
         }
 
@@ -931,6 +947,7 @@ public class EfaMenuButton {
                 return false;
             }
             Admins myAdmins = Daten.admins;
+            boolean remoteAdmins = false;
             if (Daten.project != null && Daten.project.getProjectStorageType() == IDataAccess.TYPE_EFA_REMOTE) {
                 switch(Dialog.auswahlDialog(International.getString("Administratoren"),
                         International.getString("Lokale oder remote Administratoren bearbeiten?"),
@@ -940,10 +957,16 @@ public class EfaMenuButton {
                     case 0:
                         break;
                     case 1:
-                        myAdmins = new Admins(Daten.project.getProjectStorageType(),
-                                Daten.project.getProjectStorageLocation(),
-                                Daten.project.getProjectStorageUsername(),
-                                Daten.project.getProjectStoragePassword());
+                    	try {
+                    		setWaitCursor(parentFrame, parentDialog, true);
+	                        myAdmins = new Admins(Daten.project.getProjectStorageType(),
+	                                Daten.project.getProjectStorageLocation(),
+	                                Daten.project.getProjectStorageUsername(),
+	                                Daten.project.getProjectStoragePassword());
+	                        remoteAdmins = true;
+                    	} finally {
+                        	setWaitCursor(parentFrame, parentDialog, false);
+                    	}
                         break;
                     default:
                         return false;
@@ -953,6 +976,7 @@ public class EfaMenuButton {
             AdminListDialog dlg = (parentFrame != null ?
                     new AdminListDialog(parentFrame, myAdmins, admin) :
                     new AdminListDialog(parentDialog, myAdmins, admin));
+            dlg.setTitle(dlg.getTitle() + (remoteAdmins ? " (" + International.getString("Remote") + ")" : ""));
             dlg.showDialog();
         }
 
@@ -1042,6 +1066,14 @@ public class EfaMenuButton {
 
         return true;
     }
+
+	private static void setWaitCursor(BaseFrame parentFrame, BaseDialog parentDialog, boolean wait) {
+		if (parentFrame != null) {
+			EfaGuiUtils.setWaitCursor(parentFrame, wait);
+		} else if (parentDialog != null) {
+			EfaGuiUtils.setWaitCursor(parentDialog,wait);
+		}
+	}
 
     /**
 	 * Run the interactive online update process, showing a dialog for both to select the update source

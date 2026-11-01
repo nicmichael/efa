@@ -23,6 +23,7 @@ import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
+import java.awt.Window;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.io.IOException;
@@ -31,7 +32,9 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.JComponent;
+import javax.swing.JDialog;
 import javax.swing.JEditorPane;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JViewport;
@@ -96,6 +99,36 @@ public class EfaGuiUtils {
         List<String> captions = splitStringByWidth(caption, maxPixelWidth, myFontMetrics);
         String[] a = captions.toArray(new String[0]);
         return createHint(uniqueName, type, category, a, gridWidth, padBefore, padAfter);
+	}
+
+	/**
+	 * Word-wraps the given plain text at the specified maximum pixel width (using
+	 * the default JLabel font metrics) and returns it as an HTML string with
+	 * explicit {@code <br>} line breaks, exactly the way {@link #createHintWordWrap}
+	 * formats its caption internally. This is useful when a hint's text needs to
+	 * be updated later at runtime (e.g. via {@code ItemTypeLabel.setDescription}),
+	 * since simply assigning the raw text would skip the word-wrapping entirely.
+	 *
+	 * @param caption      the plain (unwrapped) text to format, may be {@code null}
+	 * @param maxPixelWidth the maximum line width in pixels, should match the width
+	 *                      used when the label was originally created
+	 * @return an HTML string ("<html>...</html>") with the text word-wrapped into
+	 *         multiple lines, or an empty HTML string if caption is {@code null}/empty
+	 */
+	public static String wrapCaptionAsHtml(String caption, int maxPixelWidth) {
+		JLabel x = new JLabel();
+		FontMetrics myFontMetrics = x.getFontMetrics(x.getFont());
+
+		List<String> captions = splitStringByWidth(caption, maxPixelWidth, myFontMetrics);
+		StringBuilder resultCaption = new StringBuilder("<html>");
+		for (int i = 0; i < captions.size(); i++) {
+			resultCaption.append(captions.get(i));
+			if (captions.size() > 1 && i < captions.size() - 1) {
+				resultCaption.append("<br>");
+			}
+		}
+		resultCaption.append("</html>");
+		return resultCaption.toString();
 	}
 	
 	// Splits a string word-wise into lines. Wordwrap when the next word does not fit into maxWidth pixels.
@@ -439,5 +472,39 @@ public class EfaGuiUtils {
 	public static Color getUrlLabelColor() {
 		return Color.BLUE;
 	}
+	
+	/**
+	 * Sets or resets the wait cursor (hourglass) on the parent dialog. Does nothing if parent is null.
+	 * @param parent The parent dialog, can be null.
+	 * @param wait true to show the wait cursor, false to restore the default cursor.
+	 */
+	public static void setWaitCursor(JDialog parent, boolean wait) {
+		if (parent != null) {
+			parent.setCursor(wait ? Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR) : Cursor.getDefaultCursor());
+		}
+	}
+	
+	/**
+	 * Sets or resets the wait cursor (hourglass) on the parent dialog. Does nothing if parent is null.
+	 * @param parent The parent dialog, can be null.
+	 * @param wait true to show the wait cursor, false to restore the default cursor.
+	 */
+	public static void setWaitCursor(Window parent, boolean wait) {
+		if (parent != null) {
+			parent.setCursor(wait ? Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR) : Cursor.getDefaultCursor());
+		}
+	}
+	
+	/**
+	 * Sets or resets the wait cursor (hourglass) on the parent dialog. Does nothing if parent is null.
+	 * @param parent The parent frame, can be null.
+	 * @param wait true to show the wait cursor, false to restore the default cursor.
+	 */
+	public static void setWaitCursor(JFrame parent, boolean wait) {
+		if (parent != null) {
+			parent.setCursor(wait ? Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR) : Cursor.getDefaultCursor());
+		}
+	}
+	
 	
 }

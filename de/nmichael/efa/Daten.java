@@ -118,7 +118,7 @@ public class Daten {
 	
 	public final static String VERSIONID = "2.5.4_#1"; // VersionsID: Format: "X.Y.Z_MM"; final-Version z.B. 1.4.0_00;
 														// beta-Version z.B. 1.4.0_#1
-	public final static String VERSIONRELEASEDATE = "18.10.2026"; // Release Date: TT.MM.JJJJ
+	public final static String VERSIONRELEASEDATE = "01.11.2026"; // Release Date: TT.MM.JJJJ
 	public final static String MAJORVERSION = "2";
 	public final static String PROGRAMMID = "EFA.253"; // Versions-ID für Wettbewerbsmeldungen
 	public final static String PROGRAMMID_DRV = "EFADRV.253"; // Versions-ID für Wettbewerbsmeldungen

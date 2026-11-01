@@ -259,7 +259,7 @@ public class DRVAdminFrame extends JDialog implements ActionListener {
   }
 
   void updateButton_actionPerformed(ActionEvent e) {
-    OnlineUpdate.runOnlineUpdateGitHubNewestProd(this, false /*no beta versions*/);
+    OnlineUpdate.runOnlineUpdateDRVEfaNMichael(this);
   }
 
   void datensicherungButton_actionPerformed(ActionEvent e) {

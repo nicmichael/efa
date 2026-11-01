@@ -11,11 +11,8 @@
 package de.nmichael.efa.core.update;
 
 import java.awt.Window;
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
@@ -28,12 +25,11 @@ import java.util.Vector;
 import javax.swing.JDialog;
 
 import org.xml.sax.Attributes;
-import org.xml.sax.XMLReader;
 
 import de.nmichael.efa.Daten;
 import de.nmichael.efa.core.Backup;
 import de.nmichael.efa.data.storage.IDataAccess;
-import de.nmichael.efa.gui.onlineupdate.OnlineUpdateDialog;
+import de.nmichael.efa.gui.EfaGuiUtils;
 import de.nmichael.efa.util.Dialog;
 import de.nmichael.efa.util.DownloadThread;
 import de.nmichael.efa.util.EfaUtil;
@@ -61,39 +57,64 @@ public class OnlineUpdate {
 	 * @param eouFile The URL of the EOU XML file containing update information.
 	 * @return true if the update process was successful, false otherwise.
 	 */
-    public synchronized static boolean runOnlineUpdateGitHubNewestProd(JDialog parent, boolean allowBetaVersions) {
+    public synchronized static boolean runOnlineUpdateGitHubNewestProductionRelease(JDialog parent) {
         return runOnlineUpdate(parent,
-            new GithubReleaseUpdateProviderStrategy(Daten.ONLINEUPDATE_INFO_GITHUB_OWNER, 
-            		Daten.ONLINEUPDATE_INFO_GITHUB_REPOSITORY, allowBetaVersions),
-            new DialogSelectionStrategy()); 
+            new GithubProductionReleaseUpdateProviderStrategy(),
+            new AutoNewestSelectionStrategy()/*no dialog needed, just select the newest version*/); 
     }
+    
+    
+    /**
+	 * Run the old online update process for efaDRV programs using efa.nmichael.de as the source.
+	 * Uses the newest release only and does not need a Dialog to be displayed.
+	 * 
+	 * This method is only called from efaDRV programs.
+	 * 
+	 * The DRV releases are hosted on efa.nmichael.de and are not available on GitHub.
+	 * The DRV releases are not open source as they contain DRV specific features, 
+	 * data and branding - functions which should not be used by anyone else but DRV.
+	 * 
+	 * Until further notice, the DRV releases are only available on efa.nmichael.de and not on GitHub.
+	 * 
+	 * @param parent The parent dialog for displaying messages. Can be null if running in headless mode.
+	 * 
+	 */
+    public synchronized static boolean runOnlineUpdateDRVEfaNMichael(JDialog parent) {
+		return runOnlineUpdate(parent,
+			new EfaNMichaelDeUpdateProviderStrategy(Daten.ONLINEUPDATE_INFO_DRV),
+			new AutoNewestSelectionStrategy()/*no dialog needed, just select the newest version*/); 
+	}
     
     /**
 	 * Run the online update process using the specified provider and selection strategies.
 	 * @param parent The parent dialog for displaying messages. Can be null if running in headless mode.
 	 * @param provider The strategy for fetching available updates.
-	 * @param selection The strategy for selecting an update from the available candidates.
+	 * @param updateSelector The strategy for selecting an update from the available candidates.
 	 * @return true if the update process was successful, false otherwise.
 	 * */
     public synchronized static boolean runOnlineUpdate(
             JDialog parent,
             UpdateProviderStrategy provider,
-            UpdateSelectionStrategy selection) {
-        Vector<OnlineUpdateInfo> eouVersionInfo = null;
+            UpdateSelectionStrategy updateSelector) {
         lastError = null;
 
-        List<UpdateCandidate> allUpdateCandidates = null;
+        List<UpdateCandidate> newerCandidates;
         try {
-           allUpdateCandidates = provider.fetchAvailableUpdates();
+            newerCandidates = fetchNewerCandidates(parent, provider);
         } catch (Exception e) {
-			lastError = International.getString("Fehler beim Abrufen der Update-Informationen!")
-						+ "\n" + e.getMessage();
-			if (parent != null) {
-				Dialog.error(lastError);
-			}
-			return false;
+            lastError = International.getString("Fehler beim Abrufen der Update-Informationen!")
+                        + "\n" + e.getMessage();
+            if (parent != null) {
+                Dialog.error(lastError);
+            }
+            return false;
         }
-        List<UpdateCandidate> newerCandidates = filterNewerCandidates(allUpdateCandidates, Daten.VERSIONID);
+
+        // Update check timestamp speichern, damit nicht bei jedem Start von efa ein Online-Update-Check durchgeführt wird
+        if (Daten.efaConfig != null) {
+            Daten.efaConfig.setValueEfaVersionLastCheck(System.currentTimeMillis());
+        }
+
 
         if (newerCandidates==null || newerCandidates.isEmpty()) {
 			if (parent != null) {
@@ -105,11 +126,6 @@ public class OnlineUpdate {
 			}
 			return true;
 		}
-        
-        // Update check timestamp speichern, damit nicht bei jedem Start von efa ein Online-Update-Check durchgeführt wird
-        if (Daten.efaConfig != null) {
-            Daten.efaConfig.setValueEfaVersionLastCheck(System.currentTimeMillis());
-        }
         
     	UpdateCandidate newestCandidate = newerCandidates.get(0); // first candidate is always the newest one!
 
@@ -125,7 +141,7 @@ public class OnlineUpdate {
             return true;
         }
 
-        UpdateCandidate selected = selection.select(parent, provider, newerCandidates, Daten.VERSIONID);
+        UpdateCandidate selected = updateSelector.select(parent, provider, newerCandidates, Daten.VERSIONID);
         
 
         if (selected == null) {
@@ -134,26 +150,7 @@ public class OnlineUpdate {
         }
         
         // Ok, jetzt pruefen, ob Benutzer Schreibrechte im efa-Directory hat
-        String writeTestFile = Daten.efaMainDirectory + "writetest.tmp";
-        boolean canWrite = true;
-        try {
-            EfaUtil.deleteFile(writeTestFile); // just to make sure there is no such file
-            if (!(new File(writeTestFile)).createNewFile()) {
-                canWrite = false;
-            }
-        } catch (Exception e) {
-            canWrite = false;
-        } finally {
-            EfaUtil.deleteFile(writeTestFile);
-        }
-        if (!canWrite) {
-            if (parent != null) {
-                Dialog.error(LogString.directoryNoWritePermission(Daten.efaMainDirectory, International.getString("Verzeichnis")) +
-                        "\n\n" +
-                        International.getMessage("Bitte wiederhole das Online-Update als {osname}-Administrator.", Daten.osName));
-            } else {
-                lastError = LogString.directoryNoWritePermission(Daten.efaMainDirectory, International.getString("Verzeichnis"));
-            }
+        if (!checkWritePermission(parent)) {
             return false;
         }
 
@@ -165,24 +162,91 @@ public class OnlineUpdate {
         return downloadAndApplyUpdate(parent, newestCandidate);
     }
 
+	/**
+	 * Fetches all available update candidates from the provider and filters them to newer versions.
+	 * Shows the wait cursor during both steps.
+	 * @param parent The parent dialog, can be null.
+	 * @param provider The strategy for fetching available updates.
+	 * @return The newer candidates, newest first.
+	 * @throws Exception if the provider fails to fetch the update information.
+	 */
+	private static List<UpdateCandidate> fetchNewerCandidates(JDialog parent, UpdateProviderStrategy provider) throws Exception {
+		EfaGuiUtils.setWaitCursor(parent, true);
+		try {
+			List<UpdateCandidate> allUpdateCandidates = provider.fetchAvailableUpdates();
+			return filterNewerCandidates(allUpdateCandidates, Daten.VERSIONID);
+		} finally {
+			EfaGuiUtils.setWaitCursor(parent, false);
+		}
+	}
+
+	/**
+	 * Checks whether the current user can write into the efa main directory.
+	 * Sets lastError or shows an error dialog if not.
+	 * @param parent The parent dialog, can be null.
+	 * @return true if writing is possible, false otherwise.
+	 */
+	private static boolean checkWritePermission(JDialog parent) {
+		String writeTestFile = Daten.efaMainDirectory + "writetest.tmp";
+		boolean canWrite = true;
+		try {
+			EfaUtil.deleteFile(writeTestFile); // just to make sure there is no such file
+			if (!(new File(writeTestFile)).createNewFile()) {
+				canWrite = false;
+			}
+		} catch (Exception e) {
+			canWrite = false;
+		} finally {
+			EfaUtil.deleteFile(writeTestFile);
+		}
+		if (!canWrite) {
+			if (parent != null) {
+				Dialog.error(LogString.directoryNoWritePermission(Daten.efaMainDirectory, International.getString("Verzeichnis")) +
+						"\n\n" +
+						International.getMessage("Bitte wiederhole das Online-Update als {osname}-Administrator.", Daten.osName));
+			} else {
+				lastError = LogString.directoryNoWritePermission(Daten.efaMainDirectory, International.getString("Verzeichnis"));
+			}
+		}
+		return canWrite;
+	}
+
+	/**
+	 * Downloads the update from the specified candidate and applies it to the local installation.
+	 * 
+	 * @param parent The parent dialog, can be null.
+	 * @param newestCandidate The update candidate to download and apply.
+	 * @return true if the download and application were successful, false otherwise.
+	 */
 	private static boolean downloadAndApplyUpdate(JDialog parent, UpdateCandidate newestCandidate) {
-		// Download des Updates
+		// Target ZIP file for the downloaded update. Existing file will be overwritten.
+		// Downloaded file will NOT be deleted after the update.
         String zipFile = Daten.efaTmpDirectory + "eou.zip";
+        
         ExecuteAfterDownload afterDownload = new ExecuteAfterDownloadImpl(parent,
                 zipFile, newestCandidate.getDownloadSize(), newestCandidate.getVersionId());
+        
         if (parent != null) {
+        	// Disable the parent dialog while downloading to prevent user interaction.
             parent.setEnabled(false);
+            
+            // Download the update file. If the download fails, re-enable the parent dialog and return false.
+            // The Downloadthread shows its own progress dialog and handles cancellation and error messages.
             if (!DownloadThread.getFile(parent, newestCandidate.getDownloadUrl(), zipFile, afterDownload)) {
                 parent.setEnabled(true);
                 return false;
             }
         } else {
+        	// Download the update file without a parent dialog. 
+        	// This is used for remote updates where no GUI is available.
             Logger.log(Logger.INFO, Logger.MSG_EVT_REMOTEONLINEUPDATEDOWNLOAD,
                     International.getMessage("Download von {file}", newestCandidate.getDownloadUrl()) + " ...");
+            
             if (!DownloadThread.getFile(parent, newestCandidate.getDownloadUrl(), zipFile, true)) {
                 lastError = LogString.operationFailed(International.getString("Download"));
                 return false;
             }
+            
             Logger.log(Logger.INFO, Logger.MSG_EVT_REMOTEONLINEUPDATEDOWNLOAD,
                     LogString.operationSuccessfullyCompleted(
                         International.getMessage("Download von {file}", newestCandidate.getDownloadUrl())));
@@ -223,7 +287,8 @@ public class OnlineUpdate {
             }
         }
 
-        // Ensure newest first even if API order changes.
+        // Ensure newest first even if API order changes. 
+        // The comparator sorts the updates descending by version ID, so the newest version is first in the list.
         Collections.sort(newer, new Comparator<UpdateCandidate>() {
             @Override
             public int compare(UpdateCandidate a, UpdateCandidate b) {
@@ -243,12 +308,15 @@ public class OnlineUpdate {
         return lastError;
     }
 
+	public static void setLastError(String error) {
+		lastError = error;
+	}
+	
 	/**
 	 * Collects and formats user information for transmission during the online update process.
 	 * @param newVersionName The name of the new version being installed.
 	 * @return A formatted string containing user information, or null if the project is not open or the club name is not set.
-	 * */
-	
+	 */
     public static String getTransmitUserInfo(String newVersionName) {
         if (Daten.project == null || !Daten.project.isOpen()) {
             return null;
@@ -259,9 +327,13 @@ public class OnlineUpdate {
         StringBuilder s = new StringBuilder();
         s.append(International.getString("Verein") + ": " + Daten.project.getClubName() + "\n");
         s.append(International.getString("Sprache") + ": " + International.getLanguageDescription() + "\n");
+        
+        boolean rowing  = Daten.efaConfig != null && Daten.efaConfig.getValueUseFunctionalityRowing();
+        boolean canoeing = Daten.efaConfig != null && Daten.efaConfig.getValueUseFunctionalityCanoeing();
         s.append(International.getString("Sportarten") + ": " +
-                (Daten.efaConfig.getValueUseFunctionalityRowing() ? International.getString("Rudern") : "") + " " +
-                (Daten.efaConfig.getValueUseFunctionalityCanoeing() ? International.getString("Kanu") : "") + "\n");
+                (rowing ? International.getString("Rudern") : "") + " " +
+                (canoeing ? International.getString("Kanu") : "") + "\n");
+        
         s.append(International.getString("efa Version") + ": " + newVersionName + "\n");
         if (Daten.EFALIVE_VERSION != null) {
             s.append(International.getString("efaLive Version") + ": " + Daten.EFALIVE_VERSION + "\n");
@@ -277,43 +349,99 @@ public class OnlineUpdate {
 
     /**
 	 * Submits user information to the specified server during the online update process.
+	 * This is done "fire and forget": the actual network transmission happens asynchronously
+	 * in a background thread, so the caller is never blocked (e.g. by slow DNS/connect/read
+	 * timeouts) and does not need to wait for the result. Any failure is only logged for debugging.
+	 *
+	 * All data needed for the HTTP request (club name, storage type, Java/efa/efaLive versions, ...)
+	 * is read from {@link Daten} / {@link Daten#project} synchronously on the calling thread before
+	 * the background thread is started. This avoids race conditions / NullPointerExceptions in case
+	 * {@code Daten.project} is closed or modified concurrently while the background submission is
+	 * still in progress.
+	 *
 	 * @param newVersionName The name of the new version being installed.
 	 * */
-    public static void submitUserInfos(String newVersionName) {
-        String infos = getTransmitUserInfo(newVersionName);
-        if (infos == null || Daten.INTERNET_EFAMAIL == null) {
+    public static void submitUserInfos(final String newVersionName) {
+        final String infos = getTransmitUserInfo(newVersionName);
+        final String emailUrl = Daten.INTERNET_EFAMAIL;
+        if (infos == null || emailUrl == null || emailUrl.length() == 0) {
             return;
         }
+
+        // Snapshot all values needed for the request NOW (on the calling thread), so the
+        // background thread does not depend on mutable global state (Daten.project etc.)
+        // which could change or become unavailable while the request is still in flight.
+        final String clubName = Daten.project.getClubName();
+        final boolean isEfaCloud = Daten.project.getProjectStorageType() == IDataAccess.TYPE_EFA_CLOUD;
+        final String javaVersion = Daten.javaVersion;
+        final String appName = Daten.applName;
+        final String efaLiveVersion = Daten.EFALIVE_VERSION;
+
+        Thread t = new Thread(new Runnable() {
+            public void run() {
+                submitUserInfosBlocking(newVersionName, infos, emailUrl, clubName,
+                        isEfaCloud, javaVersion, appName, efaLiveVersion);
+            }
+        }, "OnlineUpdate-SubmitUserInfos");
+        t.setDaemon(true); // does not prevent JVM shutdown if the main thread exits
+        t.start();
+    }
+
+    /**
+	 * Performs the actual (blocking) HTTP submission of user information. Must not be called
+	 * directly from UI code; use {@link #submitUserInfos(String)} instead, which runs this in
+	 * a background thread ("fire and forget") and provides all the required snapshot data.
+	 * @param newVersionName The name of the new version being installed.
+	 * @param infos The already-collected user info text.
+	 * @param emailUrl The URL to submit the data to.
+	 * @param clubName The club name, snapshotted from Daten.project before going async.
+	 * @param isEfaCloud Whether the project storage type is efaCloud.
+	 * @param javaVersion The Java version string.
+	 * @param appName The application name.
+	 * @param efaLiveVersion The efaLive version, or null if not running under efaLive.
+	 */
+    private static void submitUserInfosBlocking(String newVersionName, String infos, String emailUrl,
+            String clubName, boolean isEfaCloud, String javaVersion, String appName, String efaLiveVersion) {
+        URLConnection connection = null;
         try {
-            URL url = new URL(Daten.INTERNET_EFAMAIL);
-            URLConnection connection = url.openConnection();
+            String body = "subject=User efa - " + newVersionName + " (Online-Update)" +
+                    "&comments=" + URLEncoder.encode(infos, "ISO-8859-1") +
+                    "&club=" + URLEncoder.encode(clubName != null ? clubName : "", "ISO-8859-1") +
+                    "&efa.version=" + URLEncoder.encode(newVersionName, "ISO-8859-1") +
+                    (efaLiveVersion != null ? "&efalive.version=" + URLEncoder.encode(efaLiveVersion, "ISO-8859-1") : "") +
+                    (isEfaCloud ? "&efacloud=efaCloud" : "") +
+                    "&java.version=" + URLEncoder.encode(javaVersion, "ISO-8859-1") +
+                    "&app=" + URLEncoder.encode(appName, "ISO-8859-1");
+
+            connection = new URL(emailUrl).openConnection();
             connection.setDoOutput(true);
             connection.setDoInput(true);
             connection.setUseCaches(false);
-            connection.setAllowUserInteraction(true);
+            connection.setConnectTimeout(15000);
+            connection.setReadTimeout(30000);
             connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-            OutputStreamWriter out = new OutputStreamWriter(connection.getOutputStream());
-            out.write("subject=User efa - " + newVersionName + " (Online-Update)" +
-                    "&comments=" + URLEncoder.encode(infos, "ISO-8859-1") +
-                    "&club=" + URLEncoder.encode(Daten.project.getClubName(), "ISO-8859-1") +
-                    "&efa.version=" + URLEncoder.encode(newVersionName, "ISO-8859-1") +
-                    (Daten.EFALIVE_VERSION != null ? "&efalive.version=" + URLEncoder.encode(Daten.EFALIVE_VERSION, "ISO-8859-1") : "") +
-                    (Daten.project != null && Daten.project.isOpen() && Daten.project.getProjectStorageType() == IDataAccess.TYPE_EFA_CLOUD ? "efacloud=efaCloud" : "")  +
-                    "&java.version=" + URLEncoder.encode(Daten.javaVersion, "ISO-8859-1") +
-                    "&app=" + URLEncoder.encode(Daten.applName, "ISO-8859-1"));
-            out.flush();
-            out.close();
-            InputStream in = new BufferedInputStream(connection.getInputStream());
-            BufferedReader buf = new BufferedReader(new InputStreamReader(in));
-            @SuppressWarnings("unused")
-			String s;
-            while ((s = buf.readLine()) != null) {
-                // nothing
+
+            try (OutputStreamWriter out = new OutputStreamWriter(connection.getOutputStream(), "ISO-8859-1")) {
+                out.write(body);
+            }
+            // read the response to ensure the request is completed, but we don't need to process it
+            try (InputStream in = connection.getInputStream()) {
+                byte[] buffer = new byte[1024];
+                while (in.read(buffer) != -1) {
+                    // nothing
+                }
             }
         } catch (Exception e) {
-            return;
+        	Logger.logdebug(e);
+            // transmitting user info failed, but we don't want to interrupt the update process for this
+        } finally {
+            // release the underlying socket/connection instead of relying on garbage collection
+            if (connection instanceof java.net.HttpURLConnection) {
+                ((java.net.HttpURLConnection) connection).disconnect();
+            }
         }
     }
+
 }
 
 /**	
@@ -326,7 +454,7 @@ public class OnlineUpdate {
  *         <DownloadUrl>...</DownloadUrl>
  *         <DownloadSize>...</DownloadSize>
  *         <Changes lang="...">
- *             <ChangeItem>...</ChangeItem>
+ *             <ChangeItem section="...">...</ChangeItem>
  *             ...
  *         </Changes>
  *     </Version>
@@ -438,6 +566,13 @@ class ExecuteAfterDownloadImpl implements ExecuteAfterDownload {
         this.fileSize = fileSize;
         this.versionId = versionId;
     }
+    
+    // NEW: sets the error locally and globally (also works in the efaRemote case without a dialog)
+    private void setError(String err) {
+        lastError = err;
+        OnlineUpdate.setLastError(err);
+    }
+
     /**
 	 * Called when the download is successful. This method verifies the downloaded file size, backs up
 	 * existing data, unzips the downloaded update, and restarts the application if necessary.
@@ -447,8 +582,8 @@ class ExecuteAfterDownloadImpl implements ExecuteAfterDownload {
             parent.setEnabled(true);
         }
         File f = new File(zipFile);
-        if ((fileSize>0) && (f.length() != fileSize)) {
-            lastError = International.getString("Der Download ist unvollständig.");
+        if ((fileSize > 0) && (f.length() != fileSize)) {
+            setError(International.getString("Der Download ist unvollständig."));
             if (parent != null) {
                 Dialog.error(LogString.operationAborted(International.getString("Update")) + "\n" + lastError);
             }
@@ -473,7 +608,7 @@ class ExecuteAfterDownloadImpl implements ExecuteAfterDownload {
             }
             Backup backup = new Backup(Daten.efaBakDirectory, null, backupProject, true, true); // do not include efa log during onlineupdate backup
             if (backup.runBackup(null) != 0) {
-                lastError = LogString.operationFailed(International.getString("Backup"));
+                setError(LogString.operationFailed(International.getString("Backup")));
                 if (parent == null) {
                     return;
                 }
@@ -486,28 +621,27 @@ class ExecuteAfterDownloadImpl implements ExecuteAfterDownload {
             }
         }
 
-        //Using new unzip method
+        // Entpacken (neue Unzip-Methode)
         UnzipResult result = null;
         if (Daten.isOsLinux()) {
-            result= EfaZIPUtil.unzipToResult(zipFile, Daten.efaMainDirectory, ".jar", ".jar.new");
+            result = EfaZIPUtil.unzipToResult(zipFile, Daten.efaMainDirectory, ".jar", ".jar.new");
         } else {
-            result= EfaZIPUtil.unzipToResult(zipFile, Daten.efaMainDirectory);
+            result = EfaZIPUtil.unzipToResult(zipFile, Daten.efaMainDirectory);
         }
-        
+
         if (result != null) {
-        	if (result.getStatus()==EfaZIPUtil.UnzipStatus.FAILURE) {
-        		String errorText = result.getErrorsAsString();
-        		if (errorText.length() > 1000) {
-        			errorText = errorText.substring(0, 1000);
-        		}
-        		
-	            lastError = LogString.operationFailed(International.getString("Installation")) +
-	                    "\n" + errorText;
-	            if (parent != null) {
-	                Dialog.error(lastError);
-	            }
-	            return;
-        	}
+            if (result.getStatus() == EfaZIPUtil.UnzipStatus.FAILURE) {
+                String errorText = result.getErrorsAsString();
+                if (errorText.length() > 1000) {
+                    errorText = errorText.substring(0, 1000);
+                }
+                setError(LogString.operationFailed(International.getString("Installation")) +
+                        "\n" + errorText);
+                if (parent != null) {
+                    Dialog.error(lastError);
+                }
+                return;
+            }
         }
 
         // Erfolgreich
@@ -529,12 +663,26 @@ class ExecuteAfterDownloadImpl implements ExecuteAfterDownload {
         }
     }
 
+
+
     /**
-	 * Called when the download fails. This method enables the parent window and displays an error message
-	 * indicating that the operation failed.
+	 * Called when the download fails. Re-enables the parent window (if present), records the error
+	 * and shows an error message (only if a parent window exists).
 	 * */
     public void failure(String text) {
-        parent.setEnabled(true);
-        Dialog.infoDialog(LogString.operationFailed(International.getString("Installation")));
+        String err = LogString.operationFailed(International.getString("Installation"));
+        if (text != null && text.length() > 0) {
+            err += "\n" + text;
+        }
+        OnlineUpdate.setLastError(err);
+        if (parent != null) {
+            parent.setEnabled(true);
+            Dialog.error(err);
+        } else {
+            Logger.log(Logger.ERROR, Logger.MSG_EVT_REMOTEONLINEUPDATEDOWNLOAD, err);
+        }
     }
+
+    
+
 }

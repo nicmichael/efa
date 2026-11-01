@@ -10,21 +10,35 @@
 
 package de.nmichael.efa.gui;
 
+import java.awt.AWTEvent;
+import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.Vector;
+
+import javax.swing.JDialog;
+
 import de.nmichael.efa.Daten;
 import de.nmichael.efa.core.Backup;
 import de.nmichael.efa.core.BackupMetaData;
 import de.nmichael.efa.core.BackupMetaDataItem;
 import de.nmichael.efa.core.config.AdminRecord;
-import de.nmichael.efa.core.items.*;
+import de.nmichael.efa.core.items.IItemListener;
+import de.nmichael.efa.core.items.IItemType;
+import de.nmichael.efa.core.items.ItemTypeBoolean;
+import de.nmichael.efa.core.items.ItemTypeButton;
+import de.nmichael.efa.core.items.ItemTypeFile;
+import de.nmichael.efa.core.items.ItemTypeLabel;
+import de.nmichael.efa.core.items.ItemTypeString;
+import de.nmichael.efa.core.items.ItemTypeTable;
 import de.nmichael.efa.data.storage.IDataAccess;
 import de.nmichael.efa.gui.util.EfaMenuButton;
 import de.nmichael.efa.gui.util.TableItem;
-import de.nmichael.efa.util.*;
 import de.nmichael.efa.util.Dialog;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-import java.util.*;
+import de.nmichael.efa.util.EfaUtil;
+import de.nmichael.efa.util.International;
 
 public class BackupDialog extends BaseTabbedDialog implements IItemListener {
 
@@ -77,6 +91,10 @@ public class BackupDialog extends BaseTabbedDialog implements IItemListener {
         // Create Backup
         cat = "%01%" + International.getString("Backup erstellen");
 
+        if (Daten.project != null && Daten.project.getProjectStorageType() == IDataAccess.TYPE_EFA_REMOTE) {
+			guiItems.add(item = EfaGuiUtils.createHintWordWrap("BACKUP_HINT_REMOTE", IItemType.TYPE_PUBLIC, cat,
+					International.getString("efaRemote Projekt aktiv\nDaten werden von remote geladen und lokal als ZIP abgelegt."), 3,10,20,700));
+		}
         guiItems.add(item = new ItemTypeBoolean("CREATE_SELECT_CONFIG", true,
                 IItemType.TYPE_PUBLIC, cat, International.getMessage("{typeOfData} sichern",
                 International.getString("Konfigurationsdaten"))));
@@ -114,6 +132,14 @@ public class BackupDialog extends BaseTabbedDialog implements IItemListener {
         // Restore Backup
         cat = "%02%" + International.getString("Backup einspielen");
 
+        if (Daten.project != null && Daten.project.getProjectStorageType() == IDataAccess.TYPE_EFA_REMOTE) {
+        	ItemTypeLabel hint;
+			guiItems.add(hint = EfaGuiUtils.createHintWordWrap("RESTORE_HINT_REMOTE", IItemType.TYPE_PUBLIC, cat,
+					International.getString("efaRemote Projekt aktiv\nDaten werden aus der lokalen Datei geladen"
+							+" und auf den Remote Server wiederhergestellt."), 1,10,10,600));
+			hint.setIndent(true);
+		}
+
         guiItems.add(item = new ItemTypeFile(ZIPFILE_SELECT, "",
                     International.getString("Backup"),
                     International.getString("ZIP-Archiv") + " (*.zip)",
@@ -121,7 +147,7 @@ public class BackupDialog extends BaseTabbedDialog implements IItemListener {
                     IItemType.TYPE_PUBLIC, cat,
                     International.getString("Backupdatei")));
         restoreZipFile = (ItemTypeFile)item;
-        restoreZipFile.setFieldSize(500, -1);
+        restoreZipFile.setFieldSize(420, -1);
         restoreZipFile.setPadding(0, 0, 10, 10);
         restoreZipFile.setFileDialogBaseDirectory(Daten.efaBakDirectory);
         restoreZipFile.registerItemListener(this);

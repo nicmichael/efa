@@ -4,11 +4,13 @@ import java.awt.Window;
 import java.io.File;
 import java.util.List;
 import java.util.Vector;
+
 import javax.swing.JDialog;
 
 import org.xml.sax.XMLReader;
 
 import de.nmichael.efa.Daten;
+import de.nmichael.efa.gui.EfaGuiUtils;
 import de.nmichael.efa.gui.onlineupdate.OnlineUpdateDialog;
 import de.nmichael.efa.util.Dialog;
 import de.nmichael.efa.util.EfaUtil;
@@ -22,28 +24,39 @@ public class DialogSelectionStrategy implements UpdateSelectionStrategy {
 
     public UpdateCandidate select(JDialog parent, UpdateProviderStrategy provider, 
     		List<UpdateCandidate> newerCandidates, String currentVersion) {
+    	
         if (newerCandidates == null || newerCandidates.isEmpty()) {
             return null;
         }
-        Vector<OnlineUpdateInfo> eouVersionInfo = null;
-        // Get the newest version information from the EOU file so that we can display the changes and download size to the user.
-        // we always use the newest candidate to get the EOU file, because it contains all newer versions and their changes.
-        eouVersionInfo = getEOUVersionInfo(parent, provider, newerCandidates);
 
-        // Ok, es gibt eine neue Version --> Infos über diese Version einlesen
+        Vector<OnlineUpdateInfo> eouVersionInfo = null;
         Vector<String> changes = new Vector<String>();
-        for (int i=0; i<eouVersionInfo.size(); i++) {
-            OnlineUpdateInfo version = eouVersionInfo.get(i);
-            if (Daten.VERSIONID.compareTo(version.versionId) >= 0) {
-                break;
-            }
-            Vector<String> moreChanges = version.getChanges();
-            for (String s : moreChanges) {
-                if (!changes.contains(s)) {
-                    changes.add(s);
-                }
-            }
-        }
+        
+        try {
+			
+        	EfaGuiUtils.setWaitCursor(parent, true);
+		    // Get the newest version information from the EOU file so that we can display the changes and download size to the user.
+	        // we always use the newest candidate to get the EOU file, because it contains all newer versions and their changes.
+	        eouVersionInfo = getEOUVersionInfo(parent, provider, newerCandidates);
+
+	        // Ok, es gibt eine neue Version --> Infos über diese Version einlesen
+
+	        for (int i=0; i<eouVersionInfo.size(); i++) {
+	            OnlineUpdateInfo version = eouVersionInfo.get(i);
+	            if (Daten.VERSIONID.compareTo(version.versionId) >= 0) {
+	                break;
+	            }
+	            Vector<String> moreChanges = version.getChanges();
+	            for (String s : moreChanges) {
+	                if (!changes.contains(s)) {
+	                    changes.add(s);
+	                }
+	            }
+	        }
+	        
+		} finally {
+			EfaGuiUtils.setWaitCursor(parent, false);
+		}
 
         UpdateCandidate newestCandidate=(newerCandidates!=null && newerCandidates.size()>0 ? newerCandidates.get(0) : null);
         
@@ -56,6 +69,8 @@ public class DialogSelectionStrategy implements UpdateSelectionStrategy {
 	            dlg.showDialog();
 	            if (!dlg.getDialogResult()) {
 	                return null;
+	            } else {
+	            	return newestCandidate;
 	            }
 	        } else {
 	        	return newestCandidate;

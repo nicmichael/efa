@@ -16,11 +16,13 @@ public class UpdateCandidate {
     private final List<String> changes;
     private final String sourceName;
     private final boolean isDraft;
+    private final boolean isPrerelease;
+    private final boolean isProductionRelease;
     private final String eouURL;
     private final String tag; // GitHub Tag ID
     
     public UpdateCandidate(String versionId, String releaseDate, String downloadUrl,
-            long downloadSize, List<String> changes, String sourceName, boolean isDraft, String eouURL, String tag) {
+            long downloadSize, List<String> changes, String sourceName, boolean isDraft, boolean isPreRelease, String eouURL, String tag) {
         this.versionId = versionId;
         this.releaseDate = releaseDate;
         this.downloadUrl = downloadUrl;
@@ -28,6 +30,8 @@ public class UpdateCandidate {
         this.changes = changes == null ? new ArrayList<String>() : new ArrayList<String>(changes);
         this.sourceName = sourceName;
         this.isDraft = isDraft;
+        this.isPrerelease = isPreRelease;
+        this.isProductionRelease = (!isDraft && !isPreRelease);
         this.eouURL = eouURL;
         this.tag = tag;
     }

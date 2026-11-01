@@ -61,7 +61,6 @@ public class BrowserDialog extends BaseDialog {
     JButton searchNextButton = new JButton();
     JLabel sslLabel = new JLabel();
 
-    private DownloadThread downloadThread;
     TimeoutThread timeoutThread;
 
     class TimeoutThread extends Thread {
