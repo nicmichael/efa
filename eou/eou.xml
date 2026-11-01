@@ -96,15 +96,17 @@ section="Other"
 			<ChangeItem section="Other">Neu: FlatLaf Bibliothek auf Version 3.7.2 aktualisiert.</ChangeItem>
 			<ChangeItem section="Other">Neu: Plugin.xml aktualisiert.</ChangeItem>
 			<ChangeItem section="Other">Neu: In der Plugin-Übersicht die "Installieren" Schaltfläche entfernt, da inzwischen veraltet. Efa wird grundsätzlich mit allen Plugins ausgeliefert.</ChangeItem>
+			<ChangeItem section="Other">Neu: Die PDF-Exportbibliothek gehört bei efa zum Standard-Installationsumfang. Die alten Weather-Plugins sind nutzlos und wurden entfernt.</ChangeItem>
 		</Changes>
-        <Changes lang="en">
-        	<ChangeItem section="Boathouse">New: Visual improvement of the boathouse lists: Rounded corners, the "---" in the sections have been removed, and scroll bars are only displayed when needed.</ChangeItem>
-        	<ChangeItem section="Widget">New: The background/text color of the news ticker is configurable.</ChangeItem>
-        	<ChangeItem section="GUI/Useability">New: When selecting colors, there is now a pastel color picker and one that displays the EFA standard colors. This greatly simplifies color selection and reuse of colors.</ChangeItem>
-       		<ChangeItem section="Other">New: FlatLaf library updated to version 3.7.2.</ChangeItem>
-       		<ChangeItem section="Other">New: Plugin.xml updated.</ChangeItem>
-       		<ChangeItem section="Other">New: In the plugin overview, the "Install" button has been removed as it is now outdated. Efa is delivered with all plugins by default.</ChangeItem>
-       </Changes>
+		<Changes lang="en">
+			<ChangeItem section="Boathouse">New: Visual improvement of the boathouse lists: Rounded corners, the "---" in the sections have been removed, and scroll bars are only displayed when needed.</ChangeItem>
+			<ChangeItem section="Widget">New: The background/text color of the news ticker is configurable.</ChangeItem>
+			<ChangeItem section="GUI/Useability">New: When selecting colors, there is now a pastel color picker and one that displays the EFA standard colors. This greatly simplifies color selection and reuse of colors.</ChangeItem>
+	   		<ChangeItem section="Other">New: FlatLaf library updated to version 3.7.2.</ChangeItem>
+	   		<ChangeItem section="Other">New: Plugin.xml updated.</ChangeItem>
+	   		<ChangeItem section="Other">New: In the plugin overview, the "Install" button has been removed as it is now outdated. Efa is delivered with all plugins by default.</ChangeItem>
+ 			<ChangeItem section="Other">New: The PDF export library is now part of the standard installation of efa. The old weather plugins are removed as they are no longer of use.</ChangeItem>
+ 		</Changes>
 	</Version>
 	<Version>
         <VersionID>2.5.3_17</VersionID>
