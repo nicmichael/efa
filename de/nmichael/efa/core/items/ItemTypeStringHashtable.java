@@ -72,13 +72,20 @@ public class ItemTypeStringHashtable extends ItemType {
 
 	@Override
 	public IItemType copyOf() {
-		ItemTypeStringHashtable item = new ItemTypeStringHashtable(name, value, isEditable, type, category, description);
+		ItemTypeStringHashtable copy = new ItemTypeStringHashtable(name, value, isEditable, type, category, description);
         String[] myKeys = this.getKeysArray();
         for (int i=0; i<myKeys.length; i++) {
             String e = get(myKeys[i]);
-            item.put(myKeys[i],e);
+            copy.put(myKeys[i],e);
         }
-        return item;
+        
+        copy.setFieldSize(fieldWidth,  fieldHeight);
+        copy.setIndent(this.isIndent());
+        copy.setVisible(this.isVisible());
+        copy.setFieldGrid(fieldGridWidth, fieldGridHeight, fieldGridAnchor, fieldGridFill);
+        copy.setPadding(padXbefore, padXafter, padYbefore, padYafter);
+ 
+        return copy;
 	}
 
     public void setAllowed(boolean allowedAdd, boolean allowedDelete) {
@@ -182,7 +189,9 @@ public class ItemTypeStringHashtable extends ItemType {
 
     public int displayOnGui(Window dlg, JPanel panel, int x, int y) {
         this.dlg = dlg;
-
+        //respect the indent property of the item, if set
+        x=(this.isIndent() ? x+1 : x);
+        
         if (Daten.efaConfig.getHeaderUseHighlightColor()) {
 	        titlelabel = new RoundedLabel();
 	        titlelabel.setBackground(Daten.efaConfig.getHeaderBackgroundColor());
@@ -356,16 +365,25 @@ public class ItemTypeStringHashtable extends ItemType {
 
     @Override
     public void setVisible(boolean visible) {
-        titlelabel.setVisible(visible);
-        addButton.setVisible(visible);
-        for (int i=0; i<textfield.length; i++) {
-            textfield[i].setVisible(visible);
-        }
-        JButton[] b = delButtons.keySet().toArray(new JButton[0]);
-        for (int i=0; i<b.length; i++) {
-            b[i].setVisible(visible);
-        }
         super.setVisible(visible);
+    	if (titlelabel != null) {
+    		titlelabel.setVisible(visible);
+    	}
+    	
+    	if (addButton!=null) {
+    		addButton.setVisible(visible);
+    	}
+    	if (textfield != null) {
+	        for (int i=0; i<textfield.length; i++) {
+	            textfield[i].setVisible(visible);
+	        }
+    	}
+    	if (delButtons != null) {
+	        JButton[] b = delButtons.keySet().toArray(new JButton[0]);
+	        for (int i=0; i<b.length; i++) {
+	            b[i].setVisible(visible);
+	        }
+    	}
     }
 
     @Override

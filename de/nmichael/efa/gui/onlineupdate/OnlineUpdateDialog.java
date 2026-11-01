@@ -8,10 +8,11 @@
  * @version 2
  */
 
-package de.nmichael.efa.gui;
+package de.nmichael.efa.gui.onlineupdate;
 
 import de.nmichael.efa.Daten;
-import de.nmichael.efa.core.OnlineUpdate;
+import de.nmichael.efa.core.update.OnlineUpdate;
+import de.nmichael.efa.gui.BaseDialog;
 import de.nmichael.efa.util.Dialog;
 import de.nmichael.efa.util.International;
 import de.nmichael.efa.util.Mnemonics;

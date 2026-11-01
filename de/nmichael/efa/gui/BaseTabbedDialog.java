@@ -654,7 +654,7 @@ public abstract class BaseTabbedDialog extends BaseDialog {
         scrollPane.getVerticalScrollBar().setBackground(panel.getBackground());
 
         innerPanel.setLayout(new GridBagLayout());
-        innerPanel.setBorder(BorderFactory.createEmptyBorder(8, 2, 0, 6));
+        innerPanel.setBorder(BorderFactory.createEmptyBorder(8, 6, 0, 6));
         panel.setLayout(new GridBagLayout());
         panel.add(scrollPane, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
 

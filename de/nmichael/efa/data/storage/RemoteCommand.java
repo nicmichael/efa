@@ -52,4 +52,24 @@ public class RemoteCommand extends RemoteEfaClient {
         }
     }
 
+    /**
+     * Requests the version information of the remote efa instance.
+     *
+     * @return a RemoteVersionInfo with the remote version values and the result code of the request.
+     *         If no valid response was received, the result code is -1 and the values are null.
+     */
+    public RemoteVersionInfo getVersionInfo() {
+        RemoteEfaMessage request = RemoteEfaMessage.createRequestData(1, getStorageObjectType(), getStorageObjectName(),
+                RemoteEfaMessage.OPERATION_CMD_GETVERSIONINFO);
+        RemoteEfaMessage result = runDataRequest(request);
+        if (result == null) {
+            return new RemoteVersionInfo(null, null, null, -1);
+        }
+        return new RemoteVersionInfo(
+                result.getFieldValue(RemoteEfaMessage.FIELD_VERSION),
+                result.getFieldValue(RemoteEfaMessage.FIELD_VERSIONID),
+                result.getFieldValue(RemoteEfaMessage.FIELD_VERSIONRELEASEDATE),
+                result.getResultCode());
+    }
+
 }

@@ -10,11 +10,24 @@
 
 package de.nmichael.efa.core.items;
 
-import de.nmichael.efa.util.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.FocusEvent;
+import java.awt.event.MouseEvent;
+
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+
 import de.nmichael.efa.util.Dialog;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
+import de.nmichael.efa.util.Mnemonics;
 
 // @i18n complete
 
@@ -137,6 +150,8 @@ public abstract class ItemTypeLabelValue extends ItemType {
         x += xOffset;
         y += yOffset;
         
+        //respect the indent property of the item, if set
+        x=(this.isIndent() ? x+1 : x);
         /*
          * If we want to have a two column layout, we need to trick and take some assumptions.
          * Problem is
@@ -289,9 +304,7 @@ public abstract class ItemTypeLabelValue extends ItemType {
 
     private boolean showExpandButton(boolean isExpandButtonHit, boolean calledForExpandButton) {
         if (isShowOptional && toString().length() == 0 && !isExpandButtonHit) {
-            if (isShowOptional) {
                 actionEvent(new ActionEvent(this, ACTIONID_FIELD_COLLAPSED, "collapsed"));
-            }
             return (calledForExpandButton); // show expandButton
         } else {
             if (isShowOptional) {

@@ -128,6 +128,7 @@ public abstract class BaseDialog extends JDialog implements ActionListener {
         super(parent);
         this._parent = parent;
         this._title = ucTitle(title);
+        super.setTitle(this._title);
         this._closeButtonText = closeButtonText;
     }
 
@@ -135,12 +136,14 @@ public abstract class BaseDialog extends JDialog implements ActionListener {
         super(parent, title, ModalityType.APPLICATION_MODAL);
         this._parent = parent;
         this._title = ucTitle(title);
+        super.setTitle(this._title);
     }
 
     public BaseDialog(JDialog parent, String title, String closeButtonText) {
         super(parent);
         this._parent = parent;
         this._title = ucTitle(title);
+        super.setTitle(this._title);
         this._closeButtonText = closeButtonText;
     }
     

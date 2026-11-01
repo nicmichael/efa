@@ -52,6 +52,7 @@ public class ItemTypeDate extends ItemTypeLabelTextfield {
         copy.setIsItemOnSameRowAsPreviousItem(itemOnSameRowAsPreviousItem);
         copy.setItemOnNewRow(itemOnNewRow);
         copy.setFieldGrid(fieldGridWidth,fieldGridHeight,fieldGridAnchor,fieldGridFill);
+        copy.setIndent(this.isIndent());
         return copy;
     }
 
@@ -97,6 +98,8 @@ public class ItemTypeDate extends ItemTypeLabelTextfield {
         int plusy = super.displayOnGui(dlg, panel, x, y);
         if (showWeekday) {
             weekdayLabel = new JLabel();
+            //respect the indent property of the item, if set
+            x=(this.isIndent() ? x+1 : x);
             panel.add(weekdayLabel, new GridBagConstraints(x+labelGridWidth+fieldGridWidth, y, weekdayGridWidth, 1, 0.0, 0.0,
                     weekdayGridAnchor, weekdayGridFill, new Insets(padYbefore, 0, padYafter, 0), 0, 0));
         }

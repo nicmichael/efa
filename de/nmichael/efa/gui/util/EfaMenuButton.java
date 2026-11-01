@@ -10,28 +10,64 @@
 
 package de.nmichael.efa.gui.util;
 
+import java.util.Hashtable;
+import java.util.Vector;
+
+import javax.swing.ImageIcon;
+
 import de.nmichael.efa.Daten;
 import de.nmichael.efa.core.config.AdminRecord;
 import de.nmichael.efa.core.config.Admins;
 import de.nmichael.efa.core.config.EfaConfig;
 import de.nmichael.efa.core.items.IItemType;
 import de.nmichael.efa.core.items.ItemTypeString;
+import de.nmichael.efa.core.update.DialogSelectionStrategy;
+import de.nmichael.efa.core.update.OnlineUpdate;
+import de.nmichael.efa.core.update.UpdateProviderStrategy;
+import de.nmichael.efa.core.update.UpdateSelectionStrategy;
 import de.nmichael.efa.data.Logbook;
 import de.nmichael.efa.data.storage.IDataAccess;
 import de.nmichael.efa.data.storage.RemoteCommand;
 import de.nmichael.efa.data.sync.KanuEfbSyncTask;
-import de.nmichael.efa.gui.*;
-import de.nmichael.efa.gui.dataedit.*;
+import de.nmichael.efa.gui.AdminDialog;
+import de.nmichael.efa.gui.AdminPasswordChangeDialog;
+import de.nmichael.efa.gui.BackupDialog;
+import de.nmichael.efa.gui.BaseDialog;
+import de.nmichael.efa.gui.BaseFrame;
+import de.nmichael.efa.gui.EfaAboutDialog;
+import de.nmichael.efa.gui.EfaBaseFrame;
+import de.nmichael.efa.gui.EfaCloudConfigDialog;
+import de.nmichael.efa.gui.EfaConfigDialog;
+import de.nmichael.efa.gui.EfaGuiUtils;
 import de.nmichael.efa.gui.ImagesAndIcons;
+import de.nmichael.efa.gui.LogViewDialog;
+import de.nmichael.efa.gui.PluginDialog;
+import de.nmichael.efa.gui.ProgressDialog;
+import de.nmichael.efa.gui.SimpleInputDialog;
+import de.nmichael.efa.gui.TranslateDialog;
+import de.nmichael.efa.gui.dataedit.AdminListDialog;
+import de.nmichael.efa.gui.dataedit.BoatDamageListDialog;
+import de.nmichael.efa.gui.dataedit.BoatListDialog;
+import de.nmichael.efa.gui.dataedit.BoatReservationListDialog;
+import de.nmichael.efa.gui.dataedit.BoatStatusListDialog;
+import de.nmichael.efa.gui.dataedit.ClubworkListDialog;
+import de.nmichael.efa.gui.dataedit.CrewListDialog;
+import de.nmichael.efa.gui.dataedit.DestinationListDialog;
+import de.nmichael.efa.gui.dataedit.FahrtenabzeichenListDialog;
+import de.nmichael.efa.gui.dataedit.GroupListDialog;
+import de.nmichael.efa.gui.dataedit.LogbookListDialog;
+import de.nmichael.efa.gui.dataedit.MessageListDialog;
+import de.nmichael.efa.gui.dataedit.PersonListDialog;
+import de.nmichael.efa.gui.dataedit.SessionGroupListDialog;
+import de.nmichael.efa.gui.dataedit.StatisticsListDialog;
+import de.nmichael.efa.gui.dataedit.StatusListDialog;
+import de.nmichael.efa.gui.dataedit.WatersListDialog;
+import de.nmichael.efa.gui.onlineupdate.OnlineUpdateSourceSelectionDialog;
 import de.nmichael.efa.util.Dialog;
 import de.nmichael.efa.util.Help;
 import de.nmichael.efa.util.International;
 import de.nmichael.efa.util.LogString;
 import de.nmichael.efa.util.Logger;
-import de.nmichael.efa.core.OnlineUpdate;
-import java.util.Hashtable;
-import java.util.Vector;
-import javax.swing.ImageIcon;
 
 public class EfaMenuButton {
 
@@ -185,7 +221,7 @@ public class EfaMenuButton {
         if (admin == null || admin.isAllowedUpdateEfa()) {
             v.add(new EfaMenuButton(MENU_FILE, BUTTON_UPDATE,
                     International.getStringWithMnemonic("Datei"),
-                    International.getStringWithMnemonic("Online-Update"),
+                    International.getStringWithMnemonic("Update (Online/USB)"),
                     BaseFrame.getIcon(ImagesAndIcons.IMAGE_MENU_UPDATE)));
         }
         if (admin == null || admin.isAllowedUpdateEfa()) {
@@ -428,6 +464,9 @@ public class EfaMenuButton {
         return menuAction(null, parent, action, admin, logbook);
     }
 
+    /**
+	 * Returns true if the action was handled, false if the caller has to handle it.
+	 */
     private static boolean menuAction(BaseFrame parentFrame, BaseDialog parentDialog, String action, AdminRecord admin, Logbook logbook) {
         if (action == null) {
             return false;
@@ -499,8 +538,15 @@ public class EfaMenuButton {
 
             boolean remoteEfa = false;
             if (Daten.project != null && Daten.project.getProjectStorageType() == IDataAccess.TYPE_EFA_REMOTE) {
+            	String efaRemoteUpdateHint = "Hinweis:\nDas Remote Online-Update startet sofort, und führt ein Update"+
+            			" auf die bei GitHub hinterlegte neueste Produktionsversion durch.\nEs ist kein remote Update"+
+            			" auf Testversionen möglich.\n\nDas Remote Update kann wegen Download, Backup, Installation,"+
+            			" Neustart von efa länger dauern. Daher ist es wahrscheinlich, dass auf diesem Rechner nach"+
+            			" 60 Sekunden eine Fehlermeldung wegen Timeout erscheint. Das heißt aber nicht, dass das Update"+
+            			" fehlgeschlagen ist.\nBitte prüfen Sie nach einigen Minuten, ob efa auf dem Remote-Rechner aktualisiert wurde.";
                 switch (Dialog.auswahlDialog(International.getString("Online-Update"),
-                        International.getString("Lokales oder entferntes efa aktualisieren?"),
+                        International.getString("Lokales oder entferntes efa aktualisieren?")
+                        + "\n\n"+ International.getString(efaRemoteUpdateHint),
                         International.getString("Lokal"),
                         International.getString("Remote"), true)) {
                     case 0:
@@ -525,7 +571,7 @@ public class EfaMenuButton {
                             result));
                 }
             } else {
-                OnlineUpdate.runOnlineUpdate(parentDialog, Daten.ONLINEUPDATE_INFO);
+                runOnlineUpdate(parentDialog);
             }
             return false; // nothing to do for caller of this method
         }
@@ -569,6 +615,7 @@ public class EfaMenuButton {
                             LogString.cantExecCommand(cmd, International.getString("Kommando")));
                 }
             }
+            return true;
         }
 
         if (action.equals(BUTTON_EXIT)) {
@@ -862,6 +909,7 @@ public class EfaMenuButton {
                 return false;
             }
             EfaConfig myEfaConfig = Daten.efaConfig;
+            boolean remoteConfig = false;
             if (Daten.project != null && Daten.project.getProjectStorageType() == IDataAccess.TYPE_EFA_REMOTE) {
                 switch(Dialog.auswahlDialog(International.getString("efa-Konfiguration"),
                         International.getString("Lokale oder remote Konfiguration bearbeiten?"),
@@ -871,11 +919,17 @@ public class EfaMenuButton {
                     case 0:
                         break;
                     case 1:
-                        myEfaConfig = new EfaConfig(Daten.project.getProjectStorageType(),
-                                Daten.project.getProjectStorageLocation(),
-                                Daten.project.getProjectStorageUsername(),
-                                Daten.project.getProjectStoragePassword());
-                        myEfaConfig.updateConfigValuesWithPersistence();
+                    	try {
+                    		setWaitCursor(parentFrame, parentDialog, true);
+	                        myEfaConfig = new EfaConfig(Daten.project.getProjectStorageType(),
+	                                Daten.project.getProjectStorageLocation(),
+	                                Daten.project.getProjectStorageUsername(),
+	                                Daten.project.getProjectStoragePassword());
+	                        myEfaConfig.updateConfigValuesWithPersistence();
+	                        remoteConfig = true;
+                    	} finally {
+                    		setWaitCursor(parentFrame, parentDialog, false);
+                    	}
                         break;
                     default:
                         return false;
@@ -883,6 +937,7 @@ public class EfaMenuButton {
             }
 
             EfaConfigDialog dlg = (parentFrame != null ? new EfaConfigDialog(parentFrame, myEfaConfig) : new EfaConfigDialog(parentDialog, myEfaConfig));
+            dlg.setTitle(dlg.getTitle() + (remoteConfig ? " (" + International.getString("Remote") + ")" : ""));
             dlg.showDialog();
         }
 
@@ -892,6 +947,7 @@ public class EfaMenuButton {
                 return false;
             }
             Admins myAdmins = Daten.admins;
+            boolean remoteAdmins = false;
             if (Daten.project != null && Daten.project.getProjectStorageType() == IDataAccess.TYPE_EFA_REMOTE) {
                 switch(Dialog.auswahlDialog(International.getString("Administratoren"),
                         International.getString("Lokale oder remote Administratoren bearbeiten?"),
@@ -901,10 +957,16 @@ public class EfaMenuButton {
                     case 0:
                         break;
                     case 1:
-                        myAdmins = new Admins(Daten.project.getProjectStorageType(),
-                                Daten.project.getProjectStorageLocation(),
-                                Daten.project.getProjectStorageUsername(),
-                                Daten.project.getProjectStoragePassword());
+                    	try {
+                    		setWaitCursor(parentFrame, parentDialog, true);
+	                        myAdmins = new Admins(Daten.project.getProjectStorageType(),
+	                                Daten.project.getProjectStorageLocation(),
+	                                Daten.project.getProjectStorageUsername(),
+	                                Daten.project.getProjectStoragePassword());
+	                        remoteAdmins = true;
+                    	} finally {
+                        	setWaitCursor(parentFrame, parentDialog, false);
+                    	}
                         break;
                     default:
                         return false;
@@ -914,6 +976,7 @@ public class EfaMenuButton {
             AdminListDialog dlg = (parentFrame != null ?
                     new AdminListDialog(parentFrame, myAdmins, admin) :
                     new AdminListDialog(parentDialog, myAdmins, admin));
+            dlg.setTitle(dlg.getTitle() + (remoteAdmins ? " (" + International.getString("Remote") + ")" : ""));
             dlg.showDialog();
         }
 
@@ -1004,6 +1067,53 @@ public class EfaMenuButton {
         return true;
     }
 
+	private static void setWaitCursor(BaseFrame parentFrame, BaseDialog parentDialog, boolean wait) {
+		if (parentFrame != null) {
+			EfaGuiUtils.setWaitCursor(parentFrame, wait);
+		} else if (parentDialog != null) {
+			EfaGuiUtils.setWaitCursor(parentDialog,wait);
+		}
+	}
+
+    /**
+	 * Run the interactive online update process, showing a dialog for both to select the update source
+	 * and to select the actual version to update to.
+	 * 
+	 * @param parentDialog The parent dialog for the update process.
+	 */
+	private static void runOnlineUpdate(BaseDialog parentDialog) {
+
+		UpdateProviderStrategy updateSource = getUpdateSourceByDialog(parentDialog);
+		UpdateSelectionStrategy updateChooser = new DialogSelectionStrategy();
+		
+		if (updateSource!=null) {
+			OnlineUpdate.runOnlineUpdate(parentDialog, updateSource, updateChooser);
+		}
+	}
+
+	/**
+	 * Show a dialog to the user to select the update source, and return the selected strategy.
+	 * 
+	 * @param parent The parent dialog for the selection dialog.
+	 * @return The selected UpdateProviderStrategy, or null if the user cancelled the selection.
+	 */
+	private static UpdateProviderStrategy getUpdateSourceByDialog(BaseDialog parent)	{
+		UpdateProviderStrategy result = null;
+		
+		OnlineUpdateSourceSelectionDialog dlg = new OnlineUpdateSourceSelectionDialog(parent);
+		dlg.showDialog(); // modal, kehrt nach dem Schließen zurück
+		result = dlg.getSelectedProviderStrategy(); // null bei Abbruch
+		
+		return result;
+	}
+	
+	/**
+	 * Show a dialog to the user to select the update source, and return the selected strategy
+	 * 
+	 * @param parent The parent frame for the selection dialog.
+	 * @return The selected UpdateProviderStrategy, or null if the user cancelled the selection.
+	 */
+	 
     public static String insufficientRights(AdminRecord admin, String action) {
         String actionText = (actionMapping != null ? actionMapping.get(action) : action);
         if (actionText == null) {

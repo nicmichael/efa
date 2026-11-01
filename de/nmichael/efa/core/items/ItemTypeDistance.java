@@ -37,7 +37,8 @@ public class ItemTypeDistance extends ItemTypeLabelTextfield {
         copy.setIsItemOnSameRowAsPreviousItem(itemOnSameRowAsPreviousItem);
         copy.setItemOnNewRow(itemOnNewRow);
         copy.setFieldGrid(fieldGridWidth,fieldGridHeight,fieldGridAnchor,fieldGridFill);
-    	return copy;
+        copy.setIndent(this.isIndent());
+        return copy;
     }
 
     public void parseValue(String value) {

@@ -489,7 +489,13 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
     }
 
     public IItemType copyOf() {
-        return new ItemTypeList(name, type, category, description, this.showFilterField);
+        ItemTypeList copy= new ItemTypeList(name, type, category, description, this.showFilterField);
+        copy.setFieldSize(fieldWidth,  fieldHeight);
+        copy.setIndent(this.isIndent());
+        copy.setVisible(this.isVisible());
+        copy.setFieldGrid(fieldGridWidth, fieldGridHeight, fieldGridAnchor, fieldGridFill);
+        copy.setPadding(padXbefore, padXafter, padYbefore, padYafter);
+        return copy;
     }
 
     public void addItem(String text, String toolTipText, String secondaryItem, String tertiaryItem, Object object, boolean separator, char separatorHotkey) {
@@ -606,6 +612,8 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
     }
 
     public int displayOnGui(Window dlg, JPanel panel, int x, int y) {
+        //respect the indent property of the item, if set
+        x=(this.isIndent() ? x+1 : x);
         panel.add(setupPanel(dlg), new GridBagConstraints(x, y, fieldGridWidth, fieldGridHeight, 0.0, 0.0,
                 fieldGridAnchor, fieldGridFill, new Insets(padYbefore, 0, padYafter, padXafter), 0, 0));
         showValue();

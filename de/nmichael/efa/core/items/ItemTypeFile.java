@@ -54,12 +54,17 @@ public class ItemTypeFile extends ItemTypeString {
         copy.setIsItemOnSameRowAsPreviousItem(itemOnSameRowAsPreviousItem);
         copy.setItemOnNewRow(itemOnNewRow);
         copy.setFieldGrid(fieldGridWidth,fieldGridHeight,fieldGridAnchor,fieldGridFill);
+        copy.setIndent(this.isIndent());
         return copy;
     }
 
     public int displayOnGui(Window dlg, JPanel panel, int x, int y) {
+    	// Display the label and text field. super.displayOnGui will respect isIndent() property
         super.displayOnGui(dlg, panel, x, y);
-
+        
+        //respect the indent property of the item, if set
+        x=(this.isIndent() ? x+1 : x);
+        
         button = new JButton();
         if (fileOpenSave == MODE_OPEN) {
             button.setIcon(BaseFrame.getIcon("menu_open.gif"));

@@ -54,6 +54,7 @@ public class ItemTypeInteger extends ItemTypeLabelTextfield {
         copy.setIsItemOnSameRowAsPreviousItem(itemOnSameRowAsPreviousItem);
         copy.setItemOnNewRow(itemOnNewRow);
         copy.setFieldGrid(fieldGridWidth,fieldGridHeight,fieldGridAnchor,fieldGridFill);
+        copy.setIndent(this.isIndent());
         return copy;
     }
 

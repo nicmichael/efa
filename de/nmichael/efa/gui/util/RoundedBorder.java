@@ -13,7 +13,7 @@ import javax.swing.border.Border;
 
 
 
-public class RoundedBorder extends AbstractBorder implements Border{
+public class RoundedBorder extends AbstractBorder{
 
     private final static int MARGIN = 3;
     private final static int ARC = 10;
@@ -36,7 +36,7 @@ public class RoundedBorder extends AbstractBorder implements Border{
         g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
         g2d.setColor(new JPanel().getBackground());
         g2d.drawRect(x, y, width-1, height-1);
-        g2d.setColor(color);
+        g2d.setColor((color == null) ? Color.BLACK : color);
         g2d.drawRoundRect(x, y, width-1, height-1, ARC, ARC);
     }
 

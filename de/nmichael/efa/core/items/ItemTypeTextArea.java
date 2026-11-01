@@ -44,7 +44,13 @@ public class ItemTypeTextArea extends ItemType {
     }
 
     public IItemType copyOf() {
-        return new ItemTypeTextArea(name, value, type, category, description);
+        ItemTypeTextArea copy = new ItemTypeTextArea(name, value, type, category, description);
+        copy.setFieldSize(fieldWidth,  fieldHeight);
+        copy.setIndent(this.isIndent());
+        copy.setVisible(this.isVisible());
+        copy.setFieldGrid(fieldGridWidth, fieldGridHeight, fieldGridAnchor, fieldGridFill);
+        copy.setPadding(padXbefore, padXafter, padYbefore, padYafter);
+        return copy;
     }
 
     protected void iniDisplay() {
@@ -87,6 +93,10 @@ public class ItemTypeTextArea extends ItemType {
     public int displayOnGui(Window dlg, JPanel panel, int x, int y) {
         this.dlg = dlg;
         iniDisplay();
+        
+        //respect the indent property of the item, if set
+        x=(this.isIndent() ? x+1 : x);
+        
         if (label != null) {
             panel.add(label, new GridBagConstraints(x, y, labelGridWidth, fieldGridHeight, 0.0, 0.0,
                     labelGridAnchor, labelGridFill, new Insets(padYbefore, padXbefore, 0, padXafter), 0, 0));

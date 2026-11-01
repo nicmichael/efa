@@ -78,7 +78,13 @@ public class ItemTypeTable extends ItemType implements ActionListener, ITableEdi
     }
 
     public IItemType copyOf() {
-        return new ItemTypeTable(name, header.clone(), (Hashtable<String,TableItem[]>)items.clone(), value, type, category, description);
+        ItemTypeTable copy = new ItemTypeTable(name, header.clone(), (Hashtable<String,TableItem[]>)items.clone(), value, type, category, description);
+        copy.setFieldSize(fieldWidth,  fieldHeight);
+        copy.setIndent(this.isIndent());
+        copy.setVisible(this.isVisible());
+        copy.setFieldGrid(fieldGridWidth, fieldGridHeight, fieldGridAnchor, fieldGridFill);
+        copy.setPadding(padXbefore, padXafter, padYbefore, padYafter);
+        return copy;
     }
 
 
@@ -294,6 +300,9 @@ public class ItemTypeTable extends ItemType implements ActionListener, ITableEdi
     public int displayOnGui(Window dlg, JPanel panel, int x, int y) {
         this.dlg = dlg;
         iniDisplay();
+        //respect the indent property of the item, if set
+        x=(this.isIndent() ? x+1 : x);
+        
         //the two 1.0 values make the panel grow with the window.
         panel.add(scrollPane, new GridBagConstraints(x, y, fieldGridWidth, fieldGridHeight, 1.0, 1.0,
                 fieldGridAnchor, fieldGridFill, new Insets(padYbefore, padXbefore+10, padYafter, padXafter+10), 0, 0));
@@ -357,9 +366,9 @@ public class ItemTypeTable extends ItemType implements ActionListener, ITableEdi
     }
 
     public void setVisible(boolean visible) {
+        super.setVisible(visible);
         table.setVisible(visible);
         scrollPane.setVisible(visible);
-        super.setVisible(visible);
     }
 
     public void setEnabled(boolean enabled) {

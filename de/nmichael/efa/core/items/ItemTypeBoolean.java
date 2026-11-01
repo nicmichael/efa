@@ -16,13 +16,16 @@ import java.awt.event.ActionEvent;
 import javax.swing.*;
 
 // @i18n complete
-
+/**
+ * This class represents a boolean item type that can be displayed as a checkbox or radio button in the GUI.
+ * It can be used to represent a boolean value in the configuration dialog or other parts of the application.
+ */
 public class ItemTypeBoolean extends ItemType {
 
     private boolean value;
     private boolean useRadioButton = false;
     private ButtonGroup buttonGroup;
-    private boolean indent = false;
+
 
     public ItemTypeBoolean(String name, boolean value, int type,
             String category, String description) {
@@ -35,11 +38,13 @@ public class ItemTypeBoolean extends ItemType {
     }
 
     public IItemType copyOf() {
-        ItemTypeBoolean myCopy = new ItemTypeBoolean(name, value, type, category, description);
-        myCopy.setPadding(padXbefore, padXafter, padYbefore, padYafter);
-        myCopy.setIndent(this.indent);
-        myCopy.setVisible(this.isVisible());
-        return myCopy;
+        ItemTypeBoolean copy = new ItemTypeBoolean(name, value, type, category, description);
+        copy.setIndent(this.isIndent());
+        copy.setVisible(this.isVisible());
+        copy.setFieldGrid(fieldGridWidth, fieldGridHeight, fieldGridAnchor, fieldGridFill);
+        copy.setPadding(padXbefore, padXafter, padYbefore, padYafter);
+        copy.setUseRadioButton(useRadioButton, buttonGroup);
+        return copy;
     }
 
     public void parseValue(String value) {
@@ -145,15 +150,8 @@ public class ItemTypeBoolean extends ItemType {
     public void setDescription(String s) {
         super.setDescription(s);
         if (field != null) {
-            Mnemonics.setButton(dlg, (JCheckBox)field, getDescription());
+            Mnemonics.setButton(dlg, (JToggleButton)field, getDescription());
         }
     }
 
-	public boolean isIndent() {
-		return indent;
-	}
-
-	public void setIndent(boolean indent) {
-		this.indent = indent;
-	}
 }

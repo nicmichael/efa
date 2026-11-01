@@ -114,6 +114,7 @@ public class ItemTypeItemList extends ItemType {
     private static final String LIST_SEPARATOR = "{=%||%=}";
     private static final String ITEM_SEPARATOR = "{=%|%=}";
     private static final String KEY_SEPARATOR = "{=%%=}";
+    private static final Pattern APPEND_POSITION_PATTERN = Pattern.compile("(.*) [0-9]+");
 
     protected Vector<IItemType[]> items = new Vector<IItemType[]>();
     protected Vector<IItemType[]> deletedItems = new Vector<IItemType[]>();
@@ -171,10 +172,16 @@ public class ItemTypeItemList extends ItemType {
 
     public IItemType copyOf() {
         ItemTypeItemList copy = new ItemTypeItemList(name, (Vector<IItemType[]>)items.clone(), itemFactory, type, category, description);
+
+        copy.setFieldSize(fieldWidth,  fieldHeight);
+        copy.setIndent(this.isIndent());
+        copy.setVisible(this.isVisible());
+        copy.setFieldGrid(fieldGridWidth, fieldGridHeight, fieldGridAnchor, fieldGridFill);
+        copy.setPadding(padXbefore, padXafter, padYbefore, padYafter);
+        
         copy.setRepeatTitle(repeatTitle);
         copy.setShortDescription(shortDescription);
         copy.setScrollPane(scrollX, scrollY);
-        copy.setPadding(padXbefore, padXafter, padYbefore, padYafter);
         copy.setFirstColumnMinWidth(firstColumnMinWidth);
         copy.setAppendPositionToEachElement(appendPositionToEachElement);
         copy.setXForAddDelButtons(xForAddDelButtons);
@@ -216,7 +223,7 @@ public class ItemTypeItemList extends ItemType {
                 }
             }
         }
-        if (afterIndex==0 || afterIndex>idxForName) {
+        if (afterIndex<0 || afterIndex>idxForName) {
         	this.items.add(items);
         } else {
         	this.items.add(afterIndex,items);
@@ -225,6 +232,7 @@ public class ItemTypeItemList extends ItemType {
 
     public void removeItems(int idx) {
         items.remove(idx);
+        changed=true;
     }
 
     public IItemType[] getItems(int idx) {
@@ -314,7 +322,7 @@ public class ItemTypeItemList extends ItemType {
     
     public int displayOnGui(Window dlg, JPanel panel, int x, int y) {
         this.dlg = dlg;
-        
+        x=(this.isIndent() ? x+1 : x);
         // is a scrollpane set? then add a scrollpane and put the elements within.
         if (scrollX > 0 && scrollY > 0) {
             scrollPane = new JScrollPane();
@@ -504,7 +512,7 @@ public class ItemTypeItemList extends ItemType {
                 if (item.getType() != IItemType.TYPE_INTERNAL) {
                     if (appendPositionToEachElement) {
                         String descr = item.getDescription();
-                        Matcher m = Pattern.compile("(.*) [0-9]+").matcher(descr);
+                        Matcher m = APPEND_POSITION_PATTERN.matcher(descr);
                         if (m.matches()) {
                             descr = m.group(1);
                         }
@@ -540,6 +548,8 @@ public class ItemTypeItemList extends ItemType {
 
     private void addButtonHit(ActionEvent e) {
         IItemType[] items = itemFactory.getDefaultItems(getName());
+        if (items ==null) {return;} 
+        
         addItems(items);
         changed = true;
         if (dlg instanceof BaseDialog) {
@@ -555,7 +565,12 @@ public class ItemTypeItemList extends ItemType {
     }
 
     private void delButtonHit(ActionEvent e) {
-        int idx = delButtons.get(e.getSource());
+    	if (e.getSource() == null) {return;}
+    	
+    	Integer o = delButtons.get(e.getSource());
+    	if (o==null) {return;}
+    	
+        int idx = o;
         if (idx < 0 || idx >= items.size()) {
             return;
         }
@@ -578,8 +593,12 @@ public class ItemTypeItemList extends ItemType {
     private void addButtonAfterPositionHit(ActionEvent e) {
     	//no up action neccessary if there is no element
     	if (items.size()<1) {return;}
+    	if (e.getSource() == null) {return;}
     	
-        int idx = addButtons.get(e.getSource());
+    	Integer o = addButtons.get(e.getSource());
+    	if (o==null) {return;}
+    	
+        int idx = o;
         if (idx < 0 || idx >= items.size()) {
             return;
         }
@@ -607,7 +626,9 @@ public class ItemTypeItemList extends ItemType {
     	//no up action neccessary if there is only one element
     	if (items.size()<=1) {return;}
     	
-        int idx = upButtons.get(e.getSource());
+    	Integer o = upButtons.get(e.getSource());
+    	if (o==null) {return;}
+        int idx = o;
         //no up action, if upButton index is invalid or is the topmost element
         if (idx < 0 || idx >= items.size() || idx == 0) {
             return;
@@ -621,7 +642,7 @@ public class ItemTypeItemList extends ItemType {
         }
         
         try {
-        	lastItemFocus = ((IItemType[])items.get(idx))[0];
+        	lastItemFocus = ((IItemType[])items.get(idx-1))[0];
         } catch (Exception e1) {
         	Logger.logdebug(e1);
         	lastItemFocus = null;
@@ -636,7 +657,9 @@ public class ItemTypeItemList extends ItemType {
     	//no down action neccessary if there is only one element
     	if (items.size()<=1) {return;}
     	
-        int idx = downButtons.get(e.getSource());
+    	Integer o = downButtons.get(e.getSource());
+    	if (o==null) {return;}
+        int idx = o;
         //no up action, if downButton index is invalid or is the lowest element
         if (idx < 0 || idx >= items.size() || idx == items.size()-1) {
             return;
@@ -666,6 +689,9 @@ public class ItemTypeItemList extends ItemType {
     public void getValueFromGui() {
         for (int i=0; i<items.size(); i++) {
             IItemType[] myItems = items.get(i);
+            
+            if (myItems == null) {continue;}
+            
             for (IItemType item : myItems) {
                 item.getValueFromGui();
             }
@@ -675,7 +701,7 @@ public class ItemTypeItemList extends ItemType {
     public void requestFocus() {
         if (items.size() > 0) {
             IItemType[] myItems = items.get(0);
-            if (myItems.length > 0) {
+            if (myItems!=null && myItems.length > 0) {
                 myItems[0].requestFocus();
             }
         }
@@ -693,34 +719,50 @@ public class ItemTypeItemList extends ItemType {
     }
 
     public void setVisible(boolean visible) {
-        titlelabel.setVisible(visible);
-        addButton.setVisible(visible);
-        for (int i=0; i<items.size(); i++) {
-            IItemType[] myItems = items.get(i);
-            for (IItemType item : myItems) {
-                item.setVisible(visible);
-            }
-        }
-        JButton[] b = delButtons.keySet().toArray(new JButton[0]);
-        for (int i=0; i<b.length; i++) {
-            b[i].setVisible(visible);
-        }
         super.setVisible(visible);
+        if (titlelabel != null) {
+        	titlelabel.setVisible(visible);
+        }
+        if (addButton != null) {
+        	addButton.setVisible(visible);
+        }
+        if (items != null) {
+	        for (int i=0; i<items.size(); i++) {
+	            IItemType[] myItems = items.get(i);
+	            for (IItemType item : myItems) {
+	                item.setVisible(visible);
+	            }
+	        }
+        }
+        if (delButtons != null) {
+	        JButton[] b = delButtons.keySet().toArray(new JButton[0]);
+	        for (int i=0; i<b.length; i++) {
+	            b[i].setVisible(visible);
+	        }
+        }
     }
 
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
-        titlelabel.setForeground((enabled ? (new JLabel()).getForeground() : Color.gray));
-        addButton.setEnabled(enabled);
-        for (int i=0; i<items.size(); i++) {
-            IItemType[] myItems = items.get(i);
-            for (IItemType item : myItems) {
-                item.setEnabled(enabled);
-            }
+        if (titlelabel != null) {
+            titlelabel.setForeground((enabled ? Daten.efaConfig.getHeaderForegroundColor() : Color.gray));
+		}
+        if (addButton != null) {
+        	addButton.setEnabled(enabled);
         }
-        JButton[] b = delButtons.keySet().toArray(new JButton[0]);
-        for (int i=0; i<b.length; i++) {
-            b[i].setEnabled(enabled);
+        if (items != null) {
+	        for (int i=0; i<items.size(); i++) {
+	            IItemType[] myItems = items.get(i);
+	            for (IItemType item : myItems) {
+	                item.setEnabled(enabled);
+	            }
+	        }
+        }
+        if (delButtons != null) {
+	        JButton[] b = delButtons.keySet().toArray(new JButton[0]);
+	        for (int i=0; i<b.length; i++) {
+	            b[i].setEnabled(enabled);
+	        }
         }
     }
 
@@ -745,7 +787,7 @@ public class ItemTypeItemList extends ItemType {
 
     /**
      * Creates Classic Storage (classic efa) for ItemTypeItemList which is dependent on the order of the items in the GUI.
-     * Changing the order of the items on the GUI affects serialization.
+     * Beware: Changing the order of the items on the GUI affects serialization.
      * 
      * @return String with serialization 
      */

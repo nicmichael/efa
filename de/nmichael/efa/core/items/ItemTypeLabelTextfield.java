@@ -18,6 +18,7 @@ import javax.swing.JTextField;
 
 import de.nmichael.efa.Daten;
 import de.nmichael.efa.util.EfaUtil;
+import de.nmichael.efa.util.Logger;
 
 // @i18n complete
 
@@ -87,7 +88,7 @@ public abstract class ItemTypeLabelTextfield extends ItemTypeLabelValue {
                 ((JTextField) field).setBackground((enabled ? (new JTextField()).getBackground() : new Color(234, 234, 234)));
             }
         } catch (Exception e) {
-            EfaUtil.foo();
+            Logger.logdebug(e);
         }
     }
 

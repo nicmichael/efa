@@ -44,7 +44,7 @@ public class ItemTypeHtmlList extends ItemType implements ActionListener {
 
     protected String value;
 
-    protected JList <String>list;
+    protected JList <String>htmlList;
     protected JScrollPane scrollPane;
     protected EfaMouseListener mouseListener;
     protected JPopupMenu popup;
@@ -69,31 +69,43 @@ public class ItemTypeHtmlList extends ItemType implements ActionListener {
 
     @SuppressWarnings({"unchecked"})
     public IItemType copyOf() {
-        return new ItemTypeHtmlList(name, keys.clone(), (Hashtable<String,String>)items.clone(), value, type, category, description);
-    }
+		String[] k = (keys != null) ? keys.clone() : null;
+		Hashtable<String,String> it = (items != null) ? (Hashtable<String,String>) items.clone() : null;
+	
+		ItemTypeHtmlList copy = new ItemTypeHtmlList(name, k, it, value, type, category, description);
+		copy.setFieldSize(fieldWidth,  fieldHeight);
+		copy.setIndent(this.isIndent());
+		copy.setVisible(this.isVisible());
+		copy.setFieldGrid(fieldGridWidth, fieldGridHeight, fieldGridAnchor, fieldGridFill);
+		copy.setPadding(padXbefore, padXafter, padYbefore, padYafter);
+		return copy;
+	}
 
     public void showValue() {
-        if (list != null) {
-            list.removeAll();
+        if (htmlList != null) {
+        	htmlList.removeAll();
             if (keys != null && items != null) {
                 String[] elements = new String[keys.length];
                 for (int i = 0; i < keys.length; i++) {
                     StringBuffer s = new StringBuffer();
-                    s.append(items.get(keys[i]));
+                    Object o = items.get(keys[i]);
+                    if (o != null) {
+                    	s.append(o.toString());
+                    }
                     elements[i] = s.toString();
                     if (Logger.isTraceOn(Logger.TT_GUI, 6)) {
                         Logger.log(Logger.DEBUG, Logger.MSG_DEBUG_GUI_ELEMENTS,
                                 getClass().getName() + ".showValue() elements[" + i + "] = " + s);
                     }
-            }
-                list.setListData(elements);
+                }
+                htmlList.setListData(elements);
             } else {
-                list.setListData(new String[0]);
+            	htmlList.setListData(new String[0]);
             }
             for (int i=0; keys != null && value != null && i<keys.length; i++) {
                 if (value.equals(keys[i])) {
-                    list.setSelectedIndex(i);
-                    list.scrollRectToVisible(list.getCellBounds(i, i));
+                	htmlList.setSelectedIndex(i);
+                	htmlList.scrollRectToVisible(htmlList.getCellBounds(i, i));
                     break;
                 }
             }
@@ -106,12 +118,12 @@ public class ItemTypeHtmlList extends ItemType implements ActionListener {
                     getClass().getName() + ".iniDisplay() fieldWidth=" + fieldWidth +
                     ", fieldHeight=" + fieldHeight);
         }
-        list = new JList <String>() ;
-        list.setCellRenderer(new MyCellRenderer());
+        htmlList = new JList <String>() ;
+        htmlList.setCellRenderer(new MyCellRenderer());
         scrollPane = new JScrollPane();
         scrollPane.setPreferredSize(new Dimension(fieldWidth, fieldHeight));
         scrollPane.setMinimumSize(new Dimension(fieldWidth, fieldHeight));
-        scrollPane.getViewport().add(list, null);
+        scrollPane.getViewport().add(htmlList, null);
 
         if (popupActions != null) {
             popup = new JPopupMenu();
@@ -128,14 +140,14 @@ public class ItemTypeHtmlList extends ItemType implements ActionListener {
         } else {
             popup = null;
         }
-        list.addMouseListener(mouseListener = new EfaMouseListener(list, popup, this, false));
-        list.addFocusListener(new java.awt.event.FocusAdapter() {
+        htmlList.addMouseListener(mouseListener = new EfaMouseListener(htmlList, popup, this, false));
+        htmlList.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(FocusEvent e) { field_focusGained(e); }
             public void focusLost(FocusEvent e) { field_focusLost(e); }
         });
 
         showValue();
-        this.field = list;
+        this.field = htmlList;
     }
 
     public int displayOnGui(Window dlg, JPanel panel, int x, int y) {
@@ -145,12 +157,10 @@ public class ItemTypeHtmlList extends ItemType implements ActionListener {
     public int displayOnGui(Window dlg, JPanel panel, int x, int y, double xWeight, double yWeight) {
         this.dlg = dlg;
         iniDisplay();
-        panel.add(scrollPane, new GridBagConstraints(x, y, fieldGridWidth, fieldGridHeight, xWeight, yWeight,
+        panel.add(scrollPane, new GridBagConstraints((this.isIndent() ? x+1 : x), y, fieldGridWidth, fieldGridHeight, xWeight, yWeight,
                 fieldGridAnchor, fieldGridFill, new Insets(padYbefore, padXbefore, padYafter, 0), 0, 0));
         return 1;    	
     }
-        
-    
 
     public int displayOnGui(Window dlg, JPanel panel, String borderLayoutPosition) {
         this.dlg = dlg;
@@ -181,14 +191,14 @@ public class ItemTypeHtmlList extends ItemType implements ActionListener {
     }
 
     public void getValueFromGui() {
-        if (list != null && keys != null && list.getSelectedIndex() >= 0) {
-            value = keys[list.getSelectedIndex()];
+        if (htmlList != null && keys != null && htmlList.getSelectedIndex() >= 0) {
+            value = keys[htmlList.getSelectedIndex()];
         }
     }
 
     public String getValueFromField() {
-        if (list != null && keys != null && list.getSelectedIndex() >= 0) {
-            return keys[list.getSelectedIndex()];
+        if (htmlList != null && keys != null && htmlList.getSelectedIndex() >= 0) {
+            return keys[htmlList.getSelectedIndex()];
         }
         return toString(); // otherwise a hidden field in expert mode might return null
     }
@@ -214,9 +224,9 @@ public class ItemTypeHtmlList extends ItemType implements ActionListener {
                 boolean cellHasFocus)
         {
 			super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-			
-            String s = value.toString();
 
+			String s = (value != null) ? value.toString() : "";
+			
             setText(s);
             if (Logger.isTraceOn(Logger.TT_GUI, 6)) {
                 Logger.log(Logger.DEBUG, Logger.MSG_DEBUG_GUI_ELEMENTS,
@@ -263,15 +273,23 @@ public class ItemTypeHtmlList extends ItemType implements ActionListener {
     }
 
     public void setVisible(boolean visible) {
-        list.setVisible(visible);
-        scrollPane.setVisible(visible);
         super.setVisible(visible);
+    	if (htmlList != null ) {
+    		htmlList.setVisible(visible);
+    	}
+    	if (scrollPane != null) {
+    		scrollPane.setVisible(visible);
+    	}
     }
 
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
-        list.setEnabled(enabled);
-        scrollPane.setEnabled(enabled);
+        if (htmlList != null) {
+        	htmlList.setEnabled(enabled);
+		}
+        if (scrollPane != null) {
+            scrollPane.setEnabled(enabled);	
+        }
     }
 
 }

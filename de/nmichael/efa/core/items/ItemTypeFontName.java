@@ -59,7 +59,8 @@ public class ItemTypeFontName extends ItemTypeLabelValue implements IItemListene
         copy.setIsItemOnSameRowAsPreviousItem(itemOnSameRowAsPreviousItem);
         copy.setItemOnNewRow(itemOnNewRow);
         copy.setFieldGrid(fieldGridWidth,fieldGridHeight,fieldGridAnchor,fieldGridFill);
-		return copy;
+        copy.setIndent(this.isIndent());
+        return copy;
 	}
 
 	public void parseValue(String value) {
@@ -75,7 +76,22 @@ public class ItemTypeFontName extends ItemTypeLabelValue implements IItemListene
 
 		EfaUtil.handleButtonOpaqueForLookAndFeels(f);
 		f.setFont(new FontUIResource(fontName, f.getFont().getStyle(), f.getFont().getSize()));
-
+		f.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				buttonHit(e);
+			}
+		});
+		
+		butdel = new JButton();
+		butdel.setEnabled(isEnabled);
+		Dialog.setPreferredSize(butdel, fieldHeight, fieldHeight);
+		butdel.setIcon(BaseDialog.getIcon(BaseDialog.IMAGE_DELETE));
+		butdel.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				buttonDel(e);
+			}
+		});
+		
 		return f;
 	}
 
@@ -87,25 +103,18 @@ public class ItemTypeFontName extends ItemTypeLabelValue implements IItemListene
 
 		Dialog.setPreferredSize(f, fieldWidth, fieldHeight);
 		f.setText(fontName);
-		f.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				buttonHit(e);
-			}
-		});
-
-		butdel = new JButton();
-		butdel.setEnabled(isEnabled);
-		Dialog.setPreferredSize(butdel, fieldHeight, fieldHeight);
-		butdel.setIcon(BaseDialog.getIcon(BaseDialog.IMAGE_DELETE));
-		butdel.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				buttonDel(e);
-			}
-		});
+		
 	}
 
 	public int displayOnGui(Window dlg, JPanel panel, int x, int y) {
+		//super already respects the indent property of the item, if set
 		int count = super.displayOnGui(dlg, panel, x, y);
+		
+        //respect the indent property of the item, if set
+        x=(this.isIndent() ? x+1 : x);
+        if (butdel==null) {
+        	return count;
+		}
 		panel.add(butdel, new GridBagConstraints(x + fieldGridWidth + 1, y, 1, fieldGridHeight, 0.0, 0.0,
 				fieldGridAnchor, fieldGridFill,
 				new Insets((itemOnNewRow ? 0 : padYbefore), (itemOnNewRow ? padXbefore : 0), padYafter, padXafter), 0,

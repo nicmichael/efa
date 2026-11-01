@@ -129,6 +129,7 @@ public class ItemTypeStringAutoComplete extends ItemTypeString implements AutoCo
         copy.setIsItemOnSameRowAsPreviousItem(itemOnSameRowAsPreviousItem);
         copy.setItemOnNewRow(itemOnNewRow);
         copy.setFieldGrid(fieldGridWidth,fieldGridHeight,fieldGridAnchor,fieldGridFill);
+        copy.setIndent(this.isIndent());
         return copy;
     }
     
@@ -175,7 +176,11 @@ public class ItemTypeStringAutoComplete extends ItemTypeString implements AutoCo
     }
 
     public int displayOnGui(Window dlg, JPanel panel, int x, int y) {
+    	// Display the label and text field. super.displayOnGui will respect isIndent() property
         int plusy = super.displayOnGui(dlg, panel, x, y);
+        
+        //respect the indent property of the item, if set
+        x=(this.isIndent() ? x+1 : x);
         if (button != null) {
             panel.add(button, new GridBagConstraints(x+labelGridWidth+fieldGridWidth, y, 1, fieldGridHeight, 0.0, 0.0,
                     GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(padYbefore, 0, padYafter, 0), 0, 0));
@@ -218,6 +223,7 @@ public class ItemTypeStringAutoComplete extends ItemTypeString implements AutoCo
     // used to hide input fields in EfaBoathouseFrame that remain invisible, even if the
     // setCrewRangeSelection(i) would want to make them visible again
     public void setVisibleSticky(boolean visible) {
+        super.setVisible(visible);
         isVisibleSticky = visible;
         setVisible(visible);
     }

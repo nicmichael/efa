@@ -293,6 +293,7 @@ public class Logger {
     public static final String MSG_EVT_CLUBWORKOPENED = "EVT048";
     public static final String MSG_EVT_PROJECTCLOSED = "EVT049";
     public static final String MSG_EVT_EFAEXIT_REQUESTED = "EVT050";
+    public static final String MSG_EVT_ONLINEUPDATEINFO = "EVT051";
 
     // Backup
     public static final String MSG_BCK_BACKUPSTARTED = "BCK001";
