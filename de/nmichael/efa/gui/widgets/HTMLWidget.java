@@ -348,6 +348,37 @@ public class HTMLWidget extends Widget implements IWidget, IItemFactory {
     ItemTypeItemList getHtmlPageList() {
         return (ItemTypeItemList)getParameterInternal(PARAM_HTML_PAGELIST);
     }
+
+    /**
+     * Returns the colors that are actually applied by the configured HTML pages:
+     * background, text, header background and header text color of every visible
+     * page which uses its own colors. The widget parameters must have been loaded
+     * from the efa configuration beforehand.
+     *
+     * @return the applied colors (may contain duplicates)
+     */
+    public Vector<Color> getColorsInUse() {
+        Vector<Color> colors = new Vector<Color>();
+        ItemTypeItemList myWList = getHtmlPageList();
+        if (myWList == null) {
+            return colors;
+        }
+        for (int i = 0; i < myWList.size(); i++) {
+            if (getHTMLPageVisible(myWList, i) && getColorsActive(myWList, i)) {
+                Color[] pageColors = {
+                        getBackgroundColor(myWList, i),
+                        getForegroundColor(myWList, i),
+                        getHeaderBackgroundColor(myWList, i),
+                        getHeaderForegroundColor(myWList, i) };
+                for (Color c : pageColors) {
+                    if (c != null) {
+                        colors.add(c);
+                    }
+                }
+            }
+        }
+        return colors;
+    }
     
     @Override 
     public boolean isGuiWidget() {

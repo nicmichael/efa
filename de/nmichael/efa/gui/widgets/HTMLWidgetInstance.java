@@ -107,6 +107,8 @@ public class HTMLWidgetInstance extends WidgetInstance implements IWidgetInstanc
             scrollPane.setPreferredSize(new Dimension(getWidth(), getHeight()));
         }
         scrollPane.getViewport().add(htmlPane, null);
+        scrollPane.getHorizontalScrollBar().setBackground(backgroundColor);
+        scrollPane.getVerticalScrollBar().setBackground(backgroundColor);
 
         if (htmlUpdater == null) {
             htmlUpdater = new HTMLUpdater();

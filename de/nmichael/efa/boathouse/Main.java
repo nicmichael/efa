@@ -15,6 +15,8 @@ import javax.swing.SwingUtilities;
 import de.nmichael.efa.Daten;
 import de.nmichael.efa.Program;
 import de.nmichael.efa.gui.EfaBoathouseFrame;
+import de.nmichael.efa.gui.util.EfaColorChooser;
+import de.nmichael.efa.gui.widgets.WidgetColorGroupProviders;
 import de.nmichael.efa.util.Dialog;
 import de.nmichael.efa.util.International;
 import de.nmichael.efa.util.Logger;
@@ -30,6 +32,9 @@ public class Main extends Program {
     	// An unprepossessing call, but most of the initializations, including creation of a super admin
     	// during first run is done here. 
         super(Daten.APPL_EFABH, args);
+
+        // Register the widget color groups once at startup (before any color chooser is opened).
+        EfaColorChooser.setWidgetColorGroupProviders(WidgetColorGroupProviders.create());
 
         EfaBoathouseFrame frame = new EfaBoathouseFrame();
         

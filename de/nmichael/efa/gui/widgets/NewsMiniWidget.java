@@ -20,6 +20,7 @@ import javax.swing.Timer;
 
 import de.nmichael.efa.Daten;
 import de.nmichael.efa.gui.util.RoundedBorder;
+import de.nmichael.efa.util.EfaUtil;
 import de.nmichael.efa.util.Logger;
 /*
  * NewMiniwidget is not a classical widget. Its config data is set up directly in efaconfig
@@ -34,12 +35,12 @@ public class NewsMiniWidget {
 
     public NewsMiniWidget() {
         mainNewsWidgetPanel.setText("+++ News +++");
-        mainNewsWidgetPanel.setForeground(Color.white);
-        mainNewsWidgetPanel.setBackground(Color.red);
+        mainNewsWidgetPanel.setForeground(Daten.efaConfig.getValueEfaDirekt_newsForegroundColor());
+        mainNewsWidgetPanel.setBackground(Daten.efaConfig.getValueEfaDirekt_newsBackgroundColor()); //Color.red);
         mainNewsWidgetPanel.setOpaque(true);
         mainNewsWidgetPanel.setVisible(false);
         mainNewsWidgetPanel.setFont(mainNewsWidgetPanel.getFont().deriveFont(Font.BOLD));
-        mainNewsWidgetPanel.setBorder(new RoundedBorder(Color.white));
+        mainNewsWidgetPanel.setBorder(new RoundedBorder(Daten.efaConfig.getValueEfaDirekt_newsForegroundColor()));
         mainNewsWidgetPanel.setWidthPercent(Daten.efaConfig.getValueEfaDirekt_newsWidthPercent());
         newsUpdater = new NewsUpdater(mainNewsWidgetPanel,mainNewsWidgetPanel.getText(), 100);
         newsUpdater.start();
@@ -47,10 +48,19 @@ public class NewsMiniWidget {
 
     public void setText(String text) {
         newsUpdater.setText(text);
+        mainNewsWidgetPanel.setForeground(Daten.efaConfig.getValueEfaDirekt_newsForegroundColor());
+        mainNewsWidgetPanel.setBackground(Daten.efaConfig.getValueEfaDirekt_newsBackgroundColor()); //Color.red);
+        mainNewsWidgetPanel.setBorder(new RoundedBorder(Daten.efaConfig.getValueEfaDirekt_newsForegroundColor()));
     }
 
     public void setScrollSpeed(int scrollSpeed) {
         newsUpdater.setScrollSpeed(scrollSpeed);
+        SwingUtilities.invokeLater(
+                new MainGuiNewsUpdater(mainNewsWidgetPanel, "")
+        );
+        SwingUtilities.invokeLater(
+                new MainGuiNewsUpdater(mainNewsWidgetPanel, newsUpdater.text)
+        );
     }
 
     public void setVisible(boolean value) {

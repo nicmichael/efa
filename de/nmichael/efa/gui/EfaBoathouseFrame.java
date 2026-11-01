@@ -427,7 +427,7 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
         JPanel newsPanel = new JPanel();
         newsPanel.setLayout(new BorderLayout());
         newsPanel.add(news.getGuiComponent(), BorderLayout.CENTER);
-        
+        newsPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
         centerPanel.add(widgetCenterPanel, new GridBagConstraints(1, 100, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5, 0, 0, 0), 0, 0));
         centerPanel.add(widgetMultiWidgetCenterPanel, new GridBagConstraints(1, 200, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0,0,0,0), 0, 0));
         

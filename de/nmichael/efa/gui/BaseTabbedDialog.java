@@ -122,7 +122,7 @@ public abstract class BaseTabbedDialog extends BaseDialog {
     // Constants for Navigation Mode 
     protected static final int MODE_TABBED_PANE = 0;
     protected static final int MODE_LEFT_NAVIGATION = 1;
-    protected static final int NAVIGATIONLIST_WIDTH = 220;
+    protected static final int NAVIGATIONLIST_WIDTH = 240;
     private static final String HIGHLIGHT_STYLE = "background-color:#fff176; color:#000000;";
     private static final Color HIGHLIGHT_COLOR = new Color(0xFFF176);
     private static final Color FILTERFIELD_FILLED = new Color(255,255,204);
@@ -549,6 +549,10 @@ public abstract class BaseTabbedDialog extends BaseDialog {
 
         navigationList = new JList<NavEntry>(navigationModel);
         navigationList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        NavEntryRenderer renderer = new NavEntryRenderer();
+        if (Daten.isEfaFlatLafActive()) {
+        	renderer.setSepartorColor(Daten.efaConfig.getEfaGuiflatLaf_Background());
+        }
         navigationList.setCellRenderer(new NavEntryRenderer());
         addNavigationListListeners(navigationList);
 
@@ -574,7 +578,9 @@ public abstract class BaseTabbedDialog extends BaseDialog {
         JScrollPane cardScrollWrapper = new JScrollPane(cardPanel);
         cardScrollWrapper.getVerticalScrollBar().setUnitIncrement(12);
         cardScrollWrapper.setBorder(BorderFactory.createEmptyBorder(3, 0, 0, 0));
-
+        cardScrollWrapper.getHorizontalScrollBar().setBackground(cardPanel.getBackground());
+        cardScrollWrapper.getVerticalScrollBar().setBackground(cardPanel.getBackground());
+        
         breadcrumbLabel = new RoundedLabel();
         breadcrumbLabel.setBorder(new RoundedBorder(Daten.efaConfig.getHeaderForegroundColor()));
         breadcrumbLabel.setOpaque(true);
@@ -644,6 +650,8 @@ public abstract class BaseTabbedDialog extends BaseDialog {
         }
         scrollPane.getVerticalScrollBar().setUnitIncrement(12);
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
+        scrollPane.getHorizontalScrollBar().setBackground(panel.getBackground());
+        scrollPane.getVerticalScrollBar().setBackground(panel.getBackground());
 
         innerPanel.setLayout(new GridBagLayout());
         innerPanel.setBorder(BorderFactory.createEmptyBorder(8, 6, 0, 6));
@@ -2107,7 +2115,7 @@ public abstract class BaseTabbedDialog extends BaseDialog {
 	 * Custom ListCellRenderer for rendering navigation entries in the navigation list.
 	 * */
     private static class NavEntryRenderer extends DefaultListCellRenderer {
-        private static final Color TOP_GROUP_BG = new Color(230, 230, 230);
+        private static Color TOP_GROUP_BG = new Color(230, 230, 230);
         private static final int NAV_INDENT_PER_LEVEL = 10;
 
         public Component getListCellRendererComponent(JList<?> list,
@@ -2140,6 +2148,10 @@ public abstract class BaseTabbedDialog extends BaseDialog {
 
             return this;
         }
+
+		public void setSepartorColor(Color efaGuiflatLaf_Background) {
+			TOP_GROUP_BG = efaGuiflatLaf_Background;			
+		}
     }
 
 }

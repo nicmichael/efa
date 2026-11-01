@@ -17,11 +17,11 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 
 import javax.swing.JButton;
-import javax.swing.JColorChooser;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 import de.nmichael.efa.gui.BaseDialog;
+import de.nmichael.efa.gui.util.EfaColorChooser;
 import de.nmichael.efa.util.Dialog;
 import de.nmichael.efa.util.EfaUtil;
 import de.nmichael.efa.util.International;
@@ -158,7 +158,7 @@ public class ItemTypeColor extends ItemTypeLabelValue {
     }
 
     private void buttonHit(ActionEvent e) {
-        Color color = JColorChooser.showDialog(dlg,
+        Color color = EfaColorChooser.showDialog(dlg,
                 International.getMessage("{item} auswählen",
                 International.getString("Farbe")),
                 field.getBackground());

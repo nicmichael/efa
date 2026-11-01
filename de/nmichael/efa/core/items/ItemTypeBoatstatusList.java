@@ -375,7 +375,7 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
             }
             anz = curBS.getSeats();
             if (sortByAnzahl || sortByType) {
-                String newSep = LIST_SECTION_STRING_START + s + LIST_SECTION_STRING_END;
+                String newSep = s; //LIST_SECTION_STRING_START + s + LIST_SECTION_STRING_END;
                 if (!newSep.equals(lastSep)) {
                     tmp.add(new ItemTypeListData(newSep, null, null, null, null, true, anz));
                 }

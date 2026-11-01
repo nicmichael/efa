@@ -15,6 +15,7 @@ import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Desktop;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Frame;
 import java.awt.Graphics2D;
@@ -31,6 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
@@ -40,6 +42,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JViewport;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.border.Border;
+import javax.swing.border.TitledBorder;
 import javax.swing.event.HyperlinkEvent;
 
 import de.nmichael.efa.Daten;
@@ -47,6 +52,7 @@ import de.nmichael.efa.core.config.EfaConfig;
 import de.nmichael.efa.core.items.ItemTypeLabel;
 import de.nmichael.efa.core.items.ItemTypeLabelHeader;
 import de.nmichael.efa.gui.util.RoundedBorder;
+import de.nmichael.efa.gui.util.RoundedLineBorder;
 import de.nmichael.efa.util.Logger;
 
 /**
@@ -469,6 +475,26 @@ public class EfaGuiUtils {
         
     }
     
+    /**
+     * Creates a {@link TitledBorder} whose decorative frame is a
+     * {@link RoundedLineBorder} (8px corner arc) instead of the default
+     * sharp-cornered line border, and whose title text is rendered in bold.
+     *
+     * @param title the border's title text
+     * @return the rounded-corner titled border with a bold title
+     */
+    public static TitledBorder createRoundedTitledBorder(String title) {
+        Color lineColor = UIManager.getColor("controlShadow");
+        Border roundedLine = new RoundedLineBorder(lineColor != null ? lineColor : Color.GRAY);
+        TitledBorder border = BorderFactory.createTitledBorder(roundedLine, title);
+        Font titleFont = UIManager.getFont("TitledBorder.font");
+        if (titleFont == null) {
+            titleFont = new JLabel().getFont();
+        }
+        border.setTitleFont(titleFont.deriveFont(Font.BOLD));
+        return border;
+    }
+
 	public static Color getUrlLabelColor() {
 		return Color.BLUE;
 	}

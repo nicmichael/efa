@@ -38,6 +38,7 @@ public class Plugins {
     public static final String PLUGIN_PDF = "pdf";
     public static final String PLUGIN_FLATLAF = "flatlaf";
     public static final String PLUGIN_FLATLAF36 = "flatlaf36";
+    public static final String PLUGIN_FLATLAF372 = "flatlaf372";
     public static final String PLUGIN_JSONORG = "org.json";
 
     private Hashtable<String,PluginInfo> pluginInfos;
@@ -111,15 +112,54 @@ public class Plugins {
             }
         }
         
-        if (pluginName.equals(PLUGIN_FLATLAF)||pluginName.equals(PLUGIN_FLATLAF36)) {
-        	// During initialization of efa programs it is determined if flatlaf library is actually present.
-        	// a failure mostly comes from a missing flatlaf-3.2.5.jar in the classpath.  
-        	
-        	// in efa 2.5.1 and newer, we only need flatlaf 3.6. the classpath variable
-        	// in runefa.sh / runefa.bat takes care that the appropriate library version is used;
-        	// but once flatlaf is initialized correctly, we return "true" for both libraries.
+    	// During initialization of efa programs it is determined if flatlaf library is actually present.
+    	// a failure mostly comes from a missing flatlaf-3.2.5.jar in the classpath.  
+    	
+    	// in efa 2.5.1 and newer, we only need flatlaf 3.6. the classpath variable
+    	// in runefa.sh / runefa.bat takes care that the appropriate library version is used;
+    	// but once flatlaf is initialized correctly, we return "true" for both libraries.
+
+        if (pluginName.equals(PLUGIN_FLATLAF)) {
+        	 try {
+             	String version = com.formdev.flatlaf.FlatLaf.class.getPackage().getImplementationVersion();
+                return (version != null && version.startsWith("3.2.5"));
+             } catch (NoClassDefFoundError e) {
+                 return false;
+             } catch (Exception e) {
+             	// we just catch the exception instead of logging it.
+             	// there can be no successful upload with the ftp client with the parameters given.
+             	EfaUtil.foo();
+             }
         	return Daten.flatLafInitializationOK;
         }           
+        
+        if (pluginName.equals(PLUGIN_FLATLAF36)) {
+       	 try {
+            	String version = com.formdev.flatlaf.FlatLaf.class.getPackage().getImplementationVersion();
+               return (version != null && version.startsWith("3.6"));
+            } catch (NoClassDefFoundError e) {
+                return false;
+            } catch (Exception e) {
+            	// we just catch the exception instead of logging it.
+            	// there can be no successful upload with the ftp client with the parameters given.
+            	EfaUtil.foo();
+            }
+       	return Daten.flatLafInitializationOK;
+       }           
+
+        if (pluginName.equals(PLUGIN_FLATLAF372)) {
+          	 try {
+               	String version = com.formdev.flatlaf.FlatLaf.class.getPackage().getImplementationVersion();
+                  return (version != null && version.startsWith("3.7.2"));
+               } catch (NoClassDefFoundError e) {
+                   return false;
+               } catch (Exception e) {
+               	// we just catch the exception instead of logging it.
+               	// there can be no successful upload with the ftp client with the parameters given.
+               	EfaUtil.foo();
+               }
+          	return Daten.flatLafInitializationOK;
+          }    
         
         if (pluginName.equals(PLUGIN_JSONORG)) {
             try {

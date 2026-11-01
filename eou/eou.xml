@@ -90,6 +90,34 @@ section="Other"
 		</Section>
 	</Sections>
 	<Version>
+        <VersionID>2.5.4_#2</VersionID>
+        <ReleaseDate>01.11.2026</ReleaseDate>
+        <DownloadUrl>https://github.com/nicmichael/efa/releases/download/2.5.4_2/efa2.5.4_2.zip</DownloadUrl>
+        <DownloadSize>TODO</DownloadSize>
+     	<MinimumJavaVersion>1.8</MinimumJavaVersion>
+		<MinimumEfaCloudVersion>2.3.3</MinimumEfaCloudVersion>
+        <ShowNotice lang="de">Wenn efaCloud eingesetzt wird, muss der Server mindestens Version 2.3.3 unterstützen. EfaCloud 2.4.0_12 und höher werden empfohlen.</ShowNotice>
+        <ShowNotice lang="en">If you use efaCloud, make sure your server at least supports efaCloud Version 2.3.3. It is recommended to upgrade to EfaCloud 2.4.0_12 or above.</ShowNotice>
+        <Changes lang="de">
+			<ChangeItem section="Boathouse">Neu: Optische Verbesserung der Bootshauslisten: Abgerundete Ecken, die "---" in den Sektionen sind entfallen, und es werden nur noch Scrollbalken angezeigt, wenn sie benötigt werden.</ChangeItem>
+			<ChangeItem section="Widget">Neu: Die Hintergrund/Textfarbe des Newstickers ist konfigurierbar.</ChangeItem>
+			<ChangeItem section="GUI/Useability">Neu: Bei der Auswahl von Farben gibt es nun einen Pastell-Farbwähler und einen, der die EFA-Standardfarben anzeigt. Dies vereinfacht die Farbauswahl und die Wiederverwendung von Farben erheblich.</ChangeItem>
+			<ChangeItem section="Other">Neu: FlatLaf Bibliothek auf Version 3.7.2 aktualisiert.</ChangeItem>
+			<ChangeItem section="Other">Neu: Plugin.xml aktualisiert.</ChangeItem>
+			<ChangeItem section="Other">Neu: In der Plugin-Übersicht die "Installieren" Schaltfläche entfernt, da inzwischen veraltet. Efa wird grundsätzlich mit allen Plugins ausgeliefert.</ChangeItem>
+			<ChangeItem section="Other">Neu: Die PDF-Exportbibliothek gehört bei efa zum Standard-Installationsumfang. Die alten Weather-Plugins sind nutzlos und wurden entfernt.</ChangeItem>
+		</Changes>
+		<Changes lang="en">
+			<ChangeItem section="Boathouse">New: Visual improvement of the boathouse lists: Rounded corners, the "---" in the sections have been removed, and scroll bars are only displayed when needed.</ChangeItem>
+			<ChangeItem section="Widget">New: The background/text color of the news ticker is configurable.</ChangeItem>
+			<ChangeItem section="GUI/Useability">New: When selecting colors, there is now a pastel color picker and one that displays the EFA standard colors. This greatly simplifies color selection and reuse of colors.</ChangeItem>
+	   		<ChangeItem section="Other">New: FlatLaf library updated to version 3.7.2.</ChangeItem>
+	   		<ChangeItem section="Other">New: Plugin.xml updated.</ChangeItem>
+	   		<ChangeItem section="Other">New: In the plugin overview, the "Install" button has been removed as it is now outdated. Efa is delivered with all plugins by default.</ChangeItem>
+ 			<ChangeItem section="Other">New: The PDF export library is now part of the standard installation of efa. The old weather plugins are removed as they are no longer of use.</ChangeItem>
+ 		</Changes>
+	</Version>
+	<Version>
         <VersionID>2.5.4_#1</VersionID>
         <ReleaseDate>01.11.2026</ReleaseDate>
         <DownloadUrl>https://github.com/nicmichael/efa/releases/download/2.5.4_1/efa2.5.4_1.zip</DownloadUrl>

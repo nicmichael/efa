@@ -48,7 +48,6 @@ public class VersionizedDataEditDialog extends UnversionizedDataEditDialog imple
     
     protected void iniDialog() throws Exception {
         super.iniDialog();
-
         versionPanel = new JPanel();
         versionPanel.setLayout(new GridBagLayout());
 
@@ -233,6 +232,8 @@ public class VersionizedDataEditDialog extends UnversionizedDataEditDialog imple
 				scrollPane.setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
 				scrollPane.setPreferredSize(EfaGuiUtils.getTabPanelPreferredSize(otherPanelHeight , this, 1000, 730));
 				scrollPane.getVerticalScrollBar().setUnitIncrement(12);
+				scrollPane.getHorizontalScrollBar().setBackground(innerPanel.getBackground());
+				scrollPane.getVerticalScrollBar().setBackground(innerPanel.getBackground());
 				innerPanel.setLayout(new GridBagLayout());
 				panel.setLayout(new BorderLayout());
 				panel.add(scrollPane,BorderLayout.CENTER);

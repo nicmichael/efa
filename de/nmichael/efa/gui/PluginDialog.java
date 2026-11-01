@@ -49,7 +49,8 @@ public class PluginDialog extends BaseDialog implements IItemListener {
         list = new ItemTypeHtmlList("LIST", null, null, null, IItemType.TYPE_PUBLIC, null,
                 International.getString("Plugins"));
         String[] actions = {
-            International.getString("Installieren")
+            //disabling installation as it is outdated and not maintained anymore. 
+        	//International.getString("Installieren")
         };
         list.setPopupActions(actions);
         list.registerItemListener(this);
@@ -57,6 +58,7 @@ public class PluginDialog extends BaseDialog implements IItemListener {
         list.setPadding(10, 10, 0, 10);
         list.displayOnGui(_parent, mainPanel, 0, 0,1.0,1.0);
 
+        /*
         JButton installButton = new JButton();
         Mnemonics.setButton(this, installButton, International.getString("Installieren"),
                 BaseDialog.IMAGE_DOWNLOAD);
@@ -67,7 +69,8 @@ public class PluginDialog extends BaseDialog implements IItemListener {
         });
         mainPanel.add(installButton, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0,
                                     GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 5, 10), 0, 0));
-
+			*/
+        
         updateGui();
     }
 

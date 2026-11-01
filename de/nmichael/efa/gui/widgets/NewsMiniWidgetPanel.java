@@ -9,7 +9,9 @@ import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.image.BufferedImage;
 
+import de.nmichael.efa.Daten;
 import de.nmichael.efa.gui.util.RoundedPanel;
+import de.nmichael.efa.util.EfaUtil;
 
 public class NewsMiniWidgetPanel extends RoundedPanel{
 
@@ -89,11 +91,11 @@ public class NewsMiniWidgetPanel extends RoundedPanel{
         g = textImage.createGraphics();
         g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-        g.setColor(Color.RED);
+        g.setColor(Daten.efaConfig.getValueEfaDirekt_newsBackgroundColor());
         g.fillRect(1, 1, textImage.getWidth(), textImage.getHeight());
 
         g.setFont(this.getFont());
-        g.setColor(Color.WHITE);
+        g.setColor(Daten.efaConfig.getValueEfaDirekt_newsForegroundColor());
         g.drawString(text, 20, 1 + fm.getAscent());
 
         g.dispose();

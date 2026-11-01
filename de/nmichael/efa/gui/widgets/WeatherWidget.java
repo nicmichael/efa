@@ -206,6 +206,29 @@ public class WeatherWidget extends Widget implements IItemFactory {
 
 	
 
+	/**
+	 * Returns the colors that are actually applied by this widget: background, text,
+	 * header and error colors. The widget parameters must have been loaded from the
+	 * efa configuration beforehand.
+	 *
+	 * @return the applied colors (may contain duplicates)
+	 */
+	public Vector<Color> getColorsInUse() {
+		Vector<Color> colors = new Vector<Color>();
+		String[] colorParams = {
+				PARAM_WEATHER_BACKGROUND, PARAM_WEATHER_FOREGROUND,
+				PARAM_WEATHER_HEADER_BACKGROUND, PARAM_WEATHER_HEADER_FOREGROUND,
+				PARAM_WEATHER_ERROR_BACKGROUND, PARAM_WEATHER_ERROR_FOREGROUND,
+				PARAM_WEATHER_ERROR_HEADER_BACKGROUND, PARAM_WEATHER_ERROR_HEADER_FOREGROUND };
+		for (String name : colorParams) {
+			IItemType item = getParameterInternal(name);
+			if (item instanceof ItemTypeColor && ((ItemTypeColor) item).getColor() != null) {
+				colors.add(((ItemTypeColor) item).getColor());
+			}
+		}
+		return colors;
+	}
+
 	/*
 	 * getDefaultItems is the factory for all location elements
 	 */

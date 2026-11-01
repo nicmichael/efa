@@ -82,9 +82,9 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
     int iconHeight = 0;
     private FastTwoColumnListCellRenderer listCellRenderer = null;
 
-    protected static final String LIST_SECTION_STRING = "----";
+    /*protected static final String LIST_SECTION_STRING = "";//"----";
     protected static final String LIST_SECTION_STRING_START = LIST_SECTION_STRING + "  ";
-    protected static final String LIST_SECTION_STRING_END = "  " + LIST_SECTION_STRING;
+    protected static final String LIST_SECTION_STRING_END = "  " + LIST_SECTION_STRING;*/
     //Spacings for pretty rendering
 	private static final int HORZ_SINGLE_BORDER=5;
 	private static Border _emptyBorder = new EmptyBorder(2, HORZ_SINGLE_BORDER, 2, HORZ_SINGLE_BORDER);
@@ -644,7 +644,7 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
         
         //Vertical scrollbar shall be shown always, because better ListCellRendering does not work optically well when
         //scrollbar is shown only when needed
-        scrollPane = new JScrollPane(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scrollPane = new JScrollPane(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED/*ALWAYS*/, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         this.field = scrollPane;
         
         mypanel = new JPanel();
@@ -976,9 +976,9 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
 
             if (Daten.efaConfig.getValueEfaBoathouseExtdToolTips()==false) {
 	            Rectangle rect = list.getVisibleRect();
-	            if (search.startsWith(LIST_SECTION_STRING)) {
+	         /*   if (search.startsWith(LIST_SECTION_STRING)) {
 	                list.setToolTipText(null);
-	            } else {
+	            } else {*/
 	                list.setToolTipText((search.length() > 0 ? search : null));
 	                int origDelay = ToolTipManager.sharedInstance().getInitialDelay();
 	                ToolTipManager.sharedInstance().setInitialDelay(0);
@@ -987,7 +987,7 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
 	                        10, rect.y + rect.height - 50,
 	                        0, false));
 	                ToolTipManager.sharedInstance().setInitialDelay(origDelay);
-	            }
+	            //}
             }
 
         } catch (Exception ee) { Logger.logdebug(ee);/* just to be sure */ }

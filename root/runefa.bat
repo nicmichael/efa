@@ -65,7 +65,7 @@ SET CP=%CP%;program/plugins/fop.jar
 SET CP=%CP%;program/plugins/xmlgraphics-commons.jar
 
 REM Classpath: EFA Flat Laf
-SET CP=%CP%;program/plugins/flatlaf-3.6.jar
+SET CP=%CP%;program/plugins/flatlaf-3.7.2.jar
 
 REM Classpath: JSON
 SET CP=%CP%;program/plugins/json-20250517.jar

@@ -78,7 +78,7 @@
     </Plugin>
 
     <Plugin name="flatlaf">
-        <FullName>FlatLaf - Flat Look and Feel</FullName>
+        <FullName>FlatLaf - Flat Look and Feel (old version)</FullName>
         <Version>3.2.5</Version>
         <Copyright>FlatLaf is open source licensed under the Apache 2.0 License.</Copyright>
         <Description lang="de">FlatLaf Look and Feel</Description>
@@ -89,13 +89,24 @@
     </Plugin>
 
     <Plugin name="flatlaf36">
-        <FullName>FlatLaf - Flat Look and Feel</FullName>
+        <FullName>FlatLaf - Flat Look and Feel (old version)</FullName>
         <Version>3.6</Version>
         <Copyright>FlatLaf is open source licensed under the Apache 2.0 License.</Copyright>
         <Description lang="de">FlatLaf Look and Feel</Description>
         <Description lang="en">FlatLaf Look and Feel</Description>
         <Files baseurl="http://efa.nmichael.de/plugins/flatlaf">
             <File size="925551">flatlaf-3.6.jar</File>
+        </Files>
+    </Plugin>
+    
+    <Plugin name="flatlaf372">
+        <FullName>FlatLaf - Flat Look and Feel</FullName>
+        <Version>3.7.2</Version>
+        <Copyright>FlatLaf is open source licensed under the Apache 2.0 License.</Copyright>
+        <Description lang="de">FlatLaf Look and Feel</Description>
+        <Description lang="en">FlatLaf Look and Feel</Description>
+        <Files baseurl="http://efa.nmichael.de/plugins/flatlaf">
+            <File size="925551">flatlaf-3.7.2.jar</File>
         </Files>
     </Plugin>
     

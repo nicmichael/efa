@@ -17,6 +17,8 @@ import de.nmichael.efa.Program;
 import de.nmichael.efa.core.config.AdminRecord;
 import de.nmichael.efa.data.Project;
 import de.nmichael.efa.gui.EfaBaseFrame;
+import de.nmichael.efa.gui.util.EfaColorChooser;
+import de.nmichael.efa.gui.widgets.WidgetColorGroupProviders;
 import de.nmichael.efa.util.International;
 import de.nmichael.efa.util.Logger;
 
@@ -30,6 +32,9 @@ public class Main extends Program {
     	// An unprepossessing call, but most of the initializations, including creation of a super admin
     	// during first run is done here.     	
         super(Daten.APPL_EFABASE, args);
+
+        // Register the widget color groups once at startup (before any color chooser is opened).
+        EfaColorChooser.setWidgetColorGroupProviders(WidgetColorGroupProviders.create());
         
         AdminRecord admin = getNewlyCreatedAdminRecord();
 
@@ -41,7 +46,7 @@ public class Main extends Program {
         if (admin != null) {
             frame.setAdmin(admin);
         }
-
+        
         // In efaBoathouse, a lot of threads are installed which interact with the gui.
         // In efaBase, this is not yet a problem. However, we
         try {

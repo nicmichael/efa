@@ -64,7 +64,7 @@ CP=$CP:program/plugins/fop.jar
 CP=$CP:program/plugins/xmlgraphics-commons.jar
 
 # EFA Flat Laf
-CP=$CP:program/plugins/flatlaf-3.6.jar
+CP=$CP:program/plugins/flatlaf-3.7.2.jar
 
 # JSON
 CP=$CP:program/plugins/json-20250517.jar
