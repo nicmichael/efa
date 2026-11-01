@@ -120,8 +120,8 @@ public class Daten {
 														// beta-Version z.B. 1.4.0_#1
 	public final static String VERSIONRELEASEDATE = "01.11.2026"; // Release Date: TT.MM.JJJJ
 	public final static String MAJORVERSION = "2";
-	public final static String PROGRAMMID = "EFA.253"; // Versions-ID für Wettbewerbsmeldungen
-	public final static String PROGRAMMID_DRV = "EFADRV.253"; // Versions-ID für Wettbewerbsmeldungen
+	public final static String PROGRAMMID = "EFA.254"; // Versions-ID für Wettbewerbsmeldungen
+	public final static String PROGRAMMID_DRV = "EFADRV.254"; // Versions-ID für Wettbewerbsmeldungen
 	public final static String COPYRIGHTYEAR = "26"; // aktuelles Jahr (Copyright (c) 2001-COPYRIGHTYEAR)
 	public final static int REQUIRED_JAVA_VERSION = 17;
 
