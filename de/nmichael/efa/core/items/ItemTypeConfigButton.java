@@ -236,10 +236,9 @@ public class ItemTypeConfigButton extends ItemType {
                 International.getMessage("{item} auswählen",
                 International.getString("Farbe")),
                 field.getBackground());
-        if (tmpColor != null) {
-            field.setBackground(tmpColor);
+        if (color != null) {
+            field.setBackground(color);
         }
-
     }
 
     public String getValueText() {
