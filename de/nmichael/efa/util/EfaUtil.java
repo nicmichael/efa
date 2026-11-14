@@ -90,6 +90,12 @@ public class EfaUtil {
 	
     private static String UMLAUTSEXTEND = UMLAUTS + "ßæœ";// those umlauts get translated to two characters
     
+    /**
+	 * Escapes the characters in a String using XML entities.
+	 *
+	 * @param str  the String to escape
+	 * @return a new escaped String
+	 */
     public static String escapeXml(String str) {
         str = replaceString(str, "&", "&amp;");
         str = replaceString(str, "<", "&lt;");
@@ -99,6 +105,12 @@ public class EfaUtil {
         return str;
     }
 
+    /**
+	 * Escapes the characters in a String using HTML entities.
+	 * 
+	 * @param str  the String to escape
+	 * @return a new escaped String
+	 * */
     public static String escapeHtml(String str) {
         str = replaceString(str, "&", "&amp;");
         str = replaceString(str, "<", "&lt;");
@@ -108,11 +120,26 @@ public class EfaUtil {
         return str;
     }
 
+    /**
+	 * Escapes the characters in a String using HTML entities and replaces linefeeds with <br> tags.
+	 *
+	 * @param str  the String to escape
+	 * @return a new escaped String
+	 */
     public static String escapeHtmlWithLinefeed(String str) {
         return replaceString(escapeHtml(str),"\n","<br>");
     }
     
-
+    /** 
+     * Replaces special characters in a string by a replacement.
+     * Like correcting Umlauts to their ascii representation, e.g. "ä"->"ae",
+     * and all non-allowed characters to "_".
+     * 
+     * Required by KanuEfbSyncTask.
+     * 
+     * @param str
+     * @return
+     */
     public static String escapeHtmlGetString(String str) {
         if (str == null) {
             return null;
@@ -129,7 +156,16 @@ public class EfaUtil {
         return str;
     }
 
-    // from StringW
+    /**
+	 * Replace a string with another string inside a larger string, for all
+	 * values of the search string.
+	 *
+	 * @param text String to do search and replace in
+	 * @param repl String to search for; must not be null or of zero length
+	 * @param with String to replace with
+	 *
+	 * @return String with values replaced
+	 */
     public static String replaceString(String text, String repl, String with) {
         return replaceString(text, repl, with, -1);
     }
@@ -169,6 +205,19 @@ public class EfaUtil {
     }
     
     @Deprecated
+    /**
+	 * Replaces special characters in a string by a replacement.
+	 * Replacing is done character-by-character, so it is not possible to replace a single character "ä" by a multi-character string "ae".
+	 * 
+	 * searchList and replaceList MUST be of equal length.
+	 * 
+	 * @see @replaceListByListFast(String input) for a MUCH faster replacement method.
+	 * 	
+	 * @param string		String containing characters to be replaced
+	 * @param searchList 	String containing all characters that shall be replaced one-by-one
+	 * @param replaceList 	String containing all replacement characters
+	 * @return String containing all replacements.
+	 * */
     public static String replaceListByList(String string, String searchList, String replaceList) {
         if (searchList.length() != replaceList.length()) {
             return string;
@@ -274,6 +323,12 @@ public class EfaUtil {
 	    return s1;
     }    
     
+    /**
+	 * Checks if a string contains any umlaut character.
+	 * 
+	 * @param data
+	 * @return true if data contains any umlaut character, false otherwise
+	 */
     public static boolean containsUmlaut(String data) {
     	if (data!=null) {
     		return data.toLowerCase().matches(".*["+UMLAUTSEXTEND+"]+.*");
@@ -281,6 +336,13 @@ public class EfaUtil {
     	return false;
     }
     
+    /**
+     * Pads a string with spaces to the right until it reaches the specified length.
+     * 
+     * @param s
+     * @param length	maximum length of the string after padding
+     * @return the padded string
+     */
     public static String getString(String s, int length) {
         while (s.length() < length) {
             s = s + " ";
@@ -288,6 +350,13 @@ public class EfaUtil {
         return s;
     }
 
+    /**
+	 * Pads a string with spaces to the left until it reaches the specified length.
+	 * 
+	 * @param s
+	 * @param length	maximum length of the string after padding
+	 * @return the padded string
+	 */
     public static String getStringPadLeft(String s, int length) {
         while (s.length() < length) {
             s = " " + s;
@@ -295,13 +364,24 @@ public class EfaUtil {
         return s;
     }
 
+    /**
+	 * Converts a long value representing minutes into a string in the format "HH:MM".
+	 * 
+	 * @param minutes the long value representing minutes
+	 * @return a string in the format "HH:MM"
+	 * */
     public static String getHHMMstring(long minutes) {
         long hh = minutes / 60;
         long mm = minutes % 60;
         return hh + ":" + long2String(mm, 2);
     }
 
-    // überprüfen, ob "c" ein "echtes" Zeichen (Buchstabe, Ziffer, Whitespace) ist
+    /** 
+	 * Checks if the character from a KeyEvent is a "real" character (letter, digit, whitespace, or certain punctuation).
+	 * 
+	 * @param e the KeyEvent to check
+	 * @return true if the character is a "real" character, false otherwise
+	 */
     public static boolean isRealChar(KeyEvent e) {
         char c = e.getKeyChar();
         return (Character.isLetter(c) || Character.isDigit(c) || Character.isWhitespace(c)
@@ -311,12 +391,17 @@ public class EfaUtil {
     }
 
     // überprüfen, ob angegebenes Datum ein Wochenende ist
-    public static boolean woEnd(String s) {
+    /** 
+     * Checks if the given date string represents a weekend (Saturday or Sunday).
+     * @param dateString the date string to check
+     * @return true if the date is on a weekend, false otherwise
+     */
+    public static boolean isWeekend(String dateString) {
         SimpleDateFormat df = new SimpleDateFormat();
         Calendar cal = new GregorianCalendar();
         int tag;
         try {
-            Date d = df.parse(s);
+            Date d = df.parse(dateString);
             cal.setTime(d);
             if ((tag = cal.get(Calendar.DAY_OF_WEEK)) == Calendar.SATURDAY || tag == Calendar.SUNDAY) {
                 return true;
@@ -328,6 +413,14 @@ public class EfaUtil {
     }
 
     // Integer-Division mit einer Nachf,ae,-Stelle (und Rundung)
+    /** 
+	 * Performs integer division of two integers and returns a float with one decimal place, rounded.
+	 * If the divisor is zero, returns 0.
+	 * 
+	 * @param a the dividend
+	 * @param b the divisor
+	 * @return the result of the division as a float with one decimal place
+	 */
     public static float div(int a, int b) {
         if (b == 0) {
             return 0;
@@ -336,6 +429,15 @@ public class EfaUtil {
     }
 
     // Integer-Division mit Rundung
+    /**
+	 * Performs integer division of two integers and returns the result, rounded.
+	 * If the divisor is zero, returns 0.
+	 * 
+	 * @param a the dividend
+	 * @param b the divisor
+	 * 
+	 * @return the result of the division, rounded
+	 * */
     public static int intdiv(int a, int b) {
         if (b == 0) {
             return 0;
@@ -348,6 +450,15 @@ public class EfaUtil {
     }
 
     // float-Division mit "div 0" Sicherung
+    /**
+	 * Performs float division of two integers and returns the result as a float.
+	 * If the divisor is zero, returns 0.
+	 * 
+	 * @param a the dividend
+	 * @param b the divisor
+	 * 
+	 * @return the result of the division as a float
+	 * */
     public static float fdiv(int a, int b) {
         if (b == 0) {
             return 0;
@@ -357,26 +468,37 @@ public class EfaUtil {
 
     // Einzelne Werte aus Datumsstring ermitteln, wobei tt, mm und yy die
     // Vorgabewerte für unvollständige Angaben sind
-    public static TMJ string2date(String s, int tt, int mm, int yy) {
+    /**
+	 * Parses a date string and returns a TMJ object containing the day, month, and
+	 * year. If the date string is incomplete, the provided default values for day, month, and year are used.
+	 * 
+	 * @param dateString the date string to parse
+	 * @param tt the default day value to use if the date string is incomplete
+	 * @param mm the default month value to use if the date string is incomplete
+	 * @param yy the default year value to use if the date string is incomplete
+	 * 
+	 * @return a TMJ object containing the parsed day, month, and year
+	 *  */
+    public static TMJ string2date(String dateString, int tt, int mm, int yy) {
         String t = "";
         int nr = 0;
         int[] a = new int[3];
         a[0] = tt;
         a[1] = mm;
         a[2] = yy;
-        for (int i = 0; i < s.length(); i++) {
+        for (int i = 0; i < dateString.length(); i++) {
             boolean inNumber = false;
-            if (Character.isDigit(s.charAt(i))) {
+            if (Character.isDigit(dateString.charAt(i))) {
                 inNumber = true;
             }
-            if (s.charAt(i) == '-' && t.length() == 0 && i + 1 < s.length() && Character.isDigit(s.charAt(i + 1))) {
+            if (dateString.charAt(i) == '-' && t.length() == 0 && i + 1 < dateString.length() && Character.isDigit(dateString.charAt(i + 1))) {
                 inNumber = true;
             }
 
             if (inNumber) {
-                t = t + s.charAt(i);
+                t = t + dateString.charAt(i);
             }
-            if (!inNumber || i + 1 == s.length()) {
+            if (!inNumber || i + 1 == dateString.length()) {
                 if (!t.equals("")) {
                     try {
                         a[nr++] = Integer.parseInt(t);
@@ -389,19 +511,45 @@ public class EfaUtil {
         return new TMJ(a[0], a[1], a[2]);
     }
 
-    public static int stringFindInt(String s, int def) {
+    /** 
+     * Finds an integer value in a string. If the string is null, returns the default value.
+     * 
+     * @param s
+     * @param defaultIfNull
+     * @return
+     */
+    public static int stringFindInt(String s, int defaultIfNull) {
         if (s == null) {
-            return def;
+            return defaultIfNull;
         }
-        return string2date(s, def, 0, 0).tag;
+        //we abuse the TMJ class to return the integer value in the tag field
+        //as the string2date method is already implemented to find an integer in a string
+        return string2date(s, defaultIfNull, 0, 0).tag;
     }
 
     // aus einem TMJ einen Datumsstring machen
+    /**
+     * Converts a TMJ object to a date string in the format "dd.MM.yyyy".
+     * 
+     * @param tmj the TMJ object containing the day, month, and year
+     * @return a date string in the format "dd.MM.yyyy"
+     */
     public static String tmj2datestring(TMJ tmj) {
         return tmj.tag + "." + tmj.monat + "." + tmj.jahr;
     }
 
     // Aus einem String s (mit Referenzwerten tt.mm.yyyy) ein korrektes (gültiges) Datum errechnen
+    /**
+	 * Parses a date string and returns a TMJ object containing the day, month, and year.
+	 * If the date string is incomplete or invalid, the provided default values for day, month, and year are used.
+	 * 
+	 * @param s the date string to parse
+	 * @param tt the default day value to use if the date string is incomplete or invalid
+	 * @param mm the default month value to use if the date string is incomplete or invalid
+	 * @param yy the default year value to use if the date string is incomplete or invalid
+	 * 
+	 * @return a TMJ object containing the parsed or corrected day, month, and year
+	 */
     public static TMJ correctDate(String s, int tt, int mm, int yy) {
         TMJ c = string2date(s, tt, mm, yy);
         int tag = c.tag;
@@ -455,6 +603,15 @@ public class EfaUtil {
         return new TMJ(tag, monat, jahr);
     }
     
+    /**
+	 * Converts a date string to the format "dd.MM.yyyy" or "dd.MM" depending on the input.
+	 * If the input date string is in the format "MM/dd/yyyy", it will be converted to "dd.MM.yyyy".
+	 * If the input date string is in the format "MM.dd.yyyy", it will be converted to "dd.MM.yyyy".
+	 * If the input date string is already in the format "dd.MM.yyyy" or "dd.MM", it will be returned as is.
+	 * 
+	 * @param date the date string to convert
+	 * @return a date string in the format "dd.MM.yyyy" or "dd.MM"
+	 */
     public static String dateToDMY(String date) {
         boolean fmtDMY = Daten.dateFormatDMY;
         if (date != null && date.indexOf("/") > 0) {
@@ -473,35 +630,79 @@ public class EfaUtil {
     }
 
     // Aus einem String s ein korrektes (gültiges) Datum machen, ggf. aktuelles Datum als Referenzdatum verwenden
-    public static String correctDate(String s) {
+    /**
+	 * Parses a date string and returns a corrected date string in the format "dd.MM.yyyy".
+	 * If the date string is incomplete or invalid, the current date is used as a reference for missing values.
+	 * 
+	 * @param dateString the date string to parse
+	 * @return a corrected date string in the format "dd.MM.yyyy"
+	 */
+    public static String correctDate(String dateString) {
         Calendar cal = new GregorianCalendar();
-        TMJ tmj = correctDate(s, cal.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.MONTH) + 1, cal.get(Calendar.YEAR));
+        TMJ tmj = correctDate(dateString, cal.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.MONTH) + 1, cal.get(Calendar.YEAR));
         return tmj.tag + "." + tmj.monat + "." + tmj.jahr;
     }
 
     // Aus einem String s eine korrekte (gültige) Zeit machen
-    public static String correctTime(String s, boolean withSeconds) {
-        return correctTime(s, 0, 0, 0, withSeconds);
+    /**
+	 * Parses a time string and returns a corrected time string in the format "HH:MM"
+	 * or "HH:MM:SS" depending on the withSeconds parameter. 
+	 * If the time string is incomplete or invalid, default values for hours, minutes, and seconds are used.
+	 * 
+	 * @param timeString the time string to parse
+	 * @param withSeconds whether to include seconds in the output string
+	 * @return a corrected time string in the format "HH:MM" or "HH:MM:SS"
+	 * */
+    public static String correctTime(String timeString, boolean withSeconds) {
+        return correctTime(timeString, 0, 0, 0, withSeconds);
     }
 
-    public static String correctTime(String s, int hdef, int mdef, int sdef, boolean withSeconds) {
-        return correctTime(s, hdef, mdef, sdef, withSeconds, false);
+    /**
+	 * Parses a time string and returns a corrected time string in the format "HH:MM"
+	 * or "HH:MM:SS" depending on the withSeconds parameter.
+	 * If the time string is incomplete or invalid, default values for hours, minutes, and seconds are used.
+	 * 
+	 * @param timeString the time string to parse
+	 * @param hdef the default hour value to use if the time string is incomplete or invalid
+	 * @param mdef the default minute value to use if the time string is incomplete or invalid
+	 * @param sdef the default second value to use if the time string is incomplete or invalid
+	 * @param withSeconds whether to include seconds in the output string
+	 * 
+	 * @return a corrected time string in the format "HH:MM" or "HH:MM:SS"
+	 * */
+    public static String correctTime(String timeString, int hdef, int mdef, int sdef, boolean withSeconds) {
+        return correctTime(timeString, hdef, mdef, sdef, withSeconds, false);
     }
 
-    public static String correctTime(String s, int hdef, int mdef, int sdef, boolean withSeconds,
+    /**
+	 * Parses a time string and returns a corrected time string in the format "HH:MM"
+	 * or "HH:MM:SS" depending on the withSeconds parameter.
+	 * If the time string is incomplete or invalid, default values for hours, minutes, and seconds are used.
+	 * 
+	 * @param timeString the time string to parse
+	 * @param hdef the default hour value to use if the time string is incomplete or invalid
+	 * @param mdef the default minute value to use if the time string is incomplete or invalid
+	 * @param sdef the default second value to use if the time string is incomplete or invalid
+	 * @param withSeconds whether to include seconds in the output string
+	 * @param useZeroAsMinuteAndSecondIfHourWasGivenInS whether to use zero for minutes and seconds if the hour was given in seconds
+	 * 
+	 * @return a corrected time string in the format "HH:MM" or "HH:MM:SS"
+	 *  
+	 * */
+    public static String correctTime(String timeString, int hdef, int mdef, int sdef, boolean withSeconds,
             boolean useZeroAsMinuteAndSecondIfHourWasGivenInS) {
-        if (s.length() == 0) {
+        if (timeString.length() == 0) {
             return "";
         }
         TMJ hhmmss;
         if (useZeroAsMinuteAndSecondIfHourWasGivenInS) {
-            hhmmss = EfaUtil.string2date(s, -1, -1, -1); // TMJ mißbraucht für die Auswertung von Uhrzeiten
+            hhmmss = EfaUtil.string2date(timeString, -1, -1, -1); // TMJ mißbraucht für die Auswertung von Uhrzeiten
             if (hhmmss.tag != -1) {
                 mdef = 0;
                 sdef = 0;
             }
         }
-        hhmmss = EfaUtil.string2date(s, hdef, mdef, sdef); // TMJ mißbraucht für die Auswertung von Uhrzeiten
+        hhmmss = EfaUtil.string2date(timeString, hdef, mdef, sdef); // TMJ mißbraucht für die Auswertung von Uhrzeiten
         int hh = hhmmss.tag;
         int mm = hhmmss.monat;
         int ss = hhmmss.jahr;
@@ -534,10 +735,36 @@ public class EfaUtil {
         }
     }
     
-    public static String correctHours(String s, int hdef, int mdef, int sdef, boolean withSeconds) {
-        return correctHours(s, hdef, mdef, sdef, withSeconds, false);
+    /**
+	 * Parses a time string and returns a corrected time string in the format "HH:MM
+	 * or "HH:MM:SS" depending on the withSeconds parameter.
+	 * If the time string is incomplete or invalid, default values for hours, minutes, and seconds are used.
+	 * 
+	 * @param timeString the time string to parse
+	 * @param hdef the default hour value to use if the time string is incomplete or invalid
+	 * @param mdef the default minute value to use if the time string is incomplete or invalid
+	 * @param sdef the default second value to use if the time string is incomplete or invalid
+	 * @param withSeconds whether to include seconds in the output string
+	 * @return a corrected time string in the format "HH:MM" or "HH:MM:SS"
+	 * */
+    public static String correctHours(String timeString, int hdef, int mdef, int sdef, boolean withSeconds) {
+        return correctHours(timeString, hdef, mdef, sdef, withSeconds, false);
     }
     
+    /**
+	 * Parses a time string and returns a corrected time string in the format "HH:MM
+	 * or "HH:MM:SS" depending on the withSeconds parameter.
+	 * If the time string is incomplete or invalid, default values for hours, minutes, and seconds are used.
+	 * 
+	 * @param timeString the time string to parse
+	 * @param hdef the default hour value to use if the time string is incomplete or invalid
+	 * @param mdef the default minute value to use if the time string is incomplete or invalid
+	 * @param sdef the default second value to use if the time string is incomplete or invalid
+	 * @param withSeconds whether to include seconds in the output string
+	 * @param useZeroAsMinuteAndSecondIfHourWasGivenInS whether to use zero for minutes and seconds if the hour was given in seconds
+	 * 	
+	 * @return a corrected time string in the format "HH:MM" or "HH:MM:SS"
+	 */
     public static String correctHours(String s, int hdef, int mdef, int sdef, boolean withSeconds,
             boolean useZeroAsMinuteAndSecondIfHourWasGivenInS) {
         if (s.length() == 0) {
@@ -567,12 +794,26 @@ public class EfaUtil {
     }
 
     // Aus einem String s eine korrekte (gültige) Zeit machen
-    public static String correctTime(String s) {
-        return correctTime(s, false);
+    /**
+	 * Parses a time string and returns a corrected time string in the format "HH:MM
+	 * or "HH:MM:SS" depending on the withSeconds parameter.
+	 * If the time string is incomplete or invalid, default values for hours, minutes, and seconds are used.
+	 * 	
+	 * @param s the time string to parse
+	 * @return a corrected time string in the format "HH:MM" or "HH:MM:SS"
+	 * */
+    public static String correctTime(String timeString) {
+        return correctTime(timeString, false);
     }
 
     // Aus einer Nachkommazahl eine Ziffer machen, so daß faktisch nur noch eine
     // Nachkommastelle existiert (90 -> 9; 10 -> 1; 55 -> 6)
+    /**
+     * Reduces a number to a single digit by repeatedly dividing by 10 until it is less than 10.
+     * Used for reducing a decimal number to a single digit.
+     * @param z
+     * @return
+     */
     public static int makeDigit(int z) {
         if (z < 0) {
             z = z * (-1);
@@ -585,6 +826,14 @@ public class EfaUtil {
 
     // Wandelt einen int-Wert in einen String um, wobei der int-Wert zuvor durch 10
     // geteilt wird (d.h. 123 -> "12.3")
+    /**
+	 * Converts an integer value to a string, where the integer value is divided by 10.
+	 * For example, 123 becomes "12.3".
+	 * 
+	 * @param i the integer value to convert
+	 * 
+	 * @return a string representation of the integer value divided by 10
+	 */
     public static String zehntelInt2String(int i) {
         String s = Integer.toString(i);
         if (s.length() == 1 && i != 0) {
@@ -603,6 +852,14 @@ public class EfaUtil {
 
     // Wandelt einen String in einen int-Wert, wobei der String-Wert mit 10 multipliziert wird
     // (d.h. "12.3" -> 123)
+    /**
+	 * Converts a string representation of a decimal number to an integer value, where the string value is multiplied by 10.
+	 * For example, "12.3" becomes 123.
+	 * 
+	 * @param s the string representation of the decimal number
+	 * 
+	 * @return the integer value of the string multiplied by 10
+	 */
     public static int zehntelString2Int(String s) {
         if (s == null) {
             return 0;
@@ -614,11 +871,26 @@ public class EfaUtil {
         return tmj.tag * 10 + tmj.monat;
     }
 
+    /**
+     * Corrects a string representation of a decimal number by converting it to an integer value and then back to a string.
+     * 
+     * This method ensures that the string representation is in a valid format.
+     * @param s
+     * @return
+     */
     public static String correctZehntelString(String s) {
         return zehntelInt2String(zehntelString2Int(s));
     }
 
     // Split: Einen String anhand von Trennzeichen in einen Vector aufspalten
+    /**
+	 * Splits a string into a vector of strings based on a specified separator character.
+	 * 
+	 * @param s the string to split
+	 * @param sep the separator character to use for splitting
+	 * 
+	 * @return a vector of strings resulting from the split operation
+	 * */
     public static Vector<String> split(String s, char sep) {
         if (s == null) {
             return null;
@@ -640,6 +912,12 @@ public class EfaUtil {
         return v;
     }
 
+    /** 
+     * Splits a string into an array of strings based on a specified separator string.
+     * @param s
+     * @param sep
+     * @return
+     */
     public static String[] split(String s, String sep) {
         if (s == null) {
             return null;
@@ -679,6 +957,12 @@ public class EfaUtil {
     }
      */
     // Eine Komma-Liste in ein Array of String umwandeln
+    /**
+     * Converts a comma-separated list in a string into an array of strings based on a specified separator character.
+     * @param s 	the string containing the comma-separated list
+     * @param sep 	the separator character to use for splitting
+     * @return 	an array of strings resulting from the split operation
+     */
     public static String[] kommaList2Arr(String s, char sep) {
         if (s == null) {
             return null;
@@ -696,6 +980,15 @@ public class EfaUtil {
         return aa;
     }
 
+    /**
+	 * Converts a comma-separated list of status values in a string into an array of strings.
+	 * If the input string is null, returns null.
+	 * If the input string is not null, it corrects the status list and splits it into an array of strings.
+	 * If certain status types are configured in the EfaTypes, it ensures that those types are included in the resulting array.
+	 * 
+	 * @param s 	the string containing the comma-separated list of status values
+	 * @return 	an array of strings representing the status values
+	 */
     public static String[] statusList2Arr(String s) {
         if (s == null) {
             return null;
@@ -724,6 +1017,15 @@ public class EfaUtil {
     }
 
     // Eine Komma-Liste in ein Array of int umwandeln
+    /**
+	 * Converts a comma-separated list of integers in a string into an array of integers based on a specified separator character.
+	 * If the input string is null, returns null.
+	 * If the input string is not null, it splits the string into a vector of strings and converts each string to an integer.
+	 * 
+	 * @param s 	the string containing the comma-separated list of integers
+	 * @param sep 	the separator character to use for splitting
+	 * @return 	an array of integers resulting from the split operation
+	 */
     public static int[] kommaList2IntArr(String s, char sep) {
         if (s == null) {
             return null;
@@ -741,6 +1043,13 @@ public class EfaUtil {
         return aa;
     }
 
+    /** 
+	 * Converts an array of strings into a single string, with each element separated by a space.
+	 * If the input array is null, returns an empty string.
+	 * 
+	 * @param a 	the array of strings to convert
+	 * @return 	a single string with each element separated by a space
+	 */
     public static String arr2string(String[] a) {
         String s = "";
         if (a == null) {
@@ -756,6 +1065,11 @@ public class EfaUtil {
     }
 
     // Array of String in eine Komma-Liste umwandeln
+    /** 
+     * Converts an array of strings into a single string, with each element separated by a comma.
+     * @param a the array of strings to convert
+     * @return a single string with each element separated by a comma
+     */
     public static String arr2KommaList(String[] a) {
         String s = "";
         if (a == null) {
@@ -771,6 +1085,13 @@ public class EfaUtil {
     }
 
     // Array of int in eine Komma-Liste umwandeln
+    /**
+	 * Converts an array of integers into a single string, with each element separated by a comma.
+	 * 
+	 * @param a  the array of integers to convert
+	 * @param start the starting index in the array from which to begin the conversion
+	 * @return a single string with each element separated by a comma
+	 */
     public static String arr2KommaList(int[] a, int start) {
         String s = "";
         if (a == null) {
@@ -786,6 +1107,12 @@ public class EfaUtil {
     }
 
     // Prüft, ob die angegebene Datei geöffnet werden kann
+    /**
+	 * Checks if the specified file can be opened for reading.
+	 * 
+	 * @param d the path to the file to check
+	 * @return true if the file can be opened, false otherwise
+	 */
     public static boolean canOpenFile(String d) {
         FileReader f;
         try {
@@ -797,6 +1124,13 @@ public class EfaUtil {
         return true;
     }
     
+    /**	
+     * Renames a file from the specified source path to the target path, with an optional backup suffix.
+     * @param from the source file path
+     * @param to the target file path
+     * @param baksuffix the suffix to append to the target file if it already exists (for backup purposes)
+     * @return true if the file was successfully renamed, false otherwise
+     */
     public static boolean renameFile(String from, String to, String baksuffix) {
         try {
             File ffrom = new File(from);
@@ -818,44 +1152,69 @@ public class EfaUtil {
     }
 
     // Suchen und Ersetzen in Strings
-    public static String replace(String org, String such, String ers) {
-        if (org==null||such==null) { return org; }
+    /**
+	 * Replaces the first occurrence of a specified substring in a string with another substring.
+	 * 
+	 * @param org the original string
+	 * @param searchFor the substring to search for
+	 * @param replacement the substring to replace the found substring with
+	 * @return the modified string with the first occurrence of the specified substring replaced
+	 * */
+    public static String replace(String org, String searchFor, String replacement) {
+        if (org==null||searchFor==null) { return org; }
 
     	int wo;
         String s = org;
         
-        if ((wo = org.indexOf(such)) >= 0) {
+        if ((wo = org.indexOf(searchFor)) >= 0) {
             if (wo > 0) {
-                if (wo + such.length() < org.length()) {
-                    s = org.substring(0, wo) + ers + org.substring(wo + such.length(), org.length());
+                if (wo + searchFor.length() < org.length()) {
+                    s = org.substring(0, wo) + replacement + org.substring(wo + searchFor.length(), org.length());
                 } else {
-                    s = org.substring(0, wo) + ers;
+                    s = org.substring(0, wo) + replacement;
                 }
-            } else if (wo + such.length() < org.length()) {
-                s = ers + org.substring(wo + such.length(), org.length());
+            } else if (wo + searchFor.length() < org.length()) {
+                s = replacement + org.substring(wo + searchFor.length(), org.length());
             } else {
-                s = ers;
+                s = replacement;
             }
         }
         return s;
     }
 
-    public static String replace(String org, String such, String ers, boolean alle) {
-        if (org == null || such == null || ers == null) {
+    /** 
+	 * Replaces all occurrences of a specified substring in a string with another substring.
+	 * 
+	 * @param org the original string
+	 * @param searchFor the substring to search for
+	 * @param replacement the substring to replace the found substring with
+	 * @param replaceAll if true, replaces all occurrences; if false, replaces only the first occurrence
+	 * 
+	 * @return the modified string with the specified substring replaced
+	 */
+    public static String replace(String org, String searchFor, String replacement, boolean replaceAll) {
+        if (org == null || searchFor == null || replacement == null) {
             return null;
         }
-        if (!alle || (ers.length() > 0 && ers.indexOf(such) >= 0)) {
-            return replace(org, such, ers);
+        if (!replaceAll || (replacement.length() > 0 && replacement.indexOf(searchFor) >= 0)) {
+            return replace(org, searchFor, replacement);
         }
         String s = org;
-        while (s.indexOf(such) >= 0) {
-            s = replace(s, such, ers);
+        while (s.indexOf(searchFor) >= 0) {
+            s = replace(s, searchFor, replacement);
         }
         return s;
     }
 
     // Vergleich zweier Strings auf numerische Weise, wobei an die Zahl noch eine Buchstabenfolge
     // angehängt sein darf (--> LfdNr). Bsp: 12<34; 12A<12B usw.
+    /** 
+     * Compares two strings numerically, allowing for an optional letter suffix after the number 
+     * (e.g., "12" < "34", "12A" < "12B").
+     * @param a  the first string to compare
+     * @param b the second string to compare
+     * @return -1 if a < b, 0 if a == b, 1 if a > b
+     */
     public static int compareIntString(String a, String b) {
         TMJ aa = string2date(a, 1, 1, 1); // TMJ mißbraucht für die Auswertung von Zahlen
         TMJ bb = string2date(b, 1, 1, 1); // TMJ mißbraucht für die Auswertung von Zahlen
@@ -869,9 +1228,16 @@ public class EfaUtil {
     }
 
     // Differenz (Anzahl der Tage) zwischen zwei TMJ-Datumsangaben berechnen (von und bis mitgerechnet)
-    public static int getDateDiff(TMJ v, TMJ b) {
-        GregorianCalendar von = new GregorianCalendar(v.jahr, v.monat - 1, v.tag);
-        GregorianCalendar bis = new GregorianCalendar(b.jahr, b.monat - 1, b.tag);
+    /** 
+	 * Calculates the difference in days between two TMJ date objects, including both the start and end dates.
+	 * @param fromDate  the starting TMJ date
+	 * @param untilDate  the ending TMJ date
+	 * 
+	 * @return the number of days between the two dates, including both start and end dates; returns a negative value if the end date is before the start date
+	 */
+    public static int getDateDiff(TMJ fromDate, TMJ untilDate) {
+        GregorianCalendar von = new GregorianCalendar(fromDate.jahr, fromDate.monat - 1, fromDate.tag);
+        GregorianCalendar bis = new GregorianCalendar(untilDate.jahr, untilDate.monat - 1, untilDate.tag);
         int tmp = Math.round((((float) bis.getTime().getTime() - (float) von.getTime().getTime()) / (float) 86400000) + 1);
         if (tmp > 0) {
             return tmp;
@@ -881,37 +1247,79 @@ public class EfaUtil {
     }
     // Differenz (Anzahl der Tage) zwischen zwei String-Datumsangaben berechnen (von und bis mitgerechnet)
 
-    public static int getDateDiff(String sv, String sb) {
-        return getDateDiff(string2date(sv, 1, 1, 1), string2date(sb, 1, 1, 1));
+    /**
+	 * Calculates the difference in days between two date strings, including both the start and end dates
+	 * 
+	 * @param dateStart  the starting date string
+	 * @param dateEnd  the ending date string
+	 * 
+	 * @return the number of days between the two dates, including both start and end dates; 
+	 * returns a negative value if the end date is before the start date
+	 * 
+	 * */
+    public static int getDateDiff(String dateStart, String dateEnd) {
+        return getDateDiff(string2date(dateStart, 1, 1, 1), string2date(dateEnd, 1, 1, 1));
     }
 
     // Differenz (Anzahl der Tage) zwischen zwei TMJ-Datumsangaben berechnen (von und bis *nicht* mitgerechnet),
     // anhängig von der Reihenfolge
+    /**
+	 * Calculates the difference in days between two TMJ date objects, excluding both the start and end dates.
+	 * The result is dependent on the order of the dates; if the end date is before the start date, a negative value is returned.
+	 * 
+	 * @param d1  the first TMJ date
+	 * @param d2  the second TMJ date
+	 * 
+	 * @return the number of days between the two dates, excluding both start and end dates; 
+	 * returns a negative value if the second date is before the first date
+	 */
     public static int getRealDateDiff(TMJ d1, TMJ d2) {
         GregorianCalendar c1 = new GregorianCalendar(d1.jahr, d1.monat - 1, d1.tag);
         GregorianCalendar c2 = new GregorianCalendar(d2.jahr, d2.monat - 1, d2.tag);
         return Math.round((((float) c2.getTime().getTime() - (float) c1.getTime().getTime()) / (float) 86400000));
     }
 
-    public static boolean secondDateIsAfterFirst(String sv, String sb) {
-        TMJ v = string2date(sv, 1, 1, 1);
-        TMJ b = string2date(sb, 1, 1, 1);
+    /** 
+     * Compares two date strings and checks if the second date is after the first date.
+     * 
+     * @param dateStringFrom
+     * @param dateStringTo
+     * @return
+     */
+    public static boolean secondDateIsAfterFirst(String dateStringFrom, String dateStringTo) {
+        TMJ v = string2date(dateStringFrom, 1, 1, 1);
+        TMJ b = string2date(dateStringTo, 1, 1, 1);
         GregorianCalendar von = new GregorianCalendar(v.jahr, v.monat - 1, v.tag);
         GregorianCalendar bis = new GregorianCalendar(b.jahr, b.monat - 1, b.tag);
         return bis.after(von);
     }
 
-    public static boolean secondDateIsEqualOrAfterFirst(String sv, String sb) {
-        TMJ v = string2date(sv, 1, 1, 1);
-        TMJ b = string2date(sb, 1, 1, 1);
+    /**
+	 * Compares two date strings and checks if the second date is equal to or after the first date.
+	 * 
+	 * @param dateStringFrom  the first date string
+	 * @param dateStringTo  the second date string
+	 * @return true if the second date is equal to or after the first date, false otherwise
+	 */
+    public static boolean secondDateIsEqualOrAfterFirst(String dateStringFrom, String dateStringTo) {
+        TMJ v = string2date(dateStringFrom, 1, 1, 1);
+        TMJ b = string2date(dateStringTo, 1, 1, 1);
         GregorianCalendar von = new GregorianCalendar(v.jahr, v.monat - 1, v.tag);
         GregorianCalendar bis = new GregorianCalendar(b.jahr, b.monat - 1, b.tag);
         return bis.equals(von) || bis.after(von);
     }
 
-    public static boolean secondTimeIsAfterFirst(String sv, String sb) {
-        TMJ v = string2date(sv, 1, 1, 1);
-        TMJ b = string2date(sb, 1, 1, 1);
+    /**
+	 * Compares two date strings and checks if the second date is after the first date.
+	 * 
+	 * @param dateStringFrom  the first date string
+	 * @param dateStringTo  the second date string
+	 * 
+	 * @return true if the second date is after the first date, false otherwise
+	 * */
+    public static boolean secondTimeIsAfterFirst(String dateStringFrom, String dateStringTo) {
+        TMJ v = string2date(dateStringFrom, 1, 1, 1);
+        TMJ b = string2date(dateStringTo, 1, 1, 1);
         if (b.tag > v.tag) {
             return true;
         }
@@ -933,13 +1341,28 @@ public class EfaUtil {
         return false;
     }
 
-    public static TMJ incDate(TMJ tmj, int diff) {
+    /**
+	 * Increments a TMJ date object by a specified number of days.
+	 * 
+	 * @param tmj  the TMJ date object to increment
+	 * @param diff  the number of days to increment the date by (can be negative to decrement)
+	 * @return a new TMJ date object representing the incremented date
+	 * */
+    public static TMJ incDateByDays(TMJ tmj, int daysDiff) {
         GregorianCalendar cal = new GregorianCalendar(tmj.jahr, tmj.monat - 1, tmj.tag);
-        cal.add(GregorianCalendar.DATE, diff);
+        cal.add(GregorianCalendar.DATE, daysDiff);
         return new TMJ(cal.get(GregorianCalendar.DAY_OF_MONTH), cal.get(GregorianCalendar.MONTH) + 1, cal.get(GregorianCalendar.YEAR));
     }
 
     // Anzahl eines Zeichens in einem String ermitteln
+    /**
+	 * Counts the occurrences of a specified character in a string.
+	 * 
+	 * @param s the string to search
+	 * @param c the character to count
+	 * 
+	 * @return the number of occurrences of the specified character in the string
+	 * */
     public static int countCharInString(String s, char c) {
         int n = 0;
         if (s==null) { return 0; }
@@ -952,6 +1375,13 @@ public class EfaUtil {
     }
 
     // Anzahl einer Zeichenfolge in einem String ermitteln
+    /**
+	 * Counts the occurrences of a specified substring in a string.
+	 * @param s the string to search
+	 * @param c the substring to count
+	 * 
+	 * @return the number of occurrences of the specified substring in the string
+	 * */
     public static int countCharInString(String s, String c) {
         int n = 0;
         int pos;
@@ -964,6 +1394,15 @@ public class EfaUtil {
 
 
     // Dateinamen "fileName" ggf. um Pfadangabe "basePath" vervollständigen, falls "fileName" kein absoluter Pfad
+    /**
+	 * Completes a file name with a base path if the file name is not an absolute
+	 * path. If the file name is already an absolute path, it is returned as is.
+	 * 	
+	 * @param basePath the base path to use for completing the file name
+	 * @param fileName the file name to complete
+	 * 
+	 * @return the completed file name with the base path if necessary, or the original file name if it is already an absolute path
+	 * */
     public static String makeFullPath(String basePath, String fileName) {
         if (basePath == null || fileName == null) {
             return null;
@@ -981,6 +1420,15 @@ public class EfaUtil {
     }
 
     // Dateinamen "fileName" relativ zum Namen "efbName" machen, d.h. falls gleiches Verzeichnis, dieses weglassen
+    /**
+	 * Makes a file name relative to another file name, removing the common directory path if they
+	 * are in the same directory. If the file names are in different directories, the original file name is returned.
+	 * 
+	 * @param fileName the file name to make relative
+	 * @param efbName the reference file name to compare against
+	 * 
+	 * @return the relative file name if they are in the same directory, or the original file name if they are in different directories
+	 * */
     public static String makeRelativePath(String fileName, String efbName) {
         String t;
         if ((t = EfaUtil.getPathOfFile(fileName)).length() > 0) {
@@ -2543,7 +2991,25 @@ public class EfaUtil {
     	}
        
 		return filename;
-	}    
+	}
+	
+	/**
+	 * Returns the input with its first character converted to upper case.
+	 * Null and empty strings are returned unchanged, because there is no
+	 * first character to convert and callers should not receive an exception.
+	 */
+	public static String capitalizeFirst(String s) {
+	    if (s == null || s.isEmpty()) {
+	        return s;
+	    }
+	    // Work on code points instead of chars so that surrogate pairs
+	    // (e.g. some rare letters or emoji) are never split in the middle.
+	    int firstCodePoint = s.codePointAt(0);
+	    int firstLength = Character.charCount(firstCodePoint);
+	    String upperFirst = new String(Character.toChars(Character.toTitleCase(firstCodePoint)));
+	    return upperFirst + s.substring(firstLength);
+	}
+
     
     public static void main(String args[]) {
         String text = "abc & def";

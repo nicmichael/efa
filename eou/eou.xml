@@ -91,7 +91,7 @@ section="Other"
 	</Sections>
 	<Version>
         <VersionID>2.5.4_#5</VersionID>
-        <ReleaseDate>14.11.2026</ReleaseDate>
+        <ReleaseDate>15.11.2026</ReleaseDate>
         <DownloadUrl>https://github.com/nicmichael/efa/releases/download/2.5.4_4/efa2.5.4_4.zip</DownloadUrl>
         <DownloadSize>TODO</DownloadSize>
      	<MinimumJavaVersion>1.8</MinimumJavaVersion>
@@ -104,6 +104,7 @@ section="Other"
 			<ChangeItem section="Boathouse">Neu: Der Automatische Fahrtenbuchwechsel brach schon immer alle Fahrten ab, die zum Zeitpunkt des Wechsels noch unterwegs waren. Treten beim Abbrechen dieser Fahrten Fehler auf (so dass sie nicht abgebrochen werden können), wird der Fehler protokolliert und die noch offenen Fahrten in die Mail an den Admin übernommen. Ein Fehler bei einem Boot behindert nicht den Fahrtenbuchwechsel.</ChangeItem>
 			<ChangeItem section="Boathouse">Neu: Fahrtenbuchwechsel: Wenn beim automatischen Fahrtenbuchwechsel ein Fehler auftritt, so wird der Fahrtenbuchwechsel nur alle 10 min statt jede Minute neu versucht. Es wird auch nur einmal am Tag eine Mail über einen fehlerhaften Fahrtenbuchwechsel versendet (um den Admin nicht vollzuspammen)</ChangeItem>
 			<ChangeItem section="Boathouse">Neu: Bootsreservierungen: Datumsfelder vervollständigen automatisch auf das nächste Jahr, wenn ansonsten die Eingabe in der Vergangenheit liegen würde (am 01.11.2026 wird die Eingabe 01.01. automatisch auf 01.01.2027 vervollständigt).</ChangeItem>
+			<ChangeItem section="Boathouse">Neu: Bootsreservierungen: Die Tooltiptexte für Reservierungen wurden überarbeitet, und redundante Zeilen in den Tooltips entfernt.</ChangeItem>
 			<ChangeItem section="Stability">Neu: Der im Hintergrund arbeitende efaBoathouseBackgroundTask wurde gehärtet und Bugs beseitigt.</ChangeItem>
 			<ChangeItem section="Stability">Neu: Der efaBoathouseBackgroundTask beendet sich, wenn eine Anforderung zum Herunterfahren/Neustart von EFA angefordert wurde.</ChangeItem>
 			<ChangeItem section="Boathouse">New: Der Wechsel zwischen Bootsliste und der Personenliste funktioniert schneller. Die Listen werden nur noch neu geladen, wenn es eine Änderung in ihnen gab.</ChangeItem>
@@ -118,6 +119,7 @@ section="Other"
 			<ChangeItem section="Boathouse">New: The automatic logbook change has always aborted all trips that were still on the way at the time of the change. If errors occur when aborting these trips (so that they cannot be aborted), the error is logged and the still open trips are included in the email to the admin. An error with one boat does not hinder the logbook change.</ChangeItem>
  			<ChangeItem section="Boathouse">New: Logbook change: If an error occurs during the automatic logbook change, the logbook change will only be retried every 10 minutes instead of every minute. Also, only one email about a failed logbook change will be sent per day (to avoid spamming the admin).</ChangeItem>
  			<ChangeItem section="Boathouse">New: Boat reservations: Date fields automatically complete to the next year if otherwise the input would be in the past (on 01.11.2026, the input 01.01. will automatically be completed to 01.01.2027).</ChangeItem>
+ 			<ChangeItem section="Boathouse">New: Boat reservations: The tooltip texts for reservations have been revised, and redundant lines in the tooltips have been removed.</ChangeItem>
  			<ChangeItem section="Stability">New: The efaBoathouseBackgroundTask running in the background has been hardened and bugs have been fixed.</ChangeItem>
  			<ChangeItem section="Stability">New: The efaBoathouseBackgroundTask stops if a shutdown-request has been detected.</ChangeItem>
 			<ChangeItem section="Boathouse">New: The switch between the list of available boats and the list of persons is faster. The lists get only reloaded if there was a recent change.</ChangeItem>

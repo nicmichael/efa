@@ -81,6 +81,7 @@ public class BoatReservationEditDialog extends UnversionizedDataEditDialog imple
             if (type == null) {
                 return;
             }
+            boolean isWeekly = type.equals(BoatReservationRecord.TYPE_WEEKLY);
             for (IItemType it : allGuiItems) {
                 if (BoatReservationRecord.DAYOFWEEK.equals(it.getName())) {
                     it.setVisible(type.equals(BoatReservationRecord.TYPE_WEEKLY) ||
@@ -96,7 +97,7 @@ public class BoatReservationEditDialog extends UnversionizedDataEditDialog imple
             showHintIfDateFieldsHaveAutocompletedYear();
         } else if (item != null && (item.getName().equals(BoatReservationRecord.DATEFROM)
                 || item.getName().equals(BoatReservationRecord.DATETO))
-                && event != null && event instanceof FocusEvent) {
+                && event != null && event instanceof FocusEvent && ((FocusEvent) event).getID() == FocusEvent.FOCUS_LOST) {
             showHintIfDateFieldsHaveAutocompletedYear();
         }
     }

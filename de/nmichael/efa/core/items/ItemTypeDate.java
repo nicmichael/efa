@@ -97,6 +97,7 @@ public class ItemTypeDate extends ItemTypeLabelTextfield {
                     }
                 }
                 TMJ tmj = EfaUtil.correctDate(value, referenceDate.getDay(), referenceDate.getMonth(), referenceDate.getYear());
+                TMJ userEnteredTMJ = EfaUtil.string2date(value, -1, -1, -1);
                 if (!isYearAutocompletionForFuture) { 
                     this.value.setDate(tmj.tag, tmj.monat, tmj.jahr);
                     this.setHasBeenFutureCompleted(false);
@@ -111,7 +112,9 @@ public class ItemTypeDate extends ItemTypeLabelTextfield {
 	                boolean isToday = (tmj.toCalendar().equals(today));
 	                boolean isFuture = tmj.toCalendar().after(today);
 	                this.setHasBeenFutureCompleted(false);
-					if (!isToday && !isFuture) {
+	                //only adapt the year if the reference date is not set, 
+	                //otherwise we assume that the user wants to enter a date in the past or present.
+					if (!isToday && userEnteredTMJ.jahr<=0 && !isFuture ) {
 	                	tmj.jahr = today.get(GregorianCalendar.YEAR) + 1;
 		                this.setHasBeenFutureCompleted(true);
 	                }

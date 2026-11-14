@@ -57,9 +57,9 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
     public static final String TYPE_OTHER = "";
     public static final String RIGGER_OTHER = "";
     EfaBoathouseFrame efaBoathouseFrame;
-    private final String STR_RESERVIERT_FUER=International.getString("Reserviert für").toLowerCase();
+    private final String STR_RESERVIERT_FUER_PREFIX=International.getString("Reserviert für").toLowerCase();
     private final String STR_BOOTSSCHADEN=International.getString("Bootsschaden");
-    private final String STR_RESERVIERT_VON = International.getString("Reserviert von");
+    private final String STR_RESERVIERT_FUER = International.getString("Reserviert für");
     
     //Cache for special tooltip colors, set up when sorting boatslist items and determining tooltip texts
     private String cacheToolTipBgColorText="";
@@ -698,7 +698,7 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
    	    		
    	    		if (!boatReservation.isEmpty()) {
    	    			sbResult.append("<tr><td align=\"left\" colspan=2>");
-   	    			sbResult.append(EfaUtil.escapeHtml(boatReservation));
+   	    			sbResult.append(EfaUtil.escapeHtmlWithLinefeed(boatReservation));
    	    			sbResult.append("</td></tr>");
    	    		}
    	    		
@@ -712,9 +712,9 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
    	    					boatComment=boatComment.substring(iPos);
    	    				}
    	    				try {
-    	   	    		String boatStatusText=BoatStatusRecord.getStatusDescription(boatStatus);
-    	    					// A null status text must not abort the comment cleanup: String.replace(null, ...) would throw
-    	    					if (boatStatusText == null) {
+   	    					String boatStatusText=BoatStatusRecord.getStatusDescription(boatStatus);
+    	    				// A null status text must not abort the comment cleanup: String.replace(null, ...) would throw
+    	    				if (boatStatusText == null) {
     							boatStatusText = "";
     						}
     						boatComment=boatComment.replace(boatName, "").replace(boatStatusText,"")
@@ -730,19 +730,25 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
    	    			sbResult.append(EfaUtil.escapeHtmlWithLinefeed(boatComment));
    	    			sbResult.append("</td></tr>");
    	    		} else {
-   		    			//if (boatComment!=null) {
-   		    			// Comment is never null here, so no outer null check is needed
-    		    			String boatStatusText=BoatStatusRecord.getStatusDescription(boatStatus);
-    		    			// A null status text must not abort the whole tooltip: String.replace(null, ...) would throw
-    		    			if (boatStatusText == null) {
-    			    			boatStatusText = "";
-    		    			}
-    		    			boatComment=boatComment.replace(boatName, "").replace(boatStatusText,"")
-    					.replace(";", ";\n").trim();
+   	    			// Comment is never null here, so no outer null check is needed
+   	    			
+   	    			// Remove the "Reserviert für" prefix from the comment if it starts with it, 
+   	    			// to avoid redundancy in the tooltip (otherwise, the reservation info would be shown twice)
+   	    			if (boatComment.toLowerCase().startsWith(STR_RESERVIERT_FUER_PREFIX)) {
+   	    				boatComment="";
+   	    			}
+   	    			
+	    			String boatStatusText=BoatStatusRecord.getStatusDescription(boatStatus);
+	    			// A null status text must not abort the whole tooltip: String.replace(null, ...) would throw
+	    			if (boatStatusText == null) {
+		    			boatStatusText = "";
+	    			}
+	    			boatComment=boatComment.replace(boatName, "").replace(boatStatusText,"")
+	    						.replace(";", ";\n").trim();
    	    			if (!boatComment.isEmpty()) {
-   					sbResult.append("<tr><td align=\"left\" colspan=2>");
-   					sbResult.append(EfaUtil.escapeHtmlWithLinefeed(boatComment));
-   					sbResult.append("</td></tr>");
+	   					sbResult.append("<tr><td align=\"left\" colspan=2>");
+	   					sbResult.append(EfaUtil.escapeHtmlWithLinefeed(boatComment));
+	   					sbResult.append("</td></tr>");
    	    			}
    	    		}
    	    		if (bSeparateBoatVariant) {
@@ -818,7 +824,7 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
      * @return true if the string starts with "Reserviert für", false otherwise
      */
     private boolean isCommentBoardReservation(String s) {
-    	return (s != null && s.toLowerCase().startsWith(STR_RESERVIERT_FUER));	
+    	return (s != null && s.toLowerCase().startsWith(STR_RESERVIERT_FUER_PREFIX));	
     }
     
     /**
@@ -856,16 +862,15 @@ public class ItemTypeBoatstatusList extends ItemTypeList {
         	String prefix = "";
         	
         	if(buildForTooltip) {
-	        	if (lookAheadMinutes>0) {
-	        			prefix=STR_RESERVIERT_VON + " ";
-	            	return prefix + res.getPersonAsName() + " " + International.getMessage("ab {timestamp}", res.getDateTimeFromDescription()) + " ("+ res.getReason()+ ")";
-	        	} else {
-	        		prefix = STR_RESERVIERT_VON + " ";
-	            	return prefix + res.getPersonAsName() + " " + International.getMessage("bis {timestamp}", res.getDateTimeToDescription())+ " ("+ res.getReason()+ ")";
-	        	}
+        		return  EfaUtil.capitalizeFirst(
+        				International.getMessage("reserviert für {name} ({reason}) {from_to}",
+                                    res.getPersonAsName(),
+                                    res.getReason(),
+                                    "\n"+res.getReservationTimeDescription())
+        				);
         	} else { // build for secondary Item in List
         		//search for Reservations in the future
-        	if (BoatReservationRecord.TYPE_ONETIME.equals(res.getType())) {
+        		if (BoatReservationRecord.TYPE_ONETIME.equals(res.getType())) {
         		
 	        		//if (lookAheadMinutes<=0) {//aktuell laufende Reservierungen?
         			if (res.getReservationValidInMinutes(true)<=0) {
