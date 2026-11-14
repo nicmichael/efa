@@ -72,7 +72,7 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
     JTextField filterTextField;
     EfaMouseListener popupListener; 
     JPopupMenu popup;
-    Long lastFilterChange=0L;
+    volatile Long lastFilterChange=0L;
     public DefaultListModel<ItemTypeListData> data; // no longer Vector as we need a DefaultListModel for filtering
     String[] actions;
     String incrementalSearch = "";
@@ -165,16 +165,12 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
     
     public ItemTypeList(String name,
             int type, String category, String description) {
-        this.name = name;
-        this.type = type;
-        this.category = category;
-        this.description = description;
-        this.showFilterField = false;
-        data = new DefaultListModel<ItemTypeListData>();
+        this(name, type, category, description, false);
     }
 
     /**
 	 * Creates a copy of this ItemTypeList with the same properties and items.
+	 * (but for ItemTypeList: not the list items).
 	 * @return a new ItemTypeList that is a copy of this one
 	 */
     public IItemType copyOf() {
@@ -185,7 +181,7 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
         copy.setFieldGrid(fieldGridWidth, fieldGridHeight, fieldGridAnchor, fieldGridFill);
         copy.setPadding(padXbefore, padXafter, padYbefore, padYafter);
         copy.setIconSize(iconWidth, iconHeight);
-        copy.setPopupActions(actions.clone());
+        if (actions!=null) { copy.setPopupActions(actions.clone());}
         copy.other_item_text=this.other_item_text;
         copy.setSeparatorBackground(this._separatorBackground);
         
@@ -198,6 +194,9 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
 
 	/**
 	 * Add an item to the list. The list will be filtered after adding the item.
+	 * This is rather expensive if you add many items, as the filter is applied after each item.
+	 * Use addItems() to add several items at once and filter only once.
+	 * 
 	 * @param text The primary text of the item
 	 * @param toolTipText The tooltip text of the item
 	 * @param secondaryItem The secondary text of the item (right-aligned)
@@ -213,6 +212,9 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
 
     /**
 	 * Add an item to the list. The list will be filtered after adding the item.
+	 * This is rather expensive if you add many items, as the filter is applied after each item.
+	 * Use addItems() to add several items at once and filter only once.
+	 * 
 	 * @param text The primary text of the item
 	 * @param toolTipText The tooltip text of the item
 	 * @param secondaryItem The secondary text of the item (right-aligned)
@@ -241,6 +243,10 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
         if (items == null) {
             return;
         }
+        /*TODO: Currently efa is based on Java8, so we cannot use data.addAll(items) directly. 
+          Instead, we add each item individually and then filter once at the end.
+          Using data.addAll(items) would be more efficient (throws one event instead of n), 
+          but it requires Java11 or later.*/
         for (ItemTypeListData item : items) {
             data.addElement(item);   // no filter() here, to avoid O(n^2) work
         }
@@ -250,7 +256,8 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
     /**
 	 * Removes an item from the list by index and filters the list afterwards.
 	 *
-	 * @param idx the index of the item to remove
+	 * @param idx the index of the item to remove, referring to the unfiltered data (all items),
+	 *            not to the filtered view
 	 */
     public void removeItem(int idx) {
         if (idx >= 0 && idx < data.size()) {
@@ -317,6 +324,8 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
      * Returns the text of the item at the given index.
      * @param idx
      * @return the text of the item at the given index, or null if the index is out of bounds
+     * Index space: the index refers to the unfiltered data (all items), not to the filtered view.
+     * Use getSelectedIndex() for the filtered view, as the filter can hide items and shift indices.
      */
     public String getItemText(int idx) {
         if (idx >= 0 && idx < data.size()) {
@@ -449,9 +458,6 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
         //scrollbar is shown only when needed
         scrollPane = new JScrollPane(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED/*ALWAYS*/, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         this.field = scrollPane;
-        
-        mypanel = new JPanel();
-        mypanel.setLayout(new BorderLayout());
 
         if (getDescription() != null) {
             if (Daten.efaConfig.getHeaderUseHighlightColor()) {
@@ -534,6 +540,7 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
         //--> Scrollpane (CENTER)
         //    --> JList
         
+        mypanel = new JPanel();
         mypanel.setLayout(new BorderLayout());
         mypanel.setBorder(new EmptyBorder(0,4,0,4));// 4 pixel space on the left and the right side of the panel
         
@@ -660,6 +667,7 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
             //list.setSelectedIndices(new int[0]);
             list.clearSelection();
         } catch(Exception e) {
+        	Logger.logdebug(e);
         }
     }
 
@@ -716,7 +724,7 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
     public void clearFilterTextByInterval() {
     	
     	// get the reset filter interval in minutes from efaConfig.
-    	long filterResetInterval= (Daten.efaConfig.getValueEfaBoathouseFilterTextAutoClearInterval()*60*1000); 
+    	long filterResetInterval= (Daten.efaConfig.getValueEfaBoathouseFilterTextAutoClearInterval() * 60L * 1000L); 
     	
     	
     	if (filterResetInterval>0) {
@@ -744,12 +752,11 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
         }
         
     	if (this.showFilterField && (this.filterTextField != null)) {
-			this.filterTextField.setText("");
+			this.filterTextField.setText(""); // this also triggers the DocumentListener, which will call filter() automatically
         	updateLastFilterChange();
     		if (!this.filterTextField.hasFocus()) {
     			this.filterTextField.setBackground(_filterTextfieldDefaultBackground);
     		}
-    		filter();    
     	}
     }
     
@@ -767,14 +774,14 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
 	 * @param plus the number of additional entries to show below the selected entry
 	 * @param direction the direction to move if the found entry is a separator (-1 for up, 1 for down)
 	 */
-    @Deprecated
+
     private void scrollToEntry(String search, int plus, int direction) {
 
-		DefaultListModel <ItemTypeListData> theData= (DefaultListModel<ItemTypeListData>)list.getModel();
-    	
         if (list == null || search == null || search.length() == 0) {
             return;
         }
+		DefaultListModel <ItemTypeListData> theData= (DefaultListModel<ItemTypeListData>)list.getModel();
+		
         try {
             int start = 0;
 
@@ -875,10 +882,16 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
 	 * If no such item exists, it selects the first item in the list regardless.
 	 */
     private void selectFirstMatchingElement() {
-    	int index=1; //start with item 1 as item 0 is always "<other boat>" or "<other person>"
 		DefaultListModel <ItemTypeListData> theData= (DefaultListModel<ItemTypeListData>)list.getModel();
-    	  // check whether we should really select this item
 
+    	int index = 0;
+	    if (filterTextField.getText().trim().length() > 0
+	          && theData.getSize() > 0
+	          && other_item_text.equals(theData.get(0).text)) {
+	      index = 1;
+	    }
+    	
+    	// check whether we should really select this item
 		if (filterTextField.getText().trim().length()==0){
 			index=0;
 		} else { 
@@ -905,30 +918,16 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
 	 * @return the associated object of the selected item, or null if no item is selected
 	 * */
     public Object getSelectedValue() {
-        try {
-            if (list == null || list.isSelectionEmpty()) {
-                return null;
-            }
-            ItemTypeListData item = (ItemTypeListData)list.getSelectedValue();
-            return item.object;
-        } catch (Exception e) {
-            return null;
-        }
+        ItemTypeListData item = getSelectedData();
+        return (item != null) ? item.object : null;
     }
 
     /** 
 	 * Returns whether the currently selected item in the list is a separator.
 	 */
     public boolean getSelectedItemIsSeparator() {
-        try {
-            if (list == null || list.isSelectionEmpty()) {
-                return false;
-            }
-            ItemTypeListData item = (ItemTypeListData)list.getSelectedValue();
-            return item.separator;
-        } catch (Exception e) {
-            return false;
-        }    	
+        ItemTypeListData item = getSelectedData();
+        return (item != null) && item.separator;
     }
     
     /**
@@ -936,13 +935,27 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
      * @return the text of the selected item, or null if no item is selected
      */
     public String getSelectedText() {
+        ItemTypeListData item = getSelectedData();
+        return (item != null) ? item.text : null;
+    }
+
+    /**
+     * Returns the data of the currently selected item, shared by all getSelected*() methods.
+     * Centralizing this keeps the selection lookup in one place, so a change to it
+     * only has to be made once.
+     *
+     * @return the selected item data, or null if nothing is selected or the lookup fails
+     */
+    private ItemTypeListData getSelectedData() {
         try {
             if (list == null || list.isSelectionEmpty()) {
                 return null;
             }
-            ItemTypeListData item = (ItemTypeListData)list.getSelectedValue();
-            return item.text;
+            // JList is typed as JList<ItemTypeListData>, so no cast is needed here
+            return list.getSelectedValue();
         } catch (Exception e) {
+            // Log instead of failing silently, so unexpected states remain visible in the debug log
+            Logger.logdebug(e);
             return null;
         }
     }
@@ -1035,7 +1048,7 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
     public void setDescription(String s) {
         super.setDescription(s);
         if (label != null) {
-            label.setText(s);
+            Mnemonics.setLabel(this.dlg, label, " " + s + ": ");
         }
     }
 
@@ -1049,7 +1062,8 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
 
     /**
 	 * Returns the index of the currently selected item in the list.
-	 * @return the index of the selected item, or -1 if no item is selected
+	 * @return the index of the selected item in the filtered view, or -1 if no item is selected.
+	 * Index space: this index refers to the filtered view, not to the unfiltered data used by getItemText() and getItemObject().
 	 */
     public int getSelectedIndex() {
         return list.getSelectedIndex();
@@ -1153,8 +1167,9 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
 	        		}
 	        	}
 	        	
-	        	//we also want to remove all consecutive section strings at the beginning of the list, as they do not make sense without entries in between
-	        	for (int i= theModel.getSize()-1; i>=0;i--) {
+	        	//we also want to remove all consecutive section strings on top of each other, 
+	        	//as they do not make sense without entries in between
+	        	for (int i = theModel.getSize()-1; i>=0; i--) {
 	        		if (theModel.getElementAt(i).separator){
 	        			if ((i<theModel.getSize()-1) && (theModel.getElementAt(i+1).separator)) {
 	        					//we have found two section strings in a row: remove the first one

@@ -2392,19 +2392,23 @@ public class EfaUtil {
 	    BufferedImage image = new BufferedImage(iconWidth, iconHeight,
 	            BufferedImage.TYPE_INT_ARGB);
 	    Graphics2D g = image.createGraphics();
-	    g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		if (colors.length == 1) {
-	        g.setColor(colors[0]);
-	        g.fillOval(0, 0, iconWidth, iconHeight);
-	    } else {
-	        int currentAngle = 90;
-	        int anglePerColor = 360 / colors.length;
-	        for (int i=0; i<colors.length; i++) {
-	            g.setColor(colors[i]);
-	            g.fillArc(0, 0, iconWidth, iconHeight,
-	                    currentAngle % 360, anglePerColor);
-	            currentAngle += anglePerColor;
-	        }
+	    try {
+		    g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			if (colors.length == 1) {
+		        g.setColor(colors[0]);
+		        g.fillOval(0, 0, iconWidth, iconHeight);
+		    } else {
+		        int currentAngle = 90;
+		        int anglePerColor = 360 / colors.length;
+		        for (int i=0; i<colors.length; i++) {
+		            g.setColor(colors[i]);
+		            g.fillArc(0, 0, iconWidth, iconHeight,
+		                    currentAngle % 360, anglePerColor);
+		            currentAngle += anglePerColor;
+		        }
+		    }
+	    } finally {
+	    	g.dispose();
 	    }
 		return new ImageIcon(image);
 	}	

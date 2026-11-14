@@ -16,6 +16,8 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.ImageIcon;
 import javax.swing.JList;
@@ -41,19 +43,23 @@ import de.nmichael.efa.util.Logger;
  * values are passed in via {@link #configure(int, int, int, Color)}.
  * 
  * The renderer does not access the {@link ItemTypeList.ItemTypeListData} directly, but instead
- * uses the values passed to {@link #getListCellRendererComponent(JList, ItemTypeList.ItemTypeListData, int, boolean, boolean)}.
+ * uses the values passed to {@link #getListCellRendererComponent(JList, ItemTypeList.ItemTypeListData, 
+ * int, boolean, boolean)}.
  * This is necessary because the renderer may be used in a different list than the one that owns
  * the data, and the renderer may be reused for multiple lists.
  * 
- * The renderer shows a separator entry (bold, centered, with a different background color) if the data has the {@code separator} flag set.
+ * The renderer shows a separator entry (bold, centered, with a different background color) 
+ * if the data has the {@code separator} flag set.
  * Otherwise, it shows a 
  * - standard entry with an optional icon on the left, primary text on the left, 
  * - optional tertiary text on the left (after three spaces), 
  * - and secondary text on the right.
  * 
  * Usually, the primary text is the most important information, 
- * where the secondary text provides extended informations (like, reservation info or target of the session).
- * The tertiary text is additional information which extends the primary text, but is less important than the secondary text.
+ * where the secondary text provides extended informations (like, reservation info 
+ * or target of the session).
+ * The tertiary text is additional information which extends the primary text, 
+ * but is less important than the secondary text.
  * 
  * @see ItemTypeList
  * @see ItemTypeList.ItemTypeListData
@@ -88,6 +94,7 @@ class ItemTypeListThreeColumnCellRenderer extends JPanel implements ListCellRend
 
     private Font fontStandard;
     private Font fontBold;
+    private Font fontPlain;
     private FontMetrics fmStandard;
     private FontMetrics fmBold;
 
@@ -101,6 +108,11 @@ class ItemTypeListThreeColumnCellRenderer extends JPanel implements ListCellRend
     private ImageIcon defaultIconForCellRenderer;
     private int defaultIconW = -1;
     private int defaultIconH = -1;
+
+    // Cache of ready-to-draw icons, keyed by source and size.
+    // Why: decoding a PNG and generating a color pie is far more expensive than drawing
+    // the result, and paintComponent runs for every visible cell on each repaint.
+    private final Map<String, ImageIcon> iconCache = new HashMap<>();
 
     /**
      * Creates the renderer. Layout values must be set afterwards via {@link #configure(int, int, int, Color)}.
@@ -162,18 +174,18 @@ class ItemTypeListThreeColumnCellRenderer extends JPanel implements ListCellRend
         this.cellHasFocus = cellHasFocus;
         this.listBackground = list.getBackground();
 
-        // Fonts: keep the same font as the list, bold for separators
-        if (value != null && value.separator) {
-            setFont(list.getFont().deriveFont(Font.BOLD));
-        } else {
-            setFont(list.getFont().deriveFont(Font.PLAIN));
+        // Fonts and metrics are derived only when the list font changes, not for every cell.
+        // Why: deriving fonts and metrics per cell repeats the same work on every repaint.
+        Font listFont = list.getFont();
+        if (!listFont.equals(fontStandard)) {
+            fontStandard = listFont;
+            fontPlain = listFont.deriveFont(Font.PLAIN);
+            fontBold = listFont.deriveFont(Font.BOLD);
+            fmStandard = getFontMetrics(fontStandard);
+            fmBold = getFontMetrics(fontBold);
         }
-
-        // Font metrics
-        fontStandard = list.getFont();
-        fontBold = fontStandard.deriveFont(Font.BOLD);
-        fmStandard = getFontMetrics(fontStandard);
-        fmBold = getFontMetrics(fontBold);
+        // Separators are bold, all other entries plain
+        setFont(value != null && value.separator ? fontBold : fontPlain);
 
         int prefH = Math.max(fmStandard.getHeight() + 6, (iconHeight > 0 ? iconHeight + 4 : 0));
         setPreferredSize(new Dimension(fieldWidth, prefH + VERTICAL_PADDING_BETWEEN_LIST));
@@ -259,27 +271,11 @@ class ItemTypeListThreeColumnCellRenderer extends JPanel implements ListCellRend
 
         // Icon rendering (only if icon present and not a separator)
         if (!currentItem.separator && iconWidth > 0 && iconHeight > 0) {
-            ImageIcon icon = null;
-            try {
-                if (currentItem.image != null) {
-                    icon = BaseDialog.getIcon(currentItem.image);
-                }
-                if (icon == null) {
-                    if (currentItem.colors != null && currentItem.colors.length > 0) {
-                        icon = EfaUtil.createColorPieIcon(currentItem.colors, iconWidth, iconHeight);
-                    } else {
-                        icon = buildDefaultIcon(iconWidth, iconHeight);
-                    }
-                }
-            } catch (Exception e) {
-                Logger.logdebug(e);
-                icon = buildDefaultIcon(iconWidth, iconHeight);
-            }
-            if (icon != null) {
-                int iconY = (h - icon.getIconHeight()) / 2;
-                g.drawImage(icon.getImage(), x, iconY, this);
-                x += iconWidth + ICON_GAP;
-            }
+            // The icon comes from the cache, so it is only created on the first paint
+            ImageIcon icon = getCachedIcon(currentItem, iconWidth, iconHeight);
+            int iconY = (h - icon.getIconHeight()) / 2;
+            g.drawImage(icon.getImage(), x, iconY, this);
+            x += iconWidth + ICON_GAP;
         }
 
         // Separator text: centered, bold
@@ -368,10 +364,64 @@ class ItemTypeListThreeColumnCellRenderer extends JPanel implements ListCellRend
     }
 
     /**
+     * Returns the icon for the item from the cache, creating it only on the first request.
+     * The key contains the size, so a size change automatically produces a new entry.
+     */
+    private ImageIcon getCachedIcon(ItemTypeList.ItemTypeListData item, int w, int h) {
+        String key = (item.image != null ? "img:" + item.image : "col:" + colorKey(item.colors))
+                + "|" + w + "x" + h;
+        ImageIcon icon = iconCache.get(key);
+        if (icon == null) {
+            icon = createIcon(item, w, h);
+            iconCache.put(key, icon);
+        }
+        return icon;
+    }
+
+    /**
+     * Creates the icon for an item. Only called on cache misses.
+     * The fallback chain (image, color pie, default circle) is kept, and the default icon
+     * is always returned so the cache never stores null.
+     */
+    private ImageIcon createIcon(ItemTypeList.ItemTypeListData item, int w, int h) {
+        try {
+            ImageIcon icon = null;
+            if (item.image != null) {
+                icon = BaseDialog.getIcon(item.image);
+            }
+            if (icon == null) {
+                icon = (item.colors != null && item.colors.length > 0)
+                        ? EfaUtil.createColorPieIcon(item.colors, w, h)
+                        : buildDefaultIcon(w, h);
+            }
+            return icon;
+        } catch (Exception e) {
+            Logger.logdebug(e);
+            return buildDefaultIcon(w, h);
+        }
+    }
+
+    /**
+     * Builds a value-based key from the RGB values, so equal color sets share one cache entry.
+     * Color objects are not guaranteed to be identical instances, so identity cannot be used.
+     * A null array yields an empty key; such items get the default icon anyway.
+     */
+    private static String colorKey(Color[] colors) {
+        if (colors == null) {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder();
+        for (Color c : colors) {
+            sb.append(Integer.toHexString(c.getRGB())).append(',');
+        }
+        return sb.toString();
+    }
+
+    /**
      * Returns a grey circle icon of the given size. The icon is cached and rebuilt only
      * if the size changes.
      */
-    private synchronized ImageIcon buildDefaultIcon(int w, int h) {
+    private ImageIcon buildDefaultIcon(int w, int h) {
         if (defaultIconForCellRenderer == null || defaultIconW != w || defaultIconH != h) {
             BufferedImage image = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
             Graphics2D g = image.createGraphics();
