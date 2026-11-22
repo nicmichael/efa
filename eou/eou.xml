@@ -90,9 +90,9 @@ section="Other"
 		</Section>
 	</Sections>
 	<Version>
-        <VersionID>2.5.4_#5</VersionID>
-        <ReleaseDate>15.11.2026</ReleaseDate>
-        <DownloadUrl>https://github.com/nicmichael/efa/releases/download/2.5.4_4/efa2.5.4_4.zip</DownloadUrl>
+        <VersionID>2.5.4_#6</VersionID>
+        <ReleaseDate>22.11.2026</ReleaseDate>
+        <DownloadUrl>https://github.com/nicmichael/efa/releases/download/2.5.4_6/efa2.5.4_6.zip</DownloadUrl>
         <DownloadSize>TODO</DownloadSize>
      	<MinimumJavaVersion>1.8</MinimumJavaVersion>
 		<MinimumEfaCloudVersion>2.3.3</MinimumEfaCloudVersion>
