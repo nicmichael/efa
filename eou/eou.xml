@@ -90,6 +90,46 @@ section="Other"
 		</Section>
 	</Sections>
 	<Version>
+        <VersionID>2.5.4_#6</VersionID>
+        <ReleaseDate>22.11.2026</ReleaseDate>
+        <DownloadUrl>https://github.com/nicmichael/efa/releases/download/2.5.4_6/efa2.5.4_6.zip</DownloadUrl>
+        <DownloadSize>TODO</DownloadSize>
+     	<MinimumJavaVersion>1.8</MinimumJavaVersion>
+		<MinimumEfaCloudVersion>2.3.3</MinimumEfaCloudVersion>
+        <ShowNotice lang="de">Wenn efaCloud eingesetzt wird, muss der Server mindestens Version 2.3.3 unterstützen. EfaCloud 2.4.0_12 und höher werden empfohlen.</ShowNotice>
+        <ShowNotice lang="en">If you use efaCloud, make sure your server at least supports efaCloud Version 2.3.3. It is recommended to upgrade to EfaCloud 2.4.0_12 or above.</ShowNotice>
+        <Changes lang="de">
+        	<ChangeItem section="Session Entry">Neu: Die AutoPopup-Listen zeigen den Suchtext im Treffer gelb hinterlegt an (nur bei aktiver Suche nach Teilbegriff).</ChangeItem>
+        	<ChangeItem section="Stability">Neu: Die AutoPopup-Listen wurden grundsätzlich überarbeitet, damit sie ohne separates Fenster auskommen. Damit gibt es weniger Probleme unter Ubuntu Linux mit Gnome Fenstermanager (oder anderen Fenstermanagern, die eine FocusStealing-Prevention umsetzen.</ChangeItem> 
+			<ChangeItem section="Boathouse">Neu: Der Automatische Fahrtenbuchwechsel brach schon immer alle Fahrten ab, die zum Zeitpunkt des Wechsels noch unterwegs waren. Treten beim Abbrechen dieser Fahrten Fehler auf (so dass sie nicht abgebrochen werden können), wird der Fehler protokolliert und die noch offenen Fahrten in die Mail an den Admin übernommen. Ein Fehler bei einem Boot behindert nicht den Fahrtenbuchwechsel.</ChangeItem>
+			<ChangeItem section="Boathouse">Neu: Fahrtenbuchwechsel: Wenn beim automatischen Fahrtenbuchwechsel ein Fehler auftritt, so wird der Fahrtenbuchwechsel nur alle 10 min statt jede Minute neu versucht. Es wird auch nur einmal am Tag eine Mail über einen fehlerhaften Fahrtenbuchwechsel versendet (um den Admin nicht vollzuspammen)</ChangeItem>
+			<ChangeItem section="Boathouse">Neu: Bootsreservierungen: Datumsfelder vervollständigen automatisch auf das nächste Jahr, wenn ansonsten die Eingabe in der Vergangenheit liegen würde (am 01.11.2026 wird die Eingabe 01.01. automatisch auf 01.01.2027 vervollständigt).</ChangeItem>
+			<ChangeItem section="Boathouse">Neu: Bootsreservierungen: Die Tooltiptexte für Reservierungen wurden überarbeitet, und redundante Zeilen in den Tooltips entfernt.</ChangeItem>
+			<ChangeItem section="Stability">Neu: Der im Hintergrund arbeitende efaBoathouseBackgroundTask wurde gehärtet und Bugs beseitigt.</ChangeItem>
+			<ChangeItem section="Stability">Neu: Der efaBoathouseBackgroundTask beendet sich, wenn eine Anforderung zum Herunterfahren/Neustart von EFA angefordert wurde.</ChangeItem>
+			<ChangeItem section="Boathouse">New: Der Wechsel zwischen Bootsliste und der Personenliste funktioniert schneller. Die Listen werden nur noch neu geladen, wenn es eine Änderung in ihnen gab.</ChangeItem>
+			<ChangeItem section="Boathouse">Neu: Wird die Boots- oder Personenliste aktualisiert, wird eine Sanduhr angezeigt. Dies erfolgt bei Änderungen an Booten, Personen und Reservierungen.</ChangeItem>
+			<ChangeItem section="Boathouse">BugFix: Performanceoptimierung von Bootshauslisten, wenn Gruppen für Boote aktiv sind.</ChangeItem>
+			<ChangeItem section="Boathouse">BugFix: Hat ein Boot mehrere Varianten oder Typen, wird es mehrfach in der Bootshausliste aufgeführt.</ChangeItem>
+			<ChangeItem section="Stability">BugFix: Härtung/Korrektur potentieller Fehler beim Aufbau der Bootshauslisten.</ChangeItem>
+		</Changes>
+		<Changes lang="en">
+			<ChangeItem section="Session Entry">New: The AutoPopup lists highlight the search text in yellow in the hit (only when searching for a partial term).</ChangeItem>
+			<ChangeItem section="Stability">New: The AutoPopup lists have been fundamentally revised so that they can do without a separate window. This reduces problems under Ubuntu Linux with Gnome window manager (or other window managers that implement focus stealing prevention).</ChangeItem>
+			<ChangeItem section="Boathouse">New: The automatic logbook change has always aborted all trips that were still on the way at the time of the change. If errors occur when aborting these trips (so that they cannot be aborted), the error is logged and the still open trips are included in the email to the admin. An error with one boat does not hinder the logbook change.</ChangeItem>
+ 			<ChangeItem section="Boathouse">New: Logbook change: If an error occurs during the automatic logbook change, the logbook change will only be retried every 10 minutes instead of every minute. Also, only one email about a failed logbook change will be sent per day (to avoid spamming the admin).</ChangeItem>
+ 			<ChangeItem section="Boathouse">New: Boat reservations: Date fields automatically complete to the next year if otherwise the input would be in the past (on 01.11.2026, the input 01.01. will automatically be completed to 01.01.2027).</ChangeItem>
+ 			<ChangeItem section="Boathouse">New: Boat reservations: The tooltip texts for reservations have been revised, and redundant lines in the tooltips have been removed.</ChangeItem>
+ 			<ChangeItem section="Stability">New: The efaBoathouseBackgroundTask running in the background has been hardened and bugs have been fixed.</ChangeItem>
+ 			<ChangeItem section="Stability">New: The efaBoathouseBackgroundTask stops if a shutdown-request has been detected.</ChangeItem>
+			<ChangeItem section="Boathouse">New: The switch between the list of available boats and the list of persons is faster. The lists get only reloaded if there was a recent change.</ChangeItem>
+			<ChangeItem section="Boathouse">New: When the boat or person list is updated, an hourglass is displayed. This occurs when changes are made to boats, persons, and reservations.</ChangeItem>
+ 			<ChangeItem section="Boathouse">BugFix: Performance optimization of boathouse lists when groups for boats are active.</ChangeItem>
+ 			<ChangeItem section="Boathouse">BugFix: If a boat has multiple variants or types, it is listed multiple times in the boathouse list.</ChangeItem>
+ 			<ChangeItem section="Stability">BugFix: Hardening/correction of potential errors when building the boathouse lists.</ChangeItem>
+ 		</Changes>
+	</Version>
+	<Version>
         <VersionID>2.5.4_#2</VersionID>
         <ReleaseDate>01.11.2026</ReleaseDate>
         <DownloadUrl>https://github.com/nicmichael/efa/releases/download/2.5.4_2/efa2.5.4_2.zip</DownloadUrl>
@@ -135,14 +175,14 @@ section="Other"
 			<ChangeItem section="efaRemote">Neu: Der efaAbout-Dialog zeigt auch die Versionsnummer des efaRemote-Servers an.</ChangeItem>
 			<ChangeItem section="GUI/Usability">Neu: Im Nimbus-LookAndFeel ist die Fokusfarbe Orange statt Blau und damit besser sichtbar.</ChangeItem>
 			<ChangeItem section="Statistics">Neu: Wettbewerbe/Rudern in Deutschland: Das Auto-Update bei der Erstellung von Wettkampf-Update geht nun auf GitHub Repository und berücksichtigt dort ausschließlich produktive efa-Versionen.</ChangeItem>
-			<ChangeItem section="Stability">Bugfix: Die bisherige Unzip-Methode für das Online-Update wurde gehärtet.</ChangeItem>
-			<ChangeItem section="Stability">Bugfix: Die Reihenfolge (Sortierung) der Build-Nummern von Produktions- und Beta-Version wurde festgelegt und dokumentiert. So können anhand der eou.xml und der aktuellen efa-Versionsnummer automatisiert alle neueren Versionen identifiziert werden.</ChangeItem>
-			<ChangeItem section="Stability">Bugfix: Alle Oberflächenelemente vom Typ ItemType wurden gehärtet gegen Nullpointer und Programmierfehler.</ChangeItem>
+			<ChangeItem section="Stability">BugFix: Die bisherige Unzip-Methode für das Online-Update wurde gehärtet.</ChangeItem>
+			<ChangeItem section="Stability">BugFix: Die Reihenfolge (Sortierung) der Build-Nummern von Produktions- und Beta-Version wurde festgelegt und dokumentiert. So können anhand der eou.xml und der aktuellen efa-Versionsnummer automatisiert alle neueren Versionen identifiziert werden.</ChangeItem>
+			<ChangeItem section="Stability">BugFix: Alle Oberflächenelemente vom Typ ItemType wurden gehärtet gegen Nullpointer und Programmierfehler.</ChangeItem>
 			<ChangeItem section="efaCli">Neu: Menü Command: Funktion "onlineupdate" zum Abrufen der Versionsnummer der Remote-Installation.</ChangeItem>
 			<ChangeItem section="efaCli">Neu: Menü Command: Funktion "versioninfo" zum Starten des Remote Online-Updates.</ChangeItem>
 			<ChangeItem section="Other">Neu: XSLT-Scripte zum automatisierten Erstellen von Changelogs zwischen zwei efa-Versionen erstellt, wahlweise nach HTML oder MarkDown für GitHub. Änderungen werden nach Bereich der Änderungen gruppiert.</ChangeItem>
 			<ChangeItem section="Other">Neu: XSLT-Scripte für das Erstellen des efa-Changelogs im "Über Efa" Dialog unterstützen zwei Sprachen und geben Änderungen nach Bereich gruppiert aus, und stellen Neuerungen getrennt von Bugfixes dar.</ChangeItem>
-			<ChangeItem section="Stability">Bugfix: Download-Thread: umfassendes Refactoring und Härtung. Dieser Funktion wird von OnlineUpdate, Fahrtenabzeichen, DRV-Funktionen, BrowserDialog genutzt. Inhaltlich tut der Download-Thread aber nichts Neues.</ChangeItem>
+			<ChangeItem section="Stability">BugFix: Download-Thread: umfassendes Refactoring und Härtung. Dieser Funktion wird von OnlineUpdate, Fahrtenabzeichen, DRV-Funktionen, BrowserDialog genutzt. Inhaltlich tut der Download-Thread aber nichts Neues.</ChangeItem>
 		</Changes>
         <Changes lang="en">
         	<ChangeItem section="Admin/Online-Update">New: Online update revised. Supports update from GitHub (Production or Prerelease), efa.nmichael.de or from a local directory/USB stick. The user can choose from which source the update shall be installed from.</ChangeItem>
@@ -153,14 +193,14 @@ section="Other"
         	<ChangeItem section="efaRemote">New: The efaAbout dialog also shows the version number of the efaRemote server.</ChangeItem>
         	<ChangeItem section="GUI/Usability">New: In the Nimbus LookAndFeel, the focus color is orange instead of blue and thus better visible.</ChangeItem>
         	<ChangeItem section="Statistics">New: Competitions/Rowing in Germany: The auto-update when creating a competition update now goes to the GitHub repository and only considers productive efa versions there.</ChangeItem>
-        	<ChangeItem section="Stability">Bugfix: The previous unzip method for the online update has been hardened.</ChangeItem>
-        	<ChangeItem section="Stability">Bugfix: The order (sorting) of the build numbers of production and beta versions has been defined and documented. This allows all newer versions to be identified automatically based on the eou.xml and the current efa version number.</ChangeItem>
-        	<ChangeItem section="Stability">Bugfix: All GUI elements of type ItemType have been hardened against null pointers and programming errors.</ChangeItem>
+        	<ChangeItem section="Stability">BugFix: The previous unzip method for the online update has been hardened.</ChangeItem>
+        	<ChangeItem section="Stability">BugFix: The order (sorting) of the build numbers of production and beta versions has been defined and documented. This allows all newer versions to be identified automatically based on the eou.xml and the current efa version number.</ChangeItem>
+        	<ChangeItem section="Stability">BugFix: All GUI elements of type ItemType have been hardened against null pointers and programming errors.</ChangeItem>
         	<ChangeItem section="efaCli">New: Menu Command: Function "onlineupdate" to retrieve the version number of the remote installation.</ChangeItem>
         	<ChangeItem section="efaCli">New: Menu Command: Function "versioninfo" to start the remote online update.</ChangeItem>
         	<ChangeItem section="Other">New: XSLT scripts created for automatically generating changelogs between two efa versions, optionally in HTML or MarkDown for GitHub. Changes are grouped by area of change.</ChangeItem>
         	<ChangeItem section="Other">New: XSLT scripts for creating the efa changelog in the "About Efa" dialog support two languages and output changes grouped by area, and display new features separately from bug fixes.</ChangeItem>
-        	<ChangeItem section="Stability">Bugfix: Download thread: comprehensive refactoring and hardening. This function is used by OnlineUpdate, Fahrtenabzeichen, DRV functions, BrowserDialog. In terms of content, however, the download thread does not do anything new.</ChangeItem>
+        	<ChangeItem section="Stability">BugFix: Download thread: comprehensive refactoring and hardening. This function is used by OnlineUpdate, Fahrtenabzeichen, DRV functions, BrowserDialog. In terms of content, however, the download thread does not do anything new.</ChangeItem>
         </Changes>
 	</Version>
 	<Version>
@@ -207,11 +247,11 @@ section="Other"
         <ShowNotice lang="de">Wenn efaCloud eingesetzt wird, muss der Server mindestens Version 2.3.3 unterstützen. EfaCloud 2.4.0_12 und höher werden empfohlen.</ShowNotice>
         <ShowNotice lang="en">If you use efaCloud, make sure your server at least supports efaCloud Version 2.3.3. It is recommended to upgrade to EfaCloud 2.4.0_12 or above.</ShowNotice>
         <Changes lang="de">
-        	<ChangeItem section="Admin/Data Edit">Bugfix: Dialoge für die Bearbeitung von Booten, Personen, Gruppen, Zielen wurden größer als das konfigurierte Limit für Dialoggrößen.</ChangeItem>
+        	<ChangeItem section="Admin/Data Edit">BugFix: Dialoge für die Bearbeitung von Booten, Personen, Gruppen, Zielen wurden größer als das konfigurierte Limit für Dialoggrößen.</ChangeItem>
         	<ChangeItem section="Stability">Neu: die Änderungshistorie zeigt die Änderungen einer Version nun je nach Bereich an. Dazu wurde eou.xml überarbeitet und um alle Einträge früher als Version 2.3.3 bereinigt.</ChangeItem>
         </Changes>
         <Changes lang="en">
-			<ChangeItem section="Admin/Data Edit">Bugfix: Dialogs for editing boats, persons, groups, and destinations were larger than the configured limit for dialog sizes.</ChangeItem>
+			<ChangeItem section="Admin/Data Edit">BugFix: Dialogs for editing boats, persons, groups, and destinations were larger than the configured limit for dialog sizes.</ChangeItem>
 			<ChangeItem section="Stability">New: The change history now displays the changes of a version according to their respective areas. For this purpose, eou.xml has been revised and all entries earlier than version 2.3.3 have been cleaned up.</ChangeItem>
         </Changes>
 	</Version>	
@@ -243,12 +283,12 @@ section="Other"
         <ShowNotice lang="de">Wenn efaCloud eingesetzt wird, muss der Server mindestens Version 2.3.3 unterstützen. EfaCloud 2.4.0_12 und höher werden empfohlen.</ShowNotice>
         <ShowNotice lang="en">If you use efaCloud, make sure your server at least supports efaCloud Version 2.3.3. It is recommended to upgrade to EfaCloud 2.4.0_12 or above.</ShowNotice>
         <Changes lang="de">
-        	<ChangeItem section="Widget">Bugfix: HTML Widget Inhalte werden nun zuverlässig neu geladen beim Eintreten des Update intervals. Beim Laden von einer lokalen Datei wird auch versucht, den Zeichensatz korrekt zu ermitteln (mit und ohne BOM: UTF-8, UTF-16BE, UTF-16LE, Windows-1252 (Windows ANSI) or ISO-8859-1)</ChangeItem>
-        	<ChangeItem section="Widget">Bugfix: Härtung des Codes von WeatherWidget* und HTMLWidget*</ChangeItem>
+        	<ChangeItem section="Widget">BugFix: HTML Widget Inhalte werden nun zuverlässig neu geladen beim Eintreten des Update intervals. Beim Laden von einer lokalen Datei wird auch versucht, den Zeichensatz korrekt zu ermitteln (mit und ohne BOM: UTF-8, UTF-16BE, UTF-16LE, Windows-1252 (Windows ANSI) or ISO-8859-1)</ChangeItem>
+        	<ChangeItem section="Widget">BugFix: Härtung des Codes von WeatherWidget* und HTMLWidget*</ChangeItem>
         </Changes>
         <Changes lang="en">
-        	<ChangeItem section="Widget">Bugfix: HTML Widget content is now reliably reloaded when the update interval is reached. When loading from a local file, an attempt is also made to correctly determine the character set (with and without BOM: UTF-8, UTF-16BE, UTF-16LE, Windows-1252 (Windows ANSI) or ISO-8859-1)</ChangeItem>
-        	<ChangeItem section="Widget">Bugfix: Hardening of the code of WeatherWidget* and HTMLWidget*</ChangeItem>
+        	<ChangeItem section="Widget">BugFix: HTML Widget content is now reliably reloaded when the update interval is reached. When loading from a local file, an attempt is also made to correctly determine the character set (with and without BOM: UTF-8, UTF-16BE, UTF-16LE, Windows-1252 (Windows ANSI) or ISO-8859-1)</ChangeItem>
+        	<ChangeItem section="Widget">BugFix: Hardening of the code of WeatherWidget* and HTMLWidget*</ChangeItem>
         </Changes>
 	</Version>
 	<Version>
@@ -263,16 +303,16 @@ section="Other"
         <Changes lang="de">
         	<ChangeItem section="Boathouse">Neu: ist in efaBths drei Minuten lang Inaktivität, erhält die Liste der verfügbaren Boote den Fokus.</ChangeItem>
 			<ChangeItem section="Statistics">Neu: Statistiken: Obmann Feld ist im XML-Export enthalten.</ChangeItem>	
-			<ChangeItem section="Session Entry">Bugfix: Bei der Anlage einer Fahrt mit ausgeschiedenen Mitgliedern wird deren letztgültiges Berechtigungsprofil geprüft.</ChangeItem>
-        	<ChangeItem section="Base">Bugfix: efaBase blieb seit efa 2.5.3#3 beim Beenden im Hintergrund hängen. efaBase lässt sich nun wieder korrekt beenden.</ChangeItem>
-        	<ChangeItem section="GUI/Usability">Bugfix: Kleinere Darstellungsfehler bei GUI-Elementen mit abgerundeten Ecken wurden behoben.</ChangeItem>
+			<ChangeItem section="Session Entry">BugFix: Bei der Anlage einer Fahrt mit ausgeschiedenen Mitgliedern wird deren letztgültiges Berechtigungsprofil geprüft.</ChangeItem>
+        	<ChangeItem section="Base">BugFix: efaBase blieb seit efa 2.5.3#3 beim Beenden im Hintergrund hängen. efaBase lässt sich nun wieder korrekt beenden.</ChangeItem>
+        	<ChangeItem section="GUI/Usability">BugFix: Kleinere Darstellungsfehler bei GUI-Elementen mit abgerundeten Ecken wurden behoben.</ChangeItem>
         </Changes>
         <Changes lang="en">
 			<ChangeItem section="Boathouse">New: If there is three minutes of inactivity in efaBths, the list of available boats will receive focus.</ChangeItem>
 			<ChangeItem section="Statistics">New: Statistics: "Boat Captain" field is included in the XML export.</ChangeItem>
-			<ChangeItem section="Session Entry">Bugfix: When creating a session with former members, their last valid permission profile is checked.</ChangeItem>
-        	<ChangeItem section="Base">Bugfix: efaBase has been hanging in the background since efa 2.5.3#3 when exiting. efaBase can now be exited correctly again.</ChangeItem>
-			<ChangeItem section="GUI/Usability">Bugfix: Minor display errors concerning GUI elements with rounded corners have been fixed.</ChangeItem>
+			<ChangeItem section="Session Entry">BugFix: When creating a session with former members, their last valid permission profile is checked.</ChangeItem>
+        	<ChangeItem section="Base">BugFix: efaBase has been hanging in the background since efa 2.5.3#3 when exiting. efaBase can now be exited correctly again.</ChangeItem>
+			<ChangeItem section="GUI/Usability">BugFix: Minor display errors concerning GUI elements with rounded corners have been fixed.</ChangeItem>
         </Changes>
 	</Version>
 	<Version>
@@ -285,12 +325,12 @@ section="Other"
         <ShowNotice lang="de">Wenn efaCloud eingesetzt wird, muss der Server mindestens Version 2.3.3 unterstützen. EfaCloud 2.4.0_12 und höher werden empfohlen.</ShowNotice>
         <ShowNotice lang="en">If you use efaCloud, make sure your server at least supports efaCloud Version 2.3.3. It is recommended to upgrade to EfaCloud 2.4.0_12 or above.</ShowNotice>
         <Changes lang="de">
-        	<ChangeItem section="Session Entry">Bugfix: Neue Fahrten/Nachtrag/Multisession: Bootnutzungssperre und Gruppenzugehörigkeiten werden nun auch dann geprüft, wenn: -Boot keinen Gruppen zugeordnet ist -Person nicht mehr gültig ist (mit Ende-Datum)</ChangeItem>
-        	<ChangeItem section="Other">Bugfix: Ein paar falsch UTF-8 kodierte Übersetzungen wurden korrigiert.</ChangeItem>
+        	<ChangeItem section="Session Entry">BugFix: Neue Fahrten/Nachtrag/Multisession: Bootnutzungssperre und Gruppenzugehörigkeiten werden nun auch dann geprüft, wenn: -Boot keinen Gruppen zugeordnet ist -Person nicht mehr gültig ist (mit Ende-Datum)</ChangeItem>
+        	<ChangeItem section="Other">BugFix: Ein paar falsch UTF-8 kodierte Übersetzungen wurden korrigiert.</ChangeItem>
         </Changes>
         <Changes lang="en">
-        	<ChangeItem section="Session Entry">Bugfix: New sessions/late entry/multisession: Boat usage restrictions and group memberships are now also checked when: -Boat is not assigned to any groups -Person is no longer valid (with end date)</ChangeItem>
-			<ChangeItem section="Other">Bugfix: A few incorrectly UTF-8 encoded translations have been corrected.</ChangeItem>
+        	<ChangeItem section="Session Entry">BugFix: New sessions/late entry/multisession: Boat usage restrictions and group memberships are now also checked when: -Boat is not assigned to any groups -Person is no longer valid (with end date)</ChangeItem>
+			<ChangeItem section="Other">BugFix: A few incorrectly UTF-8 encoded translations have been corrected.</ChangeItem>
         </Changes>
 	</Version>
 	<Version>
@@ -303,20 +343,20 @@ section="Other"
         <ShowNotice lang="de">Wenn efaCloud eingesetzt wird, muss der Server mindestens Version 2.3.3 unterstützen. EfaCloud 2.4.0_12 und höher werden empfohlen.</ShowNotice>
         <ShowNotice lang="en">If you use efaCloud, make sure your server at least supports efaCloud Version 2.3.3. It is recommended to upgrade to EfaCloud 2.4.0_12 or above.</ShowNotice>
         <Changes lang="de">
-        	<ChangeItem section="Stability">Bugfix: Refactoring/Härtung von efaBaseFrame, efaBoatHouseFrame, efaBoathouseBackgroundTask, efaConfig, efaUtil</ChangeItem>
-        	<ChangeItem section="Session Entry">Bugfix: Eintragung/Änderung von Fahrten: die Prüfung auf unbekannte Bootsnamen, Personennamen, Ziele und Gewässer funktioniert nun richtig; sofern konfiguriert, wird das Speichern bei unbekannten Namen in mindestems einen der Felder das Speichern verhindert. (Bug ist neu seit efa 2.5.0/Multisession)</ChangeItem>
-        	<ChangeItem section="Session Entry">Bugfix: Eintragung/Änderung von Fahrten: Wenn dies in efaBase oder im Admin-Modus von efaBths erfolgt, so wird die Änderung/Neueintragung durch den Admin passend im Log dokumentiert.</ChangeItem>
-			<ChangeItem section="Session Entry">Bugfix: Multisession-Eintragung: eine Name/Boot-Zeile wird jetzt nur dann akzeptiert, wenn Name und Boot BEIDE nicht leer sind.</ChangeItem>
-			<ChangeItem section="Session Entry">Bugfix: Multisession-Eintragung: korrekte Prüfung, ob alle eingegebenen Boote Einsitzer-Boote sind.</ChangeItem>
-        	<ChangeItem section="Widget">Bugfix: Wetterdaten: sind die heruntergeladenen Wetterdaten sehr alt (älter als 7 Stunden), dann konnte es bei der Aktualisierung des Wetterwidgets zu einem Fehler kommen.</ChangeItem>
+        	<ChangeItem section="Stability">BugFix: Refactoring/Härtung von efaBaseFrame, efaBoatHouseFrame, efaBoathouseBackgroundTask, efaConfig, efaUtil</ChangeItem>
+        	<ChangeItem section="Session Entry">BugFix: Eintragung/Änderung von Fahrten: die Prüfung auf unbekannte Bootsnamen, Personennamen, Ziele und Gewässer funktioniert nun richtig; sofern konfiguriert, wird das Speichern bei unbekannten Namen in mindestems einen der Felder das Speichern verhindert. (Bug ist neu seit efa 2.5.0/Multisession)</ChangeItem>
+        	<ChangeItem section="Session Entry">BugFix: Eintragung/Änderung von Fahrten: Wenn dies in efaBase oder im Admin-Modus von efaBths erfolgt, so wird die Änderung/Neueintragung durch den Admin passend im Log dokumentiert.</ChangeItem>
+			<ChangeItem section="Session Entry">BugFix: Multisession-Eintragung: eine Name/Boot-Zeile wird jetzt nur dann akzeptiert, wenn Name und Boot BEIDE nicht leer sind.</ChangeItem>
+			<ChangeItem section="Session Entry">BugFix: Multisession-Eintragung: korrekte Prüfung, ob alle eingegebenen Boote Einsitzer-Boote sind.</ChangeItem>
+        	<ChangeItem section="Widget">BugFix: Wetterdaten: sind die heruntergeladenen Wetterdaten sehr alt (älter als 7 Stunden), dann konnte es bei der Aktualisierung des Wetterwidgets zu einem Fehler kommen.</ChangeItem>
         </Changes>
         <Changes lang="en">
-        	<ChangeItem section="Stability">Bugfix: Refactoring/hardening of efaBaseFrame, efaBoatHouseFrame, efaBoathouseBackgroundTask, efaConfig, efaUtil</ChangeItem>
-        	<ChangeItem section="Session Entry">Bugfix: Entering/editing sessions: The check for unknown boat names, person names, destinations and waters now works correctly; if configured, saving with unknown names in at least one of the fields will be prevented (Bug introduced in efa 2.5.0/Multisession).</ChangeItem>
-			<ChangeItem section="Session Entry">Bugfix: Entering/editing sessions: If this is done in efaBase or in admin mode of efaBths, the change/new entry is properly documented in the log by the admin user.</ChangeItem>
-        	<ChangeItem section="Session Entry">Bugfix: Multi-session entry: A name/boat line is now only accepted if both name and boat are not empty.</ChangeItem>
-        	<ChangeItem section="Session Entry">Bugfix: Multi-session entry: Correct check if all entered boats are single-seater boats.</ChangeItem>
-        	<ChangeItem section="Widget">Bugfix: Weather data: If the downloaded weather data is very old (older than 7 hours), an error could occur when updating the weather widget.</ChangeItem>
+        	<ChangeItem section="Stability">BugFix: Refactoring/hardening of efaBaseFrame, efaBoatHouseFrame, efaBoathouseBackgroundTask, efaConfig, efaUtil</ChangeItem>
+        	<ChangeItem section="Session Entry">BugFix: Entering/editing sessions: The check for unknown boat names, person names, destinations and waters now works correctly; if configured, saving with unknown names in at least one of the fields will be prevented (Bug introduced in efa 2.5.0/Multisession).</ChangeItem>
+			<ChangeItem section="Session Entry">BugFix: Entering/editing sessions: If this is done in efaBase or in admin mode of efaBths, the change/new entry is properly documented in the log by the admin user.</ChangeItem>
+        	<ChangeItem section="Session Entry">BugFix: Multi-session entry: A name/boat line is now only accepted if both name and boat are not empty.</ChangeItem>
+        	<ChangeItem section="Session Entry">BugFix: Multi-session entry: Correct check if all entered boats are single-seater boats.</ChangeItem>
+        	<ChangeItem section="Widget">BugFix: Weather data: If the downloaded weather data is very old (older than 7 hours), an error could occur when updating the weather widget.</ChangeItem>
         </Changes>
 	</Version>
 	<Version>
@@ -365,10 +405,10 @@ section="Other"
         <ShowNotice lang="de">Wenn efaCloud eingesetzt wird, muss der Server mindestens Version 2.3.3 unterstützen. EfaCloud 2.4.0_12 und höher werden empfohlen.</ShowNotice>
         <ShowNotice lang="en">If you use efaCloud, make sure your server at least supports efaCloud Version 2.3.3. It is recommended to upgrade to EfaCloud 2.4.0_12 or above.</ShowNotice>
         <Changes lang="de">
-        	<ChangeItem section="efaCLI">Bugfix: efaCLI (z.B. Backup) und efaRemote funktionierten nicht mehr, wenn das Projekt Vereinsarbeit aktiv hatte (Fehler aus 2.5.3#4)</ChangeItem>
+        	<ChangeItem section="efaCLI">BugFix: efaCLI (z.B. Backup) und efaRemote funktionierten nicht mehr, wenn das Projekt Vereinsarbeit aktiv hatte (Fehler aus 2.5.3#4)</ChangeItem>
         </Changes>
         <Changes lang="en">
-        	<ChangeItem section="efaCLI">Bugfix: efaCLI (e.g. backup) and efaRemote did not work, if the project had an open file for clubwork. This bug was introduced with efa 2.5.3#4 only.</ChangeItem>
+        	<ChangeItem section="efaCLI">BugFix: efaCLI (e.g. backup) and efaRemote did not work, if the project had an open file for clubwork. This bug was introduced with efa 2.5.3#4 only.</ChangeItem>
         </Changes>
 	</Version>
 	<Version>
@@ -384,27 +424,27 @@ section="Other"
         	<ChangeItem section="Session Entry">Neu: Multisession-Fahrtanlage: Wird ein Personenname eingetragen, und liegt für die Person zum eingetragenen Startzeitpunkt eine Einsitzer-Reservierung vor, so wird der Bootsname automatisch befüllt. Liegt parallel für die Person ein Standard-Boot vor, so kann der Nutzer wählen, welcher Bootsname übernommen werden soll. Das Feld für Bootsname zeigt einen Tooltip für die Quelle der Vorbelegung (Reservierung/Standardboot).</ChangeItem>
 			<ChangeItem section="Session Entry">Neu: Fahrtanlage: Wenn eine Fahrtanlage über eine Person gestartet wird, so wird das Feld Bootsname bei einer passenden Reservierung der Person mit der Reservierung befüllt.</ChangeItem>
 			<ChangeItem section="Session Entry">Neu: Fahrtanlage: Wird das Feld "Bootsname" vorbelegt, so zeigt es einen Tooltip für die Quelle der Vorbelegung (Reservierung/Standardboot).</ChangeItem>
-			<ChangeItem section="Session Entry">Bugfix: Multisession-Fahrtanlage: Es wird keine Warnung zur zeitgleich offenen Reservierung für ein Boot mehr angezeigt, wenn das Boot mit der reservierenden Person unterwegs sein wird.</ChangeItem>
-        	<ChangeItem section="Boathouse">Bugfix: Boote auf Fahrt: Zeigt jetzt immer den Kommentar zur offenen Fahrt an(wer ist mit dem Boot seit wann unterwegs), statt bei einer zeitgleich vorliegenden Reservierung den Reservierungsinhalt anzuzeigen.</ChangeItem>
-        	<ChangeItem section="Session Entry">Bugfix: Fahrt beenden: Bei einer Mehrtagesfahrt mit identischer Start- und Endzeit (z.B. beides um 12:00 Uhr) wird nun auch das Enddatum bei der Prüfung der Fahrtdauer berücksichtigt. Hierdurch weniger Fehlermeldungen beim Beenden einer Fahrt.</ChangeItem>
-        	<ChangeItem section="Boathouse">Bugfix: Bootslisten in efaBootshaus: Bei der Filterung werden keine leeren Sektionen mehr angezeigt.</ChangeItem>
-        	<ChangeItem section="Boathouse">Bugfix: Bootslisten in efaBootshaus: Die Popup-Menüs sind durch Separatoren optisch strukturiert (mit Buxfix)).</ChangeItem>
-        	<ChangeItem section="Boathouse">Bugfix: Personenliste in efaBootshaus: Bei Auswahl von &lt;andere Person&gt; sind die üblichen Aktionen (z.B. Fahrt beginnen, Bootsreservierungen...) wieder möglich.</ChangeItem>
-        	<ChangeItem section="Clubwork">Bugfix: Vereinsarbeit: Es wird bei Erfassung und Bearbeitung von Vereinsarbeit geprüft, ob das Datum im zulässigen Bereich liegt.</ChangeItem>
-        	<ChangeItem section="Clubwork">Bugfix: Vereinsarbeit: Es wird in der Liste der Vereinsarbeit immer der Name angezeigt, den das Mitglied zum Zeitpunkt der Erfassung hatte. Dadurch wird bei Vereinsarbeit für inzwischen beendete Mitglieder wieder der Name angezeigt.</ChangeItem>
+			<ChangeItem section="Session Entry">BugFix: Multisession-Fahrtanlage: Es wird keine Warnung zur zeitgleich offenen Reservierung für ein Boot mehr angezeigt, wenn das Boot mit der reservierenden Person unterwegs sein wird.</ChangeItem>
+        	<ChangeItem section="Boathouse">BugFix: Boote auf Fahrt: Zeigt jetzt immer den Kommentar zur offenen Fahrt an(wer ist mit dem Boot seit wann unterwegs), statt bei einer zeitgleich vorliegenden Reservierung den Reservierungsinhalt anzuzeigen.</ChangeItem>
+        	<ChangeItem section="Session Entry">BugFix: Fahrt beenden: Bei einer Mehrtagesfahrt mit identischer Start- und Endzeit (z.B. beides um 12:00 Uhr) wird nun auch das Enddatum bei der Prüfung der Fahrtdauer berücksichtigt. Hierdurch weniger Fehlermeldungen beim Beenden einer Fahrt.</ChangeItem>
+        	<ChangeItem section="Boathouse">BugFix: Bootslisten in efaBootshaus: Bei der Filterung werden keine leeren Sektionen mehr angezeigt.</ChangeItem>
+        	<ChangeItem section="Boathouse">BugFix: Bootslisten in efaBootshaus: Die Popup-Menüs sind durch Separatoren optisch strukturiert (mit Buxfix)).</ChangeItem>
+        	<ChangeItem section="Boathouse">BugFix: Personenliste in efaBootshaus: Bei Auswahl von &lt;andere Person&gt; sind die üblichen Aktionen (z.B. Fahrt beginnen, Bootsreservierungen...) wieder möglich.</ChangeItem>
+        	<ChangeItem section="Clubwork">BugFix: Vereinsarbeit: Es wird bei Erfassung und Bearbeitung von Vereinsarbeit geprüft, ob das Datum im zulässigen Bereich liegt.</ChangeItem>
+        	<ChangeItem section="Clubwork">BugFix: Vereinsarbeit: Es wird in der Liste der Vereinsarbeit immer der Name angezeigt, den das Mitglied zum Zeitpunkt der Erfassung hatte. Dadurch wird bei Vereinsarbeit für inzwischen beendete Mitglieder wieder der Name angezeigt.</ChangeItem>
         </Changes>
         <Changes lang="en">
         	<ChangeItem section="Session Entry">New: Multi-session entry: If a persons name is entered, and a reservation for a single-seater boat exists for that person at the specified start time, the boat name is automatically populated. If a standard boat is also assigned to that person concurrently, the user may choose which boat name to apply. Also, the field boatname shows a tooltip of the source for its default value.</ChangeItem>
 			<ChangeItem section="Session Entry">New: Session entry: if a new session is created from within the person list, and a fitting current/future reservation exists, the field boatname is filled with the reservation.</ChangeItem>
 			<ChangeItem section="Session Entry">New: Session entry: If the field "boatname" has a default value, it provides a tooltip for the source of its default value (standard boat or a specific reservation)</ChangeItem>
-			<ChangeItem section="Session Entry">Bugfix: Multi-session entry: No longer shows a warning about a reservation for a boat at the same time if the reservation is for that person and the specific start date and time.</ChangeItem>	
-        	<ChangeItem section="Boathouse">Bugfix: Boats on session: Now always shows the comment for the open session (who is on the boat since when), instead of showing the reservation content if there is a reservation with the same time.</ChangeItem>
-        	<ChangeItem section="Session Entry">Bugfix: Finishing a session: For multi-day sessions with identical start and end times (e.g., both at 12:00am), the end date is now also considered when checking the session duration. This results in fewer error messages when ending a session.</ChangeItem>
-			<ChangeItem section="Boathouse">Bugfix: Boat lists in efaBoathouse: Empty sections are no longer displayed when filtering.</ChangeItem>
-        	<ChangeItem section="Boathouse">Bugfix: Boat lists in efaBoathouse: Popup menus are optically structured by adding separators (including bugfix).</ChangeItem>
-        	<ChangeItem section="Boathouse">Bugfix: Person list in efaBootshouse: when selecting &lt;other person&gt; the common actions (like "Start session", "Boat reservations") are available again, avoiding unnecessary messages to the user.</ChangeItem>
-			<ChangeItem section="Clubwork">Bugfix: Clubwork: When recording and editing clubwork, the date is checked to ensure it falls within the allowed range.</ChangeItem>
-			<ChangeItem section="Clubwork">Bugfix: Clubwork: The clubwork list now always displays the name the member had at the time of recording. This means that for former members the name for the clubwork record is displayed correctly.</ChangeItem>
+			<ChangeItem section="Session Entry">BugFix: Multi-session entry: No longer shows a warning about a reservation for a boat at the same time if the reservation is for that person and the specific start date and time.</ChangeItem>	
+        	<ChangeItem section="Boathouse">BugFix: Boats on session: Now always shows the comment for the open session (who is on the boat since when), instead of showing the reservation content if there is a reservation with the same time.</ChangeItem>
+        	<ChangeItem section="Session Entry">BugFix: Finishing a session: For multi-day sessions with identical start and end times (e.g., both at 12:00am), the end date is now also considered when checking the session duration. This results in fewer error messages when ending a session.</ChangeItem>
+			<ChangeItem section="Boathouse">BugFix: Boat lists in efaBoathouse: Empty sections are no longer displayed when filtering.</ChangeItem>
+        	<ChangeItem section="Boathouse">BugFix: Boat lists in efaBoathouse: Popup menus are optically structured by adding separators (including bugfix).</ChangeItem>
+        	<ChangeItem section="Boathouse">BugFix: Person list in efaBootshouse: when selecting &lt;other person&gt; the common actions (like "Start session", "Boat reservations") are available again, avoiding unnecessary messages to the user.</ChangeItem>
+			<ChangeItem section="Clubwork">BugFix: Clubwork: When recording and editing clubwork, the date is checked to ensure it falls within the allowed range.</ChangeItem>
+			<ChangeItem section="Clubwork">BugFix: Clubwork: The clubwork list now always displays the name the member had at the time of recording. This means that for former members the name for the clubwork record is displayed correctly.</ChangeItem>
         </Changes>
 	</Version>
 	<Version>
@@ -421,20 +461,20 @@ section="Other"
         	<ChangeItem section="Admin/Data Edit">Neu: Liste der Boote und Personen zeigen bei Bedarf eine Spalte mit den Zusatzfeldern an, und zeigen die Zusatzfelder im Tooltipp.</ChangeItem>
         	<ChangeItem section="Stability">Neu: efaBths nutzt einen Shutdownhook, damit unter linux über das 'kill' kommando ein geordnetes Herunterfahren von efaBths möglich ist.</ChangeItem>
         	<ChangeItem section="efaCLI">Neu: efaBths kann über efaCLI neu gestartet (efaCLI.sh command restartefa) bzw. beendet werden (efaCLI.sh command shutdownefa).</ChangeItem>
-        	<ChangeItem section="Boathouse">Bugfix: Besseres Layout für Bootshauslisten (mehr Abstände, Filter-Textfelder haben Standardhöhe von 21 pix)</ChangeItem>
-        	<ChangeItem section="Admin/Data Edit">Bugfix: Größenbeschränkung der Größe von VersionizedDataEditDialog (Boote, Personen, Gruppen) auf max. 1000x700 und AdminEditDialog auf 700x700 Pixel</ChangeItem>
-			<ChangeItem section="Admin/Data Edit">Bugfix: Einige Dialoge schlossen sich nicht beim Betätigen von ESC</ChangeItem>
-			<ChangeItem section="Admin/Data Edit">Bugfix: Admin-Bereich: Suche in den Dataedit-Dialogen sucht nicht mehr in technischen Feldern</ChangeItem>
+        	<ChangeItem section="Boathouse">BugFix: Besseres Layout für Bootshauslisten (mehr Abstände, Filter-Textfelder haben Standardhöhe von 21 pix)</ChangeItem>
+        	<ChangeItem section="Admin/Data Edit">BugFix: Größenbeschränkung der Größe von VersionizedDataEditDialog (Boote, Personen, Gruppen) auf max. 1000x700 und AdminEditDialog auf 700x700 Pixel</ChangeItem>
+			<ChangeItem section="Admin/Data Edit">BugFix: Einige Dialoge schlossen sich nicht beim Betätigen von ESC</ChangeItem>
+			<ChangeItem section="Admin/Data Edit">BugFix: Admin-Bereich: Suche in den Dataedit-Dialogen sucht nicht mehr in technischen Feldern</ChangeItem>
         </Changes>
         <Changes lang="en">
         	<ChangeItem section="Admin/Configuration">New: Boathouse lists have their own section in Boathouse&gt;Boat lists</ChangeItem>
         	<ChangeItem section="Admin/Data Edit">New: Boat and person lists optionally show a column with the additional fields, and show the additional fields in the tooltip.</ChangeItem>
         	<ChangeItem section="Stability">New: efaBths uses a shutdown hook to allow for orderly shutdown of efaBths under linux using the 'kill' command.</ChangeItem>
         	<ChangeItem section="efaCLI">New: efaBths can be restarted (efaCLI.sh command restartefa) or stopped (efaCLI.sh command shutdownefa) via efaCLI.</ChangeItem>
-        	<ChangeItem section="Boathouse">Bugfix: Improved layout for boathouse lists (more spacing, filter text fields have a default height of 21 pixels)</ChangeItem>
-        	<ChangeItem section="Admin/Data Edit">Bugfix: Size restriction of versionized data edit dialogs (boats, persons, groups) to max. 1000x700 and admin edit dialog to 700x700 pixels</ChangeItem>
-        	<ChangeItem section="Admin/Data Edit">Bugfix: Some dialogs did not close when pressing ESC</ChangeItem>
-        	<ChangeItem section="Admin/Data Edit">Bugfix: Admin area: Search in the data edit dialogs no longer searches in technical fields</ChangeItem>
+        	<ChangeItem section="Boathouse">BugFix: Improved layout for boathouse lists (more spacing, filter text fields have a default height of 21 pixels)</ChangeItem>
+        	<ChangeItem section="Admin/Data Edit">BugFix: Size restriction of versionized data edit dialogs (boats, persons, groups) to max. 1000x700 and admin edit dialog to 700x700 pixels</ChangeItem>
+        	<ChangeItem section="Admin/Data Edit">BugFix: Some dialogs did not close when pressing ESC</ChangeItem>
+        	<ChangeItem section="Admin/Data Edit">BugFix: Admin area: Search in the data edit dialogs no longer searches in technical fields</ChangeItem>
         </Changes>
 	</Version>
 	<Version>
@@ -452,7 +492,7 @@ section="Other"
         	<ChangeItem section="Admin/Data Edit">Neu: Person/Boot bearbeiten Dialog: Die in der Bootsliste/Personenliste zusätzlich angezeigten Felder können bei Bedarf auf der ersten Registerkarte im "Bearbeiten" Dialog angezeigt werden.</ChangeItem>
         	<ChangeItem section="Boathouse">Neu: Performance-Optimierung für die Bootslisten in efaBootshaus.</ChangeItem>
         	<ChangeItem section="Boathouse">Neu: Zweispaltige Darstellung für Bootslisten in efaBootshaus ist nun Standard, da die Performance der Bootslisten nicht mehr durch die Zwei-Spalten-Darstellung eingeschränkt ist. Einspaltige Darstellung der Bootslisten entfällt.</ChangeItem>
-        	<ChangeItem section="Admin/Data Edit">Bugfix: Person/Boot/Ziel/Gruppe bearbeiten Dialog: Scrollbars werden INNERHALB der Registerkarten angezeigt, wenn diese zu voll werden.</ChangeItem>
+        	<ChangeItem section="Admin/Data Edit">BugFix: Person/Boot/Ziel/Gruppe bearbeiten Dialog: Scrollbars werden INNERHALB der Registerkarten angezeigt, wenn diese zu voll werden.</ChangeItem>
         </Changes>
         <Changes lang="en">
         	<ChangeItem section="Boathouse">New: Boathouse: "Available boats" list can be extended by up to two additional fields. They are also shown in the tooltip, and can be used for filtering. The fields are configurable in efaConfig.</ChangeItem>
@@ -460,7 +500,7 @@ section="Other"
         	<ChangeItem section="Admin/Data Edit">New: Edit person/boat dialog: The additional fields shown in the boat/person lists can optionally be shown on the first tab of the edit dialog.</ChangeItem>
         	<ChangeItem section="Boathouse">New: Performance optimization for boat lists in efaBoathouse.</ChangeItem>
         	<ChangeItem section="Boathouse">New: Two-Column layout for the boatlists in efaBths is now standard, as the performance of the boatlists is no longer affected by using two-column layout. The option to use the former one-column layout is discarded.</ChangeItem>
-        	<ChangeItem section="Admin/Data Edit">Bugfix: Edit person/boat/destination/group dialog: Scrollbars are now shown INSIDE the tabs if they get too full.</ChangeItem>
+        	<ChangeItem section="Admin/Data Edit">BugFix: Edit person/boat/destination/group dialog: Scrollbars are now shown INSIDE the tabs if they get too full.</ChangeItem>
         </Changes>
 	</Version>
   <Version>
@@ -474,11 +514,11 @@ section="Other"
         <ShowNotice lang="en">If you use efaCloud, make sure your server at least supports efaCloud Version 2.3.3. It is recommended to upgrade to EfaCloud 2.4.0_12 or above.</ShowNotice>
         <Changes lang="de">
         	<ChangeItem section="Other">Neu: Beta 2.5.1 wird hiermit für die Produktion freigegeben (als Version 2.5.2).</ChangeItem>
-        	<ChangeItem section="Boathouse">Bugfix: Mehrtagesfahrten, Regatta- und Trainingscamp-Fahrten werden wieder ausschließlich unter "nicht verfügbare Boote" angezeigt, wenn die entsprechende Option aktiviert ist.</ChangeItem>
+        	<ChangeItem section="Boathouse">BugFix: Mehrtagesfahrten, Regatta- und Trainingscamp-Fahrten werden wieder ausschließlich unter "nicht verfügbare Boote" angezeigt, wenn die entsprechende Option aktiviert ist.</ChangeItem>
         </Changes>
         <Changes lang="en">
         	<ChangeItem section="Other">New: Beta 2.5.1 is hereby released for production (as version 2.5.2).</ChangeItem>
-        	<ChangeItem section="Boathouse">Bugfix: Multi-day, regatta and training camp sessions will again be displayed exclusivly in the "unavailable boats" list if the corresponding option is enabled.</ChangeItem>
+        	<ChangeItem section="Boathouse">BugFix: Multi-day, regatta and training camp sessions will again be displayed exclusivly in the "unavailable boats" list if the corresponding option is enabled.</ChangeItem>
         </Changes>
 	</Version>
 	<Version>
@@ -493,24 +533,24 @@ section="Other"
         <ShowNotice lang="en">Based on 2.5.0_01.</ShowNotice>
         <ShowNotice lang="en">If you use efaCloud, make sure your server at least supports efaCloud Version 2.3.3. It is recommended to upgrade to EfaCloud 2.4.0_12 or above.</ShowNotice>
         <Changes lang="de">
-        	<ChangeItem section="Session Entry">Bugfix: Bei Multisession-Dialogen (Fahrtstart oder Nachtrag) verhindert ein unbekanntes Boot nicht mehr das Speichern.</ChangeItem>
-        	<ChangeItem section="Admin/Configuration">Bugfix: Durchtabben durch Dialoge mit vielen Elementen (z.B. in der Konfiguration oder bei Widgets) holt immer das fokussierte Element in den Sichtbereich. Es entfällt das manuelle Scrollen.</ChangeItem>
-        	<ChangeItem section="Admin/Configuration">Bugfix: Bei variablen Elementen (z.B. Wetter-Orten, HTML-Seiten, Bootstypen, Crontab-Elementen) können neue Elemente an eine bestimmte Stelle eingefügt werden, statt bisher nur am Ende.</ChangeItem>
-            <ChangeItem section="Widget">Bugfix: Wetter-Widget: Ist standardmäßig aktiviert, aber ohne voreingestellte Wetter-Orte.</ChangeItem>
-            <ChangeItem section="Widget">Bugfix: Wetter-Widget: Wenn Wetterdaten z.B. direkt beim Start nicht geladen werden, findet in kürzeren Zeitintervallen eine Aktualisierung statt.</ChangeItem>
-			<ChangeItem section="Widget">Bugfix: HTML-Widget: Ist standardmäßig aktiviert, aber ohne voreingestellte HTML-Seiten.</ChangeItem>
-			<ChangeItem section="Widget">Bugfix: HTML Widget: Hintergrund war in Metal- und Nimbus-Look nicht mit der richtigen Farbe gefüllt.</ChangeItem>
-			<ChangeItem section="Widget">Bugfix: Newsticker: Ist standardmäßig deaktiviert.</ChangeItem>
+        	<ChangeItem section="Session Entry">BugFix: Bei Multisession-Dialogen (Fahrtstart oder Nachtrag) verhindert ein unbekanntes Boot nicht mehr das Speichern.</ChangeItem>
+        	<ChangeItem section="Admin/Configuration">BugFix: Durchtabben durch Dialoge mit vielen Elementen (z.B. in der Konfiguration oder bei Widgets) holt immer das fokussierte Element in den Sichtbereich. Es entfällt das manuelle Scrollen.</ChangeItem>
+        	<ChangeItem section="Admin/Configuration">BugFix: Bei variablen Elementen (z.B. Wetter-Orten, HTML-Seiten, Bootstypen, Crontab-Elementen) können neue Elemente an eine bestimmte Stelle eingefügt werden, statt bisher nur am Ende.</ChangeItem>
+            <ChangeItem section="Widget">BugFix: Wetter-Widget: Ist standardmäßig aktiviert, aber ohne voreingestellte Wetter-Orte.</ChangeItem>
+            <ChangeItem section="Widget">BugFix: Wetter-Widget: Wenn Wetterdaten z.B. direkt beim Start nicht geladen werden, findet in kürzeren Zeitintervallen eine Aktualisierung statt.</ChangeItem>
+			<ChangeItem section="Widget">BugFix: HTML-Widget: Ist standardmäßig aktiviert, aber ohne voreingestellte HTML-Seiten.</ChangeItem>
+			<ChangeItem section="Widget">BugFix: HTML Widget: Hintergrund war in Metal- und Nimbus-Look nicht mit der richtigen Farbe gefüllt.</ChangeItem>
+			<ChangeItem section="Widget">BugFix: Newsticker: Ist standardmäßig deaktiviert.</ChangeItem>
         </Changes>
         <Changes lang="en">
-        	<ChangeItem section="Session Entry">Bugfix: In multisession dialog (starting a session or late entry), an unknown boat no longer blocks the save operation.</ChangeItem>
-        	<ChangeItem section="Admin/Configuration">Bugfix: Tab navigation through dialogs with many items (e.g., in configuration or widgets) now always brings the focused element into view. Manual scrolling is no longer required.</ChangeItem>
-			<ChangeItem section="Admin/Configuration">Bugfix: For variable elements (e.g., weather locations, HTML pages, boattypes, crontab entries), new items can now be inserted at a specific position instead of only at the end.</ChangeItem>
-            <ChangeItem section="Widget">Bugfix: Weather-Widget: Enabled by default, but no locations are set up.</ChangeItem>
-            <ChangeItem section="Widget">Bugfix: Weather-Widget: If weather data cannot be loaded, a retry is performed in intervals of several minutes.</ChangeItem>
-			<ChangeItem section="Widget">Bugfix: HTML Widget: Enabled by default, but no HTML pages are set up.</ChangeItem>
-			<ChangeItem section="Widget">Bugfix: HTML Widget:Background did not have the correct color when using Metal or Nimbus look.</ChangeItem>
-			<ChangeItem section="Widget">Bugfix: Newsticker: Disabled by default.</ChangeItem>
+        	<ChangeItem section="Session Entry">BugFix: In multisession dialog (starting a session or late entry), an unknown boat no longer blocks the save operation.</ChangeItem>
+        	<ChangeItem section="Admin/Configuration">BugFix: Tab navigation through dialogs with many items (e.g., in configuration or widgets) now always brings the focused element into view. Manual scrolling is no longer required.</ChangeItem>
+			<ChangeItem section="Admin/Configuration">BugFix: For variable elements (e.g., weather locations, HTML pages, boattypes, crontab entries), new items can now be inserted at a specific position instead of only at the end.</ChangeItem>
+            <ChangeItem section="Widget">BugFix: Weather-Widget: Enabled by default, but no locations are set up.</ChangeItem>
+            <ChangeItem section="Widget">BugFix: Weather-Widget: If weather data cannot be loaded, a retry is performed in intervals of several minutes.</ChangeItem>
+			<ChangeItem section="Widget">BugFix: HTML Widget: Enabled by default, but no HTML pages are set up.</ChangeItem>
+			<ChangeItem section="Widget">BugFix: HTML Widget:Background did not have the correct color when using Metal or Nimbus look.</ChangeItem>
+			<ChangeItem section="Widget">BugFix: Newsticker: Disabled by default.</ChangeItem>
         </Changes>
 	</Version>
 	<Version>
@@ -529,30 +569,30 @@ section="Other"
             <ChangeItem section="Boathouse">Neu: Hauptbildschirm von efaBootshaus auf GridBagLayout umgestellt. Hierdurch lassen sich die HTML-Widgets besser an die auf dem Bildschirm positionieren.</ChangeItem>
             <ChangeItem section="Admin/Configuration">Neu: Neue Option um den Abstand der Schaltflächen zu den Bootslisten zu definieren (efaBootshaus-&gt;Erscheinungsbild)</ChangeItem>
             <ChangeItem section="Widget">Neu: Newsticker technisch überarbeitet. Keine Darstellungsprobleme mehr bei Verwendung einiger Schriftarten. Auch auf RASPI3b mit gleichmäßiger Tickerrate.</ChangeItem>
-            <ChangeItem section="Widget">Bugfix: Wetter-Widget: WeatherAPI aus der Liste der Datenquellen entfernt.</ChangeItem>
-            <ChangeItem section="Widget">Bugfix: Wetter-Widget: Besseres Fehlerhandling, wenn JSON-Bibliothek nicht gefunden wird.</ChangeItem>
-			<ChangeItem section="Widget">Bugfix: HTML Widget: Korrekte Darstellung, wenn auf eigene Farben verzichtet wird. HTML-Inhalt hat transparenten Hintergrund, wenn eigene Farben verwendet werden.</ChangeItem>
-			<ChangeItem section="Admin/Other">Bugfix: Plugins: Org.Json Bibliothek aufgenommen und altes Wetter-Plugin entfernt.</ChangeItem>
-			<ChangeItem section="Admin/Other">Bugfix: "Über EFA" Dialog zeigt aktuelle URLs an und öffnet sie (wenn im Admin-Modus).</ChangeItem>
-			<ChangeItem section="Admin/Other">Bugfix: Info-Dialog zur Anzeige einer veralteten Java-Version kann Webseite öffnen.</ChangeItem>
-			<ChangeItem section="Stability">Bugfix: Browserdialog nutzt beim Aufruf eines Externen Browsers auch die neue Desktop.browse() Funktion, wenn verfügbar.</ChangeItem>
-        	<ChangeItem section="Stability">Bugfix: Performanceverbesserung beim Filtern in Listen und beim Sortieren von Tabellen.</ChangeItem>
-        	<ChangeItem section="Stability">Bugfix: Performanceverbesserung bei der Sortierung der Bootsliste/Personenliste in efaBootshaus.</ChangeItem>
+            <ChangeItem section="Widget">BugFix: Wetter-Widget: WeatherAPI aus der Liste der Datenquellen entfernt.</ChangeItem>
+            <ChangeItem section="Widget">BugFix: Wetter-Widget: Besseres Fehlerhandling, wenn JSON-Bibliothek nicht gefunden wird.</ChangeItem>
+			<ChangeItem section="Widget">BugFix: HTML Widget: Korrekte Darstellung, wenn auf eigene Farben verzichtet wird. HTML-Inhalt hat transparenten Hintergrund, wenn eigene Farben verwendet werden.</ChangeItem>
+			<ChangeItem section="Admin/Other">BugFix: Plugins: Org.Json Bibliothek aufgenommen und altes Wetter-Plugin entfernt.</ChangeItem>
+			<ChangeItem section="Admin/Other">BugFix: "Über EFA" Dialog zeigt aktuelle URLs an und öffnet sie (wenn im Admin-Modus).</ChangeItem>
+			<ChangeItem section="Admin/Other">BugFix: Info-Dialog zur Anzeige einer veralteten Java-Version kann Webseite öffnen.</ChangeItem>
+			<ChangeItem section="Stability">BugFix: Browserdialog nutzt beim Aufruf eines Externen Browsers auch die neue Desktop.browse() Funktion, wenn verfügbar.</ChangeItem>
+        	<ChangeItem section="Stability">BugFix: Performanceverbesserung beim Filtern in Listen und beim Sortieren von Tabellen.</ChangeItem>
+        	<ChangeItem section="Stability">BugFix: Performanceverbesserung bei der Sortierung der Bootsliste/Personenliste in efaBootshaus.</ChangeItem>
         </Changes>
         <Changes lang="en">
             <ChangeItem section="Boathouse">New: The status bar below the boot list is no longer displayed by default (configurable)</ChangeItem>
 			<ChangeItem section="Boathouse">New: The main screen of efaBootshaus has been switched to GridBagLayout. This allows for better positioning of the HTML widgets on the screen.</ChangeItem>
             <ChangeItem section="Admin/Configuration">New: New option in efaconfig to define the distance between Buttons and Boat lists. (efaBootshaus-&gt;Appearance)</ChangeItem>
             <ChangeItem section="Widget">New: News ticker technically revised. Avoids rendering problems when using certain fonts. Smooth ticker also on RASPI 3b.</ChangeItem>
- 			<ChangeItem section="Widget">Bugfix: Weather-Widget: WeatherAPI removed from the list of data sources.</ChangeItem>
-            <ChangeItem section="Widget">Bugfix: Weather-Widget: Better error handling if JSON library is not found.</ChangeItem>
-			<ChangeItem section="Widget">Bugfix: HTML Widget: Correct display when custom colors are not used. HTML content has a transparent background when custom colors are used.</ChangeItem>
-			<ChangeItem section="Admin/Other">Bugfix: Plugins: Org.Json library included and old weather plugin removed.</ChangeItem>
-			<ChangeItem section="Admin/Other">Bugfix: The "About EFA" dialog now displays and opens current URLs (when in admin mode).</ChangeItem>
-			<ChangeItem section="Admin/Other">Bugfix: Info dialog displaying an outdated Java version may open a website.</ChangeItem>
-			<ChangeItem section="Stability">Bugfix: When calling an external browser, the browser dialog now also uses the new Desktop.browse() function, if available.</ChangeItem>
-			<ChangeItem section="Stability">Bugfix: Performance improvement when filtering in lists and sorting tables.</ChangeItem>
-        	<ChangeItem section="Stability">Bugfix: Performance improvement when sorting the three main lists in efaBoathouse.</ChangeItem>
+ 			<ChangeItem section="Widget">BugFix: Weather-Widget: WeatherAPI removed from the list of data sources.</ChangeItem>
+            <ChangeItem section="Widget">BugFix: Weather-Widget: Better error handling if JSON library is not found.</ChangeItem>
+			<ChangeItem section="Widget">BugFix: HTML Widget: Correct display when custom colors are not used. HTML content has a transparent background when custom colors are used.</ChangeItem>
+			<ChangeItem section="Admin/Other">BugFix: Plugins: Org.Json library included and old weather plugin removed.</ChangeItem>
+			<ChangeItem section="Admin/Other">BugFix: The "About EFA" dialog now displays and opens current URLs (when in admin mode).</ChangeItem>
+			<ChangeItem section="Admin/Other">BugFix: Info dialog displaying an outdated Java version may open a website.</ChangeItem>
+			<ChangeItem section="Stability">BugFix: When calling an external browser, the browser dialog now also uses the new Desktop.browse() function, if available.</ChangeItem>
+			<ChangeItem section="Stability">BugFix: Performance improvement when filtering in lists and sorting tables.</ChangeItem>
+        	<ChangeItem section="Stability">BugFix: Performance improvement when sorting the three main lists in efaBoathouse.</ChangeItem>
         </Changes>
 	</Version>
  <Version>
@@ -571,14 +611,14 @@ section="Other"
             <ChangeItem section="Widget">Neu: HTML-Widget: Jedes HTML-Widget kann separat positioniert werden (oben/unten/links/rechts/multiwidget).</ChangeItem>
             <ChangeItem section="Widget">Neu: Wetter-Widget: Jedes Wetter-Widget kann separat positioniert werden (oben/unten/links/rechts/multiwidget).</ChangeItem>
             <ChangeItem section="Widget">Neu: Wetter-Widget: Jedes Wetter-Widget kann separat sichtbar/unsichtbar gemacht werden.</ChangeItem>
-			<ChangeItem section="GUI/Usability">Bugfix: Datei-Eingabefelder zeigen keinen Fehler mehr an, wenn eine HTTP/HTTPs Seite gewählt ist.</ChangeItem>
+			<ChangeItem section="GUI/Usability">BugFix: Datei-Eingabefelder zeigen keinen Fehler mehr an, wenn eine HTTP/HTTPs Seite gewählt ist.</ChangeItem>
         </Changes>
         <Changes lang="en">
             <ChangeItem section="Widget">New: Common: Multiple widgets can be positioned at the top/bottom/left/right.</ChangeItem>
             <ChangeItem section="Widget">New: HTML-Widget: Each HTML widget can be positioned separately (top/bottom/left/right/multiwidget).</ChangeItem>
             <ChangeItem section="Widget">New: Weather-Widget: Each weather widget can be positioned separately (top/bottom/left/right/multiwidget).</ChangeItem>
             <ChangeItem section="Widget">New: Weather widget: Each weather widget can be made visible/invisible separately.</ChangeItem>
-			<ChangeItem section="GUI/Usability">Bugfix: Filename fields don't show an error message if file name starts with HTTP/HTTPs.</ChangeItem>
+			<ChangeItem section="GUI/Usability">BugFix: Filename fields don't show an error message if file name starts with HTTP/HTTPs.</ChangeItem>
         </Changes>
 	</Version>
  <Version>
@@ -621,7 +661,7 @@ section="Other"
             <ChangeItem section="Widget">Neu: Wetter-Widget: Reihenfolge der Felder in der Oberfläche verbessert.</ChangeItem>
             <ChangeItem section="Widget">Neu: Wetter-Widget: Bessere Formatierung von Fließkommazahlen kleiner 1.</ChangeItem>
             <ChangeItem section="Widget">Neu: Wetter-Widget: Benutzerefinierte Farben für Wetterwidget.</ChangeItem>
-            <ChangeItem section="Widget">Bugfix: HTML-Widget: Bessere Behandlung des Standard-Browsers auf Linux/RASPIan. Verwendet internen Browser als Fallback, wenn externer Browser nicht geöffnet werden kann.</ChangeItem>
+            <ChangeItem section="Widget">BugFix: HTML-Widget: Bessere Behandlung des Standard-Browsers auf Linux/RASPIan. Verwendet internen Browser als Fallback, wenn externer Browser nicht geöffnet werden kann.</ChangeItem>
         </Changes>
         <Changes lang="en">
             <ChangeItem section="Widget">New: HTML-Widget: Clicking in the area of the HTML widget opens a Popup window that closes automatically after 90 seconds.</ChangeItem>
@@ -632,7 +672,7 @@ section="Other"
             <ChangeItem section="Widget">New: Weather-Widget: Optimized order of parameter fields in the GUI.</ChangeItem>
             <ChangeItem section="Widget">New: Weather-Widget: Optimized rendering of double values &lt; 1.</ChangeItem>
             <ChangeItem section="Widget">New: Weather-Widget: Colors are customizable.</ChangeItem>
-			<ChangeItem section="Widget">Bugfix: HTML-Widget: Handle default browser on Linux/RASPIan. Open internal browser if external browser fails.</ChangeItem>
+			<ChangeItem section="Widget">BugFix: HTML-Widget: Handle default browser on Linux/RASPIan. Open internal browser if external browser fails.</ChangeItem>
         </Changes>
 	</Version>
     <Version>
@@ -676,11 +716,11 @@ section="Other"
         <ShowNotice lang="en">If you use efaCloud, make sure your server at least supports efaCloud Version 2.3.3. It is recommended to upgrade to EfaCloud 2.4.0_12 or above.</ShowNotice>
         <Changes lang="de">
             <ChangeItem section="Widget">Neu: HTML-Widget: Download der HTML-Seite im Hintergrund. HTML-Caching. Standardfarben definierbar. </ChangeItem>
-            <ChangeItem section="Widget">Bugfix: Wetter-Widget: Widgets überarbeitet, Übersetzungen für DE/EN/FR hinzugefügt.</ChangeItem>
+            <ChangeItem section="Widget">BugFix: Wetter-Widget: Widgets überarbeitet, Übersetzungen für DE/EN/FR hinzugefügt.</ChangeItem>
         </Changes>
         <Changes lang="en">
             <ChangeItem section="Widget">New: HTML-Widget: Download of the HTML page in the background. HTML caching. Default colors can be defined.</ChangeItem>
-            <ChangeItem section="Widget">Bugfix: Weather-Widget: Widgets revised, translations for DE/EN/FR added.</ChangeItem>
+            <ChangeItem section="Widget">BugFix: Weather-Widget: Widgets revised, translations for DE/EN/FR added.</ChangeItem>
         </Changes>
     </Version>
     <Version>
@@ -724,13 +764,13 @@ section="Other"
             <ChangeItem section="Other">Neu: Veröffentlichung efa 2.5.0 auf Basis von efa 2.5.0#21</ChangeItem>         
             <ChangeItem section="efaCloud">Neu: Lokale efaCloud-Log-Dateien werden bis zu 10 MByte groß; bei Upload-Sync werden nur die letzten 200kb der efaCloud-Log-Dateien hochgeladen.</ChangeItem>
             <ChangeItem section="efaCloud">Neu: Erweitertes Logging in efaCloud.log zur besseren Nachvollziehbarkeit in Bezug auf die transferierten Daten.</ChangeItem>
-            <ChangeItem section="Other">Bugfix: Aktualisierung von Boatstatusrecord bei Veränderung der Fahrtnummer im Fahrtenbuch erfolgt nur noch, wenn sich beide auf das gleiche Fahrtenbuch beziehen.</ChangeItem>
+            <ChangeItem section="Other">BugFix: Aktualisierung von Boatstatusrecord bei Veränderung der Fahrtnummer im Fahrtenbuch erfolgt nur noch, wenn sich beide auf das gleiche Fahrtenbuch beziehen.</ChangeItem>
         </Changes>
         <Changes lang="en">
             <ChangeItem section="Other">Neu: Publishing efa 2.5.0 based on efa 2.5.0#21</ChangeItem>
 			<ChangeItem section="efaCloud">New: Local efaCloud log files can be up to 10 MB in size; during upload sync, only the last 200 KB of the efaCloud log files are uploaded.</ChangeItem>
 			<ChangeItem section="efaCloud">New: Enhanced logging in efaCloud.log for improved traceability of transferred data.</ChangeItem>
-			<ChangeItem section="efaCloud">Bugfix: Boat status records are now only updated when the trip number in the logbook changes if both entries refer to the same logbook.</ChangeItem>            
+			<ChangeItem section="efaCloud">BugFix: Boat status records are now only updated when the trip number in the logbook changes if both entries refer to the same logbook.</ChangeItem>            
         </Changes>
     </Version>
     <Version>
@@ -743,12 +783,12 @@ section="Other"
         <ShowNotice lang="de">Wenn efaCloud eingesetzt wird, muss der Server mindestens Version 2.3.3 unterstützen. EfaCloud 2.4.0_12 und höher werden empfohlen.</ShowNotice>
         <ShowNotice lang="en">If you use efaCloud, make sure your server at least supports efaCloud Version 2.3.3. It is recommended to upgrade to EfaCloud 2.4.0_12 or above.</ShowNotice>
         <Changes lang="de">
-            <ChangeItem section="Session Entry">Bugfix: Fahrten aus einem anderen Fahrtenbuch als dem aktuell geladenen können nicht verändert werden.</ChangeItem>
-            <ChangeItem section="Boathouse">Bugfix: Neuzeichnen der Bootsliste nach Veränderung Listeninhalte verbessert.</ChangeItem>            
+            <ChangeItem section="Session Entry">BugFix: Fahrten aus einem anderen Fahrtenbuch als dem aktuell geladenen können nicht verändert werden.</ChangeItem>
+            <ChangeItem section="Boathouse">BugFix: Neuzeichnen der Bootsliste nach Veränderung Listeninhalte verbessert.</ChangeItem>            
         </Changes>
         <Changes lang="en">
             <ChangeItem section="Session Entry">BugFix: Sessions from a logbook differing from the currently loaded one cannot be modified.</ChangeItem>
-            <ChangeItem section="Boathouse">Bugfix: Repainting of boat lists improved when boat lists get updated.</ChangeItem>            
+            <ChangeItem section="Boathouse">BugFix: Repainting of boat lists improved when boat lists get updated.</ChangeItem>            
         </Changes>
     </Version>
     <Version>
@@ -762,7 +802,7 @@ section="Other"
         <ShowNotice lang="en">If you use efaCloud, make sure your server at least supports efaCloud Version 2.3.3. It is recommended to upgrade to EfaCloud 2.4.0_12 or above.</ShowNotice>
         <Changes lang="de">
             <ChangeItem section="Statistics">Neu: Aktualisierte Wettbewerbsbedingungen fuer LRV Brandenburg</ChangeItem>
-            <ChangeItem section="Stability">Bugfix: Kleine Fehlerkorrekturen</ChangeItem>
+            <ChangeItem section="Stability">BugFix: Kleine Fehlerkorrekturen</ChangeItem>
         </Changes>
         <Changes lang="en">
             <ChangeItem section="Stability">BugFix: Minor Bugfixes</ChangeItem>
@@ -816,16 +856,16 @@ section="Other"
         <Changes lang="de">
         	<ChangeItem section="Stability">Neu: update runEfa.bat/.sh - 192MB RAM statt 160MB für efa JavaVM, wegen Speicher-Mehrbedarf für efaCloud.</ChangeItem>
 			<ChangeItem section="Boathouse">Neu: Boote, die in anderen Logbüchern 'auf Fahrt' sind, können als 'nicht verfügbare Boote' angezeigt werden.</ChangeItem>
-        	<ChangeItem section="Session Entry">Bugfix: Auswahlliste für Personen wird aktualisiert, wenn bei Neuanlage einer Fahrt das Boot oder die Bootsvariante geändert wird.</ChangeItem>
-        	<ChangeItem section="Stability">Bugfix: Efa-Neustart unter Windows funktioniert zuverlässiger, es gibt keine Meldungen mehr 'efa läuft bereits im Hintergrund'.</ChangeItem>        	
-        	<ChangeItem section="efaCloud">Bugfix: Ecrid Index Handling verbessert: keine Probleme mehr nach dem Aufsetzen neuer efaCloud Systeme</ChangeItem>
+        	<ChangeItem section="Session Entry">BugFix: Auswahlliste für Personen wird aktualisiert, wenn bei Neuanlage einer Fahrt das Boot oder die Bootsvariante geändert wird.</ChangeItem>
+        	<ChangeItem section="Stability">BugFix: Efa-Neustart unter Windows funktioniert zuverlässiger, es gibt keine Meldungen mehr 'efa läuft bereits im Hintergrund'.</ChangeItem>        	
+        	<ChangeItem section="efaCloud">BugFix: Ecrid Index Handling verbessert: keine Probleme mehr nach dem Aufsetzen neuer efaCloud Systeme</ChangeItem>
         </Changes>
         <Changes lang="en">
         	<ChangeItem section="Stability">New: update runEfa.bat/.sh - 192MB RAM instead of 160MB for efa JavaVM, due to higher demands for efaCloud.</ChangeItem>
 			<ChangeItem section="Boathouse">New: Boats which are 'on the water' in other logbooks, can be shown as 'not available boats'</ChangeItem>
-        	<ChangeItem section="Session Entry">Bugfix: When changing the boat or boatvariant while creating a new session, the autocomplete list for persons get a refresh.</ChangeItem>        	
-        	<ChangeItem section="Stability">Bugfix: A restart of efa works better on Windows(r) systems. There are no longer messages like 'efa is already running in background'.</ChangeItem>        	
-        	<ChangeItem section="efaCloud">Bugfix: Ecrid index handling optimized: no more issues when setting up new efaCloud systems.</ChangeItem>
+        	<ChangeItem section="Session Entry">BugFix: When changing the boat or boatvariant while creating a new session, the autocomplete list for persons get a refresh.</ChangeItem>        	
+        	<ChangeItem section="Stability">BugFix: A restart of efa works better on Windows(r) systems. There are no longer messages like 'efa is already running in background'.</ChangeItem>        	
+        	<ChangeItem section="efaCloud">BugFix: Ecrid index handling optimized: no more issues when setting up new efaCloud systems.</ChangeItem>
         </Changes>	
 	</Version>
 	<Version>
@@ -841,15 +881,15 @@ section="Other"
         	<ChangeItem section="Admin/Data Edit">Neu: Bootsstatus-Dialog im Querformat und zeigt die zugeordnete Fahrt-Nr und Fahrtenbuchname zum Bootsstatus.</ChangeItem>
         	<ChangeItem section="Session Entry">Neu: EfaBase/Admin-Modus: Bei der Bearbeitung von Fahrtenbucheinträgen werden bestimmte leere Felder mit einem roten Warnicon hervorgehoben.</ChangeItem>
         	<ChangeItem section="Session Entry">Neu: EfaBase/Admin-Modus: Eine Fahrt wird nicht mehr _grundsätzlich_ bei der Bearbeitung in efaBase/Adminmodus auf "geschlossen" gesetzt. D.h. die "Fahrt offen - jetzt beenden" bleibt häufiger sichtbar, wenn die Fahrt tatsächlich noch offen ist.</ChangeItem>
-        	<ChangeItem section="Admin/Data Edit">Bugfix: Bootstatus: Wird der Bootstatus auf einen Wert != Unterwegs gesetzt, werden im Bootsstatus die Angaben von Fahrtnummer und Fahrtenbuchnamen geleert.</ChangeItem>
-        	<ChangeItem section="Session Entry">Bugfix: Fahrt anlegen/Nacherfassen: Ist eine Fahrt&gt;30km, und ist nur eine Fahrtart zur Auswahl möglich, unterbleibt die Abfrage der Fahrtart.</ChangeItem>
+        	<ChangeItem section="Admin/Data Edit">BugFix: Bootstatus: Wird der Bootstatus auf einen Wert != Unterwegs gesetzt, werden im Bootsstatus die Angaben von Fahrtnummer und Fahrtenbuchnamen geleert.</ChangeItem>
+        	<ChangeItem section="Session Entry">BugFix: Fahrt anlegen/Nacherfassen: Ist eine Fahrt&gt;30km, und ist nur eine Fahrtart zur Auswahl möglich, unterbleibt die Abfrage der Fahrtart.</ChangeItem>
         </Changes>
         <Changes lang="en">
         	<ChangeItem section="Admin/Data Edit">New: Dialog for editing BoatStatus in landscape mode; shows a new column for Trip number and Logbook-Date.</ChangeItem>
         	<ChangeItem section="Session Entry">New: EfaBase/Admin mode: When editing logbook entries, some fields are highlighted with a red warning icon when they are (unexpectedly) empty.</ChangeItem>
         	<ChangeItem section="Session Entry">New: EfaBase/Admin mode: A Session does not gets set to "closed" by default if a session gets edited in efaBase/Admin mode. This means that the button "Session open - finish now" is visible more often if the session is actually open.</ChangeItem>
-        	<ChangeItem section="Admin/Data Edit">Bugfix: Boatstatus: If the BoatStatus gets set to a value != OnTheWater, the attributes for TripNo and Logbookname get cleared as well.</ChangeItem>
-        	<ChangeItem section="Session Entry">Bugfix: Session start: if a trip is &gt;30km, and only a single trip type is available, no dialog for confirming the trip type is shown.</ChangeItem>
+        	<ChangeItem section="Admin/Data Edit">BugFix: Boatstatus: If the BoatStatus gets set to a value != OnTheWater, the attributes for TripNo and Logbookname get cleared as well.</ChangeItem>
+        	<ChangeItem section="Session Entry">BugFix: Session start: if a trip is &gt;30km, and only a single trip type is available, no dialog for confirming the trip type is shown.</ChangeItem>
         </Changes>	
 	</Version>
 	<Version>
@@ -1004,7 +1044,7 @@ section="Other"
             <ChangeItem section="Admin/Other">BugFix: In Beta-Versionen wird im Admin-Modus nicht mehr beständig die Aktualisierung der Gewässerliste angeboten.</ChangeItem>
             <ChangeItem section="Admin/Configuration">BugFix: Versteckte Option für "efa immer im Vordergrund" wird wieder angezeigt.</ChangeItem>
             <ChangeItem section="Admin/Other">BugFix: Wenn ein Backup efa-Konfigurationsdaten wiederherstellt, dann wird zum Neustart von EFA aufgefordert. Hierdurch wird verhindert, dass der Audit Task beim Öffnen des Projekts Daten korrigiert, weil er ggfs. nicht geladene TYPEN oder andere Konfigurationsdaten (noch) nicht findet.</ChangeItem>
-            <ChangeItem section="Stability"> Bugfix: Fehler in Audit Task behoben, wenn Reservierungen zu nicht sichtbaren Booten gelöscht werden sollen.</ChangeItem>
+            <ChangeItem section="Stability"> BugFix: Fehler in Audit Task behoben, wenn Reservierungen zu nicht sichtbaren Booten gelöscht werden sollen.</ChangeItem>
 			<ChangeItem section="Admin/Other">BugFix: Wenn ein Restore auch Konfigurationsdaten wiederherstellt, wird das Projekt nicht neu geladen und der Anwender zum Neustart von efa aufgefordert. Dies sorgt dafür, dass die wiederhergestellten Konfigurationsdaten, Bootstypen etc. direkt zum Einsatz kommen.</ChangeItem>
 			<ChangeItem section="Admin/Other">BugFix: Admin Dialog: Besseres Layout, wenn ein anstehender Fahrtenbuch- oder Vereinsarbeitswechsel dargestellt wird.</ChangeItem>			
             <ChangeItem section="efaCLI">BugFix: EFA#102: EFA2.5.0#8 Beta: efaCLI Export: bisherige Standards für Feld- und Text-Trennzeichen sollen bestehen bleiben (für Abwärtskompatiblität)</ChangeItem>
@@ -1071,7 +1111,7 @@ section="Other"
         <DownloadSize>6590962</DownloadSize>
         <Changes lang="de">
             <ChangeItem section="Statistics">Neu: Aktualisierte Wettbewerbsbedingungen fuer LRV Brandenburg</ChangeItem>
-            <ChangeItem section="Stability">Bugfix: Kleine Fehlerkorrekturen</ChangeItem>
+            <ChangeItem section="Stability">BugFix: Kleine Fehlerkorrekturen</ChangeItem>
         </Changes>
         <Changes lang="en">
             <ChangeItem section="Stability">BugFix: Minor Bugfixes</ChangeItem>
@@ -1114,12 +1154,12 @@ section="Other"
             <ChangeItem section="Session Entry">BugFix: Autovervollständigen-Felder: werden diese mit TAB verlassen, wird der gewählte Eintrag übernommen.</ChangeItem>
             <ChangeItem section="Session Entry">BugFix: Fahrt Beginnen Dialog: Taste ESC in Autovervollständigen-Feldern schließt nur die Auswahlbox, nicht den gesamten Dialog.</ChangeItem>
             <ChangeItem section="Admin/Other">BugFix: Lesen von Nachrichten: im Textfeld kann nun Text mit der Maus markiert und mit STRG+C in die Zwischenablage übernommen werden.</ChangeItem>
-            <ChangeItem section="Admin/Configuration">Bugfix: Scrollbar im Config-Fenster ist INNERHALB der Registerkarten - somit besser scrollbar</ChangeItem>
-            <ChangeItem section="Admin/Configuration">Bugfix: Tastenbelegung für Bemerkungsfeld - Textfeld zur Eingabe freigeschaltet.</ChangeItem>
-            <ChangeItem section="Admin/Configuration">Bugfix: MeteoAstro-Plugin weist in Konfiguration auf nicht mehr funktionierende Wetterabfrage hin.</ChangeItem>
-            <ChangeItem section="Admin/Configuration">Bugfix: mehr Elemente weisen darauf hin, dass sie einen Neustart von efa benötigen.</ChangeItem>
-            <ChangeItem section="Admin/Configuration">Bugfix: Automatische Vorgänge werden besser dargestellt.</ChangeItem>
-			<ChangeItem section="Kanu-EFB-Sync">Bugfix: KanuEFBSync Registerkarte wird besser dargestellt.</ChangeItem>
+            <ChangeItem section="Admin/Configuration">BugFix: Scrollbar im Config-Fenster ist INNERHALB der Registerkarten - somit besser scrollbar</ChangeItem>
+            <ChangeItem section="Admin/Configuration">BugFix: Tastenbelegung für Bemerkungsfeld - Textfeld zur Eingabe freigeschaltet.</ChangeItem>
+            <ChangeItem section="Admin/Configuration">BugFix: MeteoAstro-Plugin weist in Konfiguration auf nicht mehr funktionierende Wetterabfrage hin.</ChangeItem>
+            <ChangeItem section="Admin/Configuration">BugFix: mehr Elemente weisen darauf hin, dass sie einen Neustart von efa benötigen.</ChangeItem>
+            <ChangeItem section="Admin/Configuration">BugFix: Automatische Vorgänge werden besser dargestellt.</ChangeItem>
+			<ChangeItem section="Kanu-EFB-Sync">BugFix: KanuEFBSync Registerkarte wird besser dargestellt.</ChangeItem>
 			<ChangeItem section="Stability">BugFix: Startup: Start-Probleme von efaBths auf langsameren Maschinen behoben (Raspberry PI). Audit Task läuft beim Öffnen von Projekten nicht mehr im Hintergrund, was den Start von efaBths um eine paar Sekunden verlängern kann.</ChangeItem>
 			<ChangeItem section="Boathouse">BugFix: Boothaus-Listen mit zwei Spalten berechnen Breite für zweites Element besser. Performanceoptimierung für Darstellung der bunten Icons vor den Bootsnamen.</ChangeItem>
             <ChangeItem section="Boathouse">BugFix: Boothaus-Listen mit Filtern: Es wurden keine Einträge gefunden, wenn die Eingabe ein Sonderzeichen ß, æ oder œ beinhaltete.</ChangeItem>
@@ -1138,13 +1178,13 @@ section="Other"
             <ChangeItem section="Stability">BugFix: Resource Leak behoben: Die während eines Backups erstellte ZIP-Datei wird nach Abschluss geschlossen.</ChangeItem>
 			<ChangeItem section="Widget">BugFix: News- und Uhr Widgets laufen im Hintergrund nicht weiter, wenn sie nicht sichtbar sind.</ChangeItem>
             <ChangeItem section="Other">BugFix: emil: Einheitliche Höhe für Textfelder. Textfelder können nicht mehr zu klein sein in bestimmten LookAndFeels. Schnellere Scrollgeschwindigkeit in der Teilnehmerliste.</ChangeItem>
-			<ChangeItem section="Clubwork">Bugfix: Keine Exception im Admintask zur Berechnung des Vereinsarbeit-Übertrags mehr, wenn zu einem Projekt ohne Vereinsarbeit gewechselt wird.</ChangeItem>
-			<ChangeItem section="GUI/Usability">Bugfix: Bei aktivem Tooltip-Support zeigen Tabellen auch Tooltips für Spaltenüberschriften.</ChangeItem>
-			<ChangeItem section="Boathouse">Bugfix: Fahrtenbuch anzeigen: zeigt breitere Spalten für Datum- und Zeitfelder an (gut bei Verwendung größerer Schriftarten)</ChangeItem>
-			<ChangeItem section="Boathouse">Bugfix: Fahrtenbuch anzeigen: Darstellungsfehler behoben, wenn die Crew eines Fahrtenbucheintrags leer war.</ChangeItem>
-			<ChangeItem section="Admin/Other">Bugfix: Admin Modus: Dialoge zur Auswahl von Projekten, Fahrtenbüchern, Vereinsarbeit, Plugins werden besser dargestellt in allen LookAndFeels.</ChangeItem>
-			<ChangeItem section="Boathouse">Bugfix: efaBths: Blaue Titelleiste verändert ihre Größe nicht mehr, wenn efaFlatLaf aktiv ist, und die efa-Konfiguration geändert wurde.</ChangeItem>
-			<ChangeItem section="GUI/Usability">Bugfix: Tabellen: Wenn alternierende Zeilen aktiv sind, zeigt das efaFlatLaf zumindest horizontale Linien in den Tabellen an.</ChangeItem>        
+			<ChangeItem section="Clubwork">BugFix: Keine Exception im Admintask zur Berechnung des Vereinsarbeit-Übertrags mehr, wenn zu einem Projekt ohne Vereinsarbeit gewechselt wird.</ChangeItem>
+			<ChangeItem section="GUI/Usability">BugFix: Bei aktivem Tooltip-Support zeigen Tabellen auch Tooltips für Spaltenüberschriften.</ChangeItem>
+			<ChangeItem section="Boathouse">BugFix: Fahrtenbuch anzeigen: zeigt breitere Spalten für Datum- und Zeitfelder an (gut bei Verwendung größerer Schriftarten)</ChangeItem>
+			<ChangeItem section="Boathouse">BugFix: Fahrtenbuch anzeigen: Darstellungsfehler behoben, wenn die Crew eines Fahrtenbucheintrags leer war.</ChangeItem>
+			<ChangeItem section="Admin/Other">BugFix: Admin Modus: Dialoge zur Auswahl von Projekten, Fahrtenbüchern, Vereinsarbeit, Plugins werden besser dargestellt in allen LookAndFeels.</ChangeItem>
+			<ChangeItem section="Boathouse">BugFix: efaBths: Blaue Titelleiste verändert ihre Größe nicht mehr, wenn efaFlatLaf aktiv ist, und die efa-Konfiguration geändert wurde.</ChangeItem>
+			<ChangeItem section="GUI/Usability">BugFix: Tabellen: Wenn alternierende Zeilen aktiv sind, zeigt das efaFlatLaf zumindest horizontale Linien in den Tabellen an.</ChangeItem>        
             <ChangeItem section="efaCloud">BugFix: Verbesserungen der Synchronisation: bei Re-Synchronisation 'kürzlich' geänderter/neuer Datensätze berücksichtigt nur noch Datensätze der letzten 5 Tage statt 30 Tage.</ChangeItem>
             <ChangeItem section="efaCloud">BugFix: Verbesserungen der Synchronisation: Besserer Umgang mit der Situation, wenn die Klartext-Namen durch UUIDs ersetzt werden (durch Aufräumarbeiten am Jahresende).</ChangeItem>
             <ChangeItem section="efaCloud">BugFix: Projekt kann nicht mehr mit leeren Feldern zu efaCloud-Credentials in ein efaCloud-Projekt umgestellt werden.</ChangeItem>
@@ -1176,11 +1216,11 @@ section="Other"
             <ChangeItem section="Session Entry">BugFix: Autocomplete fields: if user leaves a popup selection with tab, the selected entry is used for the field.</ChangeItem>
             <ChangeItem section="Session Entry">BugFix: Autocomplete fields: if set to partial text mode, the color of the button was orange instead of red if the item was not valid.</ChangeItem>
             <ChangeItem section="Session Entry">BugFix: Start session dialog: Hitting ESC while an autocomplete window is open, only the autocomplete window is closed instead of the start session dialog.</ChangeItem>
-            <ChangeItem section="Admin/Configuration">Bugfix: Scrollable in the config window is INSIDE the tabs - making it easier to scroll</ChangeItem>
-            <ChangeItem section="Admin/Configuration">Bugfix: Key assignment for comment field - text field for values set to enabled.</ChangeItem>
-            <ChangeItem section="Admin/Configuration">Bugfix: MeteoAstro plugin indicates in efaconfig that weather can no longer be displayed.</ChangeItem>
-            <ChangeItem section="Admin/Configuration">Bugfix: More config items indicate that they need a restart of efa.</ChangeItem>
-            <ChangeItem section="Admin/Configuration">Bugfix: Cron job tab is refactored.</ChangeItem>
+            <ChangeItem section="Admin/Configuration">BugFix: Scrollable in the config window is INSIDE the tabs - making it easier to scroll</ChangeItem>
+            <ChangeItem section="Admin/Configuration">BugFix: Key assignment for comment field - text field for values set to enabled.</ChangeItem>
+            <ChangeItem section="Admin/Configuration">BugFix: MeteoAstro plugin indicates in efaconfig that weather can no longer be displayed.</ChangeItem>
+            <ChangeItem section="Admin/Configuration">BugFix: More config items indicate that they need a restart of efa.</ChangeItem>
+            <ChangeItem section="Admin/Configuration">BugFix: Cron job tab is refactored.</ChangeItem>
 			<ChangeItem section="Stability">BugFix: Startup: fixed startup problems of efaBths on slower machines (Raspberry PI). When opening projects, Audit task no longer runs in background. This can increase startup time for efaBths by a few seconds.</ChangeItem>
 			<ChangeItem section="Admin/Other">BugFix: When reading messages to admin, the text of the message can be selected and copied to clipboard via CTRL+C.</ChangeItem>
 			<ChangeItem section="Boathouse">BugFix: Boathouse lists with two columns: calculate widths for second columns optimized, performance optimization when a boat name has an icon prefix.</ChangeItem>
@@ -1202,13 +1242,13 @@ section="Other"
             <ChangeItem section="Other">BugFix: Dialog for automatic shutdown/restart of efa now shows the reason.</ChangeItem>
             <ChangeItem section="Stability">BugFix: Removed resource leak: ZIP file created during a backup gets closed afterwards.</ChangeItem>
 			<ChangeItem section="Stability">BugFix: Widgets for clock and news stop running in background if invisible.</ChangeItem>
-			<ChangeItem section="Clubwork">Bugfix: no exception in admintask for carryover calculation when changing project to a project where no clubwork has been defined in efabase.</ChangeItem>           
-			<ChangeItem section="GUI/Usability">Bugfix: When tooltips are active for tables, tooltips are shown for table column headers.</ChangeItem>
-			<ChangeItem section="Boathouse">Bugfix: Show Logbook dialog: shows date and time colums with a larger width.</ChangeItem>
-			<ChangeItem section="Boathouse">Bugfix: Show Logbook dialog: Fixed a rendering error when the crew of the logbook entry is empty.</ChangeItem>
-			<ChangeItem section="Boathouse">Bugfix: Admin mode: Dialogs for selecting Projects, Logbooks, Clubwork, Plugins are better readable in any LookAndFeels.</ChangeItem>
-			<ChangeItem section="Boathouse">Bugfix: efaBths: Blue title bar does not change its size when efaFlatLaf is active and config items get saved in admin mode.</ChangeItem>
-			<ChangeItem section="GUI/Usability">Bugfix: Tables: when alternating row colors are deactivated, flatlaf shows horizontal lines for better readability in tables.</ChangeItem>        
+			<ChangeItem section="Clubwork">BugFix: no exception in admintask for carryover calculation when changing project to a project where no clubwork has been defined in efabase.</ChangeItem>           
+			<ChangeItem section="GUI/Usability">BugFix: When tooltips are active for tables, tooltips are shown for table column headers.</ChangeItem>
+			<ChangeItem section="Boathouse">BugFix: Show Logbook dialog: shows date and time colums with a larger width.</ChangeItem>
+			<ChangeItem section="Boathouse">BugFix: Show Logbook dialog: Fixed a rendering error when the crew of the logbook entry is empty.</ChangeItem>
+			<ChangeItem section="Boathouse">BugFix: Admin mode: Dialogs for selecting Projects, Logbooks, Clubwork, Plugins are better readable in any LookAndFeels.</ChangeItem>
+			<ChangeItem section="Boathouse">BugFix: efaBths: Blue title bar does not change its size when efaFlatLaf is active and config items get saved in admin mode.</ChangeItem>
+			<ChangeItem section="GUI/Usability">BugFix: Tables: when alternating row colors are deactivated, flatlaf shows horizontal lines for better readability in tables.</ChangeItem>        
 			<ChangeItem section="efaCloud">BugFix: Sync improvements: when resyncing 'recently' changed/created records only records of the last 5 days are considered, instead of the last 30 days.</ChangeItem>
             <ChangeItem section="efaCloud">BugFix: Sync improvements: better handling when names of boats and other items get replaced by uuids (by cleaning actions at the end of the year).</ChangeItem>
             <ChangeItem section="efaCloud">BugFix: Cannot convert an existing project to efaCloud then efaCloud credential fields are empty</ChangeItem>
@@ -1294,12 +1334,12 @@ section="Other"
             <ChangeItem section="Boathouse">Neu: Bootsreservierungen lassen sich per Checkbox auf den heutigen Tag filtern</ChangeItem>
             <ChangeItem section="Boathouse">Neu: Bootsreservierungen mit zeitlich beschränkten wöchentlichen Reservierungen</ChangeItem>
 			<ChangeItem section="Boathouse">Neu: Verhalten von efa bei Überschneidungen von Reservierungen unterschiedlichen Typs kann eingestellt werden</ChangeItem>
-            <ChangeItem section="Stability">Bugfix: Logrotate efa.log verursacht mit efaCLI keine fehlenden Logeinträge mehr (https://github.com/nicmichael/efa/issues/22) </ChangeItem>
-            <ChangeItem section="efaCloud">Bugfix: Überschreiben von Fahrten in efaCloud bei Fahrtenbuchwechsel</ChangeItem>
-            <ChangeItem section="efaCloud">Bugfix: Synchronisationsabweichungstoleranz zu eng</ChangeItem>
+            <ChangeItem section="Stability">BugFix: Logrotate efa.log verursacht mit efaCLI keine fehlenden Logeinträge mehr (https://github.com/nicmichael/efa/issues/22) </ChangeItem>
+            <ChangeItem section="efaCloud">BugFix: Überschreiben von Fahrten in efaCloud bei Fahrtenbuchwechsel</ChangeItem>
+            <ChangeItem section="efaCloud">BugFix: Synchronisationsabweichungstoleranz zu eng</ChangeItem>
             <ChangeItem section="efaCloud">Neu: efaCloud Eigenes Logging für Synchronisationsfehler</ChangeItem>
-            <ChangeItem section="Stability">Bugfix: plugin.xml verweist auf korrekte JavaMail-Version 1.6.2</ChangeItem>
-            <ChangeItem section="GUI/Usability">Bugfix: Französische Übersetzung hat keine Fehler mehr bei Texten mit Apostrophen</ChangeItem>
+            <ChangeItem section="Stability">BugFix: plugin.xml verweist auf korrekte JavaMail-Version 1.6.2</ChangeItem>
+            <ChangeItem section="GUI/Usability">BugFix: Französische Übersetzung hat keine Fehler mehr bei Texten mit Apostrophen</ChangeItem>
         </Changes>
         <Changes lang="en">
             <ChangeItem section="Stability">>New: efa 2.3.3. requires at least Java Vesion 8</ChangeItem>
@@ -1315,12 +1355,12 @@ section="Other"
             <ChangeItem section="Boathouse">New: Boat reservations allow weekly reservations within a limited period</ChangeItem>
             <ChangeItem section="Boathouse">New: Overlapping boat reservations of diffrent types: behaviour of efa can be set</ChangeItem>
             <ChangeItem section="Session Entry">New: Autocomplete fields (e.g. boat name) filter by partial word</ChangeItem>
-            <ChangeItem section="Stability">Bugfix: Logrotate efa.log avoids missing log entries when running efaCLI(https://github.com/nicmichael/efa/issues/22) </ChangeItem>            
-            <ChangeItem section="efaCloud">Bugfix: overwriting of sessions when switching logbook</ChangeItem>
-            <ChangeItem section="efaCloud">Bugfix: too little tolerance for data synchronization</ChangeItem>
+            <ChangeItem section="Stability">BugFix: Logrotate efa.log avoids missing log entries when running efaCLI(https://github.com/nicmichael/efa/issues/22) </ChangeItem>            
+            <ChangeItem section="efaCloud">BugFix: overwriting of sessions when switching logbook</ChangeItem>
+            <ChangeItem section="efaCloud">BugFix: too little tolerance for data synchronization</ChangeItem>
             <ChangeItem section="efaCloud">New: efaCloud logging of synchronization errors</ChangeItem>
-            <ChangeItem section="Stability">>Bugfix: plugin.xml now correctly reports current version 1.6.2 of JavaMail</ChangeItem>
-            <ChangeItem section="GUI/Usability">Bugfix: Fixed errors in french locale concerning apostrophes.</ChangeItem>
+            <ChangeItem section="Stability">>BugFix: plugin.xml now correctly reports current version 1.6.2 of JavaMail</ChangeItem>
+            <ChangeItem section="GUI/Usability">BugFix: Fixed errors in french locale concerning apostrophes.</ChangeItem>
         </Changes>
     </Version>
 
@@ -1331,10 +1371,10 @@ section="Other"
         <DownloadSize>4379916</DownloadSize>
 		<MinimumJavaVersion>1.6</MinimumJavaVersion>
         <Changes lang="de">
-            <ChangeItem section="Stability">Bugfix: Standard Lock Timeout auf 30 Sekunden erhoeht</ChangeItem>
+            <ChangeItem section="Stability">BugFix: Standard Lock Timeout auf 30 Sekunden erhoeht</ChangeItem>
         </Changes>
         <Changes lang="en">
-            <ChangeItem section="Stability">Bugfix: Increased default lock timeout to 30 sec</ChangeItem>
+            <ChangeItem section="Stability">BugFix: Increased default lock timeout to 30 sec</ChangeItem>
         </Changes>
     </Version>
 
@@ -1345,10 +1385,10 @@ section="Other"
         <DownloadSize>4380077</DownloadSize>
 		<MinimumJavaVersion>1.6</MinimumJavaVersion>
         <Changes lang="de">
-            <ChangeItem section="Stability">Bugfix: Erweiterte Lock Timeout Diagnostics</ChangeItem>
+            <ChangeItem section="Stability">BugFix: Erweiterte Lock Timeout Diagnostics</ChangeItem>
         </Changes>
         <Changes lang="en">
-            <ChangeItem section="Stability">Bugfix: Additional lock timeout diagnostics</ChangeItem>
+            <ChangeItem section="Stability">BugFix: Additional lock timeout diagnostics</ChangeItem>
         </Changes>
     </Version>
 
@@ -1360,13 +1400,13 @@ section="Other"
 		<MinimumJavaVersion>1.6</MinimumJavaVersion>
         <Changes lang="de">
             <ChangeItem section="Stability">Neu: JavaMail Update auf Version 1.6.2</ChangeItem>
-            <ChangeItem section="Boathouse">Bugfix: Ungueltige Personen in Personen-Auswahlliste (https://github.com/nicmichael/efa/issues/62)</ChangeItem>
-            <ChangeItem section="Base">Bugfix: Personen-Auswahlliste schrumpft in efaBasis (https://github.com/nicmichael/efa/issues/67)</ChangeItem>
+            <ChangeItem section="Boathouse">BugFix: Ungueltige Personen in Personen-Auswahlliste (https://github.com/nicmichael/efa/issues/62)</ChangeItem>
+            <ChangeItem section="Base">BugFix: Personen-Auswahlliste schrumpft in efaBasis (https://github.com/nicmichael/efa/issues/67)</ChangeItem>
         </Changes>
         <Changes lang="en">
             <ChangeItem section="Stability">New: JavaMail Update to Version 1.6.2</ChangeItem>
-            <ChangeItem section="Boathouse">Bugfix: Invalid persons in person selection list (https://github.com/nicmichael/efa/issues/62)</ChangeItem>
-            <ChangeItem section="Base">Bugfix: Person selection list loses entries in efaBase (https://github.com/nicmichael/efa/issues/67)</ChangeItem>
+            <ChangeItem section="Boathouse">BugFix: Invalid persons in person selection list (https://github.com/nicmichael/efa/issues/62)</ChangeItem>
+            <ChangeItem section="Base">BugFix: Person selection list loses entries in efaBase (https://github.com/nicmichael/efa/issues/67)</ChangeItem>
         </Changes>
     </Version>
 
@@ -1380,15 +1420,15 @@ section="Other"
             <ChangeItem section="Boathouse">Neu: Filter fuer Liste der verfuegbaren Boote und Boote auf Fahrt</ChangeItem>
             <ChangeItem section="GUI/Usability">Neu: Verbesserte Darstellung von Tabellen</ChangeItem>
             <ChangeItem section="Clubwork">Neu: Anpassung der Logik zur Änderung des Vereinsarbeitsbuches an die Logik zur Veränderung des Fahrtenbuches bei der Verwendung in efaCloud</ChangeItem>
-            <ChangeItem section="efaCloud">Bugfix: Fehlerkorrektur für efaCloud auf Windows Systemen</ChangeItem>
-            <ChangeItem section="efaCloud">Bugfix: Verbesserung der Synchronisierung mit efaCloud</ChangeItem>
+            <ChangeItem section="efaCloud">BugFix: Fehlerkorrektur für efaCloud auf Windows Systemen</ChangeItem>
+            <ChangeItem section="efaCloud">BugFix: Verbesserung der Synchronisierung mit efaCloud</ChangeItem>
         </Changes>
         <Changes lang="en">
             <ChangeItem section="Boathouse">New: Filter for lists with available boats and boats on the water</ChangeItem>
             <ChangeItem section="GUI/Usability">New: Improved display of tables</ChangeItem>
             <ChangeItem section="Clubwork">New: Improved handling of club work in efaCloud</ChangeItem>
-            <ChangeItem section="efaCloud">Bugfix: efaCloud bugfixes on Windows</ChangeItem>
-            <ChangeItem section="efaCloud">Bugfix: Improved efaCloud synchronization</ChangeItem>
+            <ChangeItem section="efaCloud">BugFix: efaCloud bugfixes on Windows</ChangeItem>
+            <ChangeItem section="efaCloud">BugFix: Improved efaCloud synchronization</ChangeItem>
         </Changes>
     </Version>
 
@@ -1399,10 +1439,10 @@ section="Other"
         <DownloadSize>4270829</DownloadSize>
 		<MinimumJavaVersion>1.6</MinimumJavaVersion>
         <Changes lang="de">
-            <ChangeItem section="GUI/Usability">Bugfix: Korrektur fuer fehlendes Dezimalkomma in Darstellung von Entfernungen und anderen Dezimalwerten</ChangeItem>
+            <ChangeItem section="GUI/Usability">BugFix: Korrektur fuer fehlendes Dezimalkomma in Darstellung von Entfernungen und anderen Dezimalwerten</ChangeItem>
         </Changes>
         <Changes lang="en">
-            <ChangeItem section="GUI/Usability">Bugfix: Fix for missing decimal point in display of distances and other decimal values</ChangeItem>
+            <ChangeItem section="GUI/Usability">BugFix: Fix for missing decimal point in display of distances and other decimal values</ChangeItem>
         </Changes>
     </Version>
 
@@ -1414,13 +1454,13 @@ section="Other"
 		<MinimumJavaVersion>1.6</MinimumJavaVersion>
         <Changes lang="de">
             <ChangeItem section="GUI/Usability">Neu: Verbesserte Uebersetzung nach Franzoesisch</ChangeItem>
-            <ChangeItem section="efaCloud">Bugfix: Synchronisationsfehler unter Windows behoben</ChangeItem>
-            <ChangeItem section="Admin/Other">Bugfix: Fehler bei Handhabung von Dezimalzahlen im Import behoben</ChangeItem>
+            <ChangeItem section="efaCloud">BugFix: Synchronisationsfehler unter Windows behoben</ChangeItem>
+            <ChangeItem section="Admin/Other">BugFix: Fehler bei Handhabung von Dezimalzahlen im Import behoben</ChangeItem>
         </Changes>
         <Changes lang="en">
             <ChangeItem section="GUI/Usability">New: Improved transation to French</ChangeItem>
-            <ChangeItem section="efaCloud">Bugfix: synchronization problem under Windows fixed</ChangeItem>
-            <ChangeItem section="Admin/Other">Bugfix: Bug for import of decimal numbers fixed</ChangeItem>
+            <ChangeItem section="efaCloud">BugFix: synchronization problem under Windows fixed</ChangeItem>
+            <ChangeItem section="Admin/Other">BugFix: Bug for import of decimal numbers fixed</ChangeItem>
         </Changes>
     </Version>
 
@@ -1432,12 +1472,12 @@ section="Other"
 		<MinimumJavaVersion>1.6</MinimumJavaVersion>
         <Changes lang="de">
             <ChangeItem section="Other">Neu: Wettbewerbsbedingungen fuer Fahrtenabzeichen 2022 angepasst</ChangeItem>
-            <ChangeItem section="efaCloud">Bugfix: Bugfix bei Fahrtenbuchwechsel</ChangeItem>
-            <ChangeItem section="Admin/Other">Bugfix: Fehler bei Handhabung von Dezimalzahlen im Import behoben</ChangeItem>
+            <ChangeItem section="efaCloud">BugFix: Bugfix bei Fahrtenbuchwechsel</ChangeItem>
+            <ChangeItem section="Admin/Other">BugFix: Fehler bei Handhabung von Dezimalzahlen im Import behoben</ChangeItem>
         </Changes>
         <Changes lang="en">
-            <ChangeItem section="efaCloud">Bugfix: Bugfix for logbook change</ChangeItem>
-            <ChangeItem section="Admin/Other">Bugfix: Bug for import of decimal numbers fixed</ChangeItem>
+            <ChangeItem section="efaCloud">BugFix: Bugfix for logbook change</ChangeItem>
+            <ChangeItem section="Admin/Other">BugFix: Bug for import of decimal numbers fixed</ChangeItem>
         </Changes>
     </Version>
 
@@ -1476,7 +1516,7 @@ section="Other"
         <DownloadSize>4246634</DownloadSize>
 		<MinimumJavaVersion>1.6</MinimumJavaVersion>
         <Changes lang="de">
-            <ChangeItem section="Other">Bugfix: Fehlende Berechnung der Zielbereiche bei Wettbebwerbsauswertung fuer LRV Sommer-Wettbewerb 2021 behoben</ChangeItem>
+            <ChangeItem section="Other">BugFix: Fehlende Berechnung der Zielbereiche bei Wettbebwerbsauswertung fuer LRV Sommer-Wettbewerb 2021 behoben</ChangeItem>
         </Changes>
     </Version>
 
@@ -1487,12 +1527,12 @@ section="Other"
         <DownloadSize>4246168</DownloadSize>
 		<MinimumJavaVersion>1.6</MinimumJavaVersion>
         <Changes lang="de">
-            <ChangeItem section="efaCloud">Bugfix: Wenn die Internetverbindung beim Start des Programms noch nicht steht, wird der Retry der Autorisierung nun korrekt angestoßen.</ChangeItem>
-            <ChangeItem section="efaCloud">Bugfix: Behebung des Referenzfehlers in der Logdatei-Prüfung beim Raspberry Systemzeitfehler-Effekt.</ChangeItem>
+            <ChangeItem section="efaCloud">BugFix: Wenn die Internetverbindung beim Start des Programms noch nicht steht, wird der Retry der Autorisierung nun korrekt angestoßen.</ChangeItem>
+            <ChangeItem section="efaCloud">BugFix: Behebung des Referenzfehlers in der Logdatei-Prüfung beim Raspberry Systemzeitfehler-Effekt.</ChangeItem>
         </Changes>
         <Changes lang="en">
-            <ChangeItem section="efaCloud">Bugfix: Authorization retry if internet connection interrupted during program start</ChangeItem>
-            <ChangeItem section="efaCloud">Bugfix: fixed reference count in logfile check for Raspberry</ChangeItem>
+            <ChangeItem section="efaCloud">BugFix: Authorization retry if internet connection interrupted during program start</ChangeItem>
+            <ChangeItem section="efaCloud">BugFix: fixed reference count in logfile check for Raspberry</ChangeItem>
         </Changes>
     </Version>
 
@@ -1517,30 +1557,30 @@ section="Other"
         <DownloadSize>4245993</DownloadSize>
 		<MinimumJavaVersion>1.6</MinimumJavaVersion>
         <Changes lang="de">
-            <ChangeItem section="efaCloud">Bugfix: Gruppen mit mehr als 27 Mitgliedern nun möglich</ChangeItem>
-            <ChangeItem section="efaCloud">Bugfix: efaCloud und efaCLI nun kompatibel. Allerdings keine efaCloud Kommandos über efaCLI</ChangeItem>
-            <ChangeItem section="efaCloud">Bugfix: efaRemote + efaCloud getestet</ChangeItem>
-            <ChangeItem section="efaCloud">Bugfix: Toleranz der Fehlerprüfung optimiert</ChangeItem>
-            <ChangeItem section="efaCloud">Bugfix: Hinweisdialog bei fehlschlagen der Authentifizierung am Server</ChangeItem>
-            <ChangeItem section="efaCloud">Bugfix: verwaiste Konfigurationsreste in Konfigurationsmenü "Daten" durch Hinweis uf den richtigen Ort ersetzt.</ChangeItem>
-            <ChangeItem section="efaCloud">Bugfix: Bei Datensatzinkonsistenz enthält die Fehlermeldung nun den nicht aktualisierten Datensatz</ChangeItem>
-            <ChangeItem section="efaCloud">Bugfix: efa2fahrtenabzeichen wird mit bis zu 4 Abweichungen noch aktualisiert</ChangeItem>
-            <ChangeItem section="efaCloud">Bugfix: Eine Info über den Stand des Servers (server_welcome_message) wird nun im efaCloud Konfigurationsdialog mit angezeigt (braucht Serverversion 2.3.0_12)</ChangeItem>
-            <ChangeItem section="efaCloud">Bugfix: Server => client Konfigurationsinformation wird nun mit jeder Synchronisation neu übertragen, nicht nur bei Neustart. Resume nach Pausieren Fehler behoben.</ChangeItem>
-            <ChangeItem section="efaCloud">Bugfix: Verbesserte Dartsellung des Fehlers bei der initialen Verbindung zur Vereinfachung der Fehlerbehebung bei der ersten efaCloud Konfiguration</ChangeItem>
+            <ChangeItem section="efaCloud">BugFix: Gruppen mit mehr als 27 Mitgliedern nun möglich</ChangeItem>
+            <ChangeItem section="efaCloud">BugFix: efaCloud und efaCLI nun kompatibel. Allerdings keine efaCloud Kommandos über efaCLI</ChangeItem>
+            <ChangeItem section="efaCloud">BugFix: efaRemote + efaCloud getestet</ChangeItem>
+            <ChangeItem section="efaCloud">BugFix: Toleranz der Fehlerprüfung optimiert</ChangeItem>
+            <ChangeItem section="efaCloud">BugFix: Hinweisdialog bei fehlschlagen der Authentifizierung am Server</ChangeItem>
+            <ChangeItem section="efaCloud">BugFix: verwaiste Konfigurationsreste in Konfigurationsmenü "Daten" durch Hinweis uf den richtigen Ort ersetzt.</ChangeItem>
+            <ChangeItem section="efaCloud">BugFix: Bei Datensatzinkonsistenz enthält die Fehlermeldung nun den nicht aktualisierten Datensatz</ChangeItem>
+            <ChangeItem section="efaCloud">BugFix: efa2fahrtenabzeichen wird mit bis zu 4 Abweichungen noch aktualisiert</ChangeItem>
+            <ChangeItem section="efaCloud">BugFix: Eine Info über den Stand des Servers (server_welcome_message) wird nun im efaCloud Konfigurationsdialog mit angezeigt (braucht Serverversion 2.3.0_12)</ChangeItem>
+            <ChangeItem section="efaCloud">BugFix: Server => client Konfigurationsinformation wird nun mit jeder Synchronisation neu übertragen, nicht nur bei Neustart. Resume nach Pausieren Fehler behoben.</ChangeItem>
+            <ChangeItem section="efaCloud">BugFix: Verbesserte Dartsellung des Fehlers bei der initialen Verbindung zur Vereinfachung der Fehlerbehebung bei der ersten efaCloud Konfiguration</ChangeItem>
         </Changes>
         <Changes lang="en">
-            <ChangeItem section="efaCloud">Bugfix: Groups with more than 27 members allowed.</ChangeItem>
-            <ChangeItem section="efaCloud">Bugfix: efaCloud und efaCLI are compatible. No efaCloud commands via efaCli.</ChangeItem>
-            <ChangeItem section="efaCloud">Bugfix: efaRemote + efaCloud is tested.</ChangeItem>
-            <ChangeItem section="efaCloud">Bugfix: Optimized error tolerance.</ChangeItem>
-            <ChangeItem section="efaCloud">Bugfix: Shows an error dialog if authentification at efaCloud server fails</ChangeItem>
-            <ChangeItem section="efaCloud">Bugfix: Corrected config menu "Data"</ChangeItem>
-            <ChangeItem section="efaCloud">Bugfix: If a data inconsistency is detected, the error message contains the non-uploaded record</ChangeItem>
-            <ChangeItem section="efaCloud">Bugfix: efa2fahrtenabzeichen will be uploaded with up to 4 differences</ChangeItem>
-            <ChangeItem section="efaCloud">Bugfix: shows a server_welcome_message in the efaCloud configuration dialog (needs Server version 2.3.0_12)</ChangeItem>
-            <ChangeItem section="efaCloud">Bugfix: Server => client configuration information is transferred with every synchronisation, instead of doing so only after a restart of efa. Fixed an error with resume after pausing sync</ChangeItem>
-            <ChangeItem section="efaCloud">Bugfix: Optimized error message during initial connection to efaCloud.</ChangeItem>
+            <ChangeItem section="efaCloud">BugFix: Groups with more than 27 members allowed.</ChangeItem>
+            <ChangeItem section="efaCloud">BugFix: efaCloud und efaCLI are compatible. No efaCloud commands via efaCli.</ChangeItem>
+            <ChangeItem section="efaCloud">BugFix: efaRemote + efaCloud is tested.</ChangeItem>
+            <ChangeItem section="efaCloud">BugFix: Optimized error tolerance.</ChangeItem>
+            <ChangeItem section="efaCloud">BugFix: Shows an error dialog if authentification at efaCloud server fails</ChangeItem>
+            <ChangeItem section="efaCloud">BugFix: Corrected config menu "Data"</ChangeItem>
+            <ChangeItem section="efaCloud">BugFix: If a data inconsistency is detected, the error message contains the non-uploaded record</ChangeItem>
+            <ChangeItem section="efaCloud">BugFix: efa2fahrtenabzeichen will be uploaded with up to 4 differences</ChangeItem>
+            <ChangeItem section="efaCloud">BugFix: shows a server_welcome_message in the efaCloud configuration dialog (needs Server version 2.3.0_12)</ChangeItem>
+            <ChangeItem section="efaCloud">BugFix: Server => client configuration information is transferred with every synchronisation, instead of doing so only after a restart of efa. Fixed an error with resume after pausing sync</ChangeItem>
+            <ChangeItem section="efaCloud">BugFix: Optimized error message during initial connection to efaCloud.</ChangeItem>
         </Changes>
 
     </Version>
@@ -1566,10 +1606,10 @@ section="Other"
         <DownloadSize>4250040</DownloadSize>
 		<MinimumJavaVersion>1.6</MinimumJavaVersion>
         <Changes lang="de">
-            <ChangeItem section="efaCloud">Bugfix: efaCloud Fast-Sync alle 30 Sekunden (Verringerung der Latenz der Sichtbarkeit von Aenderungen verschiedener Clients)</ChangeItem>
+            <ChangeItem section="efaCloud">BugFix: efaCloud Fast-Sync alle 30 Sekunden (Verringerung der Latenz der Sichtbarkeit von Aenderungen verschiedener Clients)</ChangeItem>
         </Changes>
         <Changes lang="en">
-            <ChangeItem section="efaCloud">Bugfix: efaCloud Fast-Sync every 30 seconds (latency reduction for changes of multiple clients becoming visible to others)</ChangeItem>
+            <ChangeItem section="efaCloud">BugFix: efaCloud Fast-Sync every 30 seconds (latency reduction for changes of multiple clients becoming visible to others)</ChangeItem>
         </Changes>
     </Version>
 
@@ -1580,10 +1620,10 @@ section="Other"
         <DownloadSize>4249529</DownloadSize>
 		<MinimumJavaVersion>1.6</MinimumJavaVersion>
         <Changes lang="de">
-            <ChangeItem section="efaCloud">Bugfix: NullPointerException in efaCloud beim Beenden einer Fahrt mit unbekanntem Boot oder Doppeleintrag korrigiert</ChangeItem>
+            <ChangeItem section="efaCloud">BugFix: NullPointerException in efaCloud beim Beenden einer Fahrt mit unbekanntem Boot oder Doppeleintrag korrigiert</ChangeItem>
         </Changes>
         <Changes lang="en">
-            <ChangeItem section="efaCloud">Bugfix: NullPointerException fixed when finishing a session of an unknown or double-booked boat in efaCloud</ChangeItem>
+            <ChangeItem section="efaCloud">BugFix: NullPointerException fixed when finishing a session of an unknown or double-booked boat in efaCloud</ChangeItem>
         </Changes>
     </Version>
 
@@ -1594,12 +1634,12 @@ section="Other"
         <DownloadSize>4249632</DownloadSize>
 		<MinimumJavaVersion>1.6</MinimumJavaVersion>
 		<Changes lang="de">
-            <ChangeItem section="efaCloud">Bugfix: efaCloud Upload-Fehler (manueller Upload) korrigiert</ChangeItem>
-            <ChangeItem section="efaCloud">Bugfix: NullPointerException in efaCloud-Konfiguration korrigiert, wenn kein Projekt geoeffnet ist</ChangeItem>
+            <ChangeItem section="efaCloud">BugFix: efaCloud Upload-Fehler (manueller Upload) korrigiert</ChangeItem>
+            <ChangeItem section="efaCloud">BugFix: NullPointerException in efaCloud-Konfiguration korrigiert, wenn kein Projekt geoeffnet ist</ChangeItem>
         </Changes>
         <Changes lang="en">
-            <ChangeItem section="efaCloud">Bugfix: efaCloud Upload error (manual upload) fixed</ChangeItem>
-            <ChangeItem section="efaCloud">Bugfix: NullPointerException in efaCloud configuration fixed when no project is opened</ChangeItem>
+            <ChangeItem section="efaCloud">BugFix: efaCloud Upload error (manual upload) fixed</ChangeItem>
+            <ChangeItem section="efaCloud">BugFix: NullPointerException in efaCloud configuration fixed when no project is opened</ChangeItem>
         </Changes>
     </Version>
 
@@ -1624,11 +1664,11 @@ section="Other"
         <DownloadSize>4249549</DownloadSize>
 		<MinimumJavaVersion>1.6</MinimumJavaVersion>
         <Changes lang="de">
-            <ChangeItem section="Session Entry">Bugfix: NullPointerException beim Beenden einer Fahrt korrigiert</ChangeItem>
+            <ChangeItem section="Session Entry">BugFix: NullPointerException beim Beenden einer Fahrt korrigiert</ChangeItem>
             <ChangeItem section="Other">Neu: User Statistics bei remote Online-Update</ChangeItem>
         </Changes>
         <Changes lang="en">
-            <ChangeItem section="Session Entry">Bugfix: NullPointerException fixed when finishing a session</ChangeItem>
+            <ChangeItem section="Session Entry">BugFix: NullPointerException fixed when finishing a session</ChangeItem>
             <ChangeItem section="Other">New: User Statistics during remote Online Update</ChangeItem>
         </Changes>
     </Version>
@@ -1640,7 +1680,7 @@ section="Other"
         <DownloadSize>4249302</DownloadSize>
 		<MinimumJavaVersion>1.6</MinimumJavaVersion>
         <Changes lang="de">
-            <ChangeItem section="Stability">Bugfix: Lizenztext aktualisiert</ChangeItem>
+            <ChangeItem section="Stability">BugFix: Lizenztext aktualisiert</ChangeItem>
         </Changes>
     </Version>
 

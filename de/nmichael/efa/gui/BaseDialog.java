@@ -12,7 +12,6 @@ package de.nmichael.efa.gui;
 
 import java.awt.AWTEvent;
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Window;
@@ -28,11 +27,10 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 
 import de.nmichael.efa.Daten;
 import de.nmichael.efa.core.items.IItemType;
-import de.nmichael.efa.gui.util.AutoCompletePopupWindow;
+import de.nmichael.efa.core.items.ItemTypeStringAutoComplete;
 import de.nmichael.efa.util.ActionHandler;
 import de.nmichael.efa.util.Dialog;
 import de.nmichael.efa.util.EfaUtil;
@@ -235,14 +233,7 @@ public abstract class BaseDialog extends JDialog implements ActionListener {
         }
 
         if (evt.getActionCommand().equals(KEYACTION_ESCAPE)) {
-        	Component focusedComp=this.getFocusOwner();
-        	if (focusedComp instanceof JTextField) {
-        		if (AutoCompletePopupWindow.isShowingAt((JTextField) focusedComp)) {
-        			// do not hide window if autocomplete window is currently showing
-        			return;
-        		}
-        	}
-    		// otherwise, hide basewindow.
+        	// formerly this code checked if an autocomplete window was showing 
         	cancel(true);
         }
 

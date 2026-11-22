@@ -981,6 +981,7 @@ public class EfaBaseFrameMultisession extends EfaBaseFrame implements IItemListe
     /**
      * AutoComplete fields which are visible: try to autocomplete the item based on the data entered.
      */
+    
     @Override
     protected void autocompleteAllFields() {
     	// we do not call super implementation, as we do not set the fields which are 

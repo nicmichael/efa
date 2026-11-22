@@ -596,9 +596,11 @@ class ExecuteAfterDownloadImpl implements ExecuteAfterDownload {
                     LogString.operationSuccessfullyCompleted(International.getString("Download"))
                     + (Daten.applID != Daten.APPL_DRV ? "\n" +
                        International.getString("Es werden jetzt alle Daten gesichert und anschließend die neue Version installiert.")
+                    + "\n" + International.getString("Dies kann einige Minuten dauern, währenddessen efa auch 'eingefroren' wirken kann. Bitte warte, bis efa wieder reagiert.")
                        : ""));
         }
 
+        EfaGuiUtils.setWaitCursor(parent, true);
         // ZIP-Archiv mit bisherigen Daten sichern
         if (Daten.applID != Daten.APPL_DRV) {
             boolean backupProject = true;
@@ -609,6 +611,7 @@ class ExecuteAfterDownloadImpl implements ExecuteAfterDownload {
             Backup backup = new Backup(Daten.efaBakDirectory, null, backupProject, true, true); // do not include efa log during onlineupdate backup
             if (backup.runBackup(null) != 0) {
                 setError(LogString.operationFailed(International.getString("Backup")));
+                EfaGuiUtils.setWaitCursor(parent, false);
                 if (parent == null) {
                     return;
                 }
@@ -616,7 +619,7 @@ class ExecuteAfterDownloadImpl implements ExecuteAfterDownload {
                         backup.getLastErrorMessage()
                         + "\n"
                         + International.getString("Soll der Update-Vorgang trotzdem fortgesetzt werden?")) != Dialog.YES) {
-                    return;
+                	return;
                 }
             }
         }
@@ -629,6 +632,7 @@ class ExecuteAfterDownloadImpl implements ExecuteAfterDownload {
             result = EfaZIPUtil.unzipToResult(zipFile, Daten.efaMainDirectory);
         }
 
+        EfaGuiUtils.setWaitCursor(parent, false);
         if (result != null) {
             if (result.getStatus() == EfaZIPUtil.UnzipStatus.FAILURE) {
                 String errorText = result.getErrorsAsString();
@@ -640,10 +644,12 @@ class ExecuteAfterDownloadImpl implements ExecuteAfterDownload {
                 if (parent != null) {
                     Dialog.error(lastError);
                 }
+                EfaGuiUtils.setWaitCursor(parent, false);
                 return;
             }
         }
 
+        EfaGuiUtils.setWaitCursor(parent, false);
         // Erfolgreich
         if (parent != null) {
             Dialog.infoDialog(International.getString("Version aktualisiert"),
@@ -651,6 +657,7 @@ class ExecuteAfterDownloadImpl implements ExecuteAfterDownload {
                     + "\n" +
                     International.getString("efa wird nun neu gestartet."));
         }
+        EfaGuiUtils.setWaitCursor(parent, true);
         Logger.log(Logger.INFO, Logger.MSG_EVT_ONLINEUPDATEFINISHED,
                 LogString.operationSuccessfullyCompleted(
                 International.getMessage("Online-Update auf Version {version}", versionId)));

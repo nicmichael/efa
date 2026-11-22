@@ -12,15 +12,11 @@ package de.nmichael.efa.core.items;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.Rectangle;
-import java.awt.RenderingHints;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -28,13 +24,12 @@ import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JMenuItem;
@@ -46,14 +41,13 @@ import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
-import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import de.nmichael.efa.Daten;
-import de.nmichael.efa.gui.BaseDialog;
 import de.nmichael.efa.gui.EfaGuiUtils;
 import de.nmichael.efa.gui.ImagesAndIcons;
 import de.nmichael.efa.gui.util.EfaMouseListener;
@@ -65,353 +59,47 @@ import de.nmichael.efa.util.International;
 import de.nmichael.efa.util.Logger;
 import de.nmichael.efa.util.Mnemonics;
 
+/**
+ * ItemTypeList is a list of items that can be displayed in the GUI.
+ * It supports filtering, separators, and custom rendering.
+ */
 public class ItemTypeList extends ItemType implements ActionListener, DocumentListener, KeyListener {
 
     JPanel mypanel;
     JLabel label;
     JScrollPane scrollPane;
-    JList list = new JList();
+    JList<ItemTypeListData> list = new JList<ItemTypeListData>();
     JTextField filterTextField;
     EfaMouseListener popupListener; 
     JPopupMenu popup;
-    Long lastFilterChange=0l;
-    DefaultListModel<ItemTypeListData> data; // no longer Vector as we need a DefaultListModel for filtering
+    volatile Long lastFilterChange=0L;
+    public DefaultListModel<ItemTypeListData> data; // no longer Vector as we need a DefaultListModel for filtering
     String[] actions;
     String incrementalSearch = "";
-    int iconWidth = 0;
-    int iconHeight = 0;
-    private FastTwoColumnListCellRenderer listCellRenderer = null;
+    private int iconWidth = 0;
+    private int iconHeight = 0;
+    private ItemTypeListThreeColumnCellRenderer listCellRenderer = null;
 
-    /*protected static final String LIST_SECTION_STRING = "";//"----";
-    protected static final String LIST_SECTION_STRING_START = LIST_SECTION_STRING + "  ";
-    protected static final String LIST_SECTION_STRING_END = "  " + LIST_SECTION_STRING;*/
-    //Spacings for pretty rendering
-	private static final int HORZ_SINGLE_BORDER=5;
-	private static Border _emptyBorder = new EmptyBorder(2, HORZ_SINGLE_BORDER, 2, HORZ_SINGLE_BORDER);
-	private Color _separatorBackground = new Color(240,240,240);
+    protected static final String LIST_SECTION_STRING = "";//"----";
+
+    private double gridWeightX = 0.0;
+    private double gridWeightY = 0.0;
+
+    private Color _separatorBackground = new Color(240,240,240);
 	private Color _filterTextfieldDefaultBackground = Color.WHITE;
     private boolean showFilterField = false;
     protected String other_item_text=""; //item text of the element for <other boat> or <other person>
-    private ImageIcon defaultIconForCellRenderer;
         
-    class FastTwoColumnListCellRenderer extends JPanel implements javax.swing.ListCellRenderer<ItemTypeListData> {
 
-        private ItemTypeListData currentItem;
-        private boolean isSelected;
-        private boolean cellHasFocus;
-
-        private final static int iconGap = 6;
-        private final static int selectionBarPadding = 6; // padding inside the selection bar for better visuals
-        private final static int rightPadding = 12;
-        private final static int leftPadding = 12; 
-        private final static int verticalPaddingBetweenList = 2; //shall be a round number, 2 means one pixel above, one below the text.
-        private final static int reservedGapBetweenSides = 40; // <-- gewünschte 40px whitespace
-        private static final int SELECTION_ARC = 14; // größerer Wert für Separatoren, damit sie sich besser abheben
-        
-        Font fontStandard;
-        Font fontBold;
-        FontMetrics fmStandard;
-        FontMetrics fmBold;
-        
-        Color listBackground;
-        Color selBg = javax.swing.UIManager.getColor("List.selectionBackground");
-        Color selFg = javax.swing.UIManager.getColor("List.selectionForeground");
-        Color inActiveSelBg = javax.swing.UIManager.getColor("List.selectionInactiveBackground");
-        
-        private final Color grayColor = new Color(136, 136, 136); // #888888
-        
-        public FastTwoColumnListCellRenderer() {
-            setOpaque(true);
-            setBorder(_emptyBorder);
-            
-            updateCachedColors();
-           
-            if (Daten.lookAndFeel.endsWith(Daten.LAF_METAL) || Daten.lookAndFeel.endsWith(Daten.LAF_WINDOWS) || Daten.lookAndFeel.endsWith(Daten.LAF_WINDOWS_CLASSIC) 
-            		|| Daten.lookAndFeel.endsWith(Daten.LAF_NIMBUS)) {
-            	inActiveSelBg = selBg;
-            }
-            
-        }
-
-        private void updateCachedColors() { 
-        	selBg = (selBg != null ? selBg : new JList().getSelectionBackground());
-        	selFg = (selFg != null ? selFg : new JList().getSelectionForeground());
-        }
-
-        @Override
-        public Component getListCellRendererComponent(JList<? extends ItemTypeListData> list,
-                                                      ItemTypeListData value,
-                                                      int index,
-                                                      boolean isSelected,
-                                                      boolean cellHasFocus) {
-
-            this.currentItem = value;
-            this.isSelected = isSelected;
-            this.cellHasFocus = cellHasFocus;
-            this.listBackground = list.getBackground();
-            
-            // fonts: keep same font as list, bold for separators
-            if (value != null && value.separator) {
-                setFont(list.getFont().deriveFont(Font.BOLD));
-            } else {
-                setFont(list.getFont().deriveFont(Font.PLAIN));
-            }
-
-            // Font metrics & baseline
-            fontStandard = list.getFont();
-            fontBold = fontStandard.deriveFont(Font.BOLD);
-            fmStandard = getFontMetrics(fontStandard);
-            fmBold = getFontMetrics(fontBold);
-            
-            int prefH = Math.max(fmStandard.getHeight() + 6, (iconHeight > 0 ? iconHeight + 4 : 0));
-            setPreferredSize(new Dimension(fieldWidth, prefH+verticalPaddingBetweenList)); // +4 for vertical padding
-
-            return this;
-        }
-
-        protected void paintComponent(java.awt.Graphics g0) {
-            // We intentionally paint everything here on our own (no HTML).
-        	// this is necessary because with lot of boats which show secondary and tertiary informations,
-        	// the performance of HTML rendering is very bad on a Raspberry Pi 3b. With this custom rendering, 
-        	// we can achieve a very good performance even with 300 boats and secondary and tertiary information.
-        	
-            /* Two Column Lists
-        	 * Data is put together in ItemTypeBoatStatuslist.sortBootsList and sortMemberList
-        	 * 
-        	 * - Center separator texts, with grey background
-        	 * - left side: original data
-        	 * 
-        	 * Available boats: (right side)
-        	 * - show today's next reservation of a boat 
-        	 * 
-        	 * Boats on water: (right side)
-        	 * - show destination of a boat 
-        	 * 
-        	 * Unavailable boats
-        	 * - show "boat damage" if the boatcomment begins with this text on the l
-        	 * - show destination of boat
-        	 * - show reservation end if boat is reserved
-        	 * 
-        	 * Performance
-        	 * - excellent, only 100-150msec on Raspberry Pi 3b for reloading the whole boat list with ~300 Boats
-        	 * 
-        	 */
-            Graphics2D g = (Graphics2D) g0;
-
-            EfaGuiUtils.setStandardRenderingHints(g);
-            if (currentItem == null) {
-                super.paintComponent(g);
-                return;
-            }
-
-            int w = getWidth();
-            int h = getHeight();
-
-            // Draw background
-            if (currentItem.separator) {
-                // Separators use a different background color and are drawn as rounded rectangles. 
-            	// The text is drawn centered and in bold.
-                if (!isSelected) {
-                    g.setColor(_separatorBackground);
-                     g.fillRoundRect(selectionBarPadding, 1, w-(selectionBarPadding*2), h-1, SELECTION_ARC, SELECTION_ARC);
-                } else {
-                	if (cellHasFocus) {
-                		g.setColor(selBg != null ? selBg : this.getBackground());
-                	} else {
-                		g.setColor(inActiveSelBg != null ? inActiveSelBg : this.getBackground());
-                	}
-                    // Abgerundete Selektion zeichnen
-                    g.fillRoundRect(selectionBarPadding, 1, w-(selectionBarPadding*2), h-1, SELECTION_ARC, SELECTION_ARC);
-                }
-            } else {
-                // Standard entry: show rounded selection if selected, otherwise normal background.
-                if (isSelected) {
-                	//Draw white background first to avoid color bleeding on rounded corners when selection background is not opaque
-                    g.setColor(listBackground);
-                    g.fillRect(0, 1, w, h-1);
-                    if (cellHasFocus) {
-                    	g.setColor(selBg != null ? selBg : getBackground());
-                    } else {
-                    	g.setColor(inActiveSelBg != null ? inActiveSelBg : this.getBackground());
-                    }
-                    g.fillRoundRect(selectionBarPadding, 1, w-(selectionBarPadding*2), h-1, SELECTION_ARC, SELECTION_ARC);
-                } else {
-                    g.setColor(listBackground);
-                    g.fillRect(0, 0, w, h);
-                }
-            }
-
-            // Font metrics & baseline
-            int yText = (h + fmStandard.getAscent() - fmStandard.getDescent()) / 2;
-
-            int x = leftPadding;
-
-            // Icon rendering (only if icon present and not a separator)
-            if (!currentItem.separator && iconWidth > 0 && iconHeight > 0) {
-                ImageIcon icon = null;
-                try {
-                    if (currentItem.image != null) {
-                        icon = BaseDialog.getIcon(currentItem.image);
-                    }
-                    if (icon == null) {
-                        if (currentItem.colors != null && currentItem.colors.length > 0) {
-                            icon = EfaUtil.createColorPieIcon(currentItem.colors, iconWidth, iconHeight);
-                        } else {
-                            icon = buildDefaultIcon(iconWidth, iconHeight);
-                        }
-                    }
-                } catch (Exception e) {
-                    Logger.logdebug(e);
-                    icon = buildDefaultIcon(iconWidth, iconHeight);
-                }
-                if (icon != null) {
-                    int iconY = (h - icon.getIconHeight()) / 2;
-                    g.drawImage(icon.getImage(), x, iconY, this);
-                    x += iconWidth + iconGap;
-                }
-            }
-
-            // Separator text: centered, bold
-            if (currentItem.separator) {
-                String s = currentItem.text != null ? currentItem.text : "";
-                g.setFont(fontBold);
-                int sw = fmBold.stringWidth(s);
-                int sx = Math.max(0, (w - sw) / 2);
-                Color fg = isSelected ? selFg : getForeground();
-                g.setColor(fg != null ? fg : getForeground());
-                g.drawString(s, sx, yText);
-                return;
-            }
-
-            // Standard entry: primary text (left), optional tertiary text (left, after 3 spaces), secondary text (right, truncated if needed)
-            String primary = currentItem.text != null ? currentItem.text : "";
-            String tertiary = currentItem.tertiaryElement != null ? currentItem.tertiaryElement : "";
-            String secondary = currentItem.secondaryElement != null ? currentItem.secondaryElement : "";
-
-            // Left group MUST remain intact as it is the primary information. 
-            String leftToDraw = primary;
-            if (!tertiary.isEmpty()) {
-                leftToDraw = primary + "   " + tertiary; // three spaces exactly
-            }
-
-            int leftWidth = fmStandard.stringWidth(leftToDraw);
-
-            // Right boundary for secondary (absolute right, considering padding)
-            int rightX = w - rightPadding;
-
-            // Compute maximum pixels available for secondary given reserved gap of 40px
-            // Secondary must start at xSecLeft >= x + leftWidth + reservedGapBetweenSides
-            int maxSecPx = rightX - (x + leftWidth + reservedGapBetweenSides + selectionBarPadding); // also consider selection bar padding to avoid overlap with rounded corners
-            String secToDraw = secondary;
-
-            if (maxSecPx <= 0) {
-                // no space for secondary (even zero), don't draw it
-                secToDraw = "";
-            } else {
-                // truncate secondary to maxSecPx if necessary
-                if (fmStandard.stringWidth(secondary) > maxSecPx) {
-                    // reuse outer class truncateToWidth (available because we're inner class)
-                    secToDraw = truncateToWidth(fmStandard, secondary, maxSecPx);
-                }
-            }
-
-            // Draw left text (primary + tertiary), preserving colors:
-            // primary in normal foreground; tertiary in gray. If selected -> selection foreground.
-            g.setFont(fontStandard);
-
-            Color normalFg = isSelected ? (selFg != null ? selFg : getForeground()) : getForeground();
-            Color tertiaryColor = isSelected ? (selFg != null ? selFg : getForeground()) : grayColor;
-
-            // If there's tertiary, we need to split string to draw primary and tertiary in different colors.
-            if (!tertiary.isEmpty()) {
-                String primaryPart = primary;
-                String tertiaryPart = tertiary;
-
-                // Compute positions:
-                int xPrimary = x;
-                g.setColor(normalFg);
-                g.drawString(primaryPart, xPrimary, yText);
-
-                int xAfterPrimary = xPrimary + fmStandard.stringWidth(primaryPart);
-                // add width of three spaces
-                int spacesW = fmStandard.stringWidth("   ");
-                int xTertiary = xAfterPrimary + spacesW;
-                
-                String tertToDraw = tertiaryPart;
-                int maxTertPx = rightX - (xTertiary + selectionBarPadding);
-                if (maxTertPx <= 0) {
-                    // no space for secondary (even zero), don't draw it
-                    tertToDraw = "";
-                } else {
-                    // truncate secondary to maxSecPx if necessary
-                    if (fmStandard.stringWidth(tertiaryPart) > maxTertPx) {
-                        // reuse outer class truncateToWidth (available because we're inner class)
-                        tertToDraw = truncateToWidth(fmStandard, tertiaryPart, maxTertPx);
-                    }
-                }
-                g.setColor(tertiaryColor);
-                g.drawString(tertToDraw, xTertiary, yText);
-            } else {
-                // only primary
-                g.setColor(normalFg);
-                g.drawString(primary, x, yText);
-            }
-
-            // Draw secondary (right-aligned) if any
-            if (!secToDraw.isEmpty()) {
-                int secW = fmStandard.stringWidth(secToDraw);
-                int sx = rightX - secW;
-                // Ensure we don't overlap left group + reserved gap; as we already computed maxSecPx, this should hold.
-                g.setColor(tertiaryColor);
-                g.drawString(secToDraw, sx, yText);
-            }
-        }
-        
-        // Build a default icon (a simple filled circle) for entries that have no specific icon. Cache it for performance.
-        private synchronized ImageIcon buildDefaultIcon(int iconWidth, int iconHeight) {
-        	if (defaultIconForCellRenderer==null) {
-                BufferedImage image = new BufferedImage(iconWidth, iconHeight, BufferedImage.TYPE_INT_ARGB);
-
-                Graphics2D g = image.createGraphics();
-                g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g.setColor(new Color (230,230,230));
-        	    g.fillOval(0, 0, iconWidth, iconHeight);
-                defaultIconForCellRenderer= new ImageIcon(image);    		
-        	}
-        	return defaultIconForCellRenderer;
-        }
-        
-        /**
-         * Truncate a string to fit within maxPx pixels, appending an ellipsis if truncation occurs.
-         * @param fm FontMetrics used to measure string width
-         * @param s String to truncate
-         * @param maxPx Maximum pixel width allowed
-         * @return Truncated string with ellipsis if needed
-         */
-        private String truncateToWidth(FontMetrics fm, String s, int maxPx) {
-            if (s == null || s.isEmpty()) return s;
-            if (fm.stringWidth(s) <= maxPx) return s;
- 
-            String ell = "\u2026";
-            int ellW = fm.stringWidth(ell);
-            int lo = 0, hi = s.length();
-            
-            // use a logarithmic search to find the maximum substring that fits within maxPx
-            // and at this point, we know that we NEED to trunkate as s>maxPx
-            while (lo < hi) {
-                int mid = (lo + hi + 1) >>> 1;
-                int w = fm.stringWidth(s.substring(0, mid)) + ellW;
-                if (w <= maxPx) lo = mid;
-                else hi = mid - 1;
-            }
-            if (lo <= 0) return ell;
-            return s.substring(0, lo) + ell;
-        }
-
-        
-    }
-
+    /** 
+	 * Inner class to hold the data for each item in the list.
+	 * There are three elements for each item: primary, secondary, and tertiary.
+	 * Primary is the main text, secondary is right-aligned, and tertiary is left-aligned after primary.
+	 * An item can also be a separator, which is a non-selectable item that visually separates groups of items.
+	 * The colors array defines the colors of the icon (pie chart) of the item, wich is created by the FastTwoColumnListCellRenderer.
+	 */
     class ItemTypeListData {
+
         String text;
         String toolTipText;
         String toolTipFilterText;
@@ -437,7 +125,7 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
             	try {
             		//this removes all html tags from the tooltiptext. 
             		//although it is told it may be unsafe to remove tags by regular expressions, it works.
-            		this.toolTipFilterText = toolTipText.replaceAll("<[^\\P{Graph}>]+(?: [^\\P{Graph}>]*)*>", "");
+            		this.toolTipFilterText = EfaGuiUtils.HTML_TAG.matcher(toolTipText).replaceAll("");
             	} catch (Exception e) {
             		Logger.log(e);
             		this.toolTipFilterText=null; // just in case the removal of html tags fails, set tooltippfiltertext to null.
@@ -454,14 +142,11 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
         public String toString() {
             return text;
         }
-        public String getFilterableText() {
-        	if (toolTipFilterText!=null) {
-        		return text.concat(toolTipFilterText);
-        	} else {
-        		return text;
-        	}
-
-        }
+ 
+    	public String getFilterableText() {
+    	    if (toolTipFilterText == null) return text;
+    	    return text + " " + toolTipFilterText;   // use a space to separate the two parts for filtering
+    	}
     }
 
     public ItemTypeList(String name,
@@ -480,14 +165,14 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
     
     public ItemTypeList(String name,
             int type, String category, String description) {
-        this.name = name;
-        this.type = type;
-        this.category = category;
-        this.description = description;
-        this.showFilterField = false;
-        data = new DefaultListModel<ItemTypeListData>();
+        this(name, type, category, description, false);
     }
 
+    /**
+	 * Creates a copy of this ItemTypeList with the same properties and items.
+	 * (but for ItemTypeList: not the list items).
+	 * @return a new ItemTypeList that is a copy of this one
+	 */
     public IItemType copyOf() {
         ItemTypeList copy= new ItemTypeList(name, type, category, description, this.showFilterField);
         copy.setFieldSize(fieldWidth,  fieldHeight);
@@ -495,21 +180,85 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
         copy.setVisible(this.isVisible());
         copy.setFieldGrid(fieldGridWidth, fieldGridHeight, fieldGridAnchor, fieldGridFill);
         copy.setPadding(padXbefore, padXafter, padYbefore, padYafter);
+        copy.setIconSize(iconWidth, iconHeight);
+        if (actions!=null) { copy.setPopupActions(actions.clone());}
+        copy.other_item_text=this.other_item_text;
+        copy.setSeparatorBackground(this._separatorBackground);
+        
         return copy;
     }
 
+    private void setSeparatorBackground(Color _separatorBackground2) {
+		this._separatorBackground = _separatorBackground2;
+	}
+
+	/**
+	 * Add an item to the list. The list will be filtered after adding the item.
+	 * This is rather expensive if you add many items, as the filter is applied after each item.
+	 * Use addItems() to add several items at once and filter only once.
+	 * 
+	 * @param text The primary text of the item
+	 * @param toolTipText The tooltip text of the item
+	 * @param secondaryItem The secondary text of the item (right-aligned)
+	 * @param tertiaryItem The tertiary text of the item (left-aligned, after primary)
+	 * @param object The associated object of the item
+	 * @param separator Whether this item is a separator
+	 * @param separatorHotkey The hotkey for this separator (if applicable)
+	 */
     public void addItem(String text, String toolTipText, String secondaryItem, String tertiaryItem, Object object, boolean separator, char separatorHotkey) {
         data.addElement(new ItemTypeListData(text, toolTipText, secondaryItem, tertiaryItem, object, separator, separatorHotkey));
         filter();
     }
 
+    /**
+	 * Add an item to the list. The list will be filtered after adding the item.
+	 * This is rather expensive if you add many items, as the filter is applied after each item.
+	 * Use addItems() to add several items at once and filter only once.
+	 * 
+	 * @param text The primary text of the item
+	 * @param toolTipText The tooltip text of the item
+	 * @param secondaryItem The secondary text of the item (right-aligned)
+	 * @param tertiaryItem The tertiary text of the item (left-aligned, after primary)
+	 * @param object The associated object of the item
+	 * @param separator Whether this item is a separator
+	 * @param separatorHotkey The hotkey for this separator (if applicable)
+	 * @param image The image path for the item icon
+	 * @param colors The colors for the item icon (if applicable)
+	 * 
+	 */
     public void addItem(String text, String toolTipText, String secondaryItem, String tertiaryItem, Object object, boolean separator, char separatorHotkey,
             String image, Color[] colors) {
 		data.addElement(new ItemTypeListData(text, toolTipText, secondaryItem, tertiaryItem, object, separator,
 				separatorHotkey, image, colors));
         filter();
     }
-
+    
+    /**
+     * Adds several items at once and filters the list only once.
+     * Unlike setItems(), the existing items are kept.
+     *
+     * @param items the items to append
+     */
+    public void addItems(List<ItemTypeListData> items) {
+        if (items == null) {
+            return;
+        }
+        /*TODO: Currently efa is based on Java8, so we cannot use data.addAll(items) directly. 
+          Instead, we add each item individually and then filter once at the end.
+          Using data.addAll(items) would be more efficient (throws one event instead of n), 
+          but it requires Java11 or later.*/
+        for (ItemTypeListData item : items) {
+            data.addElement(item);   // no filter() here, to avoid O(n^2) work
+        }
+        filter();                    // filter once after all items were added
+    }
+ 
+    /**
+	 * Removes an item from the list by index and filters the list afterwards.
+	 *
+	 * @param idx the index of the item to remove, referring to the unfiltered data (all items),
+	 *            not to the filtered view
+	 */
     public void removeItem(int idx) {
         if (idx >= 0 && idx < data.size()) {
             data.remove(idx);
@@ -517,31 +266,32 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
         filter();
     }
 
+    /**
+	 * Removes all items from the list and filters the list afterwards.
+	 */
     public void removeAllItems() {
-        data = new DefaultListModel<ItemTypeListData>();
+        data.clear(); // keep the DefaultListModel, just clear it
         filter();
     }
 
+    /**
+	 * Sets the items of the list, replacing any existing items, and filters the list afterwards
+	 * @param items the new items to set
+	 */
     public void setItems(Vector<ItemTypeListData> items) {
-        if (data == null) {
-            data = new DefaultListModel<ItemTypeListData>();
-            filter();
-        }
+        data.clear();
         if (items != null) {
-        	data = new DefaultListModel<ItemTypeListData>();
-            for (ItemTypeListData item:items) {
-            	data.addElement(item);
+            for (ItemTypeListData item : items) {
+                data.addElement(item);
             }
-            filter();        	
-        } else {
-            data = new DefaultListModel<ItemTypeListData>();
-            filter();
         }
+        filter();
     }
 
-    /* returns the number of items in the list.
+    /** 
+     * Returns the number of items in the list.
      * not all may be visible. If you want to get the size of the filtered list,
-     * use @see filteredSize() instead.
+     * use @see #filteredSize() instead.
      */
     public int size() {
         if (data == null) {
@@ -550,10 +300,12 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
         return data.size();
     }
 
-    // returns the size of the list when the filter text field is applied.
-    // if no filter is set, the list data size is returned.
+    /**
+     * Returns the size of the list when the filter text field is applied.
+     * @return the number of items that match the current filter, or the total number of items if no filter is applied
+     */
     public int filteredSize() {
-    	ListModel theList = null;
+    	ListModel<ItemTypeListData> theList = null;
     	
         if (showFilterField==true) {
         	theList = list.getModel();
@@ -567,7 +319,14 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
         	return theList.getSize();
         }
     }
-    
+
+    /** 
+     * Returns the text of the item at the given index.
+     * @param idx
+     * @return the text of the item at the given index, or null if the index is out of bounds
+     * Index space: the index refers to the unfiltered data (all items), not to the filtered view.
+     * Use getSelectedIndex() for the filtered view, as the filter can hide items and shift indices.
+     */
     public String getItemText(int idx) {
         if (idx >= 0 && idx < data.size()) {
             return data.get(idx).text;
@@ -575,6 +334,11 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
         return null;
     }
 
+    /**
+	 * Returns the associated object of the item at the given index.
+	 * @param idx
+	 * @return the associated object of the item at the given index, or null if the index is out of bounds
+	 */
     public Object getItemObject(int idx) {
         if (idx >= 0 && idx < data.size()) {
             return data.get(idx).object;
@@ -582,6 +346,10 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
         return null;
     }
 
+    /**
+     * Clears the incremental search string and resets the tooltip of the list if necessary.
+     * 
+     */
     void clearIncrementalSearch() {
             incrementalSearch = "";
             if (list != null) {
@@ -591,10 +359,18 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
             }
     }
 
+    /**
+     * Returns the current incremental search string, which is built from the keys pressed by the user.
+     * @return the current incremental search string
+     */
     public String getIncrementalSearchString() {
         return incrementalSearch;
     }
 
+    /**
+	 * Sets the actions for the popup menu of the list. If a popup menu already exists, it will be rebuilt with the new actions.
+	 * @param actions an array of action strings for the popup menu
+	 */
     public void setPopupActions(String[] actions) {
         this.actions = actions;
         // if a popup menu already exists, remove all elements and rebuild the popup menu.
@@ -607,28 +383,64 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
         }
     }
 
+    /** 
+     * Initializes the display of the list. This method is not used, as everything is done in displayOnGui(...).
+     */
     protected void iniDisplay() {
         // not used, everything done in displayOnGui(...)
     }
 
+    /**
+	 * Displays the list on the given panel at the specified grid position (x, y).
+	 * If the list is indented, it will be displayed with an additional offset.
+	 * The list will be filtered after being displayed.
+	 *
+	 * @param dlg the parent window for the list
+	 * @param panel the panel to display the list on
+	 * @param x the grid x position
+	 * @param y the grid y position
+	 * @return 1 if the list was displayed successfully
+	 */
     public int displayOnGui(Window dlg, JPanel panel, int x, int y) {
+
         //respect the indent property of the item, if set
         x=(this.isIndent() ? x+1 : x);
-        panel.add(setupPanel(dlg), new GridBagConstraints(x, y, fieldGridWidth, fieldGridHeight, 0.0, 0.0,
+
+        panel.add(setupPanel(dlg), new GridBagConstraints(x, y, fieldGridWidth, fieldGridHeight, gridWeightX, gridWeightY,
                 fieldGridAnchor, fieldGridFill, new Insets(padYbefore, 0, padYafter, padXafter), 0, 0));
         showValue();
         return 1;
     }
 
+    /**
+	 * Displays the list on the given panel at the specified border layout orientation (e.g.,
+	 * BorderLayout.NORTH, BorderLayout.SOUTH, BorderLayout.CENTER, etc.). The list will be filtered after being displayed.
+	 * 
+	 * @param dlg the parent window for the list
+	 * @param panel the panel to display the list on
+	 * @param borderLayoutOrientation the border layout orientation to place the list in
+	 * @return 1 if the list was displayed successfully
+	 */
     public int displayOnGui(Window dlg, JPanel panel, String borderLayoutOrientation) {
         panel.add(setupPanel(dlg), borderLayoutOrientation);
         showValue();
         return 1;
     }
 
+    /** 
+     * Sets up the panel for displaying the list, including the label, filter text field, scroll pane, and list component.
+     * @param dlg the parent window for the list
+     * @return the panel containing the list and its components
+     */
     private JPanel setupPanel(Window dlg) {
         this.dlg = dlg;
 
+        // Detach the previous list from the shared model before it is replaced. Otherwise the
+        // old JList stays registered as a ListDataListener on the model and receives every
+        // change event (one per added item), so the cost grows with each display switch.
+        if (list != null) {
+            list.setModel(new DefaultListModel<ItemTypeListData>());
+        }
         list = createNewListWithTooltippSupport();
         
         if (this.showFilterField) {
@@ -646,9 +458,6 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
         //scrollbar is shown only when needed
         scrollPane = new JScrollPane(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED/*ALWAYS*/, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         this.field = scrollPane;
-        
-        mypanel = new JPanel();
-        mypanel.setLayout(new BorderLayout());
 
         if (getDescription() != null) {
             if (Daten.efaConfig.getHeaderUseHighlightColor()) {
@@ -687,13 +496,17 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
         list.setBorder(BorderFactory.createEmptyBorder(4, 0, 4, 0));
         scrollPane.setPreferredSize(new Dimension(fieldWidth, fieldHeight));
         buildPopupMenu(); //popupItems has been initialized earlier
+        
         // KeyListeners entfernen, damit unter Java 1.4.x nicht automatisch gescrollt wird, sondern durch den eigenen Algorithmus
         try {
             KeyListener[] kl = list.getKeyListeners();
             for (int i = 0; i < kl.length; i++) {
                 list.removeKeyListener(kl[i]);
             }
-        } catch (NoSuchMethodError e) { /* Java 1.3 kennt diese Methode nicht */ }
+        } catch (Exception e) { 
+        	Logger.logdebug(e);
+        }
+        
         list.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(KeyEvent e) {
                 list_keyReleased(e);
@@ -703,7 +516,7 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
 			list.addMouseListener(new java.awt.event.MouseAdapter() {
 	            public void mouseEntered(MouseEvent e) {
 	            	try {
-            			((JList) e.getSource()).setToolTipText(null); // remove tool tip from scrolling/searching
+            			((JList<?>) e.getSource()).setToolTipText(null); // remove tool tip from scrolling/searching
 	            	} catch (Exception ee) {
 	            		Logger.logdebug(ee);
 	            	}}});
@@ -727,6 +540,7 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
         //--> Scrollpane (CENTER)
         //    --> JList
         
+        mypanel = new JPanel();
         mypanel.setLayout(new BorderLayout());
         mypanel.setBorder(new EmptyBorder(0,4,0,4));// 4 pixel space on the left and the right side of the panel
         
@@ -771,13 +585,17 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
         mypanel.add(scrollPane, BorderLayout.CENTER);
 
         if (listCellRenderer == null) {
-            listCellRenderer = new FastTwoColumnListCellRenderer();
+            listCellRenderer = new ItemTypeListThreeColumnCellRenderer();
         }
-        list.setCellRenderer(listCellRenderer);        
+        list.setCellRenderer(listCellRenderer);
         
         return mypanel;
     }
 
+    /** 
+	 * Builds the popup menu for the list based on the actions array.
+	 * If a popup menu already exists, it will be cleared and rebuilt.
+	 */
 	private void buildPopupMenu() {
 		if (popup!=null) {
 			popup.removeAll();
@@ -796,6 +614,11 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
         }
 	}
 
+	/** 
+	 * Returns the icon corresponding to the given action ID. This is used for the popup menu items.
+	 * @param actionID the action ID string (e.g., "1", "2", "3", etc.)
+	 * @return the Icon object corresponding to the action ID, or null if no icon is defined for that action
+	 */
     private Icon getIconFromActionID(String actionID) {
     	if (actionID.equals("1")) return ImagesAndIcons.getIcon(ImagesAndIcons.IMAGE_ACTION_START_SESSION);
     	if (actionID.equals("2")) return ImagesAndIcons.getIcon(ImagesAndIcons.IMAGE_ACTION_FINISH_SESSION);	
@@ -806,36 +629,62 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
     	return null;
     }
     
+    /** 
+     * Handles action events from the popup menu items. When a menu item is clicked, 
+     * this method is called and it notifies the listener of the action.
+     * 
+     * @param e the ActionEvent triggered by the menu item click
+     */
     public void actionPerformed(ActionEvent e) {
         if (listener != null) {
             listener.itemListenerAction(this, e);
         }
     }
 
+    /** 
+	 * Clears the popup menu by hiding it if it is currently visible.
+	 */
     public void clearPopup() {
         if (popup != null) {
             popup.setVisible(false);
         }
     }
     
+    /** 
+     * Shows the popup menu by making it visible if it is not already visible.
+     */
     public void showPopup() {
         if (popup != null) {
             popup.setVisible(true);
         }	
     }
 
+    /** 
+	 * Clears the selection in the list by deselecting any selected items.
+	 */
     public void clearSelection() {
         try {
             //list.setSelectedIndices(new int[0]);
             list.clearSelection();
         } catch(Exception e) {
+        	Logger.logdebug(e);
         }
     }
 
+    /**
+     * Returns whether the list currently has focus in the GUI.
+     * @return
+     */
     public boolean isFocusOwner() {
         return list.isFocusOwner();
     }
 
+    /** 
+     * Handles key released events in the list. This method is called 
+     * when a key is released while the list has focus.
+     * @param e the KeyEvent triggered by the key release
+     * 
+     */
     private void list_keyReleased(KeyEvent e) {
         clearPopup();
         if (e != null) {
@@ -852,6 +701,12 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
         }
     }
 
+    /** 
+     * Handles focus gained events for the list. When the list gains focus, this method is called.
+     *  
+     * @param e the FocusEvent triggered by the list gaining focus
+     * 
+     */
     private void list_focusGained(FocusEvent e) {
         if (list != null && list.getFirstVisibleIndex() >= 0 && list.getSelectedIndex() < 0) {
             list.setSelectedIndex(0);
@@ -862,11 +717,14 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
         }
     }
     
-    /* clear filtertextfield, if it has been unchanged more than two minutes */
+    /** 
+     * Clears the filter text field if it has been unchanged for a specified interval.
+     * (Default is 2 minutes, but can be configured in efaConfig.)
+     */
     public void clearFilterTextByInterval() {
     	
     	// get the reset filter interval in minutes from efaConfig.
-    	long filterResetInterval= (Daten.efaConfig.getValueEfaBoathouseFilterTextAutoClearInterval()*60*1000); 
+    	long filterResetInterval= (Daten.efaConfig.getValueEfaBoathouseFilterTextAutoClearInterval() * 60L * 1000L); 
     	
     	
     	if (filterResetInterval>0) {
@@ -881,33 +739,62 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
     	}
     }
 
-    /* clear filter text field intentionally, if it is displayed */
+    /**
+	 * Clears the filter text field and resets the filter. 
+	 * This method ensures that it runs on the Event Dispatch Thread (EDT) to avoid threading issues.
+	 */
     public void clearFilterText() {
 
+    	// be sure to run on EDT, as this method may be called from a background thread
+        if (!SwingUtilities.isEventDispatchThread()) {
+            SwingUtilities.invokeLater(this::clearFilterText);   
+            return;
+        }
+        
     	if (this.showFilterField && (this.filterTextField != null)) {
-			this.filterTextField.setText("");
+			this.filterTextField.setText(""); // this also triggers the DocumentListener, which will call filter() automatically
         	updateLastFilterChange();
     		if (!this.filterTextField.hasFocus()) {
     			this.filterTextField.setBackground(_filterTextfieldDefaultBackground);
     		}
-    		filter();    
     	}
     }
     
-    // scrolle in der Liste list (deren Inhalt der Vector entries ist), zu dem Eintrag
-    // mit dem Namen such und selektiere ihn. Zeige unterhalb des Boote bis zu plus weitere Einträge.
+    /**
+	 * Scrolls the list to the entry that matches the search string and selects it.
+	 * If the entry is a separator, it will skip to the next selectable item in the specified direction.
+	 * 
+	 * Remarks: This method is used for incremental search directly in the list. 
+	 * It can be triggered by key events or other search actions.
+	 * 
+	 * This is the original incremental search method, which is kept for backwards compatibility.
+	 * It is not used for the new filter text field, which has its own filtering mechanism and shall replace this method in the future.
+	 *  
+	 * @param search the search string to find in the list
+	 * @param plus the number of additional entries to show below the selected entry
+	 * @param direction the direction to move if the found entry is a separator (-1 for up, 1 for down)
+	 */
+
     private void scrollToEntry(String search, int plus, int direction) {
-    	@SuppressWarnings("unchecked")
-		DefaultListModel <ItemTypeListData> theData= (DefaultListModel)list.getModel();
-    	
+
         if (list == null || search == null || search.length() == 0) {
             return;
         }
+		DefaultListModel <ItemTypeListData> theData= (DefaultListModel<ItemTypeListData>)list.getModel();
+		
         try {
             int start = 0;
 
             int index = -1;
 
+            /* if the first character of the search string is a digit, 
+             * we interpret it as a section number and search for the corresponding section in the list.
+             * 
+             * the intended use is that the user click in the list and then presses a number key to jump to the corresponding section.
+             * so the user can quickly jump to a section of two-seaters by pressing "2", or to a section of singles by pressing "1", etc.
+             * 
+             * this is rather outdated, as the list now has a filter text field, but we keep it for backwards compatibility.
+             */
             if (search.charAt(0) >= '0' && search.charAt(0) <= '9') {
                 int isearch = search.charAt(0) - '0';
                 // search for a section with the corresponding number
@@ -948,8 +835,9 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
                 boolean startsWith = search.length() == 1; // for single-character search, match strings starting with this search string; otherwise, match somewhere
                 for (int run = 0; run < 2; run++) { // 2 search runs: 1st - start from "start"; 2nd - if no result, restart from 0
                     for (int i = start; i < theData.size(); i++) {
-                        String item = ((String) theData.get(i).text).toLowerCase();
-                        if (startsWith && item.startsWith(search) || !startsWith && item.contains(search)) {
+                        String item = (theData.get(i).text != null ? theData.get(i).text : "").toLowerCase();
+                        boolean matches = startsWith ? item.startsWith(search) : item.contains(search);
+                        if (matches) {
                             index = i;
                             break;
                         }
@@ -976,9 +864,6 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
 
             if (Daten.efaConfig.getValueEfaBoathouseExtdToolTips()==false) {
 	            Rectangle rect = list.getVisibleRect();
-	         /*   if (search.startsWith(LIST_SECTION_STRING)) {
-	                list.setToolTipText(null);
-	            } else {*/
 	                list.setToolTipText((search.length() > 0 ? search : null));
 	                int origDelay = ToolTipManager.sharedInstance().getInitialDelay();
 	                ToolTipManager.sharedInstance().setInitialDelay(0);
@@ -987,17 +872,26 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
 	                        10, rect.y + rect.height - 50,
 	                        0, false));
 	                ToolTipManager.sharedInstance().setInitialDelay(origDelay);
-	            //}
             }
 
         } catch (Exception ee) { Logger.logdebug(ee);/* just to be sure */ }
     }
 
+    /**
+	 * Selects the first item in the list that is not a separator and not "<other boat>" or "<other person>".
+	 * If no such item exists, it selects the first item in the list regardless.
+	 */
     private void selectFirstMatchingElement() {
-    	int index=1; //start with item 1 as item 0 is always "<other boat>" or "<other person>"
-		DefaultListModel <ItemTypeListData> theData= (DefaultListModel)list.getModel();
-    	  // check whether we should really select this item
+		DefaultListModel <ItemTypeListData> theData= (DefaultListModel<ItemTypeListData>)list.getModel();
 
+    	int index = 0;
+	    if (filterTextField.getText().trim().length() > 0
+	          && theData.getSize() > 0
+	          && other_item_text.equals(theData.get(0).text)) {
+	      index = 1;
+	    }
+    	
+    	// check whether we should really select this item
 		if (filterTextField.getText().trim().length()==0){
 			index=0;
 		} else { 
@@ -1019,104 +913,200 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
 
     }
 
+    /** 
+	 * Returns the associated object of the currently selected item in the list.
+	 * @return the associated object of the selected item, or null if no item is selected
+	 * */
     public Object getSelectedValue() {
-        try {
-            if (list == null || list.isSelectionEmpty()) {
-                return null;
-            }
-            ItemTypeListData item = (ItemTypeListData)list.getSelectedValue();
-            return item.object;
-        } catch (Exception e) {
-            return null;
-        }
+        ItemTypeListData item = getSelectedData();
+        return (item != null) ? item.object : null;
     }
 
+    /** 
+	 * Returns whether the currently selected item in the list is a separator.
+	 */
     public boolean getSelectedItemIsSeparator() {
-        try {
-            if (list == null || list.isSelectionEmpty()) {
-                return false;
-            }
-            ItemTypeListData item = (ItemTypeListData)list.getSelectedValue();
-            return item.separator;
-        } catch (Exception e) {
-            return false;
-        }    	
+        ItemTypeListData item = getSelectedData();
+        return (item != null) && item.separator;
     }
     
+    /**
+     * Returns the text of the currently selected item in the list.
+     * @return the text of the selected item, or null if no item is selected
+     */
     public String getSelectedText() {
+        ItemTypeListData item = getSelectedData();
+        return (item != null) ? item.text : null;
+    }
+
+    /**
+     * Returns the data of the currently selected item, shared by all getSelected*() methods.
+     * Centralizing this keeps the selection lookup in one place, so a change to it
+     * only has to be made once.
+     *
+     * @return the selected item data, or null if nothing is selected or the lookup fails
+     */
+    private ItemTypeListData getSelectedData() {
         try {
             if (list == null || list.isSelectionEmpty()) {
                 return null;
             }
-            ItemTypeListData item = (ItemTypeListData)list.getSelectedValue();
-            return item.text;
+            // JList is typed as JList<ItemTypeListData>, so no cast is needed here
+            return list.getSelectedValue();
         } catch (Exception e) {
+            // Log instead of failing silently, so unexpected states remain visible in the debug log
+            Logger.logdebug(e);
             return null;
         }
     }
 
+    /**
+	 * Returns whether the input in the list is valid. 
+	 * This method always returns true, as the list does not have invalid input.
+	 * @return true
+	 */
     public boolean isValidInput() {
         return true;
     }
 
+    /** 
+	 * Returns the value from the field. This method is not used, as the list does
+	 * not have a single value to return. It always returns null.
+	 * 
+	 * return null
+	 */
     public String getValueFromField() {
         return null;
     }
 
+    /** 
+	 * Shows the current value of the list by updating the cell renderer configuration,
+	 * setting the list model to the data, and applying the filter.
+	 */
     public void showValue() {
+    	updateCellRendererConfig();
     	list.setModel(data);
         filter();
     }
     
+    /**
+     * Passes the current layout values (icon size, field width, separator color) to the cell renderer.
+     * Must be called whenever one of these values may have changed.
+     */
+    private void updateCellRendererConfig() {
+        if (listCellRenderer != null) {
+            listCellRenderer.configure(iconWidth, iconHeight, fieldWidth, _separatorBackground);
+        }
+    }
+
+    /**
+     * Sets the size of the group icons shown in front of the list entries.
+     * 0 means no icons are shown. The cell renderer is updated immediately.
+     *
+     * @param width  icon width in pixels
+     * @param height icon height in pixels
+     */
+    public void setIconSize(int width, int height) {
+        this.iconWidth = width;
+        this.iconHeight = height;
+        updateCellRendererConfig();
+    }
+    
+    /**
+     * Does nothing, as the list does not have a single value to get from the GUI. 
+     * This method is required by the IItemType interface.
+	 */
     public void getValueFromGui() {
     }
     
+    /**
+	 * Does nothing, as the list does not have a single value to parse. 
+	 * This method is required by the IItemType interface.
+	 */
     public void parseValue(String value) {
         // nothing to do
     }
 
+    /** 
+	 * Sets the size of the list field in the GUI. If a scroll pane is used
+	 * 
+	 * @param width  the width of the field in pixels
+	 * @param height the height of the field in pixels
+	 */
     public void setFieldSize(int width, int height) {
         super.setFieldSize(width, height);
         if (scrollPane != null) {
             scrollPane.setPreferredSize(new Dimension(fieldWidth, fieldHeight));
         }
+        updateCellRendererConfig();
     }
 
+    /** 
+	 * Sets the description text of the list and updates the label if it exists.
+	 * @param s the description text to set
+	 */
     public void setDescription(String s) {
         super.setDescription(s);
         if (label != null) {
-            label.setText(s);
+            Mnemonics.setLabel(this.dlg, label, " " + s + ": ");
         }
     }
 
+    /**
+     * Sets the selected index of the list to the given index. If the index is out of bounds, no selection is made.
+     * @param i
+     */
     public void setSelectedIndex(int i) {
         list.setSelectedIndex(i);
     }
 
+    /**
+	 * Returns the index of the currently selected item in the list.
+	 * @return the index of the selected item in the filtered view, or -1 if no item is selected.
+	 * Index space: this index refers to the filtered view, not to the unfiltered data used by getItemText() and getItemObject().
+	 */
     public int getSelectedIndex() {
         return list.getSelectedIndex();
     }
 
+    /** 
+	 * Returns the panel containing the list and its components (label, filter text field, scroll
+	 * pane). This panel can be added to a GUI container.
+	 * @return the JPanel containing the list and its components
+	 * */
     public JPanel getPanel() {
         return mypanel;
     }
 
     // functions for documentListener for the filter text field
+    /** 
+     * Called when the text in the filter text field is inserted or updated. 
+     * This method triggers the filtering of the list items based on the current text in the filter text field.
+     */
     public void insertUpdate(DocumentEvent e) {
         filter();
     }
 
-
+    /**
+     * Called when the text in the filter text field is removed or updated.
+     * This method triggers the filtering of the list items based on the current text in the filter text field.
+     */
     public void removeUpdate(DocumentEvent e) {
         filter();
     }
 
+    /**
+	 * Called when the text in the filter text field is changed. 
+	 * This method triggers the filtering of the list items based on the current text in the filter text field.
+	 */
     public void changedUpdate(DocumentEvent e) {
         filter();
     }
 
-    //filter items depending on text entered  in the filterTextField.
-    //if filtertextfield is empty, set list Data to the alldata.
+    /** 
+     * Filters the list items based on the text entered in the filter text field.
+     * if the filter text field is empty, the list is reset to show all data.
+     */
     private void filter() {
         
 		// this.filterTextField actually CAN be null also if this.showFilterField is true
@@ -1137,7 +1127,7 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
 	        	for (int i=0; i< data.getSize();i++) {
 	        		ItemTypeListData item = data.getElementAt(i);
 
-	        		if (item.separator || item.text.equals(other_item_text)) {
+	        		if (item.separator || other_item_text.equals(item.text)) {
 		                theModel.addElement(item);	        			
 	        		} else {
 	        			// this is the slow part
@@ -1177,8 +1167,9 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
 	        		}
 	        	}
 	        	
-	        	//we also want to remove all consecutive section strings at the beginning of the list, as they do not make sense without entries in between
-	        	for (int i= theModel.getSize()-1; i>=0;i--) {
+	        	//we also want to remove all consecutive section strings on top of each other, 
+	        	//as they do not make sense without entries in between
+	        	for (int i = theModel.getSize()-1; i>=0; i--) {
 	        		if (theModel.getElementAt(i).separator){
 	        			if ((i<theModel.getSize()-1) && (theModel.getElementAt(i+1).separator)) {
 	        					//we have found two section strings in a row: remove the first one
@@ -1195,37 +1186,62 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
         } //if showFilterTextField
 
     }
-    
+
+    /** 
+	 * Updates the timestamp of the last filter change to the current system time.
+	 * 
+	 * @param e the KeyEvent that triggered the update (not used in this method)
+	 */
     public void keyPressed(KeyEvent e) {
        	updateLastFilterChange();   	
     }
     
+    /**
+     * Handles key released events in the filter text field. 
+     * If the Enter, Down, or Up keys are released, the focus is moved to the list. 
+     * If the Escape key is released, the filter text field is cleared and focus is returned to it.
+     */
     public void keyReleased(KeyEvent e) {
-    	
-    	if (e.getComponent().equals(filterTextField)) {
-        	updateLastFilterChange();
-
-        if (e.getKeyCode()== KeyEvent.VK_ENTER || e.getKeyCode() == KeyEvent.VK_DOWN || e.getKeyCode() == KeyEvent.VK_UP) {
+		updateLastFilterChange();
+	
+	    if (e.getKeyCode()== KeyEvent.VK_ENTER 
+	    		|| e.getKeyCode() == KeyEvent.VK_DOWN 
+	    		|| e.getKeyCode() == KeyEvent.VK_UP) {
 	    		list.requestFocus();
-	    	} else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-	    		if (this.showFilterField) {
-		    		filterTextField.setText("");
-		    		filterTextField.requestFocus();
-	    		}
-	    	}
+	    } else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+    		if (this.showFilterField) {
+	    		filterTextField.setText("");
+	    		filterTextField.requestFocus();
+    		}
 	    }
+		    
     }
     
+    /**
+	 * Updates the timestamp of the last filter change to the current system time.
+	 * This method is called when a key is typed in the filter text field.
+	 */
     public void keyTyped(KeyEvent e) {
     	updateLastFilterChange();
     }
 
+    /** 
+	 * Updates the timestamp of the last filter change to the current system time.
+	 * This method is called whenever the filter text field is modified, either by typing, deleting, or pasting text.
+	 */
     private void updateLastFilterChange() {
     	lastFilterChange=System.currentTimeMillis(); 
     }
     
-    private JList createNewListWithTooltippSupport() {
-    	return new JList() {
+    /**
+     * Creates a new JList with support for tooltips. 
+     * The tooltip text is determined by the ItemTypeListData associated with each list item.
+     * 
+     * @return a new JList<ItemTypeListData> instance with tooltip support
+     * 
+     */
+    private JList<ItemTypeListData> createNewListWithTooltippSupport() {
+    	return new JList<ItemTypeListData>() {
 
     		public String getToolTipText(MouseEvent me) {
 	          try {
@@ -1248,9 +1264,43 @@ public class ItemTypeList extends ItemType implements ActionListener, DocumentLi
     	};
     }
     
+    /**
+	 * Updates the separator color from the EFA configuration if the flat look and feel is active.
+	 * This method should be called whenever the EFA configuration changes or when the look and feel is updated.
+	 */
     public void updateSeparatorColorFromEfaConfig() {
         if (Daten.isEfaFlatLafActive()) {
         	this._separatorBackground=Daten.efaConfig.getEfaGuiflatLaf_Background();
+        	updateCellRendererConfig();
        }
     }
+
+    /** 
+	 * Returns the grid weight in the X direction for layout purposes.
+	 * @return the grid weight in the X direction
+	 */
+	public double getGridWeightX() {
+		return gridWeightX;
+	}
+
+	/** Sets the grid weight in the X direction for layout purposes.
+	 * @param gridWeightX the grid weight in the X direction to set
+	 */
+	public void setGridWeightX(double gridWeightX) {
+		this.gridWeightX = gridWeightX;
+	}
+
+	/** Returns the grid weight in the Y direction for layout purposes.
+	 * @return the grid weight in the Y direction
+	 */
+	public double getGridWeightY() {
+		return gridWeightY;
+	}
+
+	/** Sets the grid weight in the Y direction for layout purposes.
+	 * @param gridWeightY the grid weight in the Y direction to set
+	 */
+	public void setGridWeightY(double gridWeightY) {
+		this.gridWeightY = gridWeightY;
+	}
 }

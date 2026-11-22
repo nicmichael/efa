@@ -21,6 +21,7 @@ import de.nmichael.efa.core.config.AdminRecord;
 import de.nmichael.efa.core.config.EfaTypes;
 import de.nmichael.efa.core.items.IItemType;
 import de.nmichael.efa.core.items.ItemTypeDate;
+import de.nmichael.efa.core.items.ItemTypeLabel;
 import de.nmichael.efa.core.items.ItemTypeLabelHeader;
 import de.nmichael.efa.core.items.ItemTypeRadioButtons;
 import de.nmichael.efa.core.items.ItemTypeString;
@@ -33,6 +34,7 @@ import de.nmichael.efa.data.storage.IDataAccess;
 import de.nmichael.efa.data.storage.MetaData;
 import de.nmichael.efa.data.types.DataTypeDate;
 import de.nmichael.efa.data.types.DataTypeTime;
+import de.nmichael.efa.gui.EfaGuiUtils;
 import de.nmichael.efa.gui.util.TableItem;
 import de.nmichael.efa.gui.util.TableItemHeader;
 import de.nmichael.efa.util.EfaUtil;
@@ -41,9 +43,14 @@ import de.nmichael.efa.util.Logger;
 
 // @i18n complete
 
+/**
+ * BoatReservationRecord represents a record of a boat reservation in the efa system.
+ * It contains information about the boat, reservation type, dates, times, and associated person.
+ */
 public class BoatReservationRecord extends DataRecord {
 
-    // =========================================================================
+    public static final String HINT_YEARCHANGED = "HINT_YEARCHANGED";
+	// =========================================================================
     // Value Constants
     // =========================================================================
     public static final String TYPE_ONETIME        = "ONETIME";
@@ -200,6 +207,10 @@ public class BoatReservationRecord extends DataRecord {
     public void setReason(String reason) {
         setString(REASON, reason);
     }
+    /**
+	 * Returns the reason for the reservation.
+	 * If the reason is null or empty, it returns a default string "k.A." (not available).
+	 */
     public String getReason() {
         String s = getString(REASON);
         if (s == null || s.length() == 0) {
@@ -211,6 +222,12 @@ public class BoatReservationRecord extends DataRecord {
     public void setContact(String contact) {
         setString(CONTACT, contact);
     }
+    /**
+	 * Returns the contact information for the reservation.
+	 * If the contact information is null or empty, it returns an empty string.
+	 *
+	 * @return The contact information or an empty string if not available.
+	 */
     public String getContact() {
         String s = getString(CONTACT);
         if (s == null || s.length() == 0) {
@@ -219,25 +236,54 @@ public class BoatReservationRecord extends DataRecord {
         return s;
     }
 
-    /* if date is empty, print weekday + time if provided.
-     * else, print date or return empty string.
-     */
+    
+   /**
+	* Returns a string representation of the reservation's date and time, formatted for GUI display.
+	* 
+	* Sample outputs:
+	* ONETIME:			01.01.2024 20:30
+	* WEEKLY:			Saturday 20:30
+	* WEEKLY_LIMITED: 	Saturday 20:30 
+	* 
+	* Output depends on the provided parameters. 
+	* If the date is null, it will use the weekday and time if available. 
+	* If the date is provided, it will display the date and time.
+	* 
+	* @param date The date of the reservation.
+	* @param weekday The weekday of the reservation (if applicable).
+	* @param time The time of the reservation.
+	* 
+	*/
     private String getDateDescription(DataTypeDate date, String weekday, DataTypeTime time) {
         if (date == null && weekday == null) {
             return "";
         }
-        return (date != null ? date.toString() : Daten.efaTypes.getValueWeekday(weekday)) +
+        return (date != null ? date.toString() : EfaTypes.getValueWeekday(weekday)) +
                 (time != null ? " " + time.toString(false) : "");
     }
     
-    /* if date is empty, print weekday + time if provided. Extend with time period, if available.
-     * else, print date or return empty string.
-     */
+
+    /**
+	 * Returns a string representation of the reservation's date and time, formatted for GUI display.
+	 * The format varies based on the type of reservation (ONETIME, WEEKLY, WEEKLY_LIMITED).
+	 * 
+	 * Sample outputs:
+	 * ONETIME:			01.01.2024 20:30
+	 * WEEKLY:			Saturday 20:30
+	 * WEEKLY_LIMITED: 	Saturday 20:30 (01.01.2024 - 31.12.2024)
+	 * 
+	 * @param date The date of the reservation.
+	 * @param weekday The weekday of the reservation (if applicable).
+	 * @param time The time of the reservation.
+	 * @param from The start date of the reservation period (if applicable).
+	 * @param to The end date of the reservation period (if applicable).
+	 * @return A string describing the reservation's date and time for GUI display.
+	 */
     private String getDateDescription(DataTypeDate date, String weekday, DataTypeTime time, DataTypeDate from, DataTypeDate to) {
         if (date == null && weekday == null) {
             return "";
         }
-        return (date != null ? date.toString() : Daten.efaTypes.getValueWeekday(weekday)) +
+        return (date != null ? date.toString() : EfaTypes.getValueWeekday(weekday)) +
                 (time != null ? " " + time.toString(false) : "") +
                 " ("+
                 (from != null ? from.toString() : "" ) + 
@@ -245,6 +291,17 @@ public class BoatReservationRecord extends DataRecord {
                 ")";
     }
 
+    /**
+     * Returns a string representation of the reservation's _START_ date and time, formatted for GUI display.
+     * The format varies based on the type of reservation (ONETIME, WEEKLY, WEEKLY_LIMITED).
+     * 
+     * Sample outputs:
+     * ONETIME:			01.01.2024 20:30
+     * WEEKLY:			Saturday 20:30
+     * WEEKLY_LIMITED: 	Saturday 20:30 (01.01.2024 - 31.12.2024)
+     * 
+     * @return A string describing the reservation's start date and time for GUI display.
+     */
     public String getDateTimeFromDescription() {
         String type = getType();
         if (type != null && type.equals(TYPE_ONETIME)) {
@@ -258,7 +315,19 @@ public class BoatReservationRecord extends DataRecord {
         }        
         return "";
     }
-
+    
+    /**
+	 * Returns a string representation of the reservation's _END_ date and time, formatted for GUI display
+	 * The format varies based on the type of reservation (ONETIME, WEEKLY, WEEKLY_LIMITED).
+	 * 
+	 * Sample outputs:
+	 * ONETIME:			01.01.2024 20:30
+	 * 					02.01.2024 20:30
+	 * WEEKLY:			Saturday 20:30 
+	 * WEEKLY_LIMITED: 	Saturday 20:30 (01.01.2024 - 31.12.2024)
+	 * 
+	 * @return A string describing the reservation's end date and time for GUI display.
+	 */
     public String getDateTimeToDescription() {
         String type = getType();
         if (type != null && type.equals(TYPE_ONETIME)) {
@@ -273,7 +342,11 @@ public class BoatReservationRecord extends DataRecord {
         return "";
     }
 
-    /*
+    /**
+	 * Returns a string representation of the reservation's start date and time, formatted for GUI display
+	 * The format varies based on the type of reservation (ONETIME, WEEKLY, WEEKLY_LIMITED).
+	 * This method is used to display the reservation's start date and time in the BoatReservationList.
+	 *
      * Within the BoatReservationList from and to fields are shown differently than stored
      * ONETIME
      * - If Reservation starts and ends on the same day,
@@ -284,9 +357,11 @@ public class BoatReservationRecord extends DataRecord {
      *  
      * WEEKLY / WEEKLY_LIMITED
      * - Field "From" = Day of Week
-     * - Field "To" = TimeFrom - TimeTo 
-     * 
-     */
+     * - Field "To" = TimeFrom - TimeTo
+	 * 
+	 * @return A string describing the reservation's start date and time for GUI display.
+	 * 
+	 */
     public String getGuiDateTimeFromDescription() {
         String type = getType();
         if (type != null && type.equals(TYPE_ONETIME)) {
@@ -302,7 +377,12 @@ public class BoatReservationRecord extends DataRecord {
         return "";
     }
     
-    /*
+    
+    /**
+	 * Returns a string representation of the reservation's end date and time, formatted for GUI display.
+	 * The format varies based on the type of reservation (ONETIME, WEEKLY, WEEKLY_LIMITED).
+	 * this method is used to display the reservation's end date and time in the BoatReservationList.
+	 * 
      * Within the BoatReservationList, weekly reservations will be shown as
      * ONETIME
      * - If Reservation starts and ends on the same day,
@@ -313,7 +393,9 @@ public class BoatReservationRecord extends DataRecord {
      *  WEEKLY / WEEKLY_LIMITED
      * - Field "From" = Day of Week
      * - Field "To" = TimeFrom - TimeTo  (extended with date period, if available)  
-     */
+	 * 
+	 * @return A string describing the reservation's end date and time for GUI display.
+	 */
     public String getGuiDateTimeToDescription() {
         String type = getType();
         if (type != null && type.equals(TYPE_ONETIME)) {
@@ -330,6 +412,19 @@ public class BoatReservationRecord extends DataRecord {
         return "";
     }    
 
+    /** 
+     * Returns a string representation of the weekly time description, including the time period and optional date range.
+     * 
+     * Weekly or Weekly LIMITED Reservation
+     * WEEKLY:			20:00 - 20:30 
+     * WEEKLY_LIMITED: 	20:00 - 20:30 (01.01.2024 - 31.12.2024)
+     * 
+     * @param from Time from which the reservation starts.
+     * @param to   Time to which the reservation ends.
+     * @param fromDate Optional start date for limited weekly reservations.
+     * @param toDate Optional end date for limited weekly reservations.
+     * @return
+     */
     private String getWeeklyTimeDescription(DataTypeTime from, DataTypeTime to, DataTypeDate fromDate, DataTypeDate toDate) {
         String result = (from != null ? from.toString(false) : "") + " - " + (to != null ? to.toString(false) : "");
         result = result + (fromDate!=null || toDate != null ? (
@@ -341,16 +436,54 @@ public class BoatReservationRecord extends DataRecord {
         return result;
     }
 
+    /**
+	 * Returns a string representation of the time period, formatted as "fromTime - toTime".
+	 * if fromTime is null, it will be represented as an empty string.
+	 * if toTime is null, it will be represented as an empty string.
+	 *
+	 * @param fromTime The starting time of the period.
+	 * @param toTime The ending time of the period.
+	 * @return A string describing the time period.
+	 */
     private String getTimePeriodDescription (DataTypeTime fromTime, DataTypeTime toTime) {
         return (fromTime != null ? fromTime.toString(false) : "") + " - " + (toTime != null ? toTime.toString(false) : ""); 	
     }
 
 
-
+    /**
+	 * Returns a description of the reservation time, including date and time information.
+	 * The format varies based on the type of reservation (ONETIME, WEEKLY, WEEKLY_LIMITED).
+	 * ONETIME:			01.01.2024 20:00 - 20:30
+     * 					01.01.2024 20:00 - 02.01.2024 20:30
+     * WEEKLY:			Saturday 20:00 - 20:30 
+     * WEEKLY_LIMITED: 	Saturday 20:00 - 20:30 (01.01.2024 - 31.12.2024)
+     * 
+	 * @return A string describing the reservation time.
+	 */
     public String getReservationTimeDescription() {
-        return getDateTimeFromDescription() + " - " + getDateTimeToDescription();
+    	
+        String type = getType();
+        if (type != null && type.equals(TYPE_ONETIME)) {
+        	if (getDateFrom().equals(getDateTo())) {
+        		return getDateFrom().toString() + " " + getTimePeriodDescription(getTimeFrom(),getTimeTo());
+        	} else {
+        		return getDateTimeFromDescription() + " - " + getDateTimeToDescription();
+        	}
+        } else if (type != null && type.equals(TYPE_WEEKLY)) {
+            return EfaTypes.getValueWeekday(this.getDayOfWeek()) + " " +  getWeeklyTimeDescription(getTimeFrom(), getTimeTo(), null, null);
+        }  else if (type != null && type.equals(TYPE_WEEKLY_LIMITED)) {
+            return EfaTypes.getValueWeekday(this.getDayOfWeek()) + " " +  getWeeklyTimeDescription(getTimeFrom(), getTimeTo(), getDateFrom(), getDateTo() );
+        }
+        return "";
+        
     }
 
+    /**
+	 * Returns the qualified name of the person associated with this reservation.
+	 * If the person record is not found, returns the person name stored in the reservation.
+	 *
+	 * @return The qualified name of the person or the stored person name if not found.
+	 */
     public String getPersonAsName() {
         UUID id = getPersonId();
         try {
@@ -364,6 +497,12 @@ public class BoatReservationRecord extends DataRecord {
         return getPersonName();
     }
 
+    /**
+	 * Returns the BoatRecord associated with this reservation.
+	 * If the boat record is not found, returns null.
+	 *
+	 * @return The BoatRecord or null if not found.
+	 */
     public BoatRecord getBoat() {
         Boats boats = getPersistence().getProject().getBoats(false);
         if (boats != null) {
@@ -376,6 +515,12 @@ public class BoatReservationRecord extends DataRecord {
         return null;
     }
 
+    /**
+	 * Returns the qualified name of the boat associated with this reservation.
+	 * If the boat record is not found, returns "?".
+	 *
+	 * @return The qualified name of the boat or "?" if not found.
+	 */
     public String getBoatName() {
         BoatRecord r = getBoat();
         String boatName = "?";
@@ -454,11 +599,12 @@ public class BoatReservationRecord extends DataRecord {
 
     
     /**
-    * Determines the milliseconds it takes until the current reservation gets valid.
-    * 0 for actual ongoing reservations; >0 for reservations which become valid in the future.
-    *
-    * @return milliseconds until this reservation has it's next occurrency.
-    */
+	 * Determines the milliseconds it takes until the current reservation gets valid.
+     * 0 for actual ongoing reservations; >0 for reservations which become valid in the future.
+	 *
+	 * @param respectTimeForTodaysWeeklyReservations if true, then if the current time is after the end time of the reservation, then the next occurrence will be calculated (7 days later)
+	 * @return 0 if valid now; >0 (millisecons until next occurrence); <0 if not valid within specified interval
+	 */
    public long getReservationValidInMinutes(boolean respectTimeForTodaysWeeklyReservations) {
        try {
     	   
@@ -552,13 +698,14 @@ public class BoatReservationRecord extends DataRecord {
        return -1;
    }
 
-	
    /**
-    * Get the number of days until the weekly reservation gets valid - starting form a reference timestamp (e.g. system.currentTimeMillis())
-    * @param starting_from_timestamp
-    * @return 0 if starting day of the current weekly reservation is the same day of week as the reference timestamp, 
-    * 		  otherwise the positive number of days until the next occurence of the weekday
-    */
+	* Get the number of days until the weekly reservation gets valid - 
+	* starting form a reference timestamp (e.g. system.currentTimeMillis())
+	* @param starting_from_timestamp
+	* @param respectTime if true, then if the current time is after the end time of the reservation, then the next occurrence will be calculated (7 days later)
+	* @return 0 if starting day of the current weekly reservation is the same day of week as the reference timestamp, 
+	* 		  otherwise the positive number of days until the next occurence of the weekday
+	*/
    private int getWeeklyReservationDaysToNextOccurrence(long starting_from_timestamp, boolean respectTime) {
 		GregorianCalendar cal = new GregorianCalendar();
 		   cal.setTimeInMillis(starting_from_timestamp);
@@ -580,13 +727,12 @@ public class BoatReservationRecord extends DataRecord {
 		return daysDifference;
 	}
     
-   /*
-    * returns true if the current reservation is weekly limited
-    * and the dateFrom and dateTo dates of the reservation cover the actual timestamp (now)
-    * 
-	 * @parameter now   currentTimeMillis of the referenced "today"
-	 *   
-    */
+   /**
+	* Checks if the current reservation is a weekly limited reservation and if it is valid now.
+	*
+	* @param now The current time in milliseconds.
+	* @return true if the weekly limited reservation interval applies, false otherwise.
+	*/
 	public boolean isWeeklyLimitedReservationIntervalApplying(long now) {
 
        DataTypeDate mydateFrom = this.getDateFrom();
@@ -610,17 +756,23 @@ public class BoatReservationRecord extends DataRecord {
 
 	}
 
+	/**
+	 * returns true if the current reservation is weekly limited
+	 * and the dateFrom and dateTo dates of the reservation cover the actual timestamp (now)
+	 * 
+	 * @parameter nowDate   current date of the referenced "today"
+	 * @return true if the weekly limited reservation interval applies, false otherwise
+	 */
 	public boolean isWeeklyLimitedReservationIntervalApplying(DataTypeDate nowDate) {
 		return (nowDate == null ? false : isWeeklyLimitedReservationIntervalApplying(nowDate.getTimestamp(new DataTypeTime(0,0,0))));
 	}	
 
-   /*
-    * returns true if the current reservation is weekly limited
-    * and the dateTo date of the reservation is higher than today
-    * 
-	 * @parameter now   currentTimeMillis of the referenced "today"
-	 *   
-    */
+	/**
+	 * Checks if the current reservation is a weekly limited reservation and if it is valid now or in the future.
+	 *
+	 * @param now The current time in milliseconds.
+	 * @return true if the reservation is valid now or in the future, false otherwise.
+	 */
 	public boolean isWeeklyLimitedReservationValidNowOrInFuture(long now) {
 
        DataTypeDate mydateTo = this.getDateTo();
@@ -642,10 +794,11 @@ public class BoatReservationRecord extends DataRecord {
 
 	}	
 
-	/* returns true if today's day of week name equals the day of week name in current reservation record 
-	 * 
-	 * @parameter now   currentTimeMillis of the referenced "today"
-	 *  
+	/**
+	 * Checks if the current reservation is a weekly reservation and if today is the reserved day of the week.
+	 *
+	 * @param now The current time in milliseconds.
+	 * @return true if today is the reserved day of the week, false otherwise.
 	 */
 	private boolean isTodayReservationDayOfWeek(long now) {
 		GregorianCalendar cal = new GregorianCalendar();
@@ -693,7 +846,11 @@ public class BoatReservationRecord extends DataRecord {
 		return true; // we only reach here if current weekday is the reserved weekday.
 	}
     
-	// is the current reservation obsolete, meaning: is it outdated? so it can be removed
+	/** 
+	 * Determines if the current reservation is obsolete, meaning it is outdated and can be removed.
+	 * @param now currentTimeMillis of the referenced "today"
+	 * @return true if the reservation is obsolete, false otherwise
+	 */
     public boolean isObsolete(long now) {
         try {
             if (this.getType().equals(TYPE_WEEKLY)) {
@@ -726,6 +883,15 @@ public class BoatReservationRecord extends DataRecord {
         return false;
     }
     
+    /**
+	 * Returns the value of a field as text. For virtual fields, the value is calculated.
+	 * It returns null if the field is not found.
+	 * For PersonId, it returns the name of the person if available.
+	 * For BoatId, it returns the name of the boat if available.
+	 * 
+	 * @param fieldName The name of the field.
+	 * @return The value of the field as text.
+	 */
     public String getAsText(String fieldName) {
         if (fieldName.equals(BOATID)) {
             return getBoatName();
@@ -809,19 +975,27 @@ public class BoatReservationRecord extends DataRecord {
         item.setPadding(-1, -1, -1, 15); // 15 pix distance from next gui item
         
         
+
+        ItemTypeLabel myhint;
+        v.add(myhint = EfaGuiUtils.createHintWordWrap(HINT_YEARCHANGED, IItemType.TYPE_PUBLIC, 
+        		CAT_BASEDATA, "", 4, 10, 10, 300));
+        	myhint.setIndent(true);
+        	myhint.setVisible(true);//will be set to false in BoatReservationRecordEditDialog
+        
         // new order of elements:
         // date from        date to
         // Weekday
         // time from	    time to
         // so that the weekdray dropdownlists separates the dates from the times,
         // but corresponding date & time are on the same column
-        
+        	
         v.add(item = new ItemTypeDate(BoatReservationRecord.DATEFROM, getDateFrom(),
                 IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("Von") + " (" +
                 International.getString("Tag") + ")"));
         item.setNotNull(true);
         dateFrom = (ItemTypeDate)item;
         dateFrom.setFieldSize(DATETIME_FIELDLENGTH, 0);
+        dateFrom.setYearAutocompletionForFuture(true);
         
         v.add(item = new ItemTypeDate(BoatReservationRecord.DATETO, getDateTo(),
                 IItemType.TYPE_PUBLIC, CAT_BASEDATA, International.getString("Bis") + " (" +
@@ -832,7 +1006,8 @@ public class BoatReservationRecord extends DataRecord {
         dateTo.setIsItemOnSameRowAsPreviousItem(true);
         dateTo.setFieldSize(DATETIME_FIELDLENGTH, 0);
         dateTo.setLabelGrid(-1, GridBagConstraints.EAST, -1); // right-handed label looks better.
-
+        dateTo.setYearAutocompletionForFuture(true);
+        
         v.add(item = new ItemTypeStringList(BoatReservationRecord.DAYOFWEEK, getDayOfWeek(),
                 EfaTypes.makeDayOfWeekArray(EfaTypes.ARRAY_STRINGLIST_VALUES), EfaTypes.makeDayOfWeekArray(EfaTypes.ARRAY_STRINGLIST_DISPLAY),
                 IItemType.TYPE_PUBLIC, CAT_BASEDATA,
@@ -858,7 +1033,6 @@ public class BoatReservationRecord extends DataRecord {
         ((ItemTypeTime)item).setIsItemOnSameRowAsPreviousItem(true);
         item.setFieldSize(DATETIME_FIELDLENGTH,0);
         ((ItemTypeTime)item).setLabelGrid(-1, GridBagConstraints.EAST, -1); // right-handed label looks better.
-
         
         v.add(item = getGuiItemTypeStringAutoComplete(BoatReservationRecord.PERSONID, null,
                     IItemType.TYPE_PUBLIC, CAT_BASEDATA,
@@ -932,13 +1106,27 @@ public class BoatReservationRecord extends DataRecord {
         return IDX_BOATID;
     }
 
+    /**
+     * Returns a representation of a reservation record for user display
+     * 
+	 * 
+	 * Weekly/Weekly limited Reservation:
+	 * Bootname / Person (Samstag 20:00 -- 20:30)
+	 * Reservierungsgrund: Grund
+	 * Telefon für Rückfragen: Telefonnummer
+	 * 
+	 * OneTime Reservation:
+	 * Bootname / Person (01.01.2024 20:00 -- 02.01.2024 20:30)
+	 * Reservierungsgrund: Grund
+	 * Telefon für Rückfragen: Telefonnummer
+	 */
 	public String getAsUserText() {
         String result = "";
 
         if (this.getType().equals(BoatReservationRecord.TYPE_WEEKLY)  
         		|| this.getType().equals(BoatReservationRecord.TYPE_WEEKLY_LIMITED)) {
                     result = this.getBoatName() + " / " + this.getPersonAsName() + " (" 
-                    		+ Daten.efaTypes.getValueWeekday(this.getDayOfWeek()) + " " + this.getTimeFrom() + " -- " + this.getTimeTo() + ")"
+                    		+ EfaTypes.getValueWeekday(this.getDayOfWeek()) + " " + this.getTimeFrom() + " -- " + this.getTimeTo() + ")"
                     		
                             + "\n" + International.getString("Reservierungsgrund") + ": " + this.getReason()
                             + "\n" + International.getString("Telefon für Rückfragen") + ": " + this.getContact();

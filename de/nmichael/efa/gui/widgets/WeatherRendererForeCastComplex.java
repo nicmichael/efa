@@ -22,7 +22,7 @@ public class WeatherRendererForeCastComplex extends WeatherRenderer {
 		// Build the main panel view
 		int hourlyIndex = wdf.getHourly().getIndexForCurrentTime();
 
-		if (hourlyIndex <= wdf.getHourly().getItemSize()) {
+		if (hourlyIndex < wdf.getHourly().getItemSize()) {
 			roundPanel.add(getLocationHeader(ww.getCaption(),!ww.getHtmlPopupURL().isEmpty(), ww), new GridBagConstraints(0, 0, 9, 1, 1.0, 0.0, GridBagConstraints.CENTER,
 			GridBagConstraints.BOTH, new Insets(2, 2, 2, 2), 0, 0));		
 		
@@ -37,7 +37,7 @@ public class WeatherRendererForeCastComplex extends WeatherRenderer {
 
 				startY=startY+2;
 				hourlyIndex++;
-				if (hourlyIndex <= wdf.getHourly().getItemSize()) {
+				if (hourlyIndex < wdf.getHourly().getItemSize()) {
 					//only provide next line if there is forecast info for that line
 					addForeCastPanel(WeatherRenderer.getHourlyHourRendering(wdf, hourlyIndex), 
 						WeatherRenderer.getHourlyWeatherIcon(wdf,hourlyIndex),
@@ -50,7 +50,7 @@ public class WeatherRendererForeCastComplex extends WeatherRenderer {
 				}
 				startY=startY+2;
 				hourlyIndex++;		
-				if (hourlyIndex <= wdf.getHourly().getItemSize()) {
+				if (hourlyIndex < wdf.getHourly().getItemSize()) {
 					//only provide next line if there is forecast info for that line
 					addForeCastPanel(WeatherRenderer.getHourlyHourRendering(wdf, hourlyIndex), 
 						WeatherRenderer.getHourlyWeatherIcon(wdf,hourlyIndex),

@@ -64,8 +64,7 @@ public class SimpleOptionInputDialog extends SimpleInputDialog implements IItemL
         }
         this.optionButtonIcons = optionButtonIcons;
         this._closeButtonText = null;
-         item.registerItemListener(this);
-
+        item.registerItemListener(this);
     }
 
 

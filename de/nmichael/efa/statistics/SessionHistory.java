@@ -21,7 +21,7 @@ public class SessionHistory {
 
     private Vector<LogbookRecord> sessions = new Vector<LogbookRecord>();
 
-    public void SessionHistory() {
+    public SessionHistory() {
     }
 
     public void addSession(LogbookRecord r) {

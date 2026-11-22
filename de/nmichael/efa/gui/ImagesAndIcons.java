@@ -1,5 +1,7 @@
 package de.nmichael.efa.gui;
 
+import java.net.URL;
+
 import javax.swing.ImageIcon;
 
 import de.nmichael.efa.Daten;
@@ -146,11 +148,18 @@ public class ImagesAndIcons {
             if (Logger.isTraceOn(Logger.TT_GUI, 9)) {
                 Logger.log(Logger.DEBUG, Logger.MSG_DEBUG_GUI_ICONS, "getIcon("+name+")");
             }
-            return new ImageIcon(BaseDialog.class.getResource(name));
-        } catch(Exception e) {
-            if (Logger.isTraceOn(Logger.TT_GUI, 9)) {
-                Logger.log(Logger.DEBUG, Logger.MSG_DEBUG_GUI_ICONS, "getIcon("+name+"): no icon found!");
+            // A missing resource is an expected case (e.g. unknown image name), so we check
+            // for null here instead of letting new ImageIcon(null) throw and be logged.
+            URL url = BaseDialog.class.getResource(name);
+            if (url == null) {
+                if (Logger.isTraceOn(Logger.TT_GUI, 9)) {
+                    Logger.log(Logger.DEBUG, Logger.MSG_DEBUG_GUI_ICONS, "getIcon("+name+"): no icon found!");
+                }
+                return null;
             }
+            return new ImageIcon(url);
+        } catch(Exception e) {
+            // Unexpected errors (e.g. invalid name) are still logged, not silently swallowed.
             Logger.logdebug(e);
             return null;
         }

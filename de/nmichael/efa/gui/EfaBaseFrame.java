@@ -25,6 +25,8 @@ import de.nmichael.efa.util.Dialog;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import javax.swing.FocusManager;
+
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -164,6 +166,8 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
     BoatStatusRecord correctSessionLastBoatStatus;
     int positionX,positionY;      // Position des Frames, wenn aus efaDirekt aufgerufen
 
+	private FocusManager originalFocusManager;
+
 
     public EfaBaseFrame(int mode) {
         super((JFrame)null, Daten.EFA_LONGNAME);
@@ -277,6 +281,8 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
 
     public void packFrame(String method) {
         this.pack();
+        this.revalidate();
+        this.repaint();
     }
 
     public void setFixedLocationAndSize() {
@@ -855,7 +861,9 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
      */
     void iniGuiRemaining() {
     	// FocusManager Concept is pre JDK 1.4. See comments at EfaBaseFrameFocusManager
-    	efaBaseFrameFocusManager = new EfaBaseFrameFocusManager(this,FocusManager.getCurrentManager());
+    	// save old focus manager
+    	originalFocusManager = FocusManager.getCurrentManager();
+    	efaBaseFrameFocusManager = new EfaBaseFrameFocusManager(this,originalFocusManager);
         FocusManager.setCurrentManager(efaBaseFrameFocusManager);
         if (isModeBoathouse()) {
             setResizable(false);
@@ -4480,6 +4488,23 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
             return false;
         }
 
+        if (!keyESCAction) {
+            /*
+             * We are efaBaseFrame which used in diffrent ways
+             * efaBoatHouse
+             * 		- built once as efaBaseFrame for entering session or late entries, used many times.
+             * 		  Gets disposed only at the end of efaBthsFrame
+             *      - created new in Admin mode when opening logbook for editing
+             * efaBase
+             *      - shown right in the main dialog of efabase
+             * 
+             * The focus manager is installed once when efaBaseFrame gets instantiated
+             * and it is used globally. So when discarding a efaBaseFrame, we must get rid of the efaBaseFrameFocusManager,
+             * and reinstall the former one.
+             */
+        	restoreFocusManager();
+        }
+        
         if (isModeAdmin()) {
             super.cancel();
             return true;
@@ -4495,6 +4520,35 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         super.cancel(false);
         Daten.haltProgram(0);
         return true;
+    }
+    
+    private void restoreFocusManager() {
+    	// Restore FocusManager safely: only if our manager is still installed, and on EDT
+    	if (originalFocusManager != null) {
+    	    try {
+    	        final FocusManager savedOriginal = originalFocusManager;
+    	        final FocusManager currentManager = FocusManager.getCurrentManager();
+    	        // Only restore if the manager currently installed is the one we installed
+    	        if (currentManager == efaBaseFrameFocusManager) {
+    	            if (SwingUtilities.isEventDispatchThread()) {
+    	                FocusManager.setCurrentManager(savedOriginal);
+    	            } else {
+    	                try {
+    	                    SwingUtilities.invokeAndWait(() -> FocusManager.setCurrentManager(savedOriginal));
+    	                } catch (Exception ie) {
+    	                    Logger.logdebug(ie);
+    	                }
+    	            }
+    	        } else {
+    	            Logger.log(Logger.DEBUG, "efaBoathouseHideEfaFrame: current FocusManager is not efaBaseFrameFocusManager; skipping restore.");
+    	        }
+    	    } catch (Exception ex) {
+    	        Logger.logdebug(ex);
+    	    } finally {
+    	        originalFocusManager = null;
+    	        efaBaseFrameFocusManager = null;
+    	    }
+    	}
     }
 
     // =========================================================================
@@ -4961,9 +5015,21 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         
         distance.parseAndShowValue("");
         updateTimeInfoFields();
+
         return true;
     }
 
+    /* refresh the GUI. 
+     * InvokeLater() guarantees that all other swing events have been processed before
+     */
+    private void refreshGui() {
+        SwingUtilities.invokeLater(()->{
+            this.invalidate();
+            this.revalidate();
+            this.repaint();
+        });
+    }
+    
     boolean efaBoathouseCorrectSession(ItemTypeBoatstatusList.BoatListItem item) {
         this.setTitle(International.getString("Fahrt korrigieren"));
         saveButton.setDescription(International.getStringWithMnemonic("Fahrt korrigieren"));
@@ -5359,8 +5425,11 @@ public class EfaBaseFrame extends BaseDialog implements IItemListener {
         }
         packFrame("efaBoathouseShowEfaFrame(Component)");
         efaBoathouseSetFixedLocation(-1, -1);
+        refreshGui();
         showMe();
-        toFront();
+        if (Daten.efaConfig.getValueEfaDirekt_immerImVordergrundNachFahrteingabe()) {
+        	toFront();
+        }
         if (focusItem != null) {
             focusItem.requestFocus();
         }

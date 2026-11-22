@@ -255,8 +255,11 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
     volatile boolean inUpdateBoatList = false;
     byte[] largeChunkOfMemory = new byte[1024*1024];
     boolean isLocked = false;
-
-
+	private long lastBoatlistUpdateRefreshtime=-1;
+	private long lastBoatlistUpdateRequesttime=-1;
+	private long lastPersonlistUpdateRefreshtime=-1;
+	private long lastPersonlistUpdateRequesttime=-1;
+	
     public EfaBoathouseFrame() {
         super(null, Daten.EFA_LONGNAME);
         //set the static variable of class efaBoatHouseFrame to the current instance
@@ -1292,8 +1295,10 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
         this.pack();
     }
 
-    public void bringFrameToFront() {
-        this.toFront();
+    public void bringFrameToFront(boolean byBackgroundTask) {
+        if (byBackgroundTask || (Daten.efaConfig.getValueEfaDirekt_immerImVordergrundNachFahrteingabe())) {
+        	this.toFront();
+        }
     }
 
     // i == 0 - automatically try to find correct list to focus
@@ -1376,7 +1381,9 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
     private void this_windowActivated(WindowEvent e) {
         try {
             if (!isEnabled() && efaBaseFrame != null) {
-                efaBaseFrame.toFront();
+                if (Daten.efaConfig.getValueEfaDirekt_immerImVordergrundNachFahrteingabe()) {
+                	efaBaseFrame.toFront();
+                }
             }
         } catch (Exception ee) {
             Logger.logdebug(ee);
@@ -1423,95 +1430,112 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
 		return who;
 	}
     
-    public boolean cancel(WindowEvent e, int reason, AdminRecord admin, boolean restart) {
-        Dialog.IGNORE_WINDOW_STACK_CHECKS = true;
-        int exitCode = 0;
-        Daten.requestShutdown();
-        // Under Windows and JDK8, we cannot detect if the system shutdown has been initiated by the user or by the system. 
-        // so under windows, all shutdowns initiated by the operating system itself (e.g. due to update or shutdown) 
-        // will be logged as "Programmende durch Nutzer".
-        String who = getRequestOriginator(reason, admin);
-        Logger.log(Logger.INFO, Logger.MSG_EVT_EFAEXIT_REQUESTED,
+	public boolean cancel(WindowEvent e, int reason, AdminRecord admin, boolean restart) {
+		Dialog.IGNORE_WINDOW_STACK_CHECKS = true;
+		int exitCode = 0;
+
+		// Under Windows and JDK8, we cannot detect if the system shutdown has been
+		// initiated by the user or by the system.
+		// so under windows, all shutdowns initiated by the operating system itself
+		// (e.g. due to update or shutdown)
+		// will be logged as "Programmende durch Nutzer".
+		String who = getRequestOriginator(reason, admin);
+		Logger.log(Logger.INFO, Logger.MSG_EVT_EFAEXIT_REQUESTED,
 				International.getMessage("Programmende durch {originator} angefordert", who));
-        switch (reason) {
-            case EFA_EXIT_REASON_USER: // manuelles Beenden von efa
-                boolean byUser;
-                if (admin != null || !Daten.efaConfig.getValueEfaDirekt_mitgliederDuerfenEfaBeenden()) {
-                    while (admin == null || !admin.isAllowedExitEfa()) {
-                        if (admin == null) {
-                            admin = AdminLoginDialog.login(this, International.getString("Beenden von efa"));
-                            if (admin == null) {
-                                Dialog.IGNORE_WINDOW_STACK_CHECKS = false;
-                                Daten.resetShutdownRequest(); // we no longer want to shut down, as the user cancelled the admin login
-                                return false;
-                            }
-                        }
-                        if (admin != null && !admin.isAllowedExitEfa()) {
-                            EfaMenuButton.insufficientRights(admin, EfaMenuButton.BUTTON_EXIT);
-                            admin = null;
-                        }
-                    }
-                    who = International.getString("Admin") + "=" + admin.getName();
-                    byUser = false;
-                } else {
-                    who = International.getString("Nutzer");
-                    byUser = true;
-                }
-                if (Daten.efaConfig.getValueEfaDirekt_execOnEfaExit().length() > 0 && byUser) {
-                    Logger.log(Logger.INFO, Logger.MSG_EVT_EFAEXITEXECCMD,
-                            International.getMessage("Programmende veranlaßt; versuche, Kommando '{cmd}' auszuführen...", Daten.efaConfig.getValueEfaDirekt_execOnEfaExit()));
-                    try {
-                        Runtime.getRuntime().exec(Daten.efaConfig.getValueEfaDirekt_execOnEfaExit());
-                    } catch (Exception ee) {
-                        Logger.log(Logger.ERROR, Logger.MSG_ERR_EFAEXITEXECCMD_FAILED,
-                                LogString.cantExecCommand(Daten.efaConfig.getValueEfaDirekt_execOnEfaExit(), International.getString("Kommando")));
-                    }
-                }
-                break;
-            case EFA_EXIT_REASON_TIME:
-            case EFA_EXIT_REASON_IDLE:
-                who = International.getString("Zeitsteuerung");
-                who += " (" + (reason == EFA_EXIT_REASON_TIME ? "time" : "idle") + ")";
-                if (Daten.efaConfig.getValueEfaDirekt_execOnEfaAutoExit().length() > 0) {
-                    Logger.log(Logger.INFO, Logger.MSG_EVT_EFAEXITEXECCMD,
-                            International.getMessage("Programmende veranlaßt; versuche, Kommando '{cmd}' auszuführen...", Daten.efaConfig.getValueEfaDirekt_execOnEfaAutoExit()));
-                    try {
-                        Runtime.getRuntime().exec(Daten.efaConfig.getValueEfaDirekt_execOnEfaAutoExit());
-                    } catch (Exception ee) {
-                        Logger.log(Logger.ERROR, Logger.MSG_ERR_EFAEXITEXECCMD_FAILED,
-                                LogString.cantExecCommand(Daten.efaConfig.getValueEfaDirekt_execOnEfaAutoExit(), International.getString("Kommando")));
-                    }
-                }
-                break;
-            case EFA_EXIT_REASON_OOME:
-                who = International.getString("Speicherüberwachung");
-                break;
-            case EFA_EXIT_REASON_AUTORESTART:
-                who = International.getString("Automatischer Neustart");
-                break;
-            case EFA_EXIT_REASON_ONLINEUPDATE:
-                who = International.getString("Online-Update");
-                break;
-            case EFA_EXIT_REASON_SYSTEM:
-            	// Under Windows and JDK8, we cannot detect if the system shutdown has been initiated by the user or by the system.
-            	// so this only is run on Linux/MacOs systems.
-            	who = "Shutdown Hook / System signal";
-            	break;
-        }
-        if (restart) {
-            exitCode = Daten.program.restart();
-        }
+		switch (reason) {
+		case EFA_EXIT_REASON_USER: // manuelles Beenden von efa
+			boolean byUser;
+			if (admin != null || !Daten.efaConfig.getValueEfaDirekt_mitgliederDuerfenEfaBeenden()) {
+				while (admin == null || !admin.isAllowedExitEfa()) {
+					if (admin == null) {
+						admin = AdminLoginDialog.login(this, International.getString("Beenden von efa"));
+						if (admin == null) {
+							Dialog.IGNORE_WINDOW_STACK_CHECKS = false;
+							return false;
+						}
+					}
+					if (admin != null && !admin.isAllowedExitEfa()) {
+						EfaMenuButton.insufficientRights(admin, EfaMenuButton.BUTTON_EXIT);
+						admin = null;
+						return false;
+					}
+				}
+				who = International.getString("Admin") + "=" + admin.getName();
+				byUser = false;
+			} else {
+				who = International.getString("Nutzer");
+				byUser = true;
+			}
+			// now we have the permission to exit efa
+			Daten.requestShutdown();
+			if (Daten.efaConfig.getValueEfaDirekt_execOnEfaExit().length() > 0 && byUser) {
+				Logger.log(Logger.INFO, Logger.MSG_EVT_EFAEXITEXECCMD,
+						International.getMessage("Programmende veranlaßt; versuche, Kommando '{cmd}' auszuführen...",
+								Daten.efaConfig.getValueEfaDirekt_execOnEfaExit()));
+				try {
+					Runtime.getRuntime().exec(Daten.efaConfig.getValueEfaDirekt_execOnEfaExit());
+				} catch (Exception ee) {
+					Logger.log(Logger.ERROR, Logger.MSG_ERR_EFAEXITEXECCMD_FAILED, LogString.cantExecCommand(
+							Daten.efaConfig.getValueEfaDirekt_execOnEfaExit(), International.getString("Kommando")));
+				}
+			}
+			break;
+		case EFA_EXIT_REASON_TIME:
+		case EFA_EXIT_REASON_IDLE:
+			Daten.requestShutdown();
+			who = International.getString("Zeitsteuerung");
+			who += " (" + (reason == EFA_EXIT_REASON_TIME ? "time" : "idle") + ")";
+			if (Daten.efaConfig.getValueEfaDirekt_execOnEfaAutoExit().length() > 0) {
+				Logger.log(Logger.INFO, Logger.MSG_EVT_EFAEXITEXECCMD,
+						International.getMessage("Programmende veranlaßt; versuche, Kommando '{cmd}' auszuführen...",
+								Daten.efaConfig.getValueEfaDirekt_execOnEfaAutoExit()));
+				try {
+					Runtime.getRuntime().exec(Daten.efaConfig.getValueEfaDirekt_execOnEfaAutoExit());
+				} catch (Exception ee) {
+					Logger.log(Logger.ERROR, Logger.MSG_ERR_EFAEXITEXECCMD_FAILED,
+							LogString.cantExecCommand(Daten.efaConfig.getValueEfaDirekt_execOnEfaAutoExit(),
+									International.getString("Kommando")));
+				}
+			}
+			break;
+		case EFA_EXIT_REASON_OOME:
+			Daten.requestShutdown();
+			who = International.getString("Speicherüberwachung");
+			break;
+		case EFA_EXIT_REASON_AUTORESTART:
+			Daten.requestShutdown();
+			who = International.getString("Automatischer Neustart");
+			break;
+		case EFA_EXIT_REASON_ONLINEUPDATE:
+			Daten.requestShutdown();
+			who = International.getString("Online-Update");
+			break;
+		case EFA_EXIT_REASON_SYSTEM:
+			Daten.requestShutdown();
+			// Under Windows and JDK8, we cannot detect if the system shutdown has been
+			// initiated by the user or by the system.
+			// so this only is run on Linux/MacOs systems.
+			who = "Shutdown Hook / System signal";
+			break;
+		default:
+			Daten.requestShutdown();
+			who = "unknown";
+			break;
+		}
+		if (restart) {
+			exitCode = Daten.program.restart();
+		}
 
 //        if (e != null) {
 //            super.processWindowEvent(e);
 //        }
-        super.cancel();
-        Logger.log(Logger.INFO, Logger.MSG_EVT_EFAEXIT,
-                International.getMessage("Programmende durch {originator}", who));
-        Daten.haltProgram(exitCode);
-        return true;
-    }
-
+		super.cancel();
+		Logger.log(Logger.INFO, Logger.MSG_EVT_EFAEXIT,
+				International.getMessage("Programmende durch {originator}", who));
+		Daten.haltProgram(exitCode);
+		return true;
+	}
+	
     public void cancelRunInThreadWithDelay(int reason, AdminRecord admin, boolean restart) {
         final int _reason = reason;
         final AdminRecord _admin = admin;
@@ -1977,7 +2001,8 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
             if (Logger.isTraceOn(Logger.TT_GUI, 8)) {
                 Logger.log(Logger.DEBUG, Logger.MSG_GUI_DEBUGGUI, "updateBoatLists(" + listChanged + ")");
             }
-
+            EfaGuiUtils.setWaitCursor(this, true);
+            
             if (Daten.project == null || boatStatus == null) {
                 boatsAvailableList.setItems(null);
                 personsAvailableList.setItems(null);
@@ -1992,11 +2017,15 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
                 boatsOnTheWaterList.showValue();
                 boatsNotAvailableList.showValue();
             } else {
+            	
                 if (boatsAvailableList.size() == 0) {
                     listChanged = true;
                 }
 
                 if (listChanged) {
+                	
+                	lastBoatlistUpdateRequesttime = System.currentTimeMillis();
+                	lastPersonlistUpdateRequesttime = lastBoatlistUpdateRequesttime;
                 	
                 	String strDebugTimes="";
                 	long start = System.currentTimeMillis();
@@ -2013,28 +2042,31 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
                 	strDebugTimes=strDebugTimes+(System.currentTimeMillis()-start);
                 	
                     if (!Daten.efaConfig.getValueEfaDirekt_listAllowToggleBoatsPersons() || toggleAvailableBoatsToBoats.isSelected()) {
-                        if (Logger.isTraceOn(Logger.TT_GUI, 9)) {
+                        if (Logger.isTraceOn(Logger.TT_GUI, 8)) {
                             Logger.log(Logger.DEBUG, Logger.MSG_GUI_DEBUGGUI, "updateBoatLists(" + listChanged + ") - setting boatsAvailableList ...");
                         }
                         start= System.currentTimeMillis();
                         boatsAvailableList.setBoatStatusData(boatStatus.getBoats(BoatStatusRecord.STATUS_AVAILABLE, true), logbook, "<" + International.getString("anderes Boot") + ">", todaysReservations);
                         strDebugTimes=strDebugTimes+";"+(System.currentTimeMillis()-start);
                         
-                        if (Logger.isTraceOn(Logger.TT_GUI, 9)) {
+                        lastBoatlistUpdateRefreshtime = System.currentTimeMillis();
+                        
+                        if (Logger.isTraceOn(Logger.TT_GUI, 8)) {
                             Logger.log(Logger.DEBUG, Logger.MSG_GUI_DEBUGGUI, "updateBoatLists(" + listChanged + ") - setting boatsAvailableList - done");
                         }
                     } else {
-                        if (Logger.isTraceOn(Logger.TT_GUI, 9)) {
+                        if (Logger.isTraceOn(Logger.TT_GUI, 8)) {
                             Logger.log(Logger.DEBUG, Logger.MSG_GUI_DEBUGGUI, "updateBoatLists(" + listChanged + ") - setting personsAvailableList ...");
                         }
                         Persons persons = boatStatus.getProject().getPersons(false);
                         personsAvailableList.setPersonStatusData(persons.getAllPersons(System.currentTimeMillis(), false, false), "<" + International.getString("andere Person") + ">");
-                        if (Logger.isTraceOn(Logger.TT_GUI, 9)) {
+                        lastPersonlistUpdateRefreshtime = System.currentTimeMillis();
+                        if (Logger.isTraceOn(Logger.TT_GUI, 8)) {
                             Logger.log(Logger.DEBUG, Logger.MSG_GUI_DEBUGGUI, "updateBoatLists(" + listChanged + ") - setting personsAvailableList - done");
                         }
                     }
 
-                    if (Logger.isTraceOn(Logger.TT_GUI, 9)) {
+                    if (Logger.isTraceOn(Logger.TT_GUI, 8)) {
                         Logger.log(Logger.DEBUG, Logger.MSG_GUI_DEBUGGUI, "updateBoatLists(" + listChanged + ") - setting boatsOnTheWaterList and boatsNotAvailableList ...");
                     }
                     if (!onlyAvailableBoatsOrPersons) {
@@ -2045,7 +2077,7 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
 	                    boatsNotAvailableList.setBoatStatusData(boatStatus.getBoats(BoatStatusRecord.STATUS_NOTAVAILABLE, true), logbook, null, todaysReservations);
 	                    strDebugTimes=strDebugTimes+";"+(System.currentTimeMillis()-start);
                     }
-                    if (Logger.isTraceOn(Logger.TT_GUI, 9)) {
+                    if (Logger.isTraceOn(Logger.TT_GUI, 8)) {
                         Logger.log(Logger.DEBUG, Logger.MSG_GUI_DEBUGGUI, "updateBoatLists(" + listChanged + ") - setting boatsOnTheWaterList and boatsNotAvailableList - done");
                     }
                     Logger.log(Logger.DEBUG, Logger.MSG_GUI_DEBUGGUI, "Aufrufzeiten: "+ strDebugTimes);
@@ -2095,6 +2127,7 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
             Logger.logdebug(e);
         } finally {
             inUpdateBoatList = false;
+            EfaGuiUtils.setWaitCursor(this, false);
         }
     }
 
@@ -2505,7 +2538,17 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
             this.revalidate();
             this.repaint(); // ist erforderlich, damit auch mnemonics richtig geschrieben werden.
             
-            updateBoatLists(true,true);
+            // do not rebuild the whole list, as it is not necessary 
+            // and can be performance intensive on low-power devices like Raspberry Pi 3.
+            // new person records get recognized automatically in efaBoathouseBackgroundTask 
+            boolean needsRefresh = (toggleAvailableBoatsToBoats.isSelected() && (lastBoatlistUpdateRefreshtime<lastBoatlistUpdateRequesttime) ||
+								   (!toggleAvailableBoatsToBoats.isSelected() && (lastPersonlistUpdateRefreshtime<lastPersonlistUpdateRequesttime)));
+            updateBoatLists(needsRefresh,true);
+         // Temporary diagnostic: the count should stay at 1 after each toggle.
+         // If it grows by one per toggle, stale JLists are still attached to the model.
+         //   Logger.log(Logger.DEBUG, Logger.MSG_GUI_DEBUGGUI, "listeners on boats model: " + boatsAvailableList.data.getListDataListeners().length);
+         //   Logger.log(Logger.DEBUG, Logger.MSG_GUI_DEBUGGUI, "listeners on person model: " + personsAvailableList.data.getListDataListeners().length);
+            
         } catch (Exception ee) {
         }
         if (Logger.isTraceOn(Logger.TT_GUI, 8)) {
@@ -2772,7 +2815,18 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
      * @param r LogbookRecord of the newly created record. May be null.
      */
     void showEfaBoathouseFrame(ItemTypeBoatstatusList.BoatListItem efaBoathouseAction, LogbookRecord r) {
-        bringFrameToFront();
+        // Swing components must only be accessed on the Event Dispatch Thread.
+        // Re-dispatch the call if it has been invoked from a different thread.
+    	
+    	// this also helps with runWidgetWarnings() which is called from this method.
+    	// runWidgetWarnings() may show a dialog, which must be done on the EDT.
+        if (!SwingUtilities.isEventDispatchThread()) {
+            SwingUtilities.invokeLater(() -> showEfaBoathouseFrame(efaBoathouseAction, r));
+            return;
+        }
+
+        
+    	bringFrameToFront(false);
         updateBoatLists(true,false); // must be explicitly called here! only efaBoathouseBackgroundTask.interrupt() is NOT sufficient.
         efaBoathouseBackgroundTask.interrupt();
         if (focusItem != null) {
@@ -2785,16 +2839,17 @@ public class EfaBoathouseFrame extends BaseFrame implements IItemListener {
             if (!boatStatus.areBoatsOutOnTheWater() &&
                     Daten.efaConfig.getValueEfaBoathouseShowLastFromWaterNotification() &&
                     Daten.efaConfig.getValueNotificationWindowTimeout() > 0) {
-                String txt = Daten.efaConfig.getValueEfaBoathouseShowLastFromWaterNotificationText();
-                if (txt == null || txt.length() == 0) {
-                    txt = International.getString("Alle Boote sind zurück.") + "<br>" +
-                            International.getString("Bitte schließe die Hallentore.");
-                }
+                final String txt = Daten.efaConfig.getValueEfaBoathouseShowLastFromWaterNotificationText();
+                final String standardText = International.getString("Alle Boote sind zurück.") + "<br>" +
+                        International.getString("Bitte schließe die Hallentore.");
+                
                 NotificationDialog dlg = new NotificationDialog(this,
-                        txt,
+                		//if configured text is empty, use standard text
+                        ((txt == null || txt.length() == 0) ? standardText : txt),
                         BaseDialog.BIGIMAGE_CLOSEDOORS,
                         "ffffff", "ff0000", Daten.efaConfig.getValueNotificationWindowTimeout());
                 dlg.showDialog();
+
             }
         }
         if (efaBoathouseAction != null) {

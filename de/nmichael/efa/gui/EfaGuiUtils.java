@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
@@ -63,6 +64,7 @@ public class EfaGuiUtils {
 
 	public static final String MENU_SEPARATOR = "---------";
 	private static Object desktopHints;
+	public static final Pattern HTML_TAG = Pattern.compile("<[^\\P{Graph}>]+(?: [^\\P{Graph}>]*)*>");
 	
 	public static ItemTypeLabel createHint(String uniqueName, int type, String category, String caption, int gridWidth,
 			int padBefore, int padAfter) {

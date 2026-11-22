@@ -10,14 +10,23 @@
 
 package de.nmichael.efa.gui.dataedit;
 
-import de.nmichael.efa.util.*;
-import de.nmichael.efa.core.items.*;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.util.Vector;
+
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JPanel;
+
+import de.nmichael.efa.core.items.IItemType;
 import de.nmichael.efa.gui.BaseDialog;
 import de.nmichael.efa.gui.BaseTabbedDialog;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-import java.util.*;
+import de.nmichael.efa.util.Dialog;
+import de.nmichael.efa.util.EfaUtil;
+import de.nmichael.efa.util.International;
+import de.nmichael.efa.util.Logger;
 
 // @i18n complete
 public class DataEditDialog extends BaseTabbedDialog {
@@ -75,5 +84,25 @@ public class DataEditDialog extends BaseTabbedDialog {
         } catch(Exception eignore) {
             Logger.logdebug(eignore);
         }
+    }
+    
+    /**
+	 * Resize the dialog to the preferred size of the content. 
+	 * This is needed when the visibility of some components has changed.
+	 * But it needs to be triggered manually, 
+	 * because the preferred size of the content is not automatically recalculated
+	 */
+    protected void resizeDialogToContent() {
+        // Während des Konstruktors übernimmt prepareDialog() die Erstgröße
+        if (!_prepared) {
+            return;
+        }
+        // Neue Preferred Size des Inhalts ermitteln und die ScrollPane darauf abstimmen
+        mainPanel.revalidate();
+        Dimension dim = mainPanel.getPreferredSize();
+        mainScrollPane.setPreferredSize(Dialog.getMaxSize(
+                new Dimension(dim.width + 40, dim.height + 20)));
+        EfaUtil.setMinimumSize(mainPanel);
+        EfaUtil.pack(this);
     }
 }

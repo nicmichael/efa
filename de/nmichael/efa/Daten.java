@@ -115,9 +115,9 @@ public class Daten {
 	public final static String VERSION = "2.5.4"; // Version für die Ausgabe (z.B. 2.1.0, kann aber
 																	// auch Zusätze wie "alpha" o.ä. enthalten)
 
-	public final static String VERSIONID = "2.5.4_#2"; // VersionsID: Format: "X.Y.Z_MM"; final-Version z.B. 1.4.0_00;
+	public final static String VERSIONID = "2.5.4_#6"; // VersionsID: Format: "X.Y.Z_MM"; final-Version z.B. 1.4.0_00;
 														// beta-Version z.B. 1.4.0_#1  //# is not good, is used in efa.data.Waters 	
-	public final static String VERSIONRELEASEDATE = "01.11.2026"; // Release Date: TT.MM.JJJJ
+	public final static String VERSIONRELEASEDATE = "22.11.2026"; // Release Date: TT.MM.JJJJ
 	public final static String MAJORVERSION = "2";
 	public final static String PROGRAMMID = "EFA.254"; // Versions-ID für Wettbewerbsmeldungen
 	public final static String PROGRAMMID_DRV = "EFADRV.254"; // Versions-ID für Wettbewerbsmeldungen
@@ -337,10 +337,6 @@ public class Daten {
 
 	public static synchronized void requestShutdown() {
 		isShutdownRequested = true;
-	}
-	
-	public static synchronized void resetShutdownRequest() {
-		isShutdownRequested = false;
 	}
 	
 	public static synchronized boolean isShutdownRequested() {
@@ -1849,6 +1845,11 @@ public class Daten {
 		}
 	}
 
+	/**
+	 * Checks whether the current Look&Feel is one of the efaFlatLaf variants.
+	 * 
+	 * @return true if the current Look&Feel is efaFlatLaf, false otherwise
+	 */
 	public static boolean isEfaFlatLafActive() {
 		return (lookAndFeel.endsWith(Daten.LAF_EFAFLAT_LIGHT) || lookAndFeel.endsWith(Daten.LAF_EFAFLAT_DARK));
 	}
@@ -1867,5 +1868,40 @@ public class Daten {
 			Logger.log(Logger.WARNING, Logger.MSG_WARN_CANTSETLOOKANDFEEL,
 					International.getString("Flatlaf nicht im ClassPath gefunden.") + " " + cp);
 		}
+	}
+
+	/**
+	 * Returns a list of environment variables that are relevant for determining
+	 * whether the GUI is running under X11, Wayland or a desktop environment. This
+	 * is only meaningful on Linux; on other systems the caller gets an empty list
+	 * instead of a set of misleading "(not set)" entries.
+	 */
+	public static Vector<String> getLinuxWindowProperties() {
+		// These variables are only meaningful on Linux; on other systems the caller
+		// gets an empty list instead of a set of misleading "(not set)" entries
+		if (!isOsLinux()) {
+			return new Vector<String>();
+		}
+
+		// Variables are listed in order of importance for telling X11, Wayland and
+		// the desktop environment apart, because the GUI behaves differently in each
+		final String[] GUI_VARIABLES = {
+				"XDG_SESSION_TYPE",     // "x11", "wayland" or "tty"; set by systemd-logind at login
+				"XDG_CURRENT_DESKTOP",  // desktop environment, e.g. "GNOME", "XFCE", "KDE"
+				"DESKTOP_SESSION",      // name of the session file, e.g. "xfce" or "gnome"
+				"DISPLAY",              // X11 display; also set under XWayland
+				"WAYLAND_DISPLAY",      // set only while a Wayland compositor is running
+				"GDK_BACKEND",          // GTK backend override, may be unset
+				"QT_QPA_PLATFORM"       // Qt platform override, may be unset
+		};
+
+		Vector<String> values = new Vector<String>();
+		for (String name : GUI_VARIABLES) {
+			String value = System.getenv(name);
+			// An explicit "(not set)" keeps a missing variable apart from an empty one,
+			// since the absence of a variable can itself be a hint about the session
+			values.add(name + " = " + (value == null ? "(not set)" : value));
+		}
+		return values;
 	}
 }

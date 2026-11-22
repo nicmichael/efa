@@ -243,6 +243,7 @@ public class EfaZIPUtil {
                     ZipEntry entry = entries.nextElement();
                     processedEntries++;
 
+                    Logger.log(Logger.INFO, Logger.MSG_EVT_ONLINEUPDATEINFO, International.getMessage("Entpacke Eintrag: {entry}", entry.getName()));
                     if (processedEntries > UNZIP_MAX_ENTRIES) {
                         errors.add(LogString.operationFailed(
                                 International.getString("Entpacken"),

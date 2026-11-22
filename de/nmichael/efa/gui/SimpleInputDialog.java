@@ -60,6 +60,8 @@ public class SimpleInputDialog extends BaseDialog {
                 Vector<String> v = EfaUtil.split(s, '\n');
                 for (int i = 0; i < v.size(); i++) {
                     ItemTypeLabel label = new ItemTypeLabel("LABEL" + i, IItemType.TYPE_PUBLIC, "", v.get(i));
+                    //first item: 10 pixel padding on top, last item: 10 pixel padding on bottom.
+                    label.setPadding(8, 8, (i == 0 ? 10 : 2), (i == v.size()-1 ? 10 : 2)) ;
                     y += label.displayOnGui(this, mainPanel, 0, y);
                 }
                 item.setDescription(null);

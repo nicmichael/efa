@@ -28,6 +28,7 @@ public class NotificationDialog extends BaseDialog {
 
     public NotificationDialog(Frame parent, String text, String image, String textcolor, String bgcolor, int closeTimeout) {
         super(parent, "", International.getStringWithMnemonic("Schließen"));
+
         this.text = text;
         this.image = image;
         this.textcolor = textcolor;
@@ -38,6 +39,7 @@ public class NotificationDialog extends BaseDialog {
 
     public NotificationDialog(JDialog parent, String text, String image, String textcolor, String bgcolor, int closeTimeout) {
         super(parent, "", International.getStringWithMnemonic("Schließen"));
+        this.setModal(true);
         this.text = text;
         this.image = image;
         this.textcolor = textcolor;

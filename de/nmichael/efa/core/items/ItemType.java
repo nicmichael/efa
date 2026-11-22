@@ -144,7 +144,42 @@ public abstract class ItemType implements IItemType {
             field.requestFocus();
         }
     }
+    /*
+    public void requestFocus() {
+    		Problem: Component.requestFocus() is platform-dependent and less reliable. 
+    		On many Linux window managers it fails unless called when the window is active/focused. 
+    		Also it may be called from non-EDT code paths.
+    		So just calling field.requestFocus() is not very reliable under Linux.
+    		    		
+    		Why this new code should help: requestFocusInWindow() is more predictable and invokeLater ensures the 
+    		call runs on the EDT when necessary. Fixing this single method improves all callers that use the IItemType API.
+        if (field == null) return;
+        // Prefer requestFocusInWindow on EDT, invokeLater if not currently on EDT
+        Runnable doFocus = () -> {
+            try {
+                if (field instanceof javax.swing.JComponent) {
+                    ((javax.swing.JComponent) field).requestFocusInWindow();
+                } else {
+                    // fallback
+                    field.requestFocus();
+                }
+            } catch (Exception t) {
+                Logger.logdebug(t);
+                try {
+                    field.requestFocus();
+                } catch (Throwable ignore) {
+                }
+            }
+        };
+        if (javax.swing.SwingUtilities.isEventDispatchThread()) {
+            doFocus.run();
+        } else {
+        	Logger.log(Logger.DEBUG, "WE ARE NOT ON THE EDT HERE, BUT SHOULD BE");
+            javax.swing.SwingUtilities.invokeLater(doFocus);
+        }
+    }
 
+*/
     public boolean hasFocus() {
         return (field != null && field.hasFocus());
     }

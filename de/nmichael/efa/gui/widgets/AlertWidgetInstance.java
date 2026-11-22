@@ -2,6 +2,7 @@ package de.nmichael.efa.gui.widgets;
 
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 
 import de.nmichael.efa.Daten;
 import de.nmichael.efa.core.items.ItemTypeItemList;
@@ -44,16 +45,22 @@ public class AlertWidgetInstance extends WidgetInstance implements IWidgetInstan
                         && AlertWidget.isShowOnSessionFinish(list, i))) && AlertWidget.isShowForBoat(list, i, bType, bSeats)
                         && Daten.efaConfig.getValueNotificationWindowTimeout() > 0) {
                     String text = AlertWidget.getText(list, i);
-                    String color = "0000ff";
-                    String image = BaseDialog.BIGIMAGE_INFO;
-                    if (AlertWidget.TYPE_WARN.equals(AlertWidget.getType(list, i))) {
-                        color = "ff0000";
-                        image = BaseDialog.BIGIMAGE_WARNING;
-                    }
+                    final int usedI = i;
                     if (text != null && text.length() > 0) {
-                        NotificationDialog dlg = new NotificationDialog((JFrame) null,
-                                text, image, "ffffff", color, Daten.efaConfig.getValueNotificationWindowTimeout());
-                        dlg.showDialog();
+                        //InvokeLater causes the dialogs to be displayed simultaneously 
+                        //and stacked on top of one another when multiple dialogs are configured for display.
+                    	//SwingUtilities.invokeLater(()->{
+                            String color = "0000ff";
+                            String image = BaseDialog.BIGIMAGE_INFO;
+                            if (AlertWidget.TYPE_WARN.equals(AlertWidget.getType(list, usedI))) {
+                                color = "ff0000";
+                                image = BaseDialog.BIGIMAGE_WARNING;
+                            }                    		
+
+	                        NotificationDialog dlg = new NotificationDialog((JFrame) null,
+	                                text, image, "ffffff", color, Daten.efaConfig.getValueNotificationWindowTimeout());
+	                        dlg.showDialog();
+                    	//});
                     }
                 }
             }

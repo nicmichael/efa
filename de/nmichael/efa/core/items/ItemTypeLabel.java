@@ -77,12 +77,12 @@ public class ItemTypeLabel extends ItemType {
 	 */
     public void setDescription(String s) {
         super.setDescription(s);
-        /* TODO:
-         * This method works ok if the number of lines in the description does not GROW.
+        /* TODO: This method works ok if the number of lines in the description does not GROW.
          * If the number of lines increases, the additional lines won't be displayed because the labels array is not big enough.
          *
          * This would need to be fixed by creating a new labels array with the correct size and adding the new labels to the GUI.
-         * But it would need some more references to the GUI components to do that. So for now, we just ignore this case and assume that the number of lines does not grow.
+         * But it would need some more references to the GUI components to do that. 
+         * So for now, we just ignore this case and assume that the number of lines does not grow.
          *
          */
         Vector<String> v = EfaUtil.split(description, '\n');

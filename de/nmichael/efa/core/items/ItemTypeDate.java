@@ -10,11 +10,22 @@
 
 package de.nmichael.efa.core.items;
 
-import de.nmichael.efa.util.*;
+import java.awt.AWTEvent;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
+import java.awt.Window;
+import java.awt.event.FocusEvent;
+import java.awt.event.KeyEvent;
+import java.util.GregorianCalendar;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
 import de.nmichael.efa.data.types.DataTypeDate;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
+import de.nmichael.efa.util.EfaUtil;
+import de.nmichael.efa.util.International;
+import de.nmichael.efa.util.Logger;
+import de.nmichael.efa.util.TMJ;
 
 // @i18n complete
 
@@ -25,6 +36,7 @@ public class ItemTypeDate extends ItemTypeLabelTextfield {
     private boolean allowYearOnly = false;
     private boolean allowMonthAndYearOnly = false;
     private boolean forceDayAndMonthOnly = false;
+    private boolean isYearAutocompletionForFuture = false;
     protected boolean showWeekday;
     protected JLabel weekdayLabel;
     protected int weekdayGridWidth = 1;
@@ -33,6 +45,8 @@ public class ItemTypeDate extends ItemTypeLabelTextfield {
     protected ItemTypeDate mustBeBefore;
     protected ItemTypeDate mustBeAfter;
     protected boolean mustBeCanBeEqual = false;
+	private boolean hasBeenFutureCompleted;
+    
 
     public ItemTypeDate(String name, DataTypeDate value, int type,
             String category, String description) {
@@ -53,6 +67,7 @@ public class ItemTypeDate extends ItemTypeLabelTextfield {
         copy.setItemOnNewRow(itemOnNewRow);
         copy.setFieldGrid(fieldGridWidth,fieldGridHeight,fieldGridAnchor,fieldGridFill);
         copy.setIndent(this.isIndent());
+        copy.setYearAutocompletionForFuture(this.isYearAutocompletionForFuture());
         return copy;
     }
 
@@ -81,8 +96,38 @@ public class ItemTypeDate extends ItemTypeLabelTextfield {
                         return;
                     }
                 }
-                TMJ tmj = EfaUtil.correctDate(value, referenceDate.getDay(), referenceDate.getMonth(), referenceDate.getYear());
-                this.value.setDate(tmj.tag, tmj.monat, tmj.jahr);
+                TMJ userEnteredTMJ = EfaUtil.string2date(value, -1, -1, -1);
+                if (!isYearAutocompletionForFuture) { 
+                	//"old" standard behavior: if the user entered a date without a year, we use the reference date's year.
+                    TMJ tmj = EfaUtil.correctDate(value, referenceDate.getDay(), referenceDate.getMonth(), referenceDate.getYear());
+
+                    this.value.setDate(tmj.tag, tmj.monat, tmj.jahr);
+                    this.setHasBeenFutureCompleted(false);
+				} else {
+					//if the resulting tmj is in the future, everything is fine.
+					//if it is in the past, we add one year to the resulting tmj, so that it is in the future.
+					//this is needed for reservations, where the user might enter a date like "01.01" 
+					//and expects it to be in the future, not in the past.
+					GregorianCalendar today = new GregorianCalendar();
+					today.clear();
+					today.set(DataTypeDate.today().getYear(), DataTypeDate.today().getMonth()-1, DataTypeDate.today().getDay());
+                    
+					//extend the user entered date with the current year, so that we can check if it is in the future or not.
+					TMJ tmj = EfaUtil.string2date(value, -1, -1, today.get(GregorianCalendar.YEAR));
+
+					boolean isToday = (tmj.toCalendar().equals(today));
+	                boolean isFuture = tmj.toCalendar().after(today);
+	                this.setHasBeenFutureCompleted(false);
+	                
+	                //only adapt the year if the reference date is not set, 
+	                //otherwise we assume that the user wants to enter a date in the past or present.
+					if (!isToday && userEnteredTMJ.jahr<=0 && !isFuture ) {
+	                	tmj.jahr = today.get(GregorianCalendar.YEAR) + 1;
+		                this.setHasBeenFutureCompleted(true);
+	                }
+					this.value.setDate(tmj.tag, tmj.monat, tmj.jahr);
+
+				}
             } else {
                 unset();
             }
@@ -251,5 +296,21 @@ public class ItemTypeDate extends ItemTypeLabelTextfield {
         }
         super.actionEvent(e);
     }
+
+	public boolean isYearAutocompletionForFuture() {
+		return isYearAutocompletionForFuture;
+	}
+
+	public void setYearAutocompletionForFuture(boolean isYearAutocompletionForFuture) {
+		this.isYearAutocompletionForFuture = isYearAutocompletionForFuture;
+	}
+
+	public boolean isHasBeenFutureCompleted() {
+		return hasBeenFutureCompleted;
+	}
+
+	public void setHasBeenFutureCompleted(boolean hasBeenFutureCompleted) {
+		this.hasBeenFutureCompleted = hasBeenFutureCompleted;
+	}
     
 }
