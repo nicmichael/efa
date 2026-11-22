@@ -146,9 +146,9 @@ public class EfaAboutDialog extends BaseDialog {
         changelogScrollPane.getViewport().add(changelogText, null);
         changelogScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         // this is relevant for sizing the efaAboutDialog with no vertical scrollbar - each scrollpane needs a preferred size
-        changelogScrollPane.setPreferredSize(new Dimension(400, 600));
-        changelogScrollPane.getVerticalScrollBar().setUnitIncrement(6);
-        dankeScrollPane.setPreferredSize(new Dimension(850, 750)); 
+        changelogScrollPane.setPreferredSize(new Dimension(800, 600));
+        changelogScrollPane.getVerticalScrollBar().setUnitIncrement(12);
+        dankeScrollPane.setPreferredSize(new Dimension(600, 600)); 
         languageScrollPane.setPreferredSize(new Dimension(400, 600));
         librariesScrollPane.setPreferredSize(new Dimension(400, 600));
                 
@@ -269,7 +269,14 @@ public class EfaAboutDialog extends BaseDialog {
 	        }
         }
         
-        
+        if (Daten.isOsLinux()) {
+        	efaInfosText.append("\n\n\nLinux Window Properties\n-------------\n");
+        	// Print the Linux properties themselves; the list must not be replaced by DisplayInfo
+        	Vector<String> linuxWindowProperties = Daten.getLinuxWindowProperties();
+        	for (int i = 0; linuxWindowProperties != null && i < linuxWindowProperties.size(); i++) {
+        		efaInfosText.append(linuxWindowProperties.get(i) + "\n");
+        	}
+        }
         //Add GUI Debug info, if debug info is activated in efaConfig or by Commandline
         if (Logger.isDebugLogging()||Logger.isDebugLoggingActivatedByCommandLine()) {
 	        // Get UI Defaults Properties
